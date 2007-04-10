@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+The Initial Developer of the Original Code is Shawn Betts.
+Portions created by the Initial Developer are Copyright (C) 2004
+by the Initial Developer. All Rights Reserved.
+
+Alternatively, the contents of this file may be used under the terms of
+either the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the GPL or the LGPL are applicable instead
+of those above. If you wish to allow use of your version of this file only
+under the terms of either the GPL or the LGPL, and not to allow others to
+use your version of this file under the terms of the MPL, indicate your
+decision by deleting the provisions above and replace them with the notice
+and other provisions required by the GPL or the LGPL. If you do not delete
+the provisions above, a recipient may use your version of this file under
+the terms of any one of the MPL, the GPL or the LGPL.
+***** END LICENSE BLOCK ***** -->
+
+<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?> 
+
+<overlay id="vimperator"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:nc="http://home.netscape.com/NC-rdf#"
+	xmlns:html="http://www.w3.org/1999/xhtml" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<!-- you may not believe it, but order is really important here -->
+	<script type="application/x-javascript" src="vimperator.js"/>
+	<script type="application/x-javascript" src="commands.js"/>
+	<script type="application/x-javascript" src="settings.js"/>
+	<script type="application/x-javascript" src="completion.js"/>
+	<script type="application/x-javascript" src="bookmarks.js"/>
+	<script type="application/x-javascript" src="hints.js"/>
+
+	<window id="main-window">
+		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true"
+			 onblur="onBlur();">
+			<vbox id="vim-container" flex="1" hidden="false">
+				<listbox id="vim-preview_window" class="plain" rows="10" flex="1" hidden="true"
+						ondblclick="preview_window_select(event);" onclick="preview_window_select(event);" onkeydown="preview_window_select(event);"
+						style="font-family: monospace; -moz-user-focus:ignore; overflow:-moz-scrollbars-none;">
+					<listcols>
+						<listcol flex="1" width="50%"/>
+						<listcol flex="1" width="50%"/>
+					</listcols>
+				</listbox>
+
+				<hbox id="vim-statusbar" flex="1" height="10" hidden="false" style="-moz-user-focus:ignore;">
+					<textbox class="plain" id="vim-sb-field-1"  flex="1" crop="right" value="about:blank"
+						readonly="true" style="font-family: monospace; background-color: transparent; -moz-user-focus:ignore;"/>
+					<label   class="plain" id="vim-sb-field-2"  flex="0" crop="right" value="[===>      ]"
+						style="font-family: monospace"/>
+					<label   class="plain" id="vim-sb-field-3"  flex="0" crop="right" value=""
+						style="font-family: monospace"/>
+					<label   class="plain" id="vim-sb-field-4"  flex="0" crop="right" value="[0/0]"
+						style="font-family: monospace"/>
+					<label   class="plain" id="vim-sb-field-5"  flex="0" crop="right" value=" Top"
+						style="font-family: monospace"/>
+				</hbox>
+
+				<listbox id="vim-completion" class="plain" rows="1" flex="1" hidden="true"
+					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:ignore; overflow:-moz-scrollbars-none;">
+					<listcols>
+						<listcol flex="1" width="50%"/>
+						<listcol flex="1" width="50%"/>
+					</listcols>
+				</listbox>
+
+				<textbox class="plain" id="vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
+					onkeypress="onCommandBarKeypress(event);" oninput="onCommandBarInput(event);"
+					 style="font-family: monospace"/>
+			</vbox>
+		</toolbar>
+
+		<keyset id="mainKeyset">
+			<key id="key_open_vimbar" key=":" oncommand="openVimperatorBar();" modifiers=""/>
+			<key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/> 
+
+			<!-- other keys are handled inside vimperator.js event loop -->
+		</keyset>
+	</window>
+
+</overlay>

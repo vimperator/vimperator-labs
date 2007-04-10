@@ -1,0 +1,110 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+addBookmark	bookmarks.js	/^function addBookmark(title, uri)$/;"	f
+add_to_command_history	completion.js	/^function add_to_command_history(str)$/;"	f
+beep	commands.js	/^function beep()$/;"	f
+bmadd	commands.js	/^function bmadd(str)$/;"	f
+bmdel	commands.js	/^function bmdel(str)$/;"	f
+bmshow	commands.js	/^function bmshow(filter, fullmode)$/;"	f
+changeHintFocus	hints.js	/^ 	function changeHintFocus(linkNumString, oldLinkNumString)$/;"	f
+completion_add_to_list	completion.js	/^function completion_add_to_list(completion_item, at_beginning)\/*{{{*\/$/;"	f
+completion_fill_list	completion.js	/^function completion_fill_list(startindex)\/*{{{*\/$/;"	f
+completion_select_next_item	completion.js	/^function completion_select_next_item()\/*{{{*\/$/;"	f
+completion_select_previous_item	completion.js	/^function completion_select_previous_item()\/*{{{*\/$/;"	f
+completion_show_list	completion.js	/^function completion_show_list()\/*{{{*\/$/;"	f
+copyToClipboard	commands.js	/^function copyToClipboard(str)$/;"	f
+createCursorPositionString	vimperator.js	/^function createCursorPositionString()$/;"	f
+createHints	hints.js	/^ 	function createHints(win)$/;"	f
+createProgressBar	vimperator.js	/^function createProgressBar(aProgress)$/;"	f
+deleteBookmark	bookmarks.js	/^function deleteBookmark(url)$/;"	f
+del_url_mark	commands.js	/^function del_url_mark(mark)$/;"	f
+echo	commands.js	/^function echo(msg)$/;"	f
+echoerr	commands.js	/^function echoerr(msg)$/;"	f
+execute_command	commands.js	/^function execute_command(count, cmd, special, args) \/\/ {{{$/;"	f
+filter_url_array	completion.js	/^function filter_url_array(urls, filter, use_regex)\/*{{{*\/$/;"	f
+focusContent	vimperator.js	/^function focusContent(clear_command_line, clear_statusline)$/;"	f
+focusNextFrame	commands.js	/^function focusNextFrame()$/;"	f
+formatHint	hints.js	/^ 	function formatHint(hintNum)$/;"	f
+genElemCoords	hints.js	/^ 	function genElemCoords(elem)$/;"	f
+genHintContainer	hints.js	/^ 	function genHintContainer(doc)$/;"	f
+getCurrentLinkLocation	commands.js	/^function getCurrentLinkLocation()$/;"	f
+getCurrentLocation	commands.js	/^function getCurrentLocation()$/;"	f
+getHintById	hints.js	/^ 	function getHintById(id, win)$/;"	f
+getLinkNodes	vimperator.js	/^function getLinkNodes(doc)$/;"	f
+getPageLinkNodes	vimperator.js	/^function getPageLinkNodes()$/;"	f
+getProperty	bookmarks.js	/^function getProperty( aInput, aArc, DS )$/;"	f
+get_bookmark_completions	completion.js	/^function get_bookmark_completions(filter)\/*{{{*\/$/;"	f
+get_command	commands.js	/^function get_command(cmd) \/\/ {{{$/;"	f
+get_command_completions	completion.js	/^function get_command_completions(filter)\/*{{{*\/$/;"	f
+get_firefox_pref	settings.js	/^function get_firefox_pref(name, default_value)$/;"	f
+get_history_completions	completion.js	/^function get_history_completions(filter)\/*{{{*\/$/;"	f
+get_pref	settings.js	/^function get_pref(name, forced_default)$/;"	f
+get_search_completions	completion.js	/^function get_search_completions(filter)\/*{{{*\/$/;"	f
+get_setting	settings.js	/^function get_setting(cmd)$/;"	f
+get_settings_completions	completion.js	/^function get_settings_completions(filter)\/*{{{*\/$/;"	f
+get_url_completions	completion.js	/^function get_url_completions(filter)\/*{{{*\/$/;"	f
+get_url_mark	commands.js	/^function get_url_mark(mark)$/;"	f
+goUp	commands.js	/^function goUp() \/\/ FIXME$/;"	f
+help	commands.js	/^function help(section)$/;"	f
+hit_a_hint	hints.js	/^function hit_a_hint()$/;"	f
+hsshow	commands.js	/^function hsshow(filter, fullmode)$/;"	f
+init	vimperator.js	/^function init()$/;"	f
+initDoc	hints.js	/^ 	function initDoc(event)$/;"	f
+invalidateCoords	hints.js	/^ 	function invalidateCoords(doc)$/;"	f
+isFormElemFocused	vimperator.js	/^function isFormElemFocused()$/;"	f
+keyToString	vimperator.js	/^function keyToString(event)$/;"	f
+load_history	completion.js	/^function load_history()$/;"	f
+logMessage	vimperator.js	/^function logMessage(msg)$/;"	f
+makeHelpString	commands.js	/^	function makeHelpString(commands, color, beg, end, func)$/;"	f
+makeSettingsHelpString	commands.js	/^	function makeSettingsHelpString(command)$/;"	f
+nsBrowserStatusHandler	vimperator.js	/^function nsBrowserStatusHandler() \/*{{{*\/$/;"	f
+onBlur	vimperator.js	/^function onBlur() \/\/ FIXME: needed?$/;"	f
+onCommandBarInput	vimperator.js	/^function onCommandBarInput(event)$/;"	f
+onCommandBarKeypress	vimperator.js	/^function onCommandBarKeypress(evt)\/*{{{*\/$/;"	f
+onEscape	vimperator.js	/^function onEscape()$/;"	f
+onResize	hints.js	/^ 	function onResize(event)$/;"	f
+onVimperatorKeypress	vimperator.js	/^function onVimperatorKeypress(event)\/*{{{*\/$/;"	f
+openURLs	commands.js	/^function openURLs(str)$/;"	f
+openURLsInNewTab	commands.js	/^function openURLsInNewTab(str, activate)$/;"	f
+openVimperatorBar	vimperator.js	/^function openVimperatorBar(str)$/;"	f
+outputAddonsList	commands.js	/^function outputAddonsList(aTarget)$/;"	f
+parseBookmarkString	bookmarks.js	/^function parseBookmarkString(str, res)$/;"	f
+preview_window_fill	completion.js	/^function preview_window_fill(completions)$/;"	f
+preview_window_select	completion.js	/^function preview_window_select(event)$/;"	f
+quit	commands.js	/^function quit(save_session)$/;"	f
+reload	commands.js	/^function reload(all_tabs)$/;"	f
+removeHints	hints.js	/^ 	function removeHints(win)$/;"	f
+save_history	completion.js	/^function save_history()$/;"	f
+scrollBufferAbsolute	commands.js	/^function scrollBufferAbsolute(horizontal, vertical)$/;"	f
+scrollBufferRelative	commands.js	/^function scrollBufferRelative(right, down)$/;"	f
+selectInput	commands.js	/^function selectInput()$/;"	f
+set	commands.js	/^function set(args, special)$/;"	f
+setHintStyle	hints.js	/^ 	function setHintStyle(hintElem, styleString)$/;"	f
+setMouseOverElement	hints.js	/^	function setMouseOverElement(elem)$/;"	f
+setStatusbarColor	vimperator.js	/^function setStatusbarColor(color)$/;"	f
+set_firefox_pref	settings.js	/^function set_firefox_pref(name, value)$/;"	f
+set_guioptions	settings.js	/^function set_guioptions(value)$/;"	f
+set_location_mark	commands.js	/^function set_location_mark(mark)$/;"	f
+set_pref	settings.js	/^function set_pref(name, value)$/;"	f
+set_showtabline	settings.js	/^function set_showtabline(value)$/;"	f
+set_url_mark	commands.js	/^function set_url_mark(mark, url)$/;"	f
+showHints	hints.js	/^	function showHints(win, off)$/;"	f
+showStatusbarMessage	vimperator.js	/^function showStatusbarMessage(msg, field)$/;"	f
+show_location_marks	commands.js	/^function show_location_marks(mark)$/;"	f
+show_url_marks	commands.js	/^function show_url_marks(mark)$/;"	f
+source	commands.js	/^function source(filename)$/;"	f
+startCoordLoader	hints.js	/^ 	function startCoordLoader(doc)$/;"	f
+stepInHistory	commands.js	/^function stepInHistory(steps)$/;"	f
+stringToURLs	commands.js	/^function stringToURLs(str)$/;"	f
+tab_go	commands.js	/^function tab_go(index)$/;"	f
+tab_remove	commands.js	/^function tab_remove(count, focus_left_tab, quit_on_last_tab)$/;"	f
+toggle_images	commands.js	/^function toggle_images() {$/;"	f
+unload	vimperator.js	/^function unload()$/;"	f
+updateStatusbar	vimperator.js	/^function updateStatusbar()$/;"	f
+yankCurrentLocation	commands.js	/^function yankCurrentLocation()$/;"	f
+zoom_in	commands.js	/^function zoom_in(factor)$/;"	f
+zoom_to	commands.js	/^function zoom_to(value)$/;"	f
