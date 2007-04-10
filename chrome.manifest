@@ -1,0 +1,3 @@
+# vimperators chrome registration file
+content	vimperator	jar:chrome/vimperator.jar!/chrome/content/vimperator/
+overlay chrome://browser/content/browser.xul chrome://vimperator/content/vimperator.xul
