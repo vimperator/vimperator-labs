@@ -6,6 +6,7 @@ BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
 - hints are not placed correctly when zoom is used
 - flashing frame is not perfect
+- :bm! is broken
 
 FEATURES:
 9 marks of a Location (also should work with directories), [m a-zA-Z] to set it, [' a-zA-Z] to go there
