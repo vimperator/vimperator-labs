@@ -1,6 +1,4 @@
-First there was a Navigator, then there was an Explorer. Later it was time for
-a Konqueror. Now it's time for an Imperator, the VIMperator :)
-
+<pre>
 Priority list:
 1-9 as in vim (9=required for next release, 5=would be nice, 1=probably not)
 
@@ -44,24 +42,4 @@ FEATURES:
 4 Support multiple top-level windows?
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
 3 :set should also set about:config options (with autocomplete)
-
-DONE:
-/* new shortcuts */
-	ctrl-o:	go back
-	ctrl-i: go forward
-- most commands accessible as a :command (e.g. :set noplugins)
-- Switchting between Frames of a website with [F] and flashing the active frame
-- show current url in statusbar
-- bookmarks and history handling
-- Advanced Movement Keys [gg G ctrl-f/b ctrl-u/d?]
-- Options:
-  guioptions
-  statusline
-- beep()
-- [1-9]gt Goes to tab 1-9 (13gt will go to the 13th tab)
-- support for ^ and $ (move maximum left/right)
-- ZZ (and :wq or :x) saves the session when quitting, ZQ (or :q) does not
-- pressing 0-9 starts link following mode -> [o] = open it, [t] open in new tab, [s] saves it, [ctrl-w] open in new window, [y] yanks it
-  if there is 13,14,52 open all links in tabs, if there is a , open in background
-- need to set keypress into dom.popup_allowed_events
-- copy frame/link/image Location with easy keypresses [yy?]
+</pre>
