@@ -246,7 +246,7 @@ var g_commands = [/*{{{*/
 		["tabnext", "tn", "tnext"],
 		"Switch to the next tab",
 		"Cycles to the first tab, when the last is selected.",
-		function(args, special, count) { go_tab(0); },
+		function(args, special, count) { tab_go(0); },
 		null
 	],
 	[
@@ -260,7 +260,7 @@ var g_commands = [/*{{{*/
 		["tabprevious", "tp", "tprev", "tprevious"],
 		"Switch to the previous tab",
 		"Cycles to the last tab, when the first is selected.",
-		function(args, count) { go_tab(-1); },
+		function(args, count) { tab_go(-1); },
 		null
 	],
 	[
