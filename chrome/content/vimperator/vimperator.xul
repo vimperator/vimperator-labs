@@ -88,6 +88,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 		<keyset id="mainKeyset">
 			<key id="key_open_vimbar" key=":" oncommand="openVimperatorBar();" modifiers=""/>
 			<key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/> 
+			<!--key id="key_cancel" keycode="[" modifiers="control" oncommand="onEscape();"/--> 
 
 			<!-- other keys are handled inside vimperator.js event loop -->
 		</keyset>

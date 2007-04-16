@@ -634,7 +634,7 @@ var g_mappings = [/*{{{*/
 		function(count) { openVimperatorBar(null); }
 	],
 	[ 
-		["<Esc>"],
+		["<Esc>", "<C-[>"],
 		"Cancel any operation",
 		"Stops loading the current webpage and exits any command line or hint mode.<br>"+
 		"Also focuses the web page, in case a form field has focus, and eats our key presses.",

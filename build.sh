@@ -19,5 +19,5 @@ fi
 
 
 if [ x$1 = xtest ]; then
-	cp -v chrome/vimperator.jar '/home/test/.mozilla/firefox/trsj6obw.default//extensions/{f9570b26-e246-4753-9b68-61aa95994237}/chrome'
+	cp -v chrome/vimperator.jar '/home/test/.mozilla/firefox/7ij36ukn.default/extensions/{f9570b26-e246-4753-9b68-61aa95994237}/chrome'
 fi

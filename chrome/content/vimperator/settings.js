@@ -110,7 +110,7 @@ var g_settings = [/*{{{*/
 	[
 		["guioptions", "go"],
 		"Shows or hides the menu, toolbar and scrollbars",
-		"Supported characters:<br><ul><li><b>m</b>: menubar</li><li><b>T</b>: toolbar</ul>",
+		"Supported characters:<br><ul><li><b>m</b>: menubar</li><li><b>T</b>: toolbar<li><b>b</b>: bookmark bar</li><li><b>s</b>: original Firefox statusbar</ul>",
 		function(value) { set_pref("guioptions", value); set_guioptions(value); },
 		function() { return get_pref("guioptions"); },
 		"charlist",
@@ -334,8 +334,8 @@ function set_guioptions(value)
 	document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
 	document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
 	// and original status bar (default), but show it, e.g. when needed for extensions
-	document.getElementById("status-bar").collapsed = value.indexOf("S") > -1 ? false : true;
-	document.getElementById("status-bar").hidden = value.indexOf("S") > -1 ? false : true;
+	document.getElementById("status-bar").collapsed = value.indexOf("s") > -1 ? false : true;
+	document.getElementById("status-bar").hidden = value.indexOf("s") > -1 ? false : true;
 }
 
 function set_showtabline(value)

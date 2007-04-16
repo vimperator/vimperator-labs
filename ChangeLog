@@ -1,6 +1,9 @@
 <pre>
 date:
 	* version 0.3
+	* fixed :tabnext/:tabprevious commands
+	* documented 's' guioptions flag for statusbar
+	* implemented the possibility to use CTRL-[ as an alternative to ESC, to leave the command line
 
 11/04/2007:
 	* version 0.2

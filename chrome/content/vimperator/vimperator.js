@@ -496,7 +496,6 @@ function onCommandBarKeypress(evt)/*{{{*/
 		else
 			special = false;
 
-
 		/* user pressed ENTER to carry out a command */
 		if (evt.keyCode == KeyEvent.DOM_VK_RETURN)
 		{
@@ -507,7 +506,8 @@ function onCommandBarKeypress(evt)/*{{{*/
 			execute_command(count, cmd, special, args);
 		}
 
-		else if (evt.keyCode == KeyEvent.DOM_VK_ESCAPE)
+		else if ((evt.keyCode == KeyEvent.DOM_VK_ESCAPE) ||
+		         (keyToString(evt) == "<C-[>"))
 		{
 			add_to_command_history(command);
 			focusContent(true, true);
