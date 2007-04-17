@@ -88,11 +88,11 @@ var g_settings = [/*{{{*/
 	[
 		["focusedhintstyle", "fhs"],
 		"CSS specification of focused hints appearance",
-		null,
+		"The font (and size) is inherited from Firefox's prefences for Monospaced fonts. Change them in the GUI prefernce panel if necessary.",
 		function(value) { set_pref("focusedhintstyle", value); },
 		function() { return get_pref("focusedhintstyle"); },
 		"string",
-		"z-index:500;font:normal normal normal x-small monospace;color:ButtonText;background-color:ButtonShadow;border-color:ButtonShadow;border-width:1px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
+		"z-index:500;font-family:monospace;font-size:12;color:ButtonText;background-color:ButtonShadow;border-color:ButtonShadow;border-width:1px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
 		null,
 		null
 	],
@@ -132,11 +132,11 @@ var g_settings = [/*{{{*/
 	[
 		["hintstyle", "hs"],
 		"CSS specification of unfocused hints appearance",
-		null,
+		"The font (and size) is inherited from Firefox's prefences for Monospaced fonts. Change them in the GUI prefernce panel if necessary.",
 		function(value) { set_pref("hintstyle", value); },
 		function() { return get_pref("hintstyle"); },
 		"string",
-		"z-index:500;font:normal normal normal x-small monospace;color:black;background-color:yellow;border-color:ButtonShadow;border-width:0px;border-style:solid;padding:0px 0px 0px 0px;position:absolute;",
+		"z-index:500;font-family:monospace;font-size:12;color:black;background-color:yellow;border-color:ButtonShadow;border-width:0px;border-style:solid;padding:0px 0px 0px 0px;position:absolute;",
 		null,
 		null
 	],

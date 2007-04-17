@@ -597,7 +597,8 @@ var g_mappings = [/*{{{*/
 		"Start AlwaysHint mode",
 		"In AlwaysHint mode, every hintable item (according to the <code class=setting>'hinttags'</code> XPath query) is assigned a label.<br>"+
 		"If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=mapping>&lt;Esc&gt;</code> to stop this mode.<br>"+
-		"This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.",
+		"This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br>"+
+		"Also, most <code style=mapping>Ctrl</code>-prefixed shortcut keys are available in this mode for navigation.",
 		function(count) { hah.enableHahMode(HINT_MODE_ALWAYS); }
 	],
 	[ 
@@ -771,12 +772,15 @@ var g_hint_mappings = [ /*{{{*/
 	["<C-n>",      "tab_go(0)",                          true,  true], // same as gt, but no count supported
 	["<C-p>",      "tab_go(-1)",                         true,  true],
 	/* navigation */
+	["<C-o>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
+	["<C-i>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
 	["<C-h>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
 	["<C-l>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
 	["<C-d>",      "tab_remove(g_count, false, 0);",                  true,  true],
 	/* cancel hint mode keys */
 	["<C-c>",      "", true, true],
 	["<C-g>",      "", true, true],
+	["<C-[>",      "", true, true],
 	["<Esc>",      "", true, true]
 ]; /*}}}*/
 
@@ -789,7 +793,8 @@ var g_searchengines = [ /*{{{*/
 	["imdb",      "http://www.imdb.com/find?s=all&q=%s"],
 	["leo",       "http://dict.leo.org/ende?search=%s"],
 	["wien",      "http://members.aon.at/flole/vienna.html?UserQuery=%s&amp;ResUser=1024&amp;WidthUser=2000"],
-	["wiki",      "http://en.wikipedia.org/wiki/%s"]
+	["wiki",      "http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go"],
+	["vim",       "http://www.google.com/custom?q=%s&sa=Google+Search&cof=LW%3A125%3BL%3Ahttp%3A%2F%2Fvim.sf.net%2Fimages%2Fvim.gif%3BLH%3A60%3BAH%3Acenter%3BGL%3A0%3BS%3Ahttp%3A%2F%2Fwww.vim.org%3BAWFID%3A057fa53529d52655%3B&domains=vim.sourceforge.net%3Bwww.vim.org%3Bvimdoc.sourceforge.net&sitesearch=vim.sourceforge.net"]
 ];/*}}}*/
 
 
