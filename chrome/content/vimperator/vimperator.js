@@ -26,12 +26,13 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var Modes = { // XXX: not yet used
-	MODE_NORMAL: 1,
-	MODE_INSERT: 2,
-	MODE_HAH_MAGIC: 3 // when we are holding space for hah input
-};
-var current_mode = Modes.MODE_NORMAL;
+const MODE_NORMAL = 1;
+const MODE_INSERT = 2;
+const MODE_VISUAL = 4;
+const MODE_ESCAPE_ONE_KEY = 8;
+const MODE_ESCAPE_ALL_KEYS = 16;
+
+var g_current_mode = MODE_NORMAL;
 var popup_allowed_events; // need to change and reset this firefox pref
 
 var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want to type 'gg')
@@ -199,6 +200,9 @@ function init()
 		updateStatusbar();
 	}, false);
 
+	// we always start in normal mode
+	setCurrentMode(MODE_NORMAL);
+
 	/*** load our preferences ***/
 	load_history();
 
@@ -280,10 +284,32 @@ function unload()
 ////////////////////////////////////////////////////////////////////////
 function onVimperatorKeypress(event)/*{{{*/
 {
+	// change the event to a usable string representation
+	var key = keyToString(event);
+	// alert(key);
+	if (key == null)
+		 return false;
+
 	// XXX: for now only, later: input mappings if form element focused
 	if (isFormElemFocused())
 		return false;
-
+	
+	// handle Escape-one-key mode (Ctrl-v)
+	if (hasMode(MODE_ESCAPE_ONE_KEY) && !hasMode(MODE_ESCAPE_ALL_KEYS))
+	{
+		removeMode(MODE_ESCAPE_ONE_KEY);
+		return false;
+	}
+	// handle Escape-all-keys mode (I)
+	if (hasMode(MODE_ESCAPE_ALL_KEYS))
+	{
+		if(hasMode(MODE_ESCAPE_ONE_KEY))
+			removeMode(MODE_ESCAPE_ONE_KEY); // and then let flow continue
+		else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
+			; // let flow continue to handle these keys
+		else
+			return false;
+	}
 
 // 	// FIXME: handle middle click in content area {{{
 // 	//	   alert(event.target.id);
@@ -305,10 +331,7 @@ function onVimperatorKeypress(event)/*{{{*/
 // 		return true;
 // 	} }}}
 
-	// change the event to a usable string representation
-	var key = keyToString(event);
-	if (key == null)
-		 return false;
+
 
 	// if Hit-a-hint mode is on, special handling of keys is required
 	// g_hint_mappings is used
@@ -460,6 +483,9 @@ function onVimperatorKeypress(event)/*{{{*/
 	{
 		g_inputbuffer = "";
 		beep();
+//		event.preventDefault();
+//		event.preventBubble(); XXX: 
+//		event.stopPropagation();
 	}
 
 	updateStatusbar();
@@ -722,15 +748,13 @@ function openVimperatorBar(str)
 
 function onEscape()
 {
-	BrowserStop();
-	focusContent(true, true);
-	hah.disableHahMode();
-}
-
-function onBlur() // FIXME: needed?
-{
-	//alert('blur');
-	//focusContent(false, false);
+	if (!hasMode(MODE_ESCAPE_ONE_KEY))
+	{
+		setCurrentMode(MODE_NORMAL);
+		BrowserStop();
+		focusContent(true, true);
+		hah.disableHahMode();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -845,78 +869,87 @@ function logMessage(msg)
 ////////////////////////////////////////////////////////////////////////
 // this function gets an event as the input and converts it to 
 // a keycode which can be used in mappings
-// e.g. pressing ctrl+n would result in the string "<c-n>"
+// e.g. pressing ctrl+n would result in the string "<C-n>"
+// null if unknown key
 function keyToString(event)
 {
 	var key = String.fromCharCode(event.charCode);
 	var modifier = "";
+	if (event.ctrlKey)
+		modifier += "C-";
+	if (event.altKey)
+		modifier += "A-";
+	if (event.metaKey)
+		modifier += "M-";
+
+	if (event.charCode == 0)
+	{
+		if (event.shiftKey)
+			modifier += "S-";
+		if (event.keyCode == KeyEvent.DOM_VK_ESCAPE)
+			key = "Esc";
+		else if (event.keyCode == KeyEvent.DOM_VK_RETURN)
+			key = "Return";
+		else if (event.keyCode == KeyEvent.DOM_VK_TAB)
+			key = "Tab";
+		else if (event.keyCode == KeyEvent.DOM_VK_DELETE)
+			key = "Del";
+		else if (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
+			key = "BS";
+		else if (event.keyCode == KeyEvent.DOM_VK_HOME)
+			key = "Home";
+		else if (event.keyCode == KeyEvent.DOM_VK_END)
+			key = "End";
+		else if (event.keyCode == KeyEvent.DOM_VK_LEFT)
+			key = "Left";
+		else if (event.keyCode == KeyEvent.DOM_VK_RIGHT)
+			key = "Right";
+		else if (event.keyCode == KeyEvent.DOM_VK_UP)
+			key = "Up";
+		else if (event.keyCode == KeyEvent.DOM_VK_DOWN)
+			key = "Down";
+		else if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP)
+			key = "PageUp";
+		else if (event.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
+			key = "PageDown";
+		else if (event.keyCode == KeyEvent.DOM_VK_F1)
+			key = "F1";
+		else if (event.keyCode == KeyEvent.DOM_VK_F2)
+			key = "F2";
+		else if (event.keyCode == KeyEvent.DOM_VK_F3)
+			key = "F3";
+		else if (event.keyCode == KeyEvent.DOM_VK_F4)
+			key = "F4";
+		else if (event.keyCode == KeyEvent.DOM_VK_F5)
+			key = "F5";
+		else if (event.keyCode == KeyEvent.DOM_VK_F6)
+			key = "F6";
+		else if (event.keyCode == KeyEvent.DOM_VK_F7)
+			key = "F7";
+		else if (event.keyCode == KeyEvent.DOM_VK_F8)
+			key = "F8";
+		else if (event.keyCode == KeyEvent.DOM_VK_F9)
+			key = "F9";
+		else if (event.keyCode == KeyEvent.DOM_VK_F10)
+			key = "F10";
+		else if (event.keyCode == KeyEvent.DOM_VK_F11)
+			key = "F11";
+		else if (event.keyCode == KeyEvent.DOM_VK_F12)
+			key = "F12";
+		else
+			return null;
+	}
+
+	// a normal key like a, b, c, 0, etc.
 	if (event.charCode > 0)
 	{
-		if (event.ctrlKey)
-			modifier += "C-";
-		if (event.altKey)
-			modifier += "A-";
-		if (event.metaKey)
-			modifier += "M-";
-		
 		if (modifier.length > 0)
 			return "<" + modifier + key + ">";
 		else
 			return key;
 	}
-	else if (event.keyCode == KeyEvent.DOM_VK_ESCAPE)
-		return "<Esc>";
-	else if (event.keyCode == KeyEvent.DOM_VK_RETURN)
-		return "<Return>";
-	else if (event.keyCode == KeyEvent.DOM_VK_TAB)
-		return "<Tab>";
-	else if (event.keyCode == KeyEvent.DOM_VK_DELETE)
-		return "<Del>";
-	else if (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
-		return "<BS>";
-	else if (event.keyCode == KeyEvent.DOM_VK_HOME)
-		return "<Home>";
-	else if (event.keyCode == KeyEvent.DOM_VK_END)
-		return "<End>";
-	else if (event.keyCode == KeyEvent.DOM_VK_LEFT)
-		return "<Left>";
-	else if (event.keyCode == KeyEvent.DOM_VK_RIGHT)
-		return "<Right>";
-	else if (event.keyCode == KeyEvent.DOM_VK_UP)
-		return "<Up>";
-	else if (event.keyCode == KeyEvent.DOM_VK_DOWN)
-		return "<Down>";
-	else if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP)
-		return "<PageUp>";
-	else if (event.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
-		return "<PageDown>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F1)
-		return "<F1>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F2)
-		return "<F2>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F3)
-		return "<F3>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F4)
-		return "<F4>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F5)
-		return "<F5>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F6)
-		return "<F6>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F7)
-		return "<F7>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F8)
-		return "<F8>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F9)
-		return "<F9>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F10)
-		return "<F10>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F11)
-		return "<F11>";
-	else if (event.keyCode == KeyEvent.DOM_VK_F12)
-		return "<F12>";
-
-	// if nothing matches
-	return null;
+	else // a key like F1 is always enclosed in < and >
+		return "<" + modifier + key + ">";
 }
 
 ////////////////////////////////////////////////////////////////////////

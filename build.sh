@@ -1,4 +1,4 @@
-VERSION=0.2
+VERSION=0.3
 FILES="chrome/content/ chrome.manifest"
 
 # echo Building XPI...
@@ -14,7 +14,7 @@ cp -v chrome/vimperator.jar '/home/maxauthority/.mozilla/firefox/kc3gnd7k.defaul
 if [ x$1 = xxpi ]; then
     echo Building XPI...
     zip -r vimperator_$VERSION.xpi chrome/vimperator.jar install.rdf chrome.manifest TODO
-    #mv vimperator-firefox-$VERSION.xpi ../downloads
+    mv vimperator-firefox-$VERSION.xpi ../downloads
 fi
 
 

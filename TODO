@@ -6,6 +6,7 @@ BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
 - hints are not placed correctly when zoom is used
 - flashing frame is not perfect
+- The RSS feed button in the address bar no longer works.
 
 FEATURES:
 9 marks of a Location (also should work with directories), [m a-zA-Z] to set it, [' a-zA-Z] to go there
@@ -19,6 +20,7 @@ FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 8 Use our own find-as-you-type mechanism (like conkeror does)
+8 A way to temporaily disable vimperator keys (for sites like gmail)
 7 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 :hardcopy -> printing
@@ -38,9 +40,11 @@ FEATURES:
 6 make a real one-tab-mode, divert _all_ other targets, possible by setting a firefox option (set popup=0-3)
 6 Shift-Insert in textboxes pastes clipboard contents
 5 Use arrow keys in preview window
+5 Sort :open completion by date?
 5 make use of the ] and [ keys to e.g. jump to the next heading ]], next image ]i, previous textbox [t and so on
 5 add tag support to adding/deleting bookmarks
 4 Support multiple top-level windows?
+4 :restart command to restart firefox
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
 3 :set should also set about:config options (with autocomplete)
 </pre>

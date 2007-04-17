@@ -365,14 +365,14 @@ var g_mappings = [/*{{{*/
 		function(count) { openURLsInNewTab(readFromClipboard(), false); }
 	],
 	[ 
-		["gt", "<C-n>"],
+		["gt", "<C-n>", "<C-Tab>"],
 		"Go to next tab",
 		"Cycles to the first tab, when the last is selected.<br>"+
 		"Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
 		function(count) { tab_go(count > 0 ? count : 0); }
 	],
 	[ 
-		["gT", "<C-p>"],
+		["gT", "<C-p>", "<C-S-Tab>"],
 		"Go to previous tab",
 		"Cycles to the last tab, when the first is selected.<br>"+
 		"Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
@@ -399,8 +399,8 @@ var g_mappings = [/*{{{*/
 	[ 
 		["P"],
 		"Open (put) an URL based on the current Clipboard contents in a new buffer",
-		"If the new buffer is activated, depends on the <code class=setting>'activate'</code> setting."+
-		"You can also just select some non-URL text, and search for it with the default search engine with <code class=mapping>p</code>",
+		"Works like <code class=mapping>p</code>, but opens a new tab.<br>"+
+		"Whether the new buffer is activated, depends on the <code class=setting>'activate'</code> setting.",
 		function(count) { openURLsInNewTab(readFromClipboard(), true); }
 	],
 	[ 
@@ -625,7 +625,7 @@ var g_mappings = [/*{{{*/
 		["<F1>"],
 		"Open help window",
 		"The default section is shown, if you need help for a specific topic, try <code class=command>:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet).",
-		function(count) { execute_command(0, 'help', false, ''); }
+		function(count) { help(null); }
 	],
 	[ 
 		[":"],
@@ -634,7 +634,24 @@ var g_mappings = [/*{{{*/
 		function(count) { openVimperatorBar(null); }
 	],
 	[ 
-		["<Esc>", "<C-[>"],
+		["I"],
+		"Disable vimperator keys",
+		"Starts an 'ignorekeys' mode, where all keys except <code class=mapping>&lt;Esc&gt;</code> are passed to the next event handler.<br>"+
+		"This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore." +
+		"To exit this mode, press <code class=mapping>&lt;Esc&gt;</code>. If you also need to pass <code class=mapping>&lt;Esc&gt;</code>"+
+		"<code class=mapping>&lt;Esc&gt;</code> in this mode to the webpage, prepend it with <code class=mapping>&lt;C-v&gt;</code>.",
+		function(count) { addMode(MODE_ESCAPE_ALL_KEYS); echo("Vimperator keys disabled. Press <Esc> to reenable.");}
+	],
+	[ 
+		["<C-v>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
+		"Escape next key",
+		"If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=mapping>&lt;C-v&gt;</code>.<br>"+
+		"Also works to unshadow Firefox shortcuts like <code class=mapping>&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br>"+
+		"When in 'ignorekeys' mode (activated by <code class=mapping>&lt;I&gt;</code>), <code class=mapping>&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage.",
+		function(count) { addMode(MODE_ESCAPE_ONE_KEY); }
+	],
+	[ 
+		["<Esc>", "<C-[>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
 		"Cancel any operation",
 		"Stops loading the current webpage and exits any command line or hint mode.<br>"+
 		"Also focuses the web page, in case a form field has focus, and eats our key presses.",
@@ -1663,6 +1680,33 @@ function toggle_images() {
     pref = gPrefService.getIntPref("network.image.imageBehavior");
 //    redraw();
     message ("imageBehavior set to " + pref);
+}
+
+////////////////////////////////////////////////////////////////////////
+// mode related functions ///////////////////////////////////////// {{{1
+////////////////////////////////////////////////////////////////////////
+
+// set current mode
+function setCurrentMode(mode)
+{
+	g_current_mode = mode;
+}
+// get current mode
+function hasMode(mode)
+{
+	return g_current_mode & mode;
+}
+// add to current mode
+function addMode(mode)
+{
+	g_current_mode |= mode;
+	return g_current_mode;
+}
+// get current mode
+function removeMode(mode)
+{
+	g_current_mode = (g_current_mode | mode) ^ mode;
+	return g_current_mode;
 }
 
 

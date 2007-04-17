@@ -5,7 +5,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>{f9570b26-e246-4753-9b68-61aa95994237}</em:id>
 		<em:name>Vimperator</em:name>
-		<em:version>0.2</em:version>
+		<em:version>0.3</em:version>
 		<em:description>Make Firefox work like Vim</em:description>
 		<em:creator>Martin Stubenschrott</em:creator>
 		<em:homepageURL>http://vimperator.mozdev.org</em:homepageURL>

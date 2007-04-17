@@ -1,9 +1,16 @@
 <pre>
-date:
+17/04/2007:
 	* version 0.3
+	* added <C-v> support to pass one key to firefox (patch by Muthu Kannan)
+	* also 'I' will go to 'ignorekeys' mode until esc is pressed, presenting a workaround
+	  for many javascript form fields like GMail, until something better comes along.
+	* Vimperator can now be automatically updated in the :addons screen like other extensions
 	* fixed :tabnext/:tabprevious commands
-	* documented 's' guioptions flag for statusbar
+	* documented 's' and 'b' guioptions flag for statusbar/bookmark bar
 	* implemented the possibility to use CTRL-[ as an alternative to ESC, to leave the command line
+	* added <C-Tab> and <C-S-Tab> support for switching tabs without beeping
+	* ability to use shift and ctrl with special keys like F1 in mappings
+	* small documentation and other fixes
 
 11/04/2007:
 	* version 0.2
