@@ -245,7 +245,7 @@ function hit_a_hint()
 	}
  
  	/* removes all visible hints from doc
-	 * or from current document, if doc == null
+	 * or from current document, if win == null
 	 */
  	function removeHints(win)
  	{
@@ -253,7 +253,7 @@ function hit_a_hint()
  			win = window._content;
  
  		var doc = win.document;
- 		var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE , null);
+ 		var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
  		var elem, i;
  
  		for (i = 0; i < res.snapshotLength; i++)

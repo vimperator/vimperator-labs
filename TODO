@@ -46,5 +46,6 @@ FEATURES:
 4 Support multiple top-level windows?
 4 :restart command to restart firefox
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
+  have a look into the split browser extension
 3 :set should also set about:config options (with autocomplete)
 </pre>

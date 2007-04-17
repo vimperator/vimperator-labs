@@ -1,4 +1,10 @@
 <pre>
+date:
+	* version 0.4
+	* added :edit, :e and :tabedit aliases for :open, :tabopen
+	* :open without argument reloads current page, :tabopen opens an empty tab
+	* added 'n' and 'N' to repeat a search
+
 17/04/2007:
 	* version 0.3
 	* added Ctrl-v support to pass one key to firefox (patch by Muthu Kannan)

@@ -173,7 +173,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["open", "o"],
+		["open", "o", "op", "ope", "edit", "e"],
 		"Open one ore more URLs",
 		"Usage: <code>:open &lt;url&gt; [| &lt;url&gt;]</code><br>" +
 		"Opens one ore more URLs in the current buffer.<br>"+
@@ -183,8 +183,9 @@ var g_commands = [/*{{{*/
 		"    <li>Opened with the default search engine if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
 		"    <li>Passed directly to Firefox in all other cases (<code>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
 		"You WILL be able to use <code>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br>"+
-		"The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.",
-		function(args) { if(args) openURLs(args); else reload(false); },
+		"The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br>"+
+		"Without argument, reloads the current page.",
+		function(args) { if(args.length > 0) openURLs(args); else reload(false); },
 		function(filter) { return get_url_completions(filter); }
 	],
 	[
@@ -195,7 +196,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["quit", "q"],
+		["quit", "q", "qu", "qui"],
 		"Quit current tab or quit Vimperator if this was the last tab",
 		"When quitting Vimperator, the session is not stored.",
 		function (args) { tab_remove(1, false, 1); },
@@ -250,10 +251,10 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["tabopen", "t", "to", "topen"],
+		["tabopen", "t", "to", "topen", "tabedit"],
 		"Open one or more URLs in a new tab",
 		"Like <code class=command>:open</code> but open URLs in a new tab. If used with !, the 'tabopen' value of the 'activate' setting is negated.",
-		function (args, special) { openURLsInNewTab(args, !special); },
+		function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
 		function (filter) { return get_url_completions(filter); }
 	],
 	[
@@ -552,7 +553,7 @@ var g_mappings = [/*{{{*/
 	[ 
 		["<C-f>", "<PageDown>"],
 		"Scroll down a page",
-		"Scroll dow a full page of the current document. No count support for now.",
+		"Scroll down a full page of the current document. No count support for now.",
 		function(count) { goDoCommand('cmd_scrollPageDown'); }
 	],
 
@@ -619,6 +620,19 @@ var g_mappings = [/*{{{*/
 		function(count) { hah.enableHahMode(HINT_MODE_EXTENDED); }
 	],
 
+	/* search managment */
+	[ 
+		["n"],
+		"Find next",
+		"Repeat the last \"/\" 1 time (until count is supported).",
+		function(count) { gFindBar.onFindAgainCmd(); } // this does not work, why?: goDoCommand('cmd_findAgain'); }
+	],
+	[ 
+		["N"],
+		"Find previous",
+		"Repeat the last \"/\" 1 time (until count is supported) in the opposite direction.",
+		function(count) { gFindBar.onFindPreviousCmd(); } // this does not work, why?: goDoCommand('cmd_findPrevious'); }
+	],
 
 	/* vimperator managment */
 	[ 
@@ -880,11 +894,13 @@ function openURLs(str)
 {
 	urls = stringToURLs(str);
 	if (urls.length == 0)
-		return;
+		return false;
 
 	getWebNavigation().loadURI(urls[0], nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
 	for (var url=1; url < urls.length; url++)
 		gBrowser.addTab(urls[url]);
+
+	return true;
 }
 
 function openURLsInNewTab(str, activate)
