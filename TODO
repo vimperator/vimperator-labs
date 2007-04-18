@@ -7,7 +7,9 @@ BUGS:
 - hints are not placed correctly when zoom is used
 - flashing frame is not perfect
 - The RSS feed button in the address bar no longer works.
+- hints on digg.com are behind text
 - autoupdate does not work
+- multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
 
 FEATURES:
 9 marks of a Location (also should work with directories), [m a-zA-Z] to set it, [' a-zA-Z] to go there
@@ -48,4 +50,7 @@ FEATURES:
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
 3 :set should also set about:config options (with autocomplete)
+
+RANDOM IDEAS:
+* numbered tabs
 </pre>

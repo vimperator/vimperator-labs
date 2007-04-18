@@ -251,7 +251,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["tabopen", "t", "to", "topen", "tabedit"],
+		["tabopen", "t", "to", "topen", "tabedit", "tabnew"],
 		"Open one or more URLs in a new tab",
 		"Like <code class=command>:open</code> but open URLs in a new tab. If used with !, the 'tabopen' value of the 'activate' setting is negated.",
 		function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
