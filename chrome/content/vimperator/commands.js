@@ -31,8 +31,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * [
  *     0: [all names of this command],
  *     1: description,
- *     2: function (arguments in this order: args, special, count)
- *     3: helptext
+ *     2: helptext
+ *     3: function (arguments in this order: args, special, count)
  *     4: completefunc
  * ]
  */
@@ -231,7 +231,7 @@ var g_commands = [/*{{{*/
 		"Boolean options must be set with <code>:set option</code> and <code>:set nooption</code>.<br>"+
 		"<code>:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br>"+
 		"<code>:set!</code> opens the GUI preference panel from Firefox in a new tab.<br>"+
-		"<code>:set option?</code> shows the current value of the option.<br>"+
+		"<code>:set option?</code> or <code>:set option</code> shows the current value of the option.<br>"+
 		"<code>:set option+=foo</code> and <code>:set option-=foo</code> WILL add/remove foo from list options.<br>",
 		function(args, special) { set(args, special); },
 		function(filter) { return get_settings_completions(filter); }
@@ -296,7 +296,7 @@ var g_commands = [/*{{{*/
 		["version", "ve"],
 		"Show version information",
 		null,
-		function () { echo("Vimperator version: 0.2.0.1"); },
+		function () { echo("Vimperator version: " + g_vimperator_version); },
 		null
 	],
 	[
@@ -1340,7 +1340,7 @@ function set(args, special)
 	}
 	else
 	{
-		var matches = args.match(/^\s*(no)?([a-z]+)(\?)?(=(.*))?/);
+		var matches = args.match(/^\s*(no)?([a-z]+)(\?)?(([+-])?=(.*))?/);
 		if (!matches)
 		{
 			echoerr("E518: Unknown option: " + args);
@@ -1349,15 +1349,17 @@ function set(args, special)
 
 		var no = true; if (matches[1] == undefined) no = false;
 		var opt = matches[2];
-		var get = false; if (matches[3] != undefined) get = true;
-		var val = matches[5]; if (val == undefined) val = "";
-
 		var setting = get_setting(opt);
 		if (!setting)
 		{
 			echoerr("E518: Unknown option: " + opt);
 			return;
 		}
+
+		var get = false; if (matches[3] != undefined ||
+			(setting[5] != 'boolean' && matches[4] == undefined)) get = true;
+		var oper = matches[5];
+		var val = matches[6]; if (val == undefined) val = "";
 
 		// read access
 		if (get)
@@ -1380,6 +1382,9 @@ function set(args, special)
 					echoerr("Invalid argument type to option " + setting[0][0] + ": Expects number");
 				else
 				{
+					var cur_val = setting[4].call(this);
+					if (oper == '+') num = cur_val + num;
+					if (oper == '-') num = cur_val - num;
 					if (setting[7] != null && setting[7].call(this, num) == false)
 						echoerr("Invalid argument to option " + setting[0][0] + ": Check help for more details");
 					else // all checks passed, execute option handler
@@ -1388,7 +1393,17 @@ function set(args, special)
 			}
 			else if (type == "charlist" || type == "stringlist" || type == "string")
 			{
-				if (setting[7] != null && setting[7].call(this, num) == false)
+				var cur_val = setting[4].call(this);
+				if (type == "charlist" || type == "string") {
+					if (oper == '+' && !cur_val.match(val))
+						val = cur_val + val;
+					if (oper == '-') val = cur_val.replace(val, '');
+				} else {
+					if (oper == '+' && !cur_val.match(val))
+						val = cur_val + ',' + val;
+					if (oper == '-') val = cur_val.replace(new RegExp(',?' + val), '');
+				}
+				if (setting[7] != null && setting[7].call(this, val) == false)
 					echoerr("Invalid argument to option " + setting[0][0] + ": Check help for more details");
 				else // all checks passed, execute option handler
 					setting[3].call(this, val);
