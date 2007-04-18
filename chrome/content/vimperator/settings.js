@@ -88,7 +88,7 @@ var g_settings = [/*{{{*/
 	[
 		["focusedhintstyle", "fhs"],
 		"CSS specification of focused hints appearance",
-		"The font (and size) is inherited from Firefox's prefences for Monospaced fonts. Change them in the GUI prefernce panel if necessary.",
+		null,
 		function(value) { set_pref("focusedhintstyle", value); },
 		function() { return get_pref("focusedhintstyle"); },
 		"string",
@@ -132,7 +132,7 @@ var g_settings = [/*{{{*/
 	[
 		["hintstyle", "hs"],
 		"CSS specification of unfocused hints appearance",
-		"The font (and size) is inherited from Firefox's prefences for Monospaced fonts. Change them in the GUI prefernce panel if necessary.",
+		null,
 		function(value) { set_pref("hintstyle", value); },
 		function() { return get_pref("hintstyle"); },
 		"string",

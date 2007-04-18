@@ -652,9 +652,9 @@ var g_mappings = [/*{{{*/
 		["I"],
 		"Disable vimperator keys",
 		"Starts an 'ignorekeys' mode, where all keys except <code class=mapping>&lt;Esc&gt;</code> are passed to the next event handler.<br>"+
-		"This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore." +
+		"This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br>" +
 		"To exit this mode, press <code class=mapping>&lt;Esc&gt;</code>. If you also need to pass <code class=mapping>&lt;Esc&gt;</code>"+
-		"<code class=mapping>&lt;Esc&gt;</code> in this mode to the webpage, prepend it with <code class=mapping>&lt;C-v&gt;</code>.",
+		"in this mode to the webpage, prepend it with <code class=mapping>&lt;C-v&gt;</code>.",
 		function(count) { addMode(MODE_ESCAPE_ALL_KEYS); echo("Vimperator keys disabled. Press <Esc> to reenable.");}
 	],
 	[ 

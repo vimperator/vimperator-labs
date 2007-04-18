@@ -12,9 +12,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-The Initial Developer of the Original Code is Shawn Betts.
-Portions created by the Initial Developer are Copyright (C) 2004
-by the Initial Developer. All Rights Reserved.
+(c) 2006-2007 Martin Stubenschrott
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -46,8 +44,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	<script type="application/x-javascript" src="hints.js"/>
 
 	<window id="main-window">
-		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true"
-			 onblur="onBlur();">
+		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
 			<vbox id="vim-container" flex="1" hidden="false">
 				<listbox id="vim-preview_window" class="plain" rows="10" flex="1" hidden="true"
 						ondblclick="preview_window_select(event);" onclick="preview_window_select(event);" onkeydown="preview_window_select(event);"
@@ -72,7 +69,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				</hbox>
 
 				<listbox id="vim-completion" class="plain" rows="1" flex="1" hidden="true"
-					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:ignore; overflow:-moz-scrollbars-none;">
+					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:normal; overflow:-moz-scrollbars-none;">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
@@ -88,7 +85,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 		<keyset id="mainKeyset">
 			<key id="key_open_vimbar" key=":" oncommand="openVimperatorBar();" modifiers=""/>
 			<key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/> 
-			<!--key id="key_cancel" keycode="[" modifiers="control" oncommand="onEscape();"/--> 
 
 			<!-- other keys are handled inside vimperator.js event loop -->
 		</keyset>
