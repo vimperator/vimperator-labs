@@ -476,11 +476,11 @@ function hit_a_hint()
 
 
 			var evt = doc.createEvent('MouseEvents');
-			evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/0, 0, null);
+			evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
 			elem.dispatchEvent(evt);
 
 			var evt = doc.createEvent('MouseEvents');
-			evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/0, 0, null);
+			evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
 			elem.dispatchEvent(evt);
 
 

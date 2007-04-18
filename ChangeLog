@@ -3,6 +3,7 @@ date:
 	* version 0.4
 	* added :edit, :e and :tabedit aliases for :open, :tabopen
 	* settings can now be changed with += and -= like in vim (patch from Виктор Кожухаров)
+	* Support for space/shift-space/alt-left/alt-right keys without beeping
 	* :open without argument reloads current page, :tabopen opens an empty tab
 	* added 'n' and 'N' to repeat a search
 

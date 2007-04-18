@@ -942,10 +942,18 @@ function keyToString(event)
 			return null;
 	}
 
+	// special handling of the Space key
+	if (event.charCode == 32)
+	{
+		if (event.shiftKey)
+			modifier += "S-";
+		key = "Space";
+	}
+
 	// a normal key like a, b, c, 0, etc.
 	if (event.charCode > 0)
 	{
-		if (modifier.length > 0)
+		if (modifier.length > 0 || event.charCode == 32)
 			return "<" + modifier + key + ">";
 		else
 			return key;
