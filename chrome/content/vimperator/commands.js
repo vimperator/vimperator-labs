@@ -101,21 +101,21 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["echo"],
+		["echo", "ec"],
 		"Display a string at the bottom of the window",
 		"Echo all arguments of this command. Useful for showing informational messages.<br>Multiple lines WILL be seperated by \\n.",
 		function(args) { echo(args); },
 		null
 	],
 	[
-		["echoerr"],
+		["echoerr", "echoe"],
 		"Display an error string at the bottom of the window",
 		"Echo all arguments of this command highlighted in red. Useful for showing important messages.<br>Multiple lines WILL be seperated by \\n.",
 		function(args) { echoerr(args); },
 		null
 	],
 	[
-		["execute", "exec"],
+		["execute", "exe"],
 		"Run any javascript command through eval()",
 		"Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br>"+
 		"<code>:exec alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br>"+
@@ -173,7 +173,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["open", "o", "op", "ope", "edit", "e"],
+		["open", "o", "op", "edit", "e"],
 		"Open one ore more URLs",
 		"Usage: <code>:open &lt;url&gt; [| &lt;url&gt;]</code><br>" +
 		"Opens one ore more URLs in the current buffer.<br>"+
@@ -196,14 +196,22 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["quit", "q", "qu", "qui"],
+		["preferences", "prefs"],
+		"Show Browser Preferences",
+		"You can change the browser preferences from this dialog.<br>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br>"+
+		"Works like <code class=command>:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=command>:set!</code>",
+		function() { openPreferences(); },
+		null
+	],
+	[
+		["quit", "q"],
 		"Quit current tab or quit Vimperator if this was the last tab",
 		"When quitting Vimperator, the session is not stored.",
 		function (args) { tab_remove(1, false, 1); },
 		null
 	],
 	[
-		["quitall", "qall", "qa"],
+		["quitall", "quita", "qall", "qa"],
 		"Quit Vimperator",
 		"Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.",
 		function (args) { quit(false); },
@@ -217,7 +225,14 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["save", "saveas", "sav"],
+		["restart"],
+		"Restarts the browser",
+		"Forces the browser to restart.",
+		function(args, special) { restart(); },
+		null
+	],
+	[
+		["saveas", "sav"],
 		"Save current web page to disk",
 		"Open the original Firefox \"Save page as...\" dialog in a new tab.<br>" +
 		"There, you can save the current web page to disk with various options.",
@@ -251,7 +266,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["tabopen", "t", "to", "topen", "tabedit", "tabnew"],
+		["tabopen", "t", "to", "topen", "tabedit", "tabe", "tabnew"],
 		"Open one or more URLs in a new tab",
 		"Like <code class=command>:open</code> but open URLs in a new tab. If used with !, the 'tabopen' value of the 'activate' setting is negated.",
 		function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
@@ -802,23 +817,35 @@ var g_searchengines = [ /*{{{*/
 // otherwise a refernce to our command
 function get_command(cmd) // {{{
 {
-	for (var i=0; i < g_commands.length; i++)
+	commands = [];
+	var added;
+	for (var i = 0; i < g_commands.length; i++, added = false)
 	{
-		for (var j=0; j < g_commands[i][0].length; j++)
+		for (var j = 0; j < g_commands[i][0].length; j++)
 		{
 			if (g_commands[i][0][j] == cmd)
 			{
-				return g_commands[i];
+				return g_commands[i]; //exact command, returning it
+			}
+			if (g_commands[i][0][j].indexOf(cmd) == 0)
+			{
+				if (!added)
+				{
+					commands.push(g_commands[i]);
+					added = true;
+				}
 			}
 		}
 	}
+	if (commands.length == 1)
+		return commands[0];
 	return null;
 } // }}}
 
 function execute_command(count, cmd, special, args) // {{{
 {
 	var command = get_command(cmd);
-	if (command	== null)
+	if (command == null)
 	{
 		echoerr("E492: Not an editor command: " + cmd);
 		focusContent(false, false);
@@ -827,7 +854,7 @@ function execute_command(count, cmd, special, args) // {{{
 		
 	if (command[3] == null)
 	{
-		echoerr("E666: Internal error: command[2] == null");
+		echoerr("E666: Internal error: command[3] == null");
 		return;
 	}
 
@@ -1328,6 +1355,39 @@ function reload(all_tabs)
 		BrowserReload();
 }
 
+function restart()
+{
+	// if (!arguments[1]) return;
+	const nsIAppStartup = Components.interfaces.nsIAppStartup;
+
+	// Notify all windows that an application quit has been requested.
+	var os = Components.classes["@mozilla.org/observer-service;1"]
+		.getService(Components.interfaces.nsIObserverService);
+	var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
+		.createInstance(Components.interfaces.nsISupportsPRBool);
+	os.notifyObservers(cancelQuit, "quit-application-requested", null);
+
+	// Something aborted the quit process. 
+	if (cancelQuit.data)
+		return;
+
+	// Notify all windows that an application quit has been granted.
+	os.notifyObservers(null, "quit-application-granted", null);
+
+	// Enumerate all windows and call shutdown handlers
+	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+		.getService(Components.interfaces.nsIWindowMediator);
+	var windows = wm.getEnumerator(null);
+	while (windows.hasMoreElements())
+	{
+		var win = windows.getNext();
+		if (("tryToClose" in win) && !win.tryToClose())
+			return;
+	}
+	Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
+		.quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+}
+
 // sets an vimperator option
 function set(args, special)
 {
@@ -1394,14 +1454,21 @@ function set(args, special)
 			else if (type == "charlist" || type == "stringlist" || type == "string")
 			{
 				var cur_val = setting[4].call(this);
-				if (type == "charlist" || type == "string") {
+				if (type == "charlist" || type == "string")
+				{
 					if (oper == '+' && !cur_val.match(val))
 						val = cur_val + val;
 					if (oper == '-') val = cur_val.replace(val, '');
-				} else {
+				}
+				else
+				{
 					if (oper == '+' && !cur_val.match(val))
 						val = cur_val + ',' + val;
-					if (oper == '-') val = cur_val.replace(new RegExp(',?' + val), '');
+					if (oper == '-')
+					{
+						val = cur_val.replace(new RegExp(',?' + val), '');
+						val = val.replace(/^,?/, '');
+					}
 				}
 				if (setting[7] != null && setting[7].call(this, val) == false)
 					echoerr("Invalid argument to option " + setting[0][0] + ": Check help for more details");
