@@ -423,6 +423,33 @@ function get_settings_completions(filter)/*{{{*/
 	return settings_completions;
 }/*}}}*/
 
+function get_buffer_completions(filter)
+{
+    var reg = new RegExp("^"+filter,"i");
+    items=new Array();
+    var num = getBrowser().browsers.length;
+    for(var i=0; i<num;i++)
+	{
+		try
+		{
+			title = getBrowser().getBrowserAtIndex(i).contentDocument.getElementsByTagName('title')[0].text;
+		}
+		catch (e)
+		{
+			title = "";
+		}
+		if (title == "")
+			title = "(Untitled)";
+
+		if(title.search(reg) != -1)
+		{
+			var title;
+			items.push([(i+1)+": "+title]);
+		}
+	}
+    return items;
+}
+
 ////////// COMMAND HISTORY HANDLING ////////////
 
 function add_to_command_history(str)

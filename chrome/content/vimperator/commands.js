@@ -92,6 +92,20 @@ var g_commands = [/*{{{*/
 		function(args, special) { bmshow(args, special); },
 		function(filter) { return get_bookmark_completions(filter); }
 	],
+	    [
+        ["buffer", "bu"],
+        "Go to buffer number n. Full completion works.",
+        null,
+        function (args) { tab_go(args.split(":")[0]); preview_window.hidden = true; },
+        function (filter) {return get_buffer_completions(filter);}
+    ],
+    [
+        ["buffers", "files", "ls"],
+        "Shows a list of all buffers.",
+        null,
+        function (args) {bushow("");},
+        null
+    ],
 	[
 		["downloads", "dl"],
 		"Show progress of current downloads",
@@ -322,7 +336,7 @@ var g_commands = [/*{{{*/
 		null
 	],
 	[
-		["xall", "xa", "wqall", "wqa"],
+		["xall", "xa", "wqall", "wqa", "wq"],
 		"Save the session and quit",
 		"Quit Vimperator, no matter how many tabs/windows are open. The session is stored.",
 		function (args) { quit(true); },
@@ -355,6 +369,12 @@ var g_mappings = [/*{{{*/
 		"This may not work correctly for frames with lots of CSS code.",
 		function(count) { focusNextFrame(); }
 	],
+	[
+        ["b"],
+        "Open a prompt to switch buffers",
+        "Typing the corresponding number opens switches to this buffer",
+        function (args) { bushow(""); openVimperatorBar('buffer '); }  
+    ],
 	[ 
 		["d"],
 		"Delete current buffer (=tab)",
@@ -1113,6 +1133,13 @@ function hsshow(filter, fullmode)
 		preview_window.hidden = false;
 	}
 }
+function bushow(filter)
+{
+    items = get_buffer_completions(filter);
+    preview_window_fill(items);
+    preview_window.hidden = false;
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // url marks functions //////////////////////////////////////////// {{{1
