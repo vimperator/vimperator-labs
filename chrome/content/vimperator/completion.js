@@ -425,7 +425,7 @@ function get_settings_completions(filter)/*{{{*/
 
 function get_buffer_completions(filter)
 {
-    var reg = new RegExp("^"+filter,"i");
+    var reg = new RegExp(filter,"i");
     items = new Array();
     var num = getBrowser().browsers.length;
     var title, url;

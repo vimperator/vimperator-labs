@@ -26,13 +26,17 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var g_vimperator_version  = "0.3";
+var g_vimperator_version  = "0.4 (CVS)";
 
 const MODE_NORMAL = 1;
 const MODE_INSERT = 2;
 const MODE_VISUAL = 4;
 const MODE_ESCAPE_ONE_KEY = 8;
 const MODE_ESCAPE_ALL_KEYS = 16;
+const HINT_MODE_QUICK = 32;
+const HINT_MODE_ALWAYS = 64;
+const HINT_MODE_EXTENDED = 128;
+
 
 var g_current_mode = MODE_NORMAL;
 var popup_allowed_events; // need to change and reset this firefox pref
@@ -78,7 +82,11 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        echo(link);
+        if (link != "")
+            echo(link);
+        else
+            showMode();
+            
     },
     setJSStatus : function(status)
     {
@@ -193,7 +201,6 @@ function init()
     //window.addEventListener("TabSelect", updateStatusbar, false);
     window.addEventListener("TabSelect", function(event)
     { 
-        //alert("select");
         if (hah.currentMode == HINT_MODE_ALWAYS)
         {
             hah.disableHahMode();
@@ -264,6 +271,9 @@ function init()
     if(get_pref("preload"))
         setTimeout(function() { get_url_completions(""); } , 100);
 
+    // firefox preferences which we need to be changed to work well with vimperator
+    set_firefox_pref("browser.sessionstore.resume_session_once", true);
+
     logMessage("Initialized");
 }
 
@@ -300,6 +310,7 @@ function onVimperatorKeypress(event)/*{{{*/
     if (hasMode(MODE_ESCAPE_ONE_KEY) && !hasMode(MODE_ESCAPE_ALL_KEYS))
     {
         removeMode(MODE_ESCAPE_ONE_KEY);
+        showMode();
         return false;
     }
     // handle Escape-all-keys mode (I)
@@ -754,8 +765,8 @@ function onEscape()
     {
         setCurrentMode(MODE_NORMAL);
         BrowserStop();
-        focusContent(true, true);
         hah.disableHahMode();
+        focusContent(true, true);
     }
 }
 

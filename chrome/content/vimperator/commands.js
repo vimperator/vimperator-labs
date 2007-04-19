@@ -62,7 +62,7 @@ var g_commands = [/*{{{*/
         ["beep"],
         "Play a system beep",
         null,
-        function() { beep(); },
+        beep,
         null
     ],
     [
@@ -72,7 +72,7 @@ var g_commands = [/*{{{*/
         "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br>"+
         "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br>" +
         "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.",
-        function(args) { bmadd(args); },
+        bmadd,
         null
     ],
     [
@@ -80,7 +80,7 @@ var g_commands = [/*{{{*/
         "Delete a bookmark",
         "Usage: <code>:bmdel [-T \"comma,separated,tags\"] &lt;url&gt;</code><br>" +
         "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.",
-        function(args) { bmdel(args); },
+        bmdel,
         function(filter) { return get_bookmark_completions(filter); }
     ],
     [
@@ -89,7 +89,7 @@ var g_commands = [/*{{{*/
         "Usage: <code>:bm [-T \"comma,separated,tags\"] &lt;regexp&gt;</code><br>" +
         "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br>" +
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
-        function(args, special) { bmshow(args, special); },
+        bmshow,
         function(filter) { return get_bookmark_completions(filter); }
     ],
         [
@@ -118,14 +118,14 @@ var g_commands = [/*{{{*/
         ["echo", "ec"],
         "Display a string at the bottom of the window",
         "Echo all arguments of this command. Useful for showing informational messages.<br>Multiple lines WILL be seperated by \\n.",
-        function(args) { echo(args); },
+        echo,
         null
     ],
     [
         ["echoerr", "echoe"],
         "Display an error string at the bottom of the window",
         "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br>Multiple lines WILL be seperated by \\n.",
-        function(args) { echoerr(args); },
+        echoerr,
         null
     ],
     [
@@ -160,7 +160,7 @@ var g_commands = [/*{{{*/
         ["help", "h"],
         "Open help window",
         "Open the help window in the current tab. You WILL be able to show a specific section with <code class=command>:help commands</code>.",
-        function() { help(null); },
+        help,
         null
     ],
     [
@@ -169,7 +169,7 @@ var g_commands = [/*{{{*/
         "Usage: <code>:hs &lt;regexp&gt;</code><br>" +
         "Open the preview window at the bottom of the screen for all history items which match the regexp either in the title or URL.<br>" +
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
-        function(args, special) { hsshow(args, special); },
+        hsshow,
         function(filter) { return get_history_completions(filter); }
     ],
     [
@@ -227,7 +227,7 @@ var g_commands = [/*{{{*/
         "Show Browser Preferences",
         "You can change the browser preferences from this dialog.<br>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br>"+
         "Works like <code class=command>:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=command>:set!</code>",
-        function() { openPreferences(); },
+        openPreferences,
         null
     ],
     [
@@ -255,7 +255,7 @@ var g_commands = [/*{{{*/
         ["restart"],
         "Restarts the browser",
         "Forces the browser to restart.",
-        function(args, special) { restart(); },
+        restart,
         null
     ],
     [
@@ -275,14 +275,14 @@ var g_commands = [/*{{{*/
         "<code>:set!</code> opens the GUI preference panel from Firefox in a new tab.<br>"+
         "<code>:set option?</code> or <code>:set option</code> shows the current value of the option.<br>"+
         "<code>:set option+=foo</code> and <code>:set option-=foo</code> WILL add/remove foo from list options.<br>",
-        function(args, special) { set(args, special); },
+        set,
         function(filter) { return get_settings_completions(filter); }
     ],
     [
         ["source", "so"],
         "Load a local javascript file and execute it",
         "Not implemented yet",
-        function(args) { source(args); },
+        source,
         null
     ],
     [
@@ -360,7 +360,7 @@ var g_commands = [/*{{{*/
         "Set zoom value of the webpage",
         "Usage: <code class=command>:zoom 150</code> zooms to 150% text size.<br>"+
         "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
-        function (args) { zoom_to(args); },
+        zoom_to,
         null
     ]
 ];/*}}}*/
@@ -380,7 +380,7 @@ var g_mappings = [/*{{{*/
         "Focus next frame",
         "Flashes the next frame in order with a red color, to quickly show where keyboard focus is.<br>"+
         "This may not work correctly for frames with lots of CSS code.",
-        function(count) { focusNextFrame(); }
+        focusNextFrame
     ],
     [
         ["b"],
@@ -388,6 +388,12 @@ var g_mappings = [/*{{{*/
         "Typing the corresponding number opens switches to this buffer",
         function (args) { bushow("", true); openVimperatorBar('buffer '); }  
     ],
+    /*[ 
+        ["B"],
+        "Toggle buffer list",
+        "Open the preview window with all currently opened tabs",
+        function (args) { preview_window.hidden == true ? bushow("", false) : preview_window.hidden = true; }
+    ],*/
     [ 
         ["d"],
         "Delete current buffer (=tab)",
@@ -411,7 +417,7 @@ var g_mappings = [/*{{{*/
         ["gh"],
         "Go home",
         "Opens the homepage in the current tab.",
-        function(count) { BrowserHome(); }
+        BrowserHome
     ],
     [ 
         ["gH"],
@@ -499,7 +505,7 @@ var g_mappings = [/*{{{*/
         ["y"],
         "Yank current location to the Clipboard",
         "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button.",
-        function(count) { yankCurrentLocation(); }
+        yankCurrentLocation
     ],
     [ 
         ["zi"],
@@ -534,7 +540,7 @@ var g_mappings = [/*{{{*/
         "Set zoom value of the webpage",
         "<code class=mapping>150zz</code> zooms to 150% text size.<br>"+
         "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
-        function(count) { zoom_to(count); }
+        zoom_to
     ],
     [ 
         ["ZQ"],
@@ -686,13 +692,13 @@ var g_mappings = [/*{{{*/
         ["n"],
         "Find next",
         "Repeat the last \"/\" 1 time (until count is supported).",
-        function(count) { gFindBar.onFindAgainCmd(); } // this does not work, why?: goDoCommand('cmd_findAgain'); }
+        gFindBar.onFindAgainCmd // this does not work, why?: goDoCommand('cmd_findAgain'); }
     ],
     [ 
         ["N"],
         "Find previous",
         "Repeat the last \"/\" 1 time (until count is supported) in the opposite direction.",
-        function(count) { gFindBar.onFindPreviousCmd(); } // this does not work, why?: goDoCommand('cmd_findPrevious'); }
+        gFindBar.onFindPreviousCmd // this does not work, why?: goDoCommand('cmd_findPrevious'); }
     ],
 
     /* vimperator managment */
@@ -715,7 +721,7 @@ var g_mappings = [/*{{{*/
         "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br>" +
         "To exit this mode, press <code class=mapping>&lt;Esc&gt;</code>. If you also need to pass <code class=mapping>&lt;Esc&gt;</code>"+
         "in this mode to the webpage, prepend it with <code class=mapping>&lt;C-v&gt;</code>.",
-        function(count) { addMode(MODE_ESCAPE_ALL_KEYS); echo("Vimperator keys disabled. Press <Esc> to reenable.");}
+        function(count) { addMode(MODE_ESCAPE_ALL_KEYS);}
     ],
     [ 
         ["<C-v>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
@@ -730,7 +736,7 @@ var g_mappings = [/*{{{*/
         "Cancel any operation",
         "Stops loading the current webpage and exits any command line or hint mode.<br>"+
         "Also focuses the web page, in case a form field has focus, and eats our key presses.",
-        function(count) { onEscape(); }
+        onEscape
     ],
 
     /* quick bookmark access - will be customizable in future*/
@@ -857,6 +863,16 @@ var g_searchengines = [ /*{{{*/
     ["vim",       "http://www.google.com/custom?q=%s&sa=Google+Search&cof=LW%3A125%3BL%3Ahttp%3A%2F%2Fvim.sf.net%2Fimages%2Fvim.gif%3BLH%3A60%3BAH%3Acenter%3BGL%3A0%3BS%3Ahttp%3A%2F%2Fwww.vim.org%3BAWFID%3A057fa53529d52655%3B&domains=vim.sourceforge.net%3Bwww.vim.org%3Bvimdoc.sourceforge.net&sitesearch=vim.sourceforge.net"]
 ];/*}}}*/
 
+var g_modemessages = {};
+g_modemessages[MODE_NORMAL | MODE_ESCAPE_ALL_KEYS] = "ESCAPE ALL KEYS";
+g_modemessages[MODE_NORMAL | MODE_ESCAPE_ONE_KEY] = "ESCAPE ONE KEY";
+g_modemessages[MODE_NORMAL | MODE_ESCAPE_ALL_KEYS | MODE_ESCAPE_ONE_KEY] = "PASS ONE KEY";
+g_modemessages[HINT_MODE_QUICK] = "QUICK HINT";
+g_modemessages[HINT_MODE_ALWAYS] = "ALWAYS HINT";
+g_modemessages[HINT_MODE_EXTENDED] = "EXTENDED HINT";
+g_modemessages[MODE_NORMAL] = false;
+g_modemessages[MODE_INSERT] = "INSERT";
+g_modemessages[MODE_VISUAL] = "VISUAL";
 
 // returns null, if the cmd cannot be found in our g_commands array, or
 // otherwise a refernce to our command
@@ -1375,7 +1391,7 @@ function zoom_to(value)
 
 
 ////////////////////////////////////////////////////////////////////////
-// misc helper funcstions ///////////////////////////////////////// {{{1
+// misc helper functions ////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 
 function copyToClipboard(str)
@@ -1404,6 +1420,8 @@ function quit(save_session)
 {
     if (save_history)
         set_firefox_pref("browser.sessionstore.resume_session_once", true);
+    else
+        set_firefox_pref("browser.sessionstore.resume_session_once", false);
 
     goQuitApplication();
 }
@@ -1548,8 +1566,14 @@ function source(filename)
 }
 
 
-function help(section)
+function help(section, easter)
 {
+    if (easter)
+    {
+        echoerr("E478: Don't panic!");
+        return;
+    }
+
     var doc = window.content.document;
 
     var style = "<style type='text/css'>\
@@ -1857,6 +1881,7 @@ function toggle_images() {
 function setCurrentMode(mode)
 {
     g_current_mode = mode;
+    showMode();
 }
 // get current mode
 function hasMode(mode)
@@ -1867,15 +1892,24 @@ function hasMode(mode)
 function addMode(mode)
 {
     g_current_mode |= mode;
+    showMode();
     return g_current_mode;
 }
 // get current mode
 function removeMode(mode)
 {
     g_current_mode = (g_current_mode | mode) ^ mode;
+    showMode();
     return g_current_mode;
 }
 
+function showMode()
+{
+    if (!get_pref("showmode") || !g_modemessages[g_current_mode])
+        return;
+
+    echo("-- " + g_modemessages[g_current_mode] + " --");
+}
 
 //  function keycodeToName(keyCode) {
 //    for (keyName in KeyboardEvent.prototype) {

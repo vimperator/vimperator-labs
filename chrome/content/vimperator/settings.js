@@ -174,6 +174,17 @@ var g_settings = [/*{{{*/
         null,
         null
     ],
+	[
+		["showmode", "smd"],
+		"Show the current mode in the command line",
+		null,
+        function(value) { set_pref("showmode", value); },
+        function() { return get_pref("showmode"); },
+		"boolean",
+		true,
+		null,
+		null
+	],
     [
         ["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",

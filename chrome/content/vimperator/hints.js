@@ -22,10 +22,6 @@
  *
  */
 
-const HINT_MODE_QUICK = 0;
-const HINT_MODE_ALWAYS = 1;
-const HINT_MODE_EXTENDED = 2;
-
 function hit_a_hint()
 {
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
@@ -391,9 +387,8 @@ function hit_a_hint()
     //function enableHahMode(event, mode)
     this.enableHahMode = function(mode)
     {
-//      if (isHahModeEnabled)
-//          return false;
-
+        setCurrentMode(mode);
+        showMode();
         hintmode = mode;
         state = 0;
         linkCount = 0;
@@ -418,10 +413,13 @@ function hit_a_hint()
     //function disableHahMode(event)
     this.disableHahMode = function(win)
     {
+        setCurrentMode(MODE_NORMAL);
         isHahModeEnabled = false;
         hintmode = HINT_MODE_QUICK;
         linkNumString = '';
         hintedElems = [];
+        if (get_pref("showmode"))
+            echo('');
  
         removeHints(win);
         return 0;
