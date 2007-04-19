@@ -28,615 +28,615 @@ const HINT_MODE_EXTENDED = 2;
 
 function hit_a_hint()
 {
- 	const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
+    const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 
-	// public accessors
-	this.hintsVisible = function() { return isHahModeEnabled; };
-	this.hintedElements = function() { return hintedElems; };
-	this.currentState = function() { return state;};
-	this.setCurrentState = function(s) { state = s;};
-	this.currentMode = function() { return hintmode;};
+    // public accessors
+    this.hintsVisible = function() { return isHahModeEnabled; };
+    this.hintedElements = function() { return hintedElems; };
+    this.currentState = function() { return state;};
+    this.setCurrentState = function(s) { state = s;};
+    this.currentMode = function() { return hintmode;};
 
-	var isHahModeEnabled = false; // is typing mode on
-	var hintmode = HINT_MODE_QUICK;
-	var hintedElems = [];
-	var linkNumString = ""; // the typed link number is in this string
-	var linkCount = 0;
-	var state = 0; // 0: empty or processing, 1: a full hint was parsed
+    var isHahModeEnabled = false; // is typing mode on
+    var hintmode = HINT_MODE_QUICK;
+    var hintedElems = [];
+    var linkNumString = ""; // the typed link number is in this string
+    var linkCount = 0;
+    var state = 0; // 0: empty or processing, 1: a full hint was parsed
  
- 	var wins; // frame array
+    var wins; // frame array
  
- 	// each hint element is a clone of this element
- 	var hintElemSpan;
+    // each hint element is a clone of this element
+    var hintElemSpan;
  
-  	////////////////////////////////////////////////////////////////////////////////
-  	// configuration and initialization related functions
-  	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // configuration and initialization related functions
+    ////////////////////////////////////////////////////////////////////////////////
 
-//	function load()
-//	{
-//		isHahModeEnabled = false;
-//		hintedElem = null;
-//	}
+//  function load()
+//  {
+//      isHahModeEnabled = false;
+//      hintedElem = null;
+//  }
   
- 	////////////////////////////////////////////////////////////////////////////////
- 	// hint activating and loading related functions
- 	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // hint activating and loading related functions
+    ////////////////////////////////////////////////////////////////////////////////
  
- 	function startCoordLoader(doc)
- 	{
- 		win = doc.defaultView;
- 		if (!win)
- 			return;
+    function startCoordLoader(doc)
+    {
+        win = doc.defaultView;
+        if (!win)
+            return;
  
- 		if (win.winId != null)
- 		{
- 			window.clearTimeout(win.coordLoaderId);
- 		}
- 		else
- 		{
- 			if (!wins)
- 				wins = new Array();
+        if (win.winId != null)
+        {
+            window.clearTimeout(win.coordLoaderId);
+        }
+        else
+        {
+            if (!wins)
+                wins = new Array();
  
- 			win.winId = wins.length; 
- 			wins.push(win);
- 		}
- 		//    logMessage("winId:"+win.winId);
- 		win.res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
- 		win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
- 	}
+            win.winId = wins.length; 
+            wins.push(win);
+        }
+        //    logMessage("winId:"+win.winId);
+        win.res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
+    }
  
- 	this.loadCoord = function(winId, i)
- 	{
- 		win = wins[winId];
- 		var elem = win.res.snapshotItem(i);
+    this.loadCoord = function(winId, i)
+    {
+        win = wins[winId];
+        var elem = win.res.snapshotItem(i);
  
- 		if (elem)
- 			genElemCoords(elem);
+        if (elem)
+            genElemCoords(elem);
  
- 		i++;
+        i++;
  
- 		if (i < win.res.snapshotLength && !isHahModeEnabled)
- 			window.setTimeout("hah.loadCoord(" + winId + ", "+ i +");", 1);
- 		else
- 			win.coordLoaderId = null;
- 	};
+        if (i < win.res.snapshotLength && !isHahModeEnabled)
+            window.setTimeout("hah.loadCoord(" + winId + ", "+ i +");", 1);
+        else
+            win.coordLoaderId = null;
+    };
  
- 	function genElemCoords(elem)
- 	{
- 		if (typeof(elem.validCoord) != "undefined")
- 		{
- 			if (elem.validCoord == elem.ownerDocument.validCoords)
- 				return;
- 		}
+    function genElemCoords(elem)
+    {
+        if (typeof(elem.validCoord) != "undefined")
+        {
+            if (elem.validCoord == elem.ownerDocument.validCoords)
+                return;
+        }
  
- 		if (elem.offsetParent)
- 		{
- 			genElemCoords(elem.offsetParent);
- 			elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
- 			elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
- 		}
- 		else
- 		{
- 			elem.absoLeft = elem.offsetLeft - 5;
- 			elem.absoTop = elem.offsetTop;
- 		}
- 		elem.validCoord = elem.ownerDocument.validCoords;
- 	}
+        if (elem.offsetParent)
+        {
+            genElemCoords(elem.offsetParent);
+            elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
+            elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
+        }
+        else
+        {
+            elem.absoLeft = elem.offsetLeft - 5;
+            elem.absoTop = elem.offsetTop;
+        }
+        elem.validCoord = elem.ownerDocument.validCoords;
+    }
  
- 	function createHints(win)
- 	{
- 		if (!win)
- 		{
- 			win = window._content;
- 			linkCount = 0;
- 		}
+    function createHints(win)
+    {
+        if (!win)
+        {
+            win = window._content;
+            linkCount = 0;
+        }
  
- 		var area = new Array(4);
- 		area[0] = win.pageXOffset - 5;
- 		area[1] = win.pageYOffset - 5;
- 		area[2] = area[0] + win.innerWidth;
- 		area[3] = area[1] + win.innerHeight;
+        var area = new Array(4);
+        area[0] = win.pageXOffset - 5;
+        area[1] = win.pageYOffset - 5;
+        area[2] = area[0] + win.innerWidth;
+        area[3] = area[1] + win.innerHeight;
  
- 		var doc = win.document;
- 		var res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        var doc = win.document;
+        var res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
  
- 		var elem, i;
+        var elem, i;
  
- 		hintElemSpan = doc.createElement('SPAN');
- 		hintElemSpan.style.cssText = get_pref("hintstyle");
- 		hintElemSpan.setAttribute('name', 'hah_hint');
+        hintElemSpan = doc.createElement('SPAN');
+        hintElemSpan.style.cssText = get_pref("hintstyle");
+        hintElemSpan.setAttribute('name', 'hah_hint');
  
- 		var hintContainer = doc.getElementById('hah_hints');
+        var hintContainer = doc.getElementById('hah_hints');
  
- 		if (hintContainer == null)
- 		{
-			genHintContainer(doc);
-			hintContainer = doc.getElementById('hah_hints');
- 		}
-		hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
+        if (hintContainer == null)
+        {
+            genHintContainer(doc);
+            hintContainer = doc.getElementById('hah_hints');
+        }
+        hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
  
- 		var hints = hintContainer.childNodes;
- 		var maxhints = get_pref("maxhints");
- 		for (i = 0; i < res.snapshotLength; i++)
- 		{
-			// this saves from script timeouts on pages with some thousand links
-			if (linkCount >= maxhints)
-				break;
+        var hints = hintContainer.childNodes;
+        var maxhints = get_pref("maxhints");
+        for (i = 0; i < res.snapshotLength; i++)
+        {
+            // this saves from script timeouts on pages with some thousand links
+            if (linkCount >= maxhints)
+                break;
 
- 			elem = res.snapshotItem(i);
- 			genElemCoords(elem);
+            elem = res.snapshotItem(i);
+            genElemCoords(elem);
  
- 			// for extended hint mode, show all - even currently hidden - hints
- 			if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
-					elem.absoLeft > area[2] || elem.absoLeft < area[0]))
- 				continue;
+            // for extended hint mode, show all - even currently hidden - hints
+            if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
+                    elem.absoLeft > area[2] || elem.absoLeft < area[0]))
+                continue;
  
- 			// XXX: what does that do
- 			// if (elem.offsetWidth == 0 && elem.offsetHeight == 0)
- 			//	   continue;
+            // XXX: what does that do
+            // if (elem.offsetWidth == 0 && elem.offsetHeight == 0)
+            //     continue;
  
- 			var cs = doc.defaultView.getComputedStyle(elem, null);
+            var cs = doc.defaultView.getComputedStyle(elem, null);
  
- 			if (cs.getPropertyValue("visibility") == "hidden")
- 				continue;
+            if (cs.getPropertyValue("visibility") == "hidden")
+                continue;
  
- 			if (linkCount < hints.length)
- 				hintElem = hints[linkCount];
- 			else // need to attach this new hintElem to the hint container
-			{
-				hintElem = hintElemSpan.cloneNode(false);
-				hintContainer.appendChild(hintElem);
-			}
+            if (linkCount < hints.length)
+                hintElem = hints[linkCount];
+            else // need to attach this new hintElem to the hint container
+            {
+                hintElem = hintElemSpan.cloneNode(false);
+                hintContainer.appendChild(hintElem);
+            }
  
- 			hintElem.style.display = 'none';
- 			hintElem.style.top = elem.absoTop + "px";
- 			hintElem.style.left = elem.absoLeft + "px";
- 			hintElem.refElem = elem;
+            hintElem.style.display = 'none';
+            hintElem.style.top = elem.absoTop + "px";
+            hintElem.style.left = elem.absoLeft + "px";
+            hintElem.refElem = elem;
  
-			hintContainer.valid_hint_count++; // one more visible hint in this frame
- 			linkCount++;                      // and one more total hint
- 		}
+            hintContainer.valid_hint_count++; // one more visible hint in this frame
+            linkCount++;                      // and one more total hint
+        }
  
- 		doc.coordsInvalidated = false;
+        doc.coordsInvalidated = false;
  
- 		// recursively create hints
- 		for (i = 0; i < win.frames.length; i++)
- 			createHints(win.frames[i]);
+        // recursively create hints
+        for (i = 0; i < win.frames.length; i++)
+            createHints(win.frames[i]);
  
- 	}
+    }
 
-	function showHints(win, off)
-	{
-		offset = off; // must be global without 'var' for recursion
+    function showHints(win, off)
+    {
+        offset = off; // must be global without 'var' for recursion
 
- 		if (!win)
- 			win = window._content;
+        if (!win)
+            win = window._content;
 
-		if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
-		{
-			beep();
-			linkNumString = '';
-			hintedElems = [];
-			isHahModeEnabled = false;
-			return;
-		}
+        if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
+        {
+            beep();
+            linkNumString = '';
+            hintedElems = [];
+            isHahModeEnabled = false;
+            return;
+        }
 
- 		var doc = win.document;
- 		var hintElem = null;
-		var hintContainer = doc.getElementById('hah_hints');
- 		var hints = hintContainer.childNodes;
-		var i, j;
+        var doc = win.document;
+        var hintElem = null;
+        var hintContainer = doc.getElementById('hah_hints');
+        var hints = hintContainer.childNodes;
+        var i, j;
 
- 		for (i = 0; i < hintContainer.valid_hint_count; i++)
- 		{
-			hintText = formatHint(offset+i);
- 			hintElem = hints[i];
- 			hintElem.style.display = 'inline';
- 			//hintElem.style.position = 'absolute';
-			hintElem.innerHTML = hintText;
-			hintElem.id = HINT_PREFIX + hintText;
- 		}
-		offset += hintContainer.valid_hint_count;
+        for (i = 0; i < hintContainer.valid_hint_count; i++)
+        {
+            hintText = formatHint(offset+i);
+            hintElem = hints[i];
+            hintElem.style.display = 'inline';
+            //hintElem.style.position = 'absolute';
+            hintElem.innerHTML = hintText;
+            hintElem.id = HINT_PREFIX + hintText;
+        }
+        offset += hintContainer.valid_hint_count;
 
- 		// recursively show hints
- 		for (j = 0; j < win.frames.length; j++)
-			showHints(win.frames[j], offset);
-	}
+        // recursively show hints
+        for (j = 0; j < win.frames.length; j++)
+            showHints(win.frames[j], offset);
+    }
  
- 	/* removes all visible hints from doc
-	 * or from current document, if win == null
-	 */
- 	function removeHints(win)
- 	{
- 		if (!win)
- 			win = window._content;
+    /* removes all visible hints from doc
+     * or from current document, if win == null
+     */
+    function removeHints(win)
+    {
+        if (!win)
+            win = window._content;
  
- 		var doc = win.document;
- 		var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
- 		var elem, i;
+        var doc = win.document;
+        var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        var elem, i;
  
- 		for (i = 0; i < res.snapshotLength; i++)
- 		{
- 			elem = res.snapshotItem(i);
-			setHintStyle(elem, get_pref("hintstyle"));  
- 			elem.style.display = 'none';
- 		}
+        for (i = 0; i < res.snapshotLength; i++)
+        {
+            elem = res.snapshotItem(i);
+            setHintStyle(elem, get_pref("hintstyle"));  
+            elem.style.display = 'none';
+        }
  
- 		for (i = 0; i < win.frames.length; i++)
- 			removeHints(win.frames[i]);
- 	}
+        for (i = 0; i < win.frames.length; i++)
+            removeHints(win.frames[i]);
+    }
  
- 	function onResize(event)
- 	{
- 		doc = event.originalTarget;
- 		invalidateCoords(doc);
- 		startCoordLoader(doc);
- 	}
+    function onResize(event)
+    {
+        doc = event.originalTarget;
+        invalidateCoords(doc);
+        startCoordLoader(doc);
+    }
  
- 	function invalidateCoords(doc)
- 	{
- 		if (!doc.coordsInvalidated)
- 		{
- 			// every element has .validCoord
- 			// if it is the same as doc:s .validCoords,
- 			// the coordinates have not been regenerated, otherwise they
- 			// have. This way we can also use recursive generation
- 			// so that the coordinates are generated for every
- 			// element just once
- 			doc.validCoords = !doc.validCoords;
- 			// this is because window can be resized many times
- 			// and the coords should be invalidated just once.
- 			doc.coordsInvalidated = true;
- 			//      logMessage(doc.validCoords);
- 		}
- 	}
+    function invalidateCoords(doc)
+    {
+        if (!doc.coordsInvalidated)
+        {
+            // every element has .validCoord
+            // if it is the same as doc:s .validCoords,
+            // the coordinates have not been regenerated, otherwise they
+            // have. This way we can also use recursive generation
+            // so that the coordinates are generated for every
+            // element just once
+            doc.validCoords = !doc.validCoords;
+            // this is because window can be resized many times
+            // and the coords should be invalidated just once.
+            doc.coordsInvalidated = true;
+            //      logMessage(doc.validCoords);
+        }
+    }
  
- 	function getHintById(id, win)
- 	{
- 		if (!win)
- 			win = window._content;
+    function getHintById(id, win)
+    {
+        if (!win)
+            win = window._content;
  
- 		var doc = win.document;
- 		var elem, i;
+        var doc = win.document;
+        var elem, i;
  
- 		//var hintId = parseInt(id, nums.length);
- 		//elem = doc.getElementById(prefix + hintId);
- 		elem = doc.getElementById(HINT_PREFIX + id);
+        //var hintId = parseInt(id, nums.length);
+        //elem = doc.getElementById(prefix + hintId);
+        elem = doc.getElementById(HINT_PREFIX + id);
  
- 		if (elem)
- 		{
- 			return elem;
- 		}
- 		else
- 		{
- 			for (i = 0; i < win.frames.length; i++)
- 			{
- 				elem = getHintById(id, win.frames[i]);
- 				if (elem) 
- 					return elem;
- 			}
- 		}
- 		return null;
- 	}
+        if (elem)
+        {
+            return elem;
+        }
+        else
+        {
+            for (i = 0; i < win.frames.length; i++)
+            {
+                elem = getHintById(id, win.frames[i]);
+                if (elem) 
+                    return elem;
+            }
+        }
+        return null;
+    }
  
- 	function formatHint(hintNum)
- 	{
-		var hintCharacters = get_pref("hintchars");
- 		var str = hintNum.toString(hintCharacters.length); // turn hintNum into a base(length) number
+    function formatHint(hintNum)
+    {
+        var hintCharacters = get_pref("hintchars");
+        var str = hintNum.toString(hintCharacters.length); // turn hintNum into a base(length) number
  
-		// map the number onto the chars in the numbers string
-		var result = '';
-		// make all links the same length
-		var hintLength = 1;
-		var tmp = linkCount;
-		while((tmp /= hintCharacters.length) > 1.0)
-			hintLength++;
-		while(str.length < hintLength)
-		{
-			result += hintCharacters.charAt(0).toUpperCase();
-			hintLength--;
-		}
-		
-		for (var i = 0; i < str.length; i++)
-			result += (hintCharacters.charAt(parseInt(str[i], hintCharacters.length))).toUpperCase();
+        // map the number onto the chars in the numbers string
+        var result = '';
+        // make all links the same length
+        var hintLength = 1;
+        var tmp = linkCount;
+        while((tmp /= hintCharacters.length) > 1.0)
+            hintLength++;
+        while(str.length < hintLength)
+        {
+            result += hintCharacters.charAt(0).toUpperCase();
+            hintLength--;
+        }
+        
+        for (var i = 0; i < str.length; i++)
+            result += (hintCharacters.charAt(parseInt(str[i], hintCharacters.length))).toUpperCase();
 
-		return result;
-	}
+        return result;
+    }
  
- 	function setHintStyle(hintElem, styleString)
- 	{ 
- 		if (hintElem && hintElem.style)
- 		{
- 			xTemp = hintElem.style.left;
- 			yTemp = hintElem.style.top;
- 			hintElem.style.cssText = styleString;
- 			hintElem.style.left = xTemp;
- 			hintElem.style.top = yTemp;
- 		}
- 	}
+    function setHintStyle(hintElem, styleString)
+    { 
+        if (hintElem && hintElem.style)
+        {
+            xTemp = hintElem.style.left;
+            yTemp = hintElem.style.top;
+            hintElem.style.cssText = styleString;
+            hintElem.style.left = xTemp;
+            hintElem.style.top = yTemp;
+        }
+    }
  
- 	function changeHintFocus(linkNumString, oldLinkNumString)
- 	{
- 		var styleString = get_pref("hintstyle");
- 		var styleStringFocus = get_pref("focusedhintstyle");
- 		var hintElem;
+    function changeHintFocus(linkNumString, oldLinkNumString)
+    {
+        var styleString = get_pref("hintstyle");
+        var styleStringFocus = get_pref("focusedhintstyle");
+        var hintElem;
  
- 		if (oldLinkNumString.length > 0)
- 		{
- 			hintElem = getHintById(oldLinkNumString);
- 			setHintStyle(hintElem, styleString);
- 		}
- 		if (linkNumString.length > 0)
- 		{
- 			hintElem = getHintById(linkNumString);
- 			setHintStyle(hintElem, styleStringFocus);  
-			if(hintElem)
-				setMouseOverElement(hintElem.refElem);
- 		}
- 	}
+        if (oldLinkNumString.length > 0)
+        {
+            hintElem = getHintById(oldLinkNumString);
+            setHintStyle(hintElem, styleString);
+        }
+        if (linkNumString.length > 0)
+        {
+            hintElem = getHintById(linkNumString);
+            setHintStyle(hintElem, styleStringFocus);  
+            if(hintElem)
+                setMouseOverElement(hintElem.refElem);
+        }
+    }
  
- 	////////////////////////////////////////////////////////////////////////////////
- 	// basic functionality
- 	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // basic functionality
+    ////////////////////////////////////////////////////////////////////////////////
  
- 	/**
- 	 * Enables the HaH-mode by showing the hints and prepare to input the
- 	 * hint numbers
- 	 *
- 	 * @author Pekka Sillanpaa
- 	 * @param event that caused the mode to change
- 	 * @return -1 if already enabled
- 	 */
- 	//function enableHahMode(event, mode)
- 	this.enableHahMode = function(mode)
- 	{
-// 		if (isHahModeEnabled)
-// 			return false;
+    /**
+     * Enables the HaH-mode by showing the hints and prepare to input the
+     * hint numbers
+     *
+     * @author Pekka Sillanpaa
+     * @param event that caused the mode to change
+     * @return -1 if already enabled
+     */
+    //function enableHahMode(event, mode)
+    this.enableHahMode = function(mode)
+    {
+//      if (isHahModeEnabled)
+//          return false;
 
-		hintmode = mode;
-		state = 0;
- 		linkCount = 0;
- 		linkNumString = '';
- 		isHahModeEnabled = true;
+        hintmode = mode;
+        state = 0;
+        linkCount = 0;
+        linkNumString = '';
+        isHahModeEnabled = true;
  
- 		createHints();
- 		showHints(null, 0);
+        createHints();
+        showHints(null, 0);
  
- 		return true;
- 	};
+        return true;
+    };
  
- 	/**
- 	 * Disables the HaH-mode by hiding the hints and disabling the input mode
- 	 *
- 	 * @author Pekka Sillanpaa
- 	 * @param event that caused the mode to change
- 	 * @param action = true if something is to be clicked
- 	 *                 false if cancel
- 	 * @return -1 if already disabled
- 	 */
- 	//function disableHahMode(event)
- 	this.disableHahMode = function(win)
- 	{
- 		isHahModeEnabled = false;
-		hintmode = HINT_MODE_QUICK;
- 		linkNumString = '';
- 		hintedElems = [];
+    /**
+     * Disables the HaH-mode by hiding the hints and disabling the input mode
+     *
+     * @author Pekka Sillanpaa
+     * @param event that caused the mode to change
+     * @param action = true if something is to be clicked
+     *                 false if cancel
+     * @return -1 if already disabled
+     */
+    //function disableHahMode(event)
+    this.disableHahMode = function(win)
+    {
+        isHahModeEnabled = false;
+        hintmode = HINT_MODE_QUICK;
+        linkNumString = '';
+        hintedElems = [];
  
- 		removeHints(win);
- 		return 0;
- 	};
+        removeHints(win);
+        return 0;
+    };
 
- 	this.resetHintedElements = function()
-	{
- 		linkNumString = '';
-		state = 0;
+    this.resetHintedElements = function()
+    {
+        linkNumString = '';
+        state = 0;
  
-		while(hintedElems.length > 0)
-		{
-			var elem = hintedElems.pop();
-			if (!elem)
-				return 0;
-			// reset style attribute
-			setHintStyle(elem, get_pref("hintstyle"));  
-		}
-	};
-		
+        while(hintedElems.length > 0)
+        {
+            var elem = hintedElems.pop();
+            if (!elem)
+                return 0;
+            // reset style attribute
+            setHintStyle(elem, get_pref("hintstyle"));  
+        }
+    };
+        
  
  
- 	// this function 'click' an element, which also works
-	// for javascript links
- 	this.openHints = function(new_tab, new_window)
- 	{
- 		var x = 0, y = 0;
+    // this function 'click' an element, which also works
+    // for javascript links
+    this.openHints = function(new_tab, new_window)
+    {
+        var x = 0, y = 0;
 
-		while(hintedElems.length > 0)
-		{
-			var elem = hintedElems.pop();
-			if (!elem)
-				return 0;
+        while(hintedElems.length > 0)
+        {
+            var elem = hintedElems.pop();
+            if (!elem)
+                return 0;
 
-			setHintStyle(elem, get_pref("hintstyle"));  
-			elem = elem.refElem;
-			var elemTagName = elem.tagName;
-			elem.focus();
+            setHintStyle(elem, get_pref("hintstyle"));  
+            elem = elem.refElem;
+            var elemTagName = elem.tagName;
+            elem.focus();
 
-			if (elemTagName == 'FRAME' || elemTagName == 'IFRAME')
-				return 0;
+            if (elemTagName == 'FRAME' || elemTagName == 'IFRAME')
+                return 0;
 
-			// for imagemap
-			if (elemTagName == 'AREA')
-			{
-				var coords = elem.getAttribute("coords").split(",");
-				x = Number(coords[0]);
-				y = Number(coords[1]);
-			}
-			doc = window._content.document;
-			view = window.document.defaultView;
-
-
-			var evt = doc.createEvent('MouseEvents');
-			evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-			elem.dispatchEvent(evt);
-
-			var evt = doc.createEvent('MouseEvents');
-			evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-			elem.dispatchEvent(evt);
+            // for imagemap
+            if (elemTagName == 'AREA')
+            {
+                var coords = elem.getAttribute("coords").split(",");
+                x = Number(coords[0]);
+                y = Number(coords[1]);
+            }
+            doc = window._content.document;
+            view = window.document.defaultView;
 
 
-			// for 'pure' open calls without a new tab or window it doesn't
-			// make sense to open more hints in the current tab, open new tabs
-			// for it
-			if (!new_tab && !new_window)
-				new_tab = true;
-		}
+            var evt = doc.createEvent('MouseEvents');
+            evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            elem.dispatchEvent(evt);
 
-		return 0;
- 	};
+            var evt = doc.createEvent('MouseEvents');
+            evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            elem.dispatchEvent(evt);
 
-	this.yankHints = function()
-	{
-		var loc = "";
-		var elems = hah.hintedElements();
-		var tmp = "";
-		for(i=0; i<elems.length; i++)
-		{
-			tmp = elems[i].refElem.href;
-			if (typeof(tmp) != 'undefined' && tmp.length > 0)
-				loc += tmp + "\n";
-		}
 
-		copyToClipboard(loc);
-		echo("Yanked " + loc);
-	};
+            // for 'pure' open calls without a new tab or window it doesn't
+            // make sense to open more hints in the current tab, open new tabs
+            // for it
+            if (!new_tab && !new_window)
+                new_tab = true;
+        }
 
-	function setMouseOverElement(elem)
- 	{
- 		var doc = window.document;
- 
- 		if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
- 		{
- 			elem.contentWindow.focus();
- 			return;
- 		}
- 		else
- 		{
- 			//elem.focus();
- 		}
- 
- 		var evt = doc.createEvent('MouseEvents');
- 		var x = 0;
- 		var y = 0;
- 		// for imagemap
- 		if (elem.tagName == 'AREA')
- 		{
- 			var coords = elem.getAttribute("coords").split(",");
- 			x = Number(coords[0]);
- 			y = Number(coords[1]);
- 		}
- 
- 		evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
- 		elem.dispatchEvent(evt);
- 	}
- 
- 	////////////////////////////////////////////////////////////////////////////////
- 	// event handlers
- 	////////////////////////////////////////////////////////////////////////////////
- 
- 	// returns nr. of fully parsed links when a new hint has been found,
-	// otherwise 0 if current state is part of a hint, or -1 if an error occured
-	// (like we have typed keys which never can become a hint
- 	this.processEvent = function(event)
- 	{
- 		if (!isHahModeEnabled)
- 			return -1;
+        return 0;
+    };
 
-		// reset state to show that we are in processing mode
-		state = 0;
- 
- 		var num = String.fromCharCode(event.charCode).toUpperCase();
-		var hintCharacters = get_pref("hintchars");
- 		if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
- 		{
- 			var oldLinkNumString = linkNumString;
- 			linkNumString += '' + num;
- 			// update reference to currently selected node;
- 			var elem = getHintById(linkNumString);
- 			changeHintFocus(linkNumString, oldLinkNumString);
+    this.yankHints = function()
+    {
+        var loc = "";
+        var elems = hah.hintedElements();
+        var tmp = "";
+        for(i=0; i<elems.length; i++)
+        {
+            tmp = elems[i].refElem.href;
+            if (typeof(tmp) != 'undefined' && tmp.length > 0)
+                loc += tmp + "\n";
+        }
 
-			// if we found the hint, fine just return it
-			if (elem)
-			{
-				hintedElems.push(elem);
-				linkNumString = '';
-				state = 1;
-				return hintedElems.length;
-			}
+        copyToClipboard(loc);
+        echo("Yanked " + loc);
+    };
 
-			//calculate how many characters a hint must have
-			var hintLength = 1;
-			var tmp = linkCount;
-			while((tmp /= hintCharacters.length) > 1.0)
-				hintLength++;
+    function setMouseOverElement(elem)
+    {
+        var doc = window.document;
+ 
+        if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
+        {
+            elem.contentWindow.focus();
+            return;
+        }
+        else
+        {
+            //elem.focus();
+        }
+ 
+        var evt = doc.createEvent('MouseEvents');
+        var x = 0;
+        var y = 0;
+        // for imagemap
+        if (elem.tagName == 'AREA')
+        {
+            var coords = elem.getAttribute("coords").split(",");
+            x = Number(coords[0]);
+            y = Number(coords[1]);
+        }
+ 
+        evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+        elem.dispatchEvent(evt);
+    }
+ 
+    ////////////////////////////////////////////////////////////////////////////////
+    // event handlers
+    ////////////////////////////////////////////////////////////////////////////////
+ 
+    // returns nr. of fully parsed links when a new hint has been found,
+    // otherwise 0 if current state is part of a hint, or -1 if an error occured
+    // (like we have typed keys which never can become a hint
+    this.processEvent = function(event)
+    {
+        if (!isHahModeEnabled)
+            return -1;
 
-			if (linkNumString.length >= hintLength)
-				return -1;
-			else
-				return 0;
- 		}
-		// an unparseable or wrong key
-		return -1;
- 	}
+        // reset state to show that we are in processing mode
+        state = 0;
  
- 	function genHintContainer(doc)
- 	{
- 		if (doc.getElementsByTagName('HINTS').length > 0)
- 			return;
- 
- 		hints = doc.createElement('HINTS');
- 		hints.id = "hah_hints";
- 		hints.valid_hint_count = 0; // initially 0 elements are usable as hints
- 		doc.body.appendChild(hints);
- 	}
- 
- 	function initDoc(event)
- 	{
- 		doc = event.originalTarget;
- 		genHintContainer(doc);
- 		isHahModeEnabled = false;
- 		hintedElems = [];
- 
- 		if (!doc.validCoords)
- 			doc.validCoords = true;
- 		else
- 			doc.validCoords = false;
- 
-		// XXX: prepend a ! ?
- 		if (doc.coordsInvalidated)
- 			doc.coordsInvalidated = true;
- 		else
- 			doc.coordsInvalidated = false;
- 
- 		startCoordLoader(doc);
- 
-		if (hintmode == HINT_MODE_ALWAYS)
-		{
-			state = 0;
-			linkCount = 0;
-			linkNumString = '';
-			isHahModeEnabled = true;
+        var num = String.fromCharCode(event.charCode).toUpperCase();
+        var hintCharacters = get_pref("hintchars");
+        if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
+        {
+            var oldLinkNumString = linkNumString;
+            linkNumString += '' + num;
+            // update reference to currently selected node;
+            var elem = getHintById(linkNumString);
+            changeHintFocus(linkNumString, oldLinkNumString);
 
-			createHints();
-			showHints(null, 0);
-		}
-			//window.setTimeout("this.enableHahMode(HINT_MODE_ALWAYS);", 0);
- 	}
+            // if we found the hint, fine just return it
+            if (elem)
+            {
+                hintedElems.push(elem);
+                linkNumString = '';
+                state = 1;
+                return hintedElems.length;
+            }
 
-	window.document.addEventListener("pageshow", initDoc, null);
-	window.addEventListener("resize", onResize, null);
- 	logMessage("HAH initialized.");
+            //calculate how many characters a hint must have
+            var hintLength = 1;
+            var tmp = linkCount;
+            while((tmp /= hintCharacters.length) > 1.0)
+                hintLength++;
+
+            if (linkNumString.length >= hintLength)
+                return -1;
+            else
+                return 0;
+        }
+        // an unparseable or wrong key
+        return -1;
+    }
+ 
+    function genHintContainer(doc)
+    {
+        if (doc.getElementsByTagName('HINTS').length > 0)
+            return;
+ 
+        hints = doc.createElement('HINTS');
+        hints.id = "hah_hints";
+        hints.valid_hint_count = 0; // initially 0 elements are usable as hints
+        doc.body.appendChild(hints);
+    }
+ 
+    function initDoc(event)
+    {
+        doc = event.originalTarget;
+        genHintContainer(doc);
+        isHahModeEnabled = false;
+        hintedElems = [];
+ 
+        if (!doc.validCoords)
+            doc.validCoords = true;
+        else
+            doc.validCoords = false;
+ 
+        // XXX: prepend a ! ?
+        if (doc.coordsInvalidated)
+            doc.coordsInvalidated = true;
+        else
+            doc.coordsInvalidated = false;
+ 
+        startCoordLoader(doc);
+ 
+        if (hintmode == HINT_MODE_ALWAYS)
+        {
+            state = 0;
+            linkCount = 0;
+            linkNumString = '';
+            isHahModeEnabled = true;
+
+            createHints();
+            showHints(null, 0);
+        }
+            //window.setTimeout("this.enableHahMode(HINT_MODE_ALWAYS);", 0);
+    }
+
+    window.document.addEventListener("pageshow", initDoc, null);
+    window.addEventListener("resize", onResize, null);
+    logMessage("HAH initialized.");
 }
 
 var hah = new hit_a_hint();
 
-// vim: set fdm=marker sw=4 ts=4:
+// vim: set fdm=marker sw=4 ts=4 et:
