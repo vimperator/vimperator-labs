@@ -355,4 +355,4 @@ function set_showtabline(value)
 	}
 }
 
-// vim: set fdm=marker :
+// vim: set fdm=marker sw=4 ts=4:

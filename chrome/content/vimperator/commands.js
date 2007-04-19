@@ -93,7 +93,7 @@ var g_commands = [/*{{{*/
 		function(filter) { return get_bookmark_completions(filter); }
 	],
 	    [
-        ["buffer", "bu"],
+        ["buffer", "b"],
         "Go to buffer number n. Full completion works.",
         null,
         function (args) { tab_go(args.split(":")[0]); preview_window.hidden = true; },
@@ -103,7 +103,7 @@ var g_commands = [/*{{{*/
         ["buffers", "files", "ls"],
         "Shows a list of all buffers.",
         null,
-        function (args) {bushow("");},
+        function (args) {bushow("", false);},
         null
     ],
 	[
@@ -198,8 +198,21 @@ var g_commands = [/*{{{*/
 		"    <li>Passed directly to Firefox in all other cases (<code>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
 		"You WILL be able to use <code>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br>"+
 		"The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br>"+
-		"Without argument, reloads the current page.",
-		function(args) { if(args.length > 0) openURLs(args); else reload(false); },
+		"Without argument, reloads the current page.<br>"+
+		"Without argument but with !, reloads the current page skipping the cache.",
+		function(args, special)
+		{
+			if(args.length > 0)
+				openURLs(args);
+			else
+			{
+				if (special)
+					BrowserReloadSkipCache();
+				else
+					BrowserReload();
+			}
+		},
+
 		function(filter) { return get_url_completions(filter); }
 	],
 	[
@@ -373,7 +386,7 @@ var g_mappings = [/*{{{*/
         ["b"],
         "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
-        function (args) { bushow(""); openVimperatorBar('buffer '); }  
+        function (args) { bushow("", true); openVimperatorBar('buffer '); }  
     ],
 	[ 
 		["d"],
@@ -393,6 +406,18 @@ var g_mappings = [/*{{{*/
 		"<code>Go Execute</code> works like <code class=command>:execute</code>.<br>"+
 		"This mapping is for debugging purposes, and may be removed in future.",
 		function(count) { openVimperatorBar('execute '); }
+	],
+	[ 
+		["gh"],
+		"Go home",
+		"Opens the homepage in the current tab.",
+		function(count) { BrowserHome(); }
+	],
+	[ 
+		["gH"],
+		"Go home in a new tab",
+		"Opens the homepage in a new tab.",
+		function(count) { openURLsInNewTab("", true); BrowserHome(); }
 	],
 	[ 
 		["gP"],
@@ -1117,7 +1142,7 @@ function bmshow(filter, fullmode)
 		openURLsInNewTab("chrome://browser/content/bookmarks/bookmarksPanel.xul", true);
 	else
 	{
-		items = get_bookmark_completions(filter);
+		var items = get_bookmark_completions(filter);
 		preview_window_fill(items);
 		preview_window.hidden = false;
 	}
@@ -1128,16 +1153,25 @@ function hsshow(filter, fullmode)
 		openURLsInNewTab("chrome://browser/content/history/history-panel.xul", true);
 	else
 	{
-		items = get_history_completions(filter);
+		var items = get_history_completions(filter);
 		preview_window_fill(items);
 		preview_window.hidden = false;
 	}
 }
-function bushow(filter)
+function bushow(filter, in_comp_window)
 {
-    items = get_buffer_completions(filter);
-    preview_window_fill(items);
-    preview_window.hidden = false;
+	if (in_comp_window) // fill the completion list
+	{
+		g_completions = get_buffer_completions(filter);
+		completion_fill_list(0);
+		completion_show_list();
+	}
+	else // in the preview window
+	{
+		var items = get_buffer_completions(filter);
+		preview_window_fill(items);
+		preview_window.hidden = false;
+	}
 }
 
 
@@ -1856,4 +1890,4 @@ function removeMode(mode)
 //    return 0;
 //  }
 
-// vim: set fdm=marker :
+// vim: set fdm=marker sw=4 ts=4:

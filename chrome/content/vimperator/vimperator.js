@@ -1010,4 +1010,4 @@ function getLinkNodes(doc)
     return links;
 }
 
-// vim: set fdm=marker :
+// vim: set fdm=marker sw=4 ts=4:

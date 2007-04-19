@@ -426,8 +426,10 @@ function get_settings_completions(filter)/*{{{*/
 function get_buffer_completions(filter)
 {
     var reg = new RegExp("^"+filter,"i");
-    items=new Array();
+    items = new Array();
     var num = getBrowser().browsers.length;
+	var title, url;
+
     for(var i=0; i<num;i++)
 	{
 		try
@@ -441,10 +443,11 @@ function get_buffer_completions(filter)
 		if (title == "")
 			title = "(Untitled)";
 
-		if(title.search(reg) != -1)
+		url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
+
+		if(title.search(reg) != -1 || url.search(reg) != -1)
 		{
-			var title;
-			items.push([(i+1)+": "+title]);
+			items.push([(i+1)+": "+title, url]);
 		}
 	}
     return items;
@@ -510,4 +513,5 @@ function preview_window_select(event)
 	else
 		return false;
 }
-// vim: set fdm=marker :
+
+// vim: set fdm=marker sw=4 ts=4:

@@ -151,3 +151,4 @@ function parseBookmarkString(str, res)
 	return true;
 }
 
+// vim: set fdm=marker sw=4 ts=4:

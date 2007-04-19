@@ -27,26 +27,22 @@ FEATURES:
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 :hardcopy -> printing
 7 Ctrl-6/Ctrl-^ -> jump to the previously active tab
-7 :b[uffer] <name> should switch to a buffer/tab
-  :b[uffer] - show buffers, if argument is number, switch to this tab, if url, open tab with this url
-  buffer Switching also after pressing 'b' and typing _any_ part of the buffer name?
 7 3d should delete 3 tabs
 6 :map commands to keys
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
 6 vim like mappings for caret mode and textboxes (i to start caret mode?)
 6 pipe selected text/link/website to an external command
 6 macros (qq)
-6 :ls - show buffers
 6 support firefox search engines, or at least make our search enginges user configurable
 6 gf = view source?
 6 make a real one-tab-mode, divert _all_ other targets, possible by setting a firefox option (set popup=0-3)
-6 Shift-Insert in textboxes pastes clipboard contents
+6 Shift-Insert in textboxes pastes selection contents
+6 page info support (ctrl-g, g<C-g>)
 5 Use arrow keys in preview window
 5 Sort :open completion by date?
 5 make use of the ] and [ keys to e.g. jump to the next heading ]], next image ]i, previous textbox [t and so on
 5 add tag support to adding/deleting bookmarks
 4 Support multiple top-level windows?
-4 :restart command to restart firefox
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
 3 :set should also set about:config options (with autocomplete)
@@ -54,4 +50,5 @@ FEATURES:
 RANDOM IDEAS:
 * numbered tabs
 * make hints work with usermode
+* https://addons.mozilla.org/en-US/firefox/addon/4125 - use vim to edit text fields
 </pre>

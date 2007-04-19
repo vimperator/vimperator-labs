@@ -5,11 +5,13 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.6	//
 addBookmark	bookmarks.js	/^function addBookmark(title, uri)$/;"	f
+addMode	commands.js	/^function addMode(mode)$/;"	f
 add_to_command_history	completion.js	/^function add_to_command_history(str)$/;"	f
 beep	commands.js	/^function beep()$/;"	f
 bmadd	commands.js	/^function bmadd(str)$/;"	f
 bmdel	commands.js	/^function bmdel(str)$/;"	f
 bmshow	commands.js	/^function bmshow(filter, fullmode)$/;"	f
+bushow	commands.js	/^function bushow(filter)$/;"	f
 changeHintFocus	hints.js	/^ 	function changeHintFocus(linkNumString, oldLinkNumString)$/;"	f
 completion_add_to_list	completion.js	/^function completion_add_to_list(completion_item, at_beginning)\/*{{{*\/$/;"	f
 completion_fill_list	completion.js	/^function completion_fill_list(startindex)\/*{{{*\/$/;"	f
@@ -38,6 +40,7 @@ getLinkNodes	vimperator.js	/^function getLinkNodes(doc)$/;"	f
 getPageLinkNodes	vimperator.js	/^function getPageLinkNodes()$/;"	f
 getProperty	bookmarks.js	/^function getProperty( aInput, aArc, DS )$/;"	f
 get_bookmark_completions	completion.js	/^function get_bookmark_completions(filter)\/*{{{*\/$/;"	f
+get_buffer_completions	completion.js	/^function get_buffer_completions(filter)$/;"	f
 get_command	commands.js	/^function get_command(cmd) \/\/ {{{$/;"	f
 get_command_completions	completion.js	/^function get_command_completions(filter)\/*{{{*\/$/;"	f
 get_firefox_pref	settings.js	/^function get_firefox_pref(name, default_value)$/;"	f
@@ -49,6 +52,7 @@ get_settings_completions	completion.js	/^function get_settings_completions(filte
 get_url_completions	completion.js	/^function get_url_completions(filter)\/*{{{*\/$/;"	f
 get_url_mark	commands.js	/^function get_url_mark(mark)$/;"	f
 goUp	commands.js	/^function goUp() \/\/ FIXME$/;"	f
+hasMode	commands.js	/^function hasMode(mode)$/;"	f
 help	commands.js	/^function help(section)$/;"	f
 hit_a_hint	hints.js	/^function hit_a_hint()$/;"	f
 hsshow	commands.js	/^function hsshow(filter, fullmode)$/;"	f
@@ -62,7 +66,6 @@ logMessage	vimperator.js	/^function logMessage(msg)$/;"	f
 makeHelpString	commands.js	/^	function makeHelpString(commands, color, beg, end, func)$/;"	f
 makeSettingsHelpString	commands.js	/^	function makeSettingsHelpString(command)$/;"	f
 nsBrowserStatusHandler	vimperator.js	/^function nsBrowserStatusHandler() \/*{{{*\/$/;"	f
-onBlur	vimperator.js	/^function onBlur() \/\/ FIXME: needed?$/;"	f
 onCommandBarInput	vimperator.js	/^function onCommandBarInput(event)$/;"	f
 onCommandBarKeypress	vimperator.js	/^function onCommandBarKeypress(evt)\/*{{{*\/$/;"	f
 onEscape	vimperator.js	/^function onEscape()$/;"	f
@@ -78,11 +81,14 @@ preview_window_select	completion.js	/^function preview_window_select(event)$/;"	
 quit	commands.js	/^function quit(save_session)$/;"	f
 reload	commands.js	/^function reload(all_tabs)$/;"	f
 removeHints	hints.js	/^ 	function removeHints(win)$/;"	f
+removeMode	commands.js	/^function removeMode(mode)$/;"	f
+restart	commands.js	/^function restart()$/;"	f
 save_history	completion.js	/^function save_history()$/;"	f
 scrollBufferAbsolute	commands.js	/^function scrollBufferAbsolute(horizontal, vertical)$/;"	f
 scrollBufferRelative	commands.js	/^function scrollBufferRelative(right, down)$/;"	f
 selectInput	commands.js	/^function selectInput()$/;"	f
 set	commands.js	/^function set(args, special)$/;"	f
+setCurrentMode	commands.js	/^function setCurrentMode(mode)$/;"	f
 setHintStyle	hints.js	/^ 	function setHintStyle(hintElem, styleString)$/;"	f
 setMouseOverElement	hints.js	/^	function setMouseOverElement(elem)$/;"	f
 setStatusbarColor	vimperator.js	/^function setStatusbarColor(color)$/;"	f

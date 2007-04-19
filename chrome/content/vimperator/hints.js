@@ -638,3 +638,5 @@ function hit_a_hint()
 }
 
 var hah = new hit_a_hint();
+
+// vim: set fdm=marker sw=4 ts=4:
