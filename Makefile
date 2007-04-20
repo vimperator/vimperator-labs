@@ -19,6 +19,7 @@ VIMPERATOR_CHROME = $(wildcard ${FIREFOX_DEFAULT}/extensions/{f9570b26-e246-4753
 
 # specify V=1 on make line to see more verbose output
 Q=$(if ${V},,@)
+CP_V=$(if ${V},-v)
 
 #### rules
 
@@ -47,14 +48,14 @@ info:
 	@echo    "vimperator chrome   ${VIMPERATOR_CHROME}"
 
 needs_chrome_dir:
-	test -d "${VIMPERATOR_CHROME}"
+	${Q}test -d "${VIMPERATOR_CHROME}"
 
 xpi: ${RELEASE}
 jar: ${JAR}
 
 install: needs_chrome_dir ${JAR}
 	@echo "Installing JAR..."
-	${Q}cp -v ${JAR} ${VIMPERATOR_CHROME}
+	${Q}cp ${CP_V} ${JAR} ${VIMPERATOR_CHROME}
 
 clean:
 	@echo "Cleanup..."
