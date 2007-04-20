@@ -4,19 +4,19 @@ Priority list:
 
 BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
-- hints are not placed correctly when zoom is used
 - flashing frame is not perfect
 - The RSS feed button in the address bar no longer works.
-- hints on digg.com are behind text
 - autoupdate does not work
 - multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
+- :o google c++ -> searches for c (need to escape the + in the url)
+- reload/stop buttons don't update enabled state
 
 FEATURES:
 9 marks of a Location (also should work with directories), [m a-zA-Z] to set it, [' a-zA-Z] to go there
   [m 0-9] marks a buffer instead [' 0-9] goes there
   also mark bookmarks (with mA-Z maybe and use only lowercase marks for inbuffer marks?)
   also support :mark and :marks
-8 :cd .. -> Up one directory, :cd goes to top location, [Backspace] command shortcut, use count (:3cd goes 3 levels up)
+8 :open .. -> Up one directory, :cd goes to top location, [Backspace] command shortcut, use count (:3cd goes 3 levels up)
 8 downloading of links to filesystem (:save <filename>)
 8 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
   with color support (for things like :ls)

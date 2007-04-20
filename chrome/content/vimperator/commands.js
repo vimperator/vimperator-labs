@@ -96,14 +96,14 @@ var g_commands = [/*{{{*/
         ["buffer", "b"],
         "Go to buffer number n. Full completion works.",
         null,
-        function (args) { tab_go(args.split(":")[0]); preview_window.hidden = true; },
+        function (args) { tab_go(args.split(":")[0]); },
         function (filter) {return get_buffer_completions(filter);}
     ],
     [
         ["buffers", "files", "ls"],
         "Shows a list of all buffers.",
         null,
-        function (args) {bushow("", false);},
+        function (args) {bufshow("", false);},
         null
     ],
     [
@@ -386,14 +386,14 @@ var g_mappings = [/*{{{*/
         ["b"],
         "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
-        function (args) { bushow("", true); openVimperatorBar('buffer '); }  
+        function (args) { bufshow("", true); openVimperatorBar('buffer '); }  
     ],
-    /*[ 
+    [ 
         ["B"],
         "Toggle buffer list",
         "Open the preview window with all currently opened tabs",
-        function (args) { preview_window.hidden == true ? bushow("", false) : preview_window.hidden = true; }
-    ],*/
+        buffer_preview_toggle,
+    ],
     [ 
         ["d"],
         "Delete current buffer (=tab)",
@@ -508,7 +508,7 @@ var g_mappings = [/*{{{*/
         yankCurrentLocation
     ],
     [ 
-        ["zi"],
+        ["zi", "+"],
         "Zoom in",
         "Zoom in current web page by 25%.<br>"+
         "Currently no count supported.",
@@ -522,7 +522,7 @@ var g_mappings = [/*{{{*/
         function(count) { zoom_in(4); }
     ],
     [ 
-        ["zo"],
+        ["zo", "-"],
         "Zoom out",
         "Zoom out current web page by 25%.<br>"+
         "Currently no count supported.",
@@ -692,13 +692,15 @@ var g_mappings = [/*{{{*/
         ["n"],
         "Find next",
         "Repeat the last \"/\" 1 time (until count is supported).",
-        gFindBar.onFindAgainCmd // this does not work, why?: goDoCommand('cmd_findAgain'); }
+        // don't use a closure for this, is just DoesNotWork (TM)
+        function(count) { gFindBar.onFindAgainCmd(); } // this does not work, why?: goDoCommand('cmd_findAgain'); }
     ],
     [ 
         ["N"],
         "Find previous",
         "Repeat the last \"/\" 1 time (until count is supported) in the opposite direction.",
-        gFindBar.onFindPreviousCmd // this does not work, why?: goDoCommand('cmd_findPrevious'); }
+        // don't use a closure for this, is just DoesNotWork (TM)
+        function(count) { gFindBar.onFindPreviousCmd(); } // this does not work, why?: goDoCommand('cmd_findPrevious'); }
     ],
 
     /* vimperator managment */
@@ -1174,21 +1176,6 @@ function hsshow(filter, fullmode)
         preview_window_show();
     }
 }
-function bushow(filter, in_comp_window)
-{
-    if (in_comp_window) // fill the completion list
-    {
-        g_completions = get_buffer_completions(filter);
-        completion_fill_list(0);
-        completion_show_list();
-    }
-    else // in the preview window
-    {
-        var items = get_buffer_completions(filter);
-        preview_window_fill(items);
-        preview_window_show();
-    }
-}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -1238,7 +1225,7 @@ function show_location_marks(mark)
 }
 
 ////////////////////////////////////////////////////////////////////////
-// tab related functions ////////////////////////////////////////// {{{1
+// tab/buffer related functions /////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 /* if index = 0, advance on tab
  * if index < 0, go one tab to the left
@@ -1276,6 +1263,52 @@ function tab_remove(count, focus_left_tab, quit_on_last_tab)
         gBrowser.mTabContainer.selectedIndex--;
     getBrowser().removeTab(tab);
 }
+
+function bufshow(filter, in_comp_window)
+{
+    if (in_comp_window) // fill the completion list
+    {
+        g_completions = get_buffer_completions(filter);
+        completion_fill_list(0);
+        completion_show_list();
+    }
+    else // in the preview window
+    {
+        var items = get_buffer_completions(filter);
+        preview_window_fill(items);
+        preview_window_show();
+    }
+}
+
+//toggles the buffer preview window
+function buffer_preview_toggle()
+{
+    if(g_bufshow == true)
+    {
+        preview_window.hidden = true;
+        g_bufshow = false;
+    }
+    else
+    {
+        bufshow("", false);
+        g_bufshow = true;
+    }
+}
+
+//updates the buffer preview in place
+function buffer_preview_update(event)
+{
+    if(g_bufshow == true)
+        bufshow("",false);
+}
+
+// adds listeners to buffer actions.
+var container = getBrowser().tabContainer;
+container.addEventListener("TabOpen", buffer_preview_update, false);
+container.addEventListener("TabSelect", buffer_preview_update, false);
+container.addEventListener("TabMove", buffer_preview_update, false);
+container.addEventListener("TabClose", buffer_preview_update, false);
+
 
 ////////////////////////////////////////////////////////////////////////
 // scrolling ////////////////////////////////////////////////////// {{{1
@@ -1356,6 +1389,9 @@ function zoom_in(factor)
         if (value > 500) value = 500;
 
         zoomMgr.textZoom = value;
+
+        hah.reshowHints();
+
         echo("Zoom value: " + value + "%");
     }
 }
@@ -1386,6 +1422,9 @@ function zoom_to(value)
     }
 
     zoomMgr.textZoom = value;
+
+    hah.reshowHints();
+
     echo("Zoom value: " + value + "%");
 }
 
@@ -1910,18 +1949,5 @@ function showMode()
 
     echo("-- " + g_modemessages[g_current_mode] + " --");
 }
-
-//  function keycodeToName(keyCode) {
-//    for (keyName in KeyboardEvent.prototype) {
-//      if (keyName.substr(0,7) == 'DOM_VK_' && KeyboardEvent.prototype[keyName] == keyCode) {
-//  // turn 'DOM_VK_KEY_NAME' into 'Key Name'
-//  parts = keyName.substr(7).split('_'); // strip off DOM_VK_ and split into words
-//  for (var i = 0; i < parts.length; i++)
-//    parts[i] = parts[i][0] + parts[i].substr(1).toLowerCase();
-//  return parts.join(' ');
-//      }
-//    }
-//    return 0;
-//  }
 
 // vim: set fdm=marker sw=4 ts=4 et:

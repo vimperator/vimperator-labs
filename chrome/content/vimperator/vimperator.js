@@ -43,6 +43,7 @@ var popup_allowed_events; // need to change and reset this firefox pref
 
 var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want to type 'gg')
 var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
+var g_bufshow = false;   // keeps track if the preview window shows current buffers ('B')
 
 // handles to our gui elements
 var preview_window = null;
@@ -82,9 +83,9 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        if (link != "")
-            echo(link);
-        else
+        echo(link);
+            
+        if (link == "")
             showMode();
             
     },

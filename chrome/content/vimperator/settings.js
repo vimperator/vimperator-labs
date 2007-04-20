@@ -92,7 +92,7 @@ var g_settings = [/*{{{*/
         function(value) { set_pref("focusedhintstyle", value); },
         function() { return get_pref("focusedhintstyle"); },
         "string",
-        "z-index:5000;font-family:monospace;font-size:12;color:ButtonText;background-color:ButtonShadow;border-color:ButtonShadow;border-width:1px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
+        "z-index:5000;font-family:monospace;font-size:12px;color:ButtonText;background-color:ButtonShadow;border-color:ButtonShadow;border-width:1px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
         null,
         null
     ],
@@ -136,7 +136,7 @@ var g_settings = [/*{{{*/
         function(value) { set_pref("hintstyle", value); },
         function() { return get_pref("hintstyle"); },
         "string",
-        "z-index:5000;font-family:monospace;font-size:12;color:black;background-color:yellow;border-color:ButtonShadow;border-width:0px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
+        "z-index:5000;font-family:monospace;font-size:12px;color:black;background-color:yellow;border-color:ButtonShadow;border-width:0px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
         null,
         null
     ],

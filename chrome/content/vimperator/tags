@@ -11,8 +11,10 @@ beep	commands.js	/^function beep()$/;"	f
 bmadd	commands.js	/^function bmadd(str)$/;"	f
 bmdel	commands.js	/^function bmdel(str)$/;"	f
 bmshow	commands.js	/^function bmshow(filter, fullmode)$/;"	f
-bushow	commands.js	/^function bushow(filter)$/;"	f
-changeHintFocus	hints.js	/^ 	function changeHintFocus(linkNumString, oldLinkNumString)$/;"	f
+buffer_preview_toggle	commands.js	/^function buffer_preview_toggle()$/;"	f
+buffer_preview_update	commands.js	/^function buffer_preview_update(event)$/;"	f
+bufshow	commands.js	/^function bufshow(filter, in_comp_window)$/;"	f
+changeHintFocus	hints.js	/^    function changeHintFocus(linkNumString, oldLinkNumString)$/;"	f
 completion_add_to_list	completion.js	/^function completion_add_to_list(completion_item, at_beginning)\/*{{{*\/$/;"	f
 completion_fill_list	completion.js	/^function completion_fill_list(startindex)\/*{{{*\/$/;"	f
 completion_select_next_item	completion.js	/^function completion_select_next_item()\/*{{{*\/$/;"	f
@@ -20,7 +22,7 @@ completion_select_previous_item	completion.js	/^function completion_select_previ
 completion_show_list	completion.js	/^function completion_show_list()\/*{{{*\/$/;"	f
 copyToClipboard	commands.js	/^function copyToClipboard(str)$/;"	f
 createCursorPositionString	vimperator.js	/^function createCursorPositionString()$/;"	f
-createHints	hints.js	/^ 	function createHints(win)$/;"	f
+createHints	hints.js	/^    function createHints(win)$/;"	f
 createProgressBar	vimperator.js	/^function createProgressBar(aProgress)$/;"	f
 deleteBookmark	bookmarks.js	/^function deleteBookmark(url)$/;"	f
 del_url_mark	commands.js	/^function del_url_mark(mark)$/;"	f
@@ -30,12 +32,12 @@ execute_command	commands.js	/^function execute_command(count, cmd, special, args
 filter_url_array	completion.js	/^function filter_url_array(urls, filter, use_regex)\/*{{{*\/$/;"	f
 focusContent	vimperator.js	/^function focusContent(clear_command_line, clear_statusline)$/;"	f
 focusNextFrame	commands.js	/^function focusNextFrame()$/;"	f
-formatHint	hints.js	/^ 	function formatHint(hintNum)$/;"	f
-genElemCoords	hints.js	/^ 	function genElemCoords(elem)$/;"	f
-genHintContainer	hints.js	/^ 	function genHintContainer(doc)$/;"	f
+formatHint	hints.js	/^    function formatHint(hintNum)$/;"	f
+genElemCoords	hints.js	/^    function genElemCoords(elem)$/;"	f
+genHintContainer	hints.js	/^    function genHintContainer(doc)$/;"	f
 getCurrentLinkLocation	commands.js	/^function getCurrentLinkLocation()$/;"	f
 getCurrentLocation	commands.js	/^function getCurrentLocation()$/;"	f
-getHintById	hints.js	/^ 	function getHintById(id, win)$/;"	f
+getHintById	hints.js	/^    function getHintById(id, win)$/;"	f
 getLinkNodes	vimperator.js	/^function getLinkNodes(doc)$/;"	f
 getPageLinkNodes	vimperator.js	/^function getPageLinkNodes()$/;"	f
 getProperty	bookmarks.js	/^function getProperty( aInput, aArc, DS )$/;"	f
@@ -53,23 +55,23 @@ get_url_completions	completion.js	/^function get_url_completions(filter)\/*{{{*\
 get_url_mark	commands.js	/^function get_url_mark(mark)$/;"	f
 goUp	commands.js	/^function goUp() \/\/ FIXME$/;"	f
 hasMode	commands.js	/^function hasMode(mode)$/;"	f
-help	commands.js	/^function help(section)$/;"	f
+help	commands.js	/^function help(section, easter)$/;"	f
 hit_a_hint	hints.js	/^function hit_a_hint()$/;"	f
 hsshow	commands.js	/^function hsshow(filter, fullmode)$/;"	f
 init	vimperator.js	/^function init()$/;"	f
-initDoc	hints.js	/^ 	function initDoc(event)$/;"	f
-invalidateCoords	hints.js	/^ 	function invalidateCoords(doc)$/;"	f
+initDoc	hints.js	/^    function initDoc(event)$/;"	f
+invalidateCoords	hints.js	/^    function invalidateCoords(doc)$/;"	f
 isFormElemFocused	vimperator.js	/^function isFormElemFocused()$/;"	f
 keyToString	vimperator.js	/^function keyToString(event)$/;"	f
 load_history	completion.js	/^function load_history()$/;"	f
 logMessage	vimperator.js	/^function logMessage(msg)$/;"	f
-makeHelpString	commands.js	/^	function makeHelpString(commands, color, beg, end, func)$/;"	f
-makeSettingsHelpString	commands.js	/^	function makeSettingsHelpString(command)$/;"	f
+makeHelpString	commands.js	/^    function makeHelpString(commands, color, beg, end, func)$/;"	f
+makeSettingsHelpString	commands.js	/^    function makeSettingsHelpString(command)$/;"	f
 nsBrowserStatusHandler	vimperator.js	/^function nsBrowserStatusHandler() \/*{{{*\/$/;"	f
 onCommandBarInput	vimperator.js	/^function onCommandBarInput(event)$/;"	f
 onCommandBarKeypress	vimperator.js	/^function onCommandBarKeypress(evt)\/*{{{*\/$/;"	f
 onEscape	vimperator.js	/^function onEscape()$/;"	f
-onResize	hints.js	/^ 	function onResize(event)$/;"	f
+onResize	hints.js	/^    function onResize(event)$/;"	f
 onVimperatorKeypress	vimperator.js	/^function onVimperatorKeypress(event)\/*{{{*\/$/;"	f
 openURLs	commands.js	/^function openURLs(str)$/;"	f
 openURLsInNewTab	commands.js	/^function openURLsInNewTab(str, activate)$/;"	f
@@ -78,9 +80,10 @@ outputAddonsList	commands.js	/^function outputAddonsList(aTarget)$/;"	f
 parseBookmarkString	bookmarks.js	/^function parseBookmarkString(str, res)$/;"	f
 preview_window_fill	completion.js	/^function preview_window_fill(completions)$/;"	f
 preview_window_select	completion.js	/^function preview_window_select(event)$/;"	f
+preview_window_show	completion.js	/^function preview_window_show()\/*{{{*\/$/;"	f
 quit	commands.js	/^function quit(save_session)$/;"	f
 reload	commands.js	/^function reload(all_tabs)$/;"	f
-removeHints	hints.js	/^ 	function removeHints(win)$/;"	f
+removeHints	hints.js	/^    function removeHints(win)$/;"	f
 removeMode	commands.js	/^function removeMode(mode)$/;"	f
 restart	commands.js	/^function restart()$/;"	f
 save_history	completion.js	/^function save_history()$/;"	f
@@ -89,8 +92,8 @@ scrollBufferRelative	commands.js	/^function scrollBufferRelative(right, down)$/;
 selectInput	commands.js	/^function selectInput()$/;"	f
 set	commands.js	/^function set(args, special)$/;"	f
 setCurrentMode	commands.js	/^function setCurrentMode(mode)$/;"	f
-setHintStyle	hints.js	/^ 	function setHintStyle(hintElem, styleString)$/;"	f
-setMouseOverElement	hints.js	/^	function setMouseOverElement(elem)$/;"	f
+setHintStyle	hints.js	/^    function setHintStyle(hintElem, styleString)$/;"	f
+setMouseOverElement	hints.js	/^    function setMouseOverElement(elem)$/;"	f
 setStatusbarColor	vimperator.js	/^function setStatusbarColor(color)$/;"	f
 set_firefox_pref	settings.js	/^function set_firefox_pref(name, value)$/;"	f
 set_guioptions	settings.js	/^function set_guioptions(value)$/;"	f
@@ -98,12 +101,13 @@ set_location_mark	commands.js	/^function set_location_mark(mark)$/;"	f
 set_pref	settings.js	/^function set_pref(name, value)$/;"	f
 set_showtabline	settings.js	/^function set_showtabline(value)$/;"	f
 set_url_mark	commands.js	/^function set_url_mark(mark, url)$/;"	f
-showHints	hints.js	/^	function showHints(win, off)$/;"	f
+showHints	hints.js	/^    function showHints(win, off)$/;"	f
+showMode	commands.js	/^function showMode()$/;"	f
 showStatusbarMessage	vimperator.js	/^function showStatusbarMessage(msg, field)$/;"	f
 show_location_marks	commands.js	/^function show_location_marks(mark)$/;"	f
 show_url_marks	commands.js	/^function show_url_marks(mark)$/;"	f
 source	commands.js	/^function source(filename)$/;"	f
-startCoordLoader	hints.js	/^ 	function startCoordLoader(doc)$/;"	f
+startCoordLoader	hints.js	/^    function startCoordLoader(doc)$/;"	f
 stepInHistory	commands.js	/^function stepInHistory(steps)$/;"	f
 stringToURLs	commands.js	/^function stringToURLs(str)$/;"	f
 tab_go	commands.js	/^function tab_go(index)$/;"	f

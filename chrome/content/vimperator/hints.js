@@ -265,7 +265,11 @@ function hit_a_hint()
  
     function onResize(event)
     {
-        doc = event.originalTarget;
+        if(event)
+            doc = event.originalTarget;
+        else
+            doc = window._content.document;
+
         invalidateCoords(doc);
         startCoordLoader(doc);
     }
@@ -440,6 +444,18 @@ function hit_a_hint()
         }
     };
         
+
+    this.reshowHints = function()
+    {
+        onResize(null);
+
+        if (isHahModeEnabled)
+        {
+            removeHints();
+            createHints();
+            showHints(null, 0);
+        }
+    };
  
  
     // this function 'click' an element, which also works
