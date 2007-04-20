@@ -3,6 +3,7 @@ date:
 	* version 0.4
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
+	* added 'B' command for continous buffer display
 	* changed hintsize to 12px by default
 	* 'previewheight' setting to set the maximum size for the preview window
 	* showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)

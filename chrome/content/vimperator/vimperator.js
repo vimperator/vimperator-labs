@@ -123,9 +123,13 @@ nsBrowserStatusHandler.prototype =
         },
     onLocationChange:function (aWebProgress, aRequest, aLocation)
         {
-            UpdateBackForwardButtons();
+            // firefox 3.0 doesn't seem to have them anymore
+            if (UpdateBackForwardButtons)
+                UpdateBackForwardButtons();
+
             var url = aLocation.spec;
-            gURLBar.value = url; // also update the original firefox location bar
+            if (gURLBar)
+                gURLBar.value = url; // also update the original firefox location bar
 
             // onLocationChange is also called when switching/deleting tabs
             if (hah.currentMode() != HINT_MODE_ALWAYS)
@@ -256,6 +260,10 @@ function init()
             }
             g_history.unshift([url, title]);
         }
+
+        // also reset the buffer list, since the url titles are valid here
+        if (g_bufshow)
+            bufshow("", false);
     }
     , null);
 

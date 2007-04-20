@@ -42,6 +42,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	<script type="application/x-javascript" src="completion.js"/>
 	<script type="application/x-javascript" src="bookmarks.js"/>
 	<script type="application/x-javascript" src="hints.js"/>
+	<script type="application/x-javascript" src="file.js"/>
 
 	<window id="main-window">
 		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">

@@ -391,7 +391,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["B"],
         "Toggle buffer list",
-        "Open the preview window with all currently opened tabs",
+        "Toggle the preview window with all currently opened tabs.",
         buffer_preview_toggle,
     ],
     [ 
@@ -1601,7 +1601,22 @@ function set(args, special)
 
 function source(filename)
 {
-    echoerr("Soucing not yet implemented");
+
+
+
+    //echoerr("Soucing not yet implemented");
+    var fd = fopen(filename, "<");
+    var s = fd.read();
+    fd.close();
+
+    try
+    {
+        eval(s);
+    }
+    catch(e)
+    {
+        alert(e);
+    }
 }
 
 
@@ -1773,7 +1788,6 @@ table.settings th {\
     doc.write(fulldoc);
     doc.close();
 }
-
 
 
 
