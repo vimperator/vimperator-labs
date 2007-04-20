@@ -281,7 +281,7 @@ var g_commands = [/*{{{*/
     [
         ["source", "so"],
         "Load a local javascript file and execute it",
-        "Not implemented yet",
+        "~ is supported as a shortcut for the $HOME directory.",
         source,
         null
     ],
@@ -1599,23 +1599,20 @@ function set(args, special)
     }
 }
 
-function source(filename)
+function source(filename, silent)
 {
-
-
-
-    //echoerr("Soucing not yet implemented");
-    var fd = fopen(filename, "<");
-    var s = fd.read();
-    fd.close();
-
     try
     {
+        var fd = fopen(filename, "<");
+        var s = fd.read();
+        fd.close();
+
         eval(s);
     }
     catch(e)
     {
-        alert(e);
+        if(!silent)
+            echoerr(e);
     }
 }
 

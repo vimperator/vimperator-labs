@@ -283,7 +283,13 @@ function init()
     // firefox preferences which we need to be changed to work well with vimperator
     set_firefox_pref("browser.startup.page", 3); // start with saved session
 
+
     logMessage("Initialized");
+
+    // at the very last, read a ~/.vimperatorrc
+    source("~/.vimperatorrc", true);
+
+    logMessage("~/.vimperatorrc sourced");
 }
 
 function unload()

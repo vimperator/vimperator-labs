@@ -1,6 +1,7 @@
 <pre>
 date:
 	* version 0.4
+	* :source support, and auto-sourcing ~/.vimperatorrc on startup
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
 	* added 'B' command for continous buffer display

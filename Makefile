@@ -2,7 +2,7 @@
 
 VERSION  = 0.4
 
-JAR_FILES     = ${shell find chrome/content/ -type f -a ! -path '*CVS*'} chrome.manifest
+JAR_FILES     = ${shell find chrome/content/ -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
 JAR           = chrome/vimperator.jar
 
 RELEASE_FILES = ${JAR} install.rdf chrome.manifest TODO AUTHORS Donators ChangeLog Makefile
