@@ -1,6 +1,8 @@
 <pre>
 date:
 	* version 0.4
+	* :help <section> supported, :help set will show help for the :set command
+	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page

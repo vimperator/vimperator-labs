@@ -302,6 +302,26 @@ function get_bookmark_completions(filter)/*{{{*/
     return filter_url_array(g_bookmarks, filter, true);
 }/*}}}*/
 
+function get_help_completions(filter)
+{
+    var help_completions = [];
+    help_completions = help_completions.concat(get_command_completions(filter));
+    help_completions = help_completions.concat(get_settings_completions(filter));
+    for(var i = 0; i < g_mappings.length; i++)
+    {
+        for(var j = 0; j < g_mappings[i][0].length; j++)
+        {
+            //var re = new RegExp("^" + filter);
+            if (g_mappings[i][0][j].indexOf(filter) == 0)
+            {
+                help_completions.push([g_mappings[i][0][j], g_mappings[i][1]]);
+                break; // only add a command once
+            }
+        }
+    }
+    return help_completions;
+}
+
 function get_history_completions(filter)/*{{{*/
 {
     var history = document.getElementById("hiddenHistoryTree");
@@ -372,6 +392,7 @@ function get_command_completions(filter)/*{{{*/
     }
     // commands should be sorted anyway, but it doesn't really hurt -> it DOES hurt :(
     //g_completions.sort();
+    return g_completions;
 }/*}}}*/
 
 function get_settings_completions(filter)/*{{{*/

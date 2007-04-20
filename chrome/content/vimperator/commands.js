@@ -161,7 +161,7 @@ var g_commands = [/*{{{*/
         "Open help window",
         "Open the help window in the current tab. You WILL be able to show a specific section with <code class=command>:help commands</code>.",
         help,
-        null
+        function(filter) { return get_help_completions(filter); }
     ],
     [
         ["history", "hs"],
@@ -281,6 +281,7 @@ var g_commands = [/*{{{*/
     [
         ["source", "so"],
         "Load a local javascript file and execute it",
+        "The .vimperatorrc file in your home directory is always sourced at start up.<br>"+
         "~ is supported as a shortcut for the $HOME directory.",
         source,
         null
@@ -1027,7 +1028,7 @@ function stringToURLs(str)
             matches = urls[url].match(regex);
             if(matches != null)
             {
-                urls[url] = g_searchengines[i][1].replace(/%s/, matches[1]);
+                urls[url] = g_searchengines[i][1].replace(/%s/, encodeURIComponent(matches[1]));
                 break begin;
             }
         }
@@ -1035,7 +1036,7 @@ function stringToURLs(str)
         /* if the string contains a space or does not conatain any of: .:/
          * open it with default searchengine */
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
-            urls[url] = g_searchengines[0][1].replace(/%s/, urls[url]);
+            urls[url] = g_searchengines[0][1].replace(/%s/, encodeURIComponent(urls[url]));
     }
     return urls;
 }
@@ -1299,7 +1300,7 @@ function buffer_preview_toggle()
 function buffer_preview_update(event)
 {
     if(g_bufshow == true)
-        bufshow("",false);
+        bufshow("", false);
 }
 
 // adds listeners to buffer actions.
@@ -1677,7 +1678,7 @@ table.settings th {\
         '<p align=center bgcolor=blue borderwidth=1><b>First there was a Navigator, then there was an Explorer. Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</b></p>'
 
     var introduction = '<h2>Introduction</h2>' +
-        '<p>Vimperator is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
+        '<p><a href="http://vimperator.mozdev.net">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
         'It has similar key bindings, and you could call it a modal webbrowser, as key bindings differ according to which mode you are in.</p>' +
 
         '<p><font color=red><b>Warning:</b></font> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden. If you really need them, type: <code class=command>:set guioptions=mT</code> to get it back. ' +
@@ -1720,9 +1721,9 @@ table.settings th {\
                 cmd_name = cmd_name.replace(/</g, "&lt;");
                 cmd_name = cmd_name.replace(/>/g, "&gt;");
                 if (j==0) // color the first item differently
-                    command += "<font color='" + color + "'><b><code>" +beg+ cmd_name +end+ '</code></b></font><br>';
+                    command += "<font color='" + color + "'><b><code id='" + commands[i][0][j] + "'>" +beg+ cmd_name +end+ '</code></b></font><br>';
                 else
-                    command += "<code>" +beg+ cmd_name +end+ '</code><br>';
+                    command += "<code id='" + commands[i][0][j] + "'>" +beg+ cmd_name +end+ '</code><br>';
             }
             ret += command + '</td><td>';
             if (commands[i][1])
@@ -1762,10 +1763,17 @@ table.settings th {\
         '<p><table class="vimperator mappings">'
     mappings += makeHelpString(g_mappings, "#102663", "", "", null);
     mappings += '</table></p>';
+    if (section && section == 'holy-grail')
+        mappings += '<span id="holy-grail">You found it, Arthur!</span>';
 
     var commands = '<h2>Commands</h2><p><table class="vimperator commands">'
     commands += makeHelpString(g_commands, "#632610", ":", "", null);
     commands += '</table></p>';
+    if (section && section == '42')
+        commands += '<p id="42">What is the meaning of life, the universe and everything?<br/>' +
+                    'Douglas Adams, the only person who knew what this question really was about is<br/>' +
+                    'now dead, unfortunately.  So now you might wonder what the meaning of death<br/>' +
+                    'is...</p>';
 
     var settings = '<h2>Settings</h2><p><table class="vimperator settings">'
     settings += makeHelpString(g_settings, "#106326", "'", "'", makeSettingsHelpString);
@@ -1784,8 +1792,30 @@ table.settings th {\
     doc.open();
     doc.write(fulldoc);
     doc.close();
+    if (section)
+    {
+        var element = doc.getElementById(section);
+        if (!element)
+        {
+            echoerr("E149: Sorry, no help for " + section);
+            return;
+        }
+        var pos = cumulativeOffset(element);
+        window.content.scrollTo(pos[0], pos[1]);
+    }
 }
 
+
+function cumulativeOffset(element) {
+    var valueT = 0, valueL = 0;
+    if (!element) return [0, 0];
+    do {
+        valueT += element.offsetTop  || 0;
+        valueL += element.offsetLeft || 0;
+        element = element.offsetParent;
+    } while (element);
+    return [valueL, valueT];
+}
 
 
 

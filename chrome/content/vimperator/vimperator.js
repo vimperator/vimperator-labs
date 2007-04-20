@@ -118,6 +118,8 @@ nsBrowserStatusHandler.prototype =
             else if (aFlag & nsIWebProgressListener.STATE_STOP)
             {
                 updateStatusbar();
+                // also reset the buffer list, since the url titles are valid here
+                buffer_preview_update();
             }
             return 0;
         },
@@ -261,9 +263,6 @@ function init()
             g_history.unshift([url, title]);
         }
 
-        // also reset the buffer list, since the url titles are valid here
-        if (g_bufshow)
-            bufshow("", false);
     }
     , null);
 
