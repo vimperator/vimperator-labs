@@ -272,7 +272,7 @@ function init()
         setTimeout(function() { get_url_completions(""); } , 100);
 
     // firefox preferences which we need to be changed to work well with vimperator
-    set_firefox_pref("browser.sessionstore.resume_session_once", true);
+    set_firefox_pref("browser.startup.page", 3); // start with saved session
 
     logMessage("Initialized");
 }

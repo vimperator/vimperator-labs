@@ -71,11 +71,8 @@ function completion_show_list()/*{{{*/
         items = COMPLETION_MAXITEMS;
     if (items > 1) // FIXME
     {
-        //alert(completion_list.getRowCount().toString());
         completion_list.setAttribute("rows", items.toString());
-        //completion_list.rowCountChanged(0, items);
         completion_list.hidden = false;
-        //completion_list.selectedIndex = selected_index;
     }
     else
         completion_list.hidden = true;
@@ -514,4 +511,16 @@ function preview_window_select(event)
         return false;
 }
 
+function preview_window_show()/*{{{*/
+{
+    var items = preview_window.getElementsByTagName("listitem").length;
+    var height = get_pref("previewheight");
+    if (items > height)
+        items = height;
+    if (items < 3)
+        items = 3;
+
+    preview_window.setAttribute("rows", items.toString());
+    preview_window.hidden = false;
+}/*}}}*/
 // vim: set fdm=marker sw=4 ts=4 et:

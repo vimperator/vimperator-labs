@@ -1160,7 +1160,7 @@ function bmshow(filter, fullmode)
     {
         var items = get_bookmark_completions(filter);
         preview_window_fill(items);
-        preview_window.hidden = false;
+        preview_window_show();
     }
 }
 function hsshow(filter, fullmode)
@@ -1171,7 +1171,7 @@ function hsshow(filter, fullmode)
     {
         var items = get_history_completions(filter);
         preview_window_fill(items);
-        preview_window.hidden = false;
+        preview_window_show();
     }
 }
 function bushow(filter, in_comp_window)
@@ -1186,7 +1186,7 @@ function bushow(filter, in_comp_window)
     {
         var items = get_buffer_completions(filter);
         preview_window_fill(items);
-        preview_window.hidden = false;
+        preview_window_show();
     }
 }
 
@@ -1418,10 +1418,10 @@ function beep()
 // quit vimperator, no matter how many tabs/windows are open
 function quit(save_session)
 {
-    if (save_history)
-        set_firefox_pref("browser.sessionstore.resume_session_once", true);
+    if (save_session)
+        set_firefox_pref("browser.startup.page", 3); // start with saved session
     else
-        set_firefox_pref("browser.sessionstore.resume_session_once", false);
+        set_firefox_pref("browser.startup.page", 1); // start with default homepage session
 
     goQuitApplication();
 }

@@ -1,6 +1,9 @@
 <pre>
 date:
 	* version 0.4
+	* fixed saving of session
+	* 'previewheight' setting to set the maximum size for the preview window
+	* showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
 	* gh goes home :) gH in a new tab
 	* :open! bypasses cache
 	* :buffer and :buffers support (patch from Lars Kindler)

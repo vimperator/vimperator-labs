@@ -174,6 +174,17 @@ var g_settings = [/*{{{*/
         null,
         null
     ],
+    [
+        ["previewheight", "pvh"],
+        "Default height for preview window",
+        "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with <code class=command>:pclose</close>.",
+        function(value) { set_pref("previewheight", value); },
+        function() { return get_pref("previewheight"); },
+        "number",
+        10,
+        function (value) { if (value>=1 && value <=50) return true; else return false; },
+        null
+    ],
 	[
 		["showmode", "smd"],
 		"Show the current mode in the command line",

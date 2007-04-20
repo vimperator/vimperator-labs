@@ -51,4 +51,6 @@ RANDOM IDEAS:
 * numbered tabs
 * make hints work with usermode
 * https://addons.mozilla.org/en-US/firefox/addon/4125 - use vim to edit text fields
+* Would it be possible to add a setting "maxcompletionsshown" and 
+  "maxpreviewwindowheight" or something like this?
 </pre>
