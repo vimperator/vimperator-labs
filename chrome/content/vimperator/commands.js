@@ -1805,20 +1805,22 @@ table.settings th {\
     }
 }
 
-
-function cumulativeOffset(element) {
+function cumulativeOffset(element)
+{
     var valueT = 0, valueL = 0;
-    if (!element) return [0, 0];
-    do {
+    if (!element)
+        return [0, 0];
+
+    do
+    {
         valueT += element.offsetTop  || 0;
         valueL += element.offsetLeft || 0;
         element = element.offsetParent;
-    } while (element);
+    }
+    while (element);
+
     return [valueL, valueT];
 }
-
-
-
 
 
 
