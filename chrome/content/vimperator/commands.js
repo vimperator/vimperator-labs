@@ -1678,7 +1678,7 @@ table.settings th {\
         '<p align=center bgcolor=blue borderwidth=1><b>First there was a Navigator, then there was an Explorer. Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</b></p>'
 
     var introduction = '<h2>Introduction</h2>' +
-        '<p><a href="http://vimperator.mozdev.net">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
+        '<p><a href="http://vimperator.mozdev.org">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
         'It has similar key bindings, and you could call it a modal webbrowser, as key bindings differ according to which mode you are in.</p>' +
 
         '<p><font color=red><b>Warning:</b></font> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden. If you really need them, type: <code class=command>:set guioptions=mT</code> to get it back. ' +
@@ -1713,7 +1713,7 @@ table.settings th {\
         var ret = "";
         for (var i=0; i < commands.length; i++)
         {
-            ret += '<tr>';
+            ret += '<tr valign="top">';
             var command = "<td>";
             for (var j=0; j < commands[i][0].length; j++)
             {

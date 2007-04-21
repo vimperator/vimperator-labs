@@ -212,9 +212,13 @@ function hit_a_hint()
         if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
         {
             beep();
-            linkNumString = '';
-            hintedElems = [];
-            isHahModeEnabled = false;
+            alert('h');
+            this.disableHahMode(win);
+            alert('g');
+//            setCurrentMode(MODE_NORMAL);
+//            linkNumString = '';
+//            hintedElems = [];
+//            isHahModeEnabled = false;
             return;
         }
 

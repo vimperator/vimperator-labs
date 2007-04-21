@@ -125,8 +125,8 @@ nsBrowserStatusHandler.prototype =
         },
     onLocationChange:function (aWebProgress, aRequest, aLocation)
         {
-            // firefox 3.0 doesn't seem to have them anymore
-            if (UpdateBackForwardButtons)
+            // firefox 3.0 doesn't seem to have this function anymore
+            if (typeof UpdateBackForwardButtons == "function")
                 UpdateBackForwardButtons();
 
             var url = aLocation.spec;
