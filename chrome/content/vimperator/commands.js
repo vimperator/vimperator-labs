@@ -47,8 +47,9 @@ var g_commands = [/*{{{*/
     [
         ["back", "ba"],
         "Go back in the browser history",
-        "Count is supported, <code>:3back</code> goes back 3 pages in the browser history.",
-        function(args, special, count) { stepInHistory(count > 0 ? -1 * count : -1); },
+        "Count is supported, <code>:3back</code> goes back 3 pages in the browser history.<br>"+
+        "The special version <code>:back!</code> goes to the beginning of the browser history.",
+        function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
         null
     ],
     [
@@ -145,8 +146,9 @@ var g_commands = [/*{{{*/
     [
         ["forward", "fw"],
         "Go forward in the browser history",
-        "Count is supported, <code>:3forward</code> goes forward 3 pages in the browser history.",
-        function(count) { stepInHistory(count > 0 ? count : 1); },
+        "Count is supported, <code>:3forward</code> goes forward 3 pages in the browser history.<br>"+
+        "The special version <code>:back!</code> goes to the beginning of the browser history.",
+        function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
         null
     ],
     [
@@ -964,23 +966,41 @@ function echoerr(msg)
 function stepInHistory(steps)
 {
     var index = getWebNavigation().sessionHistory.index + steps;
-    if (index >= 0 && index < getWebNavigation().sessionHistory.count) {
+    if (index >= 0 && index < getWebNavigation().sessionHistory.count)
+    {
         getWebNavigation().gotoIndex(index);
     }
     else
     {
         beep();
         if(index<0)
-            echo("Already at beginning of history");
+            echo("Cannot go past beginning of history");
         else
-            echo("Already at end of history");
+            echo("Cannot go past end of history");
     }
 }
-
-function goUp() // FIXME
+function historyGoToBeginning()
 {
-
+    var index = getWebNavigation().sessionHistory.index;
+    if (index == 0)
+    {
+            echo("Already at beginning of history");
+            return;
+    }
+    getWebNavigation().gotoIndex(0);
 }
+function historyGoToEnd()
+{
+    var index = getWebNavigation().sessionHistory.index;
+    var max = getWebNavigation().sessionHistory.count -1;
+    if (index == max)
+    {
+            echo("Already at end of history");
+            return;
+    }
+    getWebNavigation().gotoIndex(max);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////

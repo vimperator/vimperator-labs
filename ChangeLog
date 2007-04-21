@@ -1,6 +1,9 @@
 <pre>
 date:
 	* version 0.4
+	* :back! goes to beginning of history now
+	* diabled firefox 3.0 support for now, as there are just too many small
+	  bugs
 	* :help <section> supported, :help set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
