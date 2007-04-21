@@ -1801,7 +1801,8 @@ table.settings th {\
             return;
         }
         var pos = cumulativeOffset(element);
-        window.content.scrollTo(pos[0], pos[1]);
+        // horizontal offset is annyoing, set it to 0 (use pos[0] if you want horizontal offset)
+        window.content.scrollTo(0, pos[1]);
     }
 }
 
