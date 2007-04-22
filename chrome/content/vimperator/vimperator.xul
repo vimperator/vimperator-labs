@@ -79,7 +79,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 				<textbox class="plain" id="vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
 					onkeypress="onCommandBarKeypress(event);" oninput="onCommandBarInput(event);"
-					 style="font-family: monospace"/>
+					onmousedown="onCommandBarMouseDown(event);" style="font-family: monospace"/>
 			</vbox>
 		</toolbar>
 

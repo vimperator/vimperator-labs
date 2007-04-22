@@ -129,6 +129,19 @@ function fo_write(buf)
 LocalFile.prototype.read =
 function fo_read(max)
 {
+    if (this.localFile.isDirectory())
+    {
+        var entries = this.localFile.directoryEntries;
+        var array = [];
+        while(entries.hasMoreElements())
+        {
+            var entry = entries.getNext();
+            entry.QueryInterface(Components.interfaces.nsIFile);
+            array.push(entry);
+        }
+        return array;
+    }
+
     if (!("inputStream" in this))
         throw "file not open for reading.";
 

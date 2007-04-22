@@ -131,16 +131,11 @@ var g_commands = [/*{{{*/
     ],
     [
         ["execute", "exe"],
-        "Run any javascript command through eval()",
-        "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br>"+
-        "<code>:exec alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br>"+
-        "The special version <code>:execute!</code> will open the javascript console of Firefox.",
-        function(args, special) {
-            if (special) // open javascript console
-                openURLsInNewTab("chrome://global/content/console.xul", true);
-            else
-                eval(args);
-        },
+        "Executes a string as an Ex command",
+        "Usage: <code>:execute {expr1} [ ... ]</code><br>" +
+        "Executes the string that results from the evaluation of {expr1} as an Ex command.<br>"+
+        "<code>:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br>",
+        execute,
         null
     ],
     [
@@ -173,6 +168,21 @@ var g_commands = [/*{{{*/
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
         hsshow,
         function(filter) { return get_history_completions(filter); }
+    ],
+    [
+        ["javascript", "js"],
+        "Run any javascript command through eval()",
+        "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br>" +
+        "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br>" +
+        "<code>:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br>" +
+        "The special version <code>:javascript!</code> will open the javascript console of Firefox.",
+        function(args, special) {
+            if (special) // open javascript console
+                openURLsInNewTab("chrome://global/content/console.xul", true);
+            else
+                eval(args);
+        },
+        null
     ],
     [
         ["mark"],
@@ -286,7 +296,7 @@ var g_commands = [/*{{{*/
         "The .vimperatorrc file in your home directory is always sourced at start up.<br>"+
         "~ is supported as a shortcut for the $HOME directory.",
         source,
-        null
+        function (filter) { return get_file_completions(filter); }
     ],
     [
         ["tabnext", "tn", "tnext"],
@@ -910,6 +920,7 @@ function get_command(cmd) // {{{
 
 function execute_command(count, cmd, special, args) // {{{
 {
+    if (!cmd) return;
     var command = get_command(cmd);
     if (command == null)
     {
@@ -929,6 +940,86 @@ function execute_command(count, cmd, special, args) // {{{
 
 } // }}}
 
+function tokenize_ex(string, tag)
+{
+    // removing commends
+    string.replace(/\s*".*$/, '');
+    if (tag)
+    {
+        if (string == tag)
+            return [null, null, null, null, false];
+        else
+            return [null, null, null, string, tag];
+    }
+
+    // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
+    var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?))?$/);
+    if (!matches) return [null, null, null, null, null];
+    matches.shift();
+
+    if (matches[0])
+    {
+        matches[0] = parseInt(matches[0]);
+        if (isNaN(matches[0])) matches[0] = 0;
+    }
+    else matches[0] = 0;
+    matches[2] = !!matches[2];
+    matches.push(null);
+    if (matches[3])
+    {
+        tag = matches[3].match(/<<\s*(\w+)/);
+        if (tag && tag[1])
+            matches[4] = tag[1];
+    }
+    else matches[3] = '';
+
+    return matches;
+}
+
+function multiliner(line, prev_match, heredoc)
+{
+    var end = true;
+    var match = tokenize_ex(line, prev_match[4]);
+    if (prev_match[3] === undefined) prev_match[3] = '';
+    if (match[4] === null)
+    {
+        focusContent(false, true); // also sets comp_tab_index to -1
+        execute_command.apply(this, match);
+    }
+    else
+    {
+        if (match[4] === false)
+        {
+            prev_match[3] = prev_match[3].replace(new RegExp('<<\s*' + prev_match[4]), heredoc.replace(/\n$/, ''));
+            execute_command.apply(this, prev_match);
+            prev_match = new Array(5);
+            prev_match[3] = '';
+            heredoc = '';
+        }
+        else
+        {
+            end = false;
+            if (!prev_match[3])
+            {
+                prev_match[0] = match[0];
+                prev_match[1] = match[1];
+                prev_match[2] = match[2];
+                prev_match[3] = match[3];
+                prev_match[4] = match[4];
+            }
+            else
+            {
+                heredoc += match[3] + '\n';
+            }
+        }
+    }
+    return [prev_match, heredoc, end];
+}
+
+function execute(string)
+{
+    return execute_command.apply(this, tokenize_ex(string.replace(/^'(.*)'$/, '$1')));
+}
 ////////////////////////////////////////////////////////////////////////
 // statusbar/commandbar handling ////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
@@ -1628,7 +1719,12 @@ function source(filename, silent)
         var s = fd.read();
         fd.close();
 
-        eval(s);
+        var prev_match = new Array(5);
+        var heredoc = '';
+        var end = false;
+        s.split('\n').forEach(function (line) {
+            [prev_match, heredoc, end] = multiliner(line, prev_match, heredoc);
+        });
     }
     catch(e)
     {
@@ -1636,7 +1732,6 @@ function source(filename, silent)
             echoerr(e);
     }
 }
-
 
 function help(section, easter)
 {

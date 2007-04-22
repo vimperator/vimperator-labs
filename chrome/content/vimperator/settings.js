@@ -64,17 +64,6 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["completeopt", "cot"],
-        "Define how command line completion works",
-        "Not implemented yet.",
-        function(value) { set_pref("completeopt", value); },
-        function() { return get_pref("completeopt"); },
-        "stringlist",
-        "menu",
-        null,
-        null
-    ],
-    [
         ["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
         null,
@@ -219,6 +208,17 @@ var g_settings = [/*{{{*/
         function() { return opt_usermode; },
         "boolean",
         false,
+        null,
+        null
+    ],
+    [
+        ["wildmode", "wim"],
+        "Define how command line completion works",
+        "Not implemented yet.",
+        function(value) { set_pref("wildmode", value); },
+        function() { return get_pref("wildmode"); },
+        "stringlist",
+        "menu",
         null,
         null
     ]

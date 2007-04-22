@@ -45,6 +45,10 @@ var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want
 var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
 var g_bufshow = false;   // keeps track if the preview window shows current buffers ('B')
 
+// handles multi-line commands
+var prev_match = new Array(5);
+var heredoc = '';
+
 // handles to our gui elements
 var preview_window = null;
 var status_line = null;
@@ -83,7 +87,7 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        echo(link);
+        updateStatusbar(link);
             
         if (link == "")
             showMode();
@@ -518,45 +522,24 @@ function onVimperatorKeypress(event)/*{{{*/
     updateStatusbar();
     return false;
 }/*}}}*/
+
 function onCommandBarKeypress(evt)/*{{{*/
 {
+    var end = false;
     try
     {
         /* parse our command string into tokens */
         var command = command_line.value;
 
-        var matches1 = command.match(/^:(\d+)/);
-        var matches2 = command.match(/^:(\d+)?([a-zA-Z!]+)/);
-        var matches3 = command.match(/^:(\d+)?([a-zA-Z!]+)\s*(.*?)\s*$/);
-        var count = 0;
-        var cmd = "";
-        var args= "";
-        var special = false;
-
-        if (matches1 != null && matches1.length == 2)
-            count = parseInt(matches1[1], 10);
-        if (matches2 != null && matches2.length >= 3)
-            cmd = matches2[2];
-        if (matches3 != null && matches3.length >= 4)
-            args = matches3[3];
-
-        /* if the user executes a command with ! at the end */
-        if (cmd.length - 1 == cmd.lastIndexOf("!"))
-        {
-            special = true;
-            cmd = cmd.replace(/!$/, "");
-        }
-        else
-            special = false;
-
         /* user pressed ENTER to carry out a command */
         if (evt.keyCode == KeyEvent.DOM_VK_RETURN)
         {
             // unfocus command line first
-            focusContent(false, true); // also sets comp_tab_index to -1
             add_to_command_history(command);
 
-            execute_command(count, cmd, special, args);
+            [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
+            if (!end)
+                command_line.value = "";
         }
 
         else if ((evt.keyCode == KeyEvent.DOM_VK_ESCAPE) ||
@@ -606,6 +589,8 @@ function onCommandBarKeypress(evt)/*{{{*/
         /* user pressed TAB to get completions of a command */
         else if (evt.keyCode == KeyEvent.DOM_VK_TAB)
         {
+            var match = tokenize_ex(command);
+            var [count, cmd, special, args] = match;
             //always reset our completion history so up/down keys will start with new values
             comp_history_index = -1;
 
@@ -714,6 +699,17 @@ function onCommandBarInput(event)
         command_line.value = ":";
 }
 
+function onCommandBarMouseDown(event)
+{
+    if (command_line.value.indexOf(':') != 0)
+    {
+        command_line.blur();
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////
 // focus and mode handling //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
@@ -802,12 +798,12 @@ function setStatusbarColor(color)
     bar.setAttribute("style", "background-color: " + color);
 }
 
-function updateStatusbar()
+function updateStatusbar(message)
 {
     var buffers =   "[" + (gBrowser.tabContainer.selectedIndex + 1).toString() + "/" +
         gBrowser.tabContainer.childNodes.length.toString() + "]";
 
-    showStatusbarMessage(getCurrentLocation(), STATUSFIELD_URL);
+    showStatusbarMessage(message || getCurrentLocation(), STATUSFIELD_URL);
     showStatusbarMessage(" " + g_inputbuffer + " ", STATUSFIELD_INPUTBUFFER);
     showStatusbarMessage("", STATUSFIELD_PROGRESS);
     showStatusbarMessage(buffers, STATUSFIELD_BUFFERS);
