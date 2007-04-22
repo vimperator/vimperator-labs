@@ -1,10 +1,12 @@
 <pre>
 Main developer:
   * Martin Stubenschrott (stubenschrott@gmx.net)
+
+Developers:
+  * Viktor Kojouharov (Виктор Кожухаров)
  
 Patches:
   * Muthu Kannan (ctrl-v support)
-  * Viktor Kojouharov (Виктор Кожухаров) (too many patches to count :) )
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:cd command)
   * Bart Trojanowski (Makefile)
