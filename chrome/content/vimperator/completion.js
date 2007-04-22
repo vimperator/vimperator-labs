@@ -191,11 +191,11 @@ function get_file_completions(filter)/*{{{*/
     var fd = fopen(dir, "<");
     if (!fd) return [];
     var entries = fd.read();
-    var delim = (fd.path.search(/\\/) != -1) ? "\\" : "/";
+    var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
     var reg = new RegExp("^" + fd.path + delim + compl);
     entries.forEach(function(file) {
         if (file.path.search(reg) != -1)
-            g_completions.push([file.path]);
+            g_completions.push([file.path, '']);
     });
 
     return g_completions;
