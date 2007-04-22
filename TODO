@@ -8,7 +8,6 @@ BUGS:
 - The RSS feed button in the address bar no longer works.
 - autoupdate does not work
 - multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
-- :o google c++ -> searches for c (need to escape the + in the url)
 - reload/stop buttons don't update enabled state
 
 FEATURES:
