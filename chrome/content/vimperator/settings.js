@@ -15,7 +15,7 @@ var opt_fullscreen = false;
  * format:
  * [
  *     0: [all names of this setting],
- *     1: description,
+ *     1: usage,
  *     2: help text,
  *     3: set_function,
  *     4: get_function,
@@ -28,7 +28,8 @@ var opt_fullscreen = false;
 var g_settings = [/*{{{*/
     [
         ["activate"],
-        "Define when tabs are automatically activated",
+        ["activate"],
+        "Define when tabs are automatically activated<br/>" +
         "Not implemented yet",
         function(value) { set_pref("activate", value); },
         function() { return get_pref("activate"); },
@@ -39,8 +40,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["beep"],
+        ["beep"],
         "Emit a pc speaker beep on certain errors",
-        null,
         function(value) { set_pref("beep", value); },
         function() { return get_pref("beep"); },
         "boolean",
@@ -50,7 +51,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["complete", "cpt"],
-        "Order and items which are completed at the :[tab]open prompt",
+        ["complete", "cpt"],
+        "Order and items which are completed at the :[tab]open prompt<br/>" +
         "Available items:<br>"+
         "<ul><li><b>s</b>: Search machines</li><li>"+
         "        <b>b</b>: Bookmarks</li><li>"+
@@ -65,8 +67,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["extendedhinttags", "eht"],
-        "XPath string of hintable elements activated by ';'",
-        null,
+        ["extendedhinttags", "eht"],
+        "XPath string of hintable elements activated by ';'<br/>",
         function(value) { set_pref("extendedhinttags", value); },
         function() { return get_pref("extendedhinttags"); },
         "string",
@@ -76,8 +78,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["focusedhintstyle", "fhs"],
+        ["focusedhintstyle", "fhs"],
         "CSS specification of focused hints appearance",
-        null,
         function(value) { set_pref("focusedhintstyle", value); },
         function() { return get_pref("focusedhintstyle"); },
         "string",
@@ -87,8 +89,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["fullscreen", "fs"],
+        ["fullscreen", "fs"],
         "Shows the current window fullscreen",
-        null,
         function(value) { opt_fullscreen = value; BrowserFullScreen(); },
         function() { return opt_fullscreen; },
         "boolean",
@@ -98,7 +100,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["guioptions", "go"],
-        "Shows or hides the menu, toolbar and scrollbars",
+        ["guioptions", "go"],
+        "Shows or hides the menu, toolbar and scrollbars<br/>" +
         "Supported characters:<br><ul><li><b>m</b>: menubar</li><li><b>T</b>: toolbar<li><b>b</b>: bookmark bar</li><li><b>s</b>: original Firefox statusbar</ul>",
         function(value) { set_pref("guioptions", value); set_guioptions(value); },
         function() { return get_pref("guioptions"); },
@@ -109,8 +112,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["hintchars", "hc"],
+        ["hintchars", "hc"],
         "String of single characters which can be used to follow hints",
-        null,
         function(value) { set_pref("hintchars", value); },
         function() { return get_pref("hintchars"); },
         "charlist",
@@ -120,8 +123,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["hintstyle", "hs"],
+        ["hintstyle", "hs"],
         "CSS specification of unfocused hints appearance",
-        null,
         function(value) { set_pref("hintstyle", value); },
         function() { return get_pref("hintstyle"); },
         "string",
@@ -131,8 +134,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["hinttags"],
+        ["hinttags"],
         "XPath string of hintable elements activated by 'f'",
-        null,
         function(value) { set_pref("hinttags", value); },
         function() { return get_pref("hinttags"); },
         "string",
@@ -142,7 +145,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["maxhints", "mh"],
-        "Maximum of simultanously shown hints",
+        ["maxhints", "mh"],
+        "Maximum of simultanously shown hints<br/>" +
         "If you want to speed up display of hints, choose a smaller value",
         function(value) { set_pref("maxhints", value); },
         function() { return get_pref("maxhints"); },
@@ -153,7 +157,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["preload"],
-        "Speed up first time history/bookmark completion",
+        ["preload"],
+        "Speed up first time history/bookmark completion<br/>" +
         "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br>"+
         "In order to also speed up first time access, it is cached at startup, if this option is set (recommended).",
         function(value) { set_pref("preload", value); },
@@ -165,7 +170,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["previewheight", "pvh"],
-        "Default height for preview window",
+        ["previewheight", "pvh"],
+        "Default height for preview window<br/>" +
         "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with <code class=command>:pclose</close>.",
         function(value) { set_pref("previewheight", value); },
         function() { return get_pref("previewheight"); },
@@ -176,8 +182,8 @@ var g_settings = [/*{{{*/
     ],
 	[
 		["showmode", "smd"],
+		["showmode", "smd"],
 		"Show the current mode in the command line",
-		null,
         function(value) { set_pref("showmode", value); },
         function() { return get_pref("showmode"); },
 		"boolean",
@@ -187,7 +193,8 @@ var g_settings = [/*{{{*/
 	],
     [
         ["showtabline", "stal"],
-        "Control when to show the tab bar of opened web pages",
+        ["showtabline", "stal"],
+        "Control when to show the tab bar of opened web pages<br/>" +
         "Available items:<br>"+
         "<ul><li><b>0</b>: Never show tab bar</li><li>"+
         "        <b>1</b>: Show tab bar only if more than one tab is open</li><li>"+
@@ -202,7 +209,8 @@ var g_settings = [/*{{{*/
     ],
     [
         ["usermode", "um"],
-        "Show current website with a minimal stylesheet to make it easily accessible",
+        ["usermode", "um"],
+        "Show current website with a minimal stylesheet to make it easily accessible<br/>" +
         "Note that this is a local setting for now, later it may be split into a global and <code style=command>:setlocal</code> part",
         function(value) { opt_usermode = value; setStyleDisabled(value); },
         function() { return opt_usermode; },
@@ -213,12 +221,13 @@ var g_settings = [/*{{{*/
     ],
     [
         ["wildmode", "wim"],
-        "Define how command line completion works",
+        ["wildmode", "wim"],
+        "Define how command line completion works<br/>" +
         "Not implemented yet.",
         function(value) { set_pref("wildmode", value); },
         function() { return get_pref("wildmode"); },
         "stringlist",
-        "menu",
+        "full",
         null,
         null
     ]

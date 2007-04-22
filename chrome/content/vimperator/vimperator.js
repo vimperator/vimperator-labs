@@ -537,7 +537,13 @@ function onCommandBarKeypress(evt)/*{{{*/
             // unfocus command line first
             add_to_command_history(command);
 
-            [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
+            try {
+                [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
+            } catch(e) {
+                echoerr(e.name + ": " + e.message);
+                prev_match = new Array(5);
+                heredoc = '';
+            }
             if (!end)
                 command_line.value = "";
         }

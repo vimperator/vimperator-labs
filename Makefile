@@ -15,7 +15,7 @@ ZIP = zip
 # find the vimperator chrome dir
 
 FIREFOX_DEFAULT = $(wildcard ${HOME}/.mozilla/firefox/*.default)
-VIMPERATOR_CHROME = $(wildcard ${FIREFOX_DEFAULT}/extensions/{f9570b26-e246-4753-9b68-61aa95994237}/chrome/)
+VIMPERATOR_CHROME = $(wildcard ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/)
 
 # specify V=1 on make line to see more verbose output
 Q=$(if ${V},,@)
