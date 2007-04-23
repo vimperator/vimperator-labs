@@ -36,12 +36,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<!-- you may not believe it, but order is really important here -->
+	<script type="application/x-javascript" src="help.js"/>
 	<script type="application/x-javascript" src="vimperator.js"/>
 	<script type="application/x-javascript" src="commands.js"/>
 	<script type="application/x-javascript" src="settings.js"/>
 	<script type="application/x-javascript" src="completion.js"/>
 	<script type="application/x-javascript" src="bookmarks.js"/>
-	<script type="application/x-javascript" src="help.js"/>
 	<script type="application/x-javascript" src="hints.js"/>
 	<script type="application/x-javascript" src="file.js"/>
 

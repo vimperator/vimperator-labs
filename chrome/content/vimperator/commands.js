@@ -164,7 +164,7 @@ var g_commands = [/*{{{*/
         ["help", "h"],
         ["h[elp] {subject}"],
         "Open the help window in the current tab. It can jump to the specified {subject} with <code class=command>:help {subject}</code>.",
-        null,//help,
+        help,
         function(filter) { return get_help_completions(filter); }
     ],
     [
