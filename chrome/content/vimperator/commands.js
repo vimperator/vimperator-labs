@@ -71,28 +71,35 @@ var g_commands = [/*{{{*/
     ],
     [
         ["bmadd"],
-        ["bmadd [-t \"my custom title\"] [-T \"comma,separated,tags\"] [url]"],
+        ["bmadd [-tT] [url]"],
         "Add a bookmark<br/>" +
         "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
         "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
-        "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.",
+        "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
+        "The following options WILL be interpretted in the future:<br/>" +
+        " -t 'custom title'<br/>" +
+        " -T comma,separated,tag,list <br/>",
         bmadd,
         null
     ],
     [
         ["bmdel"],
-        ["bmdel [-T \"comma,separated,tags\"] {url}"],
+        ["bmdel [-T] {url}"],
         "Delete a bookmark<br/>"+
-        "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.",
+        "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
+        "The following options WILL be interpretted in the future:<br/>" +
+        " -T comma,separated,tag,list <br/>",
         bmdel,
         function(filter) { return get_bookmark_completions(filter); }
     ],
     [
         ["bookmarks", "bm"],
-        ["bm[!] [-T \"comma,separated,tags\"] {regexp}"],
+        ["bm[!] [-T] {regexp}"],
         "Show bookmarks<br/>" +
         "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
-        "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
+        "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
+        "The following options WILL be interpretted in the future:<br/>" +
+        " -T comma,separated,tag,list <br/>",
         bmshow,
         function(filter) { return get_bookmark_completions(filter); }
     ],

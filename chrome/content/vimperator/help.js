@@ -70,6 +70,9 @@ tr.tag td {\
 tr.tag code, td.usage code {\
     margin: 0px 2px;\
 }\
+td.usage code {\
+    white-space: nowrap;\
+}\
 tr.tag code {\
     font-weight: bold;\
     font-size: 1opx;\
