@@ -180,27 +180,6 @@ function completion_select_previous_item()/*{{{*/
 }/*}}}*/
 
 
-function get_file_completions(filter)/*{{{*/
-{
-    g_completions = [];
-
-    var match = filter.match(/^(.*[\/\\])(.*?)$/);
-    var dir;
-    if (!match || !(dir = match[1])) return [];
-    var compl = match[2] || '';
-    var fd = fopen(dir, "<");
-    if (!fd) return [];
-    var entries = fd.read();
-    var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
-    var reg = new RegExp("^" + fd.path + delim + compl);
-    entries.forEach(function(file) {
-        if (file.path.search(reg) != -1)
-            g_completions.push([file.path, '']);
-    });
-
-    return g_completions;
-}/*}}}*/
-
 
 /* 
  * filter a list of urls
@@ -286,6 +265,32 @@ outer:
         additional_completions.push([urls[i][0], urls[i][1] ]);
     }
     return filtered.concat(additional_completions);
+}/*}}}*/
+
+function get_file_completions(filter)/*{{{*/
+{
+    g_completions = [];
+    var match = filter.match(/^(.*[\/\\])(.*?)$/);
+    var dir;
+
+    if (!match || !(dir = match[1]))
+        return [];
+
+    var compl = match[2] || '';
+    var fd = fopen(dir, "<");
+    if (!fd)
+        return [];
+
+    var entries = fd.read();
+    var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
+    var reg = new RegExp("^" + fd.path + delim + compl);
+    entries.forEach(function(file)
+    {
+        if (file.path.search(reg) != -1)
+            g_completions.push([file.path, '']);
+    });
+
+    return g_completions;
 }/*}}}*/
 
 function get_search_completions(filter)/*{{{*/

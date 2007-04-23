@@ -41,6 +41,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	<script type="application/x-javascript" src="settings.js"/>
 	<script type="application/x-javascript" src="completion.js"/>
 	<script type="application/x-javascript" src="bookmarks.js"/>
+	<script type="application/x-javascript" src="help.js"/>
 	<script type="application/x-javascript" src="hints.js"/>
 	<script type="application/x-javascript" src="file.js"/>
 
