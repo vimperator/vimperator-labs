@@ -1481,9 +1481,25 @@ function bufshow(filter, in_comp_window)
     }
     else // in the preview window
     {
-        var items = get_buffer_completions(filter);
-        preview_window_fill(items);
-        preview_window_show();
+        if(g_bufshow == true)
+        {
+            setTimeout(function ()
+                {
+                    var items = get_buffer_completions(filter);
+                    preview_window_fill(items);
+                    preview_window_show();
+                    g_bufshow = true;
+                    preview_window.selectItem(preview_window.getItemAtIndex(gBrowser.mTabContainer.selectedIndex));
+                }, 100);
+        }
+        else
+        {
+            var items = get_buffer_completions(filter);
+            preview_window_fill(items);
+            preview_window_show();
+            g_bufshow = true;
+            preview_window.selectItem(preview_window.getItemAtIndex(gBrowser.mTabContainer.selectedIndex));
+        }
     }
 }
 

@@ -830,7 +830,7 @@ var buffer_changed_listener =
         else if(aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP)
         {
             //alert('stopchange');
-            buffer_preview_update();
+            //buffer_preview_update();
         }
         return 0;
     },
@@ -838,7 +838,7 @@ var buffer_changed_listener =
 
    // This fires when the location bar changes i.e load event is confirmed
    // or when the user switches tabs
-    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange'); buffer_preview_update();*/ return 0; },
+    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange');*/buffer_preview_update(); return 0; },
     onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress){ return 0; },
     onStatusChange: function() {return 0;},
     onSecurityChange: function() {return 0;},
