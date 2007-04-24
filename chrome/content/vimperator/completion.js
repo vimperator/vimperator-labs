@@ -564,10 +564,11 @@ function preview_window_show()/*{{{*/
     var height = get_pref("previewheight");
     if (items > height)
         items = height;
-    if (items < 3)
+    if (items < 3) // minimum of 3 entries, drop that constraint?
         items = 3;
 
     preview_window.setAttribute("rows", items.toString());
     preview_window.hidden = false;
+    g_bufshow = false;
 }/*}}}*/
 // vim: set fdm=marker sw=4 ts=4 et:

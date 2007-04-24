@@ -144,6 +144,7 @@ nsBrowserStatusHandler.prototype =
             // updating history cache is not done here but in
             // the 'pageshow' event handler, because at this point I don't
             // have access to the url title
+            //alert('locchange2');
         },
     onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
         {
@@ -195,30 +196,9 @@ function init()
         .XULBrowserWindow = window.XULBrowserWindow;
 
 
-    window.addEventListener("unload", unload, false);
-    window.addEventListener("keypress", onVimperatorKeypress, true);
-    //  window.addEventListener("keyup", onVimperatorKeyup, true);
-    //  window.addEventListener("keydown", onVimperatorKeydown, true);
-
-    // this handler is for middle click only in the content
-    //window.addEventListener("mousedown", onVimperatorKeypress, true);
-    //content.mPanelContainer.addEventListener("mousedown", onVimperatorKeypress, true);
-    //document.getElementById("content").onclick = function(event) { alert("foo"); };
-
-    // these 4 events require >=firefox-2.0 beta1
-    window.addEventListener("TabMove",   updateStatusbar, false);
-    window.addEventListener("TabOpen",   updateStatusbar, false);
-    window.addEventListener("TabClose",  updateStatusbar, false);
-    //window.addEventListener("TabSelect", updateStatusbar, false);
-    window.addEventListener("TabSelect", function(event)
-    { 
-        if (hah.currentMode == HINT_MODE_ALWAYS)
-        {
-            hah.disableHahMode();
-            hah.enableHahMode(HINT_MODE_ALWAYS);
-        }
-        updateStatusbar();
-    }, false);
+    // this function adds all our required listeners to react on events
+    // also stuff like window.onScroll is handled there.
+    addEventListeners();
 
     // we always start in normal mode
     setCurrentMode(MODE_NORMAL);
@@ -250,31 +230,6 @@ function init()
     }
 
 
-    // update our history cache when a new page is shown
-    // XXX: there should be a cleaner way with onload() handler, but it just
-    //      does not work out well for me :(
-    window.document.addEventListener("pageshow", function(event)
-    {
-        if (!event.persisted) // only if not bypassing cache
-        {
-            var url = getCurrentLocation();
-            var title = document.title;
-            for(var i=0; i<g_history.length; i++)
-            {
-                if(g_history[i][0] == url)
-                    return;
-            }
-            g_history.unshift([url, title]);
-        }
-
-    }
-    , null);
-
-    // called when the window is scrolled.
-    window.onscroll = function (event)
-    {
-        showStatusbarMessage(createCursorPositionString(), STATUSFIELD_CURSOR_POSITION);
-    };
 
     gURLBar.blur();
     focusContent(true, true);
@@ -301,11 +256,9 @@ function unload()
     save_history();
 
     // reset firefox pref
-    if (get_firefox_pref('dom.popup_allowed_events',
-        'change click dblclick mouseup reset submit') == popup_allowed_events + " keypress")
-    set_firefox_pref('dom.popup_allowed_events', popup_allowed_events);
-
-    // XXX: not needed anymore?: window.getBrowser().removeProgressListener(urlChangeListener);
+    if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
+            == popup_allowed_events + " keypress")
+        set_firefox_pref('dom.popup_allowed_events', popup_allowed_events);
 }
 
 
@@ -787,6 +740,113 @@ function onEscape()
 }
 
 ////////////////////////////////////////////////////////////////////////
+// event listeners //////////////////////////////////////////////// {{{1
+////////////////////////////////////////////////////////////////////////
+function addEventListeners()
+{
+    window.addEventListener("unload", unload, false);
+    window.addEventListener("keypress", onVimperatorKeypress, true);
+
+    // this handler is for middle click only in the content
+    //window.addEventListener("mousedown", onVimperatorKeypress, true);
+    //content.mPanelContainer.addEventListener("mousedown", onVimperatorKeypress, true);
+    //document.getElementById("content").onclick = function(event) { alert("foo"); };
+
+    // these 4 events require >=firefox-2.0 beta1
+    window.addEventListener("TabMove",   updateStatusbar, false);
+    window.addEventListener("TabOpen",   updateStatusbar, false);
+    window.addEventListener("TabClose",  updateStatusbar, false);
+    window.addEventListener("TabSelect", function(event)
+    { 
+        if (hah.currentMode == HINT_MODE_ALWAYS)
+        {
+            hah.disableHahMode();
+            hah.enableHahMode(HINT_MODE_ALWAYS);
+        }
+        updateStatusbar();
+    }, false);
+
+    // update our history cache when a new page is shown
+    // XXX: there should be a cleaner way with onload() handler, but it just
+    //      does not work out well for me :(
+    window.document.addEventListener("pageshow", function(event)
+    {
+        if (!event.persisted) // only if not bypassing cache
+        {
+            var url = getCurrentLocation();
+            var title = document.title;
+            for(var i=0; i<g_history.length; i++)
+            {
+                if(g_history[i][0] == url)
+                    return;
+            }
+            g_history.unshift([url, title]);
+        }
+        // alert('pageshow');
+    }
+    , null);
+
+    // called when the window is scrolled.
+    window.onscroll = function (event)
+    {
+        showStatusbarMessage(createCursorPositionString(), STATUSFIELD_CURSOR_POSITION);
+    };
+
+    // adds listeners to buffer actions.
+    var container = getBrowser().tabContainer;
+    container.addEventListener("TabOpen", function(event)
+    {
+        var browser = event.target.linkedBrowser;
+        browser.addProgressListener(buffer_changed_listener, Components.interfaces.nsIWebProgress.NOTIFY_STATE_DOCUMENT);
+    }, false);
+    container.addEventListener("TabClose", function(event)
+    {
+        var browser = event.target.linkedBrowser;
+        browser.removeProgressListener(buffer_changed_listener);
+        buffer_preview_update();
+    }, false);
+    container.addEventListener("TabSelect", buffer_preview_update, false);
+    container.addEventListener("TabMove", buffer_preview_update, false);
+
+}
+
+var buffer_changed_listener =
+{
+    QueryInterface: function(aIID)
+    {
+        if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                aIID.equals(Components.interfaces.nsISupports))
+            return this;
+        throw Components.results.NS_NOINTERFACE;
+    },
+
+    onStateChange: function(aProgress, aRequest, aFlag, aStatus)
+    {
+        if(aFlag & Components.interfaces.nsIWebProgressListener.STATE_START)
+        {
+          // This fires when the load event is initiated
+        }
+        else if(aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+        {
+            //alert('stopchange');
+            buffer_preview_update();
+        }
+        return 0;
+    },
+
+
+   // This fires when the location bar changes i.e load event is confirmed
+   // or when the user switches tabs
+    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange'); buffer_preview_update();*/ return 0; },
+    onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress){ return 0; },
+    onStatusChange: function() {return 0;},
+    onSecurityChange: function() {return 0;},
+    onLinkIconAvailable: function() {return 0;}
+}
+
+
+////////////////////////////////////////////////////////////////////////
 // statusbar/progressbar ////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 /* the statusbar is currently divided into 5 fields, you can set 
@@ -894,7 +954,7 @@ function logMessage(msg)
 }
 
 ////////////////////////////////////////////////////////////////////////
-// misc helper funcstions ///////////////////////////////////////// {{{1
+// misc helper functions ////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 // this function gets an event as the input and converts it to 
 // a keycode which can be used in mappings

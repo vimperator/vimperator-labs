@@ -113,8 +113,8 @@ var g_commands = [/*{{{*/
     [
         ["buffers", "files", "ls"],
         ["buffers"],
-        "Shows a list of all buffers.",
-        function (args) {bufshow("", false);},
+        "Shows a list of all buffers.<br/>If the list is already shown, close the preview window.",
+        buffer_preview_toggle,
         null
     ],
     [
@@ -1508,13 +1508,6 @@ function buffer_preview_update(event)
     if(g_bufshow == true)
         bufshow("", false);
 }
-
-// adds listeners to buffer actions.
-var container = getBrowser().tabContainer;
-container.addEventListener("TabOpen", buffer_preview_update, false);
-container.addEventListener("TabSelect", buffer_preview_update, false);
-container.addEventListener("TabMove", buffer_preview_update, false);
-container.addEventListener("TabClose", buffer_preview_update, false);
 
 
 ////////////////////////////////////////////////////////////////////////
