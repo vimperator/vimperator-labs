@@ -1,12 +1,15 @@
 <pre>
 date:
 	* version 0.4
+	* Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
+	* changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
 	* :back! goes to beginning of history now
 	* diabled firefox 3.0 support for now, as there are just too many small
 	  bugs
-	* :help <section> supported, :help set will show help for the :set command
+	* :help section supported, :help set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
+	* :javascript <<EOF support to execute multiline javascript code
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
 	* added 'B' command for continous buffer display

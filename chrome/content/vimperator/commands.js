@@ -327,6 +327,14 @@ var g_commands = [/*{{{*/
         function (filter) { return get_file_completions(filter); }
     ],
     [
+        ["stop", "st"],
+        ["st[op]"],
+        "Stop loading<br/>" +
+        "Stop loading current web page.",
+        BrowserStop,
+        null
+    ],
+    [
         ["tab"],
         ["tab {cmd}"],
         "Executes {cmd} and tells it to output in a new tab. Works for commands that support it.<br/>" +
@@ -831,11 +839,18 @@ var g_mappings = [/*{{{*/
         function(count) { addMode(MODE_ESCAPE_ONE_KEY); }
     ],
     [ 
+        ["<C-c>"],
+        ["<C-c>"],
+        "Stop loading<br/>" +
+        "Stops loading the current webpage.",
+        BrowserStop,
+    ],
+    [ 
         ["<Esc>", "<C-[>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
         ["<Esc>", "<C-[>"],
         "Cancel any operation<br/>" +
-        "Stops loading the current webpage and exits any command line or hint mode.<br/>"+
-        "Also focuses the web page, in case a form field has focus, and eats our key presses.",
+        "Exits any command line or hint mode and returns to browser mode.<br/>"+
+        "Also focuses the web page, in case a form field has focus and eats our key presses.",
         onEscape
     ],
 

@@ -11,9 +11,9 @@ BUGS:
 - reload/stop buttons don't update enabled state
 
 FEATURES:
-9 marks of a Location (also should work with directories), [m a-zA-Z] to set it, [' a-zA-Z] to go there
+9 marks of a Location, [m a-zA-Z] to set it, [` a-zA-Z] to go there
   [m 0-9] marks a buffer instead [' 0-9] goes there
-  also mark bookmarks (with mA-Z maybe and use only lowercase marks for inbuffer marks?)
+  also mark bookmarks (with M[a-zA-Z] maybe and use only lowercase marks for inbuffer marks?)
   also support :mark and :marks
 8 :open .. -> Up one directory, :cd goes to top location, [Backspace] command shortcut, use count (:3cd goes 3 levels up)
 8 downloading of links to filesystem (:save <filename>)
