@@ -1,0 +1,12 @@
+" I don't like beeps
+set nobeep
+echo vimperatorrc found
+
+" embedded javascript is possible
+" You can even add new functions which are then available in the :js command
+javascript <<EOF
+hello = function(name)
+{
+	alert("Hello world: " + name);
+}
+EOF
