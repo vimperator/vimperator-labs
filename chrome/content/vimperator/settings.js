@@ -72,7 +72,8 @@ var g_settings = [/*{{{*/
         function(value) { set_pref("extendedhinttags", value); },
         function() { return get_pref("extendedhinttags"); },
         "string",
-        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden'] | //a | //area | //iframe | //textarea | //button | //select",
+        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden' or not(boolean(@type))] | //a | //area | //iframe | //textarea | //button | //select",
+
         null,
         null
     ],
