@@ -967,6 +967,7 @@ var g_hint_mappings = [ /*{{{*/
 
 var g_searchengines = [ /*{{{*/
     ["google",    "http://www.google.com/search?num=100&q=%s"],
+    ["lucky",     "http://www.google.com/search?num=100&q=%s&btnI=I'm%20Feeling%20Lucky"],
     ["chefkoch",  "http://www.chefkoch.de/rezept-suche.php?Suchbegriff=%s"],
     ["dewiki",    "http://de.wikipedia.org/wiki/%s"],
     ["discogs",   "http://www.discogs.com/search?type=all&q=%s&btn=Search"],
