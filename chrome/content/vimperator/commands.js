@@ -1250,7 +1250,7 @@ function stringToURLs(str)
             }
         }
 
-        /* if the string contains a space or does not conatain any of: .:/
+        /* if the string contains a space or does not contain any of: .:/
          * open it with default searchengine */
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
             urls[url] = g_searchengines[0][1].replace(/%s/, encodeURIComponent(urls[url]));
