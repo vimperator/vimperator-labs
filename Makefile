@@ -15,7 +15,7 @@ ZIP = zip
 # find the vimperator chrome dir
 
 FIREFOX_DEFAULT = $(wildcard ${HOME}/.mozilla/firefox/*.default)
-VIMPERATOR_CHROME = $(wildcard ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/)
+VIMPERATOR_CHROME = ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/
 
 # specify V=1 on make line to see more verbose output
 Q=$(if ${V},,@)
@@ -48,6 +48,8 @@ info:
 	@echo    "vimperator chrome   ${VIMPERATOR_CHROME}"
 
 needs_chrome_dir:
+	@echo "Checking chrome dir..."
+	-${Q}mkdir -p "${VIMPERATOR_CHROME}"
 	${Q}test -d "${VIMPERATOR_CHROME}"
 
 xpi: ${RELEASE}

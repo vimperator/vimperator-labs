@@ -31,6 +31,7 @@ FEATURES:
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
 6 vim like mappings for caret mode and textboxes (i to start caret mode?)
 6 pipe selected text/link/website to an external command
+6 it would be nice to have :undo <url> w/ tab completion support
 6 macros (qq)
 6 support firefox search engines, or at least make our search enginges user configurable
 6 gf = view source?
