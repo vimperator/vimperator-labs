@@ -24,6 +24,9 @@ const COMMAND_LINE_HISTORY_SIZE = 500;
 //                2nd element: help description
 var g_completions = new Array(); 
 
+// The completion substrings, used for showing the longest common match
+var g_substrings = [];
+
 var comp_tab_index = COMPLETION_UNINITIALIZED;  // the index in the internal g_completions array
 var comp_tab_list_offset = 0; // how many items is the displayed list shifted from the internal tab index
 var comp_tab_startstring = ""; 
@@ -107,17 +110,24 @@ function completion_add_to_list(completion_item, at_beginning)/*{{{*/
 /* select the next index, refill list if necessary
  *
  * changes 'comp_tab_index' */
-function completion_select_next_item()/*{{{*/
+function completion_select_next_item(has_list, has_full, has_longest)/*{{{*/
 {
-    comp_tab_index++;
+    if (has_full)
+        comp_tab_index++;
+    has_list = has_list || (!completion_list.hidden && (has_full || has_longest));
     if (comp_tab_index >= g_completions.length) /* wrap around */
     {
         comp_tab_index = -1;
-        completion_list.selectedIndex = -1;
+        if (has_list && has_full)
+            completion_list.selectedIndex = -1;
         return;
     }
 
-    if (comp_tab_index == 0) // at the top of the list
+    if (has_full)
+        showStatusbarMessage(" match " + (comp_tab_index + 1).toString() + " of " + g_completions.length.toString() + " ", STATUSFIELD_PROGRESS);
+    if (!has_list) return;
+
+    if (comp_tab_index < 1) // at the top of the list
     {
         completion_fill_list(0);
         comp_tab_list_offset = 0;
@@ -135,50 +145,143 @@ function completion_select_next_item()/*{{{*/
         comp_tab_list_offset++;
     }
 
-    listindex = comp_tab_index - comp_tab_list_offset;
-    completion_list.selectedIndex = listindex;
-
-    showStatusbarMessage(" match " + (comp_tab_index+1).toString() + " of " + g_completions.length.toString() + " ", STATUSFIELD_PROGRESS);
+    if (has_full)
+    {
+        listindex = comp_tab_index - comp_tab_list_offset;
+        completion_list.selectedIndex = listindex;
+    }
 }/*}}}*/
 
 /* select the previous index, refill list if necessary
  *
  * changes 'comp_tab_index' */
-function completion_select_previous_item()/*{{{*/
+function completion_select_previous_item(has_list, has_full, has_longest)/*{{{*/
 {
-    comp_tab_index--;
+    if (has_full)
+        comp_tab_index--;
+    has_list = has_list || (!completion_list.hidden && (has_full || has_longest));
     if (comp_tab_index == -1)
     {
-        completion_list.selectedIndex = -1;
+        if (has_list && has_full)
+            completion_list.selectedIndex = -1;
         return;
     }
+
+    if (has_full)
+        showStatusbarMessage("match " + (comp_tab_index+1).toString() + " of " + g_completions.length.toString(), STATUSFIELD_PROGRESS);
 
     if (comp_tab_index < -1) // go to the end of the list
     {
         comp_tab_index = g_completions.length -1;
+        if (!has_list) return;
         completion_fill_list(g_completions.length - COMPLETION_MAXITEMS);
         comp_tab_list_offset = g_completions.length - COMPLETION_MAXITEMS;//COMPLETION_MAXITEMS - 1;
         if (comp_tab_list_offset < 0)
             comp_tab_list_offset = 0;
     }
+    if (!has_list) return;
 
     var listindex = comp_tab_index - comp_tab_list_offset;
     // only move the list, if there are still items we can move
     if (listindex < COMPLETION_CONTEXTLINES && comp_tab_list_offset > 0)
     {
         // for speed reason: just remove old item, and add new at the end of the list
-        var items = completion_list.getElementsByTagName("listitem");
-        completion_list.removeChild(items[items.length-1]);
-        completion_add_to_list(g_completions[comp_tab_index - COMPLETION_CONTEXTLINES], true);
+        if (has_list)
+        {
+            var items = completion_list.getElementsByTagName("listitem");
+            completion_list.removeChild(items[items.length-1]);
+            completion_add_to_list(g_completions[comp_tab_index - COMPLETION_CONTEXTLINES], true);
+        }
         comp_tab_list_offset--;
     }
 
-    listindex = comp_tab_index - comp_tab_list_offset;
-    completion_list.selectedIndex = listindex;
-
-    showStatusbarMessage("item " + (comp_tab_index+1).toString() + " of " + g_completions.length.toString(), STATUSFIELD_PROGRESS);
+    if (has_full)
+    {
+        listindex = comp_tab_index - comp_tab_list_offset;
+        completion_list.selectedIndex = listindex;
+    }
 }/*}}}*/
 
+/*
+ * returns the longest common substring
+ * used for the 'longest' setting for wildmode
+ *
+ */
+function get_longest_substring()/*{{{*/
+{
+    if (g_substrings.length == 0)
+        return '';
+    var longest = g_substrings[0];
+    for (var i = 1; i < g_substrings.length; i++)
+    {
+        if (g_substrings[i].length > longest.length)
+            longest = g_substrings[i];
+    }
+    return longest;
+}/*}}}*/
+
+// list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
+function build_longest_common_substring(list, filter)/*{{{*/
+{
+    var filtered = [];
+    var filter_length = filter.length;
+    for (var i = 0; i < list.length; i++)
+    {
+        for (var j = 0; j < list[i][0].length; j++)
+        {
+            if (list[i][0][j].indexOf(filter) == -1)
+                continue;
+            if (g_substrings.length == 0)
+            {
+                var last_index = list[i][0][j].lastIndexOf(filter);
+                var length = list[i][0][j].length;
+                for (var k = list[i][0][j].indexOf(filter); k != -1 && k <= last_index; k = list[i][0][j].indexOf(filter, k + 1))
+                {
+                    for (var l = k + filter_length; l <= length; l++)
+                        g_substrings.push(list[i][0][j].substring(k, l));
+                }
+            }
+            else
+            {
+                g_substrings = g_substrings.filter(function($_) {
+                    return list[i][0][j].indexOf($_) >= 0;
+                });
+            }
+            filtered.push([list[i][0][j], list[i][1]]);
+            break;
+        }
+    }
+    return filtered;
+}/*}}}*/
+
+function build_longest_starting_substring(list, filter)/*{{{*/
+{
+    var filtered = [];
+    var filter_length = filter.length;
+    for (var i = 0; i < list.length; i++)
+    {
+        for (var j = 0; j < list[i][0].length; j++)
+        {
+            if (list[i][0][j].indexOf(filter) != 0)
+                continue;
+            if (g_substrings.length == 0)
+            {
+                var length = list[i][0][j].length;
+                for (var k = filter_length; k <= length; k++)
+                    g_substrings.push(list[i][0][j].substring(0, k));
+            }
+            else
+            {
+                g_substrings = g_substrings.filter(function($_) {
+                    return list[i][0][j].indexOf($_) == 0;
+                });
+            }
+            filtered.push([list[i][0][j], list[i][1]]);
+            break;
+        }
+    }
+    return filtered;
+}/*}}}*/
 
 
 /* 
@@ -190,6 +293,7 @@ function completion_select_previous_item()/*{{{*/
 function get_url_completions(filter)/*{{{*/
 {
     g_completions = [];
+    g_substrings = [];
 
     var cpt = get_pref("complete");
     // join all completion arrays together
@@ -207,146 +311,62 @@ function get_url_completions(filter)/*{{{*/
 }/*}}}*/
 
 /* discard all entries in the 'urls' array, which don't match 'filter */
-function filter_url_array(urls, filter, use_regex)/*{{{*/
+function filter_url_array(urls, filter)/*{{{*/
 {
     var filtered = [];
     // completions which don't match the url but just the description
     // list them add the end of the array
     var additional_completions = [];
 
-    var reg, reg2;
-    if (use_regex)
+    if (!filter) return urls.map(function($_) {
+        return [$_[0], $_[1]]
+    });
+    var filter_length = filter.length;
+    /*
+     * Longest Common Subsequence
+     * This shouldn't use build_longest_common_substring
+     * for performance reasons, so as not to cycle through the urls twice
+     */
+    for (var i = 0; i < urls.length; i++)
     {
-        reg = new RegExp("^" + filter, "i");
-        reg2 = new RegExp(filter, "i");
-    }
-
-outer:
-    for (var i = 0; i < urls.length; ++i)
-    {
-        if (filter != null && filter.length > 0)
+        if (urls[i][0].indexOf(filter) == -1)
         {
-            // first check if the filter matches in the main part of the URL
-            var bm = urls[i][0].replace(/^.*:\/\/(www)?/, "");
-            bm = bm.replace(/\/.*$/, "");
-            var tokens = bm.split(".");
-            for (var k = 0; k < tokens.length-1; k++) // -1 because we don't search the domain (like .com)
+            if (urls[i][1].indexOf(filter) != -1)
+                additional_completions.push([urls[i][0], urls[i][1] ]);
+            continue;
+        }
+        if (g_substrings.length == 0)   // Build the substrings
+        {
+            var last_index = urls[i][0].lastIndexOf(filter);
+            var url_length = urls[i][0].length;
+            for (var k = urls[i][0].indexOf(filter); k != -1 && k <= last_index; k = urls[i][0].indexOf(filter, k + 1))
             {
-                if (use_regex)
-                {
-                    if(tokens[k].search(reg) != -1)
-                    {
-                        filtered.push([urls[i][0], urls[i][1] ]);
-                        continue outer;
-                    }
-                }
-                else
-                {
-                    if (tokens[k].indexOf(filter) == 0)
-                    {
-                        filtered.push([urls[i][0], urls[i][1] ]);
-                        continue outer;
-                    }
-                }
-            }
-
-            // otherwise check if the filter matches in the description of the bookmark
-            if (use_regex)
-            {
-                if(urls[i][0].search(reg2) == -1 && urls[i][1].search(reg2) == -1)
-                    continue;
-            }
-            else
-            {
-                if (urls[i][0].indexOf(filter) == -1 && urls[i][1].indexOf(filter) == -1)
-                    continue;
+                for (var l = k + filter_length; l <= url_length; l++)
+                    g_substrings.push(urls[i][0].substring(k, l));
             }
         }
-        additional_completions.push([urls[i][0], urls[i][1] ]);
+        else
+        {
+            g_substrings = g_substrings.filter(function($_) {
+                return urls[i][0].indexOf($_) >= 0;
+            });
+        }
+        filtered.push([urls[i][0], urls[i][1]]);
     }
+
     return filtered.concat(additional_completions);
-}/*}}}*/
-
-function get_file_completions(filter)/*{{{*/
-{
-    g_completions = [];
-    var match = filter.match(/^(.*[\/\\])(.*?)$/);
-    var dir;
-
-    if (!match || !(dir = match[1]))
-        return [];
-
-    var compl = match[2] || '';
-    var fd = fopen(dir, "<");
-    if (!fd)
-        return [];
-
-    var entries = fd.read();
-    var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
-    var reg = new RegExp("^" + fd.path + delim + compl);
-    entries.forEach(function(file)
-    {
-        if (file.path.search(reg) != -1)
-            g_completions.push([file.path, '']);
-    });
-
-    return g_completions;
 }/*}}}*/
 
 function get_search_completions(filter)/*{{{*/
 {
-    var search_completions = [];
-    
-    var reg = new RegExp("^" + filter, "i");
-    for (var i = 0; i < g_searchengines.length; i++)
-    {
-        if (g_searchengines[i][0].search(reg) != -1)
-            search_completions.push([g_searchengines[i][0] + " ", g_searchengines[i][1] ]);
-    }
-
-    return search_completions;
+    if (!filter) return g_searchengines.map(function($_) {
+        return [$_[0], $_[1]];
+    });
+    var mapped = g_searchengines.map(function($_) {
+        return [[$_[0]], $_[1]];
+    });
+    return build_longest_common_substring(mapped, filter);
 }/*}}}*/
-
-function get_bookmark_completions(filter)/*{{{*/
-{
-    if (!bookmarks_loaded)
-    {
-        // update our bookmark cache
-        var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService( Components.interfaces.nsIRDFService );
-        var root = RDF.GetResource( "NC:BookmarksRoot" );
-        bookmarks = [];   // here getAllChildren will store the bookmarks
-        g_bookmarks = []; // also clear our bookmark cache
-        BookmarksUtils.getAllChildren(root, bookmarks);
-        for(var i = 0; i < bookmarks.length; i++)
-        {
-            if (bookmarks[i][0] && bookmarks[i][1])
-                g_bookmarks.push([bookmarks[i][1].Value, bookmarks[i][0].Value ]);
-        }
-        bookmarks_loaded = true;
-    }
-
-    return filter_url_array(g_bookmarks, filter, true);
-}/*}}}*/
-
-function get_help_completions(filter)
-{
-    var help_completions = [];
-    help_completions = help_completions.concat(get_command_completions(filter));
-    help_completions = help_completions.concat(get_settings_completions(filter));
-    for(var i = 0; i < g_mappings.length; i++)
-    {
-        for(var j = 0; j < g_mappings[i][0].length; j++)
-        {
-            //var re = new RegExp("^" + filter);
-            if (g_mappings[i][0][j].indexOf(filter) == 0)
-            {
-                help_completions.push([g_mappings[i][0][j], g_mappings[i][1]]);
-                break; // only add a command once
-            }
-        }
-    }
-    return help_completions;
-}
 
 function get_history_completions(filter)/*{{{*/
 {
@@ -398,39 +418,109 @@ function get_history_completions(filter)/*{{{*/
         history_loaded = true;  
     }
 
-    return filter_url_array(g_history, filter, true);
+    return filter_url_array(g_history, filter);
+}/*}}}*/
+
+function get_bookmark_completions(filter)/*{{{*/
+{
+    if (!bookmarks_loaded)
+    {
+        // update our bookmark cache
+        var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService( Components.interfaces.nsIRDFService );
+        var root = RDF.GetResource( "NC:BookmarksRoot" );
+        bookmarks = [];   // here getAllChildren will store the bookmarks
+        g_bookmarks = []; // also clear our bookmark cache
+        BookmarksUtils.getAllChildren(root, bookmarks);
+        for(var i = 0; i < bookmarks.length; i++)
+        {
+            if (bookmarks[i][0] && bookmarks[i][1])
+                g_bookmarks.push([bookmarks[i][1].Value, bookmarks[i][0].Value ]);
+        }
+        bookmarks_loaded = true;
+    }
+
+    return filter_url_array(g_bookmarks, filter);
+}/*}}}*/
+
+function get_file_completions(filter)/*{{{*/
+{
+    g_completions = [];
+    g_substrings = [];
+    var match = filter.match(/^(.*[\/\\])(.*?)$/);
+    var dir;
+
+    if (!match || !(dir = match[1]))
+        return [];
+
+    var compl = match[2] || '';
+    var fd = fopen(dir, "<");
+    if (!fd)
+        return [];
+
+    var entries = fd.read();
+    var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
+    var new_filter = fd.path + delim + compl;
+    if (!filter) return entries.map(function($_) {
+        var path = $_.path;
+        if ($_.isDirectory()) path += '/';
+        return [path, ''];
+    });
+    var mapped = entries.map(function($_) {
+        var path = $_.path;
+        if ($_.isDirectory()) path += '/';
+        return [[path], ''];
+    });
+
+    return g_completions = build_longest_starting_substring(mapped, filter);
+}/*}}}*/
+
+function get_help_completions(filter)/*{{{*/
+{
+    var help_array = [];
+    g_substrings = [];
+    help_array = help_array.concat(g_commands);
+    help_array = help_array.concat(get_settings_completions(filter, true));
+    help_array = help_array.concat(g_mappings);
+    if (!filter) return help_array.map(function($_) {
+        return [$_[0][0], $_[1]];
+    });
+    return build_longest_common_substring(help_array, filter);
 }/*}}}*/
 
 function get_command_completions(filter)/*{{{*/
 {
     g_completions = [];
-    for(var i=0; i<g_commands.length; i++)
-    {
-        for(var j=0; j<g_commands[i][0].length; j++)
-        {
-            //var re = new RegExp("^" + filter);
-            if (g_commands[i][0][j].indexOf(filter) == 0)
-            {
-                g_completions.push([g_commands[i][0][j], g_commands[i][1]]);
-                break; // only add a command once
-            }
-        }
-    }
-    // commands should be sorted anyway, but it doesn't really hurt -> it DOES hurt :(
-    //g_completions.sort();
-    return g_completions;
+    g_substrings = [];
+    if (!filter) return g_completions = g_commands.map(function($_) {
+        return [$_[0][0], $_[1]];
+    });
+    return g_completions = build_longest_starting_substring(g_commands, filter);
 }/*}}}*/
 
-function get_settings_completions(filter)/*{{{*/
+function get_settings_completions(filter, unfiltered)/*{{{*/
 {
-    settings_completions = [];
+    g_substrings = [];
+    var settings_completions = [];
     var no_mode = false;
-
     if (filter.indexOf("no") == 0) // boolean option
     {
         no_mode = true;
         filter = filter.substr(2);
     }
+    if (unfiltered) return g_settings.filter(function($_) {
+        if (no_mode && $_[5] != "boolean") return false;
+        else return true;
+    }).map(function($_) {
+        return [$_[0], $_[1]];
+    });
+    if (!filter) return g_settings.filter(function($_) {
+        if (no_mode && $_[5] != "boolean") return false;
+        else return true;
+    }).map(function($_) {
+        return [$_[0][0], $_[1]];
+    });
+
+
     // check if filter ends with =, then complete current value
     else if(filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
     {
@@ -449,32 +539,45 @@ function get_settings_completions(filter)/*{{{*/
         return settings_completions;
     }
 
-    for(var i=0; i<g_settings.length; i++)
+    // can't use b_l_s_s, since this has special requirements (the prefix)
+    var filter_length = filter.length;
+    for (var i = 0; i < g_settings.length; i++)
     {
-        if (filter == "" || g_settings[i][0][0].indexOf(filter) > -1)
+        if (no_mode && g_settings[i][5] != "boolean")
+            continue;
+
+        var prefix = no_mode ? 'no' : '';
+        for (var j = 0; j < g_settings[i][0].length; j++)
         {
-            // for 'no'-mode only return bool options
-            if (no_mode)
+            if (g_settings[i][0][j].indexOf(filter) != 0) continue;
+            if (g_substrings.length == 0)
             {
-                if (g_settings[i][5] == "bool")
-                    settings_completions.push(["no" + g_settings[i][0][0], g_settings[i][1]]);
+                var length = g_settings[i][0][j].length;
+                for (var k = filter_length; k <= length; k++)
+                    g_substrings.push(prefix + g_settings[i][0][j].substring(0, k));
             }
             else
-                settings_completions.push([g_settings[i][0][0], g_settings[i][1]]);
+            {
+                g_substrings = g_substrings.filter(function($_) {
+                    return g_settings[i][0][j].indexOf($_) == 0;
+                });
+            }
+            settings_completions.push([prefix + g_settings[i][0][j], g_settings[i][1]]);
+            break;
         }
     }
 
     return settings_completions;
 }/*}}}*/
 
-function get_buffer_completions(filter)
+function get_buffer_completions(filter)/*{{{*/
 {
-    var reg = new RegExp(filter,"i");
-    items = new Array();
+    g_substrings = [];
+    var items = [];
     var num = getBrowser().browsers.length;
     var title, url;
 
-    for(var i=0; i<num;i++)
+    for (var i = 0; i < num; i++)
     {
         try
         {
@@ -484,18 +587,25 @@ function get_buffer_completions(filter)
         {
             title = "";
         }
-        if (title == "")
-            title = "(Untitled)";
 
         url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
 
-        if(title.search(reg) != -1 || url.search(reg) != -1)
+        if (title.indexOf(filter) == -1 && url.indexOf(filter) == -1)
+            continue;
+
+        
+        if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1)
         {
-            items.push([(i+1)+": "+title, url]);
+            if (title == "")
+                title = "(Untitled)";
+            items.push([[(i + 1) + ": " + title, (i + 1) + ": " + url], url]);
         }
     }
-    return items;
-}
+    if (!filter) return items.map(function($_) {
+        return [$_[0][0], $_[1]];
+    });
+    return build_longest_common_substring(items, filter);
+}/*}}}*/
 
 ////////// COMMAND HISTORY HANDLING ////////////
 
@@ -521,7 +631,7 @@ function load_history()
 ///////// PREVIEW WINDOW //////////////////////
 
 /* uses the entries in completions to fill the listbox */
-function preview_window_fill(completions)
+function preview_window_fill(completions)/*{{{*/
 {
     // remove all old items first
     var items = preview_window.getElementsByTagName("listitem");
@@ -542,9 +652,9 @@ function preview_window_fill(completions)
         item.appendChild(cell2);
         preview_window.appendChild(item);
     }
-}
+}/*}}}*/
 
-function preview_window_select(event)
+function preview_window_select(event)/*{{{*/
 {
     var listcell = document.getElementsByTagName("listcell");
     // 2 columns for now, use the first column
@@ -556,7 +666,7 @@ function preview_window_select(event)
         openURLsInNewTab(val);
     else
         return false;
-}
+}/*}}}*/
 
 function preview_window_show()/*{{{*/
 {

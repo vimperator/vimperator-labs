@@ -45,6 +45,9 @@ var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want
 var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
 var g_bufshow = false;   // keeps track if the preview window shows current buffers ('B')
 
+// handles wildmode tab index
+var wild_tab_index = 0;
+
 // handles multi-line commands
 var prev_match = new Array(5);
 var heredoc = '';
@@ -548,8 +551,10 @@ function onCommandBarKeypress(evt)/*{{{*/
         /* user pressed TAB to get completions of a command */
         else if (evt.keyCode == KeyEvent.DOM_VK_TAB)
         {
+            var start_cmd = command;
             var match = tokenize_ex(command);
             var [count, cmd, special, args] = match;
+            var command = get_command(cmd);
             //always reset our completion history so up/down keys will start with new values
             comp_history_index = -1;
 
@@ -559,7 +564,8 @@ function onCommandBarKeypress(evt)/*{{{*/
                 g_completions = [];
                 comp_tab_index = -1;
                 comp_tab_list_offset = 0;
-                comp_tab_startstring = command;
+                comp_tab_startstring = start_cmd;
+                wild_tab_index = 0;
 
                 /* if there is no space between the command name and the cursor
                  * then get completions of the command name
@@ -570,10 +576,18 @@ function onCommandBarKeypress(evt)/*{{{*/
                 }
                 else // dynamically get completions as specified in the g_commands array
                 {
-                    var command = get_command(cmd);
                     if (command && command[4])
                     {
                         g_completions = command[4].call(this, args);
+                        // Sort the completion list
+                        if (get_pref('wildsort'))
+                            g_completions.sort(function(a, b) {
+                                if (a[0] < b[0])
+                                    return -1;
+                                else if (a[0] > b[0])
+                                    return 1;
+                                else return 0;
+                            });
                     }
                 }
             }
@@ -586,24 +600,45 @@ function onCommandBarKeypress(evt)/*{{{*/
                 if (g_completions.length == 0)
                     beep();
 
+                var wim = get_pref('wildmode').split(/,/);
+                var has_list = false;
+                var longest = false;
+                var full = false;
+                var wildtype = wim[wild_tab_index++] || wim[wim.length - 1];
+                if (wildtype == 'list' || wildtype == 'list:full' || wildtype == 'list:longest')
+                    has_list = true;
+                if (wildtype == 'longest' || wildtype == 'list:longest')
+                    longest = true;
+                if (wildtype == 'full' || wildtype == 'list:full')
+                    full = true;
                 // show the list
-                completion_show_list();
+                if (has_list)
+                    completion_show_list();
 
                 if (evt.shiftKey)
-                    completion_select_previous_item();
+                    completion_select_previous_item(has_list, full, longest);
                 else
-                    completion_select_next_item();
+                    completion_select_next_item(has_list, full, longest);
                 //command_line.focus(); // workaraound only need for RICHlistbox
 
 
-                if (comp_tab_index == -1) // wrapped around matches, reset command line
+                if (comp_tab_index == -1 && !longest) // wrapped around matches, reset command line
                 {
-                    command_line.value = comp_tab_startstring;
-                    completion_list.selectedIndex = -1;
+                    if (full && g_completions.length > 1)
+                    {
+                        command_line.value = comp_tab_startstring;
+                        completion_list.selectedIndex = -1;
+                    }
                 }
                 else
                 {
-                    var compl = g_completions[comp_tab_index][0];
+                    if (longest && g_completions.length > 1)
+                        var compl = get_longest_substring();
+                    if (full)
+                        var compl = g_completions[comp_tab_index][0];
+                    if (g_completions.length == 1)
+                        var compl = g_completions[0][0];
+
                     if (compl)
                     {
                         /* if there is no space between the command name and the cursor
@@ -617,6 +652,9 @@ function onCommandBarKeypress(evt)/*{{{*/
                         {
                             command_line.value = ":" + (count ? count.toString() : "") +
                                 cmd + (special ? "!" : "") + " " + compl;
+                            // Start a new completion in the next iteration. Useful for commands like :source
+                            if (g_completions.length == 1 && !full) // RFC: perhaps the command can indicate whether the completion should be restarted
+                                comp_tab_index = COMPLETION_UNINITIALIZED;
                         }
                     }
                 }

@@ -107,7 +107,7 @@ var g_commands = [/*{{{*/
         ["buffer", "b"],
         ["b[uffer]"],
         "Go to buffer number n. Full completion works.",
-        function (args) { tab_go(args.split(":")[0]); },
+        buffer_switch,
         function (filter) {return get_buffer_completions(filter);}
     ],
     [
@@ -1250,6 +1250,35 @@ function stringToURLs(str)
             }
         }
 
+        // check for ./ and ../ (or even .../) to go to a file in the upper directory
+        if (urls[url].match(/^(\.$|\.\/\S*)/))
+        {
+            var newLocation = getCurrentLocation();
+            newLocation = newLocation.replace(/([\s\S]+)\/[^\/]*/, "$1");
+            if(urls[url].match(/^\.(\/\S+)/))
+                newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
+
+            urls[url] = newLocation;
+        }
+        else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
+        {
+            var newLocation = getCurrentLocation();
+            newLocation = newLocation.replace(/([\s\S]+)\/[^\/]*/, "$1/../");
+            if(urls[url].match(/^\.\.(\/\S+)/))
+                newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
+
+            urls[url] = newLocation;
+        }
+        else if (urls[url].match(/^(\.\.\.$|\.\.\.\/[\S]*)/))
+        {
+            var newLocation = getCurrentLocation();
+            newLocation = newLocation.replace(/([\s\S]+):\/\/\/?(\S+?)\/\S*/, "$1://$2/");
+            if(urls[url].match(/^\.\.\.(\/\S+)/))
+                newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
+
+            urls[url] = newLocation;
+        }
+
         /* if the string contains a space or does not contain any of: .:/
          * open it with default searchengine */
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
@@ -1516,6 +1545,19 @@ function bufshow(filter, in_comp_window)
             g_bufshow = true;
             preview_window.selectItem(preview_window.getItemAtIndex(gBrowser.mTabContainer.selectedIndex));
         }
+    }
+}
+
+function buffer_switch(string)
+{
+    var match;
+    if (match = string.match(/^(\d+):?/))
+        return tab_go(match[1]);
+    for (var i = 0; i < getBrowser().browsers.length; i++)
+    {
+        var url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
+        if (url == string)
+            return tab_go(i);
     }
 }
 

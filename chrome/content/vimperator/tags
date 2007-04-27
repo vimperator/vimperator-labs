@@ -5,6 +5,7 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.6	//
 addBookmark	bookmarks.js	/^function addBookmark(title, uri)$/;"	f
+addEventListeners	vimperator.js	/^function addEventListeners()$/;"	f
 addMode	commands.js	/^function addMode(mode)$/;"	f
 add_to_command_history	completion.js	/^function add_to_command_history(str)$/;"	f
 beep	commands.js	/^function beep()$/;"	f
@@ -24,7 +25,7 @@ copyToClipboard	commands.js	/^function copyToClipboard(str)$/;"	f
 createCursorPositionString	vimperator.js	/^function createCursorPositionString()$/;"	f
 createHints	hints.js	/^    function createHints(win)$/;"	f
 createProgressBar	vimperator.js	/^function createProgressBar(aProgress)$/;"	f
-cumulativeOffset	commands.js	/^function cumulativeOffset(element)$/;"	f
+cumulativeOffset	help.js	/^	function cumulativeOffset(element)$/;"	f
 deleteBookmark	bookmarks.js	/^function deleteBookmark(url)$/;"	f
 del_url_mark	commands.js	/^function del_url_mark(mark)$/;"	f
 echo	commands.js	/^function echo(msg)$/;"	f
@@ -62,7 +63,7 @@ get_settings_completions	completion.js	/^function get_settings_completions(filte
 get_url_completions	completion.js	/^function get_url_completions(filter)\/*{{{*\/$/;"	f
 get_url_mark	commands.js	/^function get_url_mark(mark)$/;"	f
 hasMode	commands.js	/^function hasMode(mode)$/;"	f
-help	commands.js	/^function help(section, easter)$/;"	f
+help	help.js	/^function help(section, easter)$/;"	f
 historyGoToBeginning	commands.js	/^function historyGoToBeginning()$/;"	f
 historyGoToEnd	commands.js	/^function historyGoToEnd()$/;"	f
 hit_a_hint	hints.js	/^function hit_a_hint()$/;"	f
@@ -75,8 +76,8 @@ keyToString	vimperator.js	/^function keyToString(event)$/;"	f
 load_history	completion.js	/^function load_history()$/;"	f
 LocalFile	file.js	/^function LocalFile(file, mode, perms, tmp)$/;"	f
 logMessage	vimperator.js	/^function logMessage(msg)$/;"	f
-makeHelpString	commands.js	/^    function makeHelpString(commands, color, beg, end, func)$/;"	f
-makeSettingsHelpString	commands.js	/^    function makeSettingsHelpString(command)$/;"	f
+makeHelpString	help.js	/^    function makeHelpString(commands, color, beg, end, func)$/;"	f
+makeSettingsHelpString	help.js	/^    function makeSettingsHelpString(command)$/;"	f
 multiliner	commands.js	/^function multiliner(line, prev_match, heredoc)$/;"	f
 nsBrowserStatusHandler	vimperator.js	/^function nsBrowserStatusHandler() \/*{{{*\/$/;"	f
 onCommandBarInput	vimperator.js	/^function onCommandBarInput(event)$/;"	f

@@ -39,7 +39,7 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["beep"],
+        ["beep", "nobeep"],
         ["beep"],
         "Emit a pc speaker beep on certain errors",
         function(value) { set_pref("beep", value); },
@@ -89,7 +89,7 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["fullscreen", "fs"],
+        ["fullscreen", "fs", "nofullscreen", "nofs"],
         ["fullscreen", "fs"],
         "Shows the current window fullscreen",
         function(value) { opt_fullscreen = value; BrowserFullScreen(); },
@@ -157,7 +157,7 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["preload"],
+        ["preload", "nopreload"],
         ["preload"],
         "Speed up first time history/bookmark completion<br/>" +
         "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br>"+
@@ -182,7 +182,7 @@ var g_settings = [/*{{{*/
         null
     ],
 	[
-		["showmode", "smd"],
+		["showmode", "smd", "noshowmode", "nosmd"],
 		["showmode", "smd"],
 		"Show the current mode in the command line",
         function(value) { set_pref("showmode", value); },
@@ -209,7 +209,7 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["usermode", "um"],
+        ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
         "Show current website with a minimal stylesheet to make it easily accessible<br/>" +
         "Note that this is a local setting for now, later it may be split into a global and <code style=command>:setlocal</code> part",
@@ -223,12 +223,37 @@ var g_settings = [/*{{{*/
     [
         ["wildmode", "wim"],
         ["wildmode", "wim"],
-        "Define how command line completion works<br/>" +
-        "Not implemented yet.",
+        "Defines how command line completion works<br/>" +
+        "It is a comma-separated list of parts, where each part specifies" +
+        "what to do for each consecutive use of the completion key. The first part" +
+        "specifies the behavior for the first use of the completion key, the second part" +
+        "for the second use, etc.<br/>" +
+        "These are the possible values for each part:<br/>" +
+        "<table><tbody>" +
+        "<tr><td><b>''</b></td><td>Complete only the first match</td></tr>" +
+        "<tr><td><b>'full'</b></td><td>Complete the next full match. After the last, the original string is used.</td></tr>" +
+        "<tr><td><b>'longest'</b></td><td>Complete till the longest common string.</td></tr>" +
+        "<tr><td><b>'list'</b></td><td>When more than one match, list all matches.</td></tr>" +
+        "<tr><td><b>'list:full'</b></td><td>When more than one match, list all matches and complete first match.</td></tr>" +
+        "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
+        "</tbody></table>" +
+        "When there is only a single match, it is fully completed regardless of the case.",
         function(value) { set_pref("wildmode", value); },
         function() { return get_pref("wildmode"); },
         "stringlist",
-        "full",
+        "list:full",
+        null,
+        null
+    ],
+    [
+        ["wildsort", "wis", "nowildsort", "nowis"],
+        ["wildsort", "wis"],
+        "Defines whether command line completion is sorted<br/>" +
+        "If you don't want a sorted completion list, set this to false.",
+        function(value) { set_pref("wildsort", value); },
+        function() { return get_pref("wildsort"); },
+        "boolean",
+        false,
         null,
         null
     ]
