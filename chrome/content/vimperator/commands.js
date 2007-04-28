@@ -124,7 +124,7 @@ var g_commands = [/*{{{*/
     [
         ["buffers", "files", "ls"],
         ["buffers"],
-        "Shows a list of all buffers",
+        "Show a list of all buffers",
         "If the list is already shown, close the preview window.",
         buffer_preview_toggle,
         null
@@ -157,7 +157,7 @@ var g_commands = [/*{{{*/
     [
         ["execute", "exe"],
         ["exe[cute] {expr1} [ ... ]"],
-        "Executes the string that results from the evaluation of {expr1} as an Ex command.",
+        "Execute the string that results from the evaluation of {expr1} as an Ex command.",
         "<code>:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>",
         execute,
         null
@@ -772,6 +772,20 @@ var g_mappings = [/*{{{*/
         "Count is supported, <code class=mapping>3L</code> goes forward 3 steps.",
         function(count) { stepInHistory(count > 0 ? count : 1); }
     ],
+    [ 
+        ["gu", "<BackSpace>"],
+        ["{count}gu", "{count}<BackSpace>"],
+        "Go up one directory component",
+        "Count is supported, <code class=mapping>2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>",
+        goUp
+    ],
+    [ 
+        ["gU", "<C-BackSpace>"],
+        ["gU", "<C-BackSpace>"],
+        "Go up one directory component",
+        "<code class=mapping>gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>",
+        function(count) { openURLs("..."); }
+    ],
 
     /* hint managment */
     [ 
@@ -1325,6 +1339,30 @@ function stringToURLs(str)
     return urls;
 }
 
+/* returns true if the currently loaded URI is 
+ * a directory or false if it is a file
+ * if passed 'url' is null, use current directory
+ */
+function isDirectory(url)
+{
+    if (url.match(/^file:\/\//) || url.match(/^\//))
+    {
+        var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
+        var file = fopen(stripedFilename, '<');
+        if (!file)
+            return false;
+
+        if (file.localFile.isDirectory())
+            return true;
+        else
+            return false;
+    }
+    // for all other locations just check if the URL ends with /
+    if (url.match(/\/$/))
+        return true;
+    else
+        return false;
+}
 ////////////////////////////////////////////////////////////////////////
 // frame related functions //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
@@ -1379,6 +1417,23 @@ function focusNextFrame()
 function getCurrentLocation()
 {
     return content.document.location.href;
+}
+
+function goUp(count)
+{
+    var gocmd = "";
+    if (isDirectory(getCurrentLocation()))
+        gocmd = "../";
+    else
+        gocmd = "./";
+
+    if (count < 1)
+        count = 1;
+
+    for(var i=0; i<count-1; i--)
+        gocmd += "../";
+
+    openURLs(gocmd);
 }
 
 function yankCurrentLocation()

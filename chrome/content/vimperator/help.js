@@ -41,20 +41,20 @@ function help(section, easter)
     var style = "<style type='text/css'>\
 table.vimperator {\
     border-width: 1px 1px 1px 1px;\
-    border-spacing: 5px;\
+    /*border-spacing: 5px;*/\
     border-style: dotted dotted dotted dotted;\
     border-color: gray gray gray gray;\
     border-collapse: separate;\
     background-color: white;\
 }\
 table.vimperator th {\
-    border-width: 1px 1px 1px 1px;\
-    padding: 3px 3px 3px 3px;\
+    border-width: 0px 0px 0px 0px;\
+    /*padding: 3px 3px 3px 3px;*/\
     border-style: hidden hidden hidden hidden;\
     border-color: gray gray gray gray;\
 }\
 table.vimperator td {\
-    border-width: 1px 1px 1px 1px;\
+    border-width: 0px 0px 0px 0px;\
     padding: 3px 3px 3px 3px;\
     border-style: hidden hidden hidden hidden;\
     border-color: gray gray gray gray;\
@@ -76,6 +76,7 @@ td.usage code {\
 tr.tag code {\
     font-weight: bold;\
     font-size: 1opx;\
+    font-color: red;\
     margin-left: 2em;\
 }\
 tr.desciption {\

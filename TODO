@@ -40,10 +40,9 @@ FEATURES:
 6 Shift-Insert in textboxes pastes selection contents
 6 page info support (ctrl-g, g<C-g>)
 5 Use arrow keys in preview window, and ctrl-w+j/k to switch to from preview window
-5 Sort :open completion by date?
+5 Sort :open completion by date? (use 'wildsort')
 5 make use of the ] and [ keys to e.g. jump to the next heading ]], next image ]i, previous textbox [t and so on
 5 add tag support to adding/deleting bookmarks
-4 change :exec to behave more vim like, and add a seperate :javascript << EOF command
 4 Support multiple top-level windows?
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
