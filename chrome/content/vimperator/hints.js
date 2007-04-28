@@ -207,7 +207,7 @@ function hit_a_hint()
         offset = off; // must be global without 'var' for recursion
 
         if (!win)
-            win = window._content;
+            win = window.content;
 
         if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
         {

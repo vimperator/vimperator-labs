@@ -62,6 +62,7 @@ table.vimperator td {\
 }\
 tr.tag {\
     text-align: right;\
+    border-spacing: 13px 10px 13px 10px;\
 }\
 tr.tag td {\
     width: 100%;\
@@ -75,8 +76,8 @@ td.usage code {\
 }\
 tr.tag code {\
     font-weight: bold;\
-    font-size: 1opx;\
-    font-color: red;\
+    font-size: 12px;\
+    color: red;\
     margin-left: 2em;\
 }\
 tr.desciption {\

@@ -524,7 +524,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["gP"],
         ["gP"],
-        "Open (put) an URL based on the current Clipboard contents in a new buffer",
+        "Open (put) an URL based on the current clipboard contents in a new buffer",
         "Works like <code class=mapping>P</code>, but inverts the <code class=setting>'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), false); }
     ],
@@ -1969,11 +1969,15 @@ function set(args, special)
 
 function source(filename, silent)
 {
-    if (!filename) return;
+    if (!filename)
+        return;
+
     try
     {
         var fd = fopen(filename, "<");
-        if (!fd) return;
+        if (!fd)
+            return;
+
         var s = fd.read();
         fd.close();
 

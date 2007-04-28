@@ -330,7 +330,6 @@ function onVimperatorKeypress(event)/*{{{*/
     {
         // never propagate this key to firefox, when hints are visible
         event.preventDefault();
-        event.preventBubble();
         event.stopPropagation();
 
         for (i = 0; i < g_hint_mappings.length; i++)
@@ -452,7 +451,6 @@ function onVimperatorKeypress(event)/*{{{*/
                 g_inputbuffer = "";
                 updateStatusbar();
                 event.preventDefault();
-                event.preventBubble();
                 event.stopPropagation();
                 return false;
             }
@@ -467,16 +465,12 @@ function onVimperatorKeypress(event)/*{{{*/
     {
         g_inputbuffer += key;
         event.preventDefault();
-        event.preventBubble();
         event.stopPropagation();
     }
     else
     {
         g_inputbuffer = "";
         beep();
-//      event.preventDefault();
-//      event.preventBubble(); XXX: 
-//      event.stopPropagation();
     }
 
     updateStatusbar();
@@ -669,7 +663,6 @@ function onCommandBarKeypress(evt)/*{{{*/
 
             // prevent tab from moving to the next field
             evt.preventDefault();
-            evt.preventBubble();
             evt.stopPropagation();
 
         }

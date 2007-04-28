@@ -127,6 +127,7 @@ var g_settings = [/*{{{*/
         ["hintchars", "hc"],
         ["hintchars", "hc"],
         "String of single characters which can be used to follow hints",
+        null,
         "charlist",
         null,
         function(value) { set_pref("hintchars", value); },
