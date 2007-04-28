@@ -87,10 +87,14 @@ function LocalFile(file, mode, perms, tmp)
     {
         this.localFile = classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
         this.localFile.initWithPath(file);
+        if (!this.localFile.exists())
+            throw "No such file or directory";
     }
     else if (file instanceof nsILocalFile)
     {
         this.localFile = file;
+        if (!this.localFile.exists())
+            throw "No such file or directory";
     }
     else
     {

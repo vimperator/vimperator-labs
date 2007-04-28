@@ -356,7 +356,7 @@ var g_commands = [/*{{{*/
         ["tab"],
         ["tab {cmd}"],
         "Execute {cmd} and tell it to output in a new tab",
-        "Works for only commands that support it.",
+        "Works for only commands that support it.<br/>" +
         "Example: <code class=command>:tab help tab</code> opens the help in a new tab.",
         tab,
         null
@@ -1914,9 +1914,11 @@ function set(args, special)
 
 function source(filename, silent)
 {
+    if (!filename) return;
     try
     {
         var fd = fopen(filename, "<");
+        if (!fd) return;
         var s = fd.read();
         fd.close();
 

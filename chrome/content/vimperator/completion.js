@@ -471,7 +471,7 @@ function get_file_completions(filter)/*{{{*/
         return [[path], ''];
     });
 
-    return g_completions = build_longest_starting_substring(mapped, filter);
+    return g_completions = build_longest_starting_substring(mapped, new_filter);
 }/*}}}*/
 
 function get_help_completions(filter)/*{{{*/

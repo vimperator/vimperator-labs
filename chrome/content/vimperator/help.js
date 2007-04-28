@@ -33,7 +33,7 @@ function help(section, easter)
         echoerr("E478: Don't panic!");
         return;
     }
-    if (arguments[3] && arguments[3].inTab)
+    if ((arguments[3] && arguments[3].inTab) || !window.content.document.open)
         openURLsInNewTab("", true); 
 
     var doc = window.content.document;
