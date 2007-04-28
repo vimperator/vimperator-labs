@@ -283,7 +283,7 @@ var g_commands = [/*{{{*/
     [
         ["quit", "q"],
         ["q[uit]"],
-        "Quit current tab or quit Vimperator if this was the last tab<br/>" +
+        "Quit current tab or quit Vimperator if this was the last tab",
         "When quitting Vimperator, the session is not stored.",
         function (args) { tab_remove(1, false, 1); },
         null
@@ -1173,9 +1173,12 @@ function multiliner(line, prev_match, heredoc)
 
 function execute(string)
 {
-    if (!string) return;
+    if (!string)
+        return;
+
     var tokens = tokenize_ex(string.replace(/^'(.*)'$/, '$1'));
     tokens[4] = arguments[3];
+
     return execute_command.apply(this, tokens);
 }
 ////////////////////////////////////////////////////////////////////////

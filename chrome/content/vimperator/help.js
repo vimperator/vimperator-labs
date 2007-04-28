@@ -46,6 +46,7 @@ table.vimperator {\
     border-color: gray gray gray gray;\
     border-collapse: separate;\
     background-color: white;\
+    width: 800px !important;\
 }\
 table.vimperator th {\
     border-width: 0px 0px 0px 0px;\
@@ -186,7 +187,7 @@ table.settings th {\
     function makeSettingsHelpString(command)
     {
         var ret = "";
-        ret = command[TYPE] + " (default: <code>";
+        ret = command[TYPE] + ' (default: <span style="font-family: monospace;">';
         if (command[TYPE] == "boolean")
         {
             if(command[DEFAULT] == true)
@@ -202,7 +203,7 @@ table.settings th {\
                 ret += command[DEFAULT];
         }
 
-        ret += "</code>)<br/>";
+        ret += "</span>)<br/>";
         return ret;
     }
         

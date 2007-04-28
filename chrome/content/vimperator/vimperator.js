@@ -229,7 +229,7 @@ function init()
             BrowserStop();
             help();
             set_pref("firsttime", false);
-        },1000);
+        }, 1000); 
     }
 
 
