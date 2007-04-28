@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var g_vimperator_version  = "###VERSION### (created: ###date###)";
+var g_vimperator_version  = "###VERSION### (created: ###DATE###)";
 
 const MODE_NORMAL = 1;
 const MODE_INSERT = 2;
