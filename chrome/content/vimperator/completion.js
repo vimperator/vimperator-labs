@@ -482,7 +482,7 @@ function get_help_completions(filter)/*{{{*/
     help_array = help_array.concat(get_settings_completions(filter, true));
     help_array = help_array.concat(g_mappings);
     if (!filter) return help_array.map(function($_) {
-        return [$_[0][0], $_[1]];
+        return [$_[COMMANDS][0], $_[SHORTHELP]];
     });
     return build_longest_common_substring(help_array, filter);
 }/*}}}*/
@@ -492,7 +492,7 @@ function get_command_completions(filter)/*{{{*/
     g_completions = [];
     g_substrings = [];
     if (!filter) return g_completions = g_commands.map(function($_) {
-        return [$_[0][0], $_[1]];
+        return [$_[COMMANDS][0], $_[SHORTHELP]];
     });
     return g_completions = build_longest_starting_substring(g_commands, filter);
 }/*}}}*/
@@ -508,16 +508,16 @@ function get_settings_completions(filter, unfiltered)/*{{{*/
         filter = filter.substr(2);
     }
     if (unfiltered) return g_settings.filter(function($_) {
-        if (no_mode && $_[5] != "boolean") return false;
+        if (no_mode && $_[TYPE] != "boolean") return false;
         else return true;
     }).map(function($_) {
-        return [$_[0], $_[1]];
+        return [$_[COMMANDS], $_[SHORTHELP]];
     });
     if (!filter) return g_settings.filter(function($_) {
-        if (no_mode && $_[5] != "boolean") return false;
+        if (no_mode && $_[TYPE] != "boolean") return false;
         else return true;
     }).map(function($_) {
-        return [$_[0][0], $_[1]];
+        return [$_[COMMANDS][0], $_[SHORTHELP]];
     });
 
 
@@ -527,11 +527,11 @@ function get_settings_completions(filter, unfiltered)/*{{{*/
         filter = filter.substr(0, filter.length-1);
         for(var i=0; i<g_settings.length; i++)
         {
-            for(var j=0; j<g_settings[i][0].length; j++)
+            for(var j=0; j<g_settings[i][COMMANDS].length; j++)
             {
-                if (g_settings[i][0][j] == filter)
+                if (g_settings[i][COMMANDS][j] == filter)
                 {
-                    settings_completions.push([filter + "=" + g_settings[i][4].call(this), ""]);
+                    settings_completions.push([filter + "=" + g_settings[i][GETFUNC].call(this), ""]);
                     return settings_completions;
                 }
             }
@@ -543,26 +543,26 @@ function get_settings_completions(filter, unfiltered)/*{{{*/
     var filter_length = filter.length;
     for (var i = 0; i < g_settings.length; i++)
     {
-        if (no_mode && g_settings[i][5] != "boolean")
+        if (no_mode && g_settings[i][TYPE] != "boolean")
             continue;
 
         var prefix = no_mode ? 'no' : '';
-        for (var j = 0; j < g_settings[i][0].length; j++)
+        for (var j = 0; j < g_settings[i][COMMANDS].length; j++)
         {
-            if (g_settings[i][0][j].indexOf(filter) != 0) continue;
+            if (g_settings[i][COMMANDS][j].indexOf(filter) != 0) continue;
             if (g_substrings.length == 0)
             {
-                var length = g_settings[i][0][j].length;
+                var length = g_settings[i][COMMANDS][j].length;
                 for (var k = filter_length; k <= length; k++)
-                    g_substrings.push(prefix + g_settings[i][0][j].substring(0, k));
+                    g_substrings.push(prefix + g_settings[i][COMMANDS][j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return g_settings[i][0][j].indexOf($_) == 0;
+                    return g_settings[i][COMMANDS][j].indexOf($_) == 0;
                 });
             }
-            settings_completions.push([prefix + g_settings[i][0][j], g_settings[i][1]]);
+            settings_completions.push([prefix + g_settings[i][COMMANDS][j], g_settings[i][SHORTHELP]]);
             break;
         }
     }

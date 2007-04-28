@@ -1,6 +1,9 @@
 <pre>
 date:
 	* version 0.4
+	* support for 'wildmode' completion setting
+	* changed regexp search to normal text search for completion -> massive speedup, but limited functionality
+	* support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
 	* Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
 	* changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
 	* :back! goes to beginning of history now

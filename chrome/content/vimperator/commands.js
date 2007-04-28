@@ -26,21 +26,30 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+const COMMANDS = 0;
+const USAGE = 1;
+const SHORTHELP = 2;
+const HELP = 3;
+const FUNCTION = 4;
+const COMPLETEFUNC = 5;
+
+
 /* all built-in :ex-commands of Vimperator
  * format:
  * [
  *     0: [all names of this command],
  *     1: usage,
- *     2: helptext
- *     3: function (arguments in this order: args, special, count, modifiers)
- *     4: completefunc
+ *     2: short help
+ *     3: helptext
+ *     4: function (arguments in this order: args, special, count, modifiers)
+ *     5: completefunc
  * ]
  */
 var g_commands = [/*{{{*/
     [
         ["addons"],
         ["addons"],
-        "Show available Browser Extensions and Themes<br/>" +
+        "Show available Browser Extensions and Themes",
         "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI.",
         function() { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
         null
@@ -48,7 +57,7 @@ var g_commands = [/*{{{*/
     [
         ["back", "ba"],
         ["{count}ba[ck][!]"],
-        "Go back in the browser history<br/>" +
+        "Go back in the browser history",
         "Count is supported, <code>:3back</code> goes back 3 pages in the browser history.<br/>"+
         "The special version <code>:back!</code> goes to the beginning of the browser history.",
         function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
@@ -57,7 +66,7 @@ var g_commands = [/*{{{*/
     [
         ["bdelete", "bd", "bwipeout", "bw", "bunload", "bun", "tabclose", "tabc"],
         ["{count}bd[elete][!]"],
-        "Delete current buffer (=tab)<br/>"+
+        "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=command>:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code>:bdelete!</code> to select the tab to the left after removing the current tab.",
         function (args, special, count) { tab_remove (count, special, 0); },
         null
@@ -66,13 +75,14 @@ var g_commands = [/*{{{*/
         ["beep"],
         ["beep"],
         "Play a system beep",
+        null,
         beep,
         null
     ],
     [
         ["bmadd"],
         ["bmadd [-tT] [url]"],
-        "Add a bookmark<br/>" +
+        "Add a bookmark",
         "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
         "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
         "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
@@ -85,7 +95,7 @@ var g_commands = [/*{{{*/
     [
         ["bmdel"],
         ["bmdel [-T] {url}"],
-        "Delete a bookmark<br/>"+
+        "Delete a bookmark",
         "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
         "The following options WILL be interpretted in the future:<br/>" +
         " -T comma,separated,tag,list <br/>",
@@ -95,7 +105,7 @@ var g_commands = [/*{{{*/
     [
         ["bookmarks", "bm"],
         ["bm[!] [-T] {regexp}"],
-        "Show bookmarks<br/>" +
+        "Show bookmarks",
         "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
         "The following options WILL be interpretted in the future:<br/>" +
@@ -105,23 +115,25 @@ var g_commands = [/*{{{*/
     ],
     [
         ["buffer", "b"],
-        ["b[uffer]"],
-        "Go to buffer number n. Full completion works.",
+        ["b[uffer] {url|index}"],
+        "Go to buffer from buffer list",
+        "Argument can be either the buffer index or the full URL.",
         buffer_switch,
         function (filter) {return get_buffer_completions(filter);}
     ],
     [
         ["buffers", "files", "ls"],
         ["buffers"],
-        "Shows a list of all buffers.<br/>If the list is already shown, close the preview window.",
+        "Shows a list of all buffers",
+        "If the list is already shown, close the preview window.",
         buffer_preview_toggle,
         null
     ],
     [
         ["downloads", "dl"],
         ["downloads"],
-        "Show progress of current downloads<br/>" +
-        "Open the original Firefox download dialog in a new tab.<br/>" +
+        "Show progress of current downloads",
+        "Open the original Firefox download dialog in a new tab.",
         "Here, downloads can be paused, canceled and resumed.",
         function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
         null
@@ -129,7 +141,7 @@ var g_commands = [/*{{{*/
     [
         ["echo", "ec"],
         ["ec[ho]"],
-        "Display a string at the bottom of the window<br/>" +
+        "Display a string at the bottom of the window",
         "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be seperated by \\n.",
         echo,
         null
@@ -137,7 +149,7 @@ var g_commands = [/*{{{*/
     [
         ["echoerr", "echoe"],
         ["echoe[rr]"],
-        "Display an error string at the bottom of the window<br/>",
+        "Display an error string at the bottom of the window",
         "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be seperated by \\n.",
         echoerr,
         null
@@ -145,7 +157,7 @@ var g_commands = [/*{{{*/
     [
         ["execute", "exe"],
         ["exe[cute] {expr1} [ ... ]"],
-        "Executes the string that results from the evaluation of {expr1} as an Ex command.<br/>"+
+        "Executes the string that results from the evaluation of {expr1} as an Ex command.",
         "<code>:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>",
         execute,
         null
@@ -153,7 +165,7 @@ var g_commands = [/*{{{*/
     [
         ["forward", "fw"],
         ["{count}forward[!]"],
-        "Go forward in the browser history<br/>" +
+        "Go forward in the browser history",
         "Count is supported, <code>:3forward</code> goes forward 3 pages in the browser history.<br/>"+
         "The special version <code>:forward!</code> goes to the end of the browser history.",
         function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
@@ -162,23 +174,24 @@ var g_commands = [/*{{{*/
     [
         ["hardcopy", "ha"],
         ["ha[rdcopy]"],
-        "Print current document<br/>" +
-        "Open a GUI dialog where you can select the printer, number of copies, orientation, etc.",
+        "Print current document",
+        "NOT FUNCTIONAL YET. Open a GUI dialog where you can select the printer, number of copies, orientation, etc.",
         function() { goDoCommand('cmd_print'); },
         null
     ],
     [
         ["help", "h"],
         ["h[elp] {subject}"],
-        "Open the help window in the current tab. It can jump to the specified {subject} with <code class=command>:help {subject}</code>.",
+        "Open the help window",
+        "You can jump to the specified {subject} with <code class=command>:help {subject}</code>.",
         help,
         function(filter) { return get_help_completions(filter); }
     ],
     [
         ["history", "hs"],
-        ["hs {regexp}"],
-        "Show recently visited URLs<br/>" +
-        "Open the preview window at the bottom of the screen for all history items which match the regexp either in the title or URL.<br/>" +
+        ["hs {filter}"],
+        "Show recently visited URLs",
+        "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL.",
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
         hsshow,
         function(filter) { return get_history_completions(filter); }
@@ -186,7 +199,7 @@ var g_commands = [/*{{{*/
     [
         ["javascript", "js"],
         ["javascript {cmd}", "javascript &lt;&lt;{endpattern}<br/>{script}<br/>{endpattern}"],
-        "Run any javascript command through eval()<br/>" +
+        "Run any javascript command through eval()",
         "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
         "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
         "<code>:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
@@ -206,7 +219,7 @@ var g_commands = [/*{{{*/
     [
         ["mark", "ma"],
         ["ma[rk] {arg}"],
-        "Mark current location within the webpage<br/>" +
+        "Mark current location within the webpage",
         "Not implemented yet",
         set_location_mark,
         null
@@ -214,19 +227,21 @@ var g_commands = [/*{{{*/
     [
         ["marks"],
         ["marks {arg}"],
-        "Show all location marks of current webpage<br/>" +
+        "Show all location marks of current webpage",
         "Not implemented yet",
         set_location_mark,
         null
     ],
     [
-        ["edit", "e", "open", "op", "o"],
-        ["edit [url] [| [url]]"],
-        "Open one ore more URLs<br/>" +
-        "Opens one ore more URLs in the current buffer.<br/>"+
+        ["open", "op", "o", "edit", "e"],
+        ["open [url] [| [url]]"],
+        "Open one ore more URLs in the current tab",
         "Multiple URLs can be separated with the | character.<br/>" +
         "Each |-separated token is analazed and in this order:<br/>"+
         "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code>:open wiki linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
+        "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and goes to the moves up the directory hierarchy as far as possible.<br/>"+
+        "        - <code class=command>:open ...</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com</code><br/>"+
+        "        - <code class=command>:open ./foo.html</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com/dir1/dir2/foo.html</code></li>"+
         "    <li>Opened with the default search engine if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
         "    <li>Passed directly to Firefox in all other cases (<code>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
         "You WILL be able to use <code>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
@@ -252,13 +267,14 @@ var g_commands = [/*{{{*/
         ["pclose", "pc"],
         ["pc[lose]"],
         "Close preview window on bottom of screen",
+        null,
         function() { preview_window.hidden = true; },
         null
     ],
     [
         ["preferences", "prefs"],
         ["preferences"],
-        "Show Browser Preferences<br/>" +
+        "Show Browser Preferences",
         "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>"+
         "Works like <code class=command>:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=command>:set!</code>",
         openPreferences,
@@ -275,6 +291,7 @@ var g_commands = [/*{{{*/
     [
         ["quitall", "quita", "qall", "qa"],
         ["quita[ll]"],
+        "Quit Vimperator",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.",
         function (args) { quit(false); },
         null
@@ -282,7 +299,7 @@ var g_commands = [/*{{{*/
     [
         ["reload", "re"],
         ["re[load]"],
-        "Reload current page<br/>" +
+        "Reload current page",
         "Forces reloading of the current page, or of all open pages, if ! is given.",
         function(args, special) { reload(special); },
         null
@@ -291,13 +308,14 @@ var g_commands = [/*{{{*/
         ["restart"],
         ["restart"],
         "Forces the browser to restart.",
+        null,
         restart,
         null
     ],
     [
         ["saveas", "sav"],
         ["sav[eas]"],
-        "Save current web page to disk<br/>" +
+        "Save current web page to disk",
         "Open the original Firefox \"Save page as...\" dialog in a new tab.<br/>" +
         "There, you can save the current web page to disk with various options.",
         function() { goDoCommand('Browser:SavePage'); },
@@ -306,7 +324,7 @@ var g_commands = [/*{{{*/
     [
         ["set", "se"],
         ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
-        "Set an option<br/>" +
+        "Set an option",
         "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>"+
         "Boolean options must be set with <code>:set option</code> and <code>:set nooption</code>.<br/>"+
         "<code>:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
@@ -319,7 +337,7 @@ var g_commands = [/*{{{*/
     [
         ["source", "so"],
         [":so[urce][!] {file}"],
-        "Read Ex commands from {file}<br/>" +
+        "Read Ex commands from {file}",
         "The .vimperatorrc file in your home directory is always sourced at start up.<br/>"+
         "~ is supported as a shortcut for the $HOME directory.<br/>" +
         "If ! is specified, errors are not printed.",
@@ -329,7 +347,7 @@ var g_commands = [/*{{{*/
     [
         ["stop", "st"],
         ["st[op]"],
-        "Stop loading<br/>" +
+        "Stop loading",
         "Stop loading current web page.",
         BrowserStop,
         null
@@ -337,31 +355,33 @@ var g_commands = [/*{{{*/
     [
         ["tab"],
         ["tab {cmd}"],
-        "Executes {cmd} and tells it to output in a new tab. Works for commands that support it.<br/>" +
-        "Example: <code class=command>:tab help tab</code> Opens the help in a new tab.",
+        "Execute {cmd} and tell it to output in a new tab",
+        "Works for only commands that support it.",
+        "Example: <code class=command>:tab help tab</code> opens the help in a new tab.",
         tab,
         null
     ],
     [
         ["tabnext", "tabn", "tn", "tnext"],
         ["tabn[ext]"],
-        "Switch to the next tab<br/>" +
+        "Switch to the next tab",
         "Cycles to the first tab, when the last is selected.",
         function(args, special, count) { tab_go(0); },
         null
     ],
     [
-        ["tabedit", "tabe", "tabnew", "tabopen", "t", "to", "topen"],
-        ["tabedit [url] [| [url]]"],
-        "Open one or more URLs in a new tab<br/>" +
-        "Like <code class=command>:open</code> but open URLs in a new tab. If used with !, the 'tabopen' value of the 'activate' setting is negated.",
+        ["tabopen", "t", "to", "topen", "tabnew", "tabedit", "tabe"],
+        ["tabopen [url] [| [url]]"],
+        "Open one or more URLs in a new tab",
+        "Like <code class=command>:open</code> but open URLs in a new tab.<br/>"+
+        "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
         function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
         function (filter) { return get_url_completions(filter); }
     ],
     [
         ["tabprevious", "tp", "tprev", "tprevious"],
         ["tabp[revious]"],
-        "Switch to the previous tab<br/>" +
+        "Switch to the previous tab",
         "Cycles to the last tab, when the first is selected.",
         function(args, count) { tab_go(-1); },
         null
@@ -369,23 +389,23 @@ var g_commands = [/*{{{*/
     [
         ["undo", "u"],
         ["{count}undo"],
-        "Undo closing of a tab<br/>" +
+        "Undo closing of a tab",
         "If a count is given, don't close the last but the n'th last tab",
         function(args, special, count) { if(count < 1) count = 1; undoCloseTab(count-1); },
         null
     ],
     [
         ["qmarkadd", "qmadd"],
-        ["qmarkadd"],
-        "Mark a URL with a letter for quick access<br/>" +
+        ["qmarkadd {a-zA-Z0-9} [url]"],
+        "Mark a URL with a letter for quick access",
         "Not implemented yet",
         function(args) { set_url_mark("mark", "url"); }, // FIXME
         function(filter) { return [["a", ""], ["b", ""]]; }
     ],
     [
         ["qmarkdel", "qmdel"],
-        ["qmarkdel"],
-        "Mark a URL with a letter for quick access<br/>" +
+        ["qmarkdel {a-zA-Z0-9}"],
+        "Remove a marked URL" +
         "Not implemented yet",
         function(args) { set_url_mark("mark", "url"); }, // FIXME
         function(filter) { return [["a", ""], ["b", ""]]; }
@@ -393,7 +413,7 @@ var g_commands = [/*{{{*/
     [
         ["qmarks", "qms"],
         ["qmarks"],
-        "Shows marked URLs<br/>" +
+        "Shows marked URLs",
         "Not implemented yet",
         function(args) { show_url_marks(args); }, // FIXME
         null
@@ -402,13 +422,14 @@ var g_commands = [/*{{{*/
         ["version", "ve"],
         ["ve[rsion]"],
         "Show version information",
+        null,
         function () { echo("Vimperator version: " + g_vimperator_version); },
         null
     ],
     [
-        ["winedit", "wine", "winopen", "w", "wo", "wopen"],
-        ["wine[dit] [url] [| [url]]"],
-        "Open an URL in a new window<br/>" +
+        ["winopen", "w", "wo", "wopen", "winedit", "wine"],
+        ["win[open] [url] [| [url]]"],
+        "Open an URL in a new window",
         "Not implemented yet",
         function () { echo("winopen not yet implemented"); },
         null
@@ -416,7 +437,7 @@ var g_commands = [/*{{{*/
     [
         ["xall", "xa", "wqall", "wqa", "wq"],
         ["wqa[ll]", "xa[ll]"],
-        "Save the session and quit<br/>" +
+        "Save the session and quit",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.",
         function (args) { quit(true); },
         null
@@ -424,7 +445,7 @@ var g_commands = [/*{{{*/
     [
         ["zoom", "zo"],
         ["zo[om] {value}"],
-        "Set zoom value of the webpage<br/>" +
+        "Set zoom value of the webpage",
         "{value} can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
         zoom_to,
         null
@@ -436,15 +457,16 @@ var g_commands = [/*{{{*/
  * [
  *     0: [all shortcuts of this command],
  *     1: usage,
- *     2: helptext
- *     3: function (arguments in this order: args, special, count)
+ *     2: shorthelp
+ *     3: helptext
+ *     4: function (arguments in this order: args, special, count)
  * ]
  */
 var g_mappings = [/*{{{*/
     [ 
         ["]f"],
         ["]f"],
-        "Focus next frame<br/>" +
+        "Focus next frame",
         "Flashes the next frame in order with a red color, to quickly show where keyboard focus is.<br/>"+
         "This may not work correctly for frames with lots of CSS code.",
         focusNextFrame
@@ -452,7 +474,7 @@ var g_mappings = [/*{{{*/
     [
         ["b"],
         ["b {number}"],
-        "Open a prompt to switch buffers<br/>" +
+        "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
         function (args) { bufshow("", true); openVimperatorBar('buffer '); }  
     ],
@@ -460,26 +482,27 @@ var g_mappings = [/*{{{*/
         ["B"],
         ["B"],
         "Toggle the buffer list with all currently opened tabs.",
+        null,
         buffer_preview_toggle
     ],
     [ 
         ["d"],
         ["{count}d"],
-        "Delete current buffer (=tab)<br/>" +
+        "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=mapping>2d</code> removes two tabs and the one the right is selected.",
         function(count) { tab_remove(count, false, 0); }
     ],
     [ 
         ["D"],
         ["{count}D"],
-        "Delete current buffer (=tab)<br/>" +
+        "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=mapping>2D</code> removes two tabs and the one the left is selected.",
         function(count) { tab_remove(count, true, 0); }
     ],
     [ 
         ["ge"],
         ["ge {cmd}"],
-        "Execute an Ex command<br/>" +
+        "Execute an Ex command",
         "<code>Go Execute</code> works like <code class=command>:execute</code>.<br/>"+
         "This mapping is for debugging purposes, and may be removed in future.",
         function(count) { openVimperatorBar('execute '); }
@@ -487,28 +510,28 @@ var g_mappings = [/*{{{*/
     [ 
         ["gh"],
         ["gh"],
-        "Go home<br/>" +
+        "Go home",
         "Opens the homepage in the current tab.",
         BrowserHome
     ],
     [ 
         ["gH"],
         ["gH"],
-        "Go home in a new tab<br/>" +
+        "Go home in a new tab",
         "Opens the homepage in a new tab.",
         function(count) { openURLsInNewTab("", true); BrowserHome(); }
     ],
     [ 
         ["gP"],
         ["gP"],
-        "Open (put) an URL based on the current Clipboard contents in a new buffer<br/>" +
+        "Open (put) an URL based on the current Clipboard contents in a new buffer",
         "Works like <code class=mapping>P</code>, but inverts the <code class=setting>'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), false); }
     ],
     [ 
         ["gt", "<C-n>", "<C-Tab>"],
         ["{count}gt"],
-        "Go to next tab<br/>" +
+        "Go to next tab",
         "Cycles to the first tab, when the last is selected.<br/>"+
         "Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
         function(count) { tab_go(count > 0 ? count : 0); }
@@ -516,7 +539,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["gT", "<C-p>", "<C-S-Tab>"],
         ["{count}gT"],
-        "Go to previous tab<br/>" +
+        "Go to previous tab",
         "Cycles to the last tab, when the first is selected.<br/>"+
         "Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
         function(count) { tab_go(count > 0 ? count :-1); }
@@ -524,28 +547,28 @@ var g_mappings = [/*{{{*/
     [ 
         ["o"],
         ["o"],
-        "Open one or more URLs in the current tab<br/>" +
+        "Open one or more URLs in the current tab",
         "See <code class=command>:open</code> for more details",
         function(count) { openVimperatorBar('open '); }
     ],
     [ 
         ["O"],
         ["O"],
-        "Open one ore more URLs in the current tab, based on current location<br/>" +
+        "Open one ore more URLs in the current tab, based on current location",
         "Works like <code class=mapping>o</code>, but preselects current URL in the <code class=command>:open</code> query.",
         function(count) { openVimperatorBar('open ' + getCurrentLocation()); }
     ],
     [ 
         ["p", "<MiddleMouse>"],
         ["p", "<MiddleMouse>"],
-        "Open (put) an URL based on the current Clipboard contents in the current buffer<br/>" +
+        "Open (put) an URL based on the current Clipboard contents in the current buffer",
         "You can also just select some non-URL text, and search for it with the default search engine with <code class=mapping>p</code>",
         function(count) { openURLs(readFromClipboard()); }
     ],
     [ 
         ["P"],
         ["P"],
-        "Open (put) an URL based on the current Clipboard contents in a new buffer<br/>" +
+        "Open (put) an URL based on the current Clipboard contents in a new buffer",
         "Works like <code class=mapping>p</code>, but opens a new tab.<br/>"+
         "Whether the new buffer is activated, depends on the <code class=setting>'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), true); }
@@ -554,18 +577,20 @@ var g_mappings = [/*{{{*/
         ["r"],
         ["r"],
         "Forces reloading of the current page.",
+        null,
         function(count) { reload(false); }
     ],
     [ 
         ["R"],
         ["R"],
         "Forces reloading of all open pages.",
+        null,
         function(count) { reload(true); }
     ],
     [ 
         ["t"],
         ["t"],
-        "Open one or more URLs in a new tab<br/>" +
+        "Open one or more URLs in a new tab",
         "Like <code class=mapping>o</code> but open URLs in a new tab."+
         "See <code class=command>:tabopen</code> for more details",
         function(count) { openVimperatorBar('tabopen '); }
@@ -573,70 +598,70 @@ var g_mappings = [/*{{{*/
     [ 
         ["T"],
         ["T"],
-        "Open one ore more URLs in a new tab, based on current location<br/>" +
+        "Open one ore more URLs in a new tab, based on current location",
         "Works like <code class=mapping>t</code>, but preselects current URL in the <code class=command>:tabopen</code> query.",
         function(count) { openVimperatorBar('tabopen ' + getCurrentLocation()); }
     ],
     [ 
         ["u"],
         ["{count}u"],
-        "Undo closing of a tab<br/>" +
+        "Undo closing of a tab",
         "If a count is given, don't close the last but the n'th last tab",
         function(count) { execute_command(count, 'undo', false, ''); }
     ],
     [ 
         ["y"],
         ["y"],
-        "Yank current location to the Clipboard<br/>" +
+        "Yank current location to the Clipboard",
         "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button.",
         yankCurrentLocation
     ],
     [ 
         ["zi", "+"],
         ["zi", "+"],
-        "Zoom in current web page by 25%.<br/>"+
+        "Zoom in current web page by 25%.",
         "Currently no count supported.",
         function(count) { zoom_in(1); }
     ],
     [ 
         ["zI"],
         ["zI"],
-        "Zoom in current web page by 100%.<br/>"+
+        "Zoom in current web page by 100%.",
         "Currently no count supported.",
         function(count) { zoom_in(4); }
     ],
     [ 
         ["zo", "-"],
         ["zo", "-"],
-        "Zoom out current web page by 25%.<br/>"+
+        "Zoom out current web page by 25%.",
         "Currently no count supported.",
         function(count) { zoom_in(-1); }
     ],
     [ 
         ["zO"],
         ["zO"],
-        "Zoom out current web page by 100%.<br/>"+
+        "Zoom out current web page by 100%.",
         "Currently no count supported.",
         function(count) { zoom_in(-4); }
     ],
     [ 
         ["zz"],
         ["{count}zz"],
-        "Set zoom value of the webpage<br/>" +
+        "Set zoom value of the webpage",
         "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
         zoom_to
     ],
     [ 
         ["ZQ"],
         ["ZQ"],
-        "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.<br/>" +
+        "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.",
         "Works like <code class=command>:qall</code>.",
         function(count) { quit(false); }
     ],
     [ 
         ["ZZ"],
         ["ZZ"],
-        "Save the session and quit<br/>" +
+        "Save the session and quit",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
         "Works like <code class=command>:xall</code>.",
         function(count) { quit(true); }
@@ -646,7 +671,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["0", "^"],
         ["0", "^"],
-        "Scroll to the absolute left of the document<br/>" +
+        "Scroll to the absolute left of the document",
         "Unlike in vim, <code class=mapping>0</code> and <code class=mapping>^</code> work exactly the same way.",
         function(count) { scrollBufferAbsolute(0, -1); }
     ],
@@ -654,19 +679,20 @@ var g_mappings = [/*{{{*/
         ["$"],
         ["$"],
         "Scroll to the absolute right of the document",
+        null,
         function(count) { scrollBufferAbsolute(100, -1); }
     ],
     [ 
         ["gg", "<Home>"],
         ["{count}gg", "{count}<Home>"],
-        "Goto the top of the document<br/>" +
+        "Goto the top of the document",
         "Count is supported, <code class=mapping>35gg</code> vertically goes to 35% of the document",
         function(count) { scrollBufferAbsolute(-1, count >  0 ? count : 0); }
     ],
     [ 
         ["G", "<End>"],
         ["{count}G", "{count}<End>"],
-        "Goto the end of the document<br/>" +
+        "Goto the end of the document",
         "Count is supported, <code class=mapping>35G</code> vertically goes to 35% of the document",
         function(count) { scrollBufferAbsolute(-1, count >= 0 ? count : 100); }
     ],
@@ -674,14 +700,14 @@ var g_mappings = [/*{{{*/
         ["h", "<Left>"],
         ["{count}h", "{count}<Left>"],
         "Scroll document to the left" +
-        "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.<br/>"+
+        "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.",
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(-1, 0); }
     ],
     [ 
         ["j", "<Down>", "<C-e>"],
         ["{count}j", "{count}<Down>", "{count}<C-e>"],
-        "Scroll document down<br/>" +
+        "Scroll document down",
         "Count is supported: <code class=mapping>10j</code> will move 10 times as much down.<br/>"+
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(0, 1); }
@@ -689,7 +715,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["k", "<Up>", "<C-y>"],
         ["{count}k", "{count}<Up>", "{count}<C-y>"],
-        "Scroll document up<br/>" +
+        "Scroll document up",
         "Count is supported: <code class=mapping>10k</code> will move 10 times as much up.<br/>"+
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(0, -1); }
@@ -697,21 +723,23 @@ var g_mappings = [/*{{{*/
     [ 
         ["l", "<Right>"],
         ["{count}l", "{count}<Right>"],
-        "Scroll document to the right<br/>" +
+        "Scroll document to the right",
         "Count is supported: <code class=mapping>10l</code> will move 10 times as much to the right.<br/>"+
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(1, 0); }
     ],
     [ 
-        ["<C-b>", "<PageUp>", "<S-Space>"],
-        ["<C-b>", "<PageUp>", "<S-Space>"],
+        ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"],
+        ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"],
         "Scroll up a full page of the current document. No count support for now.",
+        null,
         function(count) { goDoCommand('cmd_scrollPageUp'); }
     ],
     [ 
-        ["<C-f>", "<PageDown>", "<Space>"],
-        ["<C-f>", "<PageDown>", "<Space>"],
+        ["<C-f>", "<C-d>", "<PageDown>", "<Space>"],
+        ["<C-f>", "<C-d>", "<PageDown>", "<Space>"],
         "Scroll down a full page of the current document. No count support for now.",
+        null,
         function(count) { goDoCommand('cmd_scrollPageDown'); }
     ],
 
@@ -719,28 +747,28 @@ var g_mappings = [/*{{{*/
     [ 
         ["<C-o>"],
         ["{count}<C-o>"],
-        "Go to an older position in the jump list<br/>" +
+        "Go to an older position in the jump list",
         "The jump list is just the browser history for now",
         function(count) { stepInHistory(count > 0 ? -1 * count : -1); }
     ],
     [ 
         ["<C-i>"],
         ["{count}<C-i>"],
-        "Go to a newer position in the jump list<br/>" +
+        "Go to a newer position in the jump list",
         "The jump list is just the browser history for now",
         function(count) { stepInHistory(count > 0 ? count : 1); }
     ],
     [ 
         ["H", "<A-Left>", "<M-Left>"],
         ["{count}H", "{count}<A-Left>", "{count}<M-Left>"],
-        "Go back in the browser history<br/>" +
+        "Go back in the browser history",
         "Count is supported, <code class=mapping>3H</code> goes back 3 steps.",
         function(count) { stepInHistory(count > 0 ? -1 * count : -1); }
     ],
     [ 
         ["L", "<A-Right>", "<M-Right>"],
         ["{count}L", "{count}<A-Right>", "{count}<M-Right>"],
-        "Go forward in the browser history<br/>" +
+        "Go forward in the browser history",
         "Count is supported, <code class=mapping>3L</code> goes forward 3 steps.",
         function(count) { stepInHistory(count > 0 ? count : 1); }
     ],
@@ -749,7 +777,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["f"],
         ["f"],
-        "Start QuickHint mode<br/>" +
+        "Start QuickHint mode",
         "In QuickHint mode, every hintable item (according to the <code class=setting>'hinttags'</code> XPath query) is assigned a label.<br/>"+
         "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=mapping>&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "If you write the hint in ALLCAPS, the hint is followed in a background tab.",
@@ -758,7 +786,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["F"],
         ["F"],
-        "Start AlwaysHint mode<br/>" +
+        "Start AlwaysHint mode",
         "In AlwaysHint mode, every hintable item (according to the <code class=setting>'hinttags'</code> XPath query) is assigned a label.<br/>"+
         "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=mapping>&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>"+
@@ -768,7 +796,7 @@ var g_mappings = [/*{{{*/
     [ 
         [";"],
         [";"],
-        "Start ExtendedHint mode<br/>" +
+        "Start ExtendedHint mode",
         "ExtendedHint mode is useful, since in this mode you can yank link locations, or open them in a new window.<br/>"+
         "If you want to yank the location of hint <code>AB</code>, press <code class=mapping>;</code> to start this hint mode.<br/>"+
         "Then press <code>AB</code> to select the hint. Now press <code class=mapping>y</code> to yank its location.<br/>"+
@@ -790,7 +818,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["n"],
         ["n"],
-        "Find next<br/>" +
+        "Find next",
         "Repeat the last \"/\" 1 time (until count is supported).",
         // don't use a closure for this, is just DoesNotWork (TM)
         function(count) { gFindBar.onFindAgainCmd(); } // this does not work, why?: goDoCommand('cmd_findAgain'); }
@@ -798,7 +826,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["N"],
         ["N"],
-        "Find previous<br/>" +
+        "Find previous",
         "Repeat the last \"/\" 1 time (until count is supported) in the opposite direction.",
         // don't use a closure for this, is just DoesNotWork (TM)
         function(count) { gFindBar.onFindPreviousCmd(); } // this does not work, why?: goDoCommand('cmd_findPrevious'); }
@@ -808,21 +836,21 @@ var g_mappings = [/*{{{*/
     [ 
         ["<F1>"],
         ["<F1>"],
-        "Open help window<br/>" +
+        "Open help window",
         "The default section is shown, if you need help for a specific topic, try <code class=command>:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet).",
         function(count) { help(null); }
     ],
     [ 
         [":"],
         [":"],
-        "Start command line mode<br/>" +
+        "Start command line mode",
         "In command line mode, you can perform extended commands, which may require arguments.",
         function(count) { openVimperatorBar(null); }
     ],
     [ 
         ["I"],
         ["I"],
-        "Disable vimperator keys<br/>" +
+        "Disable vimperator keys",
         "Starts an 'ignorekeys' mode, where all keys except <code class=mapping>&lt;Esc&gt;</code> are passed to the next event handler.<br/>"+
         "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>" +
         "To exit this mode, press <code class=mapping>&lt;Esc&gt;</code>. If you also need to pass <code class=mapping>&lt;Esc&gt;</code>"+
@@ -832,7 +860,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["<C-v>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
         ["<C-v>"],
-        "Escape next key<br/>" +
+        "Escape next key",
         "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=mapping>&lt;C-v&gt;</code>.<br/>"+
         "Also works to unshadow Firefox shortcuts like <code class=mapping>&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>"+
         "When in 'ignorekeys' mode (activated by <code class=mapping>&lt;I&gt;</code>), <code class=mapping>&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage.",
@@ -841,14 +869,14 @@ var g_mappings = [/*{{{*/
     [ 
         ["<C-c>"],
         ["<C-c>"],
-        "Stop loading<br/>" +
+        "Stop loading",
         "Stops loading the current webpage.",
         BrowserStop,
     ],
     [ 
         ["<Esc>", "<C-[>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
         ["<Esc>", "<C-[>"],
-        "Cancel any operation<br/>" +
+        "Cancel any operation",
         "Exits any command line or hint mode and returns to browser mode.<br/>"+
         "Also focuses the web page, in case a form field has focus and eats our key presses.",
         onEscape
@@ -859,60 +887,70 @@ var g_mappings = [/*{{{*/
         ["'b"],
         ["'b"],
         "These quick bookmarks will be customizable in future releases, ignore for now",
+        null,
         function(count) { openURLs('www.bwin.com'); }
     ],
     [ 
         ["'o"],
         ["'o"],
         "These quick bookmarks will be customizable in future releases, ignore for now",
+        null,
         function(count) { openURLs('www.osnews.com'); }
     ],
     [ 
         ["'s"],
         ["'s"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLs('www.derstandard.at'); }
     ],
     [ 
         ["'w"],
         ["'w"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLs('wetter.orf.at'); }
     ],
     [ 
         ["'t"],
         ["'t"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLs('www.tvinfo.de'); }
     ],
     [ 
         ["\"b"],
         ["\"b"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLsInNewTab('www.bwin.com'); }
     ],
     [ 
         ["\"o"],
         ["\"o"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLsInNewTab('www.osnews.com'); }
     ],
     [ 
         ["\"s"],
         ["\"s"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLsInNewTab('www.derstandard.at'); }
     ],
     [ 
         ["\"w"],
         ["\"w"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLsInNewTab('wetter.orf.at'); }
     ],
     [ 
         ["\"t"],
         ["\"t"],
         "These quick bookmarks will be customizable in future releases, ignore for now<br/>",
+        null,
         function(count) { openURLsInNewTab('www.tvinfo.de'); }
     ]
 ];/*}}}*/
@@ -998,13 +1036,13 @@ function get_command(cmd) // {{{
     var added;
     for (var i = 0; i < g_commands.length; i++, added = false)
     {
-        for (var j = 0; j < g_commands[i][0].length; j++)
+        for (var j = 0; j < g_commands[i][COMMANDS].length; j++)
         {
-            if (g_commands[i][0][j] == cmd)
+            if (g_commands[i][COMMANDS][j] == cmd)
             {
                 return g_commands[i]; //exact command, returning it
             }
-            if (g_commands[i][0][j].indexOf(cmd) == 0)
+            if (g_commands[i][COMMANDS][j].indexOf(cmd) == 0)
             {
                 if (!added)
                 {
@@ -1031,20 +1069,20 @@ function execute_command(count, cmd, special, args, modifiers) // {{{
         return;
     }
         
-    if (command[3] === null)
+    if (command[FUNCTION] === null)
     {
-        echoerr("E666: Internal error: command[3] === null");
+        echoerr("E666: Internal error: command[FUNCTION] === null");
         return;
     }
 
     // valid command, call it:
-    command[3].call(this, args, special, count, modifiers);
+    command[FUNCTION].call(this, args, special, count, modifiers);
 
 } // }}}
 
 function tokenize_ex(string, tag)
 {
-    // removing commends
+    // removing comments
     string.replace(/\s*".*$/, '');
     if (tag)
     {
@@ -1254,7 +1292,7 @@ function stringToURLs(str)
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
             var newLocation = getCurrentLocation();
-            newLocation = newLocation.replace(/([\s\S]+)\/[^\/]*/, "$1");
+            newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1");
             if(urls[url].match(/^\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
 
@@ -1263,7 +1301,7 @@ function stringToURLs(str)
         else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
         {
             var newLocation = getCurrentLocation();
-            newLocation = newLocation.replace(/([\s\S]+)\/[^\/]*/, "$1/../");
+            newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1/../");
             if(urls[url].match(/^\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
 
@@ -1810,43 +1848,43 @@ function set(args, special)
         }
 
         var get = false; if (matches[3] != undefined ||
-            (setting[5] != 'boolean' && matches[4] == undefined)) get = true;
+            (setting[TYPE] != 'boolean' && matches[4] == undefined)) get = true;
         var oper = matches[5];
         var val = matches[6]; if (val == undefined) val = "";
 
         // read access
         if (get)
         {
-            var cur_val = setting[4].call(this);
-            echo("  " + setting[0][0] + "=" + cur_val);
+            var cur_val = setting[GETFUNC].call(this);
+            echo("  " + setting[COMMANDS][0] + "=" + cur_val);
         }
         // write access
         else
         {
-            var type = setting[5];      
+            var type = setting[TYPE];      
             if (type == "boolean")
             {
-                setting[3].call(this, !no);
+                setting[SETFUNC].call(this, !no);
             }
             else if (type == "number")
             {
                 var num = parseInt(val, 10);
                 if (isNaN(num))
-                    echoerr("Invalid argument type to option " + setting[0][0] + ": Expects number");
+                    echoerr("Invalid argument type to option " + setting[COMMANDS][0] + ": Expects number");
                 else
                 {
-                    var cur_val = setting[4].call(this);
+                    var cur_val = setting[GETFUNC].call(this);
                     if (oper == '+') num = cur_val + num;
                     if (oper == '-') num = cur_val - num;
-                    if (setting[7] != null && setting[7].call(this, num) == false)
-                        echoerr("Invalid argument to option " + setting[0][0] + ": Check help for more details");
+                    if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, num) == false)
+                        echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
                     else // all checks passed, execute option handler
-                        setting[3].call(this, num);
+                        setting[SETFUNC].call(this, num);
                 }
             }
             else if (type == "charlist" || type == "stringlist" || type == "string")
             {
-                var cur_val = setting[4].call(this);
+                var cur_val = setting[GETFUNC].call(this);
                 if (type == "charlist" || type == "string")
                 {
                     if (oper == '+' && !cur_val.match(val))
@@ -1863,10 +1901,10 @@ function set(args, special)
                         val = val.replace(/^,?/, '');
                     }
                 }
-                if (setting[7] != null && setting[7].call(this, val) == false)
-                    echoerr("Invalid argument to option " + setting[0][0] + ": Check help for more details");
+                if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, val) == false)
+                    echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
                 else // all checks passed, execute option handler
-                    setting[3].call(this, val);
+                    setting[SETFUNC].call(this, val);
             }
             else
                 echoerr("Internal error, option format `" + type + "' not supported");

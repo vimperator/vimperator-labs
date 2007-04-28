@@ -3,6 +3,13 @@
 // handles all persistent storage of information
 // to and from the firefox registry
 
+const TYPE = 4;
+const SETFUNC = 6;
+const GETFUNC = 7;
+const DEFAULT = 8;
+const CHECKFUNC = 9;
+
+
 // the global handle to the root of the firefox settings
 var g_firefox_prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 var g_vimperator_prefs = null;
@@ -16,214 +23,222 @@ var opt_fullscreen = false;
  * [
  *     0: [all names of this setting],
  *     1: usage,
- *     2: help text,
- *     3: set_function,
- *     4: get_function,
- *     5: type,
- *     6: default,
- *     7: checkfunc,
- *     8: completefunc
+ *     2: shorthelp
+ *     3: help text,
+ *     4: type,
+ *     5: completefunc
+ *     6: set_function,
+ *     7: get_function,
+ *     8: default,
+ *     9: checkfunc,
  * ]
  */
 var g_settings = [/*{{{*/
     [
         ["activate"],
         ["activate"],
-        "Define when tabs are automatically activated<br/>" +
+        "Define when tabs are automatically activated",
         "Not implemented yet",
+        "stringlist",
+        null,
         function(value) { set_pref("activate", value); },
         function() { return get_pref("activate"); },
-        "stringlist",
         "quickmark,tabopen,paste",
-        null,
         null
     ],
     [
         ["beep", "nobeep"],
         ["beep"],
         "Emit a pc speaker beep on certain errors",
+        null,
+        "boolean",
+        null,
         function(value) { set_pref("beep", value); },
         function() { return get_pref("beep"); },
-        "boolean",
         true,
-        null,
         null
     ],
     [
         ["complete", "cpt"],
         ["complete", "cpt"],
-        "Order and items which are completed at the :[tab]open prompt<br/>" +
+        "Items which are completed at the :[tab]open prompt",
         "Available items:<br>"+
         "<ul><li><b>s</b>: Search machines</li><li>"+
         "        <b>b</b>: Bookmarks</li><li>"+
         "        <b>h</b>: History</li></ul>"+
-        "The order is important, so <code class=command>:set complete=bs</code> would list bookmarks first, and then any available quick searches.",
+        "The order is important, so <code class=command>:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
+        "Set the <code class=setting>'wildsort'</code> setting if you want all entries sorted.",
+        "charlist",
+        null,
         function(value) { set_pref("complete", value); },
         function() { return get_pref("complete"); },
-        "charlist",
         "sbh",
-        null,
         null
     ],
     [
         ["extendedhinttags", "eht"],
         ["extendedhinttags", "eht"],
-        "XPath string of hintable elements activated by ';'<br/>",
+        "XPath string of hintable elements activated by ';'",
+        null,
+        "string",
+        null,
         function(value) { set_pref("extendedhinttags", value); },
         function() { return get_pref("extendedhinttags"); },
-        "string",
         "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden' or not(boolean(@type))] | //a | //area | //iframe | //textarea | //button | //select",
-
-        null,
         null
     ],
     [
         ["focusedhintstyle", "fhs"],
         ["focusedhintstyle", "fhs"],
         "CSS specification of focused hints appearance",
+        "null",
+        "string",
+        null,
         function(value) { set_pref("focusedhintstyle", value); },
         function() { return get_pref("focusedhintstyle"); },
-        "string",
         "z-index:5000;font-family:monospace;font-size:12px;color:ButtonText;background-color:ButtonShadow;border-color:ButtonShadow;border-width:1px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
-        null,
         null
     ],
     [
         ["fullscreen", "fs", "nofullscreen", "nofs"],
         ["fullscreen", "fs"],
         "Shows the current window fullscreen",
+        null,
+        "boolean",
+        null,
         function(value) { opt_fullscreen = value; BrowserFullScreen(); },
         function() { return opt_fullscreen; },
-        "boolean",
         false,
-        null,
         null
     ],
     [
         ["guioptions", "go"],
         ["guioptions", "go"],
-        "Shows or hides the menu, toolbar and scrollbars<br/>" +
+        "Shows or hides the menu, toolbar and scrollbars",
         "Supported characters:<br><ul><li><b>m</b>: menubar</li><li><b>T</b>: toolbar<li><b>b</b>: bookmark bar</li><li><b>s</b>: original Firefox statusbar</ul>",
+        "charlist",
+        null,
         function(value) { set_pref("guioptions", value); set_guioptions(value); },
         function() { return get_pref("guioptions"); },
-        "charlist",
         "",
-        null,
         null
     ],
     [
         ["hintchars", "hc"],
         ["hintchars", "hc"],
         "String of single characters which can be used to follow hints",
+        "charlist",
+        null,
         function(value) { set_pref("hintchars", value); },
         function() { return get_pref("hintchars"); },
-        "charlist",
         "hjklasdfgyuiopqwertnmzxcvb",
-        null,
         null
     ],
     [
         ["hintstyle", "hs"],
         ["hintstyle", "hs"],
         "CSS specification of unfocused hints appearance",
+        null,
+        "string",
+        null,
         function(value) { set_pref("hintstyle", value); },
         function() { return get_pref("hintstyle"); },
-        "string",
         "z-index:5000;font-family:monospace;font-size:12px;color:black;background-color:yellow;border-color:ButtonShadow;border-width:0px;border-style:solid;padding:0px 1px 0px 1px;position:absolute;",
-        null,
         null
     ],
     [
         ["hinttags"],
         ["hinttags"],
-        "XPath string of hintable elements activated by 'f'",
+        "XPath string of hintable elements activated by <code class=mapping>'f'</code> and <code class=mapping>'F'</code>",
+        null,
+        "string",
+        null,
         function(value) { set_pref("hinttags", value); },
         function() { return get_pref("hinttags"); },
-        "string",
         "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden'] | //a | //area | //iframe | //textarea | //button | //select",
-        null,
         null
     ],
     [
         ["maxhints", "mh"],
         ["maxhints", "mh"],
-        "Maximum of simultanously shown hints<br/>" +
+        "Maximum number of simultanously shown hints",
         "If you want to speed up display of hints, choose a smaller value",
+        "number",
+        null,
         function(value) { set_pref("maxhints", value); },
         function() { return get_pref("maxhints"); },
-        "number",
         250,
-        function (value) { if (value>=1 && value <=1000) return true; else return false; },
-        null
+        function (value) { if (value>=1 && value <=1000) return true; else return false; }
     ],
     [
         ["preload", "nopreload"],
         ["preload"],
-        "Speed up first time history/bookmark completion<br/>" +
+        "Speed up first time history/bookmark completion",
         "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br>"+
         "In order to also speed up first time access, it is cached at startup, if this option is set (recommended).",
+        "boolean",
+        null,
         function(value) { set_pref("preload", value); },
         function() { return get_pref("preload"); },
-        "boolean",
         true,
-        null,
         null
     ],
     [
         ["previewheight", "pvh"],
         ["previewheight", "pvh"],
-        "Default height for preview window<br/>" +
+        "Default height for preview window",
         "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with <code class=command>:pclose</close>.",
+        "number",
+        null,
         function(value) { set_pref("previewheight", value); },
         function() { return get_pref("previewheight"); },
-        "number",
         10,
-        function (value) { if (value>=1 && value <=50) return true; else return false; },
-        null
+        function (value) { if (value>=1 && value <=50) return true; else return false; }
     ],
 	[
 		["showmode", "smd", "noshowmode", "nosmd"],
 		["showmode", "smd"],
 		"Show the current mode in the command line",
+        null,
+		"boolean",
+		null,
         function(value) { set_pref("showmode", value); },
         function() { return get_pref("showmode"); },
-		"boolean",
 		true,
-		null,
 		null
 	],
     [
         ["showtabline", "stal"],
         ["showtabline", "stal"],
-        "Control when to show the tab bar of opened web pages<br/>" +
+        "Control when to show the tab bar of opened web pages",
         "Available items:<br>"+
         "<ul><li><b>0</b>: Never show tab bar</li><li>"+
         "        <b>1</b>: Show tab bar only if more than one tab is open</li><li>"+
         "        <b>2</b>: Always show tab bar</li></ul>"+
         "Not implemented yet.",
+        "number",
+        null,
         function(value) { set_pref("showtabline", value); set_showtabline(value); },
         function() { return get_pref("showtabline"); },
-        "number",
         2,
-        function (value) { if (value>=0 && value <=2) return true; else return false; },
-        null
+        function (value) { if (value>=0 && value <=2) return true; else return false; }
     ],
     [
         ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
-        "Show current website with a minimal stylesheet to make it easily accessible<br/>" +
+        "Show current website with a minimal stylesheet to make it easily accessible",
         "Note that this is a local setting for now, later it may be split into a global and <code style=command>:setlocal</code> part",
+        "boolean",
+        null,
         function(value) { opt_usermode = value; setStyleDisabled(value); },
         function() { return opt_usermode; },
-        "boolean",
         false,
-        null,
         null
     ],
     [
         ["wildmode", "wim"],
         ["wildmode", "wim"],
-        "Defines how command line completion works<br/>" +
+        "Define how command line completion works",
         "It is a comma-separated list of parts, where each part specifies" +
         "what to do for each consecutive use of the completion key. The first part" +
         "specifies the behavior for the first use of the completion key, the second part" +
@@ -238,43 +253,43 @@ var g_settings = [/*{{{*/
         "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
         "</tbody></table>" +
         "When there is only a single match, it is fully completed regardless of the case.",
+        "stringlist",
+        null,
         function(value) { set_pref("wildmode", value); },
         function() { return get_pref("wildmode"); },
-        "stringlist",
         "list:full",
-        null,
         null
     ],
     [
         ["wildsort", "wis", "nowildsort", "nowis"],
         ["wildsort", "wis"],
-        "Defines whether command line completion is sorted<br/>" +
+        "Define whether command line completion is sorted",
         "If you don't want a sorted completion list, set this to false.",
+        "boolean",
+        null,
         function(value) { set_pref("wildsort", value); },
         function() { return get_pref("wildsort"); },
-        "boolean",
         false,
-        null,
         null
     ]
 ]/*}}}*/
 
 // return null, if the cmd cannot be found in our g_settings array, or
 // otherwise a refernce to our command
-function get_setting(cmd)
+function get_setting(cmd)/*{{{*/
 {
     for (var i=0; i < g_settings.length; i++)
     {
-        for (var j=0; j < g_settings[i][0].length; j++)
+        for (var j=0; j < g_settings[i][COMMANDS].length; j++)
         {
-            if (g_settings[i][0][j] == cmd)
+            if (g_settings[i][COMMANDS][j] == cmd)
             {
                 return g_settings[i];
             }
         }
     }
     return null;
-}
+}/*}}}*/
 
 /////////////////////////////////////////////////
 // preference getter functions ///////////// {{{1
@@ -294,9 +309,9 @@ function get_pref(name, forced_default)
     {
         for (var i=0; i<g_settings.length; i++)
         {
-            if (g_settings[i][0][0] == name) // only first name is searched
+            if (g_settings[i][COMMANDS][0] == name) // only first name is searched
             {
-                default_value = g_settings[i][6];
+                default_value = g_settings[i][DEFAULT];
                 break;
             }
         }

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var g_vimperator_version  = "0.4 (CVS) [new vimperator-guid]";
+var g_vimperator_version  = "0.4 (CVS) [>=28/04/2007]";
 
 const MODE_NORMAL = 1;
 const MODE_INSERT = 2;
@@ -430,9 +430,9 @@ function onVimperatorKeypress(event)/*{{{*/
     for (var i in g_mappings)
     {
         // each internal mapping can have multiple keys
-        for (var j in g_mappings[i][0])
+        for (var j in g_mappings[i][COMMANDS])
         {
-            var mapping = g_mappings[i][0][j];
+            var mapping = g_mappings[i][COMMANDS][j];
             // alert("key: " + key +" - mapping: "+ mapping + " - g_input: " + g_inputbuffer);
             if(count_str + mapping == g_inputbuffer + key)
             {
@@ -441,8 +441,8 @@ function onVimperatorKeypress(event)/*{{{*/
                     g_count = -1;
 
                 // allow null (= no operation) mappings
-                if(g_mappings[i][3] != null)
-                    g_mappings[i][3].call(this, g_count);
+                if(g_mappings[i][FUNCTION] != null)
+                    g_mappings[i][FUNCTION].call(this, g_count);
 
                 // command executed, reset input buffer
                 g_inputbuffer = "";
@@ -576,18 +576,21 @@ function onCommandBarKeypress(evt)/*{{{*/
                 }
                 else // dynamically get completions as specified in the g_commands array
                 {
-                    if (command && command[4])
+                    if (command && command[COMPLETEFUNC])
                     {
-                        g_completions = command[4].call(this, args);
+                        g_completions = command[COMPLETEFUNC].call(this, args);
                         // Sort the completion list
                         if (get_pref('wildsort'))
+                        {
                             g_completions.sort(function(a, b) {
                                 if (a[0] < b[0])
                                     return -1;
                                 else if (a[0] > b[0])
                                     return 1;
-                                else return 0;
+                                else
+                                    return 0;
                             });
+                        }
                     }
                 }
             }

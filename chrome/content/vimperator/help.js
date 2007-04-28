@@ -137,7 +137,7 @@ table.settings th {\
      * color = used for background of the table
      * beg = string which is printed before the commmand/setting/mapping name
      * end = string which is printed after the commmand/setting/mapping name
-     * func = called with 'commands' array and result which is a sring is prepended to the help text
+     * func = called with 'command', result is a string is prepended to the help text
      */
     function makeHelpString(commands, color, beg, end, func)
     {
@@ -145,17 +145,17 @@ table.settings th {\
         for (var i=0; i < commands.length; i++)
         {
             ret += '<tr class="tag"><td colspan="2">';
-            for (var j=0; j < commands[i][0].length; j++)
+            for (var j=0; j < commands[i][COMMANDS].length; j++)
             {
-                var cmd_name = commands[i][0][j];
+                var cmd_name = commands[i][COMMANDS][j];
                 cmd_name = cmd_name.replace(/</g, "&lt;");
                 cmd_name = cmd_name.replace(/>/g, "&gt;");
-                ret += "<code id='" + commands[i][0][j] + "'>" +beg+ cmd_name +end+ '</code>';
+                ret += "<code id='" + commands[i][COMMANDS][j] + "'>" +beg+ cmd_name +end+ '</code>';
             }
             ret += '</td></tr><tr class="description"><td class="usage">';
-            for (var j=0; j < commands[i][1].length; j++)
+            for (var j=0; j < commands[i][USAGE].length; j++)
             {
-                var usage = commands[i][1][j];
+                var usage = commands[i][USAGE][j];
 
                 usage = usage.replace(/<(?!br\/>)/g, "&lt;");
                 usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
@@ -164,12 +164,18 @@ table.settings th {\
             ret += '</td><td>';
             if (func)
                 ret += func.call(this, commands[i]);
-            if (commands[i][2])
+            if (commands[i][SHORTHELP])
             {
                 if(func)
-                    ret += "<br/>"
-                ret += commands[i][2]; // the help description
+                    ret += "<br/>";
+                ret += "<b>";
+                ret += commands[i][SHORTHELP]; // the help description
+                ret += "</b><br>";
+                if (commands[i][HELP])
+                    ret += commands[i][HELP]; // the help description
             }
+            else
+                ret += "Sorry, no help available";
             ret += '</td></tr>';
         }
         return ret;
@@ -177,20 +183,20 @@ table.settings th {\
     function makeSettingsHelpString(command)
     {
         var ret = "";
-        ret = command[5] + " (default: <code>";
-        if (command[5] == "boolean")
+        ret = command[TYPE] + " (default: <code>";
+        if (command[TYPE] == "boolean")
         {
-            if(command[6] == true)
+            if(command[DEFAULT] == true)
                 ret += "on";
             else
                 ret += "off";
         }
         else
         {
-            if (typeof command[6] == 'string' && command[6].length == 0)
+            if (typeof command[DEFAULT] == 'string' && command[DEFAULT].length == 0)
                 ret += "''";
             else
-                ret += command[6];
+                ret += command[DEFAULT];
         }
 
         ret += "</code>)<br/>";
