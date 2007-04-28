@@ -240,19 +240,19 @@ var g_settings = [/*{{{*/
         ["wildmode", "wim"],
         ["wildmode", "wim"],
         "Define how command line completion works",
-        "It is a comma-separated list of parts, where each part specifies" +
-        "what to do for each consecutive use of the completion key. The first part" +
-        "specifies the behavior for the first use of the completion key, the second part" +
+        "It is a comma-separated list of parts, where each part specifies " +
+        "what to do for each consecutive use of the completion key. The first part " +
+        "specifies the behavior for the first use of the completion key, the second part " +
         "for the second use, etc.<br/>" +
         "These are the possible values for each part:<br/>" +
-        "<table><tbody>" +
+        "<table><pre>"+
         "<tr><td><b>''</b></td><td>Complete only the first match</td></tr>" +
         "<tr><td><b>'full'</b></td><td>Complete the next full match. After the last, the original string is used.</td></tr>" +
         "<tr><td><b>'longest'</b></td><td>Complete till the longest common string.</td></tr>" +
         "<tr><td><b>'list'</b></td><td>When more than one match, list all matches.</td></tr>" +
         "<tr><td><b>'list:full'</b></td><td>When more than one match, list all matches and complete first match.</td></tr>" +
         "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
-        "</tbody></table>" +
+        "</pre></table>" +
         "When there is only a single match, it is fully completed regardless of the case.",
         "stringlist",
         null,

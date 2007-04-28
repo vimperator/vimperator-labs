@@ -812,7 +812,7 @@ var g_mappings = [/*{{{*/
         [";"],
         "Start ExtendedHint mode",
         "ExtendedHint mode is useful, since in this mode you can yank link locations, or open them in a new window.<br/>"+
-        "If you want to yank the location of hint <code>AB</code>, press <code class=mapping>;</code> to start this hint mode.<br/>"+
+        "E.g., if you want to yank the location of hint <code>AB</code>, press <code class=mapping>;</code> to start this hint mode.<br/>"+
         "Then press <code>AB</code> to select the hint. Now press <code class=mapping>y</code> to yank its location.<br/>"+
         "Actions for selected hints in ExtendedHint mode are:<br/>"+
         "<ul><li><code class=mapping>y</code> to yank its location</li>"+
@@ -823,7 +823,7 @@ var g_mappings = [/*{{{*/
         "    <li><code class=mapping>s</code> to save its destination (not implemented yet)</li>"+
         "    <li><code class=mapping>&lt;C-w&gt;</code> to open its destination in a new window</li>"+
         "</ul>"+
-        "Multiple hints can be seperated by commas where it makes sense. <code class=mapping>;AB,AC,ADt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>"+
+        "Multiple hints can be seperated by commas where it makes sense. <code class=mapping>;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>"+
         "Hintable elements for this mode can be set in the <code class=setting>'extendedhinttags'</code> XPath string.",
         function(count) { hah.enableHahMode(HINT_MODE_EXTENDED); }
     ],
