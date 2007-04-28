@@ -164,15 +164,16 @@ table.settings th {\
                 ret += "<code>" +beg+ usage +end+ '</code><br/>';
             }
             ret += '</td><td>';
-            if (func)
-                ret += func.call(this, commands[i]);
             if (commands[i][SHORTHELP])
             {
-                if(func)
-                    ret += "<br/>";
                 ret += "<b>";
                 ret += commands[i][SHORTHELP]; // the help description
                 ret += "</b><br>";
+                if(func) // for settings whe print default values here, e.g.
+                {
+                    ret += func.call(this, commands[i]);
+                    ret += "<br/>";
+                }
                 if (commands[i][HELP])
                     ret += commands[i][HELP]; // the help description
             }

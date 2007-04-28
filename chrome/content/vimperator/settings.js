@@ -91,7 +91,7 @@ var g_settings = [/*{{{*/
         ["focusedhintstyle", "fhs"],
         ["focusedhintstyle", "fhs"],
         "CSS specification of focused hints appearance",
-        "null",
+        null,
         "string",
         null,
         function(value) { set_pref("focusedhintstyle", value); },
