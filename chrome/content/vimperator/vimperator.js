@@ -247,10 +247,14 @@ function init()
 
     logMessage("Initialized");
 
-    // at the very last, read a ~/.vimperatorrc
-    source("~/.vimperatorrc", true);
-
-    logMessage("~/.vimperatorrc sourced");
+    /*
+     * Finally, read a ~/.vimperatorrc
+     * Make sourcing asynchronous, otherwise commands that open new tabs won't work
+     */
+    setTimeout(function() {
+        source("~/.vimperatorrc", true);
+        logMessage("~/.vimperatorrc sourced");
+    }, 50);
 }
 
 function unload()
