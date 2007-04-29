@@ -4,7 +4,8 @@ date:
 	* extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
 	  TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
 	* support for 'wildmode' completion setting with support for matching the
-	  longest common substring
+	  longest common substring. Also new 'wildoptions' setting
+	* added 'f' to the 'complete' option to allow listing of filenames in :open prompt
 	* changed regexp search to normal text search for completion -> massive speedup, but limited functionality
 	* support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
 	  'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory 
@@ -13,6 +14,8 @@ date:
 	* :back! goes to beginning of history now
 	* diabled firefox 3.0 support for now, as there are just too many small
 	  bugs
+	* new Makefile instead of build.sh (only important for developers)
+	* newly designed help page
 	* :help section supported, :help :set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
