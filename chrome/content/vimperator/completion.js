@@ -260,23 +260,23 @@ function build_longest_starting_substring(list, filter)/*{{{*/
     var filter_length = filter.length;
     for (var i = 0; i < list.length; i++)
     {
-        for (var j = 0; j < list[i][0].length; j++)
+        for (var j = 0; j < list[i][COMMANDS].length; j++)
         {
             if (list[i][0][j].indexOf(filter) != 0)
                 continue;
             if (g_substrings.length == 0)
             {
-                var length = list[i][0][j].length;
+                var length = list[i][COMMANDS][j].length;
                 for (var k = filter_length; k <= length; k++)
-                    g_substrings.push(list[i][0][j].substring(0, k));
+                    g_substrings.push(list[i][COMMANDS][j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return list[i][0][j].indexOf($_) == 0;
+                    return list[i][COMMANDS][j].indexOf($_) == 0;
                 });
             }
-            filtered.push([list[i][0][j], list[i][1]]);
+            filtered.push([list[i][COMMANDS][j], list[i][SHORTHELP]]);
             break;
         }
     }
@@ -478,12 +478,27 @@ function get_help_completions(filter)/*{{{*/
 {
     var help_array = [];
     g_substrings = [];
-    help_array = help_array.concat(g_commands);
-    help_array = help_array.concat(get_settings_completions(filter, true));
-    help_array = help_array.concat(g_mappings);
+    help_array = help_array.concat(g_commands.map(function($_) {
+        return [
+                $_[COMMANDS].map(function($_) { return ":" + $_; }),
+                $_[SHORTHELP]
+            ];
+    }));
+    settings = get_settings_completions(filter, true);
+    help_array = help_array.concat(settings.map(function($_) {
+        return [
+                $_[COMMANDS].map(function($_) { return "'" + $_ + "'"; }),
+                $_[1]
+            ];
+    }));
+    help_array = help_array.concat(g_mappings.map(function($_) {
+        return [ $_[COMMANDS], $_[SHORTHELP] ];
+    }));
+
     if (!filter) return help_array.map(function($_) {
-        return [$_[COMMANDS][0], $_[SHORTHELP]];
+        return [$_[COMMANDS][0], $_[1]]; // unfiltered, use the first command
     });
+
     return build_longest_common_substring(help_array, filter);
 }/*}}}*/
 

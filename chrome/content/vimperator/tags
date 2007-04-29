@@ -14,12 +14,15 @@ bmdel	commands.js	/^function bmdel(str)$/;"	f
 bmshow	commands.js	/^function bmshow(filter, fullmode)$/;"	f
 buffer_preview_toggle	commands.js	/^function buffer_preview_toggle()$/;"	f
 buffer_preview_update	commands.js	/^function buffer_preview_update(event)$/;"	f
+buffer_switch	commands.js	/^function buffer_switch(string)$/;"	f
 bufshow	commands.js	/^function bufshow(filter, in_comp_window)$/;"	f
+build_longest_common_substring	completion.js	/^function build_longest_common_substring(list, filter)\/*{{{*\/$/;"	f
+build_longest_starting_substring	completion.js	/^function build_longest_starting_substring(list, filter)\/*{{{*\/$/;"	f
 changeHintFocus	hints.js	/^    function changeHintFocus(linkNumString, oldLinkNumString)$/;"	f
 completion_add_to_list	completion.js	/^function completion_add_to_list(completion_item, at_beginning)\/*{{{*\/$/;"	f
 completion_fill_list	completion.js	/^function completion_fill_list(startindex)\/*{{{*\/$/;"	f
-completion_select_next_item	completion.js	/^function completion_select_next_item()\/*{{{*\/$/;"	f
-completion_select_previous_item	completion.js	/^function completion_select_previous_item()\/*{{{*\/$/;"	f
+completion_select_next_item	completion.js	/^function completion_select_next_item(has_list, has_full, has_longest)\/*{{{*\/$/;"	f
+completion_select_previous_item	completion.js	/^function completion_select_previous_item(has_list, has_full, has_longest)\/*{{{*\/$/;"	f
 completion_show_list	completion.js	/^function completion_show_list()\/*{{{*\/$/;"	f
 copyToClipboard	commands.js	/^function copyToClipboard(str)$/;"	f
 createCursorPositionString	vimperator.js	/^function createCursorPositionString()$/;"	f
@@ -32,7 +35,7 @@ echo	commands.js	/^function echo(msg)$/;"	f
 echoerr	commands.js	/^function echoerr(msg)$/;"	f
 execute	commands.js	/^function execute(string)$/;"	f
 execute_command	commands.js	/^function execute_command(count, cmd, special, args, modifiers) \/\/ {{{$/;"	f
-filter_url_array	completion.js	/^function filter_url_array(urls, filter, use_regex)\/*{{{*\/$/;"	f
+filter_url_array	completion.js	/^function filter_url_array(urls, filter)\/*{{{*\/$/;"	f
 focusContent	vimperator.js	/^function focusContent(clear_command_line, clear_statusline)$/;"	f
 focusNextFrame	commands.js	/^function focusNextFrame()$/;"	f
 fopen	file.js	/^function fopen (path, mode, perms, tmp)$/;"	f
@@ -49,19 +52,21 @@ getLinkNodes	vimperator.js	/^function getLinkNodes(doc)$/;"	f
 getPageLinkNodes	vimperator.js	/^function getPageLinkNodes()$/;"	f
 getProperty	bookmarks.js	/^function getProperty( aInput, aArc, DS )$/;"	f
 get_bookmark_completions	completion.js	/^function get_bookmark_completions(filter)\/*{{{*\/$/;"	f
-get_buffer_completions	completion.js	/^function get_buffer_completions(filter)$/;"	f
+get_buffer_completions	completion.js	/^function get_buffer_completions(filter)\/*{{{*\/$/;"	f
 get_command	commands.js	/^function get_command(cmd) \/\/ {{{$/;"	f
 get_command_completions	completion.js	/^function get_command_completions(filter)\/*{{{*\/$/;"	f
 get_file_completions	completion.js	/^function get_file_completions(filter)\/*{{{*\/$/;"	f
 get_firefox_pref	settings.js	/^function get_firefox_pref(name, default_value)$/;"	f
-get_help_completions	completion.js	/^function get_help_completions(filter)$/;"	f
+get_help_completions	completion.js	/^function get_help_completions(filter)\/*{{{*\/$/;"	f
 get_history_completions	completion.js	/^function get_history_completions(filter)\/*{{{*\/$/;"	f
+get_longest_substring	completion.js	/^function get_longest_substring()\/*{{{*\/$/;"	f
 get_pref	settings.js	/^function get_pref(name, forced_default)$/;"	f
 get_search_completions	completion.js	/^function get_search_completions(filter)\/*{{{*\/$/;"	f
-get_setting	settings.js	/^function get_setting(cmd)$/;"	f
-get_settings_completions	completion.js	/^function get_settings_completions(filter)\/*{{{*\/$/;"	f
+get_setting	settings.js	/^function get_setting(cmd)\/*{{{*\/$/;"	f
+get_settings_completions	completion.js	/^function get_settings_completions(filter, unfiltered)\/*{{{*\/$/;"	f
 get_url_completions	completion.js	/^function get_url_completions(filter)\/*{{{*\/$/;"	f
 get_url_mark	commands.js	/^function get_url_mark(mark)$/;"	f
+goUp	commands.js	/^function goUp(count)$/;"	f
 hasMode	commands.js	/^function hasMode(mode)$/;"	f
 help	help.js	/^function help(section, easter)$/;"	f
 historyGoToBeginning	commands.js	/^function historyGoToBeginning()$/;"	f
@@ -71,6 +76,7 @@ hsshow	commands.js	/^function hsshow(filter, fullmode)$/;"	f
 init	vimperator.js	/^function init()$/;"	f
 initDoc	hints.js	/^    function initDoc(event)$/;"	f
 invalidateCoords	hints.js	/^    function invalidateCoords(doc)$/;"	f
+isDirectory	commands.js	/^function isDirectory(url)$/;"	f
 isFormElemFocused	vimperator.js	/^function isFormElemFocused()$/;"	f
 keyToString	vimperator.js	/^function keyToString(event)$/;"	f
 load_history	completion.js	/^function load_history()$/;"	f
@@ -91,8 +97,8 @@ openURLsInNewTab	commands.js	/^function openURLsInNewTab(str, activate)$/;"	f
 openVimperatorBar	vimperator.js	/^function openVimperatorBar(str)$/;"	f
 outputAddonsList	commands.js	/^function outputAddonsList(aTarget)$/;"	f
 parseBookmarkString	bookmarks.js	/^function parseBookmarkString(str, res)$/;"	f
-preview_window_fill	completion.js	/^function preview_window_fill(completions)$/;"	f
-preview_window_select	completion.js	/^function preview_window_select(event)$/;"	f
+preview_window_fill	completion.js	/^function preview_window_fill(completions)\/*{{{*\/$/;"	f
+preview_window_select	completion.js	/^function preview_window_select(event)\/*{{{*\/$/;"	f
 preview_window_show	completion.js	/^function preview_window_show()\/*{{{*\/$/;"	f
 quit	commands.js	/^function quit(save_session)$/;"	f
 reload	commands.js	/^function reload(all_tabs)$/;"	f

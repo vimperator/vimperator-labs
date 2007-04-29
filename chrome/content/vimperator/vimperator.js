@@ -771,7 +771,6 @@ function onEscape()
     if (!hasMode(MODE_ESCAPE_ONE_KEY))
     {
         setCurrentMode(MODE_NORMAL);
-        // BrowserStop(); -> moved to <C-c>
         hah.disableHahMode();
         focusContent(true, true);
     }

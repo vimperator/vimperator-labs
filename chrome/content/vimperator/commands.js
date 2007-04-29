@@ -700,7 +700,7 @@ var g_mappings = [/*{{{*/
         ["h", "<Left>"],
         ["{count}h", "{count}<Left>"],
         "Scroll document to the left",
-        "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.",
+        "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.<br/>"+
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(-1, 0); }
     ],
