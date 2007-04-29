@@ -92,11 +92,12 @@ clean:
 	@echo "Cleanup..."
 	${Q}rm -f ${JAR} ${XPI}
 	${Q}find . -name '*~' -exec rm -f {} \;
+	${Q}rm -rf ${BUILD_DIR}
 
 #### xpi
 
 ${BUILD_XPI_SUBDIRS}:
-	@mkdir -p $@
+	${Q}mkdir -p $@
 
 ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 	@echo "Building XPI..."
@@ -117,7 +118,7 @@ ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 #### jar
 
 ${BUILD_JAR_SUBDIRS}:
-	@mkdir -p $@
+	${Q}mkdir -p $@
 
 ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	@echo "Building JAR..."
