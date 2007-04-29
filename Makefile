@@ -1,31 +1,34 @@
 #### configuration
 
-TOP       = $(shell pwd)
+TOP           = $(shell pwd)
 
-VERSION   = 0.4
-OS        = $(shell uname -s)
-DATE      = $(shell date "+%Y/%m/%d")
+VERSION       = 0.4
+OS            = $(shell uname -s)
+BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 
-JAR_FILES = ${shell find chrome/content -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
-JAR_DIRS  = $(foreach f,${JAR_FILES},$(dir $f))
-JAR       = chrome/vimperator.jar
+JAR_FILES     = ${shell find chrome/content -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
+JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
+JAR           = chrome/vimperator.jar
 
 XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators ChangeLog
-XPI_DIRS  = $(foreach f,${XPI_FILES},$(dir $f))
+XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
 XPI_BIN_FILES = ${JAR} Makefile
-XPI_FILES = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
-XPI_NAME  = vimperator_${VERSION}.xpi
-XPI       = ../downloads/${XPI_NAME}
+XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
+XPI_NAME      = vimperator_${VERSION}.xpi
+XPI           = ../downloads/${XPI_NAME}
 
-BUILD_DIR=build.${VERSION}.${OS}
-BUILD_JAR_DIR=${BUILD_DIR}/jar
-BUILD_XPI_DIR=${BUILD_DIR}/xpi
+RDF           = ../downloads/update.rdf
+RDF_IN        = ${RDF}.in
 
-BUILD_JAR_SUBDIRS=$(sort ${JAR_DIRS:%=${BUILD_JAR_DIR}/%})
-BUILD_XPI_SUBDIRS=$(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
+BUILD_DIR     = build.${VERSION}.${OS}
+BUILD_JAR_DIR = ${BUILD_DIR}/jar
+BUILD_XPI_DIR = ${BUILD_DIR}/xpi
 
+BUILD_JAR_SUBDIRS = $(sort ${JAR_DIRS:%=${BUILD_JAR_DIR}/%})
+BUILD_XPI_SUBDIRS = $(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
 
 ZIP = zip
+SED = sed
 
 # find the vimperator chrome dir
 
@@ -54,10 +57,11 @@ help:
 	@echo "vimperator ${VERSION} build"
 	@echo
 	@echo "  make help      - display this help"
-	@echo "  make info      - shome some info about the system"
+	@echo "  make info      - show some info about the system"
 	@echo "  make jar       - build a JAR (${JAR})"
 	@echo "  make install   - install into your firefox dir (run info)"
 	@echo "  make xpi       - build an XPI (${XPI_NAME})"
+	@echo "  make release   - updates update.rdf (this is not for you)"
 	@echo "  make clean     - clean up"
 	@echo
 	@echo "running some commands with V=1 will show more build details"
@@ -88,6 +92,15 @@ install: needs_chrome_dir ${JAR}
 	@echo "Installing JAR..."
 	${Q}cp ${CP_V} ${JAR} ${INSTALL_CHROME}
 
+release: ${XPI} ${RDF}
+
+${RDF}: ${RDF_IN} Makefile
+	@echo "Preparing release..."
+	${Q}${SED} -e "s,###VERSION###,${VERSION},g" \
+	           -e "s,###DATE###,${DATE},g" \
+	           < $< > $@
+	@echo "SUCCESS: $@"
+
 clean:
 	@echo "Cleanup..."
 	${Q}rm -f ${JAR} ${XPI}
@@ -106,15 +119,15 @@ ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 		cp $$f ${BUILD_XPI_DIR}/$$f ; \
 	    done
 	${Q}for f in ${XPI_TXT_FILES} ; do \
-		sed -e "s,###VERSION###,${VERSION},g" \
-		    -e "s,###DATE###,${DATE},g" \
-		    < $$f > ${BUILD_XPI_DIR}/$$f ; \
+		${SED} -e "s,###VERSION###,${VERSION},g" \
+		       -e "s,###DATE###,${DATE},g" \
+		       < $$f > ${BUILD_XPI_DIR}/$$f ; \
 		( diff -q $$f ${BUILD_XPI_DIR}/$$f 1>/dev/null ) || \
 		( echo "modified: $$f" ; \
 		  diff -u $$f ${BUILD_XPI_DIR}/$$f | grep '^[-+][^-+]' ) ; \
 	    done
 	${Q}( cd ${BUILD_XPI_DIR} && ${ZIP} -r ${TOP}/${XPI} ${XPI_FILES} )
-	@echo "SUCCESS: ${XPI}"
+	@echo "SUCCESS: $@"
 
 #### jar
 
@@ -124,12 +137,12 @@ ${BUILD_JAR_SUBDIRS}:
 ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	@echo "Building JAR..."
 	${Q}for f in ${JAR_FILES} ; do \
-		sed -e "s,###VERSION###,${VERSION},g" \
-		    -e "s,###DATE###,${DATE},g" \
-		    < $$f > ${BUILD_JAR_DIR}/$$f ; \
+		${SED} -e "s,###VERSION###,${VERSION},g" \
+		       -e "s,###DATE###,${DATE},g" \
+		       < $$f > ${BUILD_JAR_DIR}/$$f ; \
 		( diff -q $$f ${BUILD_JAR_DIR}/$$f 1>/dev/null ) || \
 		( echo "modified: $$f" ; \
 		  diff -u $$f ${BUILD_JAR_DIR}/$$f | grep '^[-+][^-+]' ) ; \
 	    done
 	${Q}( cd ${BUILD_JAR_DIR} && ${ZIP} -r ${TOP}/${JAR} ${JAR_FILES} )
-	@echo "SUCCESS: ${JAR}"
+	@echo "SUCCESS: $@"
