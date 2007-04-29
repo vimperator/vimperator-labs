@@ -578,7 +578,7 @@ function onCommandBarKeypress(evt)/*{{{*/
                     {
                         g_completions = command[COMPLETEFUNC].call(this, args);
                         // Sort the completion list
-                        if (get_pref('wildsort'))
+                        if (get_pref('wildoptions').match(/\bsort\b/))
                         {
                             g_completions.sort(function(a, b) {
                                 if (a[0] < b[0])

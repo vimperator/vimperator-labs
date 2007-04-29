@@ -191,7 +191,7 @@ var g_commands = [/*{{{*/
         ["history", "hs"],
         ["history {filter}"],
         "Show recently visited URLs",
-        "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL.",
+        "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL."+
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
         hsshow,
         function(filter) { return get_history_completions(filter); }
@@ -591,7 +591,7 @@ var g_mappings = [/*{{{*/
         ["t"],
         ["t"],
         "Open one or more URLs in a new tab",
-        "Like <code class=mapping>o</code> but open URLs in a new tab."+
+        "Like <code class=mapping>o</code> but open URLs in a new tab.<br/>"+
         "See <code class=command>:tabopen</code> for more details",
         function(count) { openVimperatorBar('tabopen '); }
     ],
@@ -773,15 +773,15 @@ var g_mappings = [/*{{{*/
         function(count) { stepInHistory(count > 0 ? count : 1); }
     ],
     [ 
-        ["gu", "<BackSpace>"],
-        ["{count}gu", "{count}<BackSpace>"],
+        ["gu", "<BS>"],
+        ["{count}gu", "{count}<BS>"],
         "Go to parent directory",
         "Count is supported, <code class=mapping>2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>",
         goUp
     ],
     [ 
-        ["gU", "<C-BackSpace>"],
-        ["gU", "<C-BackSpace>"],
+        ["gU", "<C-BS>"],
+        ["gU", "<C-BS>"],
         "Go to the root of the website",
         "<code class=mapping>gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>"+
         "When browsing a local directory, it goes to the root document.",
@@ -1954,8 +1954,8 @@ function set(args, special)
                 }
                 else
                 {
-                    if (oper == '+' && !cur_val.match(val))
-                        val = cur_val + ',' + val;
+                    if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
+                            val = cur_val + ',' + val;
                     if (oper == '-')
                     {
                         val = cur_val.replace(new RegExp(',?' + val), '');

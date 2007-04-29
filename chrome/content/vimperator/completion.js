@@ -287,15 +287,16 @@ function build_longest_starting_substring(list, filter)/*{{{*/
 /* 
  * filter a list of urls
  *
- * may consist of searchengines, boorkmarks and history,
+ * may consist of searchengines, filenames, bookmarks and history,
  * depending on the 'complete' option
+ * if the 'complete' argument is passed like "h", it temproarily overrides the complete option
  */
-function get_url_completions(filter)/*{{{*/
+function get_url_completions(filter, complete)/*{{{*/
 {
     g_completions = [];
     g_substrings = [];
 
-    var cpt = get_pref("complete");
+    var cpt = complete || get_pref("complete");
     // join all completion arrays together
     for (var i = 0; i < cpt.length; i++)
     {
@@ -305,6 +306,8 @@ function get_url_completions(filter)/*{{{*/
             g_completions = g_completions.concat(get_bookmark_completions(filter));
         else if (cpt[i] == 'h')
             g_completions = g_completions.concat(get_history_completions(filter));
+        else if (cpt[i] == 'f')
+            g_completions = g_completions.concat(get_file_completions(filter));
     }
 
     return g_completions;
@@ -321,7 +324,10 @@ function filter_url_array(urls, filter)/*{{{*/
     if (!filter) return urls.map(function($_) {
         return [$_[0], $_[1]]
     });
+
     var filter_length = filter.length;
+    filter = filter.toLowerCase();
+
     /*
      * Longest Common Subsequence
      * This shouldn't use build_longest_common_substring
@@ -329,26 +335,29 @@ function filter_url_array(urls, filter)/*{{{*/
      */
     for (var i = 0; i < urls.length; i++)
     {
-        if (urls[i][0].indexOf(filter) == -1)
+        var url = urls[i][0].toLowerCase();
+        var title = urls[i][1].toLowerCase();
+
+        if (url.indexOf(filter) == -1)
         {
-            if (urls[i][1].indexOf(filter) != -1)
-                additional_completions.push([urls[i][0], urls[i][1] ]);
+            if (title.indexOf(filter) != -1)
+                additional_completions.push([ urls[i][0], urls[i][1] ]);
             continue;
         }
         if (g_substrings.length == 0)   // Build the substrings
         {
-            var last_index = urls[i][0].lastIndexOf(filter);
-            var url_length = urls[i][0].length;
-            for (var k = urls[i][0].indexOf(filter); k != -1 && k <= last_index; k = urls[i][0].indexOf(filter, k + 1))
+            var last_index = url.lastIndexOf(filter);
+            var url_length = url.length;
+            for (var k = url.indexOf(filter); k != -1 && k <= last_index; k = url.indexOf(filter, k + 1))
             {
                 for (var l = k + filter_length; l <= url_length; l++)
-                    g_substrings.push(urls[i][0].substring(k, l));
+                    g_substrings.push(url.substring(k, l));
             }
         }
         else
         {
             g_substrings = g_substrings.filter(function($_) {
-                return urls[i][0].indexOf($_) >= 0;
+                return url.indexOf($_) >= 0;
             });
         }
         filtered.push([urls[i][0], urls[i][1]]);
@@ -380,7 +389,7 @@ function get_history_completions(filter)/*{{{*/
             history.hidden = false;
             var globalHistory = Components.classes["@mozilla.org/browser/global-history;2"].getService(Components.interfaces.nsIRDFDataSource);
             history.database.AddDataSource(globalHistory);
-            history_completions = [];
+            g_history = [];
         }
 
         if (!history.ref)
@@ -414,10 +423,8 @@ function get_history_completions(filter)/*{{{*/
 
             g_history.push([url, title]);
         }
-        //      if(url.toLowerCase().indexOf(filter.toLowerCase()) > -1)
         history_loaded = true;  
     }
-
     return filter_url_array(g_history, filter);
 }/*}}}*/
 
@@ -431,13 +438,29 @@ function get_bookmark_completions(filter)/*{{{*/
         bookmarks = [];   // here getAllChildren will store the bookmarks
         g_bookmarks = []; // also clear our bookmark cache
         BookmarksUtils.getAllChildren(root, bookmarks);
+//        alert(bookmarks[0].length);
         for(var i = 0; i < bookmarks.length; i++)
         {
             if (bookmarks[i][0] && bookmarks[i][1])
+            {
                 g_bookmarks.push([bookmarks[i][1].Value, bookmarks[i][0].Value ]);
+            }
+           // for(var j=0; j < bookmarks[i].length; j++)
+           // {
+//                if(bookmarks[i][2])
+//                    alert("2: " + bookmarks[i][2].Value);
+//                if(bookmarks[i][3])
+//                    alert("3: " + bookmarks[i][3].Value);
+//                if(bookmarks[i][4])
+//                    alert("4: " + bookmarks[i][4].Value);
+//                if(bookmarks[i][5])
+//                    alert("5: " + bookmarks[i][5].Value);
+            //alert("0: " + bookmarks[i][0].Value + " - 1: " + bookmarks[i][1].Value + "- 2:" + bookmarks[i][2].Value);// + "- 3:"+  bookmarks[i][3].Value + "- 4:" + bookmarks[i][4].Value);// + "- 5:" + bookmarks[i][5].Value);
+            //}
         }
         bookmarks_loaded = true;
     }
+
 
     return filter_url_array(g_bookmarks, filter);
 }/*}}}*/

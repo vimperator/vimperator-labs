@@ -151,4 +151,32 @@ function parseBookmarkString(str, res)
     return true;
 }
 
+function getSearchEngines()
+{
+    const nsSS = Components.classes["@mozilla.org/browser/search-service;1"].
+            getService(Components.interfaces.nsIBrowserSearchService);
+    var engines = nsSS.getVisibleEngines({ });
+    for(var i in engines)
+    {
+        alert(engines[i].alias);
+        if (!engines[i].alias || !engines[i].alias.match(/^\w+$/))
+        {
+            alias = engines[i].name.replace(/^\W*(\w+).*/, "$1").toLowerCase();
+            engines[i].alias = alias;
+        }
+
+//        alert(engines[i].alias);
+//        alert(engines[i].name);
+//        alert(engines[i].description);
+    }
+//    var def = nsSS.getDefaultEngine();
+//    if(def)
+//    {
+//        alert('DEFAULT'):
+//        alert(def.alias);
+//    }
+//        alert(def.name);
+//        alert(def.description);
+}
+
 // vim: set fdm=marker sw=4 ts=4 et:

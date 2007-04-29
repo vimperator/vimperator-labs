@@ -64,15 +64,16 @@ var g_settings = [/*{{{*/
         "Items which are completed at the :[tab]open prompt",
         "Available items:<br>"+
         "<ul><li><b>s</b>: Search machines</li><li>"+
-        "        <b>b</b>: Bookmarks</li><li>"+
-        "        <b>h</b>: History</li></ul>"+
+        "<b>f</b>: Local files</li><li>"+
+        "<b>b</b>: Bookmarks</li><li>"+
+        "<b>h</b>: History</li></ul>"+
         "The order is important, so <code class=command>:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
-        "Set the <code class=setting>'wildsort'</code> setting if you want all entries sorted.",
+        "Add 'sort' to the <code class=setting>'wildoptions'</code> setting if you want all entries sorted.",
         "charlist",
         null,
         function(value) { set_pref("complete", value); },
         function() { return get_pref("complete"); },
-        "sbh",
+        "sfbh",
         null
     ],
     [
@@ -262,15 +263,19 @@ var g_settings = [/*{{{*/
         null
     ],
     [
-        ["wildsort", "wis", "nowildsort", "nowis"],
-        ["wildsort", "wis"],
-        "Define whether command line completion is sorted",
-        "If you don't want a sorted completion list, set this to false.",
-        "boolean",
+        ["wildoptions", "wop"],
+        ["wildoptions", "wop"],
+        "Change how command line completion is done",
+        "A list of words that change how command line completion is done.<br/>"+
+        "Currently only one word is allowed:<br/>"+
+        "<table><pre>"+
+        "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=setting>'complete'</code> option.</td></tr>" +
+        "</pre></table>",
+        "stringlist",
         null,
-        function(value) { set_pref("wildsort", value); },
-        function() { return get_pref("wildsort"); },
-        false,
+        function(value) { set_pref("wildoptions", value); },
+        function() { return get_pref("wildoptions"); },
+        "",
         null
     ]
 ]/*}}}*/
