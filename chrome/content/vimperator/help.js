@@ -38,76 +38,6 @@ function help(section, easter)
 
     var doc = window.content.document;
 
-    var style = "<style type='text/css'>\
-table.vimperator {\
-    border-width: 1px 1px 1px 1px;\
-    /*border-spacing: 5px;*/\
-    border-style: dotted dotted dotted dotted;\
-    border-color: gray gray gray gray;\
-    border-collapse: separate;\
-    background-color: white;\
-    width: 800px !important;\
-}\
-table.vimperator th {\
-    border-width: 0px 0px 0px 0px;\
-    /*padding: 3px 3px 3px 3px;*/\
-    border-style: hidden hidden hidden hidden;\
-    border-color: gray gray gray gray;\
-}\
-table.vimperator td {\
-    border-width: 0px 0px 0px 0px;\
-    padding: 3px 3px 3px 3px;\
-    border-style: hidden hidden hidden hidden;\
-    border-color: gray gray gray gray;\
-    background-color: rgb(250, 240, 230);\
-}\
-tr.tag {\
-    text-align: right;\
-    border-spacing: 13px 10px 13px 10px;\
-}\
-tr.tag td {\
-    width: 100%;\
-    padding: 3px 0px 3px 0px;\
-}\
-tr.tag code, td.usage code {\
-    margin: 0px 2px;\
-}\
-td.usage code {\
-    white-space: nowrap;\
-}\
-tr.tag code {\
-    font-weight: bold;\
-    font-size: 12px;\
-    color: red;\
-    margin-left: 2em;\
-}\
-tr.desciption {\
-    margin-bottom: 4px;\
-}\
-table.commands td {\
-    background-color: rgb(250, 240, 230);\
-}\
-table.commands th {\
-    background-color: rgb(250, 240, 230);\
-}\
-table.mappings td {\
-    background-color: rgb(230, 240, 250);\
-}\
-table.mappings th {\
-    background-color: rgb(230, 240, 250);\
-}\
-table.settings td {\
-    background-color: rgb(240, 250, 230);\
-}\
-table.settings th {\
-    background-color: rgb(240, 250, 230);\
-}\
-.command { font-weight: bold; color: #632610; }\
-.mapping { font-weight: bold; color: #102663; }\
-.setting { font-weight: bold; color: #106326; }\
-</style>";
-
-
     var header = '<h1 align=center>Vimperator</h1>' +
         '<p align=center><b>First there was a Navigator, then there was an Explorer.<br/>'+
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</b></p>';
@@ -137,7 +67,7 @@ table.settings th {\
 
         'Of course as a believer in free open source software, only make a donation if you really like Vimperator, and the money doesn\'t hurt - otherwise just use it, recommend it and like it :)</p>'
 
-// xxx: for firebug: :exec Firebug.toggleBar(true)
+// xxx: for firebug: :js Firebug.toggleBar(true)
 
     /* commands = array where help information is located
      * color = used for background of the table
@@ -150,6 +80,7 @@ table.settings th {\
         var ret = "";
         for (var i=0; i < commands.length; i++)
         {
+            // the tags which are printed on the top right
             ret += '<tr class="tag"><td colspan="2">';
             for (var j=0; j < commands[i][COMMANDS].length; j++)
             {
@@ -158,6 +89,8 @@ table.settings th {\
                 cmd_name = cmd_name.replace(/>/g, "&gt;");
                 ret += "<code id='" + commands[i][COMMANDS][j] + "'>" +beg+ cmd_name +end+ '</code>';
             }
+
+            // the usage information for the command
             ret += '</td></tr><tr class="description"><td class="usage" valign="top">';
             for (var j=0; j < commands[i][USAGE].length; j++)
             {
@@ -165,14 +98,19 @@ table.settings th {\
 
                 usage = usage.replace(/<(?!br\/>)/g, "&lt;");
                 usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
+                // color {count} and [url] arguments in the usage, not nice and error prone but the regexp work (for now)
+                usage = usage.replace(/(^|;|\n|\s|\]|\}|=|<br\/?>)({.*?}|\[.*?\])/gm, "$1<span class=argument>$2</span>");
+                //usage = usage.replace(/(\s)({|\[)(.*)(\]|})(.*)/g, "<span class=argument>$1$2$3$4$5</span>");
                 ret += "<code>" +beg+ usage +end+ '</code><br/>';
             }
             ret += '</td><td>';
+
+            // the actual help text with the first line in bold
             if (commands[i][SHORTHELP])
             {
                 ret += "<b>";
                 ret += commands[i][SHORTHELP]; // the help description
-                ret += "</b><br>";
+                ret += "</b><br/>";
                 if(func) // for settings whe print default values here, e.g.
                 {
                     ret += func.call(this, commands[i]);
@@ -184,6 +122,10 @@ table.settings th {\
             else
                 ret += "Sorry, no help available";
             ret += '</td></tr>';
+
+            // add more space between entries
+            if (i < commands.length-1)
+                ret += '<tr class="seperator"></tr>';
         }
         return ret;
     }
@@ -232,7 +174,8 @@ table.settings th {\
     settings += '</table></p>';
 
     var fulldoc = '<html><head><title>Vimperator help</title>' +
-        style +
+        // XXX: stylesheet broken here? Have to add it in the vimperator.xul file
+        '<link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css">'+
         '</head><body><pre style="white-space: -moz-pre-wrap !important;">' + // should change that to: white-space: pre-wrap; once CSS3 hits firefox
         header +
         introduction +
@@ -240,6 +183,8 @@ table.settings th {\
         commands +
         settings +
         '</pre></body></html>'
+
+//    fulldoc = '<html><head><title>Vimperator help</title><!--link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css"--></head><body><p class=moo>hallo</p></body></html>';
 
     doc.open();
     doc.write(fulldoc);

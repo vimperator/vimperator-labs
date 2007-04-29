@@ -189,7 +189,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["history", "hs"],
-        ["hs {filter}"],
+        ["history {filter}"],
         "Show recently visited URLs",
         "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL.",
         "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
@@ -198,7 +198,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["javascript", "js"],
-        ["javascript {cmd}", "javascript &lt;&lt;{endpattern}<br/>{script}<br/>{endpattern}"],
+        ["javascript {cmd}", "javascript &lt;&lt; {endpattern}<br/>{script}<br/>{endpattern}"],
         "Run any javascript command through eval()",
         "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
         "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
@@ -234,17 +234,17 @@ var g_commands = [/*{{{*/
     ],
     [
         ["open", "op", "o", "edit", "e"],
-        ["open [url] [| [url]]"],
+        ["open [url] [| url]"],
         "Open one ore more URLs in the current tab",
         "Multiple URLs can be separated with the | character.<br/>" +
-        "Each |-separated token is analazed and in this order:<br/>"+
-        "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code>:open wiki linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
+        "Each |-separated token is analayzed and in this order:<br/>"+
+        "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code class=command>:open wiki linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
         "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and goes to the moves up the directory hierarchy as far as possible.<br/>"+
-        "        - <code class=command>:open ...</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com</code><br/>"+
-        "        - <code class=command>:open ./foo.html</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com/dir1/dir2/foo.html</code></li>"+
+        "        <code class=command>:open ...</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com</code><br/>"+
+        "        <code class=command>:open ./foo.html</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com/dir1/dir2/foo.html</code></li>"+
         "    <li>Opened with the default search engine if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
-        "    <li>Passed directly to Firefox in all other cases (<code>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
-        "You WILL be able to use <code>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
+        "    <li>Passed directly to Firefox in all other cases (<code class=command>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
+        "You WILL be able to use <code class=command>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
         "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br/>"+
         "Without argument, reloads the current page.<br/>"+
         "Without argument but with !, reloads the current page skipping the cache.",
@@ -307,8 +307,8 @@ var g_commands = [/*{{{*/
     [
         ["restart"],
         ["restart"],
-        "Forces the browser to restart.",
-        null,
+        "Force the browser to restart",
+        "Useful when installing extenstions.",
         restart,
         null
     ],
@@ -816,6 +816,7 @@ var g_mappings = [/*{{{*/
         "Then press <code>AB</code> to select the hint. Now press <code class=mapping>y</code> to yank its location.<br/>"+
         "Actions for selected hints in ExtendedHint mode are:<br/>"+
         "<ul><li><code class=mapping>y</code> to yank its location</li>"+
+        "    <li><code class=mapping>Y</code> to yank its text description</li>"+
         "    <li><code class=mapping>o</code> to open its location in the current tab</li>"+
         "    <li><code class=mapping>t</code> to open its location in a new tab</li>"+
         "    <li><code class=mapping>O</code> to open its location in an <code class=command>:open</code> query (not implemented yet)</li>"+
@@ -985,7 +986,8 @@ var g_hint_mappings = [ /*{{{*/
     ["t",          "hah.openHints(true,  false);", true, false],
     ["<C-w>",      "hah.openHints(false, true );", true, false],
     ["s",          "echoerr('Saving of links not yet implemented');", true, false],
-    ["y",          "hah.yankHints();", true, false],
+    ["y",          "hah.yankUrlHints();", true, false],
+    ["Y",          "hah.yankTextHints();", true, false],
     [",",          "g_inputbuffer+=','; hah.setCurrentState(0);", false, true],
     [":",          "openVimperatorBar(null);", false, true],
     /* movement keys */

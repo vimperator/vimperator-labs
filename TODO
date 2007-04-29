@@ -19,7 +19,7 @@ FEATURES:
 8 :open .. -> Up one directory, :cd goes to top location, [Backspace] command shortcut, use count (:3cd goes 3 levels up)
 8 downloading of links to filesystem (:save <filename>)
 8 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
-  with color support (for things like :ls)
+  with color support (for things like :echo line1\nline2)
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 8 Use our own find-as-you-type mechanism (like conkeror does)

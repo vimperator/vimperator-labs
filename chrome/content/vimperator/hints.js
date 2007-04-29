@@ -212,9 +212,9 @@ function hit_a_hint()
         if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
         {
             beep();
-            alert('h');
+            //alert('h');
             this.disableHahMode(win);
-            alert('g');
+            //alert('g');
 //            setCurrentMode(MODE_NORMAL);
 //            linkNumString = '';
 //            hintedElems = [];
@@ -250,7 +250,7 @@ function hit_a_hint()
     function removeHints(win)
     {
         if (!win)
-            win = window._content;
+            win = window.content;
  
         var doc = win.document;
         var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -419,14 +419,17 @@ function hit_a_hint()
      * @return -1 if already disabled
      */
     //function disableHahMode(event)
-    this.disableHahMode = function(win)
+    this.disableHahMode = function(win, silent)
     {
+        if(!isHahModeEnabled)
+            return;
+
         setCurrentMode(MODE_NORMAL);
         isHahModeEnabled = false;
         hintmode = HINT_MODE_QUICK;
         linkNumString = '';
         hintedElems = [];
-        if (get_pref("showmode"))
+        if (!silent && get_pref("showmode"))
             echo('');
  
         removeHints(win);
@@ -512,7 +515,7 @@ function hit_a_hint()
         return 0;
     };
 
-    this.yankHints = function()
+    this.yankUrlHints = function()
     {
         var loc = "";
         var elems = hah.hintedElements();
@@ -523,6 +526,28 @@ function hit_a_hint()
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
                 loc += tmp + "\n";
         }
+
+        // disable the hints before we can echo() an information
+        this.disableHahMode(null, true);
+
+        copyToClipboard(loc);
+        echo("Yanked " + loc);
+    };
+
+    this.yankTextHints = function()
+    {
+        var loc = "";
+        var elems = hah.hintedElements();
+        var tmp = "";
+        for(i=0; i<elems.length; i++)
+        {
+            tmp = elems[i].refElem.textContent;
+            if (typeof(tmp) != 'undefined' && tmp.length > 0)
+                loc += tmp + "\n";
+        }
+
+        // disable the hints before we can echo() an information
+        this.disableHahMode(null, true);
 
         copyToClipboard(loc);
         echo("Yanked " + loc);

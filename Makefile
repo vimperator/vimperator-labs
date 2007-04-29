@@ -1,21 +1,45 @@
 #### configuration
 
-VERSION  = 0.4
+TOP       = $(shell pwd)
 
-JAR_FILES     = ${shell find chrome/content/ -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
-JAR           = chrome/vimperator.jar
+VERSION   = 0.4
+OS        = $(shell uname -s)
+DATE      = $(shell date "+%Y/%m/%d")
 
-RELEASE_FILES = ${JAR} install.rdf chrome.manifest TODO AUTHORS Donators ChangeLog Makefile
-RELEASE_DIR   = ../downloads
-RELEASE_XPI   = vimperator_${VERSION}.xpi
-RELEASE       = ${RELEASE_DIR}/${RELEASE_XPI}
+JAR_FILES = ${shell find chrome/content/ -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
+JAR_DIRS  = $(foreach f,${JAR_FILES},$(dir $f))
+JAR       = chrome/vimperator.jar
+
+XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators ChangeLog
+XPI_DIRS  = $(foreach f,${XPI_FILES},$(dir $f))
+XPI_BIN_FILES = ${JAR} Makefile
+XPI_FILES = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
+XPI_NAME  = vimperator_${VERSION}.xpi
+XPI       = ../downloads/${XPI_NAME}
+
+BUILD_DIR=build.${VERSION}.${OS}
+BUILD_JAR_DIR=${BUILD_DIR}/jar
+BUILD_XPI_DIR=${BUILD_DIR}/xpi
+
+BUILD_JAR_SUBDIRS=$(sort ${JAR_DIRS:%=${BUILD_JAR_DIR}/%})
+BUILD_XPI_SUBDIRS=$(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
+
 
 ZIP = zip
 
 # find the vimperator chrome dir
 
+ifeq (${OS},Darwin)
+FIREFOX_DEFAULT = $(wildcard ${HOME}/Library/Application\ Support/Firefox/Profiles/*default)
+else
 FIREFOX_DEFAULT = $(wildcard ${HOME}/.mozilla/firefox/*.default)
-VIMPERATOR_CHROME = ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/
+endif
+
+VIMPERATOR_CHROME_EMAIL = ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/
+FOUND_CHROME_UUID = $(dir $(wildcard ${FIREFOX_DEFAULT}/extensions/{*-*-*-*-*}/chrome/vimperator.jar))
+FOUND_CHROME_EMAIL = $(dir $(wildcard ${VIMPERATOR_CHROME_EMAIL}))
+FOUND_CHROME = $(if ${FOUND_CHROME_UUID},${FOUND_CHROME_UUID},${FOUND_CHROME_EMAIL})
+INSTALL_CHROME = $(if ${FOUND_CHROME},${FOUND_CHROME},${VIMPERATOR_CHROME_EMAIL})
 
 # specify V=1 on make line to see more verbose output
 Q=$(if ${V},,@)
@@ -33,44 +57,77 @@ help:
 	@echo "  make info      - shome some info about the system"
 	@echo "  make jar       - build a JAR (${JAR})"
 	@echo "  make install   - install into your firefox dir (run info)"
-	@echo "  make xpi       - build an XPI (${RELEASE_XPI})"
+	@echo "  make xpi       - build an XPI (${XPI_NAME})"
 	@echo "  make clean     - clean up"
 	@echo
 	@echo "running some commands with V=1 will show more build details"
 
 info:
 	@echo    "version             ${VERSION}"
-	@echo    "release file        ${RELEASE}"
+	@echo    "release file        ${XPI}"
 	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
 	@test -d "${FIREFOX_DEFAULT}" || ( echo "E: didn't find your .mozilla/firefox/*.default/ dir" ; false )
 	@echo    "firefox default     ${FIREFOX_DEFAULT}"
-	@test -d "${VIMPERATOR_CHROME}" || ( echo "E: didn't find an existing vimperator chrome dir" ; false )
-	@echo    "vimperator chrome   ${VIMPERATOR_CHROME}"
+	@test -d "${FOUND_CHROME}" || ( echo "E: didn't find an existing vimperator chrome dir" ; false )
+	@[ -n "${FOUND_CHROME_UUID}" ] && \
+	 echo    "vimperator chrome   ${FOUND_CHROME_UUID}" || true
+	@[ -n "${FOUND_CHROME_EMAIL}" ] && \
+	 echo    "vimperator chrome   ${FOUND_CHROME_EMAIL}" || true
+	@[ -z "${FOUND_CHROME_UUID}" -o -z "${FOUND_CHROME_EMAIL}" ] || \
+	(echo    "E: you have multiple vimperator's installed, you need to fix that" ; false)
 
 needs_chrome_dir:
 	@echo "Checking chrome dir..."
-	-${Q}mkdir -p "${VIMPERATOR_CHROME}"
-	${Q}test -d "${VIMPERATOR_CHROME}"
+	-${Q}mkdir -p "${INSTALL_CHROME}"
+	${Q}test -d "${INSTALL_CHROME}"
 
-xpi: ${RELEASE}
+xpi: ${XPI}
 jar: ${JAR}
 
 install: needs_chrome_dir ${JAR}
 	@echo "Installing JAR..."
-	${Q}cp ${CP_V} ${JAR} ${VIMPERATOR_CHROME}
+	${Q}cp ${CP_V} ${JAR} ${INSTALL_CHROME}
 
 clean:
 	@echo "Cleanup..."
 	${Q}rm -f ${JAR} ${XPI}
 	${Q}find . -name '*~' -exec rm -f {} \;
 
-${RELEASE}: ${RELEASE_FILES}
-	@echo "Building XPI..."
-	@mkdir -p ${RELEASE_DIR}
-	${Q}${ZIP} -r ${RELEASE} ${RELEASE_FILES}
-	@echo "SUCCESS: ${RELEASE}"
+#### xpi
 
-${JAR}: ${JAR_FILES}
+${BUILD_XPI_SUBDIRS}:
+	@mkdir -p $@
+
+${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
+	@echo "Building XPI..."
+	${Q}for f in ${XPI_BIN_FILES} ; do \
+		cp $$f ${BUILD_XPI_DIR}/$$f ; \
+	    done
+	${Q}for f in ${XPI_TXT_FILES} ; do \
+		sed -e "s,###VERSION###,${VERSION},g" \
+		    -e "s,###DATE###,${DATE},g" \
+		    < $$f > ${BUILD_XPI_DIR}/$$f ; \
+		( diff -q $$f ${BUILD_XPI_DIR}/$$f 1>/dev/null ) || \
+		( echo "modified: $$f" ; \
+		  diff -u $$f ${BUILD_XPI_DIR}/$$f | grep '^[-+][^-+]' ) ; \
+	    done
+	${Q}( cd ${BUILD_XPI_DIR} && ${ZIP} -r ${TOP}/${XPI} ${XPI_FILES} )
+	@echo "SUCCESS: ${XPI}"
+
+#### jar
+
+${BUILD_JAR_SUBDIRS}:
+	@mkdir -p $@
+
+${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	@echo "Building JAR..."
-	${Q}${ZIP} -r ${JAR} ${JAR_FILES}
+	${Q}for f in ${JAR_FILES} ; do \
+		sed -e "s,###VERSION###,${VERSION},g" \
+		    -e "s,###DATE###,${DATE},g" \
+		    < $$f > ${BUILD_JAR_DIR}/$$f ; \
+		( diff -q $$f ${BUILD_JAR_DIR}/$$f 1>/dev/null ) || \
+		( echo "modified: $$f" ; \
+		  diff -u $$f ${BUILD_JAR_DIR}/$$f | grep '^[-+][^-+]' ) ; \
+	    done
+	${Q}( cd ${BUILD_JAR_DIR} && ${ZIP} -r ${TOP}/${JAR} ${JAR_FILES} )
 	@echo "SUCCESS: ${JAR}"
