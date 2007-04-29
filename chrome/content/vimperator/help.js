@@ -86,8 +86,12 @@ function help(section, easter)
             {
                 var usage = commands[i][USAGE][j];
 
-                usage = usage.replace(/<(?!br\/>)/g, "&lt;");
-                usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
+                // keep <br/>
+                //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
+                //usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
+                usage = usage.replace(/</g, "&lt;");
+                usage = usage.replace(/>/g, "&gt;");
+                usage = usage.replace(/\\n/g, "<br/>");
                 // color {count} and [url] arguments in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/(^|;|\n|\s|\]|\}|=|<br\/?>)({.*?}|\[.*?\])/gm, "$1<span class=argument>$2</span>");
                 // and the 'setting' in a different color

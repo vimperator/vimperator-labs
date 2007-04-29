@@ -198,7 +198,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["javascript", "js"],
-        ["javascript {cmd}", "javascript &lt;&lt; {endpattern}<br/>{script}<br/>{endpattern}"],
+        ["javascript {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br> in the help.js code
         "Run any javascript command through eval()",
         "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
         "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
@@ -654,14 +654,14 @@ var g_mappings = [/*{{{*/
     [ 
         ["ZQ"],
         ["ZQ"],
-        "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.",
+        "Quit and don't save the session",
         "Works like <code class=command>:qall</code>.",
         function(count) { quit(false); }
     ],
     [ 
         ["ZZ"],
         ["ZZ"],
-        "Save the session and quit",
+        "Quit and save the session",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
         "Works like <code class=command>:xall</code>.",
         function(count) { quit(true); }
@@ -699,7 +699,7 @@ var g_mappings = [/*{{{*/
     [ 
         ["h", "<Left>"],
         ["{count}h", "{count}<Left>"],
-        "Scroll document to the left" +
+        "Scroll document to the left",
         "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.",
         "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(-1, 0); }
