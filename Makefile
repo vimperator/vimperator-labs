@@ -6,7 +6,7 @@ VERSION   = 0.4
 OS        = $(shell uname -s)
 DATE      = $(shell date "+%Y/%m/%d")
 
-JAR_FILES = ${shell find chrome/content/ -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
+JAR_FILES = ${shell find chrome/content -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
 JAR_DIRS  = $(foreach f,${JAR_FILES},$(dir $f))
 JAR       = chrome/vimperator.jar
 
@@ -101,6 +101,7 @@ ${BUILD_XPI_SUBDIRS}:
 
 ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 	@echo "Building XPI..."
+	${Q}mkdir -p $(dir ${XPI})
 	${Q}for f in ${XPI_BIN_FILES} ; do \
 		cp $$f ${BUILD_XPI_DIR}/$$f ; \
 	    done
