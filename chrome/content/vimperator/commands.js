@@ -371,7 +371,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["tabopen", "t", "to", "topen", "tabnew", "tabedit", "tabe"],
-        ["tabopen [url] [| [url]]"],
+        ["tabopen [url] [| url]"],
         "Open one or more URLs in a new tab",
         "Like <code class=command>:open</code> but open URLs in a new tab.<br/>"+
         "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
@@ -428,7 +428,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["winopen", "w", "wo", "wopen", "winedit", "wine"],
-        ["win[open] [url] [| [url]]"],
+        ["win[open] [url] [| url]"],
         "Open an URL in a new window",
         "Not implemented yet",
         function () { echo("winopen not yet implemented"); },
@@ -481,8 +481,8 @@ var g_mappings = [/*{{{*/
     [ 
         ["B"],
         ["B"],
-        "Toggle the buffer list with all currently opened tabs.",
-        null,
+        "Toggle buffer list",
+        "Toggles the display of the buffer list which shows all opened tabs,",
         buffer_preview_toggle
     ],
     [ 
@@ -561,14 +561,14 @@ var g_mappings = [/*{{{*/
     [ 
         ["p", "<MiddleMouse>"],
         ["p", "<MiddleMouse>"],
-        "Open (put) an URL based on the current Clipboard contents in the current buffer",
+        "Open (put) an URL based on the current clipboard contents in the current buffer",
         "You can also just select some non-URL text, and search for it with the default search engine with <code class=mapping>p</code>",
         function(count) { openURLs(readFromClipboard()); }
     ],
     [ 
         ["P"],
         ["P"],
-        "Open (put) an URL based on the current Clipboard contents in a new buffer",
+        "Open (put) an URL based on the current clipboard contents in a new buffer",
         "Works like <code class=mapping>p</code>, but opens a new tab.<br/>"+
         "Whether the new buffer is activated, depends on the <code class=setting>'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), true); }
@@ -576,15 +576,15 @@ var g_mappings = [/*{{{*/
     [ 
         ["r"],
         ["r"],
+        "Reload",
         "Forces reloading of the current page.",
-        null,
         function(count) { reload(false); }
     ],
     [ 
         ["R"],
         ["R"],
+        "Reload all",
         "Forces reloading of all open pages.",
-        null,
         function(count) { reload(true); }
     ],
     [ 
@@ -612,35 +612,35 @@ var g_mappings = [/*{{{*/
     [ 
         ["y"],
         ["y"],
-        "Yank current location to the Clipboard",
+        "Yank current location to the clipboard",
         "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button.",
         yankCurrentLocation
     ],
     [ 
         ["zi", "+"],
         ["zi", "+"],
-        "Zoom in current web page by 25%.",
+        "Zoom in current web page by 25%",
         "Currently no count supported.",
         function(count) { zoom_in(1); }
     ],
     [ 
         ["zI"],
         ["zI"],
-        "Zoom in current web page by 100%.",
+        "Zoom in current web page by 100%",
         "Currently no count supported.",
         function(count) { zoom_in(4); }
     ],
     [ 
         ["zo", "-"],
         ["zo", "-"],
-        "Zoom out current web page by 25%.",
+        "Zoom out current web page by 25%",
         "Currently no count supported.",
         function(count) { zoom_in(-1); }
     ],
     [ 
         ["zO"],
         ["zO"],
-        "Zoom out current web page by 100%.",
+        "Zoom out current web page by 100%",
         "Currently no count supported.",
         function(count) { zoom_in(-4); }
     ],
@@ -730,16 +730,16 @@ var g_mappings = [/*{{{*/
     ],
     [ 
         ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"],
-        ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"],
-        "Scroll up a full page of the current document. No count support for now.",
-        null,
+        ["<C-b>"],
+        "Scroll up a full page of the current document",
+        "No count support for now,",
         function(count) { goDoCommand('cmd_scrollPageUp'); }
     ],
     [ 
         ["<C-f>", "<C-d>", "<PageDown>", "<Space>"],
-        ["<C-f>", "<C-d>", "<PageDown>", "<Space>"],
-        "Scroll down a full page of the current document. No count support for now.",
-        null,
+        ["<C-f>"],
+        "Scroll down a full page of the current document",
+        "No count support for now,",
         function(count) { goDoCommand('cmd_scrollPageDown'); }
     ],
 
@@ -775,15 +775,16 @@ var g_mappings = [/*{{{*/
     [ 
         ["gu", "<BackSpace>"],
         ["{count}gu", "{count}<BackSpace>"],
-        "Go up one directory component",
+        "Go to parent directory",
         "Count is supported, <code class=mapping>2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>",
         goUp
     ],
     [ 
         ["gU", "<C-BackSpace>"],
         ["gU", "<C-BackSpace>"],
-        "Go up one directory component",
-        "<code class=mapping>gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>",
+        "Go to the root of the website",
+        "<code class=mapping>gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>"+
+        "When browsing a local directory, it goes to the root document.",
         function(count) { openURLs("..."); }
     ],
 

@@ -80,16 +80,6 @@ function help(section, easter)
         var ret = "";
         for (var i=0; i < commands.length; i++)
         {
-            // the tags which are printed on the top right
-            ret += '<tr class="tag"><td colspan="2">';
-            for (var j=0; j < commands[i][COMMANDS].length; j++)
-            {
-                var cmd_name = commands[i][COMMANDS][j];
-                cmd_name = cmd_name.replace(/</g, "&lt;");
-                cmd_name = cmd_name.replace(/>/g, "&gt;");
-                ret += "<code id='" + commands[i][COMMANDS][j] + "'>" +beg+ cmd_name +end+ '</code>';
-            }
-
             // the usage information for the command
             ret += '</td></tr><tr class="description"><td class="usage" valign="top">';
             for (var j=0; j < commands[i][USAGE].length; j++)
@@ -100,10 +90,11 @@ function help(section, easter)
                 usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
                 // color {count} and [url] arguments in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/(^|;|\n|\s|\]|\}|=|<br\/?>)({.*?}|\[.*?\])/gm, "$1<span class=argument>$2</span>");
-                //usage = usage.replace(/(\s)({|\[)(.*)(\]|})(.*)/g, "<span class=argument>$1$2$3$4$5</span>");
+                // and the 'setting' in a different color
+                usage = usage.replace(/^'(\w+)'/gm, "'<span class=setting>$1</span>'");
                 ret += "<code>" +beg+ usage +end+ '</code><br/>';
             }
-            ret += '</td><td>';
+            ret += '</td><td valign="top">';
 
             // the actual help text with the first line in bold
             if (commands[i][SHORTHELP])
@@ -121,11 +112,21 @@ function help(section, easter)
             }
             else
                 ret += "Sorry, no help available";
+            // the tags which are printed on the top right
+            //ret += '<tr class="tag"><td colspan="1">====================================';
+            ret += '<td class="tag" valign="top">';
+            for (var j=0; j < commands[i][COMMANDS].length; j++)
+            {
+                var cmd_name = commands[i][COMMANDS][j];
+                cmd_name = cmd_name.replace(/</g, "&lt;");
+                cmd_name = cmd_name.replace(/>/g, "&gt;");
+                ret += "<code id='" + commands[i][COMMANDS][j] + "'>" +beg+ cmd_name +end+ '</code><br/>';
+            }
             ret += '</td></tr>';
 
             // add more space between entries
             if (i < commands.length-1)
-                ret += '<tr class="seperator"></tr>';
+                ret += '<tr class="separator"><td colspan=3><hr></td></tr>';
         }
         return ret;
     }
