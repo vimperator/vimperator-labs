@@ -1020,19 +1020,19 @@ var g_hint_mappings = [ /*{{{*/
     ["<Esc>",      "", true, true]
 ]; /*}}}*/
 
-var g_searchengines = [ /*{{{*/
-    ["google",    "http://www.google.com/search?num=100&q=%s"],
-    ["lucky",     "http://www.google.com/search?num=100&q=%s&btnI=I'm%20Feeling%20Lucky"],
-    ["chefkoch",  "http://www.chefkoch.de/rezept-suche.php?Suchbegriff=%s"],
-    ["dewiki",    "http://de.wikipedia.org/wiki/%s"],
-    ["discogs",   "http://www.discogs.com/search?type=all&q=%s&btn=Search"],
-    ["geizhals",  "http://geizhals.at/?fs=%s"],
-    ["imdb",      "http://www.imdb.com/find?s=all&q=%s"],
-    ["leo",       "http://dict.leo.org/ende?search=%s"],
-    ["wien",      "http://members.aon.at/flole/vienna.html?UserQuery=%s&amp;ResUser=1024&amp;WidthUser=2000"],
-    ["wiki",      "http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go"],
-    ["vim",       "http://www.google.com/custom?q=%s&sa=Google+Search&cof=LW%3A125%3BL%3Ahttp%3A%2F%2Fvim.sf.net%2Fimages%2Fvim.gif%3BLH%3A60%3BAH%3Acenter%3BGL%3A0%3BS%3Ahttp%3A%2F%2Fwww.vim.org%3BAWFID%3A057fa53529d52655%3B&domains=vim.sourceforge.net%3Bwww.vim.org%3Bvimdoc.sourceforge.net&sitesearch=vim.sourceforge.net"]
-];/*}}}*/
+//var g_searchengines = [ /*{{{*/
+//    ["google",    "http://www.google.com/search?num=100&q=%s"],
+//    ["lucky",     "http://www.google.com/search?num=100&q=%s&btnI=I'm%20Feeling%20Lucky"],
+//    ["chefkoch",  "http://www.chefkoch.de/rezept-suche.php?Suchbegriff=%s"],
+//    ["dewiki",    "http://de.wikipedia.org/wiki/%s"],
+//    ["discogs",   "http://www.discogs.com/search?type=all&q=%s&btn=Search"],
+//    ["geizhals",  "http://geizhals.at/?fs=%s"],
+//    ["imdb",      "http://www.imdb.com/find?s=all&q=%s"],
+//    ["leo",       "http://dict.leo.org/ende?search=%s"],
+//    ["wien",      "http://members.aon.at/flole/vienna.html?UserQuery=%s&amp;ResUser=1024&amp;WidthUser=2000"],
+//    ["wiki",      "http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go"],
+//    ["vim",       "http://www.google.com/custom?q=%s&sa=Google+Search&cof=LW%3A125%3BL%3Ahttp%3A%2F%2Fvim.sf.net%2Fimages%2Fvim.gif%3BLH%3A60%3BAH%3Acenter%3BGL%3A0%3BS%3Ahttp%3A%2F%2Fwww.vim.org%3BAWFID%3A057fa53529d52655%3B&domains=vim.sourceforge.net%3Bwww.vim.org%3Bvimdoc.sourceforge.net&sitesearch=vim.sourceforge.net"]
+//];/*}}}*/
 
 var g_modemessages = {};
 g_modemessages[MODE_NORMAL | MODE_ESCAPE_ALL_KEYS] = "ESCAPE ALL KEYS";
@@ -1294,10 +1294,13 @@ function openURLsInNewTab(str, activate)
  */
 function stringToURLs(str)
 {
+    const search_service = Components.classes["@mozilla.org/browser/search-service;1"].
+        getService(Components.interfaces.nsIBrowserSearchService);
+
     var urls = str.split(/\s*\|\s*/);
     begin: for(var url=0; url < urls.length; url++)
     {
-        for(var i=0; i < g_searchengines.length; i++)
+        /*for(var i=0; i < g_searchengines.length; i++)
         {
             var regex = new RegExp("^" + g_searchengines[i][0] + "\\s+" + "(.+)");
             matches = urls[url].match(regex);
@@ -1306,7 +1309,32 @@ function stringToURLs(str)
                 urls[url] = g_searchengines[i][1].replace(/%s/, encodeURIComponent(matches[1]));
                 break begin;
             }
+        }*/
+
+        // first check if the first word is a search engine
+        var matches = urls[url].match(/^\s*(\w+)\s*(.*)/);
+        var alias = matches[1] || null;
+        var text = matches[2] || null;
+        if (alias)
+        {
+            var engine = search_service.getEngineByAlias(alias);
+            if (engine)
+            {
+                if(text)
+                    urls[url] = engine.getSubmission(text, null).uri.spec;
+                else
+                    urls[url] = engine.searchForm;
+
+                continue;
+            }
         }
+
+        /* if the string contains a space or does not contain any of: .:/
+         * open it with default search engine */
+        var default_engine = search_service.defaultEngine;
+        if (default_engine)
+            urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
+
 
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (urls[url].match(/^(\.$|\.\/\S*)/))
@@ -1337,10 +1365,6 @@ function stringToURLs(str)
             urls[url] = newLocation;
         }
 
-        /* if the string contains a space or does not contain any of: .:/
-         * open it with default searchengine */
-        if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
-            urls[url] = g_searchengines[0][1].replace(/%s/, encodeURIComponent(urls[url]));
     }
     return urls;
 }

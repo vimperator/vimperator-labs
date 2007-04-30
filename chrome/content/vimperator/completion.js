@@ -217,32 +217,39 @@ function get_longest_substring()/*{{{*/
         if (g_substrings[i].length > longest.length)
             longest = g_substrings[i];
     }
+    //alert(longest);
     return longest;
 }/*}}}*/
 
+// function is case insensitive
 // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
 function build_longest_common_substring(list, filter)/*{{{*/
 {
     var filtered = [];
-    var filter_length = filter.length;
+    //var filter_length = filter.length;
+    //filter = filter.toLowerCase();
+
     for (var i = 0; i < list.length; i++)
     {
         for (var j = 0; j < list[i][0].length; j++)
         {
-            if (list[i][0][j].indexOf(filter) == -1)
+            var item = list[i][0][j].toLowerCase();
+            if (item.indexOf(filter) == -1)
                 continue;
             if (g_substrings.length == 0)
             {
-                var last_index = list[i][0][j].lastIndexOf(filter);
-                var length = list[i][0][j].length;
-                for (var k = list[i][0][j].indexOf(filter); k != -1 && k <= last_index; k = list[i][0][j].indexOf(filter, k + 1))
+                //alert('if: ' + item);
+                var last_index = item.lastIndexOf(filter);
+                var length = item.length;
+                for (var k = item.indexOf(filter); k != -1 && k <= last_index; k = item.indexOf(filter, k + 1))
                 {
-                    for (var l = k + filter_length; l <= length; l++)
+                    for (var l = k + filter.length; l <= length; l++)
                         g_substrings.push(list[i][0][j].substring(k, l));
                 }
             }
             else
             {
+                //alert('else: ' + item);
                 g_substrings = g_substrings.filter(function($_) {
                     return list[i][0][j].indexOf($_) >= 0;
                 });
@@ -254,10 +261,11 @@ function build_longest_common_substring(list, filter)/*{{{*/
     return filtered;
 }/*}}}*/
 
+/* this function is case senstitive */
 function build_longest_starting_substring(list, filter)/*{{{*/
 {
     var filtered = [];
-    var filter_length = filter.length;
+    //var filter_length = filter.length;
     for (var i = 0; i < list.length; i++)
     {
         for (var j = 0; j < list[i][COMMANDS].length; j++)
@@ -267,7 +275,7 @@ function build_longest_starting_substring(list, filter)/*{{{*/
             if (g_substrings.length == 0)
             {
                 var length = list[i][COMMANDS][j].length;
-                for (var k = filter_length; k <= length; k++)
+                for (var k = filter.length; k <= length; k++)
                     g_substrings.push(list[i][COMMANDS][j].substring(0, k));
             }
             else
@@ -368,10 +376,12 @@ function filter_url_array(urls, filter)/*{{{*/
 
 function get_search_completions(filter)/*{{{*/
 {
-    if (!filter) return g_searchengines.map(function($_) {
+    var engines = getSearchEngines();
+
+    if (!filter) return engines.map(function($_) {
         return [$_[0], $_[1]];
     });
-    var mapped = g_searchengines.map(function($_) {
+    var mapped = engines.map(function($_) {
         return [[$_[0]], $_[1]];
     });
     return build_longest_common_substring(mapped, filter);
@@ -476,7 +486,13 @@ function get_file_completions(filter)/*{{{*/
         return [];
 
     var compl = match[2] || '';
-    var fd = fopen(dir, "<");
+    try {
+        var fd = fopen(dir, "<");
+    } catch(e) {
+        // thrown if file does not exist
+        return [ ];
+    }
+
     if (!fd)
         return [];
 

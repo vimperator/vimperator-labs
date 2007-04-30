@@ -151,32 +151,28 @@ function parseBookmarkString(str, res)
     return true;
 }
 
+/* also ensures that each search engine has a vimperator-friendly alias */
 function getSearchEngines()
 {
+    var search_engines = [];
     const nsSS = Components.classes["@mozilla.org/browser/search-service;1"].
             getService(Components.interfaces.nsIBrowserSearchService);
-    var engines = nsSS.getVisibleEngines({ });
-    for(var i in engines)
+    var firefox_engines = nsSS.getVisibleEngines({ });
+    for(var i in firefox_engines)
     {
-        alert(engines[i].alias);
-        if (!engines[i].alias || !engines[i].alias.match(/^\w+$/))
+        if (!firefox_engines[i].alias || !firefox_engines[i].alias.match(/^\w+$/))
         {
-            alias = engines[i].name.replace(/^\W*(\w+).*/, "$1").toLowerCase();
-            engines[i].alias = alias;
+            var alias = firefox_engines[i].name.replace(/^\W*(\w+).*/, "$1").toLowerCase();
+            firefox_engines[i].alias = alias;
         }
+        search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
 
 //        alert(engines[i].alias);
 //        alert(engines[i].name);
 //        alert(engines[i].description);
     }
-//    var def = nsSS.getDefaultEngine();
-//    if(def)
-//    {
-//        alert('DEFAULT'):
-//        alert(def.alias);
-//    }
-//        alert(def.name);
-//        alert(def.description);
+
+    return search_engines;
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:
