@@ -1331,9 +1331,13 @@ function stringToURLs(str)
 
         /* if the string contains a space or does not contain any of: .:/
          * open it with default search engine */
-        var default_engine = search_service.defaultEngine;
-        if (default_engine)
-            urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
+        if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
+        {
+            var default_engine = search_service.defaultEngine;
+            if (default_engine)
+                urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
+            continue;
+        }
 
 
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
