@@ -219,9 +219,9 @@ function help(section, easter)
             echoerr("E149: Sorry, no help for " + section);
             return;
         }
-        var pos = cumulativeOffset(element);
+        var pos = cumulativeOffset(element.parentNode);
         // horizontal offset is annyoing, set it to 0 (use pos[0] if you want horizontal offset)
-        window.content.scrollTo(0, pos[1] - 50); // 50 pixel context lines
+        window.content.scrollTo(0, pos[1]);
     }
 }
 
