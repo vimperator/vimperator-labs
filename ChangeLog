@@ -1,10 +1,9 @@
 <pre>
-date:
+2007-05-01:
 	* version 0.4
 	* extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
 	  TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
-	* support for internal search engines was dropped. Now we use Firefox
-	  search engines. Add custom search engines with :qsadd, remove engines with :qsdel
+	* support for internal search engines was dropped. Now we use Firefox search engines
 	* support for 'wildmode' completion setting with support for matching the
 	  longest common substring. Also new 'wildoptions' setting
 	* added 'f' to the 'complete' option to allow listing of filenames in :open prompt

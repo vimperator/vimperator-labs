@@ -6,10 +6,10 @@
 	<em:id>vimperator@mozdev.org</em:id>
 	<em:name>Vimperator</em:name>
 	<em:version>###VERSION###</em:version>
-	<em:description>Make Firefox work like Vim</em:description>
+	<em:description>Make Firefox behave like Vim</em:description>
 	<em:creator>Martin Stubenschrott</em:creator>
 	<em:homepageURL>http://vimperator.mozdev.org</em:homepageURL>
-	<em:updateURL>http://downloads.mozdev.org/vimperator/update.rdf</em:updateURL>
+	<!--em:updateURL>http://downloads.mozdev.org/vimperator/update.rdf</em:updateURL-->
 	<em:file>
 	    <Description about="urn:mozilla:extension:file:vimperator.jar">
 		<em:package>content/vimperator/</em:package>
@@ -20,7 +20,7 @@
 	    <Description>
 		<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 		<em:minVersion>2.0</em:minVersion>
-		<em:maxVersion>2.1</em:maxVersion>
+		<em:maxVersion>2.0.0.*</em:maxVersion>
 	    </Description>
 	</em:targetApplication>
     </Description>

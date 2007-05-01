@@ -1339,7 +1339,9 @@ function stringToURLs(str)
          * open it with default search engine */
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
         {
-            var default_engine = search_service.defaultEngine;
+            // defaultEngine is always the same (Google), therefor let's use the currentEngine
+            var default_engine = search_service.currentEngine;
+            //var default_engine = search_service.defaultEngine;
             if (default_engine)
             {
                 urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
