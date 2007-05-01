@@ -1,4 +1,8 @@
 <pre>
+date:
+	* version 0.5
+	* added 'defsearch' setting for setting default search engine
+
 2007-05-01:
 	* version 0.4
 	* extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE

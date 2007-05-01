@@ -166,13 +166,35 @@ function getSearchEngines()
             firefox_engines[i].alias = alias;
         }
         search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
-
-//        alert(engines[i].alias);
-//        alert(engines[i].name);
-//        alert(engines[i].description);
     }
 
     return search_engines;
 }
 
+function Search()
+{
+    const search_service = Components.classes["@mozilla.org/browser/search-service;1"].
+        getService(Components.interfaces.nsIBrowserSearchService);
+    
+    this.getDefaultEngine = function()
+    {
+        return search_service.currentEngine;
+    }
+
+    this.setDefaultEngine = function(alias)
+    {
+        var engine = search_service.getEngineByAlias(alias);
+        if(engine)
+            search_service.currentEngine = engine;
+        else
+            echoerr("Error: Search engine with alias '" + alias + "' does not exist");
+    }
+
+    this.getEngine = function(alias)
+    {
+        var engine = search_service.getEngineByAlias(alias);
+        return engine;
+    }
+}
+var search = new Search(); // FIXME, must it really be here? doesn't work in vimperator.js
 // vim: set fdm=marker sw=4 ts=4 et:

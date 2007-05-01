@@ -439,7 +439,8 @@ var g_commands = [/*{{{*/
         ["xall", "xa", "wqall", "wqa", "wq"],
         ["wqa[ll]", "xa[ll]"],
         "Save the session and quit",
-        "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.",
+        "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>"+
+        "<code command>:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that.",
         function (args) { quit(true); },
         null
     ],
@@ -1268,9 +1269,11 @@ function openURLs(str)
     if (urls.length == 0)
         return false;
 
-    getWebNavigation().loadURI(urls[0], nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+    //getWebNavigation().loadURI(urls[0], nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+    getBrowser().loadURI(urls[0]);
+
     for (var url=1; url < urls.length; url++)
-        gBrowser.addTab(urls[url]);
+        getBrowser().addTab(urls[url]);
 
     return true;
 }
@@ -1295,9 +1298,6 @@ function openURLsInNewTab(str, activate)
  */
 function stringToURLs(str)
 {
-    const search_service = Components.classes["@mozilla.org/browser/search-service;1"].
-        getService(Components.interfaces.nsIBrowserSearchService);
-
     var urls = str.split(/\s*\|\s*/);
     begin: for(var url=0; url < urls.length; url++)
     {
@@ -1323,7 +1323,7 @@ function stringToURLs(str)
 
         if (alias)
         {
-            var engine = search_service.getEngineByAlias(alias);
+            var engine = search.getEngine(alias);
             if (engine)
             {
                 if(text)
@@ -1340,8 +1340,8 @@ function stringToURLs(str)
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
         {
             // defaultEngine is always the same (Google), therefor let's use the currentEngine
-            var default_engine = search_service.currentEngine;
-            //var default_engine = search_service.defaultEngine;
+            //var default_engine = search_service.currentEngine;
+            var default_engine = search.getDefaultEngine();
             if (default_engine)
             {
                 urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;

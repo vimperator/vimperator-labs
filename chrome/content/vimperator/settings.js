@@ -77,6 +77,19 @@ var g_settings = [/*{{{*/
         null
     ],
     [
+        ["defsearch", "ds"],
+        ["defsearch", "ds"],
+        "Set the default search engine",
+        "The default search engine is used in the <code class=command>:[tab]open [arg]</code> command "+
+        "if [arg] neither looks like a URL or like a specified search engine/keyword.",
+        "string",
+        function() { return [["foo", "bar"], ["shit", "blub"]]; },
+        function(value) { search.setDefaultEngine(value); },
+        function() { return search.getDefaultEngine().alias; },
+        "google",
+        null
+    ],
+    [
         ["extendedhinttags", "eht"],
         ["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",

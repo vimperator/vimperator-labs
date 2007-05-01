@@ -28,6 +28,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 var g_vimperator_version  = "###VERSION### (created: ###DATE###)";
 
+// all our objects
+//var search = new Search(); // FIXME, put somewhere else, does not work here
+
 const MODE_NORMAL = 1;
 const MODE_INSERT = 2;
 const MODE_VISUAL = 4;
@@ -494,9 +497,11 @@ function onCommandBarKeypress(evt)/*{{{*/
             try {
                 [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
             } catch(e) {
+                logObject(e);
                 echoerr(e.name + ": " + e.message);
                 prev_match = new Array(5);
                 heredoc = '';
+                return;
             }
             if (!end)
                 command_line.value = "";
@@ -989,6 +994,25 @@ function logMessage(msg)
 {
     gConsoleService.logStringMessage('vimperator: ' + msg);
 }
+
+function logObject(object)
+{
+    if (typeof object != 'object')
+        return;
+
+    var string = object + '::\n';
+    for (var i in object)
+    {
+        var value;
+        try {
+            var value = object[i];
+        } catch (e) { value = '' }
+
+        string += i + ': ' + value + '\n';
+    }
+    logMessage(string);
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // misc helper functions ////////////////////////////////////////// {{{1
