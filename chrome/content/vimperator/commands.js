@@ -81,14 +81,15 @@ var g_commands = [/*{{{*/
     ],
     [
         ["bmadd"],
-        ["bmadd [-tT] [url]"],
+        ["bmadd [-tTk] [url]"],
         "Add a bookmark",
         "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
         "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
         "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
-        "The following options WILL be interpretted in the future:<br/>" +
-        " -t 'custom title'<br/>" +
-        " -T comma,separated,tag,list <br/>",
+        " -t \"custom title\"<br/>" +
+        "The following options will be interpreted in the future:<br/>" +
+        " -T comma,separated,tag,list <br/>"+
+        " -k keyword <br/>",
         bmadd,
         null
     ],
@@ -239,9 +240,9 @@ var g_commands = [/*{{{*/
         "Multiple URLs can be separated with the | character.<br/>" +
         "Each |-separated token is analayzed and in this order:<br/>"+
         "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code class=command>:open wiki linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
-        "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and goes to the moves up the directory hierarchy as far as possible.<br/>"+
-        "        <code class=command>:open ...</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com</code><br/>"+
-        "        <code class=command>:open ./foo.html</code> with current location <code>http://www.example.com/dir1/dir2/file.html</code> will open <code>http://www.example.com/dir1/dir2/foo.html</code></li>"+
+        "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and moves up the directory hierarchy as far as possible.<br/>"+
+        "<ul><li><code class=command>:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li></li>"+
+        "<li><code class=command>:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
         "    <li>Opened with the default search engine if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
         "    <li>Passed directly to Firefox in all other cases (<code class=command>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
         "You WILL be able to use <code class=command>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
@@ -1313,8 +1314,13 @@ function stringToURLs(str)
 
         // first check if the first word is a search engine
         var matches = urls[url].match(/^\s*(\w+)\s*(.*)/);
-        var alias = matches[1] || null;
-        var text = matches[2] || null;
+        var alias = null;
+        var text = null;
+        if (matches && matches[1])
+            alias = matches[1];
+        if (matches && matches[2])
+            text = matches[2];
+
         if (alias)
         {
             var engine = search_service.getEngineByAlias(alias);
@@ -1335,8 +1341,10 @@ function stringToURLs(str)
         {
             var default_engine = search_service.defaultEngine;
             if (default_engine)
+            {
                 urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
-            continue;
+                continue;
+            }
         }
 
 
@@ -1453,6 +1461,17 @@ function getCurrentLocation()
     return content.document.location.href;
 }
 
+/* returns the current title or null */
+function getCurrentTitle()
+{
+    var titles = window.content.document.getElementsByTagName('title');
+    if (titles.length >= 1)
+        return titles[0];
+    else
+        return null;
+}
+
+
 function goUp(count)
 {
     var gocmd = "";
@@ -1502,12 +1521,18 @@ function bmadd(str)
     if (parseBookmarkString(str, res))
     {
         if(res.url == null)
+        {
             res.url = getCurrentLocation();
-        if(res.title == null) // XXX: maybe use current title of webpage
+            // also guess title if the current url is :bmadded
+            if(res.title == null)
+                res.title = getCurrentTitle();
+        }
+
+        if(res.title == null) // title could still be null
             res.title = res.url;
 
         addBookmark(res.title, res.url);
-        echo("Bookmark `" + res.url + "' added");
+        echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
     }
     else
         echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");

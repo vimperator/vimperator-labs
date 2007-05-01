@@ -228,14 +228,21 @@ function build_longest_common_substring(list, filter)/*{{{*/
     var filtered = [];
     //var filter_length = filter.length;
     //filter = filter.toLowerCase();
+    var ignorecase = false;
+    if(filter == filter.toLowerCase())
+        ignorecase = true;
 
     for (var i = 0; i < list.length; i++)
     {
         for (var j = 0; j < list[i][0].length; j++)
         {
-            var item = list[i][0][j].toLowerCase();
+            var item = list[i][0][j];
+            if(ignorecase)
+                item = item.toLowerCase();
+
             if (item.indexOf(filter) == -1)
                 continue;
+
             if (g_substrings.length == 0)
             {
                 //alert('if: ' + item);
@@ -333,8 +340,10 @@ function filter_url_array(urls, filter)/*{{{*/
         return [$_[0], $_[1]]
     });
 
-    var filter_length = filter.length;
-    filter = filter.toLowerCase();
+    //var filter_length = filter.length;
+    var ignorecase = false;
+    if(filter == filter.toLowerCase())
+        ignorecase = true;
 
     /*
      * Longest Common Subsequence
@@ -343,8 +352,13 @@ function filter_url_array(urls, filter)/*{{{*/
      */
     for (var i = 0; i < urls.length; i++)
     {
-        var url = urls[i][0].toLowerCase();
-        var title = urls[i][1].toLowerCase();
+        var url = urls[i][0];
+        var title = urls[i][1];
+        if(ignorecase)
+        {
+            url = url.toLowerCase();
+            title = title.toLowerCase();
+        }
 
         if (url.indexOf(filter) == -1)
         {
@@ -358,7 +372,7 @@ function filter_url_array(urls, filter)/*{{{*/
             var url_length = url.length;
             for (var k = url.indexOf(filter); k != -1 && k <= last_index; k = url.indexOf(filter, k + 1))
             {
-                for (var l = k + filter_length; l <= url_length; l++)
+                for (var l = k + filter.length; l <= url_length; l++)
                     g_substrings.push(url.substring(k, l));
             }
         }

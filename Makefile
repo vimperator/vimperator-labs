@@ -97,7 +97,7 @@ release: ${XPI} ${RDF}
 ${RDF}: ${RDF_IN} Makefile
 	@echo "Preparing release..."
 	${Q}${SED} -e "s,###VERSION###,${VERSION},g" \
-	           -e "s,###DATE###,${DATE},g" \
+	           -e "s,###DATE###,${BUILD_DATE},g" \
 	           < $< > $@
 	@echo "SUCCESS: $@"
 
@@ -120,7 +120,7 @@ ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 	    done
 	${Q}for f in ${XPI_TXT_FILES} ; do \
 		${SED} -e "s,###VERSION###,${VERSION},g" \
-		       -e "s,###DATE###,${DATE},g" \
+		       -e "s,###DATE###,${BUILD_DATE},g" \
 		       < $$f > ${BUILD_XPI_DIR}/$$f ; \
 		( diff -q $$f ${BUILD_XPI_DIR}/$$f 1>/dev/null ) || \
 		( echo "modified: $$f" ; \
@@ -138,7 +138,7 @@ ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	@echo "Building JAR..."
 	${Q}for f in ${JAR_FILES} ; do \
 		${SED} -e "s,###VERSION###,${VERSION},g" \
-		       -e "s,###DATE###,${DATE},g" \
+		       -e "s,###DATE###,${BUILD_DATE},g" \
 		       < $$f > ${BUILD_JAR_DIR}/$$f ; \
 		( diff -q $$f ${BUILD_JAR_DIR}/$$f 1>/dev/null ) || \
 		( echo "modified: $$f" ; \
