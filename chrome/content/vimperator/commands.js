@@ -1313,13 +1313,13 @@ function stringToURLs(str)
         }*/
 
         // first check if the first word is a search engine
-        var matches = urls[url].match(/^\s*(\w+)\s*(.*)/);
+        var matches = urls[url].match(/^\s*(\w+)(\s+|$)(.*)/);
         var alias = null;
         var text = null;
         if (matches && matches[1])
             alias = matches[1];
-        if (matches && matches[2])
-            text = matches[2];
+        if (matches && matches[3] && matches[3].length >= 1)
+            text = matches[3];
 
         if (alias)
         {
