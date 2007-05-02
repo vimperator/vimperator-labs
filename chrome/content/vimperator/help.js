@@ -83,7 +83,10 @@ function help(section, easter)
                     ret += "<br/>";
                 }
                 if (commands[i][HELP])
+                {
                     ret += commands[i][HELP]; // the help description
+                    ret += "<br/>";
+                }
             }
             else
                 ret += "Sorry, no help available";
@@ -182,6 +185,7 @@ function help(section, easter)
         // XXX: stylesheet broken here? Have to add it in the vimperator.xul file
         '<link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css">'+
         '</head><body><pre style="white-space: -moz-pre-wrap !important;"><table class="main"><tr><td>' + // should change that to: white-space: pre-wrap; once CSS3 hits firefox
+        '<span class="version">version ' + g_vimperator_version + '</span>'+
         header +
         introduction +
         mappings +
