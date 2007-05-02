@@ -1,5 +1,5 @@
 <pre>
-date:
+2007-05-02:
 	* version 0.4.1
 	* Fixed bug that :open google.com/mail opened ".com/mail" in google search
 	* made <tab> <up> <down> etc. perform the default action, so menus kinda
@@ -27,7 +27,7 @@ date:
 	* :help section supported, :help :set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
-	* :javascript <<EOF support to execute multiline javascript code
+	* :javascript &lt;&lt;EOF support to execute multiline javascript code
 	  also changed :exec to behave more vim like
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
