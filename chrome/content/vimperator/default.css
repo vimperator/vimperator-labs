@@ -78,4 +78,4 @@ table.settings {
 .mapping { font-weight: bold; color: #102663; }
 .setting { font-weight: bold; color: #106326; }
 .argument { color: #6A97D4; }
-.version { position:absolute; top:10px; right:2%; color:#B0B0B0; text-align:right; }
+.version { position:absolute; top:10px; right:2%; color:#C0C0C0; text-align:right; }

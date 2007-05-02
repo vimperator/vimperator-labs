@@ -283,6 +283,11 @@ function onVimperatorKeypress(event)/*{{{*/
     if (key == null)
          return false;
 
+    // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+    // also fixes key navigation in menus, etc.
+    if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+        return false;
+
     // XXX: for now only, later: input mappings if form element focused
     if (isFormElemFocused())
         return false;
@@ -968,15 +973,17 @@ function createCursorPositionString()
 function isFormElemFocused()
 {
     var elt = document.commandDispatcher.focusedElement;
-    if (elt == null) return false;
+    if (elt == null)
+        return false;
 
-    var tagName = elt.localName.toUpperCase();
+    var tagname = elt.localName.toLowerCase();
+    var type = elt.type.toLowerCase();
 
-    if (tagName == "INPUT" ||
-            tagName == "TEXTAREA" ||
-            tagName == "SELECT" ||
-            tagName == "BUTTON" ||
-            tagName == "ISINDEX")
+    if ( (tagname == "input" && (type != "image")) ||
+          tagname == "textarea" ||
+//            tagName == "SELECT" ||
+//            tagName == "BUTTON" ||
+          tagname == "isindex") // isindex is deprecated one-line input box
         return true;
 
     return false;
