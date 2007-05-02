@@ -160,7 +160,7 @@ function getSearchEngines()
     var firefox_engines = nsSS.getVisibleEngines({ });
     for(var i in firefox_engines)
     {
-        if (!firefox_engines[i].alias || !firefox_engines[i].alias.match(/^\w+$/))
+        if (!firefox_engines[i].alias || !firefox_engines[i].alias.match(/^[a-z0-9_]+$/))
         {
             var alias = firefox_engines[i].name.replace(/^\W*(\w+).*/, "$1").toLowerCase();
             firefox_engines[i].alias = alias;

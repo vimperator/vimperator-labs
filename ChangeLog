@@ -1,6 +1,7 @@
 <pre>
 date:
-	* version 0.5
+	* version 0.4.1
+	* Fixed bug that :open google.com/mail opened ".com/mail" in google search
 	* made <tab> <up> <down> etc. perform the default action, so menus kinda
 	work, and it doesn't beep anymore on tab.
 	* added 'defsearch' setting for setting default search engine
