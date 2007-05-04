@@ -8,6 +8,7 @@ Developers:
 Patches:
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)
-  * Lee Hinman (:cd command) -> not yet commited
+  * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
+  * Doug Kearns (vimperator.vim)
 </pre>

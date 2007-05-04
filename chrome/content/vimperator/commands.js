@@ -134,7 +134,7 @@ var g_commands = [/*{{{*/
         ["downloads", "dl"],
         ["downloads"],
         "Show progress of current downloads",
-        "Open the original Firefox download dialog in a new tab.",
+        "Open the original Firefox download dialog in a new tab.<br>"+
         "Here, downloads can be paused, canceled and resumed.",
         function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
         null

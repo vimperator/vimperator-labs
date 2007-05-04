@@ -1,6 +1,7 @@
 <pre>
 2007-05-02:
 	* version ???
+	* added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
 	* Added keyword support for bookmarks to the :[tab]open commands
 	* many small bug fixes
 

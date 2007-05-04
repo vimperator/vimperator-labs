@@ -409,6 +409,8 @@ function get_search_completions(filter)/*{{{*/
 function get_history_completions(filter)/*{{{*/
 {
     var history = document.getElementById("hiddenHistoryTree");
+    if (!history)
+        return [];
 
     // build our history cache
     if (history_loaded == false)
