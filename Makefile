@@ -6,7 +6,13 @@ VERSION       = 0.4.1
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 
-JAR_FILES     = ${shell find chrome/content -type f -a ! -path '*CVS*' ! -name 'tags'} chrome.manifest
+JAR_FILES     = ${shell find chrome/content -type f 		\
+					-a ! -path '*CVS*' 	\
+					-a \( -path '*.js' 	\
+				     -o  -path '*.css' 	\
+				     -o  -path '*.xul' 	\
+				     -o  -path '*.rdf' 	\
+				   \) } chrome.manifest
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
 JAR           = chrome/vimperator.jar
 

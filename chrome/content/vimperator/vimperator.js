@@ -180,11 +180,25 @@ nsBrowserStatusHandler.prototype =
 
 window.addEventListener("load", init, false);
 
+
+// the global vimperator object, quit empty right now
+// add functions with vimperator.prototype.func = ...
+// var vimperator = null;
+// var Vimperator = function() {
+//     this.keywordsLoaded = false;
+//     this.keywords = [];
+//     this.searchEngines = [];
+//     this.bookmarks = new Bookmarks();
+// };
+
+
 ////////////////////////////////////////////////////////////////////////
 // init/uninit //////////////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 function init()
 {
+//    vimperator = new Vimperator;
+
     preview_window = document.getElementById("vim-preview_window");
     status_line = document.getElementById("vim-statusbar");
     completion_list = document.getElementById("vim-completion");

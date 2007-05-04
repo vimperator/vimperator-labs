@@ -1,5 +1,10 @@
 <pre>
 2007-05-02:
+	* version ???
+	* Added keyword support for bookmarks to the :[tab]open commands
+	* many small bug fixes
+
+2007-05-02:
 	* version 0.4.1
 	* Fixed bug that :open google.com/mail opened ".com/mail" in google search
 	* made <tab> <up> <down> etc. perform the default action, so menus kinda

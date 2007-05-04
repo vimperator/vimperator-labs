@@ -239,11 +239,11 @@ var g_commands = [/*{{{*/
         "Open one ore more URLs in the current tab",
         "Multiple URLs can be separated with the | character.<br/>" +
         "Each |-separated token is analayzed and in this order:<br/>"+
-        "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code class=command>:open wiki linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
+        "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code class=command>:open wikipedia linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
         "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and moves up the directory hierarchy as far as possible.<br/>"+
+        "    <li>Opened with the default search engine or keyword (specified with the <code class=setting>'defsearch'</code> setting) if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
         "<ul><li><code class=command>:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li></li>"+
         "<li><code class=command>:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
-        "    <li>Opened with the default search engine if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
         "    <li>Passed directly to Firefox in all other cases (<code class=command>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
         "You WILL be able to use <code class=command>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
         "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br/>"+
@@ -564,7 +564,7 @@ var g_mappings = [/*{{{*/
         ["p", "<MiddleMouse>"],
         ["p", "<MiddleMouse>"],
         "Open (put) an URL based on the current clipboard contents in the current buffer",
-        "You can also just select some non-URL text, and search for it with the default search engine with <code class=mapping>p</code>",
+        "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=setting>'defsearch'</code> setting) with <code class=mapping>p</code>",
         function(count) { openURLs(readFromClipboard()); }
     ],
     [ 
@@ -1301,55 +1301,6 @@ function stringToURLs(str)
     var urls = str.split(/\s*\|\s*/);
     begin: for(var url=0; url < urls.length; url++)
     {
-        /*for(var i=0; i < g_searchengines.length; i++)
-        {
-            var regex = new RegExp("^" + g_searchengines[i][0] + "\\s+" + "(.+)");
-            matches = urls[url].match(regex);
-            if(matches != null)
-            {
-                urls[url] = g_searchengines[i][1].replace(/%s/, encodeURIComponent(matches[1]));
-                break begin;
-            }
-        }*/
-
-        // first check if the first word is a search engine
-        var matches = urls[url].match(/^\s*(\w+)(\s+|$)(.*)/);
-        var alias = null;
-        var text = null;
-        if (matches && matches[1])
-            alias = matches[1];
-        if (matches && matches[3] && matches[3].length >= 1)
-            text = matches[3];
-
-        if (alias)
-        {
-            var engine = search.getEngine(alias);
-            if (engine)
-            {
-                if(text)
-                    urls[url] = engine.getSubmission(text, null).uri.spec;
-                else
-                    urls[url] = engine.searchForm;
-
-                continue;
-            }
-        }
-
-        /* if the string contains a space or does not contain any of: .:/
-         * open it with default search engine */
-        if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
-        {
-            // defaultEngine is always the same (Google), therefor let's use the currentEngine
-            //var default_engine = search_service.currentEngine;
-            var default_engine = search.getDefaultEngine();
-            if (default_engine)
-            {
-                urls[url] = default_engine.getSubmission(urls[url], null).uri.spec;
-                continue;
-            }
-        }
-
-
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
@@ -1359,6 +1310,7 @@ function stringToURLs(str)
                 newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
 
             urls[url] = newLocation;
+            continue;
         }
         else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
         {
@@ -1368,6 +1320,7 @@ function stringToURLs(str)
                 newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
 
             urls[url] = newLocation;
+            continue;
         }
         else if (urls[url].match(/^(\.\.\.$|\.\.\.\/[\S]*)/))
         {
@@ -1377,15 +1330,47 @@ function stringToURLs(str)
                 newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
 
             urls[url] = newLocation;
+            continue;
         }
 
+        /* if the string contains a space or does not contain any of: .:/
+         * open it with default search engine */
+        if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
+        {
+            // check if the first word is a search engine
+            var matches = urls[url].match(/^\s*(.*?)(\s+|$)(.*)/);
+            var alias = null;
+            var text = null;
+            if (matches && matches[1])
+                alias = matches[1];
+            if (matches && matches[3] && matches[3].length >= 1)
+                text = matches[3];
+
+            var search_url = bookmarks.getSearchURL(text, alias);        
+            if (search_url && search_url.length >= 1)
+            {
+                urls[url] = search_url;
+                continue;
+            }
+            else // the first word was not a search engine, search for the whole string in the default engine
+            {
+                search_url = bookmarks.getSearchURL(urls[url], null);
+                if (search_url && search_url.length >= 1)
+                {
+                    urls[url] = search_url;
+                    continue;
+                }
+            }
+        }
+
+        // if we are here let Firefox handle the url and hope it does
+        // something useful with it :)
     }
     return urls;
 }
 
 /* returns true if the currently loaded URI is 
  * a directory or false if it is a file
- * if passed 'url' is null, use current directory
  */
 function isDirectory(url)
 {

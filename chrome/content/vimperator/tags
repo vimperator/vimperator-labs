@@ -13,6 +13,7 @@ beep	commands.js	/^function beep()$/;"	f
 bmadd	commands.js	/^function bmadd(str)$/;"	f
 bmdel	commands.js	/^function bmdel(str)$/;"	f
 bmshow	commands.js	/^function bmshow(filter, fullmode)$/;"	f
+Bookmarks	bookmarks.js	/^function Bookmarks()$/;"	f
 buffer_preview_toggle	commands.js	/^function buffer_preview_toggle()$/;"	f
 buffer_preview_update	commands.js	/^function buffer_preview_update(event)$/;"	f
 buffer_switch	commands.js	/^function buffer_switch(string)$/;"	f
@@ -55,7 +56,6 @@ getHintById	hints.js	/^    function getHintById(id, win)$/;"	f
 getLinkNodes	vimperator.js	/^function getLinkNodes(doc)$/;"	f
 getPageLinkNodes	vimperator.js	/^function getPageLinkNodes()$/;"	f
 getProperty	bookmarks.js	/^function getProperty( aInput, aArc, DS )$/;"	f
-getSearchEngines	bookmarks.js	/^function getSearchEngines()$/;"	f
 get_bookmark_completions	completion.js	/^function get_bookmark_completions(filter)\/*{{{*\/$/;"	f
 get_buffer_completions	completion.js	/^function get_buffer_completions(filter)\/*{{{*\/$/;"	f
 get_command	commands.js	/^function get_command(cmd) \/\/ {{{$/;"	f
@@ -113,8 +113,8 @@ removeHints	hints.js	/^    function removeHints(win)$/;"	f
 removeMode	commands.js	/^function removeMode(mode)$/;"	f
 restart	commands.js	/^function restart()$/;"	f
 save_history	completion.js	/^function save_history()$/;"	f
+scrollBufferAbsolute	commands.js	/^function scrollBufferAbsolute(horizontal, vertical)$/;"	f
 scrollBufferRelative	commands.js	/^function scrollBufferRelative(right, down)$/;"	f
-Search	bookmarks.js	/^function Search()$/;"	f
 searcher	find.js	/^function searcher () {$/;"	f
 selectInput	commands.js	/^function selectInput()$/;"	f
 set	commands.js	/^function set(args, special)$/;"	f
@@ -146,3 +146,5 @@ tokenize_ex	commands.js	/^function tokenize_ex(string, tag)$/;"	f
 unload	vimperator.js	/^function unload()$/;"	f
 updateStatusbar	vimperator.js	/^function updateStatusbar(message)$/;"	f
 yankCurrentLocation	commands.js	/^function yankCurrentLocation()$/;"	f
+zoom_in	commands.js	/^function zoom_in(factor)$/;"	f
+zoom_to	commands.js	/^function zoom_to(value)$/;"	f

@@ -12,6 +12,9 @@ var bookmarks_loaded = false;
 var g_history = [];
 var history_loaded = false;
 
+// array of our bookmark keywords
+var g_keywords = [];
+
 // variables for the tab completion and command history:
 // -1: filled, but no selection made
 // >= 0: index of current item in the g_completions array
@@ -390,7 +393,9 @@ function filter_url_array(urls, filter)/*{{{*/
 
 function get_search_completions(filter)/*{{{*/
 {
-    var engines = getSearchEngines();
+    //var engines = bookmarks.getSearchEngines();//.concat(bookmarks.getKeywords());
+    //var engines = bokmarks.getKeywords();//.concat(bookmarks.getKeywords());
+    var engines = bookmarks.getSearchEngines().concat(bookmarks.getKeywords());
 
     if (!filter) return engines.map(function($_) {
         return [$_[0], $_[1]];
@@ -459,20 +464,27 @@ function get_bookmark_completions(filter)/*{{{*/
         // update our bookmark cache
         var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService( Components.interfaces.nsIRDFService );
         var root = RDF.GetResource( "NC:BookmarksRoot" );
-        bookmarks = [];   // here getAllChildren will store the bookmarks
+        var bmarks = [];   // here getAllChildren will store the bookmarks
         g_bookmarks = []; // also clear our bookmark cache
-        BookmarksUtils.getAllChildren(root, bookmarks);
+        // FIXME: wrong location
+        g_keywords = [];
+
+        BookmarksUtils.getAllChildren(root, bmarks);
 //        alert(bookmarks[0].length);
-        for(var i = 0; i < bookmarks.length; i++)
+        for(var i = 0; i < bmarks.length; i++)
         {
-            if (bookmarks[i][0] && bookmarks[i][1])
+            if (bmarks[i][0] && bmarks[i][1])
             {
-                g_bookmarks.push([bookmarks[i][1].Value, bookmarks[i][0].Value ]);
+                g_bookmarks.push([bmarks[i][1].Value, bmarks[i][0].Value ]);
             }
            // for(var j=0; j < bookmarks[i].length; j++)
            // {
-//                if(bookmarks[i][2])
-//                    alert("2: " + bookmarks[i][2].Value);
+                // keyword
+            if(bmarks[i][1] && bmarks[i][2])
+                g_keywords.push([bmarks[i][2].Value, bmarks[i][0].Value, bmarks[i][1].Value]);
+                //g_keywords.push([bookmarks[i][2].Value, bookmarks[i][0].Value + " (" + bookmarks[i][1].Value + ")"]);
+                //g_keywords.push([[bookmarks[i][2].Value, bookmarks[i][1].Value], bookmarks[i][0].Value]);
+                //alert("2: " + bookmarks[i][2].Value);
 //                if(bookmarks[i][3])
 //                    alert("3: " + bookmarks[i][3].Value);
 //                if(bookmarks[i][4])

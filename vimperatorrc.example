@@ -73,4 +73,4 @@ EOF
 javascript define_map("h","h","previous tab",function(){tab_go(-1);});
 javascript define_map("l","l","next tab",function(){tab_go(0);});
 
-" vim: set syntax=javascript :
+" vim: set syntax=vimperator:

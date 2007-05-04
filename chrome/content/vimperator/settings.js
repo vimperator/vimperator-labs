@@ -63,7 +63,7 @@ var g_settings = [/*{{{*/
         ["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "Available items:<br>"+
-        "<ul><li><b>s</b>: Search machines</li><li>"+
+        "<ul><li><b>s</b>: Search machines and keyword URLs</li><li>"+
         "<b>f</b>: Local files</li><li>"+
         "<b>b</b>: Bookmarks</li><li>"+
         "<b>h</b>: History</li></ul>"+
@@ -84,8 +84,8 @@ var g_settings = [/*{{{*/
         "if [arg] neither looks like a URL or like a specified search engine/keyword.",
         "string",
         function() { return [["foo", "bar"], ["shit", "blub"]]; },
-        function(value) { search.setDefaultEngine(value); },
-        function() { return search.getDefaultEngine().alias; },
+        function(value) { set_pref("defsearch", value); },
+        function() { return get_pref("defsearch", "google"); },
         "google",
         null
     ],
