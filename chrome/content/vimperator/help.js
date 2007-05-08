@@ -194,9 +194,23 @@ function help(section, easter)
         '\n</td></tr></table>\n</pre></body>\n</html>';
 
 
-    doc.open();
+    try
+    {
+        doc.open();
+    }
+    catch(e)
+    {
+        // when the url is "about:" the doc is not open
+        // then open a new tab for it
+        //if (!arguments[3] || !arguments[3].inTab)
+        //    help(section, false, {inTab: true});
+        openURLsInNewTab("", true); 
+        doc = window.content.document;
+        doc.open();
+    }
     doc.write(fulldoc);
     doc.close();
+
 
 	function cumulativeOffset(element)
 	{

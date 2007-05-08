@@ -355,8 +355,8 @@ function filter_url_array(urls, filter)/*{{{*/
      */
     for (var i = 0; i < urls.length; i++)
     {
-        var url = urls[i][0];
-        var title = urls[i][1];
+        var url = urls[i][0] || "";
+        var title = urls[i][1] || "";
         if(ignorecase)
         {
             url = url.toLowerCase();

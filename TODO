@@ -55,4 +55,8 @@ RANDOM IDEAS:
 * https://addons.mozilla.org/en-US/firefox/addon/4125 - use vim to edit text fields
 * Would it be possible to add a setting "maxcompletionsshown" and 
   "maxpreviewwindowheight" or something like this?
+* 16:06:04       bartman| maxauthority: feature idea: what if :n and :N searched the 
+                        page and if they found a unique <a href=...>.*next.*</a> or <a 
+                        href=...>.*prev.*<a/> they would follow that link?
+
 </pre>

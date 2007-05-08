@@ -184,7 +184,14 @@ var g_commands = [/*{{{*/
         ["help", "h"],
         ["h[elp] {subject}"],
         "Open the help window",
-        "You can jump to the specified {subject} with <code class=command>:help {subject}</code>.",
+        "You can jump to the specified {subject} with <code class=command>:help {subject}</code>.<br/>"+
+        "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
+        "<ul>"+
+        "<li><code class=command>:help :help</code> for commands (: prefix)</li>"+
+        "<li><code class=command>:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
+        "<li><code class=command>:help o</code> for mappings (no pre- or postfix)</li>"+
+        "</ul>"+
+        "You can however use partial stings in the tab completion, so <code class=command>:help he<Tab></code> will complete <code class=command>:help :help</code>",
         help,
         function(filter) { return get_help_completions(filter); }
     ],
@@ -380,11 +387,41 @@ var g_commands = [/*{{{*/
         function (filter) { return get_url_completions(filter); }
     ],
     [
-        ["tabprevious", "tp", "tprev", "tprevious"],
-        ["tabp[revious]"],
+        ["tabonly", "tabo"],
+        ["tabo[nly]"],
+        "Close all other tabs",
+        null,
+        function () {
+            tabs = getBrowser().mTabContainer.childNodes;
+            for (var i = tabs.length - 1; i >= 0; i--) {
+                if (tabs[i] != getBrowser().mCurrentTab)
+                    getBrowser().removeTab(tabs[i]);
+            }
+        },
+        null
+    ],
+    [
+        ["tabprevious", "tabp", "tp", "tprev", "tprevious", "tabNext", "tabN", "tN", "tNext"],
+        ["tabp[revious]", "tabN[ext]"],
         "Switch to the previous tab",
         "Cycles to the last tab, when the first is selected.",
         function(args, count) { tab_go(-1); },
+        null
+    ],
+    [
+        ["tabrewind", "tabr", "tabfir", "tabfirst"],
+        ["tabr[ewind]", "tabfir[st]"],
+        "Switch to the first tab",
+        null,
+        function(args, count) { tab_go(1); },
+        null
+    ],
+    [
+        ["tablast", "tabl"],
+        ["tabl[ast]"],
+        "Switch to the last tab",
+        null,
+        function(args, count) { tab_go(getBrowser().mTabContainer.childNodes.length); },
         null
     ],
     [

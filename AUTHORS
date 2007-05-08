@@ -10,5 +10,5 @@ Patches:
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
-  * Doug Kearns (vimperator.vim)
+  * Doug Kearns (vimperator.vim, :tabonly etc. commands)
 </pre>
