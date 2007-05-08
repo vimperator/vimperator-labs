@@ -78,7 +78,7 @@ function hit_a_hint()
             wins.push(win);
         }
         //    logMessage("winId:"+win.winId);
-        win.res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        win.res = evaluateXPath(get_pref("hinttags"), doc);
         win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
     }
  
@@ -135,7 +135,7 @@ function hit_a_hint()
         area[3] = area[1] + win.innerHeight;
  
         var doc = win.document;
-        var res = doc.evaluate(get_pref("hinttags"), doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        var res = evaluateXPath(get_pref("hinttags"), doc);
  
         var elem, i;
  
@@ -253,7 +253,7 @@ function hit_a_hint()
             win = window.content;
  
         var doc = win.document;
-        var res = doc.evaluate("//HINTS/SPAN", doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        var res = evaluateXPath("//HINTS/SPAN", doc)
         var elem, i;
  
         for (i = 0; i < res.snapshotLength; i++)
@@ -272,7 +272,7 @@ function hit_a_hint()
         if(event)
             doc = event.originalTarget;
         else
-            doc = window._content.document;
+            doc = window.content.document;
 
         invalidateCoords(doc);
         startCoordLoader(doc);

@@ -98,7 +98,8 @@ var g_settings = [/*{{{*/
         null,
         function(value) { set_pref("extendedhinttags", value); },
         function() { return get_pref("extendedhinttags"); },
-        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden' or not(boolean(@type))] | //a | //area | //iframe | //textarea | //button | //select",
+        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden' or not(boolean(@type))] | //a | //area | //iframe | //textarea | //button | //select | "+
+        "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //xhtml:input[@type!='hidden' or not(boolean(@type))] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select",
         null
     ],
     [
@@ -170,7 +171,8 @@ var g_settings = [/*{{{*/
         null,
         function(value) { set_pref("hinttags", value); },
         function() { return get_pref("hinttags"); },
-        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden'] | //a | //area | //iframe | //textarea | //button | //select",
+        "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //input[@type!='hidden'] | //a | //area | //iframe | //textarea | //button | //select | "+
+        "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | //xhtml:input[@type!='hidden'] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select",
         null
     ],
     [

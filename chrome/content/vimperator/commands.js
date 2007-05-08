@@ -338,6 +338,7 @@ var g_commands = [/*{{{*/
         "<code>:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
         "<code>:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
         "<code>:set option?</code> or <code>:set option</code> shows the current value of the option.<br/>"+
+        "<code>:set option&</code> resets 'option' to the default value.<br/>"+
         "<code>:set option+=foo</code> and <code>:set option-=foo</code> WILL add/remove foo from list options.<br/>",
         set,
         function(filter) { return get_settings_completions(filter); }
@@ -1488,11 +1489,12 @@ function getCurrentLocation()
 /* returns the current title or null */
 function getCurrentTitle()
 {
-    var titles = window.content.document.getElementsByTagName('title');
-    if (titles.length >= 1)
-        return titles[0];
-    else
-        return null;
+    return window.content.document.title;
+//    var titles = window.content.document.getElementsByTagName('title');
+//    if (titles.length >= 1)
+//        return titles[0];
+//    else
+//        return null;
 }
 
 
@@ -1969,7 +1971,7 @@ function set(args, special)
     }
     else
     {
-        var matches = args.match(/^\s*(no)?([a-z]+)(\?)?(([+-])?=(.*))?/);
+        var matches = args.match(/^\s*(no)?([a-z]+)(\?|&)?(([+-])?=(.*))?/);
         if (!matches)
         {
             echoerr("E518: Unknown option: " + args);
@@ -1985,13 +1987,20 @@ function set(args, special)
             return;
         }
 
-        var get = false; if (matches[3] != undefined ||
+        var get = false; if (matches[3] == "?" ||
             (setting[TYPE] != 'boolean' && matches[4] == undefined)) get = true;
+        var reset = false; if (matches[3] == "&") reset = true;
         var oper = matches[5];
         var val = matches[6]; if (val == undefined) val = "";
 
+        // reset a variable to its default value.
+        if (reset)
+        {
+            var def = setting[DEFAULT];
+            setting[SETFUNC].call(this, def);
+        }
         // read access
-        if (get)
+        else if (get)
         {
             var cur_val = setting[GETFUNC].call(this);
             echo("  " + setting[COMMANDS][0] + "=" + cur_val);
@@ -2078,8 +2087,26 @@ function source(filename, silent)
     }
 }
 
+// returns an XPathResult object
+function evaluateXPath(expression, doc, ordered)
+{
+    if(!doc)
+        doc = window.content.document;
 
-
+    var res = doc.evaluate(expression, doc, 
+        function lookupNamespaceURI(prefix) { 
+          switch (prefix) {
+            case 'xhtml':
+              return 'http://www.w3.org/1999/xhtml';
+            default:
+              return null;
+          }
+        },
+        ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+        null
+    );
+    return res;
+}
 
 
 
@@ -2183,8 +2210,7 @@ function selectInput()
 //  if (! (ev.charCode == 47 /* ord('/') */ && ev.ctrlKey))
 //      return;
 
-    var texts = document.evaluate("//input[@type='text']", document, 
-        null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    var texts = evaluateXPath("//input[@type='text']");
     
     texts.snapshotItem(0).focus();
 }
