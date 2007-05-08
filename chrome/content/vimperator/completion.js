@@ -325,7 +325,7 @@ function get_url_completions(filter, complete)/*{{{*/
         else if (cpt[i] == 'h')
             g_completions = g_completions.concat(get_history_completions(filter));
         else if (cpt[i] == 'f')
-            g_completions = g_completions.concat(get_file_completions(filter));
+            g_completions = g_completions.concat(get_file_completions(filter, true));
     }
 
     return g_completions;
@@ -506,7 +506,9 @@ function get_bookmark_completions(filter)/*{{{*/
 function get_file_completions(filter)/*{{{*/
 {
     g_completions = [];
-    g_substrings = [];
+    /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
+    if (!arguments[1])
+        g_substrings = [];
     var match = filter.match(/^(.*[\/\\])(.*?)$/);
     var dir;
 
