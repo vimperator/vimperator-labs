@@ -294,7 +294,7 @@ function onVimperatorKeypress(event)/*{{{*/
 {
     // change the event to a usable string representation
     var key = keyToString(event);
-    // alert(key);
+     //alert(key);
     if (key == null)
          return false;
 

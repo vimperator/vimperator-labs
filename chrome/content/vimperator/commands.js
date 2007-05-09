@@ -467,10 +467,10 @@ var g_commands = [/*{{{*/
     ],
     [
         ["version", "ve"],
-        ["ve[rsion]"],
+        ["ve[rsion][!]"],
         "Show version information",
-        null,
-        function () { echo("Vimperator version: " + g_vimperator_version); },
+        "You can show the Firefox version page with <code class=\"command\">:version!</code>.",
+        function (args, special) { if (special) openURLs("about:"); else echo("Vimperator version: " + g_vimperator_version); },
         null
     ],
     [
@@ -1972,10 +1972,14 @@ function set(args, special)
 {
     if (args == "")
     {
+        var func = openURLs;
+        if (arguments[3] && arguments[3].inTab)
+            func = openURLsInNewTab;
+
         if (special) // open firefox settings gui dialog
-            openURLsInNewTab("chrome://browser/content/preferences/preferences.xul", true);
+            func.call(this, "chrome://browser/content/preferences/preferences.xul", true);
         else
-            openURLsInNewTab("about:config", true);
+            func.call(this, "about:config", true);
     }
     else
     {

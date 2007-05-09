@@ -1,6 +1,8 @@
 <pre>
 2007-05-02:
 	* version ???
+	* :version! shows firefox version page
+	* hovered links appear in the command line again, not statusbar
 	* :help now opens in the current tab even for xhtml pages like "about:"
 	* hints work on xhtml pages now (you need to reset the 'hinttags' and
 	  'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&
