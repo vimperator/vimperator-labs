@@ -93,7 +93,8 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        updateStatusbar(link);
+        // updateStatusbar(link);
+        echo(link);
             
         if (link == "")
             showMode();
