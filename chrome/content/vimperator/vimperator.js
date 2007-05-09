@@ -242,9 +242,9 @@ function init()
     if (get_pref("firsttime", true))
     {
         setTimeout(function() {
-            var tab = openURLsInNewTab("about:blank", true);
-            BrowserStop();
-            help();
+            //var tab = openURLsInNewTab("about:blank", true);
+            //BrowserStop();
+            help(null, null, null, {inTab: true});
             set_pref("firsttime", false);
         }, 1000); 
     }

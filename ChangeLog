@@ -1,6 +1,7 @@
 <pre>
 2007-05-02:
 	* version ???
+	* :help now opens in the current tab even for xhtml pages like "about:"
 	* hints work on xhtml pages now (you need to reset the 'hinttags' and
 	  'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&
 	* :set option& resets the option to the default value

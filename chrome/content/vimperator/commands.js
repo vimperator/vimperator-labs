@@ -67,7 +67,7 @@ var g_commands = [/*{{{*/
         ["bdelete", "bd", "bwipeout", "bw", "bunload", "bun", "tabclose", "tabc"],
         ["{count}bd[elete][!]"],
         "Delete current buffer (=tab)",
-        "Count WILL be supported in future releases, then <code class=command>:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code>:bdelete!</code> to select the tab to the left after removing the current tab.",
+        "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code>:bdelete!</code> to select the tab to the left after removing the current tab.",
         function (args, special, count) { tab_remove (count, special, 0); },
         null
     ],
@@ -134,7 +134,7 @@ var g_commands = [/*{{{*/
         ["downloads", "dl"],
         ["downloads"],
         "Show progress of current downloads",
-        "Open the original Firefox download dialog in a new tab.<br>"+
+        "Open the original Firefox download dialog in a new tab.<br/>"+
         "Here, downloads can be paused, canceled and resumed.",
         function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
         null
@@ -184,14 +184,14 @@ var g_commands = [/*{{{*/
         ["help", "h"],
         ["h[elp] {subject}"],
         "Open the help window",
-        "You can jump to the specified {subject} with <code class=command>:help {subject}</code>.<br/>"+
+        "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>"+
         "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
         "<ul>"+
-        "<li><code class=command>:help :help</code> for commands (: prefix)</li>"+
-        "<li><code class=command>:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
-        "<li><code class=command>:help o</code> for mappings (no pre- or postfix)</li>"+
+        "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>"+
+        "<li><code class=\"command\">:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
+        "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>"+
         "</ul>"+
-        "You can however use partial stings in the tab completion, so <code class=command>:help he<Tab></code> will complete <code class=command>:help :help</code>",
+        "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>",
         help,
         function(filter) { return get_help_completions(filter); }
     ],
@@ -206,7 +206,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["javascript", "js"],
-        ["javascript {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br> in the help.js code
+        ["javascript {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br/> in the help.js code
         "Run any javascript command through eval()",
         "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
         "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
@@ -246,13 +246,21 @@ var g_commands = [/*{{{*/
         "Open one ore more URLs in the current tab",
         "Multiple URLs can be separated with the | character.<br/>" +
         "Each |-separated token is analayzed and in this order:<br/>"+
-        "<ol><li>Opened with the specified search engine if the token looks like a search string and the first word of the token is the name of a search engine (<code class=command>:open wikipedia linus torvalds</code> will open the wikipedia entry for linux torvalds).</li>"+
-        "    <li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>... is special and moves up the directory hierarchy as far as possible.<br/>"+
-        "    <li>Opened with the default search engine or keyword (specified with the <code class=setting>'defsearch'</code> setting) if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
-        "<ul><li><code class=command>:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li></li>"+
-        "<li><code class=command>:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
-        "    <li>Passed directly to Firefox in all other cases (<code class=command>:open www.osnews.com | www.slashdot.org</code> will open OSNews in the current, and Slashdot in a new background tab).</li></ol>"+
-        "You WILL be able to use <code class=command>:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
+        "<ol>"+
+        "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>"+
+        "... is special and moves up the directory hierarchy as far as possible."+
+        "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>"+
+        "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
+        "<li>Opened with the specified search engine if the token looks like a search string "+
+        "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
+        "will open the wikipedia entry for linux torvalds).</li>"+
+        "    <li>Opened with the default search engine or keyword (specified with the <code class=\"setting\">'defsearch'</code> setting) "+
+        "if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
+        "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
+        "open OSNews in the current, and Slashdot in a new background tab).</li>"+
+        "</ol>"+
+        "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
+        "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
         "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br/>"+
         "Without argument, reloads the current page.<br/>"+
         "Without argument but with !, reloads the current page skipping the cache.",
@@ -284,7 +292,7 @@ var g_commands = [/*{{{*/
         ["preferences"],
         "Show Browser Preferences",
         "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>"+
-        "Works like <code class=command>:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=command>:set!</code>",
+        "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>",
         openPreferences,
         null
     ],
@@ -338,7 +346,7 @@ var g_commands = [/*{{{*/
         "<code>:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
         "<code>:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
         "<code>:set option?</code> or <code>:set option</code> shows the current value of the option.<br/>"+
-        "<code>:set option&</code> resets 'option' to the default value.<br/>"+
+        "<code>:set option&amp;</code> resets 'option' to the default value.<br/>"+
         "<code>:set option+=foo</code> and <code>:set option-=foo</code> WILL add/remove foo from list options.<br/>",
         set,
         function(filter) { return get_settings_completions(filter); }
@@ -366,7 +374,7 @@ var g_commands = [/*{{{*/
         ["tab {cmd}"],
         "Execute {cmd} and tell it to output in a new tab",
         "Works for only commands that support it.<br/>" +
-        "Example: <code class=command>:tab help tab</code> opens the help in a new tab.",
+        "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
         tab,
         null
     ],
@@ -382,7 +390,7 @@ var g_commands = [/*{{{*/
         ["tabopen", "t", "to", "topen", "tabnew", "tabedit", "tabe"],
         ["tabopen [url] [| url]"],
         "Open one or more URLs in a new tab",
-        "Like <code class=command>:open</code> but open URLs in a new tab.<br/>"+
+        "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
         "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
         function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
         function (filter) { return get_url_completions(filter); }
@@ -478,7 +486,7 @@ var g_commands = [/*{{{*/
         ["wqa[ll]", "xa[ll]"],
         "Save the session and quit",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>"+
-        "<code command>:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that.",
+        "<code class=\"command\">:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that.",
         function (args) { quit(true); },
         null
     ],
@@ -529,21 +537,21 @@ var g_mappings = [/*{{{*/
         ["d"],
         ["{count}d"],
         "Delete current buffer (=tab)",
-        "Count WILL be supported in future releases, then <code class=mapping>2d</code> removes two tabs and the one the right is selected.",
+        "Count WILL be supported in future releases, then <code class=\"mapping\">2d</code> removes two tabs and the one the right is selected.",
         function(count) { tab_remove(count, false, 0); }
     ],
     [ 
         ["D"],
         ["{count}D"],
         "Delete current buffer (=tab)",
-        "Count WILL be supported in future releases, then <code class=mapping>2D</code> removes two tabs and the one the left is selected.",
+        "Count WILL be supported in future releases, then <code class=\"mapping\">2D</code> removes two tabs and the one the left is selected.",
         function(count) { tab_remove(count, true, 0); }
     ],
     [ 
         ["ge"],
         ["ge {cmd}"],
         "Execute an Ex command",
-        "<code>Go Execute</code> works like <code class=command>:execute</code>.<br/>"+
+        "<code>Go Execute</code> works like <code class=\"command\">:execute</code>.<br/>"+
         "This mapping is for debugging purposes, and may be removed in future.",
         function(count) { openVimperatorBar('execute '); }
     ],
@@ -565,7 +573,7 @@ var g_mappings = [/*{{{*/
         ["gP"],
         ["gP"],
         "Open (put) an URL based on the current clipboard contents in a new buffer",
-        "Works like <code class=mapping>P</code>, but inverts the <code class=setting>'activate'</code> setting.",
+        "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"setting\">'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), false); }
     ],
     [ 
@@ -573,7 +581,7 @@ var g_mappings = [/*{{{*/
         ["{count}gt"],
         "Go to next tab",
         "Cycles to the first tab, when the last is selected.<br/>"+
-        "Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
+        "Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
         function(count) { tab_go(count > 0 ? count : 0); }
     ],
     [ 
@@ -581,36 +589,36 @@ var g_mappings = [/*{{{*/
         ["{count}gT"],
         "Go to previous tab",
         "Cycles to the last tab, when the first is selected.<br/>"+
-        "Count is supported, <code class=mapping>3gt</code> goes to the third tab.",
+        "Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
         function(count) { tab_go(count > 0 ? count :-1); }
     ],
     [ 
         ["o"],
         ["o"],
         "Open one or more URLs in the current tab",
-        "See <code class=command>:open</code> for more details",
+        "See <code class=\"command\">:open</code> for more details",
         function(count) { openVimperatorBar('open '); }
     ],
     [ 
         ["O"],
         ["O"],
         "Open one ore more URLs in the current tab, based on current location",
-        "Works like <code class=mapping>o</code>, but preselects current URL in the <code class=command>:open</code> query.",
+        "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query.",
         function(count) { openVimperatorBar('open ' + getCurrentLocation()); }
     ],
     [ 
         ["p", "<MiddleMouse>"],
         ["p", "<MiddleMouse>"],
         "Open (put) an URL based on the current clipboard contents in the current buffer",
-        "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=setting>'defsearch'</code> setting) with <code class=mapping>p</code>",
+        "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"setting\">'defsearch'</code> setting) with <code class=\"mapping\">p</code>",
         function(count) { openURLs(readFromClipboard()); }
     ],
     [ 
         ["P"],
         ["P"],
         "Open (put) an URL based on the current clipboard contents in a new buffer",
-        "Works like <code class=mapping>p</code>, but opens a new tab.<br/>"+
-        "Whether the new buffer is activated, depends on the <code class=setting>'activate'</code> setting.",
+        "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>"+
+        "Whether the new buffer is activated, depends on the <code class=\"setting\">'activate'</code> setting.",
         function(count) { openURLsInNewTab(readFromClipboard(), true); }
     ],
     [ 
@@ -631,15 +639,15 @@ var g_mappings = [/*{{{*/
         ["t"],
         ["t"],
         "Open one or more URLs in a new tab",
-        "Like <code class=mapping>o</code> but open URLs in a new tab.<br/>"+
-        "See <code class=command>:tabopen</code> for more details",
+        "Like <code class=\"mapping\">o</code> but open URLs in a new tab.<br/>"+
+        "See <code class=\"command\">:tabopen</code> for more details",
         function(count) { openVimperatorBar('tabopen '); }
     ],
     [ 
         ["T"],
         ["T"],
         "Open one ore more URLs in a new tab, based on current location",
-        "Works like <code class=mapping>t</code>, but preselects current URL in the <code class=command>:tabopen</code> query.",
+        "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query.",
         function(count) { openVimperatorBar('tabopen ' + getCurrentLocation()); }
     ],
     [ 
@@ -695,7 +703,7 @@ var g_mappings = [/*{{{*/
         ["ZQ"],
         ["ZQ"],
         "Quit and don't save the session",
-        "Works like <code class=command>:qall</code>.",
+        "Works like <code class=\"command\">:qall</code>.",
         function(count) { quit(false); }
     ],
     [ 
@@ -703,7 +711,7 @@ var g_mappings = [/*{{{*/
         ["ZZ"],
         "Quit and save the session",
         "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
-        "Works like <code class=command>:xall</code>.",
+        "Works like <code class=\"command\">:xall</code>.",
         function(count) { quit(true); }
     ],
 
@@ -712,7 +720,7 @@ var g_mappings = [/*{{{*/
         ["0", "^"],
         ["0", "^"],
         "Scroll to the absolute left of the document",
-        "Unlike in vim, <code class=mapping>0</code> and <code class=mapping>^</code> work exactly the same way.",
+        "Unlike in vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way.",
         function(count) { scrollBufferAbsolute(0, -1); }
     ],
     [ 
@@ -726,46 +734,46 @@ var g_mappings = [/*{{{*/
         ["gg", "<Home>"],
         ["{count}gg", "{count}<Home>"],
         "Goto the top of the document",
-        "Count is supported, <code class=mapping>35gg</code> vertically goes to 35% of the document",
+        "Count is supported, <code class=\"mapping\">35gg</code> vertically goes to 35% of the document",
         function(count) { scrollBufferAbsolute(-1, count >  0 ? count : 0); }
     ],
     [ 
         ["G", "<End>"],
         ["{count}G", "{count}<End>"],
         "Goto the end of the document",
-        "Count is supported, <code class=mapping>35G</code> vertically goes to 35% of the document",
+        "Count is supported, <code class=\"mapping\">35G</code> vertically goes to 35% of the document",
         function(count) { scrollBufferAbsolute(-1, count >= 0 ? count : 100); }
     ],
     [ 
         ["h", "<Left>"],
         ["{count}h", "{count}<Left>"],
         "Scroll document to the left",
-        "Count is supported: <code class=mapping>10h</code> will move 10 times as much to the left.<br/>"+
-        "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
+        "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>"+
+        "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(-1, 0); }
     ],
     [ 
         ["j", "<Down>", "<C-e>"],
         ["{count}j", "{count}<Down>", "{count}<C-e>"],
         "Scroll document down",
-        "Count is supported: <code class=mapping>10j</code> will move 10 times as much down.<br/>"+
-        "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
+        "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>"+
+        "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(0, 1); }
     ],
     [ 
         ["k", "<Up>", "<C-y>"],
         ["{count}k", "{count}<Up>", "{count}<C-y>"],
         "Scroll document up",
-        "Count is supported: <code class=mapping>10k</code> will move 10 times as much up.<br/>"+
-        "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
+        "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>"+
+        "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(0, -1); }
     ],
     [ 
         ["l", "<Right>"],
         ["{count}l", "{count}<Right>"],
         "Scroll document to the right",
-        "Count is supported: <code class=mapping>10l</code> will move 10 times as much to the right.<br/>"+
-        "If the document cannot scroll more, a beep is emmited (unless <code class=setting>'beep'</code> is turned off).",
+        "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>"+
+        "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
         function(count) { scrollBufferRelative(1, 0); }
     ],
     [ 
@@ -802,28 +810,28 @@ var g_mappings = [/*{{{*/
         ["H", "<A-Left>", "<M-Left>"],
         ["{count}H", "{count}<A-Left>", "{count}<M-Left>"],
         "Go back in the browser history",
-        "Count is supported, <code class=mapping>3H</code> goes back 3 steps.",
+        "Count is supported, <code class=\"mapping\">3H</code> goes back 3 steps.",
         function(count) { stepInHistory(count > 0 ? -1 * count : -1); }
     ],
     [ 
         ["L", "<A-Right>", "<M-Right>"],
         ["{count}L", "{count}<A-Right>", "{count}<M-Right>"],
         "Go forward in the browser history",
-        "Count is supported, <code class=mapping>3L</code> goes forward 3 steps.",
+        "Count is supported, <code class=\"mapping\">3L</code> goes forward 3 steps.",
         function(count) { stepInHistory(count > 0 ? count : 1); }
     ],
     [ 
         ["gu", "<BS>"],
         ["{count}gu", "{count}<BS>"],
         "Go to parent directory",
-        "Count is supported, <code class=mapping>2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>",
+        "Count is supported, <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>",
         goUp
     ],
     [ 
         ["gU", "<C-BS>"],
         ["gU", "<C-BS>"],
         "Go to the root of the website",
-        "<code class=mapping>gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>"+
+        "<code class=\"mapping\">gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>"+
         "When browsing a local directory, it goes to the root document.",
         function(count) { openURLs("..."); }
     ],
@@ -833,8 +841,8 @@ var g_mappings = [/*{{{*/
         ["f"],
         ["f"],
         "Start QuickHint mode",
-        "In QuickHint mode, every hintable item (according to the <code class=setting>'hinttags'</code> XPath query) is assigned a label.<br/>"+
-        "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=mapping>&lt;Esc&gt;</code> to stop this mode.<br/>"+
+        "In QuickHint mode, every hintable item (according to the <code class=\"setting\">'hinttags'</code> XPath query) is assigned a label.<br/>"+
+        "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "If you write the hint in ALLCAPS, the hint is followed in a background tab.",
         function(count) { hah.enableHahMode(HINT_MODE_QUICK); }
     ],
@@ -842,10 +850,10 @@ var g_mappings = [/*{{{*/
         ["F"],
         ["F"],
         "Start AlwaysHint mode",
-        "In AlwaysHint mode, every hintable item (according to the <code class=setting>'hinttags'</code> XPath query) is assigned a label.<br/>"+
-        "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=mapping>&lt;Esc&gt;</code> to stop this mode.<br/>"+
+        "In AlwaysHint mode, every hintable item (according to the <code class=\"setting\">'hinttags'</code> XPath query) is assigned a label.<br/>"+
+        "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>"+
-        "Also, most <code style=mapping>Ctrl</code>-prefixed shortcut keys are available in this mode for navigation.",
+        "Also, most <code class=\"mapping\">Ctrl</code>-prefixed shortcut keys are available in this mode for navigation.",
         function(count) { hah.enableHahMode(HINT_MODE_ALWAYS); }
     ],
     [ 
@@ -853,20 +861,20 @@ var g_mappings = [/*{{{*/
         [";"],
         "Start ExtendedHint mode",
         "ExtendedHint mode is useful, since in this mode you can yank link locations, or open them in a new window.<br/>"+
-        "E.g., if you want to yank the location of hint <code>AB</code>, press <code class=mapping>;</code> to start this hint mode.<br/>"+
-        "Then press <code>AB</code> to select the hint. Now press <code class=mapping>y</code> to yank its location.<br/>"+
+        "E.g., if you want to yank the location of hint <code>AB</code>, press <code class=\"mapping\">;</code> to start this hint mode.<br/>"+
+        "Then press <code>AB</code> to select the hint. Now press <code class=\"mapping\">y</code> to yank its location.<br/>"+
         "Actions for selected hints in ExtendedHint mode are:<br/>"+
-        "<ul><li><code class=mapping>y</code> to yank its location</li>"+
-        "    <li><code class=mapping>Y</code> to yank its text description</li>"+
-        "    <li><code class=mapping>o</code> to open its location in the current tab</li>"+
-        "    <li><code class=mapping>t</code> to open its location in a new tab</li>"+
-        "    <li><code class=mapping>O</code> to open its location in an <code class=command>:open</code> query (not implemented yet)</li>"+
-        "    <li><code class=mapping>T</code> to open its location in an <code class=command>:tabopen</code> query (not implemented yet)</li>"+
-        "    <li><code class=mapping>s</code> to save its destination (not implemented yet)</li>"+
-        "    <li><code class=mapping>&lt;C-w&gt;</code> to open its destination in a new window</li>"+
+        "<ul><li><code class=\"mapping\">y</code> to yank its location</li>"+
+        "    <li><code class=\"mapping\">Y</code> to yank its text description</li>"+
+        "    <li><code class=\"mapping\">o</code> to open its location in the current tab</li>"+
+        "    <li><code class=\"mapping\">t</code> to open its location in a new tab</li>"+
+        "    <li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query (not implemented yet)</li>"+
+        "    <li><code class=\"mapping\">T</code> to open its location in an <code class=\"command\">:tabopen</code> query (not implemented yet)</li>"+
+        "    <li><code class=\"mapping\">s</code> to save its destination (not implemented yet)</li>"+
+        "    <li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>"+
         "</ul>"+
-        "Multiple hints can be seperated by commas where it makes sense. <code class=mapping>;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>"+
-        "Hintable elements for this mode can be set in the <code class=setting>'extendedhinttags'</code> XPath string.",
+        "Multiple hints can be seperated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>"+
+        "Hintable elements for this mode can be set in the <code class=\"setting\">'extendedhinttags'</code> XPath string.",
         function(count) { hah.enableHahMode(HINT_MODE_EXTENDED); }
     ],
 
@@ -893,7 +901,7 @@ var g_mappings = [/*{{{*/
         ["<F1>"],
         ["<F1>"],
         "Open help window",
-        "The default section is shown, if you need help for a specific topic, try <code class=command>:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet).",
+        "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet).",
         function(count) { help(null); }
     ],
     [ 
@@ -907,19 +915,19 @@ var g_mappings = [/*{{{*/
         ["I"],
         ["I"],
         "Disable vimperator keys",
-        "Starts an 'ignorekeys' mode, where all keys except <code class=mapping>&lt;Esc&gt;</code> are passed to the next event handler.<br/>"+
+        "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>"+
         "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>" +
-        "To exit this mode, press <code class=mapping>&lt;Esc&gt;</code>. If you also need to pass <code class=mapping>&lt;Esc&gt;</code>"+
-        "in this mode to the webpage, prepend it with <code class=mapping>&lt;C-v&gt;</code>.",
+        "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>"+
+        "in this mode to the webpage, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>.",
         function(count) { addMode(MODE_ESCAPE_ALL_KEYS);}
     ],
     [ 
         ["<C-v>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
         ["<C-v>"],
         "Escape next key",
-        "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=mapping>&lt;C-v&gt;</code>.<br/>"+
-        "Also works to unshadow Firefox shortcuts like <code class=mapping>&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>"+
-        "When in 'ignorekeys' mode (activated by <code class=mapping>&lt;I&gt;</code>), <code class=mapping>&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage.",
+        "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>"+
+        "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>"+
+        "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage.",
         function(count) { addMode(MODE_ESCAPE_ONE_KEY); }
     ],
     [ 

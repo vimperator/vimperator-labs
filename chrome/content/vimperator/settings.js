@@ -62,13 +62,13 @@ var g_settings = [/*{{{*/
         ["complete", "cpt"],
         ["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
-        "Available items:<br>"+
+        "Available items:<br/>"+
         "<ul><li><b>s</b>: Search machines and keyword URLs</li><li>"+
         "<b>f</b>: Local files</li><li>"+
         "<b>b</b>: Bookmarks</li><li>"+
         "<b>h</b>: History</li></ul>"+
-        "The order is important, so <code class=command>:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
-        "Add 'sort' to the <code class=setting>'wildoptions'</code> setting if you want all entries sorted.",
+        "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
+        "Add 'sort' to the <code class=\"setting\">'wildoptions'</code> setting if you want all entries sorted.",
         "charlist",
         null,
         function(value) { set_pref("complete", value); },
@@ -80,7 +80,7 @@ var g_settings = [/*{{{*/
         ["defsearch", "ds"],
         ["defsearch", "ds"],
         "Set the default search engine",
-        "The default search engine is used in the <code class=command>:[tab]open [arg]</code> command "+
+        "The default search engine is used in the <code class=\"command\">:[tab]open [arg]</code> command "+
         "if [arg] neither looks like a URL or like a specified search engine/keyword.",
         "string",
         function() { return [["foo", "bar"], ["shit", "blub"]]; },
@@ -130,7 +130,12 @@ var g_settings = [/*{{{*/
         ["guioptions", "go"],
         ["guioptions", "go"],
         "Shows or hides the menu, toolbar and scrollbars",
-        "Supported characters:<br><ul><li><b>m</b>: menubar</li><li><b>T</b>: toolbar<li><b>b</b>: bookmark bar</li><li><b>s</b>: original Firefox statusbar</ul>",
+        "Supported characters:<br/><ul>"+
+        "<li><b>m</b>: menubar</li>"+
+        "<li><b>T</b>: toolbar</li>"+
+        "<li><b>b</b>: bookmark bar</li>"+
+        "<li><b>s</b>: original Firefox statusbar</li>"+
+        "</ul>",
         "charlist",
         null,
         function(value) { set_pref("guioptions", value); set_guioptions(value); },
@@ -165,7 +170,7 @@ var g_settings = [/*{{{*/
     [
         ["hinttags"],
         ["hinttags"],
-        "XPath string of hintable elements activated by <code class=mapping>'f'</code> and <code class=mapping>'F'</code>",
+        "XPath string of hintable elements activated by <code class=\"mapping\">'f'</code> and <code class=\"mapping\">'F'</code>",
         null,
         "string",
         null,
@@ -191,7 +196,7 @@ var g_settings = [/*{{{*/
         ["preload", "nopreload"],
         ["preload"],
         "Speed up first time history/bookmark completion",
-        "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br>"+
+        "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br/>"+
         "In order to also speed up first time access, it is cached at startup, if this option is set (recommended).",
         "boolean",
         null,
@@ -204,7 +209,8 @@ var g_settings = [/*{{{*/
         ["previewheight", "pvh"],
         ["previewheight", "pvh"],
         "Default height for preview window",
-        "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with <code class=command>:pclose</close>.",
+        "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. "+
+        "Close the preview window with <code class=\"command\">:pclose</code>.",
         "number",
         null,
         function(value) { set_pref("previewheight", value); },
@@ -228,7 +234,7 @@ var g_settings = [/*{{{*/
         ["showtabline", "stal"],
         ["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "Available items:<br>"+
+        "Available items:<br/>"+
         "<ul><li><b>0</b>: Never show tab bar</li><li>"+
         "        <b>1</b>: Show tab bar only if more than one tab is open</li><li>"+
         "        <b>2</b>: Always show tab bar</li></ul>"+
@@ -244,7 +250,7 @@ var g_settings = [/*{{{*/
         ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
         "Show current website with a minimal stylesheet to make it easily accessible",
-        "Note that this is a local setting for now, later it may be split into a global and <code style=command>:setlocal</code> part",
+        "Note that this is a local setting for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
         "boolean",
         null,
         function(value) { opt_usermode = value; setStyleDisabled(value); },
@@ -284,7 +290,7 @@ var g_settings = [/*{{{*/
         "A list of words that change how command line completion is done.<br/>"+
         "Currently only one word is allowed:<br/>"+
         "<table><pre>"+
-        "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=setting>'complete'</code> option.</td></tr>" +
+        "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"setting\">'complete'</code> option.</td></tr>" +
         "</pre></table>",
         "stringlist",
         null,
