@@ -30,7 +30,7 @@ function help(section, easter)
 {
     if (easter)
     {
-        echoerr("E478: Don't panic!");
+        vimperator.echoerr("E478: Don't panic!");
         return;
     }
     if ((arguments[3] && arguments[3].inTab))// || !window.content.document.open)
@@ -238,7 +238,7 @@ function help(section, easter)
         var element = doc.getElementById(section);
         if (!element)
         {
-            echoerr("E149: Sorry, no help for " + section);
+            vimperator.echoerr("E149: Sorry, no help for " + section);
             return;
         }
         var pos = cumulativeOffset(element.parentNode);

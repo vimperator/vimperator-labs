@@ -30,180 +30,6 @@ var g_completions = new Array();
 // The completion substrings, used for showing the longest common match
 var g_substrings = [];
 
-var comp_tab_index = COMPLETION_UNINITIALIZED;  // the index in the internal g_completions array
-var comp_tab_list_offset = 0; // how many items is the displayed list shifted from the internal tab index
-var comp_tab_startstring = ""; 
-var comp_history = new Array();
-var comp_history_index = -1;
-
-
-
-/* uses the entries in g_completions to fill the listbox
- * starts at index 'startindex', and shows COMPLETION_MAXITEMS
- * returns the number of items */
-function completion_fill_list(startindex)/*{{{*/
-{
-    // remove all old items first
-    var items = completion_list.getElementsByTagName("listitem");
-    while (items.length > 0) { completion_list.removeChild(items[0]);}
-
-    // find start index
-    //var i = index - 3; // 3 lines of context
-    if (startindex + COMPLETION_MAXITEMS > g_completions.length)
-        startindex = g_completions.length - COMPLETION_MAXITEMS;
-    if (startindex < 0)
-        startindex = 0;
-
-    for(i=startindex; i<g_completions.length && i < startindex + COMPLETION_MAXITEMS; i++)
-    {
-        completion_add_to_list(g_completions[i], false);
-    }
-    //completion_list.hidden = true;
-//  completion_list.setAttribute("rows", (i-startindex).toString());
-//  showStatusbarMessage ( (i-startindex).toString(), 1);
-//  if ( i-startindex > 0) // XXX: respect completetopt setting
-//      completion_list.hidden = false;
-//  else
-//      completion_list.hidden = true;
-//  completion_list.setAttribute("rows", (i-startindex).toString());
-
-    return (i-startindex);
-}/*}}}*/
-
-function completion_show_list()/*{{{*/
-{
-    var items = g_completions.length;
-    if (items > COMPLETION_MAXITEMS)
-        items = COMPLETION_MAXITEMS;
-    if (items > 1) // FIXME
-    {
-        completion_list.setAttribute("rows", items.toString());
-        completion_list.hidden = false;
-    }
-    else
-        completion_list.hidden = true;
-}/*}}}*/
-
-/* add a single completion item to the list */
-function completion_add_to_list(completion_item, at_beginning)/*{{{*/
-{
-        var item  = document.createElement("listitem");
-        var cell1 = document.createElement("listcell");
-        var cell2 = document.createElement("listcell");
-
-        cell1.setAttribute("label", completion_item[0]);
-        cell1.setAttribute("width", "200");
-        cell2.setAttribute("label", completion_item[1]);
-        cell2.setAttribute("style", "color:green; font-family: sans");
-
-        item.appendChild(cell1);
-        item.appendChild(cell2);
-        if (at_beginning == true)
-        {
-            var items = completion_list.getElementsByTagName("listitem");
-            if (items.length > 0)
-                completion_list.insertBefore(item, items[0]);
-            else
-                completion_list.appendChild(item);
-        }
-        else
-            completion_list.appendChild(item);
-}/*}}}*/
-
-/* select the next index, refill list if necessary
- *
- * changes 'comp_tab_index' */
-function completion_select_next_item(has_list, has_full, has_longest)/*{{{*/
-{
-    if (has_full)
-        comp_tab_index++;
-    has_list = has_list || (!completion_list.hidden && (has_full || has_longest));
-    if (comp_tab_index >= g_completions.length) /* wrap around */
-    {
-        comp_tab_index = -1;
-        if (has_list && has_full)
-            completion_list.selectedIndex = -1;
-        return;
-    }
-
-    if (has_full)
-        showStatusbarMessage(" match " + (comp_tab_index + 1).toString() + " of " + g_completions.length.toString() + " ", STATUSFIELD_PROGRESS);
-    if (!has_list) return;
-
-    if (comp_tab_index < 1) // at the top of the list
-    {
-        completion_fill_list(0);
-        comp_tab_list_offset = 0;
-    }
-
-    var listindex = comp_tab_index - comp_tab_list_offset;
-    // only move the list, if there are still items we can move
-    if (listindex >= COMPLETION_MAXITEMS - COMPLETION_CONTEXTLINES &&
-        comp_tab_list_offset < g_completions.length - COMPLETION_MAXITEMS)
-    {
-        // for speed reason: just remove old item, and add new at the end of the list
-        var items = completion_list.getElementsByTagName("listitem");
-        completion_list.removeChild(items[0]);
-        completion_add_to_list(g_completions[comp_tab_index + COMPLETION_CONTEXTLINES], false);
-        comp_tab_list_offset++;
-    }
-
-    if (has_full)
-    {
-        listindex = comp_tab_index - comp_tab_list_offset;
-        completion_list.selectedIndex = listindex;
-    }
-}/*}}}*/
-
-/* select the previous index, refill list if necessary
- *
- * changes 'comp_tab_index' */
-function completion_select_previous_item(has_list, has_full, has_longest)/*{{{*/
-{
-    if (has_full)
-        comp_tab_index--;
-    has_list = has_list || (!completion_list.hidden && (has_full || has_longest));
-    if (comp_tab_index == -1)
-    {
-        if (has_list && has_full)
-            completion_list.selectedIndex = -1;
-        return;
-    }
-
-    if (has_full)
-        showStatusbarMessage("match " + (comp_tab_index+1).toString() + " of " + g_completions.length.toString(), STATUSFIELD_PROGRESS);
-
-    if (comp_tab_index < -1) // go to the end of the list
-    {
-        comp_tab_index = g_completions.length -1;
-        if (!has_list) return;
-        completion_fill_list(g_completions.length - COMPLETION_MAXITEMS);
-        comp_tab_list_offset = g_completions.length - COMPLETION_MAXITEMS;//COMPLETION_MAXITEMS - 1;
-        if (comp_tab_list_offset < 0)
-            comp_tab_list_offset = 0;
-    }
-    if (!has_list) return;
-
-    var listindex = comp_tab_index - comp_tab_list_offset;
-    // only move the list, if there are still items we can move
-    if (listindex < COMPLETION_CONTEXTLINES && comp_tab_list_offset > 0)
-    {
-        // for speed reason: just remove old item, and add new at the end of the list
-        if (has_list)
-        {
-            var items = completion_list.getElementsByTagName("listitem");
-            completion_list.removeChild(items[items.length-1]);
-            completion_add_to_list(g_completions[comp_tab_index - COMPLETION_CONTEXTLINES], true);
-        }
-        comp_tab_list_offset--;
-    }
-
-    if (has_full)
-    {
-        listindex = comp_tab_index - comp_tab_list_offset;
-        completion_list.selectedIndex = listindex;
-    }
-}/*}}}*/
 
 /*
  * returns the longest common substring
@@ -224,7 +50,7 @@ function get_longest_substring()/*{{{*/
     return longest;
 }/*}}}*/
 
-// function is case insensitive
+// function uses smartcase
 // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
 function build_longest_common_substring(list, filter)/*{{{*/
 {
@@ -271,7 +97,7 @@ function build_longest_common_substring(list, filter)/*{{{*/
     return filtered;
 }/*}}}*/
 
-/* this function is case senstitive */
+/* this function is case sensitive */
 function build_longest_starting_substring(list, filter)/*{{{*/
 {
     var filtered = [];
@@ -691,26 +517,41 @@ function get_buffer_completions(filter)/*{{{*/
     return build_longest_common_substring(items, filter);
 }/*}}}*/
 
-////////// COMMAND HISTORY HANDLING ////////////
 
-function add_to_command_history(str)
+
+// return [startindex, [[itemtext, itemhelp],...]]
+function exTabCompletion(str)
 {
-    /* add string to the command line history */
-    if (str.length >= 2 && comp_history.push(str) > COMMAND_LINE_HISTORY_SIZE)
-        comp_history.shift();
-}
+	var [count, cmd, special, args] = tokenize_ex(str);
+	var completions = new Array;
+	var start = 0;
+	var s = 0; //FIXME, command specific start setting
 
-function save_history()
-{
-    set_pref("comp_history", comp_history.join("\n"));
+	// if there is no space between the command name and the cursor
+	// then get completions of the command name
+	var matches = str.match(/^(:*\d*)\w*$/);
+	if(matches)
+	{
+		completions = get_command_completions(cmd);
+		start = matches[1].length;
+	}
+	else // dynamically get completions as specified in the g_commands array
+	{
+		var command = get_command(cmd);
+		if (command && command[COMPLETEFUNC])
+		{
+			completions = command[COMPLETEFUNC].call(this, args);
+//			if (command[COMMANDS][0] == "open" ||
+//					command[COMMANDS][0] == "tabopen" ||
+//					command[COMMANDS][0] == "winopen")
+//				start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
+//			else
+			matches = str.match(/^:*\d*\w+\s+/); // up to the first spaces only
+			start = matches[0].length;
+		}
+	}
+	return [start, completions];
 }
-
-function load_history()
-{
-    var hist = get_pref("comp_history", "");
-    comp_history = hist.split("\n");
-}
-
 
 ///////// PREVIEW WINDOW //////////////////////
 

@@ -321,6 +321,21 @@ function get_setting(cmd)/*{{{*/
 /////////////////////////////////////////////////
 // preference getter functions ///////////// {{{1
 /////////////////////////////////////////////////
+Vimperator.prototype.getpr = function(name){
+    //alert('in here');
+    if (!g_vimperator_prefs)
+        g_vimperator_prefs = g_firefox_prefs.getBranch("extensions.vimperator.");
+        try{
+    pref = g_vimperator_prefs.getCharPref(name);
+    } catch(e) { pref = "no idea"; }
+    return pref;
+}
+// does not work:
+vimperator.getpref2 = function(name){
+    pref = g_vimperator_prefs.getCharPref(name);
+    return pref;
+}
+
 function get_pref(name, forced_default)
 {
     var pref = null;
@@ -361,6 +376,7 @@ function get_pref(name, forced_default)
     }
     return pref;
 }
+Vimperator.prototype.getpref = get_pref;
 
 
 function get_firefox_pref(name, default_value)
@@ -399,7 +415,7 @@ function set_pref(name, value)
     else if (typeof(value) == "boolean")
         g_vimperator_prefs.setBoolPref(name, value);
     else
-        echoerr("Unkown typeof pref: " + value);
+        vimperator.echoerr("Unkown typeof pref: " + value);
 }
 
 function set_firefox_pref(name, value)
@@ -413,7 +429,7 @@ function set_firefox_pref(name, value)
     else if (typeof(value) == "boolean")
         g_firefox_prefs.setBoolPref(name, value);
     else
-        echoerr("Unkown typeof pref: " + value);
+        vimperator.echoerr("Unkown typeof pref: " + value);
 }
 
 
@@ -442,15 +458,15 @@ function set_showtabline(value)
     // hide tabbar
     if(value == 0)
     {
-        gBrowser.mStrip.collapsed = true;
-        gBrowser.mStrip.hidden = true;
+        getBrowser().mStrip.collapsed = true;
+        getBrowser().mStrip.hidden = true;
     }
     else if(value == 1)
-        echo("show tabline only with > 1 page open not impl. yet");
+        vimperator.echo("show tabline only with > 1 page open not impl. yet");
     else
     {
-        gBrowser.mStrip.collapsed = false;
-        gBrowser.mStrip.hidden = false;
+        getBrowser().mStrip.collapsed = false;
+        getBrowser().mStrip.hidden = false;
     }
 }
 

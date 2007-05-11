@@ -120,7 +120,7 @@ var g_commands = [/*{{{*/
         "Go to buffer from buffer list",
         "Argument can be either the buffer index or the full URL.",
         buffer_switch,
-        function (filter) {return get_buffer_completions(filter);}
+        function (filter) { return get_buffer_completions(filter); }
     ],
     [
         ["buffers", "files", "ls"],
@@ -219,7 +219,7 @@ var g_commands = [/*{{{*/
                 try {
                     eval(args);
                 } catch(e) {
-                    echoerr(e.name + ": " + e.message);
+                    vimperator.echoerr(e.name + ": " + e.message);
                 }
         },
         null
@@ -470,7 +470,7 @@ var g_commands = [/*{{{*/
         ["ve[rsion][!]"],
         "Show version information",
         "You can show the Firefox version page with <code class=\"command\">:version!</code>.",
-        function (args, special) { if (special) openURLs("about:"); else echo("Vimperator version: " + g_vimperator_version); },
+        function (args, special) { if (special) openURLs("about:"); else vimperator.echo("Vimperator version: " + vimperator.ver); },
         null
     ],
     [
@@ -478,7 +478,7 @@ var g_commands = [/*{{{*/
         ["win[open] [url] [| url]"],
         "Open an URL in a new window",
         "Not implemented yet",
-        function () { echo("winopen not yet implemented"); },
+        function () { vimperator.echo("winopen not yet implemented"); },
         null
     ],
     [
@@ -524,7 +524,7 @@ var g_mappings = [/*{{{*/
         ["b {number}"],
         "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
-        function (args) { bufshow("", true); openVimperatorBar('buffer '); }  
+        function (args) { bufshow("", true); vimperator.commandline.open(":", "buffer ", MODE_EX); }  
     ],
     [ 
         ["B"],
@@ -547,14 +547,14 @@ var g_mappings = [/*{{{*/
         "Count WILL be supported in future releases, then <code class=\"mapping\">2D</code> removes two tabs and the one the left is selected.",
         function(count) { tab_remove(count, true, 0); }
     ],
-    [ 
+    /*[ 
         ["ge"],
         ["ge {cmd}"],
         "Execute an Ex command",
         "<code>Go Execute</code> works like <code class=\"command\">:execute</code>.<br/>"+
         "This mapping is for debugging purposes, and may be removed in future.",
         function(count) { openVimperatorBar('execute '); }
-    ],
+    ],*/
     [ 
         ["gh"],
         ["gh"],
@@ -597,14 +597,14 @@ var g_mappings = [/*{{{*/
         ["o"],
         "Open one or more URLs in the current tab",
         "See <code class=\"command\">:open</code> for more details",
-        function(count) { openVimperatorBar('open '); }
+        function(count) { vimperator.commandline.open(":", "open ", MODE_EX); }
     ],
     [ 
         ["O"],
         ["O"],
         "Open one ore more URLs in the current tab, based on current location",
         "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query.",
-        function(count) { openVimperatorBar('open ' + getCurrentLocation()); }
+        function(count) { vimperator.commandline.open(":", "open " + getCurrentLocation(), MODE_EX); }
     ],
     [ 
         ["p", "<MiddleMouse>"],
@@ -641,14 +641,14 @@ var g_mappings = [/*{{{*/
         "Open one or more URLs in a new tab",
         "Like <code class=\"mapping\">o</code> but open URLs in a new tab.<br/>"+
         "See <code class=\"command\">:tabopen</code> for more details",
-        function(count) { openVimperatorBar('tabopen '); }
+        function(count) { vimperator.commandline.open(":", "tabopen ", MODE_EX); }
     ],
     [ 
         ["T"],
         ["T"],
         "Open one ore more URLs in a new tab, based on current location",
         "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query.",
-        function(count) { openVimperatorBar('tabopen ' + getCurrentLocation()); }
+        function(count) { vimperator.commandline.open(":", "tabopen " + getCurrentLocation(), MODE_EX); }
     ],
     [ 
         ["u"],
@@ -879,21 +879,26 @@ var g_mappings = [/*{{{*/
     ],
 
     /* search managment */
+    [
+        ["g/"],
+        ["g/"],
+        "Open search dialog",
+        "",
+        function(count) { vimperator.search.openSearchDialog(); }
+    ],
     [ 
         ["n"],
         ["n"],
         "Find next",
         "Repeat the last \"/\" 1 time (until count is supported).",
-        // don't use a closure for this, is just DoesNotWork (TM)
-        function(count) { gFindBar.onFindAgainCmd(); } // this does not work, why?: goDoCommand('cmd_findAgain'); }
+        function(count) { vimperator.search.findNext(); }
     ],
     [ 
         ["N"],
         ["N"],
         "Find previous",
         "Repeat the last \"/\" 1 time (until count is supported) in the opposite direction.",
-        // don't use a closure for this, is just DoesNotWork (TM)
-        function(count) { gFindBar.onFindPreviousCmd(); } // this does not work, why?: goDoCommand('cmd_findPrevious'); }
+        function(count) { vimperator.search.findPrevious(); }
     ],
 
     /* vimperator managment */
@@ -909,7 +914,7 @@ var g_mappings = [/*{{{*/
         [":"],
         "Start command line mode",
         "In command line mode, you can perform extended commands, which may require arguments.",
-        function(count) { openVimperatorBar(null); }
+        function(count) { vimperator.commandline.open(":", "", MODE_EX); }
     ],
     [ 
         ["I"],
@@ -1019,14 +1024,14 @@ var g_mappings = [/*{{{*/
     ]
 ];/*}}}*/
 
-var g_insert_mappings = [ /*{{{*/
-    ["xxx", "todo"],
-    ["<C-w>", "delete word"],
-    ["<C-u>", "delete beginning"],
-    ["<C-a>", "go beginning"],
-    ["<C-e>", "go end"],
-    ["<C-c>", "cancel"]
-]; /*}}}*/
+// var g_insert_mappings = [ /*{{{*/
+//     ["xxx", "todo"],
+//     ["<C-w>", "delete word"],
+//     ["<C-u>", "delete beginning"],
+//     ["<C-a>", "go beginning"],
+//     ["<C-e>", "go end"],
+//     ["<C-c>", "cancel"]
+// ]; /*}}}*/
 
 /* [command, action, cancel_hint_mode, always_active] */
 var g_hint_mappings = [ /*{{{*/
@@ -1034,11 +1039,11 @@ var g_hint_mappings = [ /*{{{*/
     ["o",          "hah.openHints(false, false);", true, false],
     ["t",          "hah.openHints(true,  false);", true, false],
     ["<C-w>",      "hah.openHints(false, true );", true, false],
-    ["s",          "echoerr('Saving of links not yet implemented');", true, false],
+    ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
     ["y",          "hah.yankUrlHints();", true, false],
     ["Y",          "hah.yankTextHints();", true, false],
     [",",          "g_inputbuffer+=','; hah.setCurrentState(0);", false, true],
-    [":",          "openVimperatorBar(null);", false, true],
+    [":",          "vimperator.commandline.open(':', '', MODE_EX);", false, true],
     /* movement keys */
     ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
     ["<C-y>",      "scrollBufferRelative(0, -1);",       false, true],
@@ -1094,10 +1099,10 @@ g_modemessages[MODE_INSERT] = "INSERT";
 g_modemessages[MODE_VISUAL] = "VISUAL";
 
 // returns null, if the cmd cannot be found in our g_commands array, or
-// otherwise a refernce to our command
+// otherwise a reference to our command
 function get_command(cmd) // {{{
 {
-    commands = [];
+    var commands = [];
     var added;
     for (var i = 0; i < g_commands.length; i++, added = false)
     {
@@ -1117,15 +1122,20 @@ function get_command(cmd) // {{{
             }
         }
     }
+    // return an unambigious command even if it was only given partly
     if (commands.length == 1)
         return commands[0];
+
     return null;
 } // }}}
 
 function execute_command(count, cmd, special, args, modifiers) // {{{
 {
-    if (!cmd) return;
-    if (!modifiers) modifiers = {};
+    if (!cmd)
+        return;
+    if (!modifiers)
+        modifiers = {};
+
     var command = get_command(cmd);
     if (command === null)
     {
@@ -1145,11 +1155,13 @@ function execute_command(count, cmd, special, args, modifiers) // {{{
 
 } // }}}
 
+// return [null, null, null, null, heredoc_tag || false];
+//        [count, cmd, special, args] = match;
 function tokenize_ex(string, tag)
 {
     // removing comments
     string.replace(/\s*".*$/, '');
-    if (tag)
+    if (tag) // we already have a multiline heredoc construct
     {
         if (string == tag)
             return [null, null, null, null, false];
@@ -1159,68 +1171,34 @@ function tokenize_ex(string, tag)
 
     // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
     var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?))?$/);
-    if (!matches) return [null, null, null, null, null];
+    if (!matches)
+        return [null, null, null, null, null];
     matches.shift();
 
+    // parse count
     if (matches[0])
     {
         matches[0] = parseInt(matches[0]);
-        if (isNaN(matches[0])) matches[0] = 0;
+        if (isNaN(matches[0]))
+            matches[0] = 0; // 0 is the default if no count given
     }
-    else matches[0] = 0;
+    else
+        matches[0] = 0;
+
     matches[2] = !!matches[2];
     matches.push(null);
     if (matches[3])
     {
-        tag = matches[3].match(/<<\s*(\w+)/);
+        tag = matches[3].match(/<<\s*(\w+)\s*$/);
         if (tag && tag[1])
             matches[4] = tag[1];
     }
-    else matches[3] = '';
+    else
+        matches[3] = '';
 
     return matches;
 }
 
-function multiliner(line, prev_match, heredoc)
-{
-    var end = true;
-    var match = tokenize_ex(line, prev_match[4]);
-    if (prev_match[3] === undefined) prev_match[3] = '';
-    if (match[4] === null)
-    {
-        focusContent(false, true); // also sets comp_tab_index to -1
-        execute_command.apply(this, match);
-    }
-    else
-    {
-        if (match[4] === false)
-        {
-            prev_match[3] = prev_match[3].replace(new RegExp('<<\s*' + prev_match[4]), heredoc.replace(/\n$/, ''));
-            focusContent(false, true); // also sets comp_tab_index to -1
-            execute_command.apply(this, prev_match);
-            prev_match = new Array(5);
-            prev_match[3] = '';
-            heredoc = '';
-        }
-        else
-        {
-            end = false;
-            if (!prev_match[3])
-            {
-                prev_match[0] = match[0];
-                prev_match[1] = match[1];
-                prev_match[2] = match[2];
-                prev_match[3] = match[3];
-                prev_match[4] = match[4];
-            }
-            else
-            {
-                heredoc += match[3] + '\n';
-            }
-        }
-    }
-    return [prev_match, heredoc, end];
-}
 
 function execute(string)
 {
@@ -1235,33 +1213,33 @@ function execute(string)
 ////////////////////////////////////////////////////////////////////////
 // statusbar/commandbar handling ////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
-function echo(msg)
-{
-    /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
-     * input element. The read only property '.inputField' holds a reference to this inner
-     * input element. */
-    var bar = command_line.inputField;
-    var focused = document.commandDispatcher.focusedElement;
-    if (focused && focused == bar)
-        return;
-
-    bar.setAttribute("style","font-family: monospace;");
-    bar.value = msg;
-}
-
-function echoerr(msg)
-{
-    /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
-     * input element. The read only property '.inputField' holds a reference to this inner
-     * input element. */
-    var bar = command_line.inputField;
-    var focused = document.commandDispatcher.focusedElement;
-    if (focused && focused == bar)
-        return;
-
-    bar.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
-    bar.value = msg;
-}
+ function echo(msg)
+ {
+     /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
+      * input element. The read only property '.inputField' holds a reference to this inner
+      * input element. */
+     var bar = command_line.inputField;
+     var focused = document.commandDispatcher.focusedElement;
+     if (focused && focused == bar)
+         return;
+ 
+     bar.setAttribute("style","font-family: monospace;");
+     bar.value = msg;
+ }
+ 
+ function echoerr(msg)
+ {
+     /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
+      * input element. The read only property '.inputField' holds a reference to this inner
+      * input element. */
+     var bar = command_line.inputField;
+     var focused = document.commandDispatcher.focusedElement;
+     if (focused && focused == bar)
+         return;
+ 
+     bar.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
+     bar.value = msg;
+ }
 
 ////////////////////////////////////////////////////////////////////////
 // navigation functions /////////////////////////////////////////// {{{1
@@ -1276,7 +1254,7 @@ function stepInHistory(steps)
     else
     {
         beep();
-        if(index<0)
+        if(index < 0)
             echo("Cannot go past beginning of history");
         else
             echo("Cannot go past end of history");
@@ -1706,9 +1684,10 @@ function bufshow(filter, in_comp_window)
 {
     if (in_comp_window) // fill the completion list
     {
-        g_completions = get_buffer_completions(filter);
-        completion_fill_list(0);
-        completion_show_list();
+        // FIXME
+        // g_completions = get_buffer_completions(filter);
+        // completion_fill_list(0);
+        // completion_show_list();
     }
     else // in the preview window
     {
@@ -1856,7 +1835,8 @@ function zoom_in(factor)
     }
 }
 
-function zoom_to(value)
+function zoom_to(value) {};
+Vimperator.prototype.zoom_to = function(value)
 {
     var zoomMgr = ZoomManager.prototype.getInstance();
     value = parseInt(value);
@@ -2281,6 +2261,9 @@ function removeMode(mode)
 
 function showMode()
 {
+    // XXX: remove
+    showStatusbarMessage(g_current_mode, STATUSFIELD_INPUTBUFFER);
+
     if (!get_pref("showmode") || !g_modemessages[g_current_mode])
         return;
 

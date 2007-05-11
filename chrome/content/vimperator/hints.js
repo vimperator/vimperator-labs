@@ -430,7 +430,7 @@ function hit_a_hint()
         linkNumString = '';
         hintedElems = [];
         if (!silent && get_pref("showmode"))
-            echo('');
+            vimperator.echo('');
  
         removeHints(win);
         return 0;
@@ -531,7 +531,7 @@ function hit_a_hint()
         this.disableHahMode(null, true);
 
         copyToClipboard(loc);
-        echo("Yanked " + loc);
+        vimperator.echo("Yanked " + loc);
     };
 
     this.yankTextHints = function()
@@ -550,7 +550,7 @@ function hit_a_hint()
         this.disableHahMode(null, true);
 
         copyToClipboard(loc);
-        echo("Yanked " + loc);
+        vimperator.echo("Yanked " + loc);
     };
 
     function setMouseOverElement(elem)

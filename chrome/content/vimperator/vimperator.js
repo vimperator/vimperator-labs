@@ -26,19 +26,27 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var g_vimperator_version  = "###VERSION### (created: ###DATE###)";
 
 // all our objects
-//var search = new Search(); // FIXME, put somewhere else, does not work here
+var vimperator = null;
 
-const MODE_NORMAL = 1;
-const MODE_INSERT = 2;
-const MODE_VISUAL = 4;
-const MODE_ESCAPE_ONE_KEY = 8;
+// major modes - FIXME: major cleanup needed
+const MODE_NORMAL          = 1;
+const MODE_INSERT          = 2;
+const MODE_VISUAL          = 4;
+const MODE_ESCAPE_ONE_KEY  = 8;
 const MODE_ESCAPE_ALL_KEYS = 16;
-const HINT_MODE_QUICK = 32;
-const HINT_MODE_ALWAYS = 64;
-const HINT_MODE_EXTENDED = 128;
+const MODE_HINTS           = 2048;
+  const HINT_MODE_QUICK      = 32;
+  const HINT_MODE_ALWAYS     = 64;
+  const HINT_MODE_EXTENDED   = 128;
+const MODE_COMMAND_LINE    = 4096;
+  const MODE_EX              = 256;
+  const MODE_SEARCH          = 512;
+  const MODE_SEARCH_BACKWARD = 1024;
+// need later?
+//const MODE_BROWSER
+//const MODE_CARET
 
 
 var g_current_mode = MODE_NORMAL;
@@ -48,8 +56,12 @@ var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want
 var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
 var g_bufshow = false;   // keeps track if the preview window shows current buffers ('B')
 
+// handlers for vimperator triggered events, such as typing in the command
+// line. See triggerVimperatorEvent and registerVimperatorEventHandler
+//var g_vimperator_event_handlers = new Array();
+
 // handles wildmode tab index
-var wild_tab_index = 0;
+//var wild_tab_index = 0;
 
 // handles multi-line commands
 var prev_match = new Array(5);
@@ -93,8 +105,8 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        // updateStatusbar(link);
-        echo(link);
+        //updateStatusbar(link);
+        //vimperator.echo(link);
             
         if (link == "")
             showMode();
@@ -181,24 +193,20 @@ nsBrowserStatusHandler.prototype =
 
 window.addEventListener("load", init, false);
 
-
-// the global vimperator object, quit empty right now
-// add functions with vimperator.prototype.func = ...
-// var vimperator = null;
-// var Vimperator = function() {
-//     this.keywordsLoaded = false;
-//     this.keywords = [];
-//     this.searchEngines = [];
-//     this.bookmarks = new Bookmarks();
-// };
-
-
 ////////////////////////////////////////////////////////////////////////
 // init/uninit //////////////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 function init()
 {
-//    vimperator = new Vimperator;
+    // init the main object
+    vimperator = new Vimperator;
+    Vimperator.prototype.qm = new QM;
+    Vimperator.prototype.search = new Search;
+
+    // XXX: move elsewhere
+    vimperator.registerCallback("submit", MODE_EX, function(command) { /*vimperator.*/execute(command); } );
+    vimperator.registerCallback("complete", MODE_EX, function(str) { return exTabCompletion(str); } );
+
 
     preview_window = document.getElementById("vim-preview_window");
     status_line = document.getElementById("vim-statusbar");
@@ -225,7 +233,7 @@ function init()
     setCurrentMode(MODE_NORMAL);
 
     /*** load our preferences ***/
-    load_history();
+    // load_history(); FIXME
 
     set_showtabline(get_pref("showtabline"));
     set_guioptions(get_pref("guioptions"));
@@ -278,7 +286,7 @@ function init()
 function unload()
 {
     /*** save our preferences ***/
-    save_history();
+    // save_history(); FIXME
 
     // reset firefox pref
     if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
@@ -461,6 +469,7 @@ function onVimperatorKeypress(event)/*{{{*/
             var mapping = g_mappings[i][COMMANDS][j];
             // alert("key: " + key +" - mapping: "+ mapping + " - g_input: " + g_inputbuffer);
             if(count_str + mapping == g_inputbuffer + key)
+            //if (count_str + mapping == vimperator.commandline.getCommand() + key)
             {
                 g_count = parseInt(count_str, 10);
                 if (isNaN(g_count))
@@ -478,6 +487,7 @@ function onVimperatorKeypress(event)/*{{{*/
                 return false;
             }
             else if ((count_str+mapping).indexOf(g_inputbuffer + key) == 0)
+            //else if ((count_str+mapping).indexOf(vimperator.commandline.getCommand() + key) == 0)
             {
                 couldBecomeCompleteMapping = true;
             }
@@ -500,238 +510,6 @@ function onVimperatorKeypress(event)/*{{{*/
     return false;
 }/*}}}*/
 
-function onCommandBarKeypress(evt)/*{{{*/
-{
-    var end = false;
-    try
-    {
-        /* parse our command string into tokens */
-        var command = command_line.value;
-
-        /* user pressed ENTER to carry out a command */
-        if (evt.keyCode == KeyEvent.DOM_VK_RETURN)
-        {
-            // unfocus command line first
-            add_to_command_history(command);
-
-            try {
-                [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
-            } catch(e) {
-                logObject(e);
-                echoerr(e.name + ": " + e.message);
-                prev_match = new Array(5);
-                heredoc = '';
-                return;
-            }
-            if (!end)
-                command_line.value = "";
-        }
-
-        else if ((evt.keyCode == KeyEvent.DOM_VK_ESCAPE) ||
-                 (keyToString(evt) == "<C-[>"))
-        {
-            add_to_command_history(command);
-            focusContent(true, true);
-        }
-
-        /* user pressed UP or DOWN arrow to cycle completion */
-        else if (evt.keyCode == KeyEvent.DOM_VK_UP || evt.keyCode == KeyEvent.DOM_VK_DOWN)
-        {
-            /* save 'start' position for iterating through the history */
-            if (comp_history_index == -1)
-            {
-                comp_history_index = comp_history.length;
-                comp_history_start = command_line.value;
-            }
-
-            while (comp_history_index >= -1 && comp_history_index <= comp_history.length)
-            {
-                evt.keyCode == KeyEvent.DOM_VK_UP ? comp_history_index-- : comp_history_index++;
-                if (comp_history_index == comp_history.length) // user pressed DOWN when there is no newer history item
-                {
-                    command_line.value = comp_history_start;
-                    return;
-                }
-
-                /* if we are at either end of the list, reset the counter, break the loop and beep */
-                if((evt.keyCode == KeyEvent.DOM_VK_UP && comp_history_index <= -1) ||
-                   (evt.keyCode == KeyEvent.DOM_VK_DOWN && comp_history_index >= comp_history.length))
-                {
-                    evt.keyCode == KeyEvent.DOM_VK_UP ? comp_history_index++ : comp_history_index--;
-                    break;
-                }
-
-                if (comp_history[comp_history_index].indexOf(comp_history_start) == 0)
-                {
-                    command_line.value = comp_history[comp_history_index];
-                    return;
-                }
-
-            }
-            beep();
-        }
-
-        /* user pressed TAB to get completions of a command */
-        else if (evt.keyCode == KeyEvent.DOM_VK_TAB)
-        {
-            var start_cmd = command;
-            var match = tokenize_ex(command);
-            var [count, cmd, special, args] = match;
-            var command = get_command(cmd);
-            //always reset our completion history so up/down keys will start with new values
-            comp_history_index = -1;
-
-            // we need to build our completion list first
-            if (comp_tab_index == COMPLETION_UNINITIALIZED) 
-            {
-                g_completions = [];
-                comp_tab_index = -1;
-                comp_tab_list_offset = 0;
-                comp_tab_startstring = start_cmd;
-                wild_tab_index = 0;
-
-                /* if there is no space between the command name and the cursor
-                 * then get completions of the command name
-                 */
-                if(command_line.value.substring(0, command_line.selectionStart).search(/[ \t]/) == -1)
-                {
-                    get_command_completions(cmd);
-                }
-                else // dynamically get completions as specified in the g_commands array
-                {
-                    if (command && command[COMPLETEFUNC])
-                    {
-                        g_completions = command[COMPLETEFUNC].call(this, args);
-                        // Sort the completion list
-                        if (get_pref('wildoptions').match(/\bsort\b/))
-                        {
-                            g_completions.sort(function(a, b) {
-                                if (a[0] < b[0])
-                                    return -1;
-                                else if (a[0] > b[0])
-                                    return 1;
-                                else
-                                    return 0;
-                            });
-                        }
-                    }
-                }
-            }
-
-            /* now we have the g_completions, so lets show them */
-            if (comp_tab_index >= -1)
-            {
-                // we could also return when no completion is found
-                // but we fall through to the cleanup anyway
-                if (g_completions.length == 0)
-                    beep();
-
-                var wim = get_pref('wildmode').split(/,/);
-                var has_list = false;
-                var longest = false;
-                var full = false;
-                var wildtype = wim[wild_tab_index++] || wim[wim.length - 1];
-                if (wildtype == 'list' || wildtype == 'list:full' || wildtype == 'list:longest')
-                    has_list = true;
-                if (wildtype == 'longest' || wildtype == 'list:longest')
-                    longest = true;
-                if (wildtype == 'full' || wildtype == 'list:full')
-                    full = true;
-                // show the list
-                if (has_list)
-                    completion_show_list();
-
-                if (evt.shiftKey)
-                    completion_select_previous_item(has_list, full, longest);
-                else
-                    completion_select_next_item(has_list, full, longest);
-                //command_line.focus(); // workaraound only need for RICHlistbox
-
-
-                if (comp_tab_index == -1 && !longest) // wrapped around matches, reset command line
-                {
-                    if (full && g_completions.length > 1)
-                    {
-                        command_line.value = comp_tab_startstring;
-                        completion_list.selectedIndex = -1;
-                    }
-                }
-                else
-                {
-                    if (longest && g_completions.length > 1)
-                        var compl = get_longest_substring();
-                    if (full)
-                        var compl = g_completions[comp_tab_index][0];
-                    if (g_completions.length == 1)
-                        var compl = g_completions[0][0];
-
-                    if (compl)
-                    {
-                        /* if there is no space between the command name and the cursor
-                         * the completions are for the command name
-                         */
-                        if(command_line.value.substring(0, command_line.selectionStart).search(/[ \t]/) == -1)
-                        {
-                            command_line.value = ":" + (count ? count.toString() : "") + compl;
-                        }
-                        else // completions are for an argument
-                        {
-                            command_line.value = ":" + (count ? count.toString() : "") +
-                                cmd + (special ? "!" : "") + " " + compl;
-                            // Start a new completion in the next iteration. Useful for commands like :source
-                            if (g_completions.length == 1 && !full) // RFC: perhaps the command can indicate whether the completion should be restarted
-                                comp_tab_index = COMPLETION_UNINITIALIZED;
-                        }
-                    }
-                }
-            }
-
-            // prevent tab from moving to the next field
-            evt.preventDefault();
-            evt.stopPropagation();
-
-        }
-        else if (evt.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
-        {
-            if (command_line.value == ":")
-            {
-                evt.preventDefault();
-                focusContent(true, true);
-            }
-            comp_tab_index = COMPLETION_UNINITIALIZED;
-            comp_history_index = -1;
-        }
-        else
-        {
-            // some key hit, check if the cursor is before the : 
-            if (command_line.selectionStart == 0)
-                command_line.selectionStart = 1;
-
-            // and reset the tab completion
-            comp_tab_index = COMPLETION_UNINITIALIZED;
-            comp_history_index = -1;
-
-        }
-    } catch(e) { alert(e); }
-}/*}}}*/
-
-function onCommandBarInput(event)
-{
-    if (command_line.value == "")
-        command_line.value = ":";
-}
-
-function onCommandBarMouseDown(event)
-{
-    if (command_line.value.indexOf(':') != 0)
-    {
-        command_line.blur();
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////
 // focus and mode handling //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
@@ -742,19 +520,25 @@ function focusContent(clear_command_line, clear_statusline)
     {
         g_count = -1; // clear count
 
-        if(clear_command_line)
-        {
-            command_line.value = "";
-            command_line.inputField.setAttribute("style","font-family: monospace;");
-        }
-
-        if(clear_statusline)
-        {
-            completion_list.hidden = true;
-            comp_tab_index = COMPLETION_UNINITIALIZED;
-            comp_history_index = -1;
-            updateStatusbar();
-        }
+//        if(clear_command_line)
+//        {
+//            command_line.value = "";
+//            command_line.inputField.setAttribute("style","font-family: monospace;");
+//
+//            var commandBarPrompt = document.getElementById('vim-commandbar-prompt');
+//            commandBarPrompt.style.visibility = 'collapsed';
+//            commandBarPrompt.value = '';
+//
+//            //vimperator.commandline.clear();
+//        }
+//
+//        if(clear_statusline)
+//        {
+//            completion_list.hidden = true;
+//            comp_tab_index = COMPLETION_UNINITIALIZED;
+//            comp_history_index = -1;
+//            updateStatusbar();
+//        }
 
         var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
             .getService(Components.interfaces.nsIWindowWatcher);
@@ -766,30 +550,9 @@ function focusContent(clear_command_line, clear_statusline)
         
     } catch(e)
     {
-        echoerr(e);
+        vimperator.echoerr(e);
     }
 }
-
-function openVimperatorBar(str)
-{
-    // make sure the input field is not red anymore if we had an echoerr() first
-    command_line.inputField.setAttribute("style","font-family: monospace;");
-
-    if(str == null)
-        str = "";
-
-    if (g_count > 1)
-        command_line.value = ":" + g_count.toString() + str;
-    else
-        command_line.value = ":" + str;
-
-    try {
-        command_line.focus();
-    } catch(e) {
-        echo(e);
-    }
-}
-
 
 function onEscape()
 {
@@ -1012,11 +775,19 @@ function isFormElemFocused()
 var gConsoleService = Components.classes['@mozilla.org/consoleservice;1']
                     .getService(Components.interfaces.nsIConsoleService);
 
+/**
+ * logs any object to the javascript error console
+ * also prints all properties of thie object
+ */
 function logMessage(msg)
 {
     gConsoleService.logStringMessage('vimperator: ' + msg);
 }
 
+/**
+ * logs any object to the javascript error console
+ * also prints all properties of thie object
+ */
 function logObject(object)
 {
     if (typeof object != 'object')
@@ -1178,6 +949,45 @@ function getLinkNodes(doc)
     }
 
     return links;
-}
+}//}}}
 
+//vimperator = new function()
+function Vimperator()
+{
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////// PRIVATE SECTION /////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	var callbacks = new Array();
+
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////// PUBLIC SECTION //////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+    this.ver  = "###VERSION### CVS (created: ###DATE###)";
+    this.commandline = new CommandLine();
+//    this.search = new Search();
+
+    /////////////// callbacks ////////////////////////////
+	// type='[submit|change|cancel|complete]'
+	this.registerCallback = function(type, mode, func)
+	{
+		// TODO: check if callback is already registered
+		callbacks.push([type, mode, func]);
+	}
+	this.triggerCallback = function(type, data)
+	{
+		for (i in callbacks)
+		{
+			[typ, mode, func] = callbacks[i];
+			if (hasMode(mode) && type == typ)
+				return func.call(this, data);
+		}
+		return false;
+	}
+
+this.foo = function () {alert("foo");};
+
+    // just forward these echo commands
+    this.echo = this.commandline.echo;
+    this.echoerr = this.commandline.echoErr;
+}
 // vim: set fdm=marker sw=4 ts=4 et:

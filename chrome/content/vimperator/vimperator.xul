@@ -42,11 +42,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	<script type="application/x-javascript" src="help.js"/>
 	<script type="application/x-javascript" src="vimperator.js"/>
 	<script type="application/x-javascript" src="commands.js"/>
+	<script type="application/x-javascript" src="commandline.js"/>
 	<script type="application/x-javascript" src="settings.js"/>
 	<script type="application/x-javascript" src="completion.js"/>
 	<script type="application/x-javascript" src="bookmarks.js"/>
 	<script type="application/x-javascript" src="hints.js"/>
 	<script type="application/x-javascript" src="file.js"/>
+	<script type="application/x-javascript" src="find.js"/>
 
 	<window id="main-window">
 		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
@@ -63,7 +65,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				<hbox id="vim-statusbar" flex="1" height="10" hidden="false" style="-moz-user-focus:ignore;">
 					<textbox class="plain" id="vim-sb-field-1"  flex="1" crop="right" value="about:blank"
 						readonly="true" style="font-family: monospace; background-color: transparent; -moz-user-focus:ignore;"/>
-					<label   class="plain" id="vim-sb-field-2"  flex="0" crop="right" value="[===>      ]"
+					<label   class="plain" id="vim-sb-field-2"  flex="0" crop="right" value="[===&gt; Loading... &lt;===]"
 						style="font-family: monospace"/>
 					<label   class="plain" id="vim-sb-field-3"  flex="0" crop="right" value=""
 						style="font-family: monospace"/>
@@ -74,22 +76,34 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				</hbox>
 
 				<listbox id="vim-completion" class="plain" rows="1" flex="1" hidden="true"
-					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:normal; overflow:-moz-scrollbars-none;">
+					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:ignore; overflow:-moz-scrollbars-none;">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
 					</listcols>
 				</listbox>
 
-				<textbox class="plain" id="vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
-					onkeypress="onCommandBarKeypress(event);" oninput="onCommandBarInput(event);"
-					onmousedown="onCommandBarMouseDown(event);" style="font-family: monospace"/>
+                <hbox id="vim-commandbar-container" flex="1" hidden="true" style="-moz-user-focus:ignore;">
+					<textbox class="plain" id="vim-commandbar-prompt"  flex="0" crop="right" value="" collapsed="true" size="1"
+						readonly="true" style="font-family: monospace; background-color: transparent; -moz-user-focus:ignore;"/>
+                    <textbox class="plain" id="vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
+                        style="font-family: monospace"/>
+                </hbox>
+                <hbox id="new-vim-commandbar-container" flex="1" hidden="false" style="-moz-user-focus:ignore;">
+					<textbox class="plain" id="new-vim-commandbar-prompt"  flex="0" crop="right" value="" collapsed="true"
+						readonly="true" style="font-family: monospace; background-color:white; -moz-user-focus:ignore;"/>
+                    <textbox class="plain" id="new-vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
+						onkeypress="vimperator.commandline.onEvent(event);"
+						oninput="vimperator.commandline.onEvent(event);"
+                        onblur="vimperator.commandline.onEvent(event);" style="font-family: monospace"/>
+                </hbox>
 			</vbox>
 		</toolbar>
 
 		<keyset id="mainKeyset">
-			<key id="key_open_vimbar" key=":" oncommand="openVimperatorBar();" modifiers=""/>
-			<key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/> 
+           <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', MODE_EX);" modifiers=""/>
+           <!--<key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':');alert('from keyset');" modifiers=""/>-->
+           <key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/>
 
 			<!-- other keys are handled inside vimperator.js event loop -->
 		</keyset>
