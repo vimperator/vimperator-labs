@@ -188,7 +188,7 @@ function help(section, easter)
         // XXX: stylesheet broken here? Have to add it in the vimperator.xul file
         '<link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css">\n'+
         '</head>\n<body><pre style="white-space: -moz-pre-wrap !important;">\n<table class="main"><tr><td>\n' + // should change that to: white-space: pre-wrap; once CSS3 hits firefox
-        '<span class="version">version ' + g_vimperator_version + '</span>\n'+
+        '<span class="version">version ' + vimperator.ver + '</span>\n'+
         header +
         introduction +
         mappings +
@@ -236,6 +236,16 @@ function help(section, easter)
     if (section)
     {
         var element = doc.getElementById(section);
+        if (!element)
+        {
+            var firstChar = section.charAt(0);
+            if (firstChar != ':' && firstChar != "'")
+            {
+                element = doc.getElementById(':' + section);
+                if (!element)
+                    element = doc.getElementById("'" + section + "'");
+            }
+        }
         if (!element)
         {
             vimperator.echoerr("E149: Sorry, no help for " + section);
