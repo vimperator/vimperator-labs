@@ -230,6 +230,21 @@ var g_settings = [/*{{{*/
 		true,
 		null
 	],
+	[
+		["showstatuslinks", "ssli"],
+		["showstatuslinks", "ssli"],
+		"Show the destination of the link under the cursor in the status bar",
+        "Available items:<br/>"+
+        "<ul><li><b>0</b>: Don't show link destination</li><li>" +
+        "        <b>1</b>: Show the link in the status line</li><li>" +
+        "        <b>2</b>: Show the link in the command line</li></ul>",
+		"number",
+		null,
+        function(value) { set_pref("showstatuslinks", value); },
+        function() { return get_pref("showstatuslinks"); },
+		1,
+		null
+	],
     [
         ["showtabline", "stal"],
         ["showtabline", "stal"],

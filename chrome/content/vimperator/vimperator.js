@@ -105,11 +105,20 @@ nsBrowserStatusHandler.prototype =
 
     setOverLink : function(link, b)
     {
-        //updateStatusbar(link);
-        //vimperator.echo(link);
+        var ssli = get_pref("showstatuslinks");
+        if (link && ssli)
+        {
+            if (ssli == 1)
+                updateStatusbar("Link: " + link);
+            else if (ssli == 2)
+                vimperator.echo("Link: " + link);
+        }
             
         if (link == "")
+        {
+            updateStatusbar();
             showMode();
+        }
             
     },
     setJSStatus : function(status)
