@@ -400,13 +400,15 @@ var g_commands = [/*{{{*/
         ["tabo[nly]"],
         "Close all other tabs",
         null,
-        function () {
-            tabs = getBrowser().mTabContainer.childNodes;
-            for (var i = tabs.length - 1; i >= 0; i--) {
-                if (tabs[i] != getBrowser().mCurrentTab)
-                    getBrowser().removeTab(tabs[i]);
-            }
-        },
+        function() { getBrowser().removeAllTabsBut(getBrowser().mCurrentTab); },
+        null
+    ],
+    [
+        ["tabmove", "tabm"],
+        ["tabm[ove] [N]"],
+        "Move the current tab after tab N",
+        "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one.",
+        tab_move,
         null
     ],
     [
@@ -430,7 +432,7 @@ var g_commands = [/*{{{*/
         ["tabl[ast]"],
         "Switch to the last tab",
         null,
-        function(args, count) { tab_go(getBrowser().mTabContainer.childNodes.length); },
+        function(args, count) { tab_go(getBrowser().mTabs.length); },
         null
     ],
     [
@@ -1170,7 +1172,7 @@ function tokenize_ex(string, tag)
     }
 
     // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-    var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?))?$/);
+    var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?)\s*)?$/);
     if (!matches)
         return [null, null, null, null, null];
     matches.shift();
@@ -1655,7 +1657,7 @@ function tab_go(index)
         getBrowser().mTabContainer.advanceSelectedTab(1, true);
     else
     {
-        if (getBrowser().mTabContainer.childNodes.length < index)
+        if (getBrowser().mTabs.length < index)
             beep();
         else
             getBrowser().mTabContainer.selectedIndex = index-1;
@@ -1671,13 +1673,28 @@ function tab_remove(count, focus_left_tab, quit_on_last_tab)
 {
     if (count < 1) count = 1;
 
-    if (quit_on_last_tab >= 1 && getBrowser().mTabContainer.childNodes.length <= count)
+    if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
         quit(quit_on_last_tab == 2);
 
     var tab = getBrowser().mCurrentTab;
     if(focus_left_tab && tab.previousSibling)
         gBrowser.mTabContainer.selectedIndex--;
     getBrowser().removeTab(tab);
+}
+
+function tab_move(position)
+{
+    if (!position.match(/^(\d+|)$/))
+    {
+        vimperator.echoerr("E488: Trailing characters");
+        return;
+    }
+
+    var last = getBrowser().mTabs.length - 1;
+    if (position == "" || position > last)
+        position = last;
+
+    getBrowser().moveTabTo(getBrowser().mCurrentTab, parseInt(position));
 }
 
 function bufshow(filter, in_comp_window)

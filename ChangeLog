@@ -1,6 +1,9 @@
 <pre>
 2007-05-02:
 	* version ???
+	* :tabmove command (by Doug Kearns)
+	* 'showstatuslinks' option to control where/if we show the destination of
+	a hovered link
 	* :version! shows firefox version page
 	* hovered links appear in the command line again, not statusbar
 	* :help now opens in the current tab even for xhtml pages like "about:"
@@ -10,7 +13,7 @@
 	* added :tabonly and :tabrewind and :tablast commands and some futher aliases :tabNext, etc. (by Doug Kearns)
 	* added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
 	* Added keyword support for bookmarks to the :[tab]open commands
-	* many small bug fixes
+	* many small bug fixes and enhancements
 
 2007-05-02:
 	* version 0.4.1
