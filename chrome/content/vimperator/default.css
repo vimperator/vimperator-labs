@@ -31,21 +31,20 @@ tr.separator {
 }
 hr { /* horizontal lines */
 	width: 100%;
-	height: 1;
+	height: 1px;
 	border-style: solid;
 	/*border-color: #6A97D4;*/
 	border-color: white;
 }
 td.tag {
     text-align: right;
-	text-vertical-align: top;
+	vertical-align: top;
 	white-space: -moz-pre-wrap !important;
-    border-spacing: 13px 10px 13px 10px;
+    border-spacing: 13px 10px;
 	border-width: 0px 10px 0px 10px;
 	border-color: blue !important;
 }
 td.tag td {
-    /*width: 100%;*/
     width: 100px;
     padding: 3px 0px 3px 0px;
 }

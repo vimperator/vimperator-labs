@@ -565,3 +565,5 @@ this.len = function() {alert(completions.length);};
 // }
 // PreviewWindow.protoype = new CompletionList;
 // var pw = new PreviewWindow();
+
+// vim: set fdm=marker sw=4 ts=4 et:
