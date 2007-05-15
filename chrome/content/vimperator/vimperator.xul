@@ -38,7 +38,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	xmlns:html="http://www.w3.org/1999/xhtml" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<!-- you may not believe it, but order is really important here -->
 	<script type="application/x-javascript" src="help.js"/>
 	<script type="application/x-javascript" src="vimperator.js"/>
 	<script type="application/x-javascript" src="commands.js"/>
@@ -53,9 +52,22 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	<window id="main-window">
 		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
 			<vbox id="vim-container" flex="1" hidden="false">
-				<listbox id="vim-preview_window" class="plain" rows="10" flex="1" hidden="true"
-						ondblclick="preview_window_select(event);" onclick="preview_window_select(event);" onkeydown="preview_window_select(event);"
-						style="font-family: monospace; -moz-user-focus:ignore; overflow:-moz-scrollbars-none;">
+				<listbox id="vimperator-buffer-window" class="plain" rows="10" flex="1" hidden="true"
+                        onclick=   "vimperator.bufferwindow.onEvent(event);"
+                        ondblclick="vimperator.bufferwindow.onEvent(event);"
+                        onkeydown= "vimperator.bufferwindow.onEvent(event);"
+						style="font-family: monospace; overflow:-moz-scrollbars-none;">
+					<listcols>
+						<listcol flex="1" width="50%"/>
+						<listcol flex="1" width="50%"/>
+					</listcols>
+				</listbox>
+
+				<listbox id="vimperator-preview-window" class="plain" rows="10" flex="1" hidden="true"
+                        onclick=   "vimperator.previewwindow.onEvent(event);"
+                        ondblclick="vimperator.previewwindow.onEvent(event);"
+                        onkeydown= "vimperator.previewwindow.onEvent(event);"
+						style="font-family: monospace; overflow:-moz-scrollbars-none;">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
@@ -102,11 +114,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 		<keyset id="mainKeyset">
            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', MODE_EX);" modifiers=""/>
-           <!--<key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':');alert('from keyset');" modifiers=""/>-->
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="onEscape();"/>
-
-			<!-- other keys are handled inside vimperator.js event loop -->
+           <!-- other keys are handled inside vimperator.js event loop -->
 		</keyset>
 	</window>
-
 </overlay>
+<!-- vim: set et ts=4 sw=4 : -->

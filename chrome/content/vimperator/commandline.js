@@ -1,4 +1,4 @@
-// XXX: remove!
+// XXX: move somehere else!
 function save_history()
 {
     set_pref("comp_history", comp_history.join("\n"));
@@ -52,7 +52,6 @@ function multiliner(line, prev_match, heredoc)
 }
 
 
-
 /*
  * This class is used for prompting of user input and echoing of messages
  *
@@ -67,7 +66,7 @@ function CommandLine ()
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
     const HISTORY_SIZE = 500;
 
-    var completionlist = new CompletionList();
+    var completionlist = new InformationList("vim-completion", { min_items: 2, max_items: 10 });
     var completions = new Array();
 
     var history = new Array();
@@ -77,7 +76,7 @@ function CommandLine ()
     // for the example command "open sometext| othertext" (| is the cursor pos)
     var completion_start_index = 0;  // will be 5 because we want to complete arguments for the :open command
     var completion_prefix = ""       // will be: "open sometext"
-	var completion_postfix = "";     // will be: " othertext"
+        var completion_postfix = "";     // will be: " othertext"
 
     var wild_index = 0;  // keep track how often we press <Tab> in a row
     var completion_index = UNINITIALIZED;
@@ -89,49 +88,49 @@ function CommandLine ()
 
     function setNormalStyle()
     {
-	command_widget.inputField.setAttribute("style","font-family: monospace;");
+        command_widget.inputField.setAttribute("style","font-family: monospace;");
     }
     function setErrorStyle()
     {
-	command_widget.inputField.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
+        command_widget.inputField.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
     }
 
     // Sets the prompt - for example, : or /
     function setPrompt(prompt)
     {
-	if (typeof(prompt) != "string")
-	    prompt = "";
+        if (typeof(prompt) != "string")
+            prompt = "";
 
-	prompt_widget.value = prompt;
-	if (prompt)
-	{
-	    // Initially (in the xul) the prompt is 'collapsed', this makes
-	    // sure it's visible, then we toggle the display which works better
-	    prompt_widget.style.visibility = 'visible';
-	    prompt_widget.style.display = 'inline';
-	    prompt_widget.size = prompt.length;
-	}
-	else
-	{
-	    prompt_widget.style.display = 'none';
-	}
+        prompt_widget.value = prompt;
+        if (prompt)
+        {
+            // Initially (in the xul) the prompt is 'collapsed', this makes
+            // sure it's visible, then we toggle the display which works better
+            prompt_widget.style.visibility = 'visible';
+            prompt_widget.style.display = 'inline';
+            prompt_widget.size = prompt.length;
+        }
+        else
+        {
+            prompt_widget.style.display = 'none';
+        }
     }
 
     // Sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
-	command_widget.value = cmd;
+        command_widget.value = cmd;
     }
 
     function addToHistory(str)
     {
-	// first remove all old history elements which have this string
-	history = history.filter(function(elem) {
-		return elem != str;
-		});
-	// add string to the command line history
-	if (str.length >= 1 && history.push(str) > HISTORY_SIZE)
-	    history.shift();
+        // first remove all old history elements which have this string
+        history = history.filter(function(elem) {
+                return elem != str;
+                });
+        // add string to the command line history
+        if (str.length >= 1 && history.push(str) > HISTORY_SIZE)
+            history.shift();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +139,7 @@ function CommandLine ()
 
     this.getCommand = function()
     {
-	return command_widget.value;
+        return command_widget.value;
     };
 
     /**
@@ -148,422 +147,480 @@ function CommandLine ()
      */
     this.open = function(prompt, cmd, minor_mode)
     {
-	if (!prompt)
-	    prompt = "";
-	if (!cmd)
-	    cmd = "";
-	if (minor_mode)
-	    setCurrentMode(minor_mode);
+        if (!prompt)
+            prompt = "";
+        if (!cmd)
+            cmd = "";
+        if (minor_mode)
+            setCurrentMode(minor_mode);
 
-	setNormalStyle();
-	setPrompt(prompt);
-	setCommand(cmd);
-	history_index = UNINITIALIZED;
-	completion_index = UNINITIALIZED;
-	command_widget.focus();
+        setNormalStyle();
+        setPrompt(prompt);
+        setCommand(cmd);
+        history_index = UNINITIALIZED;
+        completion_index = UNINITIALIZED;
+        command_widget.focus();
     };
 
     this.echo = function(str)
     {
-	setNormalStyle();
-	setPrompt("");
-	setCommand(str);
+        setNormalStyle();
+        setPrompt("");
+        setCommand(str);
     };
 
     this.echoErr = function(str)
     {
-	setErrorStyle();
-	setPrompt("");
-	setCommand(str);
+        setErrorStyle();
+        setPrompt("");
+        setCommand(str);
     };
 
     this.clear = function()
     {
-	setPrompt(" "); // looks faster than an empty string
-	setCommand("");
-	setNormalStyle();
+        setPrompt(" "); // looks faster than an empty string
+        setCommand("");
+        setNormalStyle();
     };
 
 
     this.onEvent = function(event)
     {
-	//var end = false;
-	var command = this.getCommand();
+        //var end = false;
+        var command = this.getCommand();
 
-	if(event.type == "blur")
-	{
-	    // when we do a command_widget.focus() we get a blur event immediately,
-	    // so check if the target is the actualy input field
-	    if (event.target == command_widget.inputField)
-	    {
-		addToHistory(command);
-		completionlist.hide();
-	    }
-	}
-	else if(event.type == "input")
-	{
-	    vimperator.triggerCallback("change", command);
-	}
-	else if(event.type == "keypress")
-	{
-	    var key = keyToString(event);
-	    /* user pressed ENTER to carry out a command */
-	    if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
-	    {
-		//				try {
-		//					[prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
-		//				} catch(e) {
-		//					logObject(e);
-		//					echoerr(e.name + ": " + e.message);
-		//					prev_match = new Array(5);
-		//					heredoc = '';
-		//					return;
-		//				}
-		//				if (!end)
-		//					command_line.value = "";
+        if(event.type == "blur")
+        {
+            // when we do a command_widget.focus() we get a blur event immediately,
+            // so check if the target is the actualy input field
+            if (event.target == command_widget.inputField)
+            {
+                addToHistory(command);
+                completionlist.hide();
+            }
+        }
+        else if(event.type == "input")
+        {
+            vimperator.triggerCallback("change", command);
+        }
+        else if(event.type == "keypress")
+        {
+            var key = keyToString(event);
+            /* user pressed ENTER to carry out a command */
+            if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+            {
+                //              FIXME: move to execute() in commands.js
+                //              try {
+                //                  [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
+                //              } catch(e) {
+                //                  logObject(e);
+                //                  echoerr(e.name + ": " + e.message);
+                //                  prev_match = new Array(5);
+                //                  heredoc = '';
+                //                  return;
+                //              }
+                //              if (!end)
+                //                  command_line.value = "";
 
-		// the command is saved in the blur() handler
-		focusContent();
-		var res = vimperator.triggerCallback("submit", command);
-		return res;
-	    }
-	    /* user pressed ESCAPE to cancel this prompt */
-	    else if (key == "<Esc>" || key == "<C-[>")
-	    {
-		var res = vimperator.triggerCallback("cancel");
-		addToHistory(command);
-		this.clear();
-		focusContent(true, true);
-		return res;
-	    }
+                // the command is saved in the blur() handler
+                focusContent();
+                var res = vimperator.triggerCallback("submit", command);
+                return res;
+            }
+            /* user pressed ESCAPE to cancel this prompt */
+            else if (key == "<Esc>" || key == "<C-[>" || key == "<C-c>")
+            {
+                var res = vimperator.triggerCallback("cancel");
+                addToHistory(command);
+                this.clear();
+                focusContent(true, true);
+                return res;
+            }
 
-	    /* user pressed UP or DOWN arrow to cycle history completion */
-	    else if (key == "<Up>" || key == "<Down>")
-	    {
-		//always reset the tab completion if we use up/down keys
-		completion_index = UNINITIALIZED; 
+            /* user pressed UP or DOWN arrow to cycle history completion */
+            else if (key == "<Up>" || key == "<Down>")
+            {
+                //always reset the tab completion if we use up/down keys
+                completion_index = UNINITIALIZED; 
 
-		/* save 'start' position for iterating through the history */
-		if (history_index == UNINITIALIZED)
-		{
-		    history_index = history.length;
-		    history_start = command;
-		}
+                /* save 'start' position for iterating through the history */
+                if (history_index == UNINITIALIZED)
+                {
+                    history_index = history.length;
+                    history_start = command;
+                }
 
-		while (history_index >= -1 && history_index <= history.length)
-		{
-		    key == "<Up>" ? history_index-- : history_index++;
-		    if (history_index == history.length) // user pressed DOWN when there is no newer history item
-		    {
-			setCommand(history_start);
-			return;
-		    }
-		    // cannot go past history start/end
-		    if (history_index <= -1)
-		    {
-			history_index = 0;
-			beep();
-			break;
-		    }
-		    if (history_index >= history.length + 1)
-		    {
-			history_index = history.length;
-			beep();
-			break;
-		    }
+                while (history_index >= -1 && history_index <= history.length)
+                {
+                    key == "<Up>" ? history_index-- : history_index++;
+                    if (history_index == history.length) // user pressed DOWN when there is no newer history item
+                    {
+                        setCommand(history_start);
+                        return;
+                    }
+                    // cannot go past history start/end
+                    if (history_index <= -1)
+                    {
+                        history_index = 0;
+                        beep();
+                        break;
+                    }
+                    if (history_index >= history.length + 1)
+                    {
+                        history_index = history.length;
+                        beep();
+                        break;
+                    }
 
-		    if (history[history_index].indexOf(history_start) == 0)
-		    {
-			setCommand(history[history_index]);
-			return;
-		    }
-		}
-		beep();
-	    }
+                    if (history[history_index].indexOf(history_start) == 0)
+                    {
+                        setCommand(history[history_index]);
+                        return;
+                    }
+                }
+                beep();
+            }
 
-	    /* user pressed TAB to get completions of a command */
-	    else if (key == "<Tab>" || key == "<S-Tab>")
-	    {
-		//always reset our completion history so up/down keys will start with new values
-		history_index = UNINITIALIZED;
+            /* user pressed TAB to get completions of a command */
+            else if (key == "<Tab>" || key == "<S-Tab>")
+            {
+                //always reset our completion history so up/down keys will start with new values
+                history_index = UNINITIALIZED;
 
-		// we need to build our completion list first
-		if (completion_index == UNINITIALIZED) 
-		{
-		    // FIXME: completions.clear();
-		    completion_start_index = 0;
+                // we need to build our completion list first
+                if (completion_index == UNINITIALIZED) 
+                {
+                    completion_start_index = 0;
 
-		    completion_index = -1;
-		    wild_index = 0;
+                    completion_index = -1;
+                    wild_index = 0;
 
-		    completion_prefix = command.substring(0, command_widget.selectionStart);
-		    completion_postfix = command.substring(command_widget.selectionStart);
-		    var res = vimperator.triggerCallback("complete", completion_prefix);
-		    if (res)
-			[completion_start_index, completions] = res;
+                    completion_prefix = command.substring(0, command_widget.selectionStart);
+                    completion_postfix = command.substring(command_widget.selectionStart);
+                    var res = vimperator.triggerCallback("complete", completion_prefix);
+                    if (res)
+                        [completion_start_index, completions] = res;
 
-		    // Sort the completion list
-		    if (get_pref('wildoptions').match(/\bsort\b/))
-		    {
-			completions.sort(function(a, b) {
-			    if (a[0] < b[0])
-				return -1;
-			    else if (a[0] > b[0])
-				return 1;
-			    else
-				return 0;
-			});
-		    }
-		}
-		// we could also return when no completion is found
-		// but we fall through to the cleanup anyway
-		if (completions.length == 0)
-		{
-		    beep();
-		    // prevent tab from moving to the next field
-		    event.preventDefault();
-		    event.stopPropagation();
-		    return;
-		}
+                    // Sort the completion list
+                    if (get_pref('wildoptions').match(/\bsort\b/))
+                    {
+                        completions.sort(function(a, b) {
+                                if (a[0] < b[0])
+                                    return -1;
+                                else if (a[0] > b[0])
+                                    return 1;
+                                else
+                                    return 0;
+                        });
+                    }
+                }
 
-		var wim = get_pref('wildmode').split(/,/);
-		var has_list = false;
-		var longest = false;
-		var full = false;
-		var wildtype = wim[wild_index++] || wim[wim.length - 1];
-		if (wildtype == 'list' || wildtype == 'list:full' || wildtype == 'list:longest')
-		    has_list = true;
-		if (wildtype == 'longest' || wildtype == 'list:longest')
-		    longest = true;
-		else if (wildtype == 'full' || wildtype == 'list:full')
-		    full = true;
+                if (completions.length == 0)
+                {
+                    beep();
+                    // prevent tab from moving to the next field
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                }
 
-		// show the list
-		if (has_list)
-		    completionlist.show(completions);
+                var wim = get_pref('wildmode').split(/,/);
+                var has_list = false;
+                var longest = false;
+                var full = false;
+                var wildtype = wim[wild_index++] || wim[wim.length - 1];
+                if (wildtype == 'list' || wildtype == 'list:full' || wildtype == 'list:longest')
+                    has_list = true;
+                if (wildtype == 'longest' || wildtype == 'list:longest')
+                    longest = true;
+                else if (wildtype == 'full' || wildtype == 'list:full')
+                    full = true;
 
-		if (full)
-		{
-		    if (event.shiftKey)
-		    {
-			completion_index--;
-			if(completion_index < -1)
-			    completion_index = completions.length -1;
-		    }
-		    else
-		    {
-			completion_index++;
-			if(completion_index >= completions.length)
-			    completion_index = -1;
-		    }
+                // show the list
+                if (has_list)
+                {
+                    if (completion_index < 0)
+                        completionlist.show(completions);
+                    else
+                        completionlist.show();
+                }
 
-		    showStatusbarMessage("match " + (completion_index+1).toString() + " of " + completions.length.toString(), STATUSFIELD_PROGRESS);
-		    // if the list is hidden, this function does nothing
-		    completionlist.selectItem(completion_index);
-		}
+                if (full)
+                {
+                    if (event.shiftKey)
+                    {
+                        completion_index--;
+                        if(completion_index < -1)
+                            completion_index = completions.length -1;
+                    }
+                    else
+                    {
+                        completion_index++;
+                        if(completion_index >= completions.length)
+                            completion_index = -1;
+                    }
+
+                    showStatusbarMessage("match " + (completion_index+1).toString() + " of " + completions.length.toString(), STATUSFIELD_PROGRESS);
+                    // if the list is hidden, this function does nothing
+                    completionlist.selectItem(completion_index);
+                }
 
 
-		if (completion_index == -1 && !longest) // wrapped around matches, reset command line
-		{
-		    if (full && completions.length > 1)
-		    {
-			setCommand(completion_prefix + completion_postfix);
-			//completion_list.selectedIndex = -1;
-		    }
-		}
-		else
-		{
-		    if (longest && completions.length > 1)
-			var compl = get_longest_substring();
-		    else if (full)
-			var compl = completions[completion_index][0];
-		    else if (completions.length == 1)
-			var compl = completions[0][0];
-		    if (compl)
-		    {
-			setCommand(command.substring(0, completion_start_index) + compl + completion_postfix);
-			command_widget.selectionStart = command_widget.selectionEnd = completion_start_index + compl.length;
+                if (completion_index == -1 && !longest) // wrapped around matches, reset command line
+                {
+                    if (full && completions.length > 1)
+                    {
+                        setCommand(completion_prefix + completion_postfix);
+                    }
+                }
+                else
+                {
+                    if (longest && completions.length > 1)
+                        var compl = get_longest_substring();
+                    else if (full)
+                        var compl = completions[completion_index][0];
+                    else if (completions.length == 1)
+                        var compl = completions[0][0];
+                    if (compl)
+                    {
+                        setCommand(command.substring(0, completion_start_index) + compl + completion_postfix);
+                        command_widget.selectionStart = command_widget.selectionEnd = completion_start_index + compl.length;
 
-			// Start a new completion in the next iteration. Useful for commands like :source
-			// RFC: perhaps the command can indicate whether the completion should be restarted
-			// Needed for :source to grab another set of completions after a file/directory has been filled out
-			if (completions.length == 1 && !full)
-			    completion_index = UNINITIALIZED;
-		    }
-		}
+                        // Start a new completion in the next iteration. Useful for commands like :source
+                        // RFC: perhaps the command can indicate whether the completion should be restarted
+                        // Needed for :source to grab another set of completions after a file/directory has been filled out
+                        if (completions.length == 1 && !full)
+                            completion_index = UNINITIALIZED;
+                    }
+                }
 
-		// prevent tab from moving to the next field
-		event.preventDefault();
-		event.stopPropagation();
-	    }
-	    else if (key == "<BS>")
-	    {
-		// reset the tab completion
-		completion_index = history_index = UNINITIALIZED;
+                // prevent tab from moving to the next field
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            else if (key == "<BS>")
+            {
+                // reset the tab completion
+                completion_index = history_index = UNINITIALIZED;
 
-		// and blur the command line if there is no text left
-		if(command.length == 0)
-		{
-		    this.clear();
-		    focusContent();
-		}
-	    }
-	    else // any other key
-	    {
-		// reset the tab completion
-		completion_index = history_index = UNINITIALIZED;
-	    }
-	}
+                // and blur the command line if there is no text left
+                if(command.length == 0)
+                {
+                    this.clear();
+                    focusContent();
+                }
+            }
+            else // any other key
+            {
+                // reset the tab completion
+                completion_index = history_index = UNINITIALIZED;
+            }
+        }
     }
     logMessage("CommandLine initialized.");
 }
 
-function CompletionList()
+/**
+ * The list which is used for the completion box, the preview window and the buffer preview window
+ *
+ * @param id: the id of the the XUL widget which we want to fill
+ * @param options: an optional hash which modifies the behavior of the list
+ */
+function InformationList(id, options)
 {
-	const MAX_ITEMS = 10;
-	const CONTEXT_LINES = 3;
+    const CONTEXT_LINES = 3;
+    var max_items = 10; 
+    var min_items = 1; 
+    var incremental_fill = true; // make display faster, but does not show scrollbar
 
-	var completions = null; // a reference to the Array of completions
-    var completion_widget = document.getElementById("vim-completion");
-	var list_offset = 0; // how many items is the displayed list shifted from the internal tab index
-	var list_index = 0;  // list_offset + list_index = completions[item]
+    if(options)
+    {
+        if (options.max_items) max_items = options.max_items;
+        if (options.min_items) min_items = options.min_items;
+        if (options.incremental_fill) incremental_fill = options.incremental_fill;
+    }
 
-	// add a single completion item to the list
-	function addItem(completion_item, at_beginning)
-	{
-		var item  = document.createElement("listitem");
-		var cell1 = document.createElement("listcell");
-		var cell2 = document.createElement("listcell");
+    var widget = document.getElementById(id);
+    var completions = null; // a reference to the Array of completions
+    var list_offset = 0; // how many items is the displayed list shifted from the internal tab index
+    var list_index = 0;  // list_offset + list_index = completions[item]
 
-		cell1.setAttribute("label", completion_item[0]);
-		cell2.setAttribute("label", completion_item[1]);
-		cell2.setAttribute("style", "color:green; font-family: sans");
+    // add a single completion item to the list
+    function addItem(completion_item, at_beginning)
+    {
+        var item  = document.createElement("listitem");
+        var cell1 = document.createElement("listcell");
+        var cell2 = document.createElement("listcell");
 
-		item.appendChild(cell1);
-		item.appendChild(cell2);
-		if (at_beginning == true)
-		{
-			var items = completion_widget.getElementsByTagName("listitem");
-			if (items.length > 0)
-				completion_widget.insertBefore(item, items[0]);
-			else
-				completion_widget.appendChild(item);
-		}
-		else
-			completion_widget.appendChild(item);
-	}
+        cell1.setAttribute("label", completion_item[0]);
+        cell2.setAttribute("label", completion_item[1]);
+        cell2.setAttribute("style", "color:green; font-family: sans");
 
-	/**
-	 * uses the entries in completions to fill the listbox
-	 * @param startindex: start at this index and show MAX_ITEMS
-	 * @returns the number of items
-	 */
-	function fill(startindex)
-	{
-		var complength = completions.length;
+        item.appendChild(cell1);
+        item.appendChild(cell2);
+        if (at_beginning == true)
+        {
+            var items = widget.getElementsByTagName("listitem");
+            if (items.length > 0)
+                widget.insertBefore(item, items[0]);
+            else
+                widget.appendChild(item);
+        }
+        else
+            widget.appendChild(item);
+    }
 
-		// remove all old items first
-		var items = completion_widget.getElementsByTagName("listitem");
-		while (items.length > 0) { completion_widget.removeChild(items[0]);}
+    /**
+     * uses the entries in completions to fill the listbox
+     * 
+     * @param startindex: start at this index and show max_items
+     * @returns the number of items
+     */
+    function fill(startindex)
+    {
+        var complength = completions.length;
 
-		// find start index
-		if (startindex + MAX_ITEMS > complength)
-			startindex = complength - MAX_ITEMS;
-		if (startindex < 0)
-			startindex = 0;
+        // remove all old items first
+        var items = widget.getElementsByTagName("listitem");
+        while (items.length > 0) { widget.removeChild(items[0]);}
 
-		list_offset = startindex;
-		list_index = -1;
+        if(!incremental_fill)
+        {
+            for (i in completions)
+                addItem(completions[i], false);
+            return complength;
+        }
 
-		for(i = startindex; i < complength && i < startindex + MAX_ITEMS; i++)
-		{
-			addItem(completions[i], false);
-		}
+        // find start index
+        if (startindex + max_items > complength)
+            startindex = complength - max_items;
+        if (startindex < 0)
+            startindex = 0;
 
-		return (i-startindex);
-	}
+        list_offset = startindex;
+        list_index = -1;
 
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////// PUBLIC SECTION //////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
-this.len = function() {alert(completions.length);};
-	this.show = function(compl)
-	{
-		completions = compl;
-		fill(0);
+        for(i = startindex; i < complength && i < startindex + max_items; i++)
+        {
+            addItem(completions[i], false);
+        }
 
-		var length = completions.length;
-		if (length > MAX_ITEMS)
-			length = MAX_ITEMS;
-		if (length > 1)
-		{
-			completion_widget.setAttribute("rows", length.toString());
-			completion_widget.hidden = false;
-			return true;
-		}
-		else
-		{
-			completion_widget.hidden = true;
-			return false;
-		}
-	}
+        return (i-startindex);
+    }
 
-	this.hide = function()
-	{
-		completion_widget.hidden = true;
-	}
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Show the completion list window
+     *
+     * @param compl: if null, only show the list with current entries, otherwise
+     *          use entries of 'compl' to fill the list.
+     *          Required format: [["left", "right"], ["another"], ["completion"]]
+     */
+    this.show = function(compl)
+    {
+        //max_items = get_pref("previewheight");
 
-	/**
-	 * select index, refill list if necessary
-	 */
- 	this.selectItem = function(index)
- 	{
-		if(completion_widget.hidden)
-			return;
+        if (compl)
+        {
+            completions = compl;
+            fill(0);
+        }
 
-		// find start index
-		var new_offset = 0;
-		if (index >= list_offset + MAX_ITEMS - CONTEXT_LINES)
-			new_offset = index - MAX_ITEMS + CONTEXT_LINES + 1;
-		else if (index <= list_offset + CONTEXT_LINES)
-			new_offset = index - CONTEXT_LINES;
-		else
-			new_offset = list_offset;
+        var length = completions.length;
+        if (length > max_items)
+            length = max_items;
+        if (length >= min_items)
+        {
+            widget.setAttribute("rows", length.toString());
+            widget.hidden = false;
+            return true;
+        }
+        else
+        {
+            widget.hidden = true;
+            return false;
+        }
+    }
 
-		if (new_offset + MAX_ITEMS > completions.length)
-			new_offset = completions.length - MAX_ITEMS;
-		if (new_offset < 0)
-			new_offset = 0;
+    this.hide = function()
+    {
+        widget.hidden = true;
+    }
 
-		// for speed reason: just remove old item, and add the new one at the end of the list
-		var items = completion_widget.getElementsByTagName("listitem");
-		if (new_offset == list_offset + 1)
-		{
-			completion_widget.removeChild(items[0]);
-			addItem(completions[index + CONTEXT_LINES], false);
-		}
-		else if (new_offset == list_offset - 1)
-		{
-            completion_widget.removeChild(items[items.length-1]);
-			addItem(completions[index - CONTEXT_LINES], true);
-		}
-		else if (new_offset == list_offset)
-		{
-			// do nothing
-		}
-		else
-			fill(new_offset);
+    this.visible = function()
+    {
+        return !widget.hidden;
+    }
 
-		list_offset = new_offset;
-		completion_widget.selectedIndex = index - list_offset;
-	}
+    /**
+     * select index, refill list if necessary
+     */
+    this.selectItem = function(index)
+    {
+        if(widget.hidden)
+            return;
+
+        if(!incremental_fill)
+        {
+            widget.selectedIndex = index;
+            return;
+        }
+
+        // find start index
+        var new_offset = 0;
+        if (index >= list_offset + max_items - CONTEXT_LINES)
+            new_offset = index - max_items + CONTEXT_LINES + 1;
+        else if (index <= list_offset + CONTEXT_LINES)
+            new_offset = index - CONTEXT_LINES;
+        else
+            new_offset = list_offset;
+
+        if (new_offset + max_items > completions.length)
+            new_offset = completions.length - max_items;
+        if (new_offset < 0)
+            new_offset = 0;
+
+        // for speed reason: just remove old item, and add the new one at the end of the list
+        var items = widget.getElementsByTagName("listitem");
+        if (new_offset == list_offset + 1)
+        {
+            widget.removeChild(items[0]);
+            addItem(completions[index + CONTEXT_LINES], false);
+        }
+        else if (new_offset == list_offset - 1)
+        {
+            widget.removeChild(items[items.length-1]);
+            addItem(completions[index - CONTEXT_LINES], true);
+        }
+        else if (new_offset == list_offset)
+        {
+            // do nothing
+        }
+        else
+            fill(new_offset);
+
+        list_offset = new_offset;
+        widget.selectedIndex = index - list_offset;
+    }
+
+    this.onEvent = function(event)
+    {
+        var listcells = document.getElementsByTagName("listcell");
+        // 2 columns for now, use the first column
+        var index = (widget.selectedIndex * 2) + 0;
+        var val = listcells[index].getAttribute("label");
+        if (val && event.button == 0 && event.type == "dblclick") // left double click
+            openURLs(val);
+        else if (val && event.button == 1) // middle click
+            openURLsInNewTab(val);
+        else
+            return false;
+    }
+
+    logMessage("InformationList initialized for widget id: " + id);
 }
-
-// function PreviewWindow()
-// {
-//     var completion_widget = document.getElementById("vim-preview_window");
-// }
-// PreviewWindow.protoype = new CompletionList;
-// var pw = new PreviewWindow();
 
 // vim: set fdm=marker sw=4 ts=4 et:

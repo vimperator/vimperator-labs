@@ -68,9 +68,8 @@ var prev_match = new Array(5);
 var heredoc = '';
 
 // handles to our gui elements
-var preview_window = null;
+//var preview_window = null;
 var status_line = null;
-var completion_list = null;
 var command_line = null;
 
 // our status bar fields
@@ -151,7 +150,7 @@ nsBrowserStatusHandler.prototype =
             {
                 updateStatusbar();
                 // also reset the buffer list, since the url titles are valid here
-                buffer_preview_update();
+                showBufferList(true);
             }
             return 0;
         },
@@ -209,20 +208,25 @@ function init()
 {
     // init the main object
     vimperator = new Vimperator;
+    
+    // these inner classes are only created here, because outside the init()
+    // function, the chrome:// is not ready
     Vimperator.prototype.qm = new QM;
     Vimperator.prototype.search = new Search;
+    Vimperator.prototype.previewwindow = new InformationList("vimperator-preview-window", { incremental_fill: false, max_items: 10 });
+    Vimperator.prototype.bufferwindow = new InformationList("vimperator-buffer-window", { incremental_fill: false, max_items: 10 });
 
     // XXX: move elsewhere
     vimperator.registerCallback("submit", MODE_EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", MODE_EX, function(str) { return exTabCompletion(str); } );
 
 
-    preview_window = document.getElementById("vim-preview_window");
+    //preview_window = document.getElementById("vim-preview_window");
     status_line = document.getElementById("vim-statusbar");
-    completion_list = document.getElementById("vim-completion");
+    //completion_list = document.getElementById("vim-completion");
     command_line = document.getElementById("vim-commandbar");
-    if (!completion_list || !command_line)
-        alert("GUI not correctly created! Strange things will happen (until I find out, how to exit this script by code)");
+//    if (!completion_list || !command_line)
+//        alert("GUI not correctly created! Strange things will happen (until I find out, how to exit this script by code)");
 
     // Setup our status handler - from browser.js
     window.XULBrowserWindow = new nsBrowserStatusHandler();
@@ -280,8 +284,6 @@ function init()
     set_firefox_pref("browser.startup.page", 3); // start with saved session
 
 
-    logMessage("Initialized");
-
     /*
      * Finally, read a ~/.vimperatorrc
      * Make sourcing asynchronous, otherwise commands that open new tabs won't work
@@ -290,6 +292,8 @@ function init()
         source("~/.vimperatorrc", true);
         logMessage("~/.vimperatorrc sourced");
     }, 50);
+
+    logMessage("Vimperator fully initialized");
 }
 
 function unload()
@@ -637,10 +641,10 @@ function addEventListeners()
     {
         var browser = event.target.linkedBrowser;
         browser.removeProgressListener(buffer_changed_listener);
-        buffer_preview_update();
+        updateBufferList();
     }, false);
-    container.addEventListener("TabSelect", buffer_preview_update, false);
-    container.addEventListener("TabMove", buffer_preview_update, false);
+    container.addEventListener("TabSelect", updateBufferList, false);
+    container.addEventListener("TabMove",   updateBufferList, false);
 
 }
 
@@ -672,7 +676,7 @@ var buffer_changed_listener =
 
    // This fires when the location bar changes i.e load event is confirmed
    // or when the user switches tabs
-    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange');*/buffer_preview_update(); return 0; },
+    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange');*/ setTimeout( updateBufferList, 250); return 0; },
     onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress){ return 0; },
     onStatusChange: function() {return 0;},
     onSecurityChange: function() {return 0;},
@@ -993,7 +997,7 @@ function Vimperator()
 		return false;
 	}
 
-this.foo = function () {alert("foo");};
+    this.foo = function () {alert("foo");};
 
     // just forward these echo commands
     this.echo = this.commandline.echo;

@@ -127,7 +127,7 @@ var g_commands = [/*{{{*/
         ["buffers"],
         "Show a list of all buffers",
         "If the list is already shown, close the preview window.",
-        buffer_preview_toggle,
+        toggleBufferList,
         null
     ],
     [
@@ -284,7 +284,7 @@ var g_commands = [/*{{{*/
         ["pc[lose]"],
         "Close preview window on bottom of screen",
         null,
-        function() { preview_window.hidden = true; },
+        function() { vimperator.previewwindow.hide(); },
         null
     ],
     [
@@ -353,7 +353,7 @@ var g_commands = [/*{{{*/
     ],
     [
         ["source", "so"],
-        [":so[urce][!] {file}"],
+        ["so[urce][!] {file}"],
         "Read Ex commands from {file}",
         "The .vimperatorrc file in your home directory is always sourced at start up.<br/>"+
         "~ is supported as a shortcut for the $HOME directory.<br/>" +
@@ -526,14 +526,14 @@ var g_mappings = [/*{{{*/
         ["b {number}"],
         "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
-        function (args) { bufshow("", true); vimperator.commandline.open(":", "buffer ", MODE_EX); }  
+        function (args) { /*bufshow("", true); */vimperator.commandline.open(":", "buffer ", MODE_EX); }  
     ],
     [ 
         ["B"],
         ["B"],
         "Toggle buffer list",
         "Toggles the display of the buffer list which shows all opened tabs,",
-        buffer_preview_toggle
+        toggleBufferList
     ],
     [ 
         ["d"],
@@ -1574,8 +1574,7 @@ function bmshow(filter, fullmode)
     else
     {
         var items = get_bookmark_completions(filter);
-        preview_window_fill(items);
-        preview_window_show();
+        vimperator.previewwindow.show(items);
     }
 }
 function hsshow(filter, fullmode)
@@ -1585,8 +1584,7 @@ function hsshow(filter, fullmode)
     else
     {
         var items = get_history_completions(filter);
-        preview_window_fill(items);
-        preview_window_show();
+        vimperator.previewwindow.show(items);
     }
 }
 
@@ -1697,39 +1695,6 @@ function tab_move(position)
     getBrowser().moveTabTo(getBrowser().mCurrentTab, parseInt(position));
 }
 
-function bufshow(filter, in_comp_window)
-{
-    if (in_comp_window) // fill the completion list
-    {
-        // FIXME
-        // g_completions = get_buffer_completions(filter);
-        // completion_fill_list(0);
-        // completion_show_list();
-    }
-    else // in the preview window
-    {
-        if(g_bufshow == true)
-        {
-            setTimeout(function ()
-                {
-                    var items = get_buffer_completions(filter);
-                    preview_window_fill(items);
-                    preview_window_show();
-                    g_bufshow = true;
-                    preview_window.selectItem(preview_window.getItemAtIndex(gBrowser.mTabContainer.selectedIndex));
-                }, 100);
-        }
-        else
-        {
-            var items = get_buffer_completions(filter);
-            preview_window_fill(items);
-            preview_window_show();
-            g_bufshow = true;
-            preview_window.selectItem(preview_window.getItemAtIndex(gBrowser.mTabContainer.selectedIndex));
-        }
-    }
-}
-
 function buffer_switch(string)
 {
     var match;
@@ -1744,27 +1709,27 @@ function buffer_switch(string)
 }
 
 //toggles the buffer preview window
-function buffer_preview_toggle()
+function toggleBufferList()
 {
-    if(g_bufshow == true)
-    {
-        preview_window.hidden = true;
-        g_bufshow = false;
-    }
+    if (vimperator.bufferwindow.visible())
+        vimperator.bufferwindow.hide();
     else
     {
-        bufshow("", false);
-        g_bufshow = true;
+        var items = get_buffer_completions("");
+        vimperator.bufferwindow.show(items);
+        vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
     }
 }
-
-//updates the buffer preview in place
-function buffer_preview_update(event)
+// updates the buffer preview in place only if list is visible
+function updateBufferList()
 {
-    if(g_bufshow == true)
-        bufshow("", false);
-}
+    if (!vimperator.bufferwindow.visible())
+        return false;
 
+    var items = get_buffer_completions("");
+    vimperator.bufferwindow.show(items);
+    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+}
 
 ////////////////////////////////////////////////////////////////////////
 // scrolling ////////////////////////////////////////////////////// {{{1

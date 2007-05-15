@@ -234,7 +234,8 @@ var g_settings = [/*{{{*/
 		["showstatuslinks", "ssli"],
 		["showstatuslinks", "ssli"],
 		"Show the destination of the link under the cursor in the status bar",
-        "Available items:<br/>"+
+        "Also links which are focused by keyboard commands like <code class=\"mapping\">&lt;Tab&gt;</code> are shown. "+
+        "Possible values:<br/>"+
         "<ul><li><b>0</b>: Don't show link destination</li><li>" +
         "        <b>1</b>: Show the link in the status line</li><li>" +
         "        <b>2</b>: Show the link in the command line</li></ul>",
@@ -249,7 +250,7 @@ var g_settings = [/*{{{*/
         ["showtabline", "stal"],
         ["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "Available items:<br/>"+
+        "Possible values:<br/>"+
         "<ul><li><b>0</b>: Never show tab bar</li><li>"+
         "        <b>1</b>: Show tab bar only if more than one tab is open</li><li>"+
         "        <b>2</b>: Always show tab bar</li></ul>"+

@@ -15,14 +15,6 @@ var history_loaded = false;
 // array of our bookmark keywords
 var g_keywords = [];
 
-// variables for the tab completion and command history:
-// -1: filled, but no selection made
-// >= 0: index of current item in the g_completions array
-const COMPLETION_UNINITIALIZED = -2; // if we need to build the completion array first
-const COMPLETION_MAXITEMS = 10;
-const COMPLETION_CONTEXTLINES = 3;
-const COMMAND_LINE_HISTORY_SIZE = 500;
-
 // 2 dimensional: 1st element: what to complete
 //                2nd element: help description
 var g_completions = new Array(); 
@@ -518,7 +510,6 @@ function get_buffer_completions(filter)/*{{{*/
 }/*}}}*/
 
 
-
 // return [startindex, [[itemtext, itemhelp],...]]
 function exTabCompletion(str)
 {
@@ -553,57 +544,4 @@ function exTabCompletion(str)
 	return [start, completions];
 }
 
-///////// PREVIEW WINDOW //////////////////////
-
-/* uses the entries in completions to fill the listbox */
-function preview_window_fill(completions)/*{{{*/
-{
-    // remove all old items first
-    var items = preview_window.getElementsByTagName("listitem");
-    while (items.length > 0) { preview_window.removeChild(items[0]);}
-
-    for(i=0; i<completions.length; i++)
-    {
-        var item  = document.createElement("listitem");
-        var cell1 = document.createElement("listcell");
-        var cell2 = document.createElement("listcell");
-
-        cell1.setAttribute("label", completions[i][0]);
-        cell2.setAttribute("label", completions[i][1]);
-        //cell2.setAttribute("style", "color:green; font-family: sans; text-align:right");
-        cell2.setAttribute("style", "color:green; font-family: sans;");
-
-        item.appendChild(cell1);
-        item.appendChild(cell2);
-        preview_window.appendChild(item);
-    }
-}/*}}}*/
-
-function preview_window_select(event)/*{{{*/
-{
-    var listcell = document.getElementsByTagName("listcell");
-    // 2 columns for now, use the first column
-    var index = (preview_window.selectedIndex * 2) + 0;
-    var val = listcell[index].getAttribute("label");
-    if (val && event.button == 0 && event.type == "dblclick") // left double click
-        openURLs(val);
-    else if (val && event.button == 1) // middle click
-        openURLsInNewTab(val);
-    else
-        return false;
-}/*}}}*/
-
-function preview_window_show()/*{{{*/
-{
-    var items = preview_window.getElementsByTagName("listitem").length;
-    var height = get_pref("previewheight");
-    if (items > height)
-        items = height;
-    if (items < 3) // minimum of 3 entries, drop that constraint?
-        items = 3;
-
-    preview_window.setAttribute("rows", items.toString());
-    preview_window.hidden = false;
-    g_bufshow = false;
-}/*}}}*/
 // vim: set fdm=marker sw=4 ts=4 et:
