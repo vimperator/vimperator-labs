@@ -26,8 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-
-// all our objects
+// The only global object, a handler to the main Vimperator object
 var vimperator = null;
 
 // major modes - FIXME: major cleanup needed
@@ -54,14 +53,6 @@ var popup_allowed_events; // need to change and reset this firefox pref
 
 var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want to type 'gg')
 var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
-var g_bufshow = false;   // keeps track if the preview window shows current buffers ('B')
-
-// handlers for vimperator triggered events, such as typing in the command
-// line. See triggerVimperatorEvent and registerVimperatorEventHandler
-//var g_vimperator_event_handlers = new Array();
-
-// handles wildmode tab index
-//var wild_tab_index = 0;
 
 // handles multi-line commands
 var prev_match = new Array(5);
@@ -69,7 +60,7 @@ var heredoc = '';
 
 // handles to our gui elements
 //var preview_window = null;
-var status_line = null;
+//var status_line = null;
 var command_line = null;
 
 // our status bar fields
@@ -108,52 +99,41 @@ nsBrowserStatusHandler.prototype =
         if (link && ssli)
         {
             if (ssli == 1)
-                updateStatusbar("Link: " + link);
+                vimperator.statusline.updateUrl("Link: " + link);
             else if (ssli == 2)
                 vimperator.echo("Link: " + link);
         }
             
         if (link == "")
         {
-            updateStatusbar();
+            vimperator.statusline.updateUrl();
             showMode();
         }
-            
     },
-    setJSStatus : function(status)
-    {
-        // echo("setJSStatus");
-        // this.updateStatusField(status);
-    },
-    setJSDefaultStatus : function(status)
-    {
-        //  echo("setJSDefaultStatus");
-        // this.updateStatusField(status);
-    },
-    setDefaultStatus : function(status)
-    {
-        // echo("setDefaultStatus");
-        // this.updateStatusField(status);
-    },
+    setJSStatus : function(status) { },
+    setJSDefaultStatus : function(status) { },
+    setDefaultStatus : function(status) { },
 
 
     onStateChange:function(aProgress,aRequest,aFlag,aStatus)
+    {
+        const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+        //const nsIChannel = Components.interfaces.nsIChannel;
+        if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
         {
-        //alert("state change");
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            const nsIChannel = Components.interfaces.nsIChannel;
-            if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
-            {
-                var toLoadUrl = aRequest.URI.spec;
-            }
-            else if (aFlag & nsIWebProgressListener.STATE_STOP)
-            {
-                updateStatusbar();
-                // also reset the buffer list, since the url titles are valid here
-                showBufferList(true);
-            }
-            return 0;
-        },
+            vimperator.statusline.updateProgress(0);
+        }
+        // this is called when all loading was done (or when the user canceled the load
+        else if (aFlag & nsIWebProgressListener.STATE_STOP)
+        {
+            //alert('stop: ' + aRequest.URI.spec);
+            vimperator.statusline.updateUrl(aRequest.URI.spec);
+            vimperator.statusline.updateProgress("");
+            // also reset the buffer list, since the url titles are valid here
+            showBufferList(true);
+        }
+        return 0;
+    },
     onLocationChange:function (aWebProgress, aRequest, aLocation)
         {
             // firefox 3.0 doesn't seem to have this function anymore
@@ -161,37 +141,43 @@ nsBrowserStatusHandler.prototype =
                 UpdateBackForwardButtons();
 
             var url = aLocation.spec;
+
+            // also update the original firefox location bar
             if (gURLBar)
-                gURLBar.value = url; // also update the original firefox location bar
+                gURLBar.value = url;
 
             // onLocationChange is also called when switching/deleting tabs
             if (hah.currentMode() != HINT_MODE_ALWAYS)
                 hah.disableHahMode();
+            
+            vimperator.statusline.updateUrl(url);
+            vimperator.statusline.updateProgress();
+            setTimeout(function() {vimperator.statusline.updateBufferPosition();}, 100); // if not delayed we get the wrong position of the old buffer
 
-            // updating history cache is not done here but in
-            // the 'pageshow' event handler, because at this point I don't
-            // have access to the url title
-            //alert('locchange2');
+            // updating history cache is not done here but in the 'pageshow' event
+            // handler, because at this point I don't have access to the url title
+            return 0;
         },
     onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
         {
-            showStatusbarMessage(createProgressBar(aCurTotalProgress/aMaxTotalProgress), STATUSFIELD_PROGRESS);
+            vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
             return 0;
         },
     onStatusChange:function (aWebProgress, aRequest, aStatus, aMessage)
         {
-            showStatusbarMessage(aMessage, STATUSFIELD_URL);
+            //alert('change');
+            vimperator.statusline.updateUrl(aMessage);
             return 0;
         },
     onSecurityChange:function (aWebProgress, aRequest, aState)
         {
             const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
             if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                setStatusbarColor("transparent");
+                vimperator.statusline.setColor("transparent");
             else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                setStatusbarColor("orange");
+                vimperator.statusline.setColor("orange");
             else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-                setStatusbarColor("yellow");
+                vimperator.statusline.setColor("yellow");
 
             return 0;
         }
@@ -199,6 +185,7 @@ nsBrowserStatusHandler.prototype =
 
 };/*}}}*/
 
+// called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load", init, false);
 
 ////////////////////////////////////////////////////////////////////////
@@ -211,31 +198,138 @@ function init()
     
     // these inner classes are only created here, because outside the init()
     // function, the chrome:// is not ready
-    Vimperator.prototype.qm = new QM;
-    Vimperator.prototype.search = new Search;
+    Vimperator.prototype.qm            = new QM;
+    Vimperator.prototype.search        = new Search;
     Vimperator.prototype.previewwindow = new InformationList("vimperator-preview-window", { incremental_fill: false, max_items: 10 });
-    Vimperator.prototype.bufferwindow = new InformationList("vimperator-buffer-window", { incremental_fill: false, max_items: 10 });
+    Vimperator.prototype.bufferwindow  = new InformationList("vimperator-buffer-window", { incremental_fill: false, max_items: 10 });
+    Vimperator.prototype.statusline    = new StatusLine();
+    Vimperator.prototype.tabs          = new Tabs();
 
     // XXX: move elsewhere
     vimperator.registerCallback("submit", MODE_EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", MODE_EX, function(str) { return exTabCompletion(str); } );
 
-
-    //preview_window = document.getElementById("vim-preview_window");
-    status_line = document.getElementById("vim-statusbar");
-    //completion_list = document.getElementById("vim-completion");
+    //status_line = document.getElementById("vim-statusbar");
     command_line = document.getElementById("vim-commandbar");
-//    if (!completion_list || !command_line)
-//        alert("GUI not correctly created! Strange things will happen (until I find out, how to exit this script by code)");
 
-    // Setup our status handler - from browser.js
+    // Setup our main status handler - from browser.js
     window.XULBrowserWindow = new nsBrowserStatusHandler();
+//    window.XULBrowserWindow = new function()
+//    {
+//        this.init = function(){alert("init");};
+//        QueryInterface: function(aIID)
+//        {
+//            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+//                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+//                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
+//                    aIID.equals(Components.interfaces.nsISupports))
+//                return this;
+//            throw Components.results.NS_NOINTERFACE;
+//        },
+//
+//        /* functions needed for functioning */
+//        init:               function() {},
+//        setJSStatus:        function(status) {},
+//        setJSDefaultStatus: function(status) {},
+//        setDefaultStatus:   function(status) {},
+//        onLinkIconAvailable:function(a) {},
+//        onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) { return 0; },
+//
+//        setOverLink: function(link, b)
+//        {
+//            var ssli = get_pref("showstatuslinks");
+//            if (link && ssli)
+//            {
+//                if (ssli == 1)
+//                    vimperator.statusline.updateUrl("Link: " + link);
+//                else if (ssli == 2)
+//                    vimperator.echo("Link: " + link);
+//            }
+//                
+//            if (link == "")
+//            {
+//                vimperator.statusline.updateUrl();
+//                showMode();
+//            }
+//        },
+//
+//
+//        // called when a page load is requested or finished/stopped
+//        onStateChange:function(aProgress,aRequest,aFlag,aStatus)
+//        {
+//            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+//            //const nsIChannel = Components.interfaces.nsIChannel;
+//            if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
+//            {
+//                vimperator.statusline.updateProgress(0);
+//            }
+//            // this is called when all loading was done (or when the user canceled the load
+//            else if (aFlag & nsIWebProgressListener.STATE_STOP)
+//            {
+//                vimperator.statusline.updateUrl(aRequest.URI.spec);
+//                vimperator.statusline.updateProgress("");
+//                // also reset the buffer list, since the url titles are valid here
+//                showBufferList(true);
+//            }
+//            return 0;
+//        },
+//        // onLocationChange is also called when switching/deleting tabs
+//        onLocationChange: function (aWebProgress, aRequest, aLocation)
+//        {
+//            // firefox 3.0 doesn't seem to have this function anymore
+//            if (typeof UpdateBackForwardButtons == "function")
+//                UpdateBackForwardButtons();
+//
+//            var url = aLocation.spec;
+//
+//            // also update the original firefox location bar
+//            if (gURLBar)
+//                gURLBar.value = url;
+//
+//            if (hah.currentMode() != HINT_MODE_ALWAYS)
+//                hah.disableHahMode();
+//            
+//            vimperator.statusline.updateUrl(url);
+//            vimperator.statusline.updateProgress();
+//            setTimeout(function() {vimperator.statusline.updateBufferPosition();}, 100); // if not delayed we get the wrong position of the old buffer
+//
+//            // updating history cache is not done here but in the 'pageshow' event
+//            // handler, because at this point I don't have access to the url title
+//            return 0;
+//        },
+//        onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
+//        {
+//            vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
+//            return 0;
+//        },
+//        onSecurityChange:function (aWebProgress, aRequest, aState)
+//        {
+//            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+//            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+//                vimperator.statusline.setColor("transparent");
+//            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+//                vimperator.statusline.setColor("orange");
+//            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+//                vimperator.statusline.setColor("yellow");
+//
+//            return 0;
+//        }
+//    }
+
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIWebNavigation)
         .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
         .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
+
+
+
+
+
+
+
+
 
 
     // this function adds all our required listeners to react on events
@@ -299,9 +393,9 @@ function init()
 function unload()
 {
     /*** save our preferences ***/
-    // save_history(); FIXME
+    vimperator.commandline.saveHistory();
 
-    // reset firefox pref
+    // reset some modified firefox prefs
     if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
             == popup_allowed_events + " keypress")
         set_firefox_pref('dom.popup_allowed_events', popup_allowed_events);
@@ -318,6 +412,17 @@ function onVimperatorKeypress(event)/*{{{*/
      //alert(key);
     if (key == null)
          return false;
+
+    if(event.type == "keydown")
+    {
+        logObject(event);
+        logObject(event.target);
+        return;//alert(event.target.id);
+    }
+    // sometimes the non-content area has focus, making our keys not work
+//    if (event.target.id == "main-window")
+//        alert("focusContent();");
+
 
     // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
     // also fixes key navigation in menus, etc.
@@ -370,6 +475,7 @@ function onVimperatorKeypress(event)/*{{{*/
 
     // if Hit-a-hint mode is on, special handling of keys is required
     // g_hint_mappings is used
+    // FIXME: total mess
     if (hah.hintsVisible())
     {
         // never propagate this key to firefox, when hints are visible
@@ -388,14 +494,14 @@ function onVimperatorKeypress(event)/*{{{*/
                     {
                         hah.disableHahMode();
                         g_inputbuffer = "";
-                        updateStatusbar();
+                        vimperator.statusline.updateInputBuffer("");
                         return false;
                     }
                     else
                     {
-                        // make sure that YOU update the statusbar message yourself
+                        // FIXME: make sure that YOU update the statusbar message yourself
                         // first in g_hint_mappings when in this mode!
-                        updateStatusbar();
+                        vimperator.statusline.updateInputBuffer(g_inputbuffer);
                         return false;
                     }
                 }
@@ -408,7 +514,7 @@ function onVimperatorKeypress(event)/*{{{*/
             beep();
             hah.disableHahMode();
             g_inputbuffer = "";
-            updateStatusbar();
+            vimperator.statusline.updateInputBuffer(g_inputbuffer);
             return true;
         }
 
@@ -443,7 +549,7 @@ function onVimperatorKeypress(event)/*{{{*/
             g_inputbuffer = "";
         }
 
-        updateStatusbar();
+        vimperator.statusline.updateInputBuffer(g_inputbuffer);
         return true;
     }
 
@@ -458,7 +564,7 @@ function onVimperatorKeypress(event)/*{{{*/
         {
             g_inputbuffer = "";
             beep();
-            updateStatusbar();
+            vimperator.statusline.updateInputBuffer(g_inputbuffer);
             return true;
         }
         else
@@ -467,7 +573,7 @@ function onVimperatorKeypress(event)/*{{{*/
             if (g_inputbuffer != "" || key != "0") 
             {
                 g_inputbuffer += key;
-                updateStatusbar();
+                vimperator.statusline.updateInputBuffer(g_inputbuffer);
                 return true;
             }
             // else let the flow continue, and check if 0 is a mapping
@@ -494,7 +600,7 @@ function onVimperatorKeypress(event)/*{{{*/
 
                 // command executed, reset input buffer
                 g_inputbuffer = "";
-                updateStatusbar();
+                vimperator.statusline.updateInputBuffer(g_inputbuffer);
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
@@ -519,7 +625,7 @@ function onVimperatorKeypress(event)/*{{{*/
         beep();
     }
 
-    updateStatusbar();
+    vimperator.statusline.updateInputBuffer(g_inputbuffer);
     return false;
 }/*}}}*/
 
@@ -550,7 +656,6 @@ function focusContent(clear_command_line, clear_statusline)
 //            completion_list.hidden = true;
 //            comp_tab_index = COMPLETION_UNINITIALIZED;
 //            comp_history_index = -1;
-//            updateStatusbar();
 //        }
 
         var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
@@ -574,6 +679,7 @@ function onEscape()
         setCurrentMode(MODE_NORMAL);
         hah.disableHahMode();
         focusContent(true, true);
+        vimperator.statusline.updateUrl();
     }
 }
 
@@ -582,8 +688,9 @@ function onEscape()
 ////////////////////////////////////////////////////////////////////////
 function addEventListeners()
 {
-    window.addEventListener("unload", unload, false);
+    window.addEventListener("unload",   unload, false);
     window.addEventListener("keypress", onVimperatorKeypress, true);
+//    window.addEventListener("keydown",  onVimperatorKeypress, true);
 
     // this handler is for middle click only in the content
     //window.addEventListener("mousedown", onVimperatorKeypress, true);
@@ -591,9 +698,9 @@ function addEventListeners()
     //document.getElementById("content").onclick = function(event) { alert("foo"); };
 
     // these 4 events require >=firefox-2.0 beta1
-    window.addEventListener("TabMove",   updateStatusbar, false);
-    window.addEventListener("TabOpen",   updateStatusbar, false);
-    window.addEventListener("TabClose",  updateStatusbar, false);
+    window.addEventListener("TabMove",   vimperator.statusline.updateTabCount, false);
+    window.addEventListener("TabOpen",   vimperator.statusline.updateTabCount, false);
+    window.addEventListener("TabClose",  vimperator.statusline.updateTabCount, false);
     window.addEventListener("TabSelect", function(event)
     { 
         if (hah.currentMode == HINT_MODE_ALWAYS)
@@ -601,7 +708,7 @@ function addEventListeners()
             hah.disableHahMode();
             hah.enableHahMode(HINT_MODE_ALWAYS);
         }
-        updateStatusbar();
+        vimperator.statusline.updateTabCount();
     }, false);
 
     // update our history cache when a new page is shown
@@ -627,7 +734,7 @@ function addEventListeners()
     // called when the window is scrolled.
     window.onscroll = function (event)
     {
-        showStatusbarMessage(createCursorPositionString(), STATUSFIELD_CURSOR_POSITION);
+        vimperator.statusline.updateBufferPosition();
     };
 
     // adds listeners to buffer actions.
@@ -673,9 +780,6 @@ var buffer_changed_listener =
         return 0;
     },
 
-
-   // This fires when the location bar changes i.e load event is confirmed
-   // or when the user switches tabs
     onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange');*/ setTimeout( updateBufferList, 250); return 0; },
     onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress){ return 0; },
     onStatusChange: function() {return 0;},
@@ -684,79 +788,6 @@ var buffer_changed_listener =
 }
 
 
-////////////////////////////////////////////////////////////////////////
-// statusbar/progressbar ////////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-/* the statusbar is currently divided into 5 fields, you can set 
- * each one independently */
-function showStatusbarMessage(msg, field)
-{
-    var bar = document.getElementById("vim-sb-field-" + field);
-    if (bar)
-        bar.value = msg;
-}
-
-function setStatusbarColor(color)
-{
-    var bar = document.getElementById("vim-statusbar");
-    bar.setAttribute("style", "background-color: " + color);
-}
-
-function updateStatusbar(message)
-{
-    var buffers =   "[" + (gBrowser.tabContainer.selectedIndex + 1).toString() + "/" +
-        gBrowser.tabContainer.childNodes.length.toString() + "]";
-
-    showStatusbarMessage(message || getCurrentLocation(), STATUSFIELD_URL);
-    showStatusbarMessage(" " + g_inputbuffer + " ", STATUSFIELD_INPUTBUFFER);
-    showStatusbarMessage("", STATUSFIELD_PROGRESS);
-    showStatusbarMessage(buffers, STATUSFIELD_BUFFERS);
-
-    // required to postpone it a little, otherwise we could get the wrong cursor
-    // position when switching tabs
-    setTimeout(function() {
-            showStatusbarMessage(createCursorPositionString(), STATUSFIELD_CURSOR_POSITION);
-    } , 10);
-}
-
-/* aProgress is a float between 0 and 1 */
-function createProgressBar(aProgress)
-{
-    /* the progress field */
-    var progress;
-    if (aProgress <= 0)
-        progress = "[ Loading...         ]";
-    else if (aProgress >= 1)
-        progress = "[====================]";
-    else
-    {
-        progress = /*(aProgress*100).round().toString() + "% */"[";
-        done = Math.floor(aProgress * 20);
-        for (i=0; i < done; i++)
-            progress = progress + "=";
-        progress = progress + ">";
-        for (i=19; i > done; i--)
-            progress = progress + " ";
-        progress = progress + "]";
-    }
-    return progress;
-}
-
-function createCursorPositionString()
-{
-    var win = document.commandDispatcher.focusedWindow;
-    //var x = win.scrollMaxX == 0 ? 100 : Math.round(win.scrollX / win.scrollMaxX * 100);
-    var y = win.scrollMaxY == 0 ? -1 : Math.round(win.scrollY / win.scrollMaxY * 100);
-
-    var percent;
-    if (y < 0) percent = "All";
-    else if (y == 0) percent = "Top";
-    else if (y < 10) percent = " " + y.toString() + "%";
-    else if (y >= 100) percent = "Bot";
-    else percent = y.toString() + "%";
-
-    return(" " + percent);
-}
 
 ////////////////////////////////////////////////////////////////////////
 // text input functions /////////////////////////////////////////// {{{1
@@ -1002,5 +1033,20 @@ function Vimperator()
     // just forward these echo commands
     this.echo = this.commandline.echo;
     this.echoerr = this.commandline.echoErr;
+}
+
+// provides functions for working with tabs
+function Tabs()
+{
+    // @returns the index of the currently selected tab starting with 0
+    this.index = function()
+    {
+        return getBrowser().tabContainer.selectedIndex;
+
+    }
+    this.count = function()
+    {
+        return getBrowser().tabContainer.childNodes.length;
+    }
 }
 // vim: set fdm=marker sw=4 ts=4 et:

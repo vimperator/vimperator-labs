@@ -254,7 +254,8 @@ function Search()
 
     // Called when the search dialog is asked for. Sets up everything necessary
     // for this round of searching
-    this.openSearchDialog = function() {
+    this.openSearchDialog = function()
+    {
         // Get a reference to the focused window if necessary
         if (this.gWin == null) this.gWin = document.commandDispatcher.focusedWindow;
 
@@ -419,7 +420,8 @@ function Search()
     }
     
     // Finds text in a page
-    this.find = function(str, dir, pt) {
+    this.find = function(str, dir, pt)
+    {
         var norecurse = arguments[3];
 
         var matchRange;
@@ -451,13 +453,8 @@ function Search()
         }
     }
 
-//logObject(vimperator);
-    logMessage("Search initialized.");
+    logMessage("Search initialized");
 }
-
-//searcher = new searcher();
-//vimperator.registerCallback("submit", MODE_SEARCH, function(command) { /*vimperator.*/alert(command); } );
-//vimperator.registerCallback("change", MODE_SEARCH, function(command) { /*vimperator.*/alert(command); } );
 
 // @todo nicer way to register commands?
 g_commands.push(

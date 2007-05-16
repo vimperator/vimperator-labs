@@ -1471,7 +1471,7 @@ function focusNextFrame()
 ////////////////////////////////////////////////////////////////////////
 function getCurrentLocation()
 {
-    return content.document.location.href;
+    return window.content.document.location.href;
 }
 
 /* returns the current title or null */
@@ -1660,8 +1660,6 @@ function tab_go(index)
         else
             getBrowser().mTabContainer.selectedIndex = index-1;
     }
-
-    updateStatusbar();
 }
 
 /* quit_on_last_tab = 1: quit without saving session
@@ -2244,7 +2242,7 @@ function removeMode(mode)
 function showMode()
 {
     // XXX: remove
-    showStatusbarMessage(g_current_mode, STATUSFIELD_INPUTBUFFER);
+    // showStatusbarMessage(g_current_mode, STATUSFIELD_INPUTBUFFER);
 
     if (!get_pref("showmode") || !g_modemessages[g_current_mode])
         return;

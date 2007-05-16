@@ -1,14 +1,14 @@
 // XXX: move somehere else!
-function save_history()
-{
-    set_pref("comp_history", comp_history.join("\n"));
-}
-
-function load_history()
-{
-    var hist = get_pref("comp_history", "");
-    comp_history = hist.split("\n");
-}
+// function save_history()
+// {
+//     set_pref("comp_history", comp_history.join("\n"));
+// }
+// 
+// function load_history()
+// {
+//     var hist = get_pref("comp_history", "");
+//     comp_history = hist.split("\n");
+// }
 
 function multiliner(line, prev_match, heredoc)
 {
@@ -86,6 +86,10 @@ function CommandLine ()
     // The command bar which contains the current command
     var command_widget = document.getElementById('new-vim-commandbar');
 
+    // load the history
+    var hist = get_pref("commandline_history", "");
+    history = hist.split("\n");
+
     function setNormalStyle()
     {
         command_widget.inputField.setAttribute("style","font-family: monospace;");
@@ -127,7 +131,7 @@ function CommandLine ()
         // first remove all old history elements which have this string
         history = history.filter(function(elem) {
                 return elem != str;
-                });
+        });
         // add string to the command line history
         if (str.length >= 1 && history.push(str) > HISTORY_SIZE)
             history.shift();
@@ -197,6 +201,7 @@ function CommandLine ()
             {
                 addToHistory(command);
                 completionlist.hide();
+                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
             }
         }
         else if(event.type == "input")
@@ -222,7 +227,7 @@ function CommandLine ()
                 //              if (!end)
                 //                  command_line.value = "";
 
-                // the command is saved in the blur() handler
+                // NOTE: the command is saved to the history in the blur() handler
                 focusContent();
                 var res = vimperator.triggerCallback("submit", command);
                 return res;
@@ -360,7 +365,7 @@ function CommandLine ()
                             completion_index = -1;
                     }
 
-                    showStatusbarMessage("match " + (completion_index+1).toString() + " of " + completions.length.toString(), STATUSFIELD_PROGRESS);
+                    vimperator.statusline.updateProgress("match " + (completion_index+1).toString() + " of " + completions.length.toString());
                     // if the list is hidden, this function does nothing
                     completionlist.selectItem(completion_index);
                 }
@@ -416,6 +421,12 @@ function CommandLine ()
                 completion_index = history_index = UNINITIALIZED;
             }
         }
+    }
+
+    // it would be better if we had a destructor in javascript ...
+    this.saveHistory = function()
+    {
+        set_pref("commandline_history", history.join("\n"));
     }
     logMessage("CommandLine initialized.");
 }
@@ -621,6 +632,112 @@ function InformationList(id, options)
     }
 
     logMessage("InformationList initialized for widget id: " + id);
+}
+
+function StatusLine()
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // our status bar fields
+    var statusline_widget     = document.getElementById("vimperator-statusline");
+    var url_widget            = document.getElementById("vimperator-statusline-field-url");
+    var inputbuffer_widget    = document.getElementById("vimperator-statusline-field-inputbuffer");
+    var progress_widget       = document.getElementById("vimperator-statusline-field-progress");
+    var tabcount_widget       = document.getElementById("vimperator-statusline-field-tabcount");
+    var bufferposition_widget = document.getElementById("vimperator-statusline-field-bufferposition");
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // use names for the color or "transparent" to remove color information
+    this.setColor = function(color)
+    {
+        if (!color)
+            color = "transparent";
+        statusline_widget.setAttribute("style", "background-color: " + color);
+    };
+
+    this.updateUrl = function(url)
+    {
+        if (!url || typeof(url) != "string")
+            url = getCurrentLocation();
+
+        url_widget.value = url;
+    };
+
+    this.updateInputBuffer = function(buffer)
+    {
+        if (!buffer || typeof(buffer) != "string")
+            buffer = "";
+
+        inputbuffer_widget.value = buffer;
+    };
+
+    this.updateProgress = function(progress)
+    {
+        if (!progress)
+            progress = "";
+
+        if (typeof(progress) == "string")
+            progress_widget.value = progress;
+        else if (typeof(progress) == "number")
+        {
+            var progress_str = "";
+            if (progress <= 0)
+                progress_str = "[ Loading...         ]";
+            else if (progress < 1)
+            {
+                progress_str = "[";
+                var done = Math.floor(progress * 20);
+                for (i=0; i < done; i++)
+                    progress_str += "=";
+
+                progress_str += ">";
+
+                for (i=19; i > done; i--)
+                    progress_str += " ";
+
+                progress_str += "]";
+            }
+            progress_widget.value = progress_str;
+        }
+    };
+
+    // you can omit either of the 2 arguments
+    this.updateTabCount = function(cur_index, total_tabs)
+    {
+        if(!cur_index || typeof(cur_index != "number"))
+            cur_index = vimperator.tabs.index() + 1;
+        if(!total_tabs || typeof(cur_index != "number"))
+            total_tabs = vimperator.tabs.count();
+
+        //var tabcount_str = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
+        tabcount_widget.value = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
+        //tabcount_widget.value = tabcount_str;
+    };
+
+    // percent is given between 0 and 1
+    this.updateBufferPosition = function(percent)
+    {
+        if(!percent || typeof(percent) != "number")
+        {
+            var win = document.commandDispatcher.focusedWindow;
+            percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
+        }
+
+        var bufferpostion_str = "";
+        percent = Math.round(percent*100);
+        if (percent < 0)          bufferposition_str = "All";
+        else if (percent == 0)    bufferposition_str = "Top";
+        else if (percent < 10)    bufferposition_str = " " + percent.toString() + "%";
+        else if (percent >= 100)  bufferposition_str = "Bot";
+        else                      bufferposition_str = percent.toString() + "%";
+
+        bufferposition_widget.value = bufferposition_str;
+    };
+
+    logMessage("StatusLine initialized");
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:
