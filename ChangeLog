@@ -1,6 +1,9 @@
 <pre>
 2007-05-02:
 	* version ???
+	* Vimperator now sets the window title, so it's "vimperator.mozdev.org -
+	  Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
+	  Use :set title=... to change it back (help from Hannes Rist)
 	* :tabmove command (by Doug Kearns)
 	* 'showstatuslinks' option to control where/if we show the destination of
 	a hovered link

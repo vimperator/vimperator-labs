@@ -11,4 +11,5 @@ Patches:
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
   * Doug Kearns (vimperator.vim, :tabonly etc. commands)
+  * Hannes Rist (:set title support)
 </pre>

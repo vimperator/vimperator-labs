@@ -1478,11 +1478,6 @@ function getCurrentLocation()
 function getCurrentTitle()
 {
     return window.content.document.title;
-//    var titles = window.content.document.getElementsByTagName('title');
-//    if (titles.length >= 1)
-//        return titles[0];
-//    else
-//        return null;
 }
 
 

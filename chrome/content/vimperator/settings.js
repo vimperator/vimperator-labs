@@ -262,6 +262,20 @@ var g_settings = [/*{{{*/
         2,
         function (value) { if (value>=0 && value <=2) return true; else return false; }
     ],
+	[
+		["titlestring"],
+		["titlestring"],
+		"Change the title of the browser window",
+		"Vimperator changes the browser title from \"Title of webpage - Mozilla Firefox\" to "+
+        "\"Title of webpage - Vimperator\".<br/>If you don't like that, you can restore it with: "+
+        "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
+		"string",
+		null,
+		function(value) { set_pref("title", value); set_title(value); },
+		function() { return get_pref("title"); }, 
+		"Vimperator",
+		null
+	],
     [
         ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
@@ -484,6 +498,15 @@ function set_showtabline(value)
         getBrowser().mStrip.collapsed = false;
         getBrowser().mStrip.hidden = false;
     }
+}
+
+function set_title(value)
+{
+    if (!value || typeof(value) != "string")
+        value = get_pref("titlestring");
+
+	document.getElementById("main-window").setAttribute("titlemodifier", value);
+    document.title = window.content.document.title + " - " + value; // not perfect fix, but good enough
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

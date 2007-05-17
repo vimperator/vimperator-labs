@@ -47,7 +47,6 @@ const MODE_COMMAND_LINE    = 4096;
 //const MODE_BROWSER
 //const MODE_CARET
 
-
 var g_current_mode = MODE_NORMAL;
 var popup_allowed_events; // need to change and reset this firefox pref
 
@@ -59,17 +58,7 @@ var prev_match = new Array(5);
 var heredoc = '';
 
 // handles to our gui elements
-//var preview_window = null;
-//var status_line = null;
 var command_line = null;
-
-// our status bar fields
-const STATUSFIELD_URL = 1;
-const STATUSFIELD_INPUTBUFFER = 2;
-const STATUSFIELD_PROGRESS = 3;
-const STATUSFIELD_BUFFERS = 4;
-const STATUSFIELD_CURSOR_POSITION = 5;
-
 
 /* this function reacts to status bar and url changes which are sent from
    the mozilla core */
@@ -152,7 +141,7 @@ nsBrowserStatusHandler.prototype =
             
             vimperator.statusline.updateUrl(url);
             vimperator.statusline.updateProgress();
-            setTimeout(function() {vimperator.statusline.updateBufferPosition();}, 100); // if not delayed we get the wrong position of the old buffer
+            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); // if not delayed we get the wrong position of the old buffer
 
             // updating history cache is not done here but in the 'pageshow' event
             // handler, because at this point I don't have access to the url title
@@ -344,6 +333,7 @@ function init()
 
     set_showtabline(get_pref("showtabline"));
     set_guioptions(get_pref("guioptions"));
+    set_title();
 
     // work around firefox popup blocker
     popup_allowed_events = get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
@@ -727,7 +717,6 @@ function addEventListeners()
             }
             g_history.unshift([url, title]);
         }
-        // alert('pageshow');
     }
     , null);
 
@@ -752,7 +741,6 @@ function addEventListeners()
     }, false);
     container.addEventListener("TabSelect", updateBufferList, false);
     container.addEventListener("TabMove",   updateBufferList, false);
-
 }
 
 var buffer_changed_listener =

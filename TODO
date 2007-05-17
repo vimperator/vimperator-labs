@@ -58,5 +58,8 @@ RANDOM IDEAS:
 * 16:06:04       bartman| maxauthority: feature idea: what if :n and :N searched the 
                         page and if they found a unique <a href=...>.*next.*</a> or <a 
                         href=...>.*prev.*<a/> they would follow that link?
+* 20:12:26         skaar| so, I think get_history_completion effectively will put the oldest 
+                        history entry at the top of the completion list
+  20:12:48         skaar| since you're counting down in the for loop
 
 </pre>
