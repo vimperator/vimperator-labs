@@ -1,27 +1,5 @@
-/*
- * COMPLETION HANDLING
- *
- * also responsible for command history, url history and bookmark handling
- */
-
-// array of all our bookmarks
-// var g_bookmarks = [];
-// var bookmarks_loaded = false;
-
-// array of all our history items
-// var g_history = [];
-// var history_loaded = false;
-
-// array of our bookmark keywords
-// var g_keywords = [];
-
-// 2 dimensional: 1st element: what to complete
-//                2nd element: help description
-var g_completions = new Array(); 
-
 // The completion substrings, used for showing the longest common match
 var g_substrings = [];
-
 
 /*
  * returns the longest common substring
@@ -129,7 +107,7 @@ function build_longest_starting_substring(list, filter)/*{{{*/
  */
 function get_url_completions(filter, complete)/*{{{*/
 {
-    g_completions = [];
+    var completions = new Array();
     g_substrings = [];
 
     var cpt = complete || get_pref("complete");
@@ -137,16 +115,16 @@ function get_url_completions(filter, complete)/*{{{*/
     for (var i = 0; i < cpt.length; i++)
     {
         if (cpt[i] == 's')
-            g_completions = g_completions.concat(get_search_completions(filter));
+            completions = completions.concat(get_search_completions(filter));
         else if (cpt[i] == 'b')
-            g_completions = g_completions.concat(get_bookmark_completions(filter));
+            completions = completions.concat(get_bookmark_completions(filter));
         else if (cpt[i] == 'h')
-            g_completions = g_completions.concat(get_history_completions(filter));
+            completions = completions.concat(get_history_completions(filter));
         else if (cpt[i] == 'f')
-            g_completions = g_completions.concat(get_file_completions(filter, true));
+            completions = completions.concat(get_file_completions(filter, true));
     }
 
-    return g_completions;
+    return completions;
 }/*}}}*/
 
 /* discard all entries in the 'urls' array, which don't match 'filter */
@@ -236,7 +214,7 @@ function get_bookmark_completions(filter)
 
 function get_file_completions(filter)/*{{{*/
 {
-    g_completions = [];
+    //var completions = new Array();
     /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
     if (!arguments[1])
         g_substrings = [];
@@ -271,7 +249,7 @@ function get_file_completions(filter)/*{{{*/
         return [[path], ''];
     });
 
-    return g_completions = build_longest_starting_substring(mapped, new_filter);
+    return build_longest_starting_substring(mapped, new_filter);
 }/*}}}*/
 
 function get_help_completions(filter)/*{{{*/
@@ -304,12 +282,12 @@ function get_help_completions(filter)/*{{{*/
 
 function get_command_completions(filter)/*{{{*/
 {
-    g_completions = [];
+    //g_completions = [];
     g_substrings = [];
-    if (!filter) return g_completions = g_commands.map(function($_) {
+    if (!filter) return g_commands.map(function($_) {
         return [$_[COMMANDS][0], $_[SHORTHELP]];
     });
-    return g_completions = build_longest_starting_substring(g_commands, filter);
+    return build_longest_starting_substring(g_commands, filter);
 }/*}}}*/
 
 function get_settings_completions(filter, unfiltered)/*{{{*/
