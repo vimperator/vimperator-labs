@@ -1346,7 +1346,7 @@ function stringToURLs(str)
             if (matches && matches[3] && matches[3].length >= 1)
                 text = matches[3];
 
-            var search_url = bookmarks.getSearchURL(text, alias);        
+            var search_url = vimperator.bookmarks.getSearchURL(text, alias);        
             if (search_url && search_url.length >= 1)
             {
                 urls[url] = search_url;
@@ -1354,7 +1354,7 @@ function stringToURLs(str)
             }
             else // the first word was not a search engine, search for the whole string in the default engine
             {
-                search_url = bookmarks.getSearchURL(urls[url], null);
+                search_url = vimperator.bookmarks.getSearchURL(urls[url], null);
                 if (search_url && search_url.length >= 1)
                 {
                     urls[url] = search_url;
@@ -1515,11 +1515,11 @@ function bmadd(str)
         if(res.title == null) // title could still be null
             res.title = res.url;
 
-        addBookmark(res.title, res.url);
-        echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
+        vimperator.bookmarks.add(res.title, res.url);
+        vimperator.echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
     }
     else
-        echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");
+        vimperator.echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");
 }
 
 function bmdel(str)
@@ -1530,11 +1530,11 @@ function bmdel(str)
         if(res.url == null)
             res.url = getCurrentLocation();
 
-        var del = deleteBookmark(res.url);
-        echo(del + " bookmark(s) with url `" + res.url + "' deleted");
+        var del = vimperator.bookmarks.remove(res.url);
+        vimperator.echo(del + " bookmark(s) with url `" + res.url + "' deleted");
     }
     else
-        echo("Usage: :bmdel <url>");
+        vimperator.echo("Usage: :bmdel <url>");
 }
 
 function bmshow(filter, fullmode)
@@ -1543,7 +1543,7 @@ function bmshow(filter, fullmode)
         openURLsInNewTab("chrome://browser/content/bookmarks/bookmarksPanel.xul", true);
     else
     {
-        var items = get_bookmark_completions(filter);
+        var items = vimperator.bookmarks.get(filter);
         vimperator.previewwindow.show(items);
     }
 }
@@ -1553,7 +1553,7 @@ function hsshow(filter, fullmode)
         openURLsInNewTab("chrome://browser/content/history/history-panel.xul", true);
     else
     {
-        var items = get_history_completions(filter);
+        var items = vimperator.history.get(filter);
         vimperator.previewwindow.show(items);
     }
 }

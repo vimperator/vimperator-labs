@@ -167,20 +167,22 @@ window.addEventListener("load", init, false);
 ////////////////////////////////////////////////////////////////////////
 // init/uninit //////////////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
+//function moo() { return ["moo", "x"];};
+// return [startindex, [[itemtext, itemhelp],...]]
+
 function init()
 {
     // init the main object
     vimperator = new Vimperator;
     
-    // these inner classes are only created here, because outside the init()
+    // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
+    Vimperator.prototype.bookmarks     = new Bookmarks;
+    Vimperator.prototype.history       = new History;
     Vimperator.prototype.qm            = new QM;
-//    alert("ini3");
 //    Vimperator.prototype.commandline   = new CommandLine;
     Vimperator.prototype.search        = new Search;
-//   alert("ini4");
     Vimperator.prototype.previewwindow = new InformationList("vimperator-preview-window", { incremental_fill: false, max_items: 10 });
-//    alert("ini5");
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-buffer-window", { incremental_fill: false, max_items: 10 });
     Vimperator.prototype.statusline    = new StatusLine();
     Vimperator.prototype.tabs          = new Tabs();
@@ -188,6 +190,7 @@ function init()
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
+    //vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return moo();; } );
 
     //status_line = document.getElementById("vim-statusbar");
     command_line = document.getElementById("vim-commandbar");
@@ -337,10 +340,6 @@ function init()
     gURLBar.blur();
     vimperator.focusContent();
 
-    // everything important is done, register a preload handler to speed up first time history cache
-    if(get_pref("preload"))
-        setTimeout(function() { get_url_completions(""); } , 100);
-
     // firefox preferences which we need to be changed to work well with vimperator
     set_firefox_pref("browser.startup.page", 3); // start with saved session
 
@@ -421,13 +420,8 @@ function addEventListeners()
         if (!event.persisted) // only if not bypassing cache
         {
             var url = getCurrentLocation();
-            var title = document.title;
-            for(var i=0; i<g_history.length; i++)
-            {
-                if(g_history[i][0] == url)
-                    return;
-            }
-            g_history.unshift([url, title]);
+            var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
+            vimperator.history.add(url, title);
         }
     }
     , null);

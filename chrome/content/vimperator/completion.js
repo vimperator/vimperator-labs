@@ -5,15 +5,15 @@
  */
 
 // array of all our bookmarks
-var g_bookmarks = [];
-var bookmarks_loaded = false;
+// var g_bookmarks = [];
+// var bookmarks_loaded = false;
 
 // array of all our history items
-var g_history = [];
-var history_loaded = false;
+// var g_history = [];
+// var history_loaded = false;
 
 // array of our bookmark keywords
-var g_keywords = [];
+// var g_keywords = [];
 
 // 2 dimensional: 1st element: what to complete
 //                2nd element: help description
@@ -211,9 +211,7 @@ function filter_url_array(urls, filter)/*{{{*/
 
 function get_search_completions(filter)/*{{{*/
 {
-    //var engines = bookmarks.getSearchEngines();//.concat(bookmarks.getKeywords());
-    //var engines = bokmarks.getKeywords();//.concat(bookmarks.getKeywords());
-    var engines = bookmarks.getSearchEngines().concat(bookmarks.getKeywords());
+    var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
     if (!filter) return engines.map(function($_) {
         return [$_[0], $_[1]];
@@ -224,102 +222,17 @@ function get_search_completions(filter)/*{{{*/
     return build_longest_common_substring(mapped, filter);
 }/*}}}*/
 
-function get_history_completions(filter)/*{{{*/
+function get_history_completions(filter)
 {
-    var history = document.getElementById("hiddenHistoryTree");
-    if (!history)
-        return [];
+    var items = vimperator.history.get();
+    return filter_url_array(items, filter);
+}
 
-    // build our history cache
-    if (history_loaded == false)
-    {
-        if (history.hidden)
-        {
-            history.hidden = false;
-            var globalHistory = Components.classes["@mozilla.org/browser/global-history;2"].getService(Components.interfaces.nsIRDFDataSource);
-            history.database.AddDataSource(globalHistory);
-            g_history = [];
-        }
-
-        if (!history.ref)
-            history.ref = "NC:HistoryRoot";
-
-        const NC_NS     = "http://home.netscape.com/NC-rdf#";
-        if (!gRDF)
-            gRDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                .getService(Components.interfaces.nsIRDFService);
-
-        var nameResource = gRDF.GetResource(NC_NS + "Name");
-        var builder = history.builder.QueryInterface(Components.interfaces.nsIXULTreeBuilder);
-
-        var count = history.view.rowCount;
-        for (var i = count-1; i >= 0; i--)
-        {
-            var res = builder.getResourceAtIndex(i);
-            var url = res.Value;
-            //      var col = history.columns["Name"];
-            //var title = history.view.getCellText(i, col);
-            var title;
-            var titleRes = history.database.GetTarget(res, nameResource, true);
-            if (!titleRes)
-                continue;
-            
-            var titleLiteral = titleRes.QueryInterface(Components.interfaces.nsIRDFLiteral);
-            if(titleLiteral)
-                title = titleLiteral.Value;
-            else
-                title = "";
-
-            g_history.push([url, title]);
-        }
-        history_loaded = true;  
-    }
-    return filter_url_array(g_history, filter);
-}/*}}}*/
-
-function get_bookmark_completions(filter)/*{{{*/
+function get_bookmark_completions(filter)
 {
-    if (!bookmarks_loaded)
-    {
-        // update our bookmark cache
-        var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService( Components.interfaces.nsIRDFService );
-        var root = RDF.GetResource( "NC:BookmarksRoot" );
-        var bmarks = [];   // here getAllChildren will store the bookmarks
-        g_bookmarks = []; // also clear our bookmark cache
-        // FIXME: wrong location
-        g_keywords = [];
-
-        BookmarksUtils.getAllChildren(root, bmarks);
-//        alert(bookmarks[0].length);
-        for(var i = 0; i < bmarks.length; i++)
-        {
-            if (bmarks[i][0] && bmarks[i][1])
-            {
-                g_bookmarks.push([bmarks[i][1].Value, bmarks[i][0].Value ]);
-            }
-           // for(var j=0; j < bookmarks[i].length; j++)
-           // {
-                // keyword
-            if(bmarks[i][1] && bmarks[i][2])
-                g_keywords.push([bmarks[i][2].Value, bmarks[i][0].Value, bmarks[i][1].Value]);
-                //g_keywords.push([bookmarks[i][2].Value, bookmarks[i][0].Value + " (" + bookmarks[i][1].Value + ")"]);
-                //g_keywords.push([[bookmarks[i][2].Value, bookmarks[i][1].Value], bookmarks[i][0].Value]);
-                //alert("2: " + bookmarks[i][2].Value);
-//                if(bookmarks[i][3])
-//                    alert("3: " + bookmarks[i][3].Value);
-//                if(bookmarks[i][4])
-//                    alert("4: " + bookmarks[i][4].Value);
-//                if(bookmarks[i][5])
-//                    alert("5: " + bookmarks[i][5].Value);
-            //alert("0: " + bookmarks[i][0].Value + " - 1: " + bookmarks[i][1].Value + "- 2:" + bookmarks[i][2].Value);// + "- 3:"+  bookmarks[i][3].Value + "- 4:" + bookmarks[i][4].Value);// + "- 5:" + bookmarks[i][5].Value);
-            //}
-        }
-        bookmarks_loaded = true;
-    }
-
-
-    return filter_url_array(g_bookmarks, filter);
-}/*}}}*/
+    var bookmarks = vimperator.bookmarks.get();
+    return filter_url_array(bookmarks, filter);
+}
 
 function get_file_completions(filter)/*{{{*/
 {
@@ -509,8 +422,6 @@ function get_buffer_completions(filter)/*{{{*/
     return build_longest_common_substring(items, filter);
 }/*}}}*/
 
-
-// return [startindex, [[itemtext, itemhelp],...]]
 function exTabCompletion(str)
 {
 	var [count, cmd, special, args] = tokenize_ex(str);

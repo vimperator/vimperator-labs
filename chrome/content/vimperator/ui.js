@@ -66,7 +66,7 @@ function CommandLine ()
     // for the example command "open sometext| othertext" (| is the cursor pos)
     var completion_start_index = 0;  // will be 5 because we want to complete arguments for the :open command
     var completion_prefix = ""       // will be: "open sometext"
-        var completion_postfix = "";     // will be: " othertext"
+    var completion_postfix = "";     // will be: " othertext"
 
     var wild_index = 0;  // keep track how often we press <Tab> in a row
     var completion_index = UNINITIALIZED;
@@ -158,6 +158,10 @@ function CommandLine ()
 
     this.echo = function(str)
     {
+        var focused = document.commandDispatcher.focusedElement;
+        if (focused && focused == command_widget.inputField)
+            return;
+
         setNormalStyle();
         setPrompt("");
         setCommand(str);
@@ -165,6 +169,10 @@ function CommandLine ()
 
     this.echoErr = function(str)
     {
+        var focused = document.commandDispatcher.focusedElement;
+        if (focused && focused == command_widget.inputField)
+            return;
+
         setErrorStyle();
         setPrompt("");
         setCommand(str);
