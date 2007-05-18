@@ -76,7 +76,7 @@ var g_commands = [/*{{{*/
         ["beep"],
         "Play a system beep",
         null,
-        beep,
+        function() { /*vimperator.*/beep(); },
         null
     ],
     [
@@ -144,7 +144,7 @@ var g_commands = [/*{{{*/
         ["ec[ho]"],
         "Display a string at the bottom of the window",
         "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be seperated by \\n.",
-        echo,
+        function(args) { vimperator.echo(args); } ,
         null
     ],
     [
@@ -152,7 +152,7 @@ var g_commands = [/*{{{*/
         ["echoe[rr]"],
         "Display an error string at the bottom of the window",
         "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be seperated by \\n.",
-        echoerr,
+        function(args) { vimperator.echoerr(args); } ,
         null
     ],
     [
@@ -526,7 +526,7 @@ var g_mappings = [/*{{{*/
         ["b {number}"],
         "Open a prompt to switch buffers",
         "Typing the corresponding number opens switches to this buffer",
-        function (args) { /*bufshow("", true); */vimperator.commandline.open(":", "buffer ", MODE_EX); }  
+        function (args) { vimperator.commandline.open(":", "buffer ", vimperator.modes.EX); }  
     ],
     [ 
         ["B"],
@@ -599,14 +599,14 @@ var g_mappings = [/*{{{*/
         ["o"],
         "Open one or more URLs in the current tab",
         "See <code class=\"command\">:open</code> for more details",
-        function(count) { vimperator.commandline.open(":", "open ", MODE_EX); }
+        function(count) { vimperator.commandline.open(":", "open ", vimperator.modes.EX); }
     ],
     [ 
         ["O"],
         ["O"],
         "Open one ore more URLs in the current tab, based on current location",
         "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query.",
-        function(count) { vimperator.commandline.open(":", "open " + getCurrentLocation(), MODE_EX); }
+        function(count) { vimperator.commandline.open(":", "open " + getCurrentLocation(), vimperator.modes.EX); }
     ],
     [ 
         ["p", "<MiddleMouse>"],
@@ -643,14 +643,14 @@ var g_mappings = [/*{{{*/
         "Open one or more URLs in a new tab",
         "Like <code class=\"mapping\">o</code> but open URLs in a new tab.<br/>"+
         "See <code class=\"command\">:tabopen</code> for more details",
-        function(count) { vimperator.commandline.open(":", "tabopen ", MODE_EX); }
+        function(count) { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); }
     ],
     [ 
         ["T"],
         ["T"],
         "Open one ore more URLs in a new tab, based on current location",
         "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query.",
-        function(count) { vimperator.commandline.open(":", "tabopen " + getCurrentLocation(), MODE_EX); }
+        function(count) { vimperator.commandline.open(":", "tabopen " + getCurrentLocation(), vimperator.modes.EX); }
     ],
     [ 
         ["u"],
@@ -846,7 +846,7 @@ var g_mappings = [/*{{{*/
         "In QuickHint mode, every hintable item (according to the <code class=\"setting\">'hinttags'</code> XPath query) is assigned a label.<br/>"+
         "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "If you write the hint in ALLCAPS, the hint is followed in a background tab.",
-        function(count) { hah.enableHahMode(HINT_MODE_QUICK); }
+        function(count) { hah.enableHahMode(vimperator.modes.QUICK_HINT); }
     ],
     [ 
         ["F"],
@@ -856,7 +856,7 @@ var g_mappings = [/*{{{*/
         "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>"+
         "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>"+
         "Also, most <code class=\"mapping\">Ctrl</code>-prefixed shortcut keys are available in this mode for navigation.",
-        function(count) { hah.enableHahMode(HINT_MODE_ALWAYS); }
+        function(count) { hah.enableHahMode(vimperator.modes.ALWAYS_HINT); }
     ],
     [ 
         [";"],
@@ -877,7 +877,7 @@ var g_mappings = [/*{{{*/
         "</ul>"+
         "Multiple hints can be seperated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>"+
         "Hintable elements for this mode can be set in the <code class=\"setting\">'extendedhinttags'</code> XPath string.",
-        function(count) { hah.enableHahMode(HINT_MODE_EXTENDED); }
+        function(count) { hah.enableHahMode(vimperator.modes.EXTENDED_HINT); }
     ],
 
     /* search managment */
@@ -916,7 +916,7 @@ var g_mappings = [/*{{{*/
         [":"],
         "Start command line mode",
         "In command line mode, you can perform extended commands, which may require arguments.",
-        function(count) { vimperator.commandline.open(":", "", MODE_EX); }
+        function(count) { vimperator.commandline.open(":", "", vimperator.modes.EX); }
     ],
     [ 
         ["I"],
@@ -926,7 +926,7 @@ var g_mappings = [/*{{{*/
         "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>" +
         "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>"+
         "in this mode to the webpage, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>.",
-        function(count) { addMode(MODE_ESCAPE_ALL_KEYS);}
+        function(count) { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS);}
     ],
     [ 
         ["<C-v>"], // if you ever add/remove keys here, also check them in the onVimperatorKeypress() function
@@ -935,7 +935,7 @@ var g_mappings = [/*{{{*/
         "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>"+
         "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>"+
         "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage.",
-        function(count) { addMode(MODE_ESCAPE_ONE_KEY); }
+        function(count) { vimperator.addMode(null, vimperator.modes.ESCAPE_ONE_KEY); }
     ],
     [ 
         ["<C-c>"],
@@ -1045,7 +1045,7 @@ var g_hint_mappings = [ /*{{{*/
     ["y",          "hah.yankUrlHints();", true, false],
     ["Y",          "hah.yankTextHints();", true, false],
     [",",          "g_inputbuffer+=','; hah.setCurrentState(0);", false, true],
-    [":",          "vimperator.commandline.open(':', '', MODE_EX);", false, true],
+    [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
     /* movement keys */
     ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
     ["<C-y>",      "scrollBufferRelative(0, -1);",       false, true],
@@ -1074,31 +1074,6 @@ var g_hint_mappings = [ /*{{{*/
     ["<C-[>",      "", true, true],
     ["<Esc>",      "", true, true]
 ]; /*}}}*/
-
-//var g_searchengines = [ /*{{{*/
-//    ["google",    "http://www.google.com/search?num=100&q=%s"],
-//    ["lucky",     "http://www.google.com/search?num=100&q=%s&btnI=I'm%20Feeling%20Lucky"],
-//    ["chefkoch",  "http://www.chefkoch.de/rezept-suche.php?Suchbegriff=%s"],
-//    ["dewiki",    "http://de.wikipedia.org/wiki/%s"],
-//    ["discogs",   "http://www.discogs.com/search?type=all&q=%s&btn=Search"],
-//    ["geizhals",  "http://geizhals.at/?fs=%s"],
-//    ["imdb",      "http://www.imdb.com/find?s=all&q=%s"],
-//    ["leo",       "http://dict.leo.org/ende?search=%s"],
-//    ["wien",      "http://members.aon.at/flole/vienna.html?UserQuery=%s&amp;ResUser=1024&amp;WidthUser=2000"],
-//    ["wiki",      "http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go"],
-//    ["vim",       "http://www.google.com/custom?q=%s&sa=Google+Search&cof=LW%3A125%3BL%3Ahttp%3A%2F%2Fvim.sf.net%2Fimages%2Fvim.gif%3BLH%3A60%3BAH%3Acenter%3BGL%3A0%3BS%3Ahttp%3A%2F%2Fwww.vim.org%3BAWFID%3A057fa53529d52655%3B&domains=vim.sourceforge.net%3Bwww.vim.org%3Bvimdoc.sourceforge.net&sitesearch=vim.sourceforge.net"]
-//];/*}}}*/
-
-var g_modemessages = {};
-g_modemessages[MODE_NORMAL | MODE_ESCAPE_ALL_KEYS] = "ESCAPE ALL KEYS";
-g_modemessages[MODE_NORMAL | MODE_ESCAPE_ONE_KEY] = "ESCAPE ONE KEY";
-g_modemessages[MODE_NORMAL | MODE_ESCAPE_ALL_KEYS | MODE_ESCAPE_ONE_KEY] = "PASS ONE KEY";
-g_modemessages[HINT_MODE_QUICK] = "QUICK HINT";
-g_modemessages[HINT_MODE_ALWAYS] = "ALWAYS HINT";
-g_modemessages[HINT_MODE_EXTENDED] = "EXTENDED HINT";
-g_modemessages[MODE_NORMAL] = false;
-g_modemessages[MODE_INSERT] = "INSERT";
-g_modemessages[MODE_VISUAL] = "VISUAL";
 
 // returns null, if the cmd cannot be found in our g_commands array, or
 // otherwise a reference to our command
@@ -1142,7 +1117,7 @@ function execute_command(count, cmd, special, args, modifiers) // {{{
     if (command === null)
     {
         echoerr("E492: Not an editor command: " + cmd);
-        focusContent(false, false);
+        vimperator.focusContent();
         return;
     }
         
@@ -1295,7 +1270,6 @@ function openURLs(str)
     if (urls.length == 0)
         return false;
 
-    //getWebNavigation().loadURI(urls[0], nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
     getBrowser().loadURI(urls[0]);
 
     for (var url=1; url < urls.length; url++)
@@ -1423,9 +1397,10 @@ function isDirectory(url)
 ////////////////////////////////////////////////////////////////////////
 
 // function stolen from Conkeror
-function focusNextFrame()
+function focusNextFrame(count)
 {
-    try {
+    try
+    {
         var frames = window.content.frames;
         if (frames.length == 0)
         {
@@ -2202,47 +2177,6 @@ function toggle_images() {
     pref = gPrefService.getIntPref("network.image.imageBehavior");
 //    redraw();
     message ("imageBehavior set to " + pref);
-}
-
-////////////////////////////////////////////////////////////////////////
-// mode related functions ///////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-
-// set current mode
-function setCurrentMode(mode)
-{
-    g_current_mode = mode;
-    showMode();
-}
-// get current mode
-function hasMode(mode)
-{
-    return g_current_mode & mode;
-}
-// add to current mode
-function addMode(mode)
-{
-    g_current_mode |= mode;
-    showMode();
-    return g_current_mode;
-}
-// get current mode
-function removeMode(mode)
-{
-    g_current_mode = (g_current_mode | mode) ^ mode;
-    showMode();
-    return g_current_mode;
-}
-
-function showMode()
-{
-    // XXX: remove
-    // showStatusbarMessage(g_current_mode, STATUSFIELD_INPUTBUFFER);
-
-    if (!get_pref("showmode") || !g_modemessages[g_current_mode])
-        return;
-
-    echo("-- " + g_modemessages[g_current_mode] + " --");
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

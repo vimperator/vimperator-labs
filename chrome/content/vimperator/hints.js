@@ -27,14 +27,14 @@ function hit_a_hint()
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 
     // public accessors
-    this.hintsVisible = function() { return isHahModeEnabled; };
+    //this.hintsVisible = function() { return isHahModeEnabled; };
     this.hintedElements = function() { return hintedElems; };
     this.currentState = function() { return state;};
     this.setCurrentState = function(s) { state = s;};
-    this.currentMode = function() { return hintmode;};
+    //this.currentMode = function() { return hintmode;};
 
     var isHahModeEnabled = false; // is typing mode on
-    var hintmode = HINT_MODE_QUICK;
+    //var hintmode = HINT_MODE_QUICK;
     var hintedElems = [];
     var linkNumString = ""; // the typed link number is in this string
     var linkCount = 0;
@@ -164,7 +164,8 @@ function hit_a_hint()
             genElemCoords(elem);
  
             // for extended hint mode, show all - even currently hidden - hints
-            if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
+            //if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
+            if (vimperator.hasMode(vimperator.modes.QUICK_HINT) && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
                     elem.absoLeft > area[2] || elem.absoLeft < area[0]))
                 continue;
  
@@ -209,7 +210,8 @@ function hit_a_hint()
         if (!win)
             win = window.content;
 
-        if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
+        //if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
+        if (linkCount == 0 && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
             beep();
             //alert('h');
@@ -395,9 +397,9 @@ function hit_a_hint()
     //function enableHahMode(event, mode)
     this.enableHahMode = function(mode)
     {
-        setCurrentMode(mode);
-        showMode();
-        hintmode = mode;
+        //setCurrentMode(mode);
+        vimperator.setMode(vimperator.modes.HINTS, mode);
+        //hintmode = mode;
         state = 0;
         linkCount = 0;
         linkNumString = '';
@@ -424,13 +426,14 @@ function hit_a_hint()
         if(!isHahModeEnabled)
             return;
 
-        setCurrentMode(MODE_NORMAL);
+        //setCurrentMode(MODE_NORMAL);
+        vimperator.setMode(vimperator.modes.NORMAL);
         isHahModeEnabled = false;
-        hintmode = HINT_MODE_QUICK;
+        //hintmode = HINT_MODE_QUICK;
         linkNumString = '';
         hintedElems = [];
-        if (!silent && get_pref("showmode"))
-            vimperator.echo('');
+//        if (!silent && get_pref("showmode"))
+//            vimperator.echo('');
  
         removeHints(win);
         return 0;
@@ -662,7 +665,8 @@ function hit_a_hint()
  
         startCoordLoader(doc);
  
-        if (hintmode == HINT_MODE_ALWAYS)
+        //if (hintmode == HINT_MODE_ALWAYS)
+        if (vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
             state = 0;
             linkCount = 0;
@@ -677,7 +681,8 @@ function hit_a_hint()
 
     window.document.addEventListener("pageshow", initDoc, null);
     window.addEventListener("resize", onResize, null);
-    logMessage("HAH initialized.");
+
+    logMessage("Hints initialized");
 }
 
 var hah = new hit_a_hint();

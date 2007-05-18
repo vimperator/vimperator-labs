@@ -1,14 +1,4 @@
 // XXX: move somehere else!
-// function save_history()
-// {
-//     set_pref("comp_history", comp_history.join("\n"));
-// }
-// 
-// function load_history()
-// {
-//     var hist = get_pref("comp_history", "");
-//     comp_history = hist.split("\n");
-// }
 
 function multiliner(line, prev_match, heredoc)
 {
@@ -17,7 +7,7 @@ function multiliner(line, prev_match, heredoc)
     if (prev_match[3] === undefined) prev_match[3] = '';
     if (match[4] === null)
     {
-        focusContent(false, true); // also sets tab_index to -1
+        vimperator.focusContent();
         execute_command.apply(this, match);
     }
     else
@@ -25,7 +15,7 @@ function multiliner(line, prev_match, heredoc)
         if (match[4] === false)
         {
             prev_match[3] = prev_match[3].replace(new RegExp('<<\s*' + prev_match[4]), heredoc.replace(/\n$/, ''));
-            focusContent(false, true); // also sets comp_tab_index to -1
+            vimperator.focusContent(); // also sets comp_tab_index to -1
             execute_command.apply(this, prev_match);
             prev_match = new Array(5);
             prev_match[3] = '';
@@ -155,8 +145,8 @@ function CommandLine ()
             prompt = "";
         if (!cmd)
             cmd = "";
-        if (minor_mode)
-            setCurrentMode(minor_mode);
+        //if (minor_mode)
+        vimperator.setMode(vimperator.modes.COMMAND_LINE, minor_mode);
 
         setNormalStyle();
         setPrompt(prompt);
@@ -228,8 +218,9 @@ function CommandLine ()
                 //                  command_line.value = "";
 
                 // NOTE: the command is saved to the history in the blur() handler
-                focusContent();
+                vimperator.focusContent();
                 var res = vimperator.triggerCallback("submit", command);
+                vimperator.setMode(vimperator.modes.NORMAL, null, true);
                 return res;
             }
             /* user pressed ESCAPE to cancel this prompt */
@@ -238,7 +229,7 @@ function CommandLine ()
                 var res = vimperator.triggerCallback("cancel");
                 addToHistory(command);
                 this.clear();
-                focusContent(true, true);
+                vimperator.focusContent();
                 return res;
             }
 
@@ -412,7 +403,7 @@ function CommandLine ()
                 if(command.length == 0)
                 {
                     this.clear();
-                    focusContent();
+                    vimperator.focusContent();
                 }
             }
             else // any other key
@@ -712,9 +703,7 @@ function StatusLine()
         if(!total_tabs || typeof(cur_index != "number"))
             total_tabs = vimperator.tabs.count();
 
-        //var tabcount_str = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
         tabcount_widget.value = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
-        //tabcount_widget.value = tabcount_str;
     };
 
     // percent is given between 0 and 1

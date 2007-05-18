@@ -271,8 +271,8 @@ var g_settings = [/*{{{*/
         "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
 		"string",
 		null,
-		function(value) { set_pref("title", value); set_title(value); },
-		function() { return get_pref("title"); }, 
+		function(value) { set_pref("titlestring", value); set_titlestring(value); },
+		function() { return get_pref("titlestring"); }, 
 		"Vimperator",
 		null
 	],
@@ -500,7 +500,7 @@ function set_showtabline(value)
     }
 }
 
-function set_title(value)
+function set_titlestring(value)
 {
     if (!value || typeof(value) != "string")
         value = get_pref("titlestring");

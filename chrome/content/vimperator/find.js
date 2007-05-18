@@ -247,9 +247,9 @@ function Search()
     this.gFindState = [];
 
     // Event handlers for search - closure is needed
-    vimperator.registerCallback("change", MODE_SEARCH, function(command){ self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", MODE_SEARCH, function(command){ self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", MODE_SEARCH, function(){ self.searchCancelled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function(){ self.searchCancelled(); });
 
 
     // Called when the search dialog is asked for. Sets up everything necessary
@@ -276,7 +276,7 @@ function Search()
         this.gFindState.push(state);
         this.resumeFindState(state);
 
-        vimperator.commandline.open('/', '', MODE_SEARCH);
+        vimperator.commandline.open('/', '', vimperator.modes.SEARCH_FORWARD);
     }
 
     // Called when the current search needs to be repeated in the forward
@@ -330,7 +330,8 @@ function Search()
 
     // Called when the enter key is pressed to trigger a search
     this.searchSubmitted = function(command) {
-        removeMode(MODE_SEARCH);
+        //removeMode(MODE_SEARCH);
+        vimperator.setMode(vimperator.modes.NORMAL);
         if (this.lastFindState()["range"] == null) {
             vimperator.echoerr("E492: Pattern not found: " + this.lastFindState()["search-str"]);
         }
@@ -339,9 +340,10 @@ function Search()
     // Called when the search is cancelled - for example if someone presses
     // escape while typing a search
     this.searchCancelled = function() {
-        removeMode(MODE_SEARCH);
+        //removeMode(MODE_SEARCH);
+        vimperator.setMode(vimperator.modes.NORMAL);
         clearSelection();
-        focusContent(true, true);
+        vimperator.focusContent();
     }
 
 
