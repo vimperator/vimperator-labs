@@ -74,23 +74,24 @@ function build_longest_starting_substring(list, filter)/*{{{*/
     //var filter_length = filter.length;
     for (var i = 0; i < list.length; i++)
     {
-        for (var j = 0; j < list[i][COMMANDS].length; j++)
+        var command_names = command_long_names(list[i]);
+        for (var j = 0; j < command_names.length; j++)
         {
-            if (list[i][0][j].indexOf(filter) != 0)
+            if (command_names[j].indexOf(filter) != 0)
                 continue;
             if (g_substrings.length == 0)
             {
-                var length = list[i][COMMANDS][j].length;
+                var length = command_names[j].length;
                 for (var k = filter.length; k <= length; k++)
-                    g_substrings.push(list[i][COMMANDS][j].substring(0, k));
+                    g_substrings.push(command_names[j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return list[i][COMMANDS][j].indexOf($_) == 0;
+                    return command_names[j].indexOf($_) == 0;
                 });
             }
-            filtered.push([list[i][COMMANDS][j], list[i][SHORTHELP]]);
+            filtered.push([command_names[j], list[i][SHORTHELP]]);
             break;
         }
     }
@@ -285,7 +286,7 @@ function get_command_completions(filter)/*{{{*/
     //g_completions = [];
     g_substrings = [];
     if (!filter) return g_commands.map(function($_) {
-        return [$_[COMMANDS][0], $_[SHORTHELP]];
+        return [command_name($_), $_[SHORTHELP]];
     });
     return build_longest_starting_substring(g_commands, filter);
 }/*}}}*/

@@ -1108,5 +1108,19 @@ function Tabs()
     {
         return getBrowser().tabContainer.childNodes.length;
     }
+
+    this.get = function(filter)
+    {
+        var buffers = [];
+        var browsers = getBrowser().browsers;
+        for (var i in browsers)
+        {
+            var title = browsers[i].contentTitle || "(Untitled)";
+            var uri = browsers[i].currentURI.spec;
+            var number = i + 1;
+            buffers.push([number, title, uri]);
+        }
+        return buffers;
+    }
 }
 // vim: set fdm=marker sw=4 ts=4 et:

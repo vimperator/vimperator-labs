@@ -91,11 +91,11 @@ function help(section, easter)
             else
                 ret += "Sorry, no help available";
             // the tags which are printed on the top right
-            //ret += '<tr class="tag"><td colspan="1">====================================';
             ret += '</td><td class="tag" valign="top">';
-            for (var j=0; j < commands[i][COMMANDS].length; j++)
+            var names = command_names(commands[i]);
+            for (var j=0; j < names.length; j++)
             {
-                var cmd_name = commands[i][COMMANDS][j];
+                var cmd_name = names[j];
                 cmd_name = cmd_name.replace(/</g, "&lt;");
                 cmd_name = cmd_name.replace(/>/g, "&gt;");
                 // cmd_name = cmd_name.replace(/"/g, "&quot;");
