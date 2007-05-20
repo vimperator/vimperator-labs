@@ -1,6 +1,7 @@
 <pre>
 2007-05-02:
 	* version ???
+	* changed secure sites -> green, broken sites -> red in the statusbar
 	* Vimperator now sets the window title, so it's "vimperator.mozdev.org -
 	  Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
 	  Use :set title=... to change it back (help from Hannes Rist)

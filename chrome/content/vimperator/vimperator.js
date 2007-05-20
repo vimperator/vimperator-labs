@@ -41,11 +41,12 @@ var heredoc = '';
 // handles to our gui elements
 var command_line = null;
 
-function nsBrowserStatusHandler2() /*{{{*/
+// FIXME: if I rename this to another class name, it doesn't work, find the reason
+function nsBrowserStatusHandler() /*{{{*/
 {
     this.init();
 }
-nsBrowserStatusHandler2.prototype =
+nsBrowserStatusHandler.prototype =
 {
     QueryInterface : function(aIID)
     {
@@ -669,7 +670,13 @@ function Vimperator()
 //    this.search = new Search();
 
     /////////////// callbacks ////////////////////////////
-	// type='[submit|change|cancel|complete]'
+	/**
+     * @param type Can be:
+     *  "submit": when the user pressed enter in the command line
+     *  "change"
+     *  "cancel"
+     *  "complete"
+     */
 	this.registerCallback = function(type, mode, func)
 	{
 		// TODO: check if callback is already registered
@@ -732,19 +739,14 @@ function Vimperator()
         showMode();
     }
 
-    /* After pressing Escape, put focus on a non-input field of the browser document */
+    // After pressing Escape, put focus on a non-input field of the browser document
     this.focusContent = function()
     {
-//        count = -1;
-//        inputbuffer = "";
-
         var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].getService(Components.interfaces.nsIWindowWatcher);
         if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
             document.commandDispatcher.focusedElement.blur();
 
         content.focus();
-        //this.setMode(vimperator.modes.NORMAL);
-        //showMode();
     }
 
     this.onEvent = function(event)/*{{{*/
@@ -978,6 +980,7 @@ function Vimperator()
     }/*}}}*/
 
 
+    // FIXME: is not called for onLocationChange etc, find the reason
     this.browserStatusHandler = function() { this.init(); }
     this.browserStatusHandler.prototype =
     {
