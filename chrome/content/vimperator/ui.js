@@ -656,6 +656,10 @@ function StatusLine()
             color = "transparent";
         statusline_widget.setAttribute("style", "background-color: " + color);
     };
+    this.setClass = function(class)
+    {
+        statusline_widget.setAttribute("class", "status_" + class);
+    };
 
     this.updateUrl = function(url)
     {

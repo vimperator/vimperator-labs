@@ -78,3 +78,15 @@ table.settings {
 .setting { font-weight: bold; color: #106326; }
 .argument { color: #6A97D4; }
 .version { position:absolute; top:10px; right:2%; color:#C0C0C0; text-align:right; }
+
+.status_insecure, .status_insecure * {
+    background-color: transparent;
+}
+.status_secure, .status_secure * {
+    background-color: yellow;
+    color: black;
+}
+.status_broken, .status_broken * {
+    background-color: #ff9900;
+    color: black;
+}

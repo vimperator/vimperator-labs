@@ -147,11 +147,11 @@ nsBrowserStatusHandler2.prototype =
         {
             const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
             if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                vimperator.statusline.setColor("transparent");
+                vimperator.statusline.setClass("insecure");
             else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                vimperator.statusline.setColor("orange");
+                vimperator.statusline.setClass("broken");
             else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-                vimperator.statusline.setColor("yellow");
+                vimperator.statusline.setClass("secure");
 
             return 0;
         }
