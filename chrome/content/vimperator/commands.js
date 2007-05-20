@@ -51,7 +51,8 @@ var g_commands = [/*{{{*/
         ["addons"],
         "Show available Browser Extensions and Themes",
         "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI.",
-        function() { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
+        //function() {  },
+        function(args) { vimperator.commands.addons(args); },
         null
     ],
     [
@@ -176,8 +177,8 @@ var g_commands = [/*{{{*/
         ["hardcopy", "ha"],
         ["ha[rdcopy]"],
         "Print current document",
-        "NOT FUNCTIONAL YET. Open a GUI dialog where you can select the printer, number of copies, orientation, etc.",
-        function() { goDoCommand('cmd_print'); },
+        "Open a GUI dialog where you can select the printer, number of copies, orientation, etc.",
+        function() { getBrowser().contentWindow.print(); },
         null
     ],
     [
@@ -2177,6 +2178,20 @@ function toggle_images() {
     pref = gPrefService.getIntPref("network.image.imageBehavior");
 //    redraw();
     message ("imageBehavior set to " + pref);
+}
+
+
+
+
+function Commands()
+{
+
+    this.addons = function(args)
+    {
+        openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true);
+    }
+
+    logMessage("Commands initialized");
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

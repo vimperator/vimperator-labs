@@ -41,13 +41,11 @@ var heredoc = '';
 // handles to our gui elements
 var command_line = null;
 
-/* this function reacts to status bar and url changes which are sent from
-   the mozilla core */
-function nsBrowserStatusHandler() /*{{{*/
+function nsBrowserStatusHandler2() /*{{{*/
 {
     this.init();
 }
-nsBrowserStatusHandler.prototype =
+nsBrowserStatusHandler2.prototype =
 {
     QueryInterface : function(aIID)
     {
@@ -167,9 +165,6 @@ window.addEventListener("load", init, false);
 ////////////////////////////////////////////////////////////////////////
 // init/uninit //////////////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
-//function moo() { return ["moo", "x"];};
-// return [startindex, [[itemtext, itemhelp],...]]
-
 function init()
 {
     // init the main object
@@ -177,6 +172,7 @@ function init()
     
     // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
+    Vimperator.prototype.commands      = new Commands;
     Vimperator.prototype.bookmarks     = new Bookmarks;
     Vimperator.prototype.history       = new History;
     Vimperator.prototype.qm            = new QM;
@@ -196,108 +192,8 @@ function init()
     command_line = document.getElementById("vim-commandbar");
 
     // Setup our main status handler - from browser.js
-    window.XULBrowserWindow = new nsBrowserStatusHandler();
-//    window.XULBrowserWindow = new function()
-//    {
-//        this.init = function(){alert("init");};
-//        QueryInterface: function(aIID)
-//        {
-//            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-//                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-//                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
-//                    aIID.equals(Components.interfaces.nsISupports))
-//                return this;
-//            throw Components.results.NS_NOINTERFACE;
-//        },
-//
-//        /* functions needed for functioning */
-//        init:               function() {},
-//        setJSStatus:        function(status) {},
-//        setJSDefaultStatus: function(status) {},
-//        setDefaultStatus:   function(status) {},
-//        onLinkIconAvailable:function(a) {},
-//        onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) { return 0; },
-//
-//        setOverLink: function(link, b)
-//        {
-//            var ssli = get_pref("showstatuslinks");
-//            if (link && ssli)
-//            {
-//                if (ssli == 1)
-//                    vimperator.statusline.updateUrl("Link: " + link);
-//                else if (ssli == 2)
-//                    vimperator.echo("Link: " + link);
-//            }
-//                
-//            if (link == "")
-//            {
-//                vimperator.statusline.updateUrl();
-//                showMode();
-//            }
-//        },
-//
-//
-//        // called when a page load is requested or finished/stopped
-//        onStateChange:function(aProgress,aRequest,aFlag,aStatus)
-//        {
-//            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-//            //const nsIChannel = Components.interfaces.nsIChannel;
-//            if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
-//            {
-//                vimperator.statusline.updateProgress(0);
-//            }
-//            // this is called when all loading was done (or when the user canceled the load
-//            else if (aFlag & nsIWebProgressListener.STATE_STOP)
-//            {
-//                vimperator.statusline.updateUrl(aRequest.URI.spec);
-//                vimperator.statusline.updateProgress("");
-//                // also reset the buffer list, since the url titles are valid here
-//                showBufferList(true);
-//            }
-//            return 0;
-//        },
-//        // onLocationChange is also called when switching/deleting tabs
-//        onLocationChange: function (aWebProgress, aRequest, aLocation)
-//        {
-//            // firefox 3.0 doesn't seem to have this function anymore
-//            if (typeof UpdateBackForwardButtons == "function")
-//                UpdateBackForwardButtons();
-//
-//            var url = aLocation.spec;
-//
-//            // also update the original firefox location bar
-//            if (gURLBar)
-//                gURLBar.value = url;
-//
-//            if (hah.currentMode() != HINT_MODE_ALWAYS)
-//                hah.disableHahMode();
-//            
-//            vimperator.statusline.updateUrl(url);
-//            vimperator.statusline.updateProgress();
-//            setTimeout(function() {vimperator.statusline.updateBufferPosition();}, 100); // if not delayed we get the wrong position of the old buffer
-//
-//            // updating history cache is not done here but in the 'pageshow' event
-//            // handler, because at this point I don't have access to the url title
-//            return 0;
-//        },
-//        onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
-//        {
-//            vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
-//            return 0;
-//        },
-//        onSecurityChange:function (aWebProgress, aRequest, aState)
-//        {
-//            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-//            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-//                vimperator.statusline.setColor("transparent");
-//            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-//                vimperator.statusline.setColor("orange");
-//            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-//                vimperator.statusline.setColor("yellow");
-//
-//            return 0;
-//        }
-//    }
+    // this function reacts to status bar and url changes which are sent from the mozilla core
+    window.XULBrowserWindow = new vimperator.browserStatusHandler;
 
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIWebNavigation)
@@ -306,6 +202,9 @@ function init()
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
 
+    var interfaceRequestor = QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+//    var webProgress = interfaceRequestor.getInterface(Components.interfaces.nsIWebProgress);
+//    webProgress.addProgressListener(window.XULBrowserWindow, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
 
 
 
@@ -423,8 +322,16 @@ function addEventListeners()
             var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
             vimperator.history.add(url, title);
         }
+        //alert("moo");
     }
     , null);
+
+    window.document.addEventListener("DOMTitleChanged", function(event)
+            {
+        //alert("tit");
+        }
+        , null);
+
 
     // called when the window is scrolled.
     window.onscroll = function (event)
@@ -1069,6 +976,122 @@ function Vimperator()
         vimperator.statusline.updateInputBuffer(g_inputbuffer);
         return false;
     }/*}}}*/
+
+
+    this.browserStatusHandler = function() { this.init(); }
+    this.browserStatusHandler.prototype =
+    {
+        QueryInterface : function(aIID)
+        {
+            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
+                    aIID.equals(Components.interfaces.nsISupports))
+                return this;
+            throw Components.results.NS_NOINTERFACE;
+        },
+
+        init : function()
+        {
+        },
+
+        setOverLink : function(link, b)
+        {
+            var ssli = get_pref("showstatuslinks");
+            if (link && ssli)
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl("Link: " + link);
+                else if (ssli == 2)
+                    vimperator.echo("Link: " + link);
+            }
+                
+            if (link == "")
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl();
+                else if (ssli == 2)
+                {
+                    //vimperator.echo("");
+                    vimperator.setMode(); // trick to reshow the mode in the command line
+                }
+            }
+        },
+        setJSStatus : function(status) { },
+        setJSDefaultStatus : function(status) { },
+        setDefaultStatus : function(status) { },
+
+
+        onStateChange:function(aProgress,aRequest,aFlag,aStatus)
+        {
+            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+            //const nsIChannel = Components.interfaces.nsIChannel;
+            if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
+            {
+                vimperator.statusline.updateProgress(0);
+            }
+            // this is called when all loading was done (or when the user canceled the load
+            else if (aFlag & nsIWebProgressListener.STATE_STOP)
+            {
+                //alert('stop: ' + aRequest.URI.spec);
+                vimperator.statusline.updateUrl(aRequest.URI.spec);
+                vimperator.statusline.updateProgress("");
+                // also reset the buffer list, since the url titles are valid here
+                showBufferList(true);
+            }
+            return 0;
+        },
+        onLocationChange:function (aWebProgress, aRequest, aLocation)
+            {
+                // firefox 3.0 doesn't seem to have this function anymore
+                if (typeof UpdateBackForwardButtons == "function")
+                    UpdateBackForwardButtons();
+
+                var url = aLocation.spec;
+
+                // also update the original firefox location bar
+                if (gURLBar)
+                    gURLBar.value = url;
+
+                // onLocationChange is also called when switching/deleting tabs
+                //if (hah.currentMode() != HINT_MODE_ALWAYS)
+                if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+                    hah.disableHahMode();
+                
+                vimperator.statusline.updateUrl(url);
+                vimperator.statusline.updateProgress();
+                setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); // if not delayed we get the wrong position of the old buffer
+
+                // updating history cache is not done here but in the 'pageshow' event
+                // handler, because at this point I don't have access to the url title
+                return 0;
+            },
+        onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
+            {
+                vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
+                return 0;
+            },
+        onStatusChange:function (aWebProgress, aRequest, aStatus, aMessage)
+            {
+                alert('change');
+                vimperator.statusline.updateUrl(aMessage);
+                return 0;
+            },
+        onSecurityChange:function (aWebProgress, aRequest, aState)
+            {
+                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+                if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+                    vimperator.statusline.setColor("transparent");
+                else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+                    vimperator.statusline.setColor("orange");
+                else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+                    vimperator.statusline.setColor("yellow");
+
+                return 0;
+            }
+        //onLinkIconAvailable:function(a){}
+
+    };/*}}}*/
     // alert('end');
 }
 

@@ -19,6 +19,6 @@
 		chrome:author="Martin Stubenschrott"
         chrome:name="vimperator"
         chrome:extension="true"
-		chrome:description="Make Firefox like Vim">
+		chrome:description="Make Firefox behave like Vim">
   </RDF:Description>
 </RDF:RDF>

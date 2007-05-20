@@ -329,25 +329,25 @@ function History()
         return history;
     }
 
-    this.add = function (uri, title)
+    this.add = function (url, title)
     {
         if(!history)
             load();
 
         // XXX: check if fast enough
         history = history.filter(function(elem) {
-                return elem[0] != uri;
+                return elem[0] != url;
         });
 //        for(var i in history)
 //        {
-//            if(g_history[i][0] == url)
+//            if(history[i][0] == url)
 //                return;
 //        }
-//        g_history.unshift([url, title]);
 
-        history.unshift([uri, title]);
+        history.unshift([url, title]);
+        //history.push([url, title]);
         return true;
-    }
+    };
 
     logMessage("History initialized");
 }
