@@ -124,9 +124,9 @@ var g_commands = [/*{{{*/
         function (filter) { return get_buffer_completions(filter); }
     ],
     [
-        ["buffers", "files", "ls"],
+        ["buffers", "files", "ls", "tabs"],
         ["buffers"],
-        "Show a list of all buffers",
+        "Show a list of all buffers (=tabs)",
         "If the list is already shown, close the preview window.",
         toggleBufferList,
         null
@@ -315,10 +315,10 @@ var g_commands = [/*{{{*/
     ],
     [
         ["re[load]"],
-        ["re[load]"],
+        ["re[load][!]"],
         "Reload current page",
-        "Forces reloading of the current page, or of all open pages, if ! is given.",
-        function(args, special) { reload(special); },
+        "Forces reloading of the current page. If ! is given, byepass cache.",
+        function(args, special) { if (special) BrowserReloadSkipCache(); else reload(special); }, // FIXME
         null
     ],
     [
@@ -636,7 +636,7 @@ var g_mappings = [/*{{{*/
         ["R"],
         "Reload all",
         "Forces reloading of all open pages.",
-        function(count) { reload(true); }
+        function(count) { BrowserReloadSkipCache(); }
     ],
     [ 
         ["t"],

@@ -1,10 +1,11 @@
 <pre>
 2007-05-02:
 	* version ???
+	* changed "R" to reload without cache instead of reload all due to popular request
 	* changed secure sites -> green, broken sites -> red in the statusbar
 	* Vimperator now sets the window title, so it's "vimperator.mozdev.org -
 	  Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
-	  Use :set title=... to change it back (help from Hannes Rist)
+	  Use :set titlestring=... to change it back (help from Hannes Rist)
 	* :tabmove command (by Doug Kearns)
 	* 'showstatuslinks' option to control where/if we show the destination of
 	a hovered link
@@ -12,7 +13,7 @@
 	* hovered links appear in the command line again, not statusbar
 	* :help now opens in the current tab even for xhtml pages like "about:"
 	* hints work on xhtml pages now (you need to reset the 'hinttags' and
-	  'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&
+	  'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&)
 	* :set option& resets the option to the default value
 	* added :tabonly and :tabrewind and :tablast commands and some futher aliases :tabNext, etc. (by Doug Kearns)
 	* added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)

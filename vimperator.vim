@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 May 03
+" Latest Revision:  2007 May 21
 
 if exists("b:current_syntax")
   finish
@@ -19,8 +19,9 @@ syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
 syn keyword vimperatorCommand addons ba[ck] bd[elete] bw[ipeout] bun[load] tabc[lose] beep bmadd bmdel bookmarks bm b[uffer]
 	\ buffers files ls downloads dl ec[ho] echoe[rr] exe[cute] forward fw ha[rdcopy] h[elp] history hs javascript js ma[rk]
 	\ marks o[pen] e[dit] pc[lose] preferences prefs q[uit] quita[ll] qa[ll] re[load] restart restart sav[eas] se[t] so[urce]
-	\ st[op] tab tabn[ext] tn[ext] tabopen t to topen tabnew tabe[dit] tp[revious] tN[ext] tabp[revious] tabN[ext] u[ndo]
-	\ qmarkadd qmadd qmarkdel qmdel qmarks qms ve[rsion] w wo[pen] wine[dit] win[open] wq wqa[ll] xa[ll] zo[om]
+	\ st[op] tab tabn[ext] tn[ext] tabopen t to topen tabnew tabe[dit] tabo[nly] tabm[ove] tp[revious] tN[ext] tabr[ewind]
+	\ tabfir[st] tabl[ast] tabp[revious] tabN[ext] u[ndo] qmarkadd qmadd qmarkdel qmdel qmarks qms ve[rsion] w wo[pen]
+	\ wine[dit] win[open] wq wqa[ll] xa[ll] zo[om] noh[ilight]
 	\ contained
 
 " FIXME
@@ -29,7 +30,8 @@ syn match vimperatorCommandWrapper "\<\h\w*\>" contains=vimperatorCommand
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate beep nobeep beep complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs
 	\ fullscreen fs nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags maxhints mh preload nopreload
-	\ previewheight pvh showtabline stal usermode um nousermode noum wildmode wim wildoptions wop
+	\ previewheight pvh showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal titlestring usermode um nousermode
+	\ noum wildmode wim wildoptions wop
 	\ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline

@@ -61,5 +61,6 @@ RANDOM IDEAS:
 * 20:12:26         skaar| so, I think get_history_completion effectively will put the oldest 
                         history entry at the top of the completion list
   20:12:48         skaar| since you're counting down in the for loop
+* hide scrollbars: http://rafb.net/p/YHRhEe47.html (window.content.document.body.style.overflow = "hidden")
 
 </pre>
