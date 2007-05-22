@@ -59,8 +59,8 @@ var g_commands = [/*{{{*/
         ["ba[ck]"],
         ["{count}ba[ck][!]"],
         "Go back in the browser history",
-        "Count is supported, <code>:3back</code> goes back 3 pages in the browser history.<br/>"+
-        "The special version <code>:back!</code> goes to the beginning of the browser history.",
+        "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>"+
+        "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history.",
         function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
         null
     ],
@@ -68,7 +68,7 @@ var g_commands = [/*{{{*/
         ["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         ["{count}bd[elete][!]"],
         "Delete current buffer (=tab)",
-        "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code>:bdelete!</code> to select the tab to the left after removing the current tab.",
+        "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab.",
         function (args, special, count) { tab_remove (count, special, 0); },
         null
     ],
@@ -86,7 +86,7 @@ var g_commands = [/*{{{*/
         "Add a bookmark",
         "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
         "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
-        "You can omit the optional [url] field, so just do <code>:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
+        "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
         " -t \"custom title\"<br/>" +
         "The following options will be interpreted in the future:<br/>" +
         " -T comma,separated,tag,list <br/>"+
@@ -109,7 +109,7 @@ var g_commands = [/*{{{*/
         ["bm[!] [-T] {regexp}"],
         "Show bookmarks",
         "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
-        "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
+        "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
         "The following options WILL be interpretted in the future:<br/>" +
         " -T comma,separated,tag,list <br/>",
         bmshow,
@@ -160,7 +160,7 @@ var g_commands = [/*{{{*/
         ["exe[cute]"],
         ["exe[cute] {expr1} [ ... ]"],
         "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-        "<code>:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>",
+        "<code class=\"command\">:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>",
         execute,
         null
     ],
@@ -168,8 +168,8 @@ var g_commands = [/*{{{*/
         ["fo[rward]", "fw"],
         ["{count}fo[rward][!]"],
         "Go forward in the browser history",
-        "Count is supported, <code>:3forward</code> goes forward 3 pages in the browser history.<br/>"+
-        "The special version <code>:forward!</code> goes to the end of the browser history.",
+        "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>"+
+        "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history.",
         function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
         null
     ],
@@ -201,7 +201,7 @@ var g_commands = [/*{{{*/
         ["hist[ory] {filter}"],
         "Show recently visited URLs",
         "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL."+
-        "Close this window with <code>:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
+        "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
         hsshow,
         function(filter) { return get_history_completions(filter); }
     ],
@@ -210,9 +210,9 @@ var g_commands = [/*{{{*/
         ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br/> in the help.js code
         "Run any javascript command through eval()",
         "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
-        "<code>:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
-        "<code>:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-        "The special version <code>:javascript!</code> will open the javascript console of Firefox.",
+        "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
+        "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
+        "The special version <code class=\"command\">:javascript!</code> will open the javascript console of Firefox.",
         function(args, special) {
             if (special) // open javascript console
                 openURLsInNewTab("chrome://global/content/console.xul", true);
@@ -256,13 +256,13 @@ var g_commands = [/*{{{*/
         "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
         "will open the wikipedia entry for linux torvalds).</li>"+
         "    <li>Opened with the default search engine or keyword (specified with the <code class=\"setting\">'defsearch'</code> setting) "+
-        "if the first word is no search engine (<code>:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
+        "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
         "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
         "open OSNews in the current, and Slashdot in a new background tab).</li>"+
         "</ol>"+
         "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
         "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
-        "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code>'complete'</code> option.<br/>"+
+        "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"setting\">'complete'</code> option.<br/>"+
         "Without argument, reloads the current page.<br/>"+
         "Without argument but with !, reloads the current page skipping the cache.",
         function(args, special)
@@ -343,12 +343,12 @@ var g_commands = [/*{{{*/
         ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
         "Set an option",
         "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>"+
-        "Boolean options must be set with <code>:set option</code> and <code>:set nooption</code>.<br/>"+
-        "<code>:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
-        "<code>:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
-        "<code>:set option?</code> or <code>:set option</code> shows the current value of the option.<br/>"+
-        "<code>:set option&amp;</code> resets 'option' to the default value.<br/>"+
-        "<code>:set option+=foo</code> and <code>:set option-=foo</code> WILL add/remove foo from list options.<br/>",
+        "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>"+
+        "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
+        "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
+        "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>"+
+        "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>"+
+        "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
         set,
         function(filter) { return get_settings_completions(filter); }
     ],
@@ -455,7 +455,7 @@ var g_commands = [/*{{{*/
     [
         ["qmarkd[el]", "qmd[el]"],
         ["qmarkd[el] {a-zA-Z0-9}"],
-        "Remove a marked URL" +
+        "Remove a marked URL",
         "Not implemented yet.",
         function(args) { set_url_mark("mark", "url"); }, // FIXME
         function(filter) { return [["a", ""], ["b", ""]]; }
@@ -1176,7 +1176,7 @@ function execute_command(count, cmd, special, args, modifiers) // {{{
         
     if (command[FUNCTION] === null)
     {
-        echoerr("E666: Internal error: command[FUNCTION] === null");
+        vimperator.echoerr("E666: Internal error: command[FUNCTION] === null");
         return;
     }
 
@@ -1241,37 +1241,6 @@ function execute(string)
     return execute_command.apply(this, tokens);
 }
 ////////////////////////////////////////////////////////////////////////
-// statusbar/commandbar handling ////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
- function echo(msg)
- {
-     /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
-      * input element. The read only property '.inputField' holds a reference to this inner
-      * input element. */
-     var bar = command_line.inputField;
-     var focused = document.commandDispatcher.focusedElement;
-     if (focused && focused == bar)
-         return;
- 
-     bar.setAttribute("style","font-family: monospace;");
-     bar.value = msg;
- }
- 
- function echoerr(msg)
- {
-     /* In Mozilla, the XUL textbox is implemented as a wrapper around an HTML
-      * input element. The read only property '.inputField' holds a reference to this inner
-      * input element. */
-     var bar = command_line.inputField;
-     var focused = document.commandDispatcher.focusedElement;
-     if (focused && focused == bar)
-         return;
- 
-     bar.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
-     bar.value = msg;
- }
-
-////////////////////////////////////////////////////////////////////////
 // navigation functions /////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 function stepInHistory(steps)
@@ -1285,9 +1254,9 @@ function stepInHistory(steps)
     {
         beep();
         if(index < 0)
-            echo("Cannot go past beginning of history");
+            vimperator.echo("Cannot go past beginning of history");
         else
-            echo("Cannot go past end of history");
+            vimperator.echo("Cannot go past end of history");
     }
 }
 function historyGoToBeginning()
@@ -1295,7 +1264,7 @@ function historyGoToBeginning()
     var index = getWebNavigation().sessionHistory.index;
     if (index == 0)
     {
-            echo("Already at beginning of history");
+            vimperator.echo("Already at beginning of history");
             return;
     }
     getWebNavigation().gotoIndex(0);
@@ -1306,7 +1275,7 @@ function historyGoToEnd()
     var max = getWebNavigation().sessionHistory.count -1;
     if (index == max)
     {
-            echo("Already at end of history");
+            vimperator.echo("Already at end of history");
             return;
     }
     getWebNavigation().gotoIndex(max);
@@ -1457,7 +1426,7 @@ function focusNextFrame(count)
         var frames = window.content.frames;
         if (frames.length == 0)
         {
-            echo("No frames found");
+            vimperator.echo("No frames found");
             beep();
             return;
         }
@@ -1530,7 +1499,7 @@ function yankCurrentLocation()
 {
     var loc = getCurrentLocation();
     copyToClipboard(loc);
-    echo("Yanked " + loc);
+    vimperator.echo("Yanked " + loc);
 }
 
 // return null, if no link with a href focused
@@ -1816,12 +1785,12 @@ function zoom_in(factor)
     var zoomMgr = ZoomManager.prototype.getInstance();
     if (zoomMgr.textZoom == 25 && factor < 0)
     {
-        echoerr("Minimum zoom level of 25% reached");
+        vimperator.echoerr("Minimum zoom level of 25% reached");
         beep();
     }
     else if (zoomMgr.textZoom == 500 && factor > 0)
     {
-        echoerr("Maximum zoom level of 500% reached");
+        vimperator.echoerr("Maximum zoom level of 500% reached");
         beep();
     }
     else
@@ -1834,7 +1803,7 @@ function zoom_in(factor)
 
         hah.reshowHints();
 
-        echo("Zoom value: " + value + "%");
+        vimperator.echo("Zoom value: " + value + "%");
     }
 }
 
@@ -1853,14 +1822,14 @@ Vimperator.prototype.zoom_to = function(value)
         value = parseInt(oldval, 10);
         if (isNaN(value))
         {
-            echoerr("Cannot convert " + oldval + " to a number");
+            vimperator.echoerr("Cannot convert " + oldval + " to a number");
             return;
         }
     }
 
     if (value < 25 || value > 500)
     {
-        echoerr("Zoom value must be between 25% and 500%");
+        vimperator.echoerr("Zoom value must be between 25% and 500%");
         beep();
         return;
     }
@@ -1869,7 +1838,7 @@ Vimperator.prototype.zoom_to = function(value)
 
     hah.reshowHints();
 
-    echo("Zoom value: " + value + "%");
+    vimperator.echo("Zoom value: " + value + "%");
 }
 
 
@@ -1895,7 +1864,7 @@ function beep()
     if (gBeepService)
         gBeepService.beep();
     else
-        echoerr('no beep service found');
+        vimperator.echoerr('no beep service found');
 }
 
 // quit vimperator, no matter how many tabs/windows are open
@@ -1969,7 +1938,7 @@ function set(args, special)
         var matches = args.match(/^\s*(no)?([a-z]+)(\?|&)?(([+-])?=(.*))?/);
         if (!matches)
         {
-            echoerr("E518: Unknown option: " + args);
+            vimperator.echoerr("E518: Unknown option: " + args);
             return;
         }
 
@@ -1978,7 +1947,7 @@ function set(args, special)
         var setting = get_setting(opt);
         if (!setting)
         {
-            echoerr("E518: Unknown option: " + opt);
+            vimperator.echoerr("E518: Unknown option: " + opt);
             return;
         }
 
@@ -1998,7 +1967,7 @@ function set(args, special)
         else if (get)
         {
             var cur_val = setting[GETFUNC].call(this);
-            echo("  " + setting[COMMANDS][0] + "=" + cur_val);
+            vimperator.echo("  " + setting[COMMANDS][0] + "=" + cur_val);
         }
         // write access
         else
@@ -2012,14 +1981,14 @@ function set(args, special)
             {
                 var num = parseInt(val, 10);
                 if (isNaN(num))
-                    echoerr("Invalid argument type to option " + setting[COMMANDS][0] + ": Expects number");
+                    vimperator.echoerr("Invalid argument type to option " + setting[COMMANDS][0] + ": Expects number");
                 else
                 {
                     var cur_val = setting[GETFUNC].call(this);
                     if (oper == '+') num = cur_val + num;
                     if (oper == '-') num = cur_val - num;
                     if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, num) == false)
-                        echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
+                        vimperator.echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
                     else // all checks passed, execute option handler
                         setting[SETFUNC].call(this, num);
                 }
@@ -2044,12 +2013,12 @@ function set(args, special)
                     }
                 }
                 if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, val) == false)
-                    echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
+                    vimperator.echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
                 else // all checks passed, execute option handler
                     setting[SETFUNC].call(this, val);
             }
             else
-                echoerr("Internal error, option format `" + type + "' not supported");
+                vimperator.echoerr("Internal error, option format `" + type + "' not supported");
         }
     }
 }
@@ -2078,7 +2047,7 @@ function source(filename, silent)
     catch(e)
     {
         if(!silent)
-            echoerr(e);
+            vimperator.echoerr(e);
     }
 }
 

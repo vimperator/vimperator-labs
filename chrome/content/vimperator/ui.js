@@ -56,7 +56,7 @@ function CommandLine ()
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
     const HISTORY_SIZE = 500;
 
-    var completionlist = new InformationList("vim-completion", { min_items: 2, max_items: 10 });
+    var completionlist = new InformationList("vimperator-completion", { min_items: 2, max_items: 10 });
     var completions = new Array();
 
     var history = new Array();
@@ -72,9 +72,9 @@ function CommandLine ()
     var completion_index = UNINITIALIZED;
 
     // The prompt for the current command, for example : or /. Can be blank
-    var prompt_widget = document.getElementById('new-vim-commandbar-prompt');
+    var prompt_widget = document.getElementById('vimperator-commandline-prompt');
     // The command bar which contains the current command
-    var command_widget = document.getElementById('new-vim-commandbar');
+    var command_widget = document.getElementById('vimperator-commandline-command');
 
     // load the history
     var hist = get_pref("commandline_history", "");

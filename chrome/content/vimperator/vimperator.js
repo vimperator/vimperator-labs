@@ -179,8 +179,8 @@ function init()
     Vimperator.prototype.qm            = new QM;
 //    Vimperator.prototype.commandline   = new CommandLine;
     Vimperator.prototype.search        = new Search;
-    Vimperator.prototype.previewwindow = new InformationList("vimperator-preview-window", { incremental_fill: false, max_items: 10 });
-    Vimperator.prototype.bufferwindow  = new InformationList("vimperator-buffer-window", { incremental_fill: false, max_items: 10 });
+    Vimperator.prototype.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
+    Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
     Vimperator.prototype.statusline    = new StatusLine();
     Vimperator.prototype.tabs          = new Tabs();
 
@@ -190,7 +190,7 @@ function init()
     //vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return moo();; } );
 
     //status_line = document.getElementById("vim-statusbar");
-    command_line = document.getElementById("vim-commandbar");
+    command_line = document.getElementById("vimperator-commandline");
 
     // Setup our main status handler - from browser.js
     // this function reacts to status bar and url changes which are sent from the mozilla core

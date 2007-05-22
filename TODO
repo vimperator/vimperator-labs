@@ -11,31 +11,35 @@ BUGS:
 - reload/stop buttons don't update enabled state
 - http://en.wikipedia.org/wiki/Portal:Current_events - 'f' shows more hints than 'F' (on left side of nav bar)
 - gu and gU don't work on local files properly
+- dpb| 09:09:56  dpb :: when I save a page with vimperator, it adds <hints
+     id="hah_hints"></hints> near the end of it.. kinda annoying
+  dpb| 09:11:50  dpb :: and this happens only when saving the complete
+     webpage, saving  only the html works just fine..
+
 
 FEATURES:
 9 marks of a Location, [m a-zA-Z] to set it, [` a-zA-Z] to go there
   [m 0-9] marks a buffer instead [' 0-9] goes there
   also mark bookmarks (with M[a-zA-Z] maybe and use only lowercase marks for inbuffer marks?)
   also support :mark and :marks
-8 downloading of links to filesystem (:save <filename>)
-8 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
-  with color support (for things like :echo line1\nline2)
+8 :map commands to keys
+8 :command for new commands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
-8 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 8 Use our own find-as-you-type mechanism (like conkeror does)
+7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
+7 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
+  with color support (for things like :echo line1\nline2)
 7 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
-7 :hardcopy -> printing
 7 Ctrl-6/Ctrl-^ -> jump to the previously active tab
 7 3d should delete 3 tabs
-6 :map commands to keys
+6 downloading of links to filesystem (:save <filename>)
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
 6 vim like mappings for caret mode and textboxes (i to start caret mode?)
   http://nigel.mcnie.name/gnawt/ has a somewhat working implementation
 6 pipe selected text/link/website to an external command
 6 it would be nice to have :(undo|back|forward) <url> w/ tab completion support
 6 macros (qq)
-6 support firefox search engines, or at least make our search enginges user configurable
 6 gf = view source?
 6 make a real one-tab-mode, divert _all_ other targets, possible by setting a firefox option (set popup=0-3)
 6 Shift-Insert in textboxes pastes selection contents
@@ -43,7 +47,7 @@ FEATURES:
 5 Use arrow keys in preview window, and ctrl-w+j/k to switch to from preview window
 5 Sort :open completion by date? (use 'wildsort')
 5 make use of the ] and [ keys to e.g. jump to the next heading ]], next image ]i, previous textbox [t and so on
-5 add tag support to adding/deleting bookmarks
+5 add tag and keyword support to adding/deleting bookmarks
 4 Support multiple top-level windows?
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension

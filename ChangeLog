@@ -1,6 +1,7 @@
 <pre>
 2007-05-02:
 	* version ???
+	* :hardcopy works now and shows the printing dialog
 	* changed "R" to reload without cache instead of reload all due to popular request
 	* changed secure sites -> green, broken sites -> red in the statusbar
 	* Vimperator now sets the window title, so it's "vimperator.mozdev.org -

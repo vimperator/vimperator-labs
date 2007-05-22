@@ -369,10 +369,7 @@ function QM()
 {
     //logObject(vimperator);
     logMessage(vimperator.getpr("complete"));
-//    var command_widget = document.getElementById('new-vim-commandbar');
-//    logMessage(command_widget);
-    //setTimeout(function() {logObject(vimperator)}, 1000);
-    //Vimperator.echo("test");
+
     this.add = function() { alert('add');};
     this.rem = function() { vimperator.echo("rem"); logObject(vimperator)};
     this.zoom = function() { vimperator.zoom_to(200); logObject(vimperator)};

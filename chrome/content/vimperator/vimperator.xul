@@ -51,8 +51,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 	<window id="main-window">
 		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
-			<vbox id="vim-container" flex="1" hidden="false">
-				<listbox id="vimperator-buffer-window" class="plain" rows="10" flex="1" hidden="true"
+			<vbox id="vimperator-container" flex="1" hidden="false">
+				<listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.bufferwindow.onEvent(event);"
                         ondblclick="vimperator.bufferwindow.onEvent(event);"
                         onkeydown= "vimperator.bufferwindow.onEvent(event);"
@@ -63,7 +63,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 					</listcols>
 				</listbox>
 
-				<listbox id="vimperator-preview-window" class="plain" rows="10" flex="1" hidden="true"
+				<listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.previewwindow.onEvent(event);"
                         ondblclick="vimperator.previewwindow.onEvent(event);"
                         onkeydown= "vimperator.previewwindow.onEvent(event);"
@@ -82,7 +82,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 					<label   class="plain" id="vimperator-statusline-field-bufferposition" flex="0" style="font-family: monospace; padding: 0px 0px 0px 8px"/>
 				</hbox>
 
-				<listbox id="vim-completion" class="plain" rows="1" flex="1" hidden="true"
+				<listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true"
 					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:ignore; overflow:-moz-scrollbars-none;">
 					<listcols>
 						<listcol flex="1" width="50%"/>
@@ -90,16 +90,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 					</listcols>
 				</listbox>
 
-                <hbox id="vim-commandbar-container" flex="1" hidden="true" style="-moz-user-focus:ignore;">
-					<textbox class="plain" id="vim-commandbar-prompt"  flex="0" crop="right" value="" collapsed="true" size="1"
-						readonly="true" style="font-family: monospace; background-color: transparent; -moz-user-focus:ignore;"/>
-                    <textbox class="plain" id="vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
-                        style="font-family: monospace"/>
-                </hbox>
-                <hbox id="new-vim-commandbar-container" flex="1" hidden="false" style="-moz-user-focus:ignore;">
-					<textbox class="plain" id="new-vim-commandbar-prompt"  flex="0" crop="right" value="" collapsed="true"
+                <hbox id="vimperator-commandline" flex="1" hidden="false" style="-moz-user-focus:ignore;">
+					<textbox class="plain" id="vimperator-commandline-prompt"  flex="0" crop="right" value="" collapsed="true"
 						readonly="true" style="font-family: monospace; background-color:white; -moz-user-focus:ignore;"/>
-                    <textbox class="plain" id="new-vim-commandbar" flex="1" hidden="false" type="timed" timeout="100"
+                    <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
 						onkeypress="vimperator.commandline.onEvent(event);"
 						oninput="vimperator.commandline.onEvent(event);"
                         onblur="vimperator.commandline.onEvent(event);" style="font-family: monospace"/>
