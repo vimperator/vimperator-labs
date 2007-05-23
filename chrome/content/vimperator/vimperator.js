@@ -1101,17 +1101,76 @@ function Vimperator()
 // provides functions for working with tabs
 function Tabs()
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    /* spec can either be an absolute integer
+     * or "" for the current tab
+     * or "+1" for the next tab
+     * or "-3" for the tab, which is 3 positions left of the current
+     * or "$" for the last tab
+     */
+    function indexFromSpec(spec, wrap)
+    {
+        var position = getBrowser().tabContainer.selectedIndex;
+        var length   = getBrowser().mTabs.length;
+        var last     = length - 1;
+
+        if (typeof(spec) === "undefined" || spec === "")
+            return position;
+
+        if (typeof(spec) === "number")
+            position = spec;
+        else if (spec === "$")
+            return last;
+        else if (!spec.match(/^([+-]?\d+|)$/))
+        {
+            // TODO: move error reporting to ex-command?
+            vimperator.echoerr("E488: Trailing characters");
+            return false;
+        }
+        else
+        {
+            if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
+                position += parseInt(spec);
+            else                           // absolute position
+                position = parseInt(spec);
+        }
+
+        if (position > last)
+            position = wrap ? position % length : last;
+        else if (position < 0)
+            position = wrap ? (position % length) + length: 0;
+
+        return position;
+    }
+
+    function indexFromTab(tab)
+    {
+        var length = getBrowser().mTabs.length;
+        for (var i = 0; i < length; i++)
+        {
+            if (getBrowser().mTabs[i] == tab)
+                return i;
+        }
+        return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // @returns the index of the currently selected tab starting with 0
     this.index = function()
     {
         return getBrowser().tabContainer.selectedIndex;
-
     }
     this.count = function()
     {
-        return getBrowser().tabContainer.childNodes.length;
+        return getBrowser().mTabs.length;
     }
 
+    // TODO: implement filter
+    // @returns an array of buffers which match filter
     this.get = function(filter)
     {
         var buffers = [];
@@ -1124,6 +1183,52 @@ function Tabs()
             buffers.push([number, title, uri]);
         }
         return buffers;
+    }
+
+    /*  position == '' moves the tab to the last position as per Vim
+     *  wrap causes the movement to wrap around the start and end of the tab list
+     *  NOTE: position is a 0 based index
+     *  FIXME: tabmove! N should probably produce an error
+     */
+    this.move = function(tab, spec, wrap)
+    {
+        if (spec === "")
+            spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
+
+        var index = indexFromSpec(spec, false); // XXX: really no wrap?
+        getBrowser().moveTabTo(tab, index);
+    }
+
+    this.select = function(spec, wrap)
+    {
+        var index = indexFromSpec(spec, wrap);
+        if (index === false)
+        {
+            beep(); // XXX: move to ex-handling?
+            return false;
+        }
+        getBrowser().mTabContainer.selectedIndex = index;
+    }
+
+    /* quit_on_last_tab = 1: quit without saving session
+     * quit_on_last_tab = 2: quit and save session
+     */
+    this.remove = function(tab, count, focus_left_tab, quit_on_last_tab)
+    {
+        if (count < 1) count = 1;
+
+        if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
+            quit(quit_on_last_tab == 2);
+
+        if(focus_left_tab && tab.previousSibling)
+            this.select("-1", false);
+
+        getBrowser().removeTab(tab);
+    }
+
+    this.removeAllOthers = function(tab)
+    {
+        getBrowser().removeAllTabsBut(tab);
     }
 }
 // vim: set fdm=marker sw=4 ts=4 et:

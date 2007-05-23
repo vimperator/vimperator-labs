@@ -83,7 +83,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				</hbox>
 
 				<listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true"
-					style="font-family: monospace; -moz-user-focus:ignore; -moz-user-select:ignore; overflow:-moz-scrollbars-none;">
+					style="font-family: monospace; -moz-user-focus:ignore; overflow:-moz-scrollbars-none;">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>

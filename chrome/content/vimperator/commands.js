@@ -69,7 +69,7 @@ var g_commands = [/*{{{*/
         ["{count}bd[elete][!]"],
         "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab.",
-        function (args, special, count) { tab_remove (count, special, 0); },
+        function (args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
         null
     ],
     [
@@ -302,7 +302,7 @@ var g_commands = [/*{{{*/
         ["q[uit]"],
         "Quit current tab or quit Vimperator if this was the last tab",
         "When quitting Vimperator, the session is not stored.",
-        function (args) { tab_remove(1, false, 1); },
+        function (args) { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         null
     ],
     [
@@ -317,8 +317,16 @@ var g_commands = [/*{{{*/
         ["re[load]"],
         ["re[load][!]"],
         "Reload current page",
-        "Forces reloading of the current page. If ! is given, byepass cache.",
-        function(args, special) { if (special) BrowserReloadSkipCache(); else reload(special); }, // FIXME
+        "Forces reloading of the current page. If ! is given, skip the cache.",
+        function(args, special) { reload(getBrowser().mCurrentTab, special); },
+        null
+    ],
+    [
+        ["reloada[ll]"],
+        ["reloada[ll][!]"],
+        "Reload all pages",
+        "Forces reloading of all pages. If ! is given, skip the cache.",
+        function(args, special) { reload_all(special); },
         null
     ],
     [
@@ -384,7 +392,7 @@ var g_commands = [/*{{{*/
         ["tabn[ext]"],
         "Switch to the next tab",
         "Cycles to the first tab, when the last is selected.",
-        function(args, special, count) { tab_go(0); },
+        function(args, special, count) { vimperator.tabs.select("+1", true); },
         null
     ],
     [
@@ -401,15 +409,16 @@ var g_commands = [/*{{{*/
         ["tabo[nly]"],
         "Close all other tabs",
         null,
-        function() { getBrowser().removeAllTabsBut(getBrowser().mCurrentTab); },
+        function() { vimperator.tabs.removeAllOthers(getBrowser().mCurrentTab); },
         null
     ],
     [
-        ["tabm[ove]"],
-        ["tabm[ove] [N]"],
+        ["tabmove", "tabm"],
+        ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
         "Move the current tab after tab N",
-        "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one.",
-        tab_move,
+        "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
+        "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list.",
+        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
         null
     ],
     [
@@ -417,7 +426,7 @@ var g_commands = [/*{{{*/
         ["tabp[revious]", "tabN[ext]"],
         "Switch to the previous tab",
         "Cycles to the last tab, when the first is selected.",
-        function(args, count) { tab_go(-1); },
+        function(args, count) { vimperator.tabs.select("-1", true); },
         null
     ],
     [
@@ -425,7 +434,7 @@ var g_commands = [/*{{{*/
         ["tabr[ewind]", "tabfir[st]"],
         "Switch to the first tab",
         null,
-        function(args, count) { tab_go(1); },
+        function(args, count) { vimperator.tabs.select(0, false); },
         null
     ],
     [
@@ -433,7 +442,7 @@ var g_commands = [/*{{{*/
         ["tabl[ast]"],
         "Switch to the last tab",
         null,
-        function(args, count) { tab_go(getBrowser().mTabs.length); },
+        function(args, count) { vimperator.tabs.select("$", false); },
         null
     ],
     [
@@ -541,14 +550,14 @@ var g_mappings = [/*{{{*/
         ["{count}d"],
         "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=\"mapping\">2d</code> removes two tabs and the one the right is selected.",
-        function(count) { tab_remove(count, false, 0); }
+        function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); }
     ],
     [ 
         ["D"],
         ["{count}D"],
         "Delete current buffer (=tab)",
         "Count WILL be supported in future releases, then <code class=\"mapping\">2D</code> removes two tabs and the one the left is selected.",
-        function(count) { tab_remove(count, true, 0); }
+        function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); }
     ],
     /*[ 
         ["ge"],
@@ -585,7 +594,7 @@ var g_mappings = [/*{{{*/
         "Go to next tab",
         "Cycles to the first tab, when the last is selected.<br/>"+
         "Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
-        function(count) { tab_go(count > 0 ? count : 0); }
+        function(count) { vimperator.tabs.select(count > 0 ? count -1: "+1", count > 0 ? false : true); }
     ],
     [ 
         ["gT", "<C-p>", "<C-S-Tab>"],
@@ -593,7 +602,7 @@ var g_mappings = [/*{{{*/
         "Go to previous tab",
         "Cycles to the last tab, when the first is selected.<br/>"+
         "Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
-        function(count) { tab_go(count > 0 ? count :-1); }
+        function(count) { vimperator.tabs.select(count > 0 ? count -1: "-1", count > 0 ? false : true); }
     ],
     [ 
         ["o"],
@@ -629,14 +638,14 @@ var g_mappings = [/*{{{*/
         ["r"],
         "Reload",
         "Forces reloading of the current page.",
-        function(count) { reload(false); }
+        function(count) { reload(getBrowser().mCurrentTab, false); }
     ],
     [ 
         ["R"],
         ["R"],
-        "Reload all",
-        "Forces reloading of all open pages.",
-        function(count) { BrowserReloadSkipCache(); }
+        "Reload skipping the cache",
+        "Forces reloading of the current page skipping the cache.",
+        function(count) { reload(getBrowser().mCurrentTab, true); }
     ],
     [ 
         ["t"],
@@ -1061,14 +1070,14 @@ var g_hint_mappings = [ /*{{{*/
     ["<Up>",       "scrollBufferRelative(0, -1);",       false, true],
     ["<Right>",    "scrollBufferRelative(1, 0);",        false, true],
     /* tab managment */
-    ["<C-n>",      "tab_go(0)",                          true,  true], // same as gt, but no count supported
-    ["<C-p>",      "tab_go(-1)",                         true,  true],
+    ["<C-n>",      "vimperator.tabs.select('+1', true)",       true,  true], // same as gt, but no count supported
+    ["<C-p>",      "vimperator.tabs.select('-1', true)",       true,  true],
     /* navigation */
     ["<C-o>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
     ["<C-i>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
     ["<C-h>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
     ["<C-l>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-d>",      "tab_remove(g_count, false, 0);",                  true,  true],
+    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, g_count, false, 0);",                  true,  true],
     /* cancel hint mode keys */
     ["<C-c>",      "", true, true],
     ["<C-g>",      "", true, true],
@@ -1414,6 +1423,7 @@ function isDirectory(url)
     else
         return false;
 }
+
 ////////////////////////////////////////////////////////////////////////
 // frame related functions //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
@@ -1635,66 +1645,16 @@ function tab()
     execute(arguments[0], null, null, {inTab: true});
 }
 
-/* if index = 0, advance on tab
- * if index < 0, go one tab to the left
- * otherwise, jump directly to tab <index>
- */
-function tab_go(index)
-{
-    if (index < 0)
-        getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-    else if (index == 0)
-        getBrowser().mTabContainer.advanceSelectedTab(1, true);
-    else
-    {
-        if (getBrowser().mTabs.length < index)
-            beep();
-        else
-            getBrowser().mTabContainer.selectedIndex = index-1;
-    }
-}
-
-/* quit_on_last_tab = 1: quit without saving session
-   quit_on_last_tab = 2: quit and save session
- */
-function tab_remove(count, focus_left_tab, quit_on_last_tab)
-{
-    if (count < 1) count = 1;
-
-    if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
-        quit(quit_on_last_tab == 2);
-
-    var tab = getBrowser().mCurrentTab;
-    if(focus_left_tab && tab.previousSibling)
-        gBrowser.mTabContainer.selectedIndex--;
-    getBrowser().removeTab(tab);
-}
-
-function tab_move(position)
-{
-    if (!position.match(/^(\d+|)$/))
-    {
-        vimperator.echoerr("E488: Trailing characters");
-        return;
-    }
-
-    var last = getBrowser().mTabs.length - 1;
-    if (position == "" || position > last)
-        position = last;
-
-    getBrowser().moveTabTo(getBrowser().mCurrentTab, parseInt(position));
-}
-
 function buffer_switch(string)
 {
     var match;
     if (match = string.match(/^(\d+):?/))
-        return tab_go(match[1]);
+        return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
     for (var i = 0; i < getBrowser().browsers.length; i++)
     {
         var url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
         if (url == string)
-            return tab_go(i);
+            return vimperator.tabs.select(i, false);
     }
 }
 
@@ -1878,12 +1838,40 @@ function quit(save_session)
     goQuitApplication();
 }
 
-function reload(all_tabs)
+function reload(tab, bypass_cache)
 {
-    if (all_tabs)
-        getBrowser().reloadAllTabs();
+    if (bypass_cache)
+    {
+        const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+        const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
+        getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
+    }
     else
-        BrowserReload();
+    {
+        getBrowser().reloadTab(tab);
+    }
+}
+
+function reload_all(bypass_cache)
+{
+    if (bypass_cache)
+    {
+        for (var i = 0; i < getBrowser().mTabs.length; i++)
+        {
+            try
+            { 
+                reload(getBrowser().mTabs[i], bypass_cache)
+            }
+            catch (e) {
+                // FIXME: can we do anything useful here without stopping the
+                //        other tabs from reloading?
+            }
+        }
+    }
+    else
+    {
+        getBrowser().reloadAllTabs();
+    }
 }
 
 function restart()

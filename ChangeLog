@@ -1,6 +1,8 @@
 <pre>
 2007-05-02:
 	* version ???
+	* many help fixes (most of them by Doug Kearns)
+	* new :reloadall command
 	* :hardcopy works now and shows the printing dialog
 	* changed "R" to reload without cache instead of reload all due to popular request
 	* changed secure sites -> green, broken sites -> red in the statusbar
