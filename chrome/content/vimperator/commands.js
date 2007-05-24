@@ -1428,7 +1428,6 @@ function isDirectory(url)
 // frame related functions //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 
-// function stolen from Conkeror
 function focusNextFrame(count)
 {
     try
@@ -1454,21 +1453,20 @@ function focusNextFrame(count)
         // Focus the next one, 0 if we're at the last one
         if (next >= frames.length)
             next = 0;
-        frames[next].focus();
-        var oldbg = frames[next].document.bgColor;
-        var oldstyle = frames[next].document.body.getAttribute("style");
-        frames[next].document.bgColor = "red";
-        frames[next].document.body.setAttribute("style", "background-color: #FF0000;");
-    
-        setTimeout(function(doc, bgcolor, style) {
-            doc.bgColor = bgcolor;
-            if (oldstyle == null)
-                doc.body.removeAttribute("style");
-            else
-                doc.body.setAttribute("style", style);
-        }, 150, frames[next].document, oldbg, oldstyle);
 
-    } catch(e) {alert(e);}
+        frames[next].focus();
+
+        var doc = frames[next].document;
+        var indicator = doc.createElement("div");
+        indicator.id = "vimperator-frame-indicator";
+        // NOTE: need to set a high z-index - it's a crapshoot!
+        var style = "background-color: red; opacity: 0.5; z-index: 999;" +
+                    "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
+        indicator.setAttribute("style", style);
+        doc.body.appendChild(indicator);
+
+        setTimeout(function() { doc.body.removeChild(indicator); }, 250);
+    } catch(e) { alert(e); }
 }
 
 

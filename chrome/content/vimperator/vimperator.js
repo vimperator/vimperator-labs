@@ -1098,17 +1098,19 @@ function Vimperator()
     // alert('end');
 }
 
+// XXX: move where?
 // provides functions for working with tabs
 function Tabs()
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
-    /* spec can either be an absolute integer
-     * or "" for the current tab
-     * or "+1" for the next tab
-     * or "-3" for the tab, which is 3 positions left of the current
-     * or "$" for the last tab
+    /** @param spec can either be:
+     * - an absolute integer
+     * - "" for the current tab
+     * - "+1" for the next tab
+     * - "-3" for the tab, which is 3 positions left of the current
+     * - "$" for the last tab
      */
     function indexFromSpec(spec, wrap)
     {
@@ -1145,23 +1147,23 @@ function Tabs()
         return position;
     }
 
-    function indexFromTab(tab)
-    {
-        var length = getBrowser().mTabs.length;
-        for (var i = 0; i < length; i++)
-        {
-            if (getBrowser().mTabs[i] == tab)
-                return i;
-        }
-        return false;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     // @returns the index of the currently selected tab starting with 0
-    this.index = function()
+    this.index = function(tab)
     {
+        if(tab)
+        {
+            var length = getBrowser().mTabs.length;
+            for (var i = 0; i < length; i++)
+            {
+                if (getBrowser().mTabs[i] == tab)
+                    return i;
+            }
+            return false;
+        }
+
         return getBrowser().tabContainer.selectedIndex;
     }
     this.count = function()
@@ -1170,7 +1172,7 @@ function Tabs()
     }
 
     // TODO: implement filter
-    // @returns an array of buffers which match filter
+    // @returns an array of tabs which match filter
     this.get = function(filter)
     {
         var buffers = [];
@@ -1185,7 +1187,7 @@ function Tabs()
         return buffers;
     }
 
-    /*  position == '' moves the tab to the last position as per Vim
+    /*  spec == "" moves the tab to the last position as per Vim
      *  wrap causes the movement to wrap around the start and end of the tab list
      *  NOTE: position is a 0 based index
      *  FIXME: tabmove! N should probably produce an error
@@ -1197,17 +1199,6 @@ function Tabs()
 
         var index = indexFromSpec(spec, false); // XXX: really no wrap?
         getBrowser().moveTabTo(tab, index);
-    }
-
-    this.select = function(spec, wrap)
-    {
-        var index = indexFromSpec(spec, wrap);
-        if (index === false)
-        {
-            beep(); // XXX: move to ex-handling?
-            return false;
-        }
-        getBrowser().mTabContainer.selectedIndex = index;
     }
 
     /* quit_on_last_tab = 1: quit without saving session
@@ -1229,6 +1220,17 @@ function Tabs()
     this.removeAllOthers = function(tab)
     {
         getBrowser().removeAllTabsBut(tab);
+    }
+
+    this.select = function(spec, wrap)
+    {
+        var index = indexFromSpec(spec, wrap);
+        if (index === false)
+        {
+            beep(); // XXX: move to ex-handling?
+            return false;
+        }
+        getBrowser().mTabContainer.selectedIndex = index;
     }
 }
 // vim: set fdm=marker sw=4 ts=4 et:

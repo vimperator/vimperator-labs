@@ -4,12 +4,12 @@ Main developer:
 
 Developers:
   * Viktor Kojouharov (Виктор Кожухаров)
+  * Doug Kearns
  
 Patches:
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
-  * Doug Kearns (vimperator.vim, :tabonly etc. commands)
-  * Hannes Rist (:set title support)
+  * Hannes Rist (:set titlestring support)
 </pre>
