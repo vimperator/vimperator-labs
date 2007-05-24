@@ -4,7 +4,6 @@ Priority list:
 
 BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
-- flashing frame is not perfect
 - The RSS feed button in the address bar no longer works.
 - autoupdate does not work
 - multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs

@@ -1217,7 +1217,7 @@ function Tabs()
         getBrowser().removeTab(tab);
     }
 
-    this.removeAllOthers = function(tab)
+    this.keepOnly = function(tab)
     {
         getBrowser().removeAllTabsBut(tab);
     }

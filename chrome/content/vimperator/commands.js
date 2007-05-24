@@ -409,7 +409,7 @@ var g_commands = [/*{{{*/
         ["tabo[nly]"],
         "Close all other tabs",
         null,
-        function() { vimperator.tabs.removeAllOthers(getBrowser().mCurrentTab); },
+        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
         null
     ],
     [
@@ -675,6 +675,14 @@ var g_mappings = [/*{{{*/
         "Yank current location to the clipboard",
         "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button.",
         yankCurrentLocation
+    ],
+    [
+        ["Y"],
+        ["Y"],
+        "Copy selected text",
+        "The currently selected text is copied to the system clipboard.",
+        yankCurrentSelection,
+        null
     ],
     [ 
         ["zi", "+"],
@@ -1508,6 +1516,12 @@ function yankCurrentLocation()
     var loc = getCurrentLocation();
     copyToClipboard(loc);
     vimperator.echo("Yanked " + loc);
+}
+function yankCurrentSelection()
+{
+    var sel = window.content.document.getSelection();
+    copyToClipboard(sel);
+    vimperator.echo("Yanked " + sel);
 }
 
 // return null, if no link with a href focused
