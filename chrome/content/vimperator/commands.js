@@ -244,7 +244,7 @@ var g_commands = [/*{{{*/
     [
         ["o[pen]", "e[dit]"],
         ["o[pen] [url] [| url]"],
-        "Open one ore more URLs in the current tab",
+        "Open one or more URLs in the current tab",
         "Multiple URLs can be separated with the | character.<br/>" +
         "Each |-separated token is analayzed and in this order:<br/>"+
         "<ol>"+
