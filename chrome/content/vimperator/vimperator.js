@@ -104,7 +104,7 @@ nsBrowserStatusHandler.prototype =
             vimperator.statusline.updateUrl(aRequest.URI.spec);
             vimperator.statusline.updateProgress("");
             // also reset the buffer list, since the url titles are valid here
-            showBufferList(true);
+            updateBufferList();
         }
         return 0;
     },
@@ -1040,7 +1040,7 @@ function Vimperator()
                 vimperator.statusline.updateUrl(aRequest.URI.spec);
                 vimperator.statusline.updateProgress("");
                 // also reset the buffer list, since the url titles are valid here
-                showBufferList(true);
+                updateBufferList();
             }
             return 0;
         },
