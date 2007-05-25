@@ -461,8 +461,8 @@ function Search()
 // @todo nicer way to register commands?
 g_commands.push(
     [
-        ["nohilight", "noh"],
-        ["noh[ilight]"],
+        ["noh[lsearch]", "noh"],
+        ["noh[lsearch]"],
         "Clear the current selection",
         "",
         clearSelection,

@@ -51,7 +51,6 @@ var g_commands = [/*{{{*/
         ["addo[ns]"],
         "Show available Browser Extensions and Themes",
         "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI.",
-        //function() {  },
         function(args) { vimperator.commands.addons(args); },
         null
     ],
@@ -1473,7 +1472,7 @@ function focusNextFrame(count)
         indicator.setAttribute("style", style);
         doc.body.appendChild(indicator);
 
-        setTimeout(function() { doc.body.removeChild(indicator); }, 250);
+        setTimeout(function() { doc.body.removeChild(indicator); }, 300);
     } catch(e) { alert(e); }
 }
 
@@ -2206,7 +2205,6 @@ function toggle_images() {
 
 function Commands()
 {
-
     this.addons = function(args)
     {
         openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true);
