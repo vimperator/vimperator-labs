@@ -413,7 +413,7 @@ var g_commands = [/*{{{*/
         null
     ],
     [
-        ["tabmove", "tabm"],
+        ["tabm[ove]"],
         ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
         "Move the current tab after tab N",
         "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
