@@ -38,16 +38,16 @@ the terms of any one of the MPL, the GPL or the LGPL.
 	xmlns:html="http://www.w3.org/1999/xhtml" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="help.js"/>
-	<script type="application/x-javascript" src="vimperator.js"/>
-	<script type="application/x-javascript" src="commands.js"/>
-	<script type="application/x-javascript" src="ui.js"/>
-	<script type="application/x-javascript" src="settings.js"/>
-	<script type="application/x-javascript" src="completion.js"/>
-	<script type="application/x-javascript" src="bookmarks.js"/>
-	<script type="application/x-javascript" src="hints.js"/>
-	<script type="application/x-javascript" src="file.js"/>
-	<script type="application/x-javascript" src="find.js"/>
+	<script type="application/x-javascript;version=1.7" src="help.js"/>
+	<script type="application/x-javascript;version=1.7" src="vimperator.js"/>
+	<script type="application/x-javascript;version=1.7" src="commands.js"/>
+	<script type="application/x-javascript;version=1.7" src="ui.js"/>
+	<script type="application/x-javascript;version=1.7" src="settings.js"/>
+	<script type="application/x-javascript;version=1.7" src="completion.js"/>
+	<script type="application/x-javascript;version=1.7" src="bookmarks.js"/>
+	<script type="application/x-javascript;version=1.7" src="hints.js"/>
+	<script type="application/x-javascript;version=1.7" src="file.js"/>
+	<script type="application/x-javascript;version=1.7" src="find.js"/>
 
 	<window id="main-window">
 		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">

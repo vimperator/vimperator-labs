@@ -742,7 +742,9 @@ function Vimperator()
     // After pressing Escape, put focus on a non-input field of the browser document
     this.focusContent = function()
     {
-        var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].getService(Components.interfaces.nsIWindowWatcher);
+        var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
+                 getService(Components.interfaces.nsIWindowWatcher);
+
         if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
             document.commandDispatcher.focusedElement.blur();
 
