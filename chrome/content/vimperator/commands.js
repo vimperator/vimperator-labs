@@ -1304,7 +1304,7 @@ function historyGoToEnd()
 ////////////////////////////////////////////////////////////////////////
 function openURLs(str)
 {
-    urls = stringToURLs(str);
+    var urls = stringToURLs(str);
     if (urls.length == 0)
         return false;
 
@@ -1318,7 +1318,7 @@ function openURLs(str)
 
 function openURLsInNewTab(str, activate)
 {
-    urls = stringToURLs(str);
+    var urls = stringToURLs(str);
     if (urls.length == 0)
         return null;
 
