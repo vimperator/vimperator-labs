@@ -38,9 +38,6 @@ var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no cou
 var prev_match = new Array(5);
 var heredoc = '';
 
-// handles to our gui elements
-var command_line = null;
-
 // FIXME: if I rename this to another class name, it doesn't work, find the reason
 function nsBrowserStatusHandler() /*{{{*/
 {
@@ -188,9 +185,6 @@ function init()
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
     //vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return moo();; } );
-
-    //status_line = document.getElementById("vim-statusbar");
-    command_line = document.getElementById("vimperator-commandline");
 
     // Setup our main status handler - from browser.js
     // this function reacts to status bar and url changes which are sent from the mozilla core

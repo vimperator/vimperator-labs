@@ -318,7 +318,6 @@ function Search()
 
     // Called when the user types a key in the search dialog. Triggers a find attempt
     this.searchKeyPressed = function(command) { 
-        //this.find(command_line.value, true, this.lastFindState()["point"]);
         if (command != "") {
             this.find(vimperator.commandline.getCommand(), true, this.lastFindState()["point"]);
             this.resumeFindState(this.lastFindState());
