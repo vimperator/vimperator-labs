@@ -680,7 +680,7 @@ function Vimperator()
 	{
 		for (i in callbacks)
 		{
-			[thistype, thismode, thisfunc] = callbacks[i];
+			var [thistype, thismode, thisfunc] = callbacks[i];
 			if (vimperator.hasMode(thismode) && type == thistype)
 				return thisfunc.call(this, data);
 		}
