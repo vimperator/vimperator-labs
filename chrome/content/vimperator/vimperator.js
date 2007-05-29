@@ -1228,5 +1228,42 @@ function Tabs()
         }
         getBrowser().mTabContainer.selectedIndex = index;
     }
+
+
+    /* XXX: disabled until we find a better way where to update the titles, right now
+     * it has O(n^2) complexity on firefox start when we load 50 tabs
+     * (c) by hrist
+     
+         window.addEventListener("TabMove",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+         window.addEventListener("TabOpen",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+         window.addEventListener("TabClose",   function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+
+    this.updateTitles = function(forceclear)
+    {    
+        for(var i=0;i < vimperator.tabs.count();i++)
+        {    
+            var old_title = getBrowser().mTabContainer.childNodes[i].getAttribute("label");
+            var split_title = old_title.match(/^(\d+:\s+)(.*)/);
+            if(forceclear)
+            {    
+                for(var i=0;i<vimperator.tabs.count();i++)
+                getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
+                return;
+            }    
+
+            var numbertabs = get_pref('numbertabs');
+            if(numbertabs)
+            {    
+                if(split_title)
+                {    
+                    var new_title = (i+1) + ": "+ split_title[2];
+                }    
+                else  var new_title = (i+1) + ": " + old_title;
+                getBrowser().mTabContainer.childNodes[i].setAttribute("label", new_title);
+            }    
+            else getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
+        }    
+    }
+    */
 }
 // vim: set fdm=marker sw=4 ts=4 et:

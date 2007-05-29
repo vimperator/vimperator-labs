@@ -329,6 +329,29 @@ var g_settings = [/*{{{*/
         "",
         null
     ]
+
+    // TODO: make more performant and then enable
+    /*,[   
+        ["numbertabs", "nt"],
+        ["numbertabs", "nt"],
+        "Turns tab numbering on or off",
+        "If you want to see a number on each tab turn this on",
+        "boolean",
+        null,
+        function(value) { set_pref("numbertabs", value); set_tabnumbers(value); },
+        function() { return get_pref("numbertabs"); },
+        false,
+        null
+    ],
+
+    function set_tabnumbers(value)
+    {
+        if(value==false)
+            vimperator.tabs.updateTitles(true);
+        vimperator.tabs.updateTitles(false);
+    }
+*/
+
 ]/*}}}*/
 
 // return null, if the cmd cannot be found in our g_settings array, or
