@@ -76,9 +76,9 @@ function Mappings()
     this.user = [];
 
     this.flags = {
-        MOTION:		1 << 0,
-        COUNT:		1 << 1,
-        ARGUMENT:	1 << 2
+        MOTION:		1 << 1,
+        COUNT:		1 << 2,
+        ARGUMENT:	1 << 3
     };
 
     this.add = function(map)
