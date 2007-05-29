@@ -74,7 +74,7 @@ function Mappings()
     // XXX: make these 2 arrays prviate
     this.main = [];
     this.user = [];
-    
+
     this.flags = {
         MOTION:		1 << 0,
         COUNT:		1 << 1,
@@ -93,18 +93,18 @@ function Mappings()
 
         return true;
     }
-    
+
     this.remove = function(map)
     {
         var index;
-        
+
         if (!map || !(index = this.user[map.mode].indexOf(map)))
             return false;
 
         this.user[map.mode].splice(index, 1);
         return true;
     }
-    
+
     this.get = function(mode, cmd)
     {
         if (!mode || !cmd)
@@ -191,7 +191,7 @@ function Mappings()
     addDefaultMap(new Map(vimperator.mode.NORMAL, ["m"], set_location_mark,
         {
             short_help: "Set mark at the cursor position", usage: "m{a-zA-Z}",
-            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers",
+            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
             flags: this.flags.ARGUMENT
         }
     ));
@@ -203,7 +203,7 @@ function Mappings()
     ));
     addDefaultMap(new Map(vimperator.mode.NORMAL, ["O"], function(count) { vimperator.commandline.open(":", "open " + getCurrentLocation(), vimperator.modes.EX); },
         {
-            short_help: "Open one ore more URLs in the current tab, based on current location",
+            short_help: "Open one or more URLs in the current tab, based on current location",
             help: "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query."
         }
     ));
@@ -304,7 +304,8 @@ function Mappings()
 	addDefaultMap(new Map(vimperator.mode.NORMAL, ["ZZ"], function(count) { quit(true); },
         {
             short_help: "Quit and save the session",
-            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" + "Works like <code class=\"command\">:xall</code>."
+            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
+                  "Works like <code class=\"command\">:xall</code>."
         }
     ));
 
@@ -376,7 +377,7 @@ function Mappings()
 	addDefaultMap(new Map(vimperator.mode.NORMAL, ["<C-f>", "<C-d>", "<PageDown>", "<Space>"], function(count) { goDoCommand('cmd_scrollPageDown'); },
         {
             short_help: "Scroll down a full page of the current document",
-            help: "No count support for now,"
+            help: "No count support for now."
         }
     ));
 
@@ -384,14 +385,14 @@ function Mappings()
 	addDefaultMap(new Map(vimperator.mode.NORMAL, ["<C-o>"], function(count) { stepInHistory(count > 0 ? -1 * count : -1); },
         {
             short_help: "Go to an older position in the jump list",
-            help: "The jump list is just the browser history for now",
+            help: "The jump list is just the browser history for now.",
             flags: this.flags.COUNT
         }
     ));
 	addDefaultMap(new Map(vimperator.mode.NORMAL, ["<C-i>"], function(count) { stepInHistory(count > 0 ? count : 1); },
         {
             short_help: "Go to a newer position in the jump list",
-            help: "The jump list is just the browser history for now",
+            help: "The jump list is just the browser history for now.",
             flags: this.flags.COUNT
         }
     ));
@@ -525,6 +526,7 @@ function Mappings()
         {
             short_help: "Cancel any operation",
             help: "Exits any command line or hint mode and returns to browser mode.<br/>"
+                  "Also focuses the web page, in case a form field has focus and eats our key presses.",
         }
     ));
 
