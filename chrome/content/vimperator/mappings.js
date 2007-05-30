@@ -1,47 +1,66 @@
 // TODO: document
 function Map(mode, cmds, act, extra_info)
 {
-    if (!mode || (!cmds || !cmds.length) || !action)
+    if (!mode || (!cmds || !cmds.length) || !act)
         return null;
 
-    if (!extra_info)
-        extra_info = {};
-
     var action = act;
-    var flags = extra_info.flags || 0;
 
     this.mode = mode;
     this.commands = cmds;
 
-    if (extra_info.usage)
-        this.usage = extra_info.usage;
-    else
+    if (extra_info)
     {
-        var usage = "";
-        if (flags & vimperator.mappings.flags.COUNT)
-            usage = "{count}";
+        var flags = extra_info.flags || 0;
 
-        usage += cmd;
-        if (flags & vimperator.mappings.flags.ARGUMENT)
-            usage += " {arg}";
+        if (extra_info.usage)
+            this.usage = extra_info.usage;
+        else
+        {
+            this.usage = "";
+            if (flags & vimperator.mappings.flags.COUNT)
+                this.usage = "{count}";
+            this.usage += this.commands;
+            if (flags & vimperator.mappings.flags.ARGUMENT)
+                this.usage += " {arg}";
+        }
+
+        if (extra_info.help)
+            this.help = extra_info.help;
+        else
+            this.help = null;
+
+        if (extra_info.short_help)
+            this.short_help = extra_info.short_help;
+        else
+            this.short_help = null;
     }
 
-    if (extra_info.help)
-        this.help = extra_info.help;
-    if (extra_info.short_help)
-        this.short_help = extra_info.short_help;
-
     // XXX: can we move this to Map.prototype.execute, or don't we have access to this in a prototype?
-    this.execute = function() {
+    this.execute = function()
+    {
         action.call(this);
+    }
+
+    this.toString = function()
+    {
+        // FIXME: -- djk
+        return "Map {" +
+             "\nmode: " + this.mode +
+             "\ncommands: " + this.commands +
+             "\naction: " + action  +
+             "\nusage: " + this.usage +
+             "\nshort_help: " + this.short_help +
+             "\nhelp: " + this.help +
+             "\n}"
     }
 }
 
 function Mappings()
 {
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////// PRIVATE SECTION /////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     var main = []; // array of default Map() objects
     var user = []; // array of objects created by :map
 
@@ -72,17 +91,16 @@ function Mappings()
         }
     }
 
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////// PUBLIC SECTION //////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
     this.flags = {
-        MOTION:		1 << 0,
-        COUNT:		1 << 1,
-        ARGUMENT:	1 << 2
+        MOTION:     1 << 0,
+        COUNT:      1 << 1,
+        ARGUMENT:   1 << 2
     };
 
-    // add a user mapping
     this.add = function(map)
     {
         if (!map)
