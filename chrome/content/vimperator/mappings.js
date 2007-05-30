@@ -1,16 +1,17 @@
 // TODO: document
-function Map(mode, cmd, action, extra_info)
+function Map(mode, cmds, act, extra_info)
 {
-    if (!mode || (!cmd || !cmd.length) || !action)
-        return;
+    if (!mode || (!cmds || !cmds.length) || !action)
+        return null;
 
     if (!extra_info)
         extra_info = {};
 
+    var action = act;
+    var flags = extra_info.flags || 0;
+
     this.mode = mode;
-    this.cmd = cmd; // XXX: should be this.commands?
-    this.action = action; // XXX: shoudldn't be public, use .execute() to execute the action
-    this.flags = extra_info.flags || 0; // XXX: flags shouldn't be public
+    this.commands = cmds;
 
     if (extra_info.usage)
         this.usage = extra_info.usage;
@@ -32,7 +33,7 @@ function Map(mode, cmd, action, extra_info)
 
     // XXX: can we move this to Map.prototype.execute, or don't we have access to this in a prototype?
     this.execute = function() {
-        this.cmd.call(this);
+        action.call(this);
     }
 }
 
@@ -41,16 +42,19 @@ function Mappings()
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////// PRIVATE SECTION /////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
+    var main = []; // array of default Map() objects
+    var user = []; // array of objects created by :map
+
     function addDefaultMap(map)
     {
         if (!map)
-            return;
+            return false;
 
-        if (!this.main[map.mode])
-            this.main[map.mode] = [];
+        if (!main[map.mode])
+            main[map.mode] = [];
 
-        this.main[map.mode].push(map);
-        return this;
+        main[map.mode].push(map);
+        return true;
     }
 
     function getFrom(mode, cmd, stack)
@@ -62,8 +66,8 @@ function Mappings()
         var stack_length = substack.length;
         for (var i = 0; i < stack_length; i++)
         {
-            for (var j = 0; j < substack[i].cmd.length; j++)
-                if (substack[i].cmd[j] == cmd)
+            for (var j = 0; j < substack[i].commands.length; j++)
+                if (substack[i].commands[j] == cmd)
                     return substack[i];
         }
     }
@@ -71,26 +75,23 @@ function Mappings()
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////// PUBLIC SECTION //////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
-    // XXX: make these 2 arrays prviate
-    this.main = [];
-    this.user = [];
 
     this.flags = {
-        MOTION:		1 << 1,
-        COUNT:		1 << 2,
-        ARGUMENT:	1 << 3
+        MOTION:		1 << 0,
+        COUNT:		1 << 1,
+        ARGUMENT:	1 << 2
     };
 
+    // add a user mapping
     this.add = function(map)
     {
         if (!map)
             return false;
 
-        if (!this.user[map.mode])
-            this.user[map.mode] = [];
+        if (!user[map.mode])
+            user[map.mode] = [];
 
-        this.user[map.mode].push(map);
-
+        user[map.mode].push(map);
         return true;
     }
 
@@ -98,10 +99,10 @@ function Mappings()
     {
         var index;
 
-        if (!map || !(index = this.user[map.mode].indexOf(map)))
+        if (!map || !(index = user[map.mode].indexOf(map)))
             return false;
 
-        this.user[map.mode].splice(index, 1);
+        user[map.mode].splice(index, 1);
         return true;
     }
 
@@ -110,11 +111,28 @@ function Mappings()
         if (!mode || !cmd)
             return null;
 
-        var map = getFrom(mode, cmd, this.user);
+        var map = getFrom(mode, cmd, user);
         if (!map)
-            map = getFrom(mode, cmd, this.main);
+            map = getFrom(mode, cmd, main);
 
         return map;
+    }
+
+    // same as this.get() but always returns an array of commands which start with "cmd"
+    this.getAll = function(mode, cmd)
+    {
+        var matching = [];
+
+        if (!mode || !cmd)
+            return matching;
+
+        // TODO: fill matching array with commands which start with cmd
+        /*var map = getFrom(mode, cmd, user);
+        if (!map)
+            map = getFrom(mode, cmd, main);
+        */
+
+        return matching;
     }
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -525,7 +543,7 @@ function Mappings()
 	addDefaultMap(new Map(vimperator.mode.NORMAL, ["<Esc>", "<C-[>"], onEscape,
         {
             short_help: "Cancel any operation",
-            help: "Exits any command line or hint mode and returns to browser mode.<br/>"
+            help: "Exits any command line or hint mode and returns to browser mode.<br/>" +
                   "Also focuses the web page, in case a form field has focus and eats our key presses.",
         }
     ));
