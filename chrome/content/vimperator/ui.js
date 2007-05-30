@@ -727,7 +727,7 @@ function StatusLine()
             percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
         }
 
-        var bufferpostion_str = "";
+        var bufferposition_str = "";
         percent = Math.round(percent*100);
         if (percent < 0)          bufferposition_str = "All";
         else if (percent == 0)    bufferposition_str = "Top";
