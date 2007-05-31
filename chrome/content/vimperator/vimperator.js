@@ -180,6 +180,8 @@ function init()
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
     Vimperator.prototype.statusline    = new StatusLine();
     Vimperator.prototype.tabs          = new Tabs();
+    Vimperator.prototype.mappings      = new Mappings();
+
 
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
@@ -899,8 +901,6 @@ function Vimperator()
             return true;
         }
 
-        // set this variable to true, if we have the start of a mapping
-        var couldBecomeCompleteMapping = false;
         var count_str = g_inputbuffer.match(/^[0-9]*/)[0];
 
         // counts must be at the start of a complete mapping (10j -> go 10 lines down)
@@ -926,40 +926,25 @@ function Vimperator()
             }
         }
 
-        for (var i in g_mappings)
+        var candidate_command = (g_inputbuffer + key).replace(count_str, '');
+
+        if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
         {
-            // each internal mapping can have multiple keys
-            for (var j in g_mappings[i][COMMANDS])
-            {
-                var mapping = g_mappings[i][COMMANDS][j];
-                // alert("key: " + key +" - mapping: "+ mapping + " - g_input: " + g_inputbuffer);
-                if(count_str + mapping == g_inputbuffer + key)
-                //if (count_str + mapping == vimperator.commandline.getCommand() + key)
-                {
-                    g_count = parseInt(count_str, 10);
-                    if (isNaN(g_count))
-                        g_count = -1;
+            g_count = parseInt(count_str, 10);
+            if (isNaN(g_count))
+                g_count = -1;
 
-                    // allow null (= no operation) mappings
-                    if(g_mappings[i][FUNCTION] != null)
-                        g_mappings[i][FUNCTION].call(this, g_count);
+            // FIXME: allow null (= no operation) mappings.  No longer applicable? -- djk
+            map.execute();
 
-                    // command executed, reset input buffer
-                    g_inputbuffer = "";
-                    vimperator.statusline.updateInputBuffer(g_inputbuffer);
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return false;
-                }
-                else if ((count_str+mapping).indexOf(g_inputbuffer + key) == 0)
-                //else if ((count_str+mapping).indexOf(vimperator.commandline.getCommand() + key) == 0)
-                {
-                    couldBecomeCompleteMapping = true;
-                }
-            }
+            // command executed, reset input buffer
+            g_inputbuffer = "";
+            vimperator.statusline.updateInputBuffer(g_inputbuffer);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
         }
-
-        if (couldBecomeCompleteMapping)
+        else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
         {
             g_inputbuffer += key;
             event.preventDefault();

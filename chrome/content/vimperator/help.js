@@ -166,7 +166,12 @@ function help(section, easter)
     var mappings = '<h2>Mappings</h2>\n'+
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
         '<p><table class="vimperator mappings">'
-    mappings += makeHelpString(g_mappings, "#102663", "", "", null);
+    // FIXME: fix this when Command() is added and help patch is merged -- djk
+    var all_maps = [];
+    for (map in vimperator.mappings)
+        all_maps.push([map.commands, [map.usage], map.short_help, map.help])
+    mappings += makeHelpString(all_maps, "#102663", "", "", null);
+    //mappings += makeHelpString(g_mappings, "#102663", "", "", null);
     mappings += '</table></p>';
     if (section && section == 'holy-grail')
         mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';

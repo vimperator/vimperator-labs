@@ -1,5 +1,5 @@
 // TODO: document
-function Map(mode, cmds, act, extra_info)
+function Map(mode, cmds, act, extra_info) //{{{
 {
     if (!mode || (!cmds || !cmds.length) || !act)
         return null;
@@ -18,10 +18,10 @@ function Map(mode, cmds, act, extra_info)
         else
         {
             this.usage = "";
-            if (flags & vimperator.mappings.flags.COUNT)
+            if (flags & Mappings.flags.COUNT)
                 this.usage = "{count}";
-            this.usage += this.commands[0];
-            if (flags & vimperator.mappings.flags.ARGUMENT)
+            this.usage += this.commands[0]; //XXX: or sth. like .join("&lt;br/&gt;");
+            if (flags & Mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
         }
 
@@ -54,13 +54,13 @@ function Map(mode, cmds, act, extra_info)
              "\nhelp: " + this.help +
              "\n}"
     }
-}
+} //}}}
 
-function Mappings()
+function Mappings()//{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
     var main = []; // array of default Map() objects
     var user = []; // array of objects created by :map
 
@@ -91,16 +91,40 @@ function Mappings()
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    var mappingsIterator = function(mode)
+    {
+        var mappings;
 
-    this.flags = {
+        // FIXME: initialize empty map tables -- djk
+        if (user[mode])
+            mappings = user[mode].concat(main[mode])
+        else
+            mappings = main[mode]
+
+        for (var i = 0; i < mappings.length; i++)
+            yield mappings[i];
+
+        throw StopIteration;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    // TODO: change to Mappings.MOTION etc? -- djk
+    Mappings.flags = {
         MOTION:     1 << 0,
         COUNT:      1 << 1,
         ARGUMENT:   1 << 2
     };
 
+    // NOTE: just the main/default map for now -- djk
+    this.__iterator__ = function()
+    {
+        return mappingsIterator(vimperator.modes.NORMAL);
+    }
+
+    // TODO: remove duplication in addDefaultMap -- djk
     this.add = function(map)
     {
         if (!map)
@@ -137,28 +161,33 @@ function Mappings()
     }
 
     // same as this.get() but always returns an array of commands which start with "cmd"
-    this.getAll = function(mode, cmd)
+    this.getCandidates = function(mode, cmd)
     {
         var matching = [];
 
         if (!mode || !cmd)
             return matching;
 
-        // TODO: fill matching array with commands which start with cmd
-        /*var map = getFrom(mode, cmd, user);
-        if (!map)
-            map = getFrom(mode, cmd, main);
-        */
+        // fill matching array with maps which have commands starting with cmd
+        for (var i = 0; i < main[mode].length; i++) // FIXME: just the main/default map space for now -- djk
+        {
+            var map = main[mode][i];
+            for (var j = 0; j < map.commands.length; j++)
+            {
+                if (map.commands[j].indexOf(cmd) == 0)
+                    matching.push(map)
+            }
+        }
 
         return matching;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    /* Default mappings
+    /////////////////////////////////////////////////////////////////////////////{{{
+    /*
      * Normal mode
-     * */
+     */
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"], focusNextFrame,
         {
             short_help: "Focus next frame",
@@ -182,14 +211,14 @@ function Mappings()
         {
             short_help: "Delete current buffer (=tab)",
             help: "Count WILL be supported in future releases, then <code class=\"mapping\">2d</code> removes two tabs and the one the right is selected.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["D"], function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
         {
             short_help: "Delete current buffer (=tab)",
             help: "Count WILL be supported in future releases, then <code class=\"mapping\">2d</code> removes two tabs and the one the right is selected.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gh"], BrowserHome,
@@ -214,21 +243,22 @@ function Mappings()
         {
             short_help: "Go to the next tab",
             help: "Cycles to the first tab, when the last is selected.<br/>Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gT", "<C-p>", "<C-S-Tab>"], function(count) { vimperator.tabs.select(count > 0 ? count -1: "-1", count > 0 ? false : true); },
         {
             short_help: "Go to the previous tab",
             help: "Cycles to the last tab, when the first is selected.<br/>Count is supported, <code class=\"mapping\">3gT</code> goes to the third tab.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["m"], set_location_mark,
         {
-            short_help: "Set mark at the cursor position", usage: "m{a-zA-Z}",
+            short_help: "Set mark at the cursor position",
+            usage: "m{a-zA-Z}",
             help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
-            flags: this.flags.ARGUMENT
+            flags: Mappings.flags.ARGUMENT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["o"], function(count) { vimperator.commandline.open(":", "open ", vimperator.modes.EX); },
@@ -285,7 +315,7 @@ function Mappings()
         {
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the n'th last tab.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["y"], yankCurrentLocation,
@@ -328,7 +358,7 @@ function Mappings()
         {
             short_help: "Set zoom value of the webpage",
             help: "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["ZQ"], function(count) { quit(false); },
@@ -362,14 +392,14 @@ function Mappings()
         {
             short_help: "Goto the top of the document",
             help: "Count is supported, <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["G", "<End>"], function(count) { scrollBufferAbsolute(-1, count >= 0 ? count : 100); },
         {
             short_help: "Goto the end of the document",
             help: "Count is supported, <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["h", "<Left>"], function(count) { scrollBufferRelative(-1, 0); },
@@ -377,7 +407,7 @@ function Mappings()
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
                   "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["j", "<Down>", "<C-e>"], function(count) { scrollBufferRelative(0, 1); },
@@ -385,7 +415,7 @@ function Mappings()
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
                   "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["k", "<Up>", "<C-y>"], function(count) { scrollBufferRelative(0, -1); },
@@ -393,7 +423,7 @@ function Mappings()
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
                   "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["l", "<Right>"], function(count) { scrollBufferRelative(1, 0); },
@@ -401,7 +431,7 @@ function Mappings()
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
                   "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"], function(count) { goDoCommand('cmd_scrollPageUp'); },
@@ -422,35 +452,35 @@ function Mappings()
         {
             short_help: "Go to an older position in the jump list",
             help: "The jump list is just the browser history for now.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-i>"], function(count) { stepInHistory(count > 0 ? count : 1); },
         {
             short_help: "Go to a newer position in the jump list",
             help: "The jump list is just the browser history for now.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["H", "<A-Left>", "<M-Left>"], function(count) { stepInHistory(count > 0 ? -1 * count : -1); },
         {
             short_help: "Go back in the browser history",
             help: "Count is supported, <code class=\"mapping\">3H</code> goes back 3 steps.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["L", "<A-Right>", "<M-Right>"], function(count) { stepInHistory(count > 0 ? count : 1); },
         {
             short_help: "Go forward in the browser history",
             help: "Count is supported, <code class=\"mapping\">3L</code> goes forward 3 steps.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gu", "<BS>"], goUp,
         {
             short_help: "Go to parent directory",
             help: "Count is supported, <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>.",
-            flags: this.flags.COUNT
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gU", "<C-BS>"], function(count) { openURLs("..."); },
@@ -565,7 +595,7 @@ function Mappings()
                   "Also focuses the web page, in case a form field has focus and eats our key presses."
         }
     ));
-
+//}}}
     var hint_maps = [
     /* hint action keys */
     ["o",          "hah.openHints(false, false);", true, false],
@@ -604,6 +634,6 @@ function Mappings()
     ["<C-[>",      "", true, true],
     ["<Esc>",      "", true, true]
     ];
-}
+}//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

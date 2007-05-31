@@ -270,9 +270,8 @@ function get_help_completions(filter)/*{{{*/
                 $_[1]
             ];
     }));
-    help_array = help_array.concat(g_mappings.map(function($_) {
-        return [ $_[COMMANDS], $_[SHORTHELP] ];
-    }));
+    for (map in vimperator.mappings)
+        help_array.push([map.commands, map.short_help])
 
     if (!filter) return help_array.map(function($_) {
         return [$_[COMMANDS][0], $_[1]]; // unfiltered, use the first command
