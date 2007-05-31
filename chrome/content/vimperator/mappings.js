@@ -20,7 +20,7 @@ function Map(mode, cmds, act, extra_info)
             this.usage = "";
             if (flags & vimperator.mappings.flags.COUNT)
                 this.usage = "{count}";
-            this.usage += this.commands;
+            this.usage += this.commands[0];
             if (flags & vimperator.mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
         }
