@@ -270,7 +270,7 @@ function get_help_completions(filter)/*{{{*/
                 $_[1]
             ];
     }));
-    for (map in vimperator.mappings)
+    for (var map in vimperator.mappings)
         help_array.push([map.commands, map.short_help])
 
     if (!filter) return help_array.map(function($_) {

@@ -168,10 +168,9 @@ function help(section, easter)
         '<p><table class="vimperator mappings">'
     // FIXME: fix this when Command() is added and help patch is merged -- djk
     var all_maps = [];
-    for (map in vimperator.mappings)
+    for (var map in vimperator.mappings)
         all_maps.push([map.commands, [map.usage], map.short_help, map.help])
     mappings += makeHelpString(all_maps, "#102663", "", "", null);
-    //mappings += makeHelpString(g_mappings, "#102663", "", "", null);
     mappings += '</table></p>';
     if (section && section == 'holy-grail')
         mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';
