@@ -4,10 +4,9 @@ function Map(mode, cmds, act, extra_info) //{{{
     if (!mode || (!cmds || !cmds.length) || !act)
         return null;
 
-    var action = act;
-
     this.mode = mode;
     this.commands = cmds;
+    this.action = act;
 
     if (extra_info)
     {
@@ -20,7 +19,7 @@ function Map(mode, cmds, act, extra_info) //{{{
             this.usage = "";
             if (flags & Mappings.flags.COUNT)
                 this.usage = "{count}";
-            this.usage += this.commands[0]; //XXX: or sth. like .join("&lt;br/&gt;");
+            this.usage += this.commands[0]; // only the first command name
             if (flags & Mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
         }
@@ -36,24 +35,25 @@ function Map(mode, cmds, act, extra_info) //{{{
             this.short_help = null;
     }
 
-    // XXX: can we move this to Map.prototype.execute, or don't we have access to this in a prototype?
-    this.execute = function()
-    {
-        action.call(this);
-    }
+}
+// Since we will add many Map-objects, we add some functions as prototypes
+// this will ensure we only have one copy of each function, not one for each object
+Map.prototype.execute = function()
+{
+    this.action.call(this);
+}
 
-    this.toString = function()
-    {
-        // FIXME: -- djk
-        return "Map {" +
-             "\nmode: " + this.mode +
-             "\ncommands: " + this.commands +
-             "\naction: " + action  +
-             "\nusage: " + this.usage +
-             "\nshort_help: " + this.short_help +
-             "\nhelp: " + this.help +
-             "\n}"
-    }
+Map.prototype.toString = function()
+{
+    // FIXME: -- djk
+    return "Map {" +
+        "\nmode: " + this.mode +
+        "\ncommands: " + this.commands +
+        "\naction: " + this.action +
+        "\nusage: " + this.usage +
+        "\nshort_help: " + this.short_help +
+        "\nhelp: " + this.help +
+        "\n}"
 } //}}}
 
 function Mappings()//{{{
