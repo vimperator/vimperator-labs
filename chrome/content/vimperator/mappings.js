@@ -38,9 +38,9 @@ function Map(mode, cmds, act, extra_info) //{{{
 }
 // Since we will add many Map-objects, we add some functions as prototypes
 // this will ensure we only have one copy of each function, not one for each object
-Map.prototype.execute = function()
+Map.prototype.execute = function(count)
 {
-    this.action.call(this);
+    this.action.call(this, count);
 }
 
 Map.prototype.toString = function()

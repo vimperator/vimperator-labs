@@ -935,7 +935,7 @@ function Vimperator()
                 g_count = -1;
 
             // FIXME: allow null (= no operation) mappings.  No longer applicable? -- djk
-            map.execute();
+            map.execute(g_count);
 
             // command executed, reset input buffer
             g_inputbuffer = "";
