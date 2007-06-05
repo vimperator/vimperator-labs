@@ -368,7 +368,7 @@ Vimperator.prototype.quickmarks = new function()
 function QM()
 {
     //logObject(vimperator);
-    logMessage(vimperator.getpr("complete"));
+    //logMessage(vimperator.getpr("complete"));
 
     this.add = function() { alert('add');};
     this.rem = function() { vimperator.echo("rem"); logObject(vimperator)};
