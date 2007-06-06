@@ -516,14 +516,15 @@ function Mappings()//{{{
                   "E.g., if you want to yank the location of hint <code>AB</code>, press <code class=\"mapping\">;</code> to start this hint mode.<br/>" +
                   "Then press <code>AB</code> to select the hint. Now press <code class=\"mapping\">y</code> to yank its location.<br/>" +
                   "Actions for selected hints in ExtendedHint mode are:<br/>" +
-                  "<ul><li><code class=\"mapping\">y</code> to yank its location</li>" +
-                  "    <li><code class=\"mapping\">Y</code> to yank its text description</li>" +
-                  "    <li><code class=\"mapping\">o</code> to open its location in the current tab</li>" +
-                  "    <li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
-                  "    <li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query (not implemented yet)</li>" +
-                  "    <li><code class=\"mapping\">T</code> to open its location in an <code class=\"command\">:tabopen</code> query (not implemented yet)</li>" +
-                  "    <li><code class=\"mapping\">s</code> to save its destination (not implemented yet)</li>" +
-                  "    <li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
+                  "<ul>" +
+                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
+                  "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
+                  "<li><code class=\"mapping\">o</code> to open its location in the current tab</li>" +
+                  "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
+                  "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query (not implemented yet)</li>" +
+                  "<li><code class=\"mapping\">T</code> to open its location in an <code class=\"command\">:tabopen</code> query (not implemented yet)</li>" +
+                  "<li><code class=\"mapping\">s</code> to save its destination (not implemented yet)</li>" +
+                  "<li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
                   "</ul>" +
                   "Multiple hints can be seperated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
                   "Hintable elements for this mode can be set in the <code class=\"setting\">'extendedhinttags'</code> XPath string."

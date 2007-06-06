@@ -253,7 +253,9 @@ function get_file_completions(filter)/*{{{*/
 
 function get_help_completions(filter)/*{{{*/
 {
-    var help_array = [];
+    var help_array = [[["mappings"], "Normal mode commands"],
+                      [["commands"], "Ex commands"],
+                      [["settings"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
     g_substrings = [];
     for (var command in vimperator.commands)
     {

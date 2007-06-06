@@ -381,6 +381,13 @@ function Commands()//{{{
             help: "<code class=\"command\">:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>"
         }
     ));
+    addDefaultCommand(new Command(["exu[sage]"],
+        function () { help("commands"); },
+        {
+            usage: ["exu[sage]"],
+            short_help: "Show help for Ex commands"
+        }
+    ));
     addDefaultCommand(new Command(["fo[rward]", "fw"],
         function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
         {
@@ -608,12 +615,35 @@ function Commands()//{{{
                   "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab."
         }
     ));
+    addDefaultCommand(new Command(["tabl[ast]"],
+        function(args, count) { vimperator.tabs.select("$", false); },
+        {
+            usage: ["tabl[ast]"],
+            short_help: "Switch to the last tab"
+        }
+    ));
+    addDefaultCommand(new Command(["tabm[ove]"],
+        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
+        {
+            usage: ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
+            short_help: "Move the current tab after tab N",
+            help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
+                  "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list."
+        }
+    ));
     addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
         function(args, special, count) { vimperator.tabs.select("+1", true); },
         {
             usage: ["tabn[ext]"],
             short_help: "Switch to the next tab",
             help: "Cycles to the first tab, when the last is selected."
+        }
+    ));
+    addDefaultCommand(new Command(["tabo[nly]"],
+        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
+        {
+            usage: ["tabo[nly]"],
+            short_help: "Close all other tabs"
         }
     ));
     addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
@@ -624,22 +654,6 @@ function Commands()//{{{
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
                   "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
             completer: function (filter) { return get_url_completions(filter); }
-        }
-    ));
-    addDefaultCommand(new Command(["tabo[nly]"],
-        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
-        {
-            usage: ["tabo[nly]"],
-            short_help: "Close all other tabs"
-        }
-    ));
-    addDefaultCommand(new Command(["tabm[ove]"],
-        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
-        {
-            usage: ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
-            short_help: "Move the current tab after tab N",
-            help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
-                  "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list."
         }
     ));
     addDefaultCommand(new Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
@@ -655,13 +669,6 @@ function Commands()//{{{
         {
             usage: ["tabr[ewind]", "tabfir[st]"],
             short_help: "Switch to the first tab"
-        }
-    ));
-    addDefaultCommand(new Command(["tabl[ast]"],
-        function(args, count) { vimperator.tabs.select("$", false); },
-        {
-            usage: ["tabl[ast]"],
-            short_help: "Switch to the last tab"
         }
     ));
     addDefaultCommand(new Command(["u[ndo]"],
@@ -704,6 +711,13 @@ function Commands()//{{{
             usage: ["ve[rsion][!]"],
             short_help: "Show version information",
             help: "You can show the Firefox version page with <code class=\"command\">:version!</code>."
+        }
+    ));
+    addDefaultCommand(new Command(["viu[sage]"],
+        function () { help("mappings"); },
+        {
+            usage: ["viu[sage]"],
+            short_help: "Show help for normal mode commands"
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],

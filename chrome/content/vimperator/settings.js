@@ -62,11 +62,11 @@ var g_settings = [/*{{{*/
         ["complete", "cpt"],
         ["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
-        "Available items:<br/>"+
-        "<ul><li><b>s</b>: Search machines and keyword URLs</li><li>"+
-        "<b>f</b>: Local files</li><li>"+
-        "<b>b</b>: Bookmarks</li><li>"+
-        "<b>h</b>: History</li></ul>"+
+        "Available items:<br/><ul>" +
+        "<li><b>s</b>: Search machines and keyword URLs</li>" +
+        "<li><b>f</b>: Local files</li>" +
+        "<li><b>b</b>: Bookmarks</li>" +
+        "<li><b>h</b>: History</li></ul>" +
         "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
         "Add 'sort' to the <code class=\"setting\">'wildoptions'</code> setting if you want all entries sorted.",
         "charlist",
@@ -134,8 +134,7 @@ var g_settings = [/*{{{*/
         "<li><b>m</b>: menubar</li>"+
         "<li><b>T</b>: toolbar</li>"+
         "<li><b>b</b>: bookmark bar</li>"+
-        "<li><b>s</b>: original Firefox statusbar</li>"+
-        "</ul>",
+        "<li><b>s</b>: original Firefox statusbar</li></ul>",
         "charlist",
         null,
         function(value) { set_pref("guioptions", value); set_guioptions(value); },
@@ -235,10 +234,10 @@ var g_settings = [/*{{{*/
 		["showstatuslinks", "ssli"],
 		"Show the destination of the link under the cursor in the status bar",
         "Also links which are focused by keyboard commands like <code class=\"mapping\">&lt;Tab&gt;</code> are shown. "+
-        "Possible values:<br/>"+
-        "<ul><li><b>0</b>: Don't show link destination</li><li>" +
-        "        <b>1</b>: Show the link in the status line</li><li>" +
-        "        <b>2</b>: Show the link in the command line</li></ul>",
+        "Possible values:<br/><ul>"+
+        "<li><b>0</b>: Don't show link destination</li>" +
+        "<li><b>1</b>: Show the link in the status line</li>" +
+        "<li><b>2</b>: Show the link in the command line</li></ul>",
 		"number",
 		null,
         function(value) { set_pref("showstatuslinks", value); },
@@ -250,10 +249,10 @@ var g_settings = [/*{{{*/
         ["showtabline", "stal"],
         ["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "Possible values:<br/>"+
-        "<ul><li><b>0</b>: Never show tab bar</li><li>"+
-        "        <b>1</b>: Show tab bar only if more than one tab is open</li><li>"+
-        "        <b>2</b>: Always show tab bar</li></ul>"+
+        "Possible values:<br/><ul>"+
+        "<li><b>0</b>: Never show tab bar</li>"+
+        "<li><b>1</b>: Show tab bar only if more than one tab is open</li>"+
+        "<li><b>2</b>: Always show tab bar</li></ul>"+
         "Not implemented yet.",
         "number",
         null,
@@ -297,14 +296,14 @@ var g_settings = [/*{{{*/
         "specifies the behavior for the first use of the completion key, the second part " +
         "for the second use, etc.<br/>" +
         "These are the possible values for each part:<br/>" +
-        "<table><pre>"+
+        "<table>"+
         "<tr><td><b>''</b></td><td>Complete only the first match</td></tr>" +
         "<tr><td><b>'full'</b></td><td>Complete the next full match. After the last, the original string is used.</td></tr>" +
         "<tr><td><b>'longest'</b></td><td>Complete till the longest common string.</td></tr>" +
         "<tr><td><b>'list'</b></td><td>When more than one match, list all matches.</td></tr>" +
         "<tr><td><b>'list:full'</b></td><td>When more than one match, list all matches and complete first match.</td></tr>" +
         "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
-        "</pre></table>" +
+        "</table>" +
         "When there is only a single match, it is fully completed regardless of the case.",
         "stringlist",
         null,
@@ -319,9 +318,9 @@ var g_settings = [/*{{{*/
         "Change how command line completion is done",
         "A list of words that change how command line completion is done.<br/>"+
         "Currently only one word is allowed:<br/>"+
-        "<table><pre>"+
+        "<table>"+
         "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"setting\">'complete'</code> option.</td></tr>" +
-        "</pre></table>",
+        "</table>",
         "stringlist",
         null,
         function(value) { set_pref("wildoptions", value); },

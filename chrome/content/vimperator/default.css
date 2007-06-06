@@ -1,15 +1,25 @@
+div.main {
+    font-family: monospace;
+    font-size: 12px;
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+p.tagline {
+    text-align: center;
+    font-weight: bold;
+}
+
 /* the text in the tables is too large without that */
 table {
 	font-size: 1.0em;
 }
 
-table.main {
-    border-width: 0px;
-    border-style: none;
-	margin-left: auto; /* for centering the table */
-    margin-right: auto;
-    width: 800px !important;
-}
 table.vimperator {
     border-width: 1px 1px 1px 1px;
     border-style: dotted dotted dotted dotted;
@@ -17,6 +27,7 @@ table.vimperator {
 	margin-left: auto; /* for centering the table */
     margin-right: auto;
     width: 800px !important;
+    white-space: -moz-pre-wrap !important;
 }
 table.vimperator td {
     border-width: 0px 0px 0px 0px;
@@ -39,7 +50,7 @@ hr { /* horizontal lines */
 td.tag {
     text-align: right;
 	vertical-align: top;
-	white-space: -moz-pre-wrap !important;
+	/* white-space: -moz-pre-wrap !important; // DJK */
     border-spacing: 13px 10px;
 	border-width: 0px 10px 0px 10px;
 	border-color: blue !important;
@@ -72,21 +83,37 @@ table.settings {
     background-color: rgb(240, 250, 230);
 }
 
+fieldset.paypal {
+    border: none;
+}
 
 .command { font-weight: bold; color: #632610; }
 .mapping { font-weight: bold; color: #102663; }
 .setting { font-weight: bold; color: #106326; }
 .argument { color: #6A97D4; }
-.version { position:absolute; top:10px; right:2%; color:#C0C0C0; text-align:right; }
+.version {
+    position: absolute;
+    top: 10px;
+    right: 2%;
+    color: #C0C0C0;
+    text-align: right;
+}
+.warning {
+    font-weight: bold;
+    color: red;
+}
+.shorthelp { font-weight: bold; } 
 
 .status_insecure, .status_insecure * {
     background-color: transparent;
 }
 .status_secure, .status_secure * {
-    background-color: #B0FF00; /* light green */
+    background-color: yellow;
     color: black;
 }
 .status_broken, .status_broken * {
-    background-color: #FF6060; /* light red */
+    background-color: #ff9900;
     color: black;
 }
+
+/* vim: set fdm=marker sw=4 ts=4 et: */
