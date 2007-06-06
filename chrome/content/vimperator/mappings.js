@@ -236,7 +236,7 @@ function Mappings()//{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gP"], function(count) { openURLsInNewTab(readFromClipboard(), false); },
         {
             short_help: "Open (put) an URL based on the current clipboard contents in a new buffer",
-            help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"setting\">'activate'</code> setting."
+            help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gt", "<C-n>", "<C-Tab>"], function(count) { vimperator.tabs.select(count > 0 ? count -1: "+1", count > 0 ? false : true); },
@@ -276,14 +276,14 @@ function Mappings()//{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["p", "<MiddleMouse>"], function(count) { openURLs(readFromClipboard()); },
         {
             short_help: "Open (put) an URL based on the current clipboard contents in the current buffer",
-            help: "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"setting\">'defsearch'</code> setting) with <code class=\"mapping\">p</code>."
+            help: "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["P"], function(count) { openURLsInNewTab(readFromClipboard(), true); },
         {
             short_help: "Open (put) an URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>" +
-                  "Whether the new buffer is activated, depends on the <code class=\"setting\">'activate'</code> setting."
+                  "Whether the new buffer is activated, depends on the <code class=\"option\">'activate'</code> option."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["r"], function(count) { reload(getBrowser().mCurrentTab, false); },
@@ -406,7 +406,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -414,7 +414,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -422,7 +422,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -430,7 +430,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"setting\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -495,7 +495,7 @@ function Mappings()//{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["f"], function(count) { hah.enableHahMode(vimperator.modes.QUICK_HINT); },
         {
             short_help: "Start QuickHint mode",
-            help: "In QuickHint mode, every hintable item (according to the <code class=\"setting\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
+            help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
                   "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
                   "If you write the hint in ALLCAPS, the hint is followed in a background tab."
         }
@@ -503,7 +503,7 @@ function Mappings()//{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["F"], function(count) { hah.enableHahMode(vimperator.modes.ALWAYS_HINT); },
         {
             short_help: "Start AlwaysHint mode",
-            help: "In AlwaysHint mode, every hintable item (according to the <code class=\"setting\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
+            help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
                   "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
                   "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
                   "Also, most <code class=\"mapping\">Ctrl</code>-prefixed short_helpcut keys are available in this mode for navigation."
@@ -527,7 +527,7 @@ function Mappings()//{{{
                   "<li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
                   "</ul>" +
                   "Multiple hints can be seperated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
-                  "Hintable elements for this mode can be set in the <code class=\"setting\">'extendedhinttags'</code> XPath string."
+                  "Hintable elements for this mode can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string."
         }
     ));
 

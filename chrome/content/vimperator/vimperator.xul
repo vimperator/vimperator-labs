@@ -27,7 +27,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 ***** END LICENSE BLOCK ***** -->
 
-<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
 
 <!-- The stylesheet which is used for the :help command -->
 <?xml-stylesheet href="chrome://vimperator/content/default.css" type="text/css"?>
@@ -35,14 +35,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 <overlay id="vimperator"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:nc="http://home.netscape.com/NC-rdf#"
-	xmlns:html="http://www.w3.org/1999/xhtml" 
+	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript;version=1.7" src="help.js"/>
 	<script type="application/x-javascript;version=1.7" src="vimperator.js"/>
 	<script type="application/x-javascript;version=1.7" src="commands.js"/>
 	<script type="application/x-javascript;version=1.7" src="ui.js"/>
-	<script type="application/x-javascript;version=1.7" src="settings.js"/>
+	<script type="application/x-javascript;version=1.7" src="options.js"/>
 	<script type="application/x-javascript;version=1.7" src="completion.js"/>
 	<script type="application/x-javascript;version=1.7" src="bookmarks.js"/>
 	<script type="application/x-javascript;version=1.7" src="hints.js"/>

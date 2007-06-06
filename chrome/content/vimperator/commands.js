@@ -414,7 +414,7 @@ function Commands()//{{{
                   "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
                   "<ul>"+
                   "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>"+
-                  "<li><code class=\"command\">:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
+                  "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>"+
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>"+
                   "</ul>"+
                   "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
@@ -494,14 +494,14 @@ function Commands()//{{{
                   "<li>Opened with the specified search engine if the token looks like a search string "+
                   "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
                   "will open the wikipedia entry for linux torvalds).</li>"+
-                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"setting\">'defsearch'</code> setting) "+
+                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) "+
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
                   "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
                   "open OSNews in the current, and Slashdot in a new background tab).</li>"+
                   "</ol>"+
                   "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
                   "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
-                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"setting\">'complete'</code> option.<br/>"+
+                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>"+
                   "Without argument, reloads the current page.<br/>"+
                   "Without argument but with !, reloads the current page skipping the cache.",
             completer: function(filter) { return get_url_completions(filter); }
@@ -584,7 +584,7 @@ function Commands()//{{{
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>"+
                   "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>"+
                   "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
-            completer: function(filter) { return get_settings_completions(filter); }
+            completer: function(filter) { return get_options_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["so[urce]"],
@@ -652,7 +652,7 @@ function Commands()//{{{
             usage: ["tabopen [url] [| url]"],
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
-                  "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
+                  "If used with !, the 'tabopen' value of the 'activate' option is negated.",
             completer: function (filter) { return get_url_completions(filter); }
         }
     ));
@@ -1517,15 +1517,15 @@ function set(args, special)
 
         var no = true; if (matches[1] == undefined) no = false;
         var opt = matches[2];
-        var setting = get_setting(opt);
-        if (!setting)
+        var option = get_option(opt);
+        if (!option)
         {
             vimperator.echoerr("E518: Unknown option: " + opt);
             return;
         }
 
         var get = false; if (matches[3] == "?" ||
-            (setting[TYPE] != 'boolean' && matches[4] == undefined)) get = true;
+            (option[TYPE] != 'boolean' && matches[4] == undefined)) get = true;
         var reset = false; if (matches[3] == "&") reset = true;
         var oper = matches[5];
         var val = matches[6]; if (val == undefined) val = "";
@@ -1533,42 +1533,42 @@ function set(args, special)
         // reset a variable to its default value.
         if (reset)
         {
-            var def = setting[DEFAULT];
-            setting[SETFUNC].call(this, def);
+            var def = option[DEFAULT];
+            option[SETFUNC].call(this, def);
         }
         // read access
         else if (get)
         {
-            var cur_val = setting[GETFUNC].call(this);
-            vimperator.echo("  " + setting[COMMANDS][0] + "=" + cur_val);
+            var cur_val = option[GETFUNC].call(this);
+            vimperator.echo("  " + option[COMMANDS][0] + "=" + cur_val);
         }
         // write access
         else
         {
-            var type = setting[TYPE];
+            var type = option[TYPE];
             if (type == "boolean")
             {
-                setting[SETFUNC].call(this, !no);
+                option[SETFUNC].call(this, !no);
             }
             else if (type == "number")
             {
                 var num = parseInt(val, 10);
                 if (isNaN(num))
-                    vimperator.echoerr("Invalid argument type to option " + setting[COMMANDS][0] + ": Expects number");
+                    vimperator.echoerr("Invalid argument type to option " + option[COMMANDS][0] + ": Expects number");
                 else
                 {
-                    var cur_val = setting[GETFUNC].call(this);
+                    var cur_val = option[GETFUNC].call(this);
                     if (oper == '+') num = cur_val + num;
                     if (oper == '-') num = cur_val - num;
-                    if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, num) == false)
-                        vimperator.echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
+                    if (option[CHECKFUNC] != null && option[CHECKFUNC].call(this, num) == false)
+                        vimperator.echoerr("Invalid argument to option " + option[COMMANDS][0] + ": Check help for more details");
                     else // all checks passed, execute option handler
-                        setting[SETFUNC].call(this, num);
+                        option[SETFUNC].call(this, num);
                 }
             }
             else if (type == "charlist" || type == "stringlist" || type == "string")
             {
-                var cur_val = setting[GETFUNC].call(this);
+                var cur_val = option[GETFUNC].call(this);
                 if (type == "charlist" || type == "string")
                 {
                     if (oper == '+' && !cur_val.match(val))
@@ -1585,10 +1585,10 @@ function set(args, special)
                         val = val.replace(/^,?/, '');
                     }
                 }
-                if (setting[CHECKFUNC] != null && setting[CHECKFUNC].call(this, val) == false)
-                    vimperator.echoerr("Invalid argument to option " + setting[COMMANDS][0] + ": Check help for more details");
+                if (option[CHECKFUNC] != null && option[CHECKFUNC].call(this, val) == false)
+                    vimperator.echoerr("Invalid argument to option " + option[COMMANDS][0] + ": Check help for more details");
                 else // all checks passed, execute option handler
-                    setting[SETFUNC].call(this, val);
+                    option[SETFUNC].call(this, val);
             }
             else
                 vimperator.echoerr("Internal error, option format `" + type + "' not supported");

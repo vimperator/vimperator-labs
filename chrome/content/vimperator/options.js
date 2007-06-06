@@ -1,4 +1,4 @@
-// settings.js
+// options.js
 //
 // handles all persistent storage of information
 // to and from the firefox registry
@@ -10,7 +10,7 @@ const DEFAULT = 8;
 const CHECKFUNC = 9;
 
 
-// the global handle to the root of the firefox settings
+// the global handle to the root of the firefox options
 var g_firefox_prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 var g_vimperator_prefs = null;
 
@@ -18,10 +18,10 @@ var g_vimperator_prefs = null;
 var opt_usermode = false;
 var opt_fullscreen = false;
 
-/* all user-setable vimperator settings
+/* all user-setable vimperator options
  * format:
  * [
- *     0: [all names of this setting],
+ *     0: [all names of this option],
  *     1: usage,
  *     2: shorthelp
  *     3: help text,
@@ -33,7 +33,7 @@ var opt_fullscreen = false;
  *     9: checkfunc,
  * ]
  */
-var g_settings = [/*{{{*/
+var g_options = [/*{{{*/
     [
         ["activate"],
         ["activate"],
@@ -68,7 +68,7 @@ var g_settings = [/*{{{*/
         "<li><b>b</b>: Bookmarks</li>" +
         "<li><b>h</b>: History</li></ul>" +
         "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>"+
-        "Add 'sort' to the <code class=\"setting\">'wildoptions'</code> setting if you want all entries sorted.",
+        "Add 'sort' to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
         "charlist",
         null,
         function(value) { set_pref("complete", value); },
@@ -271,7 +271,7 @@ var g_settings = [/*{{{*/
 		"string",
 		null,
 		function(value) { set_pref("titlestring", value); set_titlestring(value); },
-		function() { return get_pref("titlestring"); }, 
+		function() { return get_pref("titlestring"); },
 		"Vimperator",
 		null
 	],
@@ -279,7 +279,7 @@ var g_settings = [/*{{{*/
         ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
         "Show current website with a minimal stylesheet to make it easily accessible",
-        "Note that this is a local setting for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
+        "Note that this is a local option for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
         "boolean",
         null,
         function(value) { opt_usermode = value; setStyleDisabled(value); },
@@ -319,7 +319,7 @@ var g_settings = [/*{{{*/
         "A list of words that change how command line completion is done.<br/>"+
         "Currently only one word is allowed:<br/>"+
         "<table>"+
-        "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"setting\">'complete'</code> option.</td></tr>" +
+        "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
         "</table>",
         "stringlist",
         null,
@@ -330,7 +330,7 @@ var g_settings = [/*{{{*/
     ]
 
     // TODO: make more performant and then enable
-    /*,[   
+    /*,[
         ["numbertabs", "nt"],
         ["numbertabs", "nt"],
         "Turns tab numbering on or off",
@@ -353,17 +353,17 @@ var g_settings = [/*{{{*/
 
 ]/*}}}*/
 
-// return null, if the cmd cannot be found in our g_settings array, or
+// return null, if the cmd cannot be found in our g_options array, or
 // otherwise a refernce to our command
-function get_setting(cmd)/*{{{*/
+function get_option(cmd)/*{{{*/
 {
-    for (var i=0; i < g_settings.length; i++)
+    for (var i=0; i < g_options.length; i++)
     {
-        for (var j=0; j < g_settings[i][COMMANDS].length; j++)
+        for (var j=0; j < g_options[i][COMMANDS].length; j++)
         {
-            if (g_settings[i][COMMANDS][j] == cmd)
+            if (g_options[i][COMMANDS][j] == cmd)
             {
-                return g_settings[i];
+                return g_options[i];
             }
         }
     }
@@ -401,11 +401,11 @@ function get_pref(name, forced_default)
         default_value = forced_default;
     else
     {
-        for (var i=0; i<g_settings.length; i++)
+        for (var i=0; i<g_options.length; i++)
         {
-            if (g_settings[i][COMMANDS][0] == name) // only first name is searched
+            if (g_options[i][COMMANDS][0] == name) // only first name is searched
             {
-                default_value = g_settings[i][DEFAULT];
+                default_value = g_options[i][DEFAULT];
                 break;
             }
         }

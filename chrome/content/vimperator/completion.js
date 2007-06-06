@@ -97,7 +97,7 @@ function build_longest_starting_substring(list, filter)/*{{{*/
     return filtered;
 }/*}}}*/
 
-/* 
+/*
  * filter a list of urls
  *
  * may consist of searchengines, filenames, bookmarks and history,
@@ -255,7 +255,7 @@ function get_help_completions(filter)/*{{{*/
 {
     var help_array = [[["mappings"], "Normal mode commands"],
                       [["commands"], "Ex commands"],
-                      [["settings"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
+                      [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
     g_substrings = [];
     for (var command in vimperator.commands)
     {
@@ -264,8 +264,8 @@ function get_help_completions(filter)/*{{{*/
                                                 }),
                         command.short_help])
     }
-    settings = get_settings_completions(filter, true);
-    help_array = help_array.concat(settings.map(function($_) {
+    options = get_options_completions(filter, true);
+    help_array = help_array.concat(options.map(function($_) {
         return [
                 $_[COMMANDS].map(function($_) { return "'" + $_ + "'"; }),
                 $_[1]
@@ -298,23 +298,23 @@ function get_command_completions(filter)/*{{{*/
     return build_longest_starting_substring(completions, filter);
 }/*}}}*/
 
-function get_settings_completions(filter, unfiltered)/*{{{*/
+function get_options_completions(filter, unfiltered)/*{{{*/
 {
     g_substrings = [];
-    var settings_completions = [];
+    var options_completions = [];
     var no_mode = false;
     if (filter.indexOf("no") == 0) // boolean option
     {
         no_mode = true;
         filter = filter.substr(2);
     }
-    if (unfiltered) return g_settings.filter(function($_) {
+    if (unfiltered) return g_options.filter(function($_) {
         if (no_mode && $_[TYPE] != "boolean") return false;
         else return true;
     }).map(function($_) {
         return [$_[COMMANDS], $_[SHORTHELP]];
     });
-    if (!filter) return g_settings.filter(function($_) {
+    if (!filter) return g_options.filter(function($_) {
         if (no_mode && $_[TYPE] != "boolean") return false;
         else return true;
     }).map(function($_) {
@@ -326,49 +326,49 @@ function get_settings_completions(filter, unfiltered)/*{{{*/
     else if(filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
     {
         filter = filter.substr(0, filter.length-1);
-        for(var i=0; i<g_settings.length; i++)
+        for(var i=0; i<g_options.length; i++)
         {
-            for(var j=0; j<g_settings[i][COMMANDS].length; j++)
+            for(var j=0; j<g_options[i][COMMANDS].length; j++)
             {
-                if (g_settings[i][COMMANDS][j] == filter)
+                if (g_options[i][COMMANDS][j] == filter)
                 {
-                    settings_completions.push([filter + "=" + g_settings[i][GETFUNC].call(this), ""]);
-                    return settings_completions;
+                    options_completions.push([filter + "=" + g_options[i][GETFUNC].call(this), ""]);
+                    return options_completions;
                 }
             }
         }
-        return settings_completions;
+        return options_completions;
     }
 
     // can't use b_l_s_s, since this has special requirements (the prefix)
     var filter_length = filter.length;
-    for (var i = 0; i < g_settings.length; i++)
+    for (var i = 0; i < g_options.length; i++)
     {
-        if (no_mode && g_settings[i][TYPE] != "boolean")
+        if (no_mode && g_options[i][TYPE] != "boolean")
             continue;
 
         var prefix = no_mode ? 'no' : '';
-        for (var j = 0; j < g_settings[i][COMMANDS].length; j++)
+        for (var j = 0; j < g_options[i][COMMANDS].length; j++)
         {
-            if (g_settings[i][COMMANDS][j].indexOf(filter) != 0) continue;
+            if (g_options[i][COMMANDS][j].indexOf(filter) != 0) continue;
             if (g_substrings.length == 0)
             {
-                var length = g_settings[i][COMMANDS][j].length;
+                var length = g_options[i][COMMANDS][j].length;
                 for (var k = filter_length; k <= length; k++)
-                    g_substrings.push(prefix + g_settings[i][COMMANDS][j].substring(0, k));
+                    g_substrings.push(prefix + g_options[i][COMMANDS][j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return g_settings[i][COMMANDS][j].indexOf($_) == 0;
+                    return g_options[i][COMMANDS][j].indexOf($_) == 0;
                 });
             }
-            settings_completions.push([prefix + g_settings[i][COMMANDS][j], g_settings[i][SHORTHELP]]);
+            options_completions.push([prefix + g_options[i][COMMANDS][j], g_options[i][SHORTHELP]]);
             break;
         }
     }
 
-    return settings_completions;
+    return options_completions;
 }/*}}}*/
 
 function get_buffer_completions(filter)/*{{{*/
@@ -394,7 +394,6 @@ function get_buffer_completions(filter)/*{{{*/
         if (title.indexOf(filter) == -1 && url.indexOf(filter) == -1)
             continue;
 
-        
         if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1)
         {
             if (title == "")

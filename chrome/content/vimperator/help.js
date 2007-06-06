@@ -34,15 +34,15 @@ function help(section, easter)
         return;
     }
     if ((arguments[3] && arguments[3].inTab))// || !window.content.document.open)
-        openURLsInNewTab("", true); 
+        openURLsInNewTab("", true);
     else
         openURLs("about:blank");
 
 // xxx: for firebug: :js Firebug.toggleBar(true)
 
     /* commands = array where help information is located
-     * beg = string which is printed before the commmand/setting/mapping name
-     * end = string which is printed after the commmand/setting/mapping name
+     * beg = string which is printed before the commmand/option/mapping name
+     * end = string which is printed after the commmand/option/mapping name
      * func = called with 'command', result is a string is prepended to the help text
      */
     function makeHelpString(commands, beg, end, func)
@@ -64,8 +64,8 @@ function help(section, easter)
                 usage = usage.replace(/\\n/g, "<br/>");
                 // color {count} and [url] arguments in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/(^|;|\n|\s|\]|\}|=|<br\/?>)({.*?}|\[.*?\])/gm, "$1<span class=\"argument\">$2</span>");
-                // and the 'setting' in a different color
-                usage = usage.replace(/^'(\w+)'/gm, "'<span class=\"setting\">$1</span>'");
+                // and the 'option' in a different color
+                usage = usage.replace(/^'(\w+)'/gm, "'<span class=\"option\">$1</span>'");
                 ret += "<code>" +beg+ usage +end+ '</code><br/>';
             }
             ret += '</td><td valign="top">';
@@ -76,7 +76,7 @@ function help(section, easter)
                 ret += '<span class="shorthelp">';
                 ret += commands[i][SHORTHELP]; // the help description
                 ret += "</span><br/>";
-                if(func) // for settings whe print default values here, e.g.
+                if(func) // for options we print default values here, e.g.
                 {
                     ret += func.call(this, commands[i]);
                     ret += "<br/>";
@@ -110,7 +110,7 @@ function help(section, easter)
         }
         return ret;
     }
-    function makeSettingsHelpString(command)
+    function makeOptionsHelpString(command)
     {
         var ret = "";
         ret = command[TYPE] + ' (default: <span style="font-family: monospace;">';
@@ -132,7 +132,7 @@ function help(section, easter)
         ret += "</span>)<br/>";
         return ret;
     }
-        
+
     var header = '<h1>Vimperator</h1>\n' +
         '<p class="tagline">First there was a Navigator, then there was an Explorer.<br/>\n' +
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</p>\n';
@@ -186,10 +186,10 @@ function help(section, easter)
                     'now dead, unfortunately.  So now you might wonder what the meaning of death<br/>' +
                     'is...</p>\n';
 
-    var settings = '<div><h2 id="settings">Settings</h2></div>\n' + 
-        '<table class="vimperator settings">\n';
-    settings += makeHelpString(g_settings, "'", "'", makeSettingsHelpString);
-    settings += '</table>';
+    var options = '<div><h2 id="options">Options</h2></div>\n' +
+        '<table class="vimperator options">\n';
+    options += makeHelpString(g_options, "'", "'", makeOptionsHelpString);
+    options += '</table>';
 
     var fulldoc = '<?xml version="1.0"?>\n' +
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n' +
@@ -202,7 +202,7 @@ function help(section, easter)
         introduction +
         mappings +
         commands +
-        settings +
+        options +
         '\n</div>\n</body>\n</html>';
 
     var doc = window.content.document;
@@ -218,7 +218,7 @@ function help(section, easter)
         if (arguments[3] && arguments[3].recursive)
             return false;
 
-        openURLs("about:blank"); 
+        openURLs("about:blank");
         setTimeout(function () { help(section, false, null, {recursive: true}); }, 250);
         return;
     }

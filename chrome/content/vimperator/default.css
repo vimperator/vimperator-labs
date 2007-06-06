@@ -79,7 +79,7 @@ table.commands {
 table.mappings {
     background-color: rgb(230, 240, 250);
 }
-table.settings {
+table.options {
     background-color: rgb(240, 250, 230);
 }
 
@@ -89,7 +89,7 @@ fieldset.paypal {
 
 .command { font-weight: bold; color: #632610; }
 .mapping { font-weight: bold; color: #102663; }
-.setting { font-weight: bold; color: #106326; }
+.option { font-weight: bold; color: #106326; }
 .argument { color: #6A97D4; }
 .version {
     position: absolute;
@@ -102,7 +102,7 @@ fieldset.paypal {
     font-weight: bold;
     color: red;
 }
-.shorthelp { font-weight: bold; } 
+.shorthelp { font-weight: bold; }
 
 .status_insecure, .status_insecure * {
     background-color: transparent;
