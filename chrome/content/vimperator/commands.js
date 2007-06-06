@@ -30,8 +30,6 @@ const COMMANDS = 0;
 const USAGE = 1;
 const SHORTHELP = 2;
 const HELP = 3;
-const FUNCTION = 4;
-const COMPLETEFUNC = 5;
 
 
 // var g_insert_mappings = [ /*{{{*/
