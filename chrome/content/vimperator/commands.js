@@ -34,483 +34,6 @@ const FUNCTION = 4;
 const COMPLETEFUNC = 5;
 
 
-/* all built-in :ex-commands of Vimperator
- * format:
- * [
- *     0: [all names of this command],
- *     1: usage,
- *     2: short help
- *     3: helptext
- *     4: function (arguments in this order: args, special, count, modifiers)
- *     5: completefunc
- * ]
- */
-var g_commands = [/*{{{*/
-    [
-        ["addo[ns]"],
-        ["addo[ns]"],
-        "Show available Browser Extensions and Themes",
-        "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI.",
-        function(args) { vimperator.commands.addons(args); },
-        null
-    ],
-    [
-        ["ba[ck]"],
-        ["{count}ba[ck][!]"],
-        "Go back in the browser history",
-        "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>"+
-        "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history.",
-        function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
-        null
-    ],
-    [
-        ["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
-        ["{count}bd[elete][!]"],
-        "Delete current buffer (=tab)",
-        "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab.",
-        function (args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
-        null
-    ],
-    [
-        ["beep"],
-        ["beep"],
-        "Play a system beep",
-        null,
-        function() { /*vimperator.*/beep(); },
-        null
-    ],
-    [
-        ["bma[dd]"],
-        ["bma[dd] [-tTk] [url]"],
-        "Add a bookmark",
-        "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
-        "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
-        "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
-        " -t \"custom title\"<br/>" +
-        "The following options will be interpreted in the future:<br/>" +
-        " -T comma,separated,tag,list <br/>"+
-        " -k keyword <br/>",
-        bmadd,
-        null
-    ],
-    [
-        ["bmd[el]"],
-        ["bmd[el] [-T] {url}"],
-        "Delete a bookmark",
-        "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
-        "The following options WILL be interpretted in the future:<br/>" +
-        " -T comma,separated,tag,list <br/>",
-        bmdel,
-        function(filter) { return get_bookmark_completions(filter); }
-    ],
-    [
-        ["bookm[arks]", "bm"],
-        ["bm[!] [-T] {regexp}"],
-        "Show bookmarks",
-        "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
-        "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
-        "The following options WILL be interpretted in the future:<br/>" +
-        " -T comma,separated,tag,list <br/>",
-        bmshow,
-        function(filter) { return get_bookmark_completions(filter); }
-    ],
-    [
-        ["b[uffer]"],
-        ["b[uffer] {url|index}"],
-        "Go to buffer from buffer list",
-        "Argument can be either the buffer index or the full URL.",
-        buffer_switch,
-        function (filter) { return get_buffer_completions(filter); }
-    ],
-    [
-        ["buffers", "files", "ls", "tabs"],
-        ["buffers"],
-        "Show a list of all buffers (=tabs)",
-        "If the list is already shown, close the preview window.",
-        toggleBufferList,
-        null
-    ],
-    [
-        ["downl[oads]", "dl"],
-        ["downl[oads]"],
-        "Show progress of current downloads",
-        "Open the original Firefox download dialog in a new tab.<br/>"+
-        "Here, downloads can be paused, canceled and resumed.",
-        function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
-        null
-    ],
-    [
-        ["ec[ho]"],
-        ["ec[ho]"],
-        "Display a string at the bottom of the window",
-        "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be seperated by \\n.",
-        function(args) { vimperator.echo(args); } ,
-        null
-    ],
-    [
-        ["echoe[rr]"],
-        ["echoe[rr]"],
-        "Display an error string at the bottom of the window",
-        "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be seperated by \\n.",
-        function(args) { vimperator.echoerr(args); } ,
-        null
-    ],
-    [
-        ["exe[cute]"],
-        ["exe[cute] {expr1} [ ... ]"],
-        "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-        "<code class=\"command\">:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>",
-        execute,
-        null
-    ],
-    [
-        ["fo[rward]", "fw"],
-        ["{count}fo[rward][!]"],
-        "Go forward in the browser history",
-        "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>"+
-        "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history.",
-        function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
-        null
-    ],
-    [
-        ["ha[rdcopy]"],
-        ["ha[rdcopy]"],
-        "Print current document",
-        "Open a GUI dialog where you can select the printer, number of copies, orientation, etc.",
-        function() { getBrowser().contentWindow.print(); },
-        null
-    ],
-    [
-        ["h[elp]"],
-        ["h[elp] {subject}"],
-        "Open the help window",
-        "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>"+
-        "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
-        "<ul>"+
-        "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>"+
-        "<li><code class=\"command\">:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
-        "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>"+
-        "</ul>"+
-        "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
-        help,
-        function(filter) { return get_help_completions(filter); }
-    ],
-    [
-        ["hist[ory]", "hs"],
-        ["hist[ory] {filter}"],
-        "Show recently visited URLs",
-        "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL."+
-        "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
-        hsshow,
-        function(filter) { return get_history_completions(filter); }
-    ],
-    [
-        ["javas[cript]", "js"],
-        ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br/> in the help.js code
-        "Run any javascript command through eval()",
-        "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
-        "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
-        "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-        "The special version <code class=\"command\">:javascript!</code> will open the javascript console of Firefox.",
-        function(args, special) {
-            if (special) // open javascript console
-                openURLsInNewTab("chrome://global/content/console.xul", true);
-            else
-                try {
-                    eval(args);
-                } catch(e) {
-                    vimperator.echoerr(e.name + ": " + e.message);
-                }
-        },
-        null
-    ],
-    [
-        ["ma[rk]"],
-        ["ma[rk] {arg}"],
-        "Mark current location within the webpage",
-        "Not implemented yet",
-        set_location_mark,
-        null
-    ],
-    [
-        ["marks"],
-        ["marks {arg}"],
-        "Show all location marks of current webpage",
-        "Not implemented yet",
-        set_location_mark,
-        null
-    ],
-    [
-        ["o[pen]", "e[dit]"],
-        ["o[pen] [url] [| url]"],
-        "Open one or more URLs in the current tab",
-        "Multiple URLs can be separated with the | character.<br/>" +
-        "Each |-separated token is analayzed and in this order:<br/>"+
-        "<ol>"+
-        "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>"+
-        "... is special and moves up the directory hierarchy as far as possible."+
-        "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>"+
-        "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
-        "<li>Opened with the specified search engine if the token looks like a search string "+
-        "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
-        "will open the wikipedia entry for linux torvalds).</li>"+
-        "    <li>Opened with the default search engine or keyword (specified with the <code class=\"setting\">'defsearch'</code> setting) "+
-        "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
-        "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
-        "open OSNews in the current, and Slashdot in a new background tab).</li>"+
-        "</ol>"+
-        "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
-        "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
-        "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"setting\">'complete'</code> option.<br/>"+
-        "Without argument, reloads the current page.<br/>"+
-        "Without argument but with !, reloads the current page skipping the cache.",
-        function(args, special)
-        {
-            if(args.length > 0)
-                openURLs(args);
-            else
-            {
-                if (special)
-                    BrowserReloadSkipCache();
-                else
-                    BrowserReload();
-            }
-        },
-
-        function(filter) { return get_url_completions(filter); }
-    ],
-    [
-        ["pc[lose]"],
-        ["pc[lose]"],
-        "Close preview window on bottom of screen",
-        null,
-        function() { vimperator.previewwindow.hide(); },
-        null
-    ],
-    [
-        ["pref[erences]", "prefs"],
-        ["pref[erences]"],
-        "Show Browser Preferences",
-        "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>"+
-        "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>",
-        openPreferences,
-        null
-    ],
-    [
-        ["q[uit]"],
-        ["q[uit]"],
-        "Quit current tab or quit Vimperator if this was the last tab",
-        "When quitting Vimperator, the session is not stored.",
-        function (args) { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
-        null
-    ],
-    [
-        ["quita[ll]", "qa[ll]"],
-        ["quita[ll]"],
-        "Quit Vimperator",
-        "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored.",
-        function (args) { quit(false); },
-        null
-    ],
-    [
-        ["re[load]"],
-        ["re[load][!]"],
-        "Reload current page",
-        "Forces reloading of the current page. If ! is given, skip the cache.",
-        function(args, special) { reload(getBrowser().mCurrentTab, special); },
-        null
-    ],
-    [
-        ["reloada[ll]"],
-        ["reloada[ll][!]"],
-        "Reload all pages",
-        "Forces reloading of all pages. If ! is given, skip the cache.",
-        function(args, special) { reload_all(special); },
-        null
-    ],
-    [
-        ["res[tart]"],
-        ["res[tart]"],
-        "Force the browser to restart",
-        "Useful when installing extenstions.",
-        restart,
-        null
-    ],
-    [
-        ["sav[eas]"],
-        ["sav[eas]"],
-        "Save current web page to disk",
-        "Open the original Firefox \"Save page as...\" dialog in a new tab.<br/>" +
-        "There, you can save the current web page to disk with various options.",
-        function() { goDoCommand('Browser:SavePage'); },
-        null
-    ],
-    [
-        ["se[t]"],
-        ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
-        "Set an option",
-        "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>"+
-        "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>"+
-        "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
-        "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
-        "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>"+
-        "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>"+
-        "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
-        set,
-        function(filter) { return get_settings_completions(filter); }
-    ],
-    [
-        ["so[urce]"],
-        ["so[urce][!] {file}"],
-        "Read Ex commands from {file}",
-        "The .vimperatorrc file in your home directory is always sourced at start up.<br/>"+
-        "~ is supported as a shortcut for the $HOME directory.<br/>" +
-        "If ! is specified, errors are not printed.",
-        source,
-        function (filter) { return get_file_completions(filter); }
-    ],
-    [
-        ["st[op]"],
-        ["st[op]"],
-        "Stop loading",
-        "Stop loading current web page.",
-        BrowserStop,
-        null
-    ],
-    [
-        ["tab"],
-        ["tab {cmd}"],
-        "Execute {cmd} and tell it to output in a new tab",
-        "Works for only commands that support it.<br/>" +
-        "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
-        tab,
-        null
-    ],
-    [
-        ["tabn[ext]", "tn[ext]"],
-        ["tabn[ext]"],
-        "Switch to the next tab",
-        "Cycles to the first tab, when the last is selected.",
-        function(args, special, count) { vimperator.tabs.select("+1", true); },
-        null
-    ],
-    [
-        ["tabopen", "t[open]", "tabnew", "tabe[dit]"],
-        ["tabopen [url] [| url]"],
-        "Open one or more URLs in a new tab",
-        "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
-        "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
-        function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
-        function (filter) { return get_url_completions(filter); }
-    ],
-    [
-        ["tabo[nly]"],
-        ["tabo[nly]"],
-        "Close all other tabs",
-        null,
-        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
-        null
-    ],
-    [
-        ["tabm[ove]"],
-        ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
-        "Move the current tab after tab N",
-        "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
-        "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list.",
-        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
-        null
-    ],
-    [
-        ["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
-        ["tabp[revious]", "tabN[ext]"],
-        "Switch to the previous tab",
-        "Cycles to the last tab, when the first is selected.",
-        function(args, count) { vimperator.tabs.select("-1", true); },
-        null
-    ],
-    [
-        ["tabr[ewind]", "tabfir[st]"],
-        ["tabr[ewind]", "tabfir[st]"],
-        "Switch to the first tab",
-        null,
-        function(args, count) { vimperator.tabs.select(0, false); },
-        null
-    ],
-    [
-        ["tabl[ast]"],
-        ["tabl[ast]"],
-        "Switch to the last tab",
-        null,
-        function(args, count) { vimperator.tabs.select("$", false); },
-        null
-    ],
-    [
-        ["u[ndo]"],
-        ["{count}u[ndo]"],
-        "Undo closing of a tab",
-        "If a count is given, don't close the last but the n'th last tab.",
-        function(args, special, count) { if(count < 1) count = 1; undoCloseTab(count-1); },
-        null
-    ],
-    [
-        ["qmarka[dd]", "qma[dd]"],
-        ["qmarka[dd] {a-zA-Z0-9} [url]"],
-        "Mark a URL with a letter for quick access",
-        "Not implemented yet.",
-        function(args) { set_url_mark("mark", "url"); }, // FIXME
-        function(filter) { return [["a", ""], ["b", ""]]; }
-    ],
-    [
-        ["qmarkd[el]", "qmd[el]"],
-        ["qmarkd[el] {a-zA-Z0-9}"],
-        "Remove a marked URL",
-        "Not implemented yet.",
-        function(args) { set_url_mark("mark", "url"); }, // FIXME
-        function(filter) { return [["a", ""], ["b", ""]]; }
-    ],
-    [
-        ["qmarks", "qms"],
-        ["qmarks"],
-        "Shows marked URLs",
-        "Not implemented yet.",
-        function(args) { show_url_marks(args); }, // FIXME
-        null
-    ],
-    [
-        ["ve[rsion]"],
-        ["ve[rsion][!]"],
-        "Show version information",
-        "You can show the Firefox version page with <code class=\"command\">:version!</code>.",
-        function (args, special) { if (special) openURLs("about:"); else vimperator.echo("Vimperator version: " + vimperator.ver); },
-        null
-    ],
-    [
-        ["wino[pen]", "w[open]", "wine[dit]"],
-        ["wino[pen] [url] [| url]"],
-        "Open an URL in a new window",
-        "Not implemented yet.",
-        function () { vimperator.echo("winopen not yet implemented"); },
-        null
-    ],
-    [
-        ["xa[ll]", "wqa[ll]", "wq"],
-        ["wqa[ll]", "xa[ll]"],
-        "Save the session and quit",
-        "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>"+
-        "<code class=\"command\">:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that.",
-        function (args) { quit(true); },
-        null
-    ],
-    [
-        ["zo[om]"],
-        ["zo[om] {value}"],
-        "Set zoom value of the webpage",
-        "{value} can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
-        zoom_to,
-        null
-    ]
-];/*}}}*/
-
 // var g_insert_mappings = [ /*{{{*/
 //     ["xxx", "todo"],
 //     ["<C-w>", "delete word"],
@@ -560,88 +83,656 @@ var g_hint_mappings = [ /*{{{*/
     ["<Esc>",      "", true, true]
 ]; /*}}}*/
 
-// FIXME (DJK) [Command Name Specs]: // {{{
-// remove this when commands are objects and all short/long names etc can be
-// accessed with a property
+function Command(specs, action, extra_info)//{{{
+{
+    if (!specs || !action)
+        return null;
 
-// convert command name abbreviation specs of the form
-// 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
-// 'abc', 'abcdef'               
-function _command_parse_specs(specs)
-{                       
-    var short_names = [];
-    var long_names  = [];           
-    for (var i = 0; i < specs.length; i++)
-    {            
-        var match;                  
-        if (match = specs[i].match(/(\w+)\[(\w+)\]/))
-        {                           
-            short_names.push(match[1]);
-            long_names.push(match[1] + match[2]);
-        }  
-        else                        
-            long_names.push(specs[i]);
-    }                               
-    return { long_names: long_names, short_names: short_names };
-}                                   
-// match a candidate name against a command name abbreviation spec - returning
-// true if the candidate matches unambiguously
-function _command_match_abbreviation(name, format)
+    // convert command name abbreviation specs of the form
+    // 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
+    // 'abc', 'abcdef'
+    var parseSpecs = function(specs)
+    {
+        var short_names = [];
+        var long_names  = [];
+        for (var i = 0; i < specs.length; i++)
+        {
+            var match;
+            if (match = specs[i].match(/(\w+)\[(\w+)\]/))
+            {
+                short_names.push(match[1]);
+                long_names.push(match[1] + match[2]);
+            }
+            else
+                long_names.push(specs[i]);
+        }
+        return { long_names: long_names, short_names: short_names };
+    }
+
+    this.specs = specs;
+    var expanded_specs = parseSpecs(specs);
+    this.short_names = expanded_specs.short_names;
+    this.long_names = expanded_specs.long_names;
+
+    // return the primary command name (the long name of the first spec listed)
+    this.name = this.long_names[0];
+
+    // return all command name aliases
+    this.names = this.short_names.concat(this.long_names);
+
+    this.action = action;
+
+    if (extra_info)
+    {
+        //var flags = extra_info.flags || 0;
+
+        if (extra_info.usage)
+            this.usage = extra_info.usage;
+        else
+        {
+            // TODO: build a default usage string -- djk
+            this.usage = this.name;
+        }
+
+        // TODO: ternary operator?
+        if (extra_info.help)
+            this.help = extra_info.help;
+        else
+            this.help = null;
+
+        if (extra_info.short_help)
+            this.short_help = extra_info.short_help;
+        else
+            this.short_help = null;
+
+        if (extra_info.completer)
+            this.completer = extra_info.completer;
+        else
+            this.completer = null;
+    }
+
+}//}}}
+
+Command.prototype.execute = function(args, special, count, modifiers)
 {
-    var minimum = format.indexOf('[');                    // minumum number of characters for a command name match
-    var fullname = format.replace(/\[(\w+)\]$/, '$1');    // full command name
-    if (fullname.indexOf(name) == 0 && name.length >= minimum)
-        return true;
-    else
-        return false;
-}       
-// return the primary command name (the long name of the first spec listed)
-function command_name(cmd)
-{
-    return command_long_names(cmd)[0];
-}   
-// return all command name aliases
-function command_names(cmd)
-{
-    var names = _command_parse_specs(cmd[COMMANDS]);
-    return names.short_names.concat(names.long_names);
-}   
-// return all short command name aliases
-function command_short_names(cmd)
-{
-    return _command_parse_specs(cmd[COMMANDS]).short_names;
-}   
-// return all long command name aliases
-function command_long_names(cmd)
-{
-    return _command_parse_specs(cmd[COMMANDS]).long_names;
-}   
+    this.action.call(this, args, special, count, modifiers);
+}
+
 // return true if the candidate name matches one of the command's aliases
 // (including all acceptable abbreviations)
-function command_has_name(cmd, name)
+Command.prototype.hasName = function(name)
 {
-    var specs = cmd[COMMANDS];
-    for (var i = 0; i < specs.length; i++)
+    // match a candidate name against a command name abbreviation spec - returning
+    // true if the candidate matches unambiguously
+    function matchAbbreviation(name, format)
     {
-        if (specs[i] == name)                    // literal command name
-            return cmd; 
-        else if (specs[i].match(/^\w+\[\w+\]$/)) // abbreviation spec
-            if (_command_match_abbreviation(name, specs[i]))
-                return true;
-    }   
-    return false;
-}   
-// }}}
+        var minimum = format.indexOf('[');                    // minumum number of characters for a command name match
+        var fullname = format.replace(/\[(\w+)\]$/, '$1');    // full command name
+        if (fullname.indexOf(name) == 0 && name.length >= minimum)
+            return true;
+        else
+            return false;
+    }
 
-// returns null, if the cmd cannot be found in our g_commands array, or
-// otherwise a reference to our command
-function get_command(cmd) // {{{
+    for (var i = 0; i < this.specs.length; i++)
+    {
+        if (this.specs[i] == name)                    // literal command name
+            return true;
+        else if (this.specs[i].match(/^\w+\[\w+\]$/)) // abbreviation spec
+            if (matchAbbreviation(name, this.specs[i]))
+                return true;
+    }
+    return false;
+}
+
+Command.prototype.toString = function()
 {
-    for (var i = 0; i < g_commands.length; i++)
-        if (command_has_name(g_commands[i], cmd))
-            return g_commands[i];
-    return null;
-} // }}}
+    // FIXME: -- djk
+    return "Command {" +
+         "\nname: " + this.name +
+         "\nnames: " + this.names +
+         "\nshort_names: " + this.short_names  +
+         "\nlong_names: " + this.long_names +
+         "\nusage: " + this.usage +
+         "\nshort_help: " + this.short_help +
+         "\nhelp: " + this.help +
+         "\naction: " + this.action +
+         "\ncompleter: " + this.completer +
+         "\n}"
+}
+
+function Commands()//{{{
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var ex_commands = [];
+
+    function addDefaultCommand(command)
+    {
+        if (!command)
+            return false;
+
+        ex_commands.push(command);
+
+        return true;
+    }
+
+    function commandsIterator()
+    {
+        var commands;
+
+        for (var i = 0; i < ex_commands.length; i++)
+            yield ex_commands[i];
+
+        throw StopIteration;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    this.__iterator__ = function()
+    {
+        return commandsIterator();
+    }
+
+    this.add = function(command)
+    {
+        if (!command)
+            return false;
+
+        ex_commands.push(command);
+
+        return true;
+    }
+
+    this.get = function(name)
+    {
+        for (var i = 0; i < ex_commands.length; i++)
+        {
+            if (ex_commands[i].hasName(name))
+                return ex_commands[i];
+        }
+        return null;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    addDefaultCommand(new Command(["addo[ns]"],
+        function(args) { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
+        {
+            usage: ["addo[ns]"],
+            short_help: "Show available Browser Extensions and Themes",
+            help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI."
+        }
+    ));
+    addDefaultCommand(new Command(["ba[ck]"],
+        function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
+        {
+            usage: ["{count}ba[ck][!]"],
+            short_help: "Go back in the browser history",
+            help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>"+
+                  "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history."
+        }
+    ));
+    addDefaultCommand(new Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
+        function (args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
+        {
+            usage: ["{count}bd[elete][!]"],
+            short_help: "Delete current buffer (=tab)",
+            help: "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab."
+        }
+    ));
+    addDefaultCommand(new Command(["beep"],
+        function() { /*vimperator.*/beep(); },
+        {
+            usage: ["beep"],
+            short_help: "Play a system beep"
+        }
+    ));
+    addDefaultCommand(new Command(["bma[dd]"],
+        bmadd,
+        {
+            usage: ["bma[dd] [-tTk] [url]"],
+            short_help: "Add a bookmark",
+            help: "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
+                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
+                  "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
+                  " -t \"custom title\"<br/>" +
+                  "The following options will be interpreted in the future:<br/>" +
+                  " -T comma,separated,tag,list <br/>"+
+                  " -k keyword <br/>"
+        }
+    ));
+    addDefaultCommand(new Command(["bmd[el]"],
+        bmdel,
+        {
+            usage: ["bmd[el] [-T] {url}"],
+            short_help: "Delete a bookmark",
+            help: "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
+                  "The following options WILL be interpretted in the future:<br/>" +
+                  " -T comma,separated,tag,list <br/>",
+            completer: function(filter) { return get_bookmark_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["bookm[arks]", "bm"],
+        bmshow,
+        {
+            usage: ["bm[!] [-T] {regexp}"],
+            short_help: "Show bookmarks",
+            help: "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
+                  "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
+                  "The following options WILL be interpretted in the future:<br/>" +
+                  " -T comma,separated,tag,list <br/>",
+            completer: function(filter) { return get_bookmark_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["b[uffer]"],
+        buffer_switch,
+        {
+            usage: ["b[uffer] {url|index}"],
+            short_help: "Go to buffer from buffer list",
+            help: "Argument can be either the buffer index or the full URL.",
+            completer: function (filter) { return get_buffer_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
+        toggleBufferList,
+        {
+            usage: ["buffers"],
+            short_help: "Show a list of all buffers (=tabs)",
+            help: "If the list is already shown, close the preview window."
+        }
+    ));
+    addDefaultCommand(new Command(["downl[oads]", "dl"],
+        function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
+        {
+            usage: ["downl[oads]"],
+            short_help: "Show progress of current downloads",
+            help: "Open the original Firefox download dialog in a new tab.<br/>"+
+                  "Here, downloads can be paused, canceled and resumed."
+        }
+    ));
+    addDefaultCommand(new Command(["ec[ho]"],
+        function(args) { vimperator.echo(args); } ,
+        {
+            usage: ["ec[ho]"],
+            short_help: "Display a string at the bottom of the window",
+            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be seperated by \\n."
+        }
+    ));
+    addDefaultCommand(new Command(["echoe[rr]"],
+        function(args) { vimperator.echoerr(args); } ,
+        {
+            usage: ["echoe[rr]"],
+            short_help: "Display an error string at the bottom of the window",
+            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be seperated by \\n."
+        }
+    ));
+    addDefaultCommand(new Command(["exe[cute]"],
+        execute,
+        {
+            usage: ["exe[cute] {expr1} [ ... ]"],
+            short_help: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
+            help: "<code class=\"command\">:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>"
+        }
+    ));
+    addDefaultCommand(new Command(["fo[rward]", "fw"],
+        function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
+        {
+            usage: ["{count}fo[rward][!]"],
+            short_help: "Go forward in the browser history",
+            help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>"+
+                  "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history."
+        }
+    ));
+    addDefaultCommand(new Command(["ha[rdcopy]"],
+        function() { getBrowser().contentWindow.print(); },
+        {
+            usage: ["ha[rdcopy]"],
+            short_help: "Print current document",
+            help: "Open a GUI dialog where you can select the printer, number of copies, orientation, etc."
+        }
+    ));
+    addDefaultCommand(new Command(["h[elp]"],
+        help,
+        {
+            usage: ["h[elp] {subject}"],
+            short_help: "Open the help window",
+            help: "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>"+
+                  "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
+                  "<ul>"+
+                  "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>"+
+                  "<li><code class=\"command\">:help 'complete'</code> for settings (surrounded by ' and ')</li>"+
+                  "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>"+
+                  "</ul>"+
+                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
+            completer: function(filter) { return get_help_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["hist[ory]", "hs"],
+        hsshow,
+        {
+            usage: ["hist[ory] {filter}"],
+            short_help: "Show recently visited URLs",
+            help: "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL."+
+                  "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
+            completer: function(filter) { return get_history_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["javas[cript]", "js"],
+        function(args, special)
+        {
+            if (special) // open javascript console
+                openURLsInNewTab("chrome://global/content/console.xul", true);
+            else
+                try {
+                    eval(args);
+                } catch(e) {
+                    vimperator.echoerr(e.name + ": " + e.message);
+                }
+        },
+        {
+            usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br/> in the help.js code
+            short_help: "Run any javascript command through eval()",
+            help: "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
+                  "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
+                  "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
+                  "The special version <code class=\"command\">:javascript!</code> will open the javascript console of Firefox."
+        }
+    ));
+    addDefaultCommand(new Command(["ma[rk]"],
+        set_location_mark,
+        {
+            usage: ["ma[rk] {arg}"],
+            short_help: "Mark current location within the webpage",
+            help: "Not implemented yet"
+        }
+    ));
+    addDefaultCommand(new Command(["marks"],
+        set_location_mark,
+        {
+            usage: ["marks {arg}"],
+            short_help: "Show all location marks of current webpage",
+            help: "Not implemented yet"
+        }
+    ));
+    addDefaultCommand(new Command(["o[pen]", "e[dit]"],
+        function(args, special)
+        {
+            if(args.length > 0)
+                openURLs(args);
+            else
+            {
+                if (special)
+                    BrowserReloadSkipCache();
+                else
+                    BrowserReload();
+            }
+        },
+        {
+            usage: ["o[pen] [url] [| url]"],
+            short_help: "Open one or more URLs in the current tab",
+            help: "Multiple URLs can be separated with the | character.<br/>" +
+                  "Each |-separated token is analayzed and in this order:<br/>"+
+                  "<ol>"+
+                  "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>"+
+                  "... is special and moves up the directory hierarchy as far as possible."+
+                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>"+
+                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
+                  "<li>Opened with the specified search engine if the token looks like a search string "+
+                  "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
+                  "will open the wikipedia entry for linux torvalds).</li>"+
+                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"setting\">'defsearch'</code> setting) "+
+                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
+                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
+                  "open OSNews in the current, and Slashdot in a new background tab).</li>"+
+                  "</ol>"+
+                  "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
+                  "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
+                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"setting\">'complete'</code> option.<br/>"+
+                  "Without argument, reloads the current page.<br/>"+
+                  "Without argument but with !, reloads the current page skipping the cache.",
+            completer: function(filter) { return get_url_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["pc[lose]"],
+        function() { vimperator.previewwindow.hide(); },
+        {
+            usage: ["pc[lose]"],
+            short_help: "Close preview window on bottom of screen"
+        }
+    ));
+    addDefaultCommand(new Command(["pref[erences]", "prefs"],
+        openPreferences,
+        {
+            usage: ["pref[erences]"],
+            short_help: "Show Browser Preferences",
+            help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>"+
+                  "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>"
+        }
+    ));
+    addDefaultCommand(new Command(["q[uit]"],
+        function (args) { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
+        {
+            usage: ["q[uit]"],
+            short_help: "Quit current tab or quit Vimperator if this was the last tab",
+            help: "When quitting Vimperator, the session is not stored."
+        }
+    ));
+    addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
+        function (args) { quit(false); },
+        {
+            usage: ["quita[ll]"],
+            short_help: "Quit Vimperator",
+            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored."
+        }
+    ));
+    addDefaultCommand(new Command(["re[load]"],
+        function(args, special) { reload(getBrowser().mCurrentTab, special); },
+        {
+            usage: ["re[load][!]"],
+            short_help: "Reload current page",
+            help: "Forces reloading of the current page. If ! is given, skip the cache."
+        }
+    ));
+    addDefaultCommand(new Command(["reloada[ll]"],
+        function(args, special) { reload_all(special); },
+        {
+            usage: ["reloada[ll][!]"],
+            short_help: "Reload all pages",
+            help: "Forces reloading of all pages. If ! is given, skip the cache."
+        }
+    ));
+    addDefaultCommand(new Command(["res[tart]"],
+        restart,
+        {
+            usage: ["res[tart]"],
+            short_help: "Force the browser to restart",
+            help: "Useful when installing extenstions."
+        }
+    ));
+    addDefaultCommand(new Command(["sav[eas]"],
+        function() { goDoCommand('Browser:SavePage'); },
+        {
+            usage: ["sav[eas]"],
+            short_help: "Save current web page to disk",
+            help: "Open the original Firefox \"Save page as...\" dialog in a new tab.<br/>" +
+                  "There, you can save the current web page to disk with various options."
+        }
+    ));
+    addDefaultCommand(new Command(["se[t]"],
+        set,
+        {
+            usage: ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
+            short_help: "Set an option",
+            help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>"+
+                  "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>"+
+                  "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
+                  "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
+                  "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>"+
+                  "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>"+
+                  "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
+            completer: function(filter) { return get_settings_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["so[urce]"],
+        source,
+        {
+            usage: ["so[urce][!] {file}"],
+            short_help: "Read Ex commands from {file}",
+            help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>"+
+                  "~ is supported as a shortcut for the $HOME directory.<br/>" +
+                  "If ! is specified, errors are not printed.",
+            completer: function (filter) { return get_file_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["st[op]"],
+        BrowserStop,
+        {
+            usage: ["st[op]"],
+            short_help: "Stop loading",
+            help: "Stop loading current web page."
+        }
+    ));
+    addDefaultCommand(new Command(["tab"],
+        tab,
+        {
+            usage: ["tab {cmd}"],
+            short_help: "Execute {cmd} and tell it to output in a new tab",
+            help: "Works for only commands that support it.<br/>" +
+                  "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab."
+        }
+    ));
+    addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
+        function(args, special, count) { vimperator.tabs.select("+1", true); },
+        {
+            usage: ["tabn[ext]"],
+            short_help: "Switch to the next tab",
+            help: "Cycles to the first tab, when the last is selected."
+        }
+    ));
+    addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
+        function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
+        {
+            usage: ["tabopen [url] [| url]"],
+            short_help: "Open one or more URLs in a new tab",
+            help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
+                  "If used with !, the 'tabopen' value of the 'activate' setting is negated.",
+            completer: function (filter) { return get_url_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new Command(["tabo[nly]"],
+        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
+        {
+            usage: ["tabo[nly]"],
+            short_help: "Close all other tabs"
+        }
+    ));
+    addDefaultCommand(new Command(["tabm[ove]"],
+        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
+        {
+            usage: ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
+            short_help: "Move the current tab after tab N",
+            help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
+                  "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list."
+        }
+    ));
+    addDefaultCommand(new Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
+        function(args, count) { vimperator.tabs.select("-1", true); },
+        {
+            usage: ["tabp[revious]", "tabN[ext]"],
+            short_help: "Switch to the previous tab",
+            help: "Cycles to the last tab, when the first is selected."
+        }
+    ));
+    addDefaultCommand(new Command(["tabr[ewind]", "tabfir[st]"],
+        function(args, count) { vimperator.tabs.select(0, false); },
+        {
+            usage: ["tabr[ewind]", "tabfir[st]"],
+            short_help: "Switch to the first tab"
+        }
+    ));
+    addDefaultCommand(new Command(["tabl[ast]"],
+        function(args, count) { vimperator.tabs.select("$", false); },
+        {
+            usage: ["tabl[ast]"],
+            short_help: "Switch to the last tab"
+        }
+    ));
+    addDefaultCommand(new Command(["u[ndo]"],
+        function(args, special, count) { if(count < 1) count = 1; undoCloseTab(count-1); },
+        {
+            usage: ["{count}u[ndo]"],
+            short_help: "Undo closing of a tab",
+            help: "If a count is given, don't close the last but the n'th last tab."
+        }
+    ));
+    addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
+        function(args) { set_url_mark("mark", "url"); }, // FIXME
+        {
+            usage: ["qmarka[dd] {a-zA-Z0-9} [url]"],
+            short_help: "Mark a URL with a letter for quick access",
+            help: "Not implemented yet.",
+            completer: function(filter) { return [["a", ""], ["b", ""]]; }
+        }
+    ));
+    addDefaultCommand(new Command(["qmarkd[el]", "qmd[el]"],
+        function(args) { set_url_mark("mark", "url"); }, // FIXME
+        {
+            usage: ["qmarkd[el] {a-zA-Z0-9}"],
+            short_help: "Remove a marked URL",
+            help: "Not implemented yet.",
+            completer: function(filter) { return [["a", ""], ["b", ""]]; }
+        }
+    ));
+    addDefaultCommand(new Command(["qmarks", "qms"],
+        function(args) { show_url_marks(args); }, // FIXME
+        {
+            usage: ["qmarks"],
+            short_help: "Shows marked URLs",
+            help: "Not implemented yet."
+        }
+    ));
+    addDefaultCommand(new Command(["ve[rsion]"],
+        function (args, special) { if (special) openURLs("about:"); else vimperator.echo("Vimperator version: " + vimperator.ver); },
+        {
+            usage: ["ve[rsion][!]"],
+            short_help: "Show version information",
+            help: "You can show the Firefox version page with <code class=\"command\">:version!</code>."
+        }
+    ));
+    addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
+        function () { vimperator.echo("winopen not yet implemented"); },
+        {
+            usage: ["wino[pen] [url] [| url]"],
+            short_help: "Open an URL in a new window",
+            help: "Not implemented yet."
+        }
+    ));
+    addDefaultCommand(new Command(["xa[ll]", "wqa[ll]", "wq"],
+        function (args) { quit(true); },
+        {
+            usage: ["wqa[ll]", "xa[ll]"],
+            short_help: "Save the session and quit",
+            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>"+
+                  "<code class=\"command\">:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that."
+        }
+    ));
+    addDefaultCommand(new Command(["zo[om]"],
+        zoom_to,
+        {
+            usage: ["zo[om] {value}"],
+            short_help: "Set zoom value of the webpage",
+            help: "{value} can be between 25 and 500%. If it is omitted, zoom is reset to 100%."
+        }
+    ));
+//}}}
+}//}}}
 
 function execute_command(count, cmd, special, args, modifiers) // {{{
 {
@@ -650,22 +741,23 @@ function execute_command(count, cmd, special, args, modifiers) // {{{
     if (!modifiers)
         modifiers = {};
 
-    var command = get_command(cmd);
+    var command = vimperator.commands.get(cmd);
     if (command === null)
     {
         vimperator.echoerr("E492: Not an editor command: " + cmd);
         vimperator.focusContent();
         return;
     }
-        
-    if (command[FUNCTION] === null)
+
+    // TODO: need to perform this test? -- djk
+    if (command.action === null)
     {
-        vimperator.echoerr("E666: Internal error: command[FUNCTION] === null");
+        vimperator.echoerr("E666: Internal error: command.action === null");
         return;
     }
 
     // valid command, call it:
-    command[FUNCTION].call(this, args, special, count, modifiers);
+    command.execute(args, special, count, modifiers);
 
 } // }}}
 
@@ -852,7 +944,7 @@ function stringToURLs(str)
             if (matches && matches[3] && matches[3].length >= 1)
                 text = matches[3];
 
-            var search_url = vimperator.bookmarks.getSearchURL(text, alias);        
+            var search_url = vimperator.bookmarks.getSearchURL(text, alias);
             if (search_url && search_url.length >= 1)
             {
                 urls[url] = search_url;
@@ -875,7 +967,7 @@ function stringToURLs(str)
     return urls;
 }
 
-/* returns true if the currently loaded URI is 
+/* returns true if the currently loaded URI is
  * a directory or false if it is a file
  */
 function isDirectory(url)
@@ -914,10 +1006,10 @@ function focusNextFrame(count)
             beep();
             return;
         }
-    
+
         var w = document.commandDispatcher.focusedWindow;
         var next = 0;
-    
+
         // Find the next frame to focus
         for (var i=0; i<frames.length; i++) {
             if (w == frames[i]) {
@@ -1076,7 +1168,7 @@ function hsshow(filter, fullmode)
 /* vimperator has a concept of URL marks
  * these provide quick access to URLs with a single character
  *
- * mark urls with e.g. Ma and you can go there with 'a or open a 
+ * mark urls with e.g. Ma and you can go there with 'a or open a
  * new tab with the url with "a
  * valid characters for url marks are [a-zA-Z0-9]
  */
@@ -1338,7 +1430,7 @@ function reload_all(bypass_cache)
         for (var i = 0; i < getBrowser().mTabs.length; i++)
         {
             try
-            { 
+            {
                 reload(getBrowser().mTabs[i], bypass_cache)
             }
             catch (e) {
@@ -1365,7 +1457,7 @@ function restart()
         .createInstance(Components.interfaces.nsISupportsPRBool);
     os.notifyObservers(cancelQuit, "quit-application-requested", null);
 
-    // Something aborted the quit process. 
+    // Something aborted the quit process.
     if (cancelQuit.data)
         return;
 
@@ -1439,7 +1531,7 @@ function set(args, special)
         // write access
         else
         {
-            var type = setting[TYPE];      
+            var type = setting[TYPE];
             if (type == "boolean")
             {
                 setting[SETFUNC].call(this, !no);
@@ -1524,8 +1616,8 @@ function evaluateXPath(expression, doc, ordered)
     if(!doc)
         doc = window.content.document;
 
-    var res = doc.evaluate(expression, doc, 
-        function lookupNamespaceURI(prefix) { 
+    var res = doc.evaluate(expression, doc,
+        function lookupNamespaceURI(prefix) {
           switch (prefix) {
             case 'xhtml':
               return 'http://www.w3.org/1999/xhtml';
@@ -1642,7 +1734,7 @@ function selectInput()
 //      return;
 
     var texts = evaluateXPath("//input[@type='text']");
-    
+
     texts.snapshotItem(0).focus();
 }
 
@@ -1671,14 +1763,15 @@ function toggle_images() {
 
 
 
-function Commands()
-{
-    this.addons = function(args)
-    {
-        openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true);
-    }
-
-    logMessage("Commands initialized");
-}
+function(args) { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); };
+//function Commands()
+//{
+//    this.addons = function(args)
+//    {
+//        openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true);
+//    }
+//
+//    logMessage("Commands initialized");
+//}
 
 // vim: set fdm=marker sw=4 ts=4 et:

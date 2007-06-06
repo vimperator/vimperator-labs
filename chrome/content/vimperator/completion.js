@@ -74,30 +74,28 @@ function build_longest_starting_substring(list, filter)/*{{{*/
     //var filter_length = filter.length;
     for (var i = 0; i < list.length; i++)
     {
-        var command_names = command_long_names(list[i]);
-        for (var j = 0; j < command_names.length; j++)
+        for (var j = 0; j < list[i][COMMANDS].length; j++)
         {
-            if (command_names[j].indexOf(filter) != 0)
+            if (list[i][0][j].indexOf(filter) != 0)
                 continue;
             if (g_substrings.length == 0)
             {
-                var length = command_names[j].length;
+                var length = list[i][COMMANDS][j].length;
                 for (var k = filter.length; k <= length; k++)
-                    g_substrings.push(command_names[j].substring(0, k));
+                    g_substrings.push(list[i][COMMANDS][j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return command_names[j].indexOf($_) == 0;
+                    return list[i][COMMANDS][j].indexOf($_) == 0;
                 });
             }
-            filtered.push([command_names[j], list[i][SHORTHELP]]);
+            filtered.push([list[i][COMMANDS][j], list[i][SHORTHELP]]);
             break;
         }
     }
     return filtered;
 }/*}}}*/
-
 
 /* 
  * filter a list of urls
@@ -257,12 +255,13 @@ function get_help_completions(filter)/*{{{*/
 {
     var help_array = [];
     g_substrings = [];
-    help_array = help_array.concat(g_commands.map(function($_) {
-        return [
-                $_[COMMANDS].map(function($_) { return ":" + $_; }),
-                $_[SHORTHELP]
-            ];
-    }));
+    for (var command in vimperator.commands)
+    {
+        help_array.push([command.long_names.map(function($_) {
+                                                    return ":" + $_;
+                                                }),
+                        command.short_help])
+    }
     settings = get_settings_completions(filter, true);
     help_array = help_array.concat(settings.map(function($_) {
         return [
@@ -284,10 +283,17 @@ function get_command_completions(filter)/*{{{*/
 {
     //g_completions = [];
     g_substrings = [];
-    if (!filter) return g_commands.map(function($_) {
-        return [command_name($_), $_[SHORTHELP]];
-    });
-    return build_longest_starting_substring(g_commands, filter);
+    var completions = []
+    if (!filter)
+    {
+        for (var command in vimperator.commands)
+            completions.push([command.name, command.short_help]);
+        return completions;
+    }
+
+    for (var command in vimperator.commands)
+        completions.push([command.long_names, null, command.short_help]); // # FIXME: just return it in the format expected by blss() for now -- djk
+    return build_longest_starting_substring(completions, filter);
 }/*}}}*/
 
 function get_settings_completions(filter, unfiltered)/*{{{*/
@@ -415,12 +421,12 @@ function exTabCompletion(str)
 		completions = get_command_completions(cmd);
 		start = matches[1].length;
 	}
-	else // dynamically get completions as specified in the g_commands array
+	else // dynamically get completions as specified with the command's completer function
 	{
-		var command = get_command(cmd);
-		if (command && command[COMPLETEFUNC])
+        var command = vimperator.commands.get(cmd);
+		if (command && command.completer)
 		{
-			completions = command[COMPLETEFUNC].call(this, args);
+			completions = command.completer.call(this, args);
 //			if (command[COMMANDS][0] == "open" ||
 //					command[COMMANDS][0] == "tabopen" ||
 //					command[COMMANDS][0] == "winopen")

@@ -92,7 +92,7 @@ function help(section, easter)
                 ret += "Sorry, no help available";
             // the tags which are printed on the top right
             ret += '</td><td class="tag" valign="top">';
-            var names = command_names(commands[i]);
+            var names = commands[i][COMMANDS];
             for (var j=0; j < names.length; j++)
             {
                 var cmd_name = names[j];
@@ -176,7 +176,10 @@ function help(section, easter)
         mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';
 
     var commands = '<h2>Commands</h2><p><table class="vimperator commands">\n';
-    commands += makeHelpString(g_commands, "#632610", ":", "", null);
+    var all_commands = [];
+    for (var command in vimperator.commands)
+        all_commands.push([command.names, command.usage, command.short_help, command.help]);
+    commands += makeHelpString(all_commands, "#632610", ":", "", null);
     commands += '</table></p>';
     if (section && section == '42')
         commands += '<p id="42">What is the meaning of life, the universe and everything?<br/>' +

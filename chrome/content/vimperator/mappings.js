@@ -91,7 +91,7 @@ function Mappings()//{{{
         }
     }
 
-    var mappingsIterator = function(mode)
+    function mappingsIterator(mode)
     {
         var mappings;
 

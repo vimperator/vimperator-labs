@@ -458,15 +458,14 @@ function Search()
 }
 
 // @todo nicer way to register commands?
-g_commands.push(
-    [
-        ["noh[lsearch]"],
-        ["noh[lsearch]"],
-        "Clear the current selection",
-        "",
+vimperator.commands.add(new Command(["noh[lsearch]"],
         clearSelection,
-        null
-    ]
-);
+        {
+            usage: ["noh[lsearch]"],
+            short_help: "Clear the current selection",
+            help: null,
+            completer: null
+        }
+));
 
 // vim: set fdm=marker sw=4 ts=4 et:
