@@ -278,7 +278,7 @@ var g_options = [/*{{{*/
     [
         ["usermode", "um", "nousermode", "noum"],
         ["usermode", "um"],
-        "Show current website with a minimal stylesheet to make it easily accessible",
+        "Show current website with a minimal style sheet to make it easily accessible",
         "Note that this is a local option for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
         "boolean",
         null,

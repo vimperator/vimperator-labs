@@ -406,7 +406,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -414,7 +414,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -422,7 +422,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -430,7 +430,7 @@ function Mappings()//{{{
         {
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
-                  "If the document cannot scroll more, a beep is emmited (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -506,7 +506,7 @@ function Mappings()//{{{
             help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
                   "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
                   "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
-                  "Also, most <code class=\"mapping\">Ctrl</code>-prefixed short_helpcut keys are available in this mode for navigation."
+                  "Also, most <code class=\"mapping\">Ctrl</code>-prefixed shortcut keys are available in this mode for navigation."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, [";"], function(count) { hah.enableHahMode(vimperator.modes.EXTENDED_HINT); },
@@ -526,7 +526,7 @@ function Mappings()//{{{
                   "<li><code class=\"mapping\">s</code> to save its destination (not implemented yet)</li>" +
                   "<li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
                   "</ul>" +
-                  "Multiple hints can be seperated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
+                  "Multiple hints can be separated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
                   "Hintable elements for this mode can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string."
         }
     ));
@@ -578,7 +578,7 @@ function Mappings()//{{{
         {
             short_help: "Escape next key",
             help: "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
-                  "Also works to unshadow Firefox short_helpcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
+                  "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
                   "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage."
         }
     ));

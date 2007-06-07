@@ -312,7 +312,7 @@ function Commands()//{{{
             usage: ["bmd[el] [-T] {url}"],
             short_help: "Delete a bookmark",
             help: "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
-                  "The following options WILL be interpretted in the future:<br/>" +
+                  "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list <br/>",
             completer: function(filter) { return get_bookmark_completions(filter); }
         }
@@ -324,7 +324,7 @@ function Commands()//{{{
             short_help: "Show bookmarks",
             help: "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
                   "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
-                  "The following options WILL be interpretted in the future:<br/>" +
+                  "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list <br/>",
             completer: function(filter) { return get_bookmark_completions(filter); }
         }
@@ -360,7 +360,7 @@ function Commands()//{{{
         {
             usage: ["ec[ho]"],
             short_help: "Display a string at the bottom of the window",
-            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be seperated by \\n."
+            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be separated by \\n."
         }
     ));
     addDefaultCommand(new Command(["echoe[rr]"],
@@ -368,7 +368,7 @@ function Commands()//{{{
         {
             usage: ["echoe[rr]"],
             short_help: "Display an error string at the bottom of the window",
-            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be seperated by \\n."
+            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be separated by \\n."
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
@@ -483,7 +483,7 @@ function Commands()//{{{
             usage: ["o[pen] [url] [| url]"],
             short_help: "Open one or more URLs in the current tab",
             help: "Multiple URLs can be separated with the | character.<br/>" +
-                  "Each |-separated token is analayzed and in this order:<br/>"+
+                  "Each |-separated token is analyzed and in this order:<br/>"+
                   "<ol>"+
                   "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>"+
                   "... is special and moves up the directory hierarchy as far as possible."+
@@ -558,7 +558,7 @@ function Commands()//{{{
         {
             usage: ["res[tart]"],
             short_help: "Force the browser to restart",
-            help: "Useful when installing extenstions."
+            help: "Useful when installing extensions."
         }
     ));
     addDefaultCommand(new Command(["sav[eas]"],

@@ -139,7 +139,7 @@ function help(section, easter)
 
     var introduction = '<div><h2 id="introduction">Introduction</h2></div>' +
         '<p><a href="http://vimperator.mozdev.org">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor.<br/>' +
-        'It has similar key bindings, and you could call it a modal webbrowser, as key bindings differ according to which mode you are in.</p>\n' +
+        'It has similar key bindings, and you could call it a modal web browser, as key bindings differ according to which mode you are in.</p>\n' +
 
         '<p><span class="warning">Warning:</span> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden.<br/>' +
         'If you really need them, type: <code class="command">:set guioptions=mT</code> to get it back.<br/>\n' +
