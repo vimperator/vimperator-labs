@@ -108,11 +108,11 @@ fieldset.paypal {
     background-color: transparent;
 }
 .status_secure, .status_secure * {
-    background-color: yellow;
+    background-color: #B0FF00; /* light green */
     color: black;
 }
 .status_broken, .status_broken * {
-    background-color: #ff9900;
+    background-color: #FF6060; /* light red */
     color: black;
 }
 
