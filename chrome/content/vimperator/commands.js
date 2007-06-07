@@ -650,7 +650,7 @@ function Commands()//{{{
             usage: ["tabopen [url] [| url]"],
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
-                  "If used with !, the 'tabopen' value of the 'activate' option is negated.",
+                  "If used with !, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
             completer: function (filter) { return get_url_completions(filter); }
         }
     ));
