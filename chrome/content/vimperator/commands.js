@@ -31,16 +31,6 @@ const USAGE = 1;
 const SHORTHELP = 2;
 const HELP = 3;
 
-
-// var g_insert_mappings = [ /*{{{*/
-//     ["xxx", "todo"],
-//     ["<C-w>", "delete word"],
-//     ["<C-u>", "delete beginning"],
-//     ["<C-a>", "go beginning"],
-//     ["<C-e>", "go end"],
-//     ["<C-c>", "cancel"]
-// ]; /*}}}*/
-
 /* [command, action, cancel_hint_mode, always_active] */
 var g_hint_mappings = [ /*{{{*/
     /* hint action keys */
@@ -269,7 +259,13 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["ba[ck]"],
-        function(args, special, count) { if(special) historyGoToBeginning(); else stepInHistory(count > 0 ? -1 * count : -1); },
+        function(args, special, count)
+        {
+            if(special)
+                historyGoToBeginning();
+            else
+                stepInHistory(count > 0 ? -1 * count : -1);
+        },
         {
             usage: ["{count}ba[ck][!]"],
             short_help: "Go back in the browser history",
@@ -286,7 +282,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["beep"],
-        function() { /*vimperator.*/beep(); },
+        /*vimperator.*/beep,
         {
             usage: ["beep"],
             short_help: "Play a system beep"
@@ -346,6 +342,17 @@ function Commands()//{{{
             help: "If the list is already shown, close the preview window."
         }
     ));
+    addDefaultCommand(new Command(["delm[arks]"],
+        function(marks, special) { vimperator.marks.remove(marks, special); },
+        {
+            usage: ["delm[arks]! {marks}"],
+            short_help: "Delete the specified marks {a-zA-Z}",
+            help: "Marks are presented as a list. Example:<br/>" +
+                "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
+                "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer",
+        }
+
+    ));
     addDefaultCommand(new Command(["downl[oads]", "dl"],
         function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
         {
@@ -387,7 +394,13 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["fo[rward]", "fw"],
-        function(args, special, count) { if(special) historyGoToEnd(); else stepInHistory(count > 0 ? count : 1); },
+        function(args, special, count)
+        {
+            if(special)
+                historyGoToEnd();
+            else
+                stepInHistory(count > 0 ? count : 1);
+        },
         {
             usage: ["{count}fo[rward][!]"],
             short_help: "Go forward in the browser history",
@@ -451,19 +464,17 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
-        set_location_mark,
+        function(mark) { vimperator.marks.add(mark) },
         {
             usage: ["ma[rk] {arg}"],
             short_help: "Mark current location within the webpage",
-            help: "Not implemented yet"
         }
     ));
     addDefaultCommand(new Command(["marks"],
-        set_location_mark,
+        function(mark) { vimperator.marks.list(mark) },
         {
             usage: ["marks {arg}"],
             short_help: "Show all location marks of current webpage",
-            help: "Not implemented yet"
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
@@ -645,7 +656,13 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
-        function (args, special) { if (args.length > 0) openURLsInNewTab(args, !special); else openURLsInNewTab("about:blank", true); },
+        function (args, special)
+        {
+            if (args.length > 0)
+                openURLsInNewTab(args, !special);
+            else
+                openURLsInNewTab("about:blank", true);
+        },
         {
             usage: ["tabopen [url] [| url]"],
             short_help: "Open one or more URLs in a new tab",
@@ -704,7 +721,13 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["ve[rsion]"],
-        function (args, special) { if (special) openURLs("about:"); else vimperator.echo("Vimperator version: " + vimperator.ver); },
+        function (args, special)
+        {
+            if (special)
+                openURLs("about:");
+            else
+                vimperator.echo("Vimperator version: " + vimperator.ver);
+        },
         {
             usage: ["ve[rsion][!]"],
             short_help: "Show version information",
@@ -1205,22 +1228,6 @@ function show_url_marks(mark)
 }
 
 ////////////////////////////////////////////////////////////////////////
-// location marks functions /////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-/* vimperator has a concept of location marks
- * these provide quick access to a location within a webpage
- */
-function set_location_mark(mark)
-{
-
-}
-
-function show_location_marks(mark)
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////
 // tab/buffer related functions /////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 function tab()
@@ -1270,8 +1277,8 @@ function updateBufferList()
 function scrollBufferRelative(right, down)
 {
     var win = document.commandDispatcher.focusedWindow;
-    if (g_count < 1)
-        g_count = 1;
+    if (vimperator.input.count < 1)
+        vimperator.input.count = 1;
 
     // beep if we can't go there
     if (down > 0)
@@ -1292,7 +1299,7 @@ function scrollBufferRelative(right, down)
         if (win.scrollX == 0) beep();
     }
 
-    win.scrollBy(g_count * right * 20, g_count * down * 20);
+    win.scrollBy(vimperator.input.count * right * 20, vimperator.input.count * down * 20);
 }
 
 /* both values are given in percent, -1 means no change */
@@ -1321,8 +1328,8 @@ function scrollBufferAbsolute(horizontal, vertical)
 /* also used to zoom out, when factor is negative */
 function zoom_in(factor)
 {
-    if (g_count < 1)
-        g_count = 1;
+    if (vimperator.input.count < 1)
+        vimperator.input.count = 1;
 
     //ZoomManager.prototype.getInstance().enlarge();
     var zoomMgr = ZoomManager.prototype.getInstance();
@@ -1338,7 +1345,7 @@ function zoom_in(factor)
     }
     else
     {
-        var value = zoomMgr.textZoom + factor*g_count*25;
+        var value = zoomMgr.textZoom + factor*vimperator.input.count*25;
         if (value < 25) value = 25;
         if (value > 500) value = 500;
 

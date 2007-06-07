@@ -352,7 +352,7 @@ function History()
     logMessage("History initialized");
 }
 
-Vimperator.prototype.quickmarks = new function()
+/*Vimperator.prototype.quickmarks = new function()
 {
     //logObject(vimperator);
     //setTimeout(function() {logObject(vimperator)}, 1000);
@@ -375,8 +375,165 @@ function QM()
     this.zoom = function() { vimperator.zoom_to(200); logObject(vimperator)};
 
     logMessage("QM initialized.");
+}*/
+
+function Marks()
+{
+    var marks = {};
+
+    function remove(mark)
+    {
+        var ok = false;
+        if (mark.match(/^[A-Z0-9]$/))
+        {
+            if (mark in marks)
+            {
+                delete marks[mark];
+                ok = true;
+            }
+        }
+        else if (mark.match(/^[a-z]$/))
+        {
+            if (mark in marks)
+            {
+                var win = vimperator.getCurrentBuffer(), length = marks[mark].length;
+                for (var i = 0; i < length; i++)
+                {
+                    if (marks[mark][i].location == win.location.href)
+                    {
+                        marks[mark].splice(i, 1);
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!ok)
+        {
+            vimperator.echoerr("E20: Mark not set");
+            return false;
+        }
+        return ok;
+    }
+    
+    this.add = function(mark)
+    {
+        var win = vimperator.getCurrentBuffer();
+        var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
+        var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
+        var position = { x: x, y: y };
+        if (mark.match(/^[A-Z0-9]$/))
+            marks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
+        else if (mark.match(/^[a-z]$/))
+        {
+            if (!marks[mark])
+                marks[mark] = [];
+            marks[mark].push({ location: win.location.href, position: position });
+        }
+        else
+            return false;
+
+        return this;
+    }
+
+    // TODO: add support for mark ranges (p-z)
+    this.remove = function(marks_str, special)
+    {
+        if (special)
+        {
+            var win = vimperator.getCurrentBuffer();
+            for (var i in marks)
+            {
+                if (i.match(/^[A-Z0-9]$/))
+                    continue;
+
+                var length = marks[i].length;
+                for (var j = 0; j < length; j++)
+                {
+                    if (marks[i][j].location == win.location.href)
+                    {
+                        marks[i].splice(j, 1);
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+            return this;
+        }
+        marks_str.split(/ /).forEach(function(mark)
+        {
+            if (mark.length == 1)
+                remove(mark);
+            else
+                for (var i = 0; i < mark.length; i++)
+                {
+                    remove(mark.substr(i, 1));
+                }
+        });
+        return this;
+    }
+
+    this.jumpTo = function(mark)
+    {
+        var ok = false;
+        if (mark.match(/^[A-Z0-9]$/))
+        {
+            var slice = marks[mark];
+            if (slice && slice.tab && slice.tab.linkedBrowser)
+            {
+                vimperator.tabs.select(vimperator.tabs.index(slice.tab));
+                if (!slice.tab.parentNode)
+                {
+                    /* FIXME: this doesn't work
+                    setTimeout(function()
+                        {
+                            vimperator.getCurrentBuffer().addEventListener('load', function()
+                                {
+                                    this.scrollTo(slice.position.x, slice.position.y);
+                                }, false);
+                        }, 100);
+                    */
+                    openURLsInNewTab(slice.location);
+                    return;
+                }
+                var win = slice.tab.linkedBrowser.contentWindow;
+                if (win.location.href != slice.location)
+                {
+                    win.location.href = slice.location;
+                    return;
+                }
+                win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                ok = true;
+            }
+        }
+        else if (mark.match(/^[a-z]$/))
+        {
+            var win = vimperator.getCurrentBuffer();
+            var slice = marks[mark] || [];
+            for (var i = 0; i < slice.length; i++)
+            {
+                if (win.location.href == slice[i].location)
+                {
+                    win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
+                    ok = true;
+                }
+            }
+        }
+
+        if (!ok)
+        {
+            vimperator.echoerr("E20: Mark not set");
+            return false;
+        }
+        return this;
+    }
+    
+    // TODO: show marks like vim does (when the multiline echo impl is done) or in the preview windwo right now
+    this.list = function()
+    {
+        return this;
+    }
 }
-
-
 
 // vim: set fdm=marker sw=4 ts=4 et:

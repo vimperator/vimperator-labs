@@ -58,6 +58,7 @@ function clearSelection() {
     var selctrl = vimperator.search.gSelCtrl;
     var sel = selctrl.getSelection(Components.interfaces.nsISelectionController.SELECTION_NORMAL);
     sel.removeAllRanges();
+    gFindBar.highlightDoc();
 }
 
 // Sets what is currently selected
@@ -183,6 +184,7 @@ function highlightFind(str, color, wrapped, dir, pt)
 
 function clearHighlight()
 {
+    gFindBar.highlightDoc();
     var win = window._content; 
     var doc = win.document;
     if (!document)
@@ -319,7 +321,8 @@ function Search()
     // Called when the user types a key in the search dialog. Triggers a find attempt
     this.searchKeyPressed = function(command) { 
         if (command != "") {
-            this.find(vimperator.commandline.getCommand(), true, this.lastFindState()["point"]);
+            var str = vimperator.commandline.getCommand();
+            this.find(str, true, this.lastFindState()["point"]);
             this.resumeFindState(this.lastFindState());
         }
         else {
@@ -438,6 +441,7 @@ function Search()
             wrapped = true;
             point = null;
         }
+        gFindBar.highlightDoc('yellow', 'black', str);
         matchRange = highlightFind(str, "lightblue", wrapped, dir, point);
         if (matchRange == null) {
             // No more matches in this direction. So add the state and then find

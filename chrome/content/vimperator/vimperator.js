@@ -31,9 +31,6 @@ var vimperator = null;
 
 var popup_allowed_events; // need to change and reset this firefox pref
 
-var g_inputbuffer = "";  // here we store partial commands (e.g. 'g' if you want to type 'gg')
-var g_count = -1;        // the parsed integer of g_inputbuffer, or -1 if no count was given
-
 // handles multi-line commands
 var prev_match = new Array(5);
 var heredoc = '';
@@ -173,16 +170,20 @@ function init()
     Vimperator.prototype.commands      = new Commands;
     Vimperator.prototype.bookmarks     = new Bookmarks;
     Vimperator.prototype.history       = new History;
-    Vimperator.prototype.qm            = new QM;
 //    Vimperator.prototype.commandline   = new CommandLine;
     Vimperator.prototype.search        = new Search;
     Vimperator.prototype.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
-    Vimperator.prototype.statusline    = new StatusLine();
-    Vimperator.prototype.tabs          = new Tabs();
-    Vimperator.prototype.mappings      = new Mappings();
+    Vimperator.prototype.statusline    = new StatusLine;
+    Vimperator.prototype.tabs          = new Tabs;
+    Vimperator.prototype.mappings      = new Mappings;
+    Vimperator.prototype.marks         = new Marks;
 
-
+    vimperator.input = {
+        buffer: "",                 // partial command storage
+        pendingMap: null,           // pending map storage
+        count: -1,                  // parsed count from the input buffer
+    };
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
@@ -680,7 +681,7 @@ function Vimperator()
 	}
 	this.triggerCallback = function(type, data)
 	{
-		for (i in callbacks)
+		for (var i in callbacks)
 		{
 			var [thistype, thismode, thisfunc] = callbacks[i];
 			if (vimperator.hasMode(thismode) && type == thistype)
@@ -820,7 +821,6 @@ function Vimperator()
         // if Hit-a-hint mode is on, special handling of keys is required
         // g_hint_mappings is used
         // FIXME: total mess
-        //if (hah.hintsVisible())
         if (vimperator.hasMode(vimperator.modes.HINTS))
         {
             // never propagate this key to firefox, when hints are visible
@@ -838,7 +838,7 @@ function Vimperator()
                         if (g_hint_mappings[i][2] == true) // stop processing this event
                         {
                             hah.disableHahMode();
-                            g_inputbuffer = "";
+                            vimperator.input.buffer = "";
                             vimperator.statusline.updateInputBuffer("");
                             return false;
                         }
@@ -846,7 +846,7 @@ function Vimperator()
                         {
                             // FIXME: make sure that YOU update the statusbar message yourself
                             // first in g_hint_mappings when in this mode!
-                            vimperator.statusline.updateInputBuffer(g_inputbuffer);
+                            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
                             return false;
                         }
                     }
@@ -858,8 +858,8 @@ function Vimperator()
             {
                 beep();
                 hah.disableHahMode();
-                g_inputbuffer = "";
-                vimperator.statusline.updateInputBuffer(g_inputbuffer);
+                vimperator.input.buffer = "";
+                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
                 return true;
             }
 
@@ -874,16 +874,16 @@ function Vimperator()
                     hah.disableHahMode();
                 else // ALWAYS mode
                     hah.resetHintedElements();
-                g_inputbuffer = "";
+                vimperator.input.buffer = "";
             }
             //else if (res == 0 || hah.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
             else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
-                g_inputbuffer += key;
+                vimperator.input.buffer += key;
             else // this key completed a quick hint
             {
                 // if the hint is all in UPPERCASE, open it in new tab
-                g_inputbuffer += key;
-                if (g_inputbuffer.toUpperCase() == g_inputbuffer)
+                vimperator.input.buffer += key;
+                if (vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
                     hah.openHints(true, false);
                 else // open in current window
                     hah.openHints(false, false);
@@ -894,71 +894,73 @@ function Vimperator()
                 else // ALWAYS mode
                     hah.resetHintedElements();
 
-                g_inputbuffer = "";
+                vimperator.input.buffer = "";
             }
 
-            vimperator.statusline.updateInputBuffer(g_inputbuffer);
+            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
             return true;
         }
 
-        var count_str = g_inputbuffer.match(/^[0-9]*/)[0];
-
-        // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-        if (event.charCode >= 48 && event.charCode <= 57 && !(event.ctrlKey || event.altKey))
+        if (vimperator.hasMode(vimperator.modes.NORMAL))
         {
-            if (g_inputbuffer.search(/[^0-9]/) != -1)
+            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
+            var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
+            var map;
+
+            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
             {
-                g_inputbuffer = "";
-                beep();
-                vimperator.statusline.updateInputBuffer(g_inputbuffer);
+                vimperator.input.buffer += key;
+                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
                 return true;
+            }
+
+            if (vimperator.input.pendingMap)
+            {
+                vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+                vimperator.input.pendingMap = null;
+                vimperator.input.buffer = "";
+            }
+            else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
+            {
+                vimperator.input.count = parseInt(count_str, 10);
+                if (isNaN(vimperator.input.count))
+                    vimperator.input.count = -1;
+                if (map.flags & Mappings.flags.ARGUMENT)
+                {
+                    vimperator.input.pendingMap = map;
+                    vimperator.input.buffer += key;
+                }
+                else
+                {
+                    map.execute(null, vimperator.input.count);
+                    vimperator.input.buffer = "";
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
+            {
+                vimperator.input.buffer += key;
+                event.preventDefault();
+                event.stopPropagation();
             }
             else
             {
-                // handle '0' specially to allow binding of 0
-                if (g_inputbuffer != "" || key != "0") 
-                {
-                    g_inputbuffer += key;
-                    vimperator.statusline.updateInputBuffer(g_inputbuffer);
-                    return true;
-                }
-                // else let the flow continue, and check if 0 is a mapping
+                vimperator.input.buffer = "";
+                vimperator.input.pendingMap = null;
+                beep();
             }
         }
-
-        var candidate_command = (g_inputbuffer + key).replace(count_str, '');
-
-        if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
-        {
-            g_count = parseInt(count_str, 10);
-            if (isNaN(g_count))
-                g_count = -1;
-
-            // FIXME: allow null (= no operation) mappings.  No longer applicable? -- djk
-            map.execute(g_count);
-
-            // command executed, reset input buffer
-            g_inputbuffer = "";
-            vimperator.statusline.updateInputBuffer(g_inputbuffer);
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
-        }
-        else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
-        {
-            g_inputbuffer += key;
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        else
-        {
-            g_inputbuffer = "";
-            beep();
-        }
-
-        vimperator.statusline.updateInputBuffer(g_inputbuffer);
+        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
         return false;
     }/*}}}*/
+
+    this.getCurrentBuffer = function()
+    {
+        return document.commandDispatcher.focusedWindow;
+    }
 
 
     // FIXME: is not called for onLocationChange etc, find the reason
@@ -1079,8 +1081,9 @@ function Vimperator()
     // alert('end');
 }
 
-// XXX: move where?
 // provides functions for working with tabs
+// XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
+// Firefox 3.0, then this class should go away and their tab methods should be used
 function Tabs()
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1168,6 +1171,14 @@ function Tabs()
         return buffers;
     }
 
+    this.getTab = function(index)
+    {
+        if (index)
+            return getBrowser().mTabs[index];
+
+        return getBrowser().tabContainer.selectedItem;
+    }
+
     /*  spec == "" moves the tab to the last position as per Vim
      *  wrap causes the movement to wrap around the start and end of the tab list
      *  NOTE: position is a 0 based index
@@ -1214,7 +1225,6 @@ function Tabs()
         getBrowser().mTabContainer.selectedIndex = index;
     }
 
-
     /* XXX: disabled until we find a better way where to update the titles, right now
      * it has O(n^2) complexity on firefox start when we load 50 tabs
      * (c) by hrist
@@ -1251,4 +1261,5 @@ function Tabs()
     }
     */
 }
+
 // vim: set fdm=marker sw=4 ts=4 et:
