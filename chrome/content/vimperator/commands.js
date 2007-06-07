@@ -1350,8 +1350,8 @@ function zoom_in(factor)
     }
 }
 
-function zoom_to(value) {};
-Vimperator.prototype.zoom_to = function(value)
+//Vimperator.prototype.zoom_to = function(value)
+function zoom_to(value)
 {
     var zoomMgr = ZoomManager.prototype.getInstance();
     value = parseInt(value);
