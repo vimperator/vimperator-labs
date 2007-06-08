@@ -269,7 +269,7 @@ function Commands()//{{{
         {
             usage: ["{count}ba[ck][!]"],
             short_help: "Go back in the browser history",
-            help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>"+
+            help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history."
         }
     ));
@@ -298,7 +298,7 @@ function Commands()//{{{
                   "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   " -t \"custom title\"<br/>" +
                   "The following options will be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list <br/>"+
+                  " -T comma,separated,tag,list <br/>" +
                   " -k keyword <br/>"
         }
     ));
@@ -358,7 +358,7 @@ function Commands()//{{{
         {
             usage: ["downl[oads]"],
             short_help: "Show progress of current downloads",
-            help: "Open the original Firefox download dialog in a new tab.<br/>"+
+            help: "Open the original Firefox download dialog in a new tab.<br/>" +
                   "Here, downloads can be paused, canceled and resumed."
         }
     ));
@@ -404,7 +404,7 @@ function Commands()//{{{
         {
             usage: ["{count}fo[rward][!]"],
             short_help: "Go forward in the browser history",
-            help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>"+
+            help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history."
         }
     ));
@@ -421,13 +421,13 @@ function Commands()//{{{
         {
             usage: ["h[elp] {subject}"],
             short_help: "Open the help window",
-            help: "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>"+
-                  "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>"+
-                  "<ul>"+
-                  "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>"+
-                  "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>"+
-                  "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>"+
-                  "</ul>"+
+            help: "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>" +
+                  "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>" +
+                  "<ul>" +
+                  "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>" +
+                  "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
+                  "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
+                  "</ul>" +
                   "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
             completer: function(filter) { return get_help_completions(filter); }
         }
@@ -437,7 +437,7 @@ function Commands()//{{{
         {
             usage: ["hist[ory] {filter}"],
             short_help: "Show recently visited URLs",
-            help: "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL."+
+            help: "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL. " +
                   "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
             completer: function(filter) { return get_history_completions(filter); }
         }
@@ -494,24 +494,24 @@ function Commands()//{{{
             usage: ["o[pen] [url] [| url]"],
             short_help: "Open one or more URLs in the current tab",
             help: "Multiple URLs can be separated with the | character.<br/>" +
-                  "Each |-separated token is analyzed and in this order:<br/>"+
-                  "<ol>"+
-                  "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>"+
-                  "... is special and moves up the directory hierarchy as far as possible."+
-                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>"+
-                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>"+
-                  "<li>Opened with the specified search engine if the token looks like a search string "+
-                  "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> "+
-                  "will open the wikipedia entry for linux torvalds).</li>"+
-                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) "+
-                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>"+
-                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will "+
-                  "open OSNews in the current, and Slashdot in a new background tab).</li>"+
-                  "</ol>"+
-                  "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks "+
-                  "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>"+
-                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>"+
-                  "Without argument, reloads the current page.<br/>"+
+                  "Each |-separated token is analyzed and in this order:<br/>" +
+                  "<ol>" +
+                  "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>" +
+                  "... is special and moves up the directory hierarchy as far as possible." +
+                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>" +
+                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
+                  "<li>Opened with the specified search engine if the token looks like a search string " +
+                  "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
+                  "will open the wikipedia entry for linux torvalds).</li>" +
+                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
+                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>" +
+                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will " +
+                  "open OSNews in the current, and Slashdot in a new background tab).</li>" +
+                  "</ol>" +
+                  "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
+                  "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>" +
+                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
+                  "Without argument, reloads the current page.<br/>" +
                   "Without argument but with !, reloads the current page skipping the cache.",
             completer: function(filter) { return get_url_completions(filter); }
         }
@@ -528,7 +528,7 @@ function Commands()//{{{
         {
             usage: ["pref[erences]"],
             short_help: "Show Browser Preferences",
-            help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>"+
+            help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
                   "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>"
         }
     ));
@@ -586,12 +586,12 @@ function Commands()//{{{
         {
             usage: ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
             short_help: "Set an option",
-            help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>"+
-                  "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>"+
-                  "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>"+
-                  "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>"+
-                  "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>"+
-                  "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>"+
+            help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>" +
+                  "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>" +
+                  "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>" +
+                  "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>" +
+                  "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>" +
+                  "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>" +
                   "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
             completer: function(filter) { return get_options_completions(filter); }
         }
@@ -601,7 +601,7 @@ function Commands()//{{{
         {
             usage: ["so[urce][!] {file}"],
             short_help: "Read Ex commands from {file}",
-            help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>"+
+            help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>" +
                   "~ is supported as a shortcut for the $HOME directory.<br/>" +
                   "If ! is specified, errors are not printed.",
             completer: function (filter) { return get_file_completions(filter); }
@@ -666,7 +666,7 @@ function Commands()//{{{
         {
             usage: ["tabopen [url] [| url]"],
             short_help: "Open one or more URLs in a new tab",
-            help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>"+
+            help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with !, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
             completer: function (filter) { return get_url_completions(filter); }
         }
@@ -754,7 +754,7 @@ function Commands()//{{{
         {
             usage: ["wqa[ll]", "xa[ll]"],
             short_help: "Save the session and quit",
-            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>"+
+            help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
                   "<code class=\"command\">:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that."
         }
     ));
@@ -1757,7 +1757,6 @@ function selectInput()
     texts.snapshotItem(0).focus();
 }
 
-
 function toggle_images() {
     if (!gPrefService) {
     message("EEP: no gPrefService");
@@ -1778,19 +1777,5 @@ function toggle_images() {
 //    redraw();
     message ("imageBehavior set to " + pref);
 }
-
-
-
-
-function(args) { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); };
-//function Commands()
-//{
-//    this.addons = function(args)
-//    {
-//        openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true);
-//    }
-//
-//    logMessage("Commands initialized");
-//}
 
 // vim: set fdm=marker sw=4 ts=4 et:
