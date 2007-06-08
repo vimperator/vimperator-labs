@@ -1,6 +1,7 @@
 div.main {
-    font-family: monospace;
+    font-family: -moz-fixed;
     font-size: 12px;
+    white-space: -moz-pre-wrap;
     width: 800px;
     margin-left: auto;
     margin-right: auto;

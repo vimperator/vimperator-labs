@@ -134,19 +134,19 @@ function help(section, easter)
     }
 
     var header = '<h1>Vimperator</h1>\n' +
-        '<p class="tagline">First there was a Navigator, then there was an Explorer.<br/>\n' +
+        '<p class="tagline">First there was a Navigator, then there was an Explorer.\n' +
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</p>\n';
 
     var introduction = '<div><h2 id="introduction">Introduction</h2></div>' +
-        '<p><a href="http://vimperator.mozdev.org">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor.<br/>' +
+        '<p><a href="http://vimperator.mozdev.org">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
         'It has similar key bindings, and you could call it a modal web browser, as key bindings differ according to which mode you are in.</p>\n' +
 
         '<p><span class="warning">Warning:</span> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden.<br/>' +
-        'If you really need them, type: <code class="command">:set guioptions=mT</code> to get it back.<br/>\n' +
-        'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it.<br/>' +
+        'If you really need them, type: <code class="command">:set guioptions=mT</code> to get it back.\n' +
+        'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it.' +
         'If you like it, but can\'t remember the shortcuts, press <code class="mapping">F1</code> or <code class="command">:help</code> to get this help window back.</p>\n' +
 
-        '<p>Since Vimperator\'s GUI is embedded into a toolbar, it may look too 3D-like with the default theme.<br/>' +
+        '<p>Since Vimperator\'s GUI is embedded into a toolbar, it may look too 3D-like with the default theme. ' +
         'For best experience, I therefore recommend the <a href="https://addons.mozilla.org/firefox/364/">Whitehart</a> theme.</p>\n' +
 
         '<p>Vimperator was written by <a href="mailto:stubenschrott@gmx.net">Martin Stubenschrott</a>. If you appreciate my work on Vimperator, you can either send me greetings, patches or make a donation: </p>\n' +
