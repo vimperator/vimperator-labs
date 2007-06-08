@@ -24,15 +24,8 @@ function Map(mode, cmds, act, extra_info) //{{{
                 this.usage += " {arg}";
         }
 
-        if (extra_info.help)
-            this.help = extra_info.help;
-        else
-            this.help = null;
-
-        if (extra_info.short_help)
-            this.short_help = extra_info.short_help;
-        else
-            this.short_help = null;
+        this.help = extra_info.help || null;
+        this.short_help = extra_info.short_help || null;
     }
 
 }

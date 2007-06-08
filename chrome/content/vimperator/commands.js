@@ -122,21 +122,9 @@ function Command(specs, action, extra_info)//{{{
             this.usage = this.name;
         }
 
-        // TODO: ternary operator?
-        if (extra_info.help)
-            this.help = extra_info.help;
-        else
-            this.help = null;
-
-        if (extra_info.short_help)
-            this.short_help = extra_info.short_help;
-        else
-            this.short_help = null;
-
-        if (extra_info.completer)
-            this.completer = extra_info.completer;
-        else
-            this.completer = null;
+        this.help = extra_info.help || null;
+        this.short_help = extra_info.short_help || null;
+        this.completer = extra_info.completer || null;
     }
 
 }//}}}
