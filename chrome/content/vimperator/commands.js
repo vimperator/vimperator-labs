@@ -512,7 +512,7 @@ function Commands()//{{{
                   "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>" +
                   "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
-                  "Without argument but with !, reloads the current page skipping the cache.",
+                  "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
             completer: function(filter) { return get_url_completions(filter); }
         }
     ));
@@ -553,7 +553,7 @@ function Commands()//{{{
         {
             usage: ["re[load][!]"],
             short_help: "Reload current page",
-            help: "Forces reloading of the current page. If ! is given, skip the cache."
+            help: "Forces reloading of the current page. If <code class=\"command\">!</code> is given, skip the cache."
         }
     ));
     addDefaultCommand(new Command(["reloada[ll]"],
@@ -561,7 +561,7 @@ function Commands()//{{{
         {
             usage: ["reloada[ll][!]"],
             short_help: "Reload all pages",
-            help: "Forces reloading of all pages. If ! is given, skip the cache."
+            help: "Forces reloading of all pages. If <code class=\"command\">!</code> is given, skip the cache."
         }
     ));
     addDefaultCommand(new Command(["res[tart]"],
@@ -603,7 +603,7 @@ function Commands()//{{{
             short_help: "Read Ex commands from {file}",
             help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>" +
                   "~ is supported as a shortcut for the $HOME directory.<br/>" +
-                  "If ! is specified, errors are not printed.",
+                  "If <code class=\"command\">!</code> is specified, errors are not printed.",
             completer: function (filter) { return get_file_completions(filter); }
         }
     ));
@@ -637,7 +637,7 @@ function Commands()//{{{
             usage: ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
             short_help: "Move the current tab after tab N",
             help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
-                  "N can also be prefixed with '+' or '-' to indicate a relative movement. If ! is specified the movement wraps around the start or end of the tab list."
+                  "N can also be prefixed with '+' or '-' to indicate a relative movement. If <code class=\"command\">!</code> is specified the movement wraps around the start or end of the tab list."
         }
     ));
     addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
@@ -667,7 +667,7 @@ function Commands()//{{{
             usage: ["tabopen [url] [| url]"],
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
-                  "If used with !, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
+                  "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
             completer: function (filter) { return get_url_completions(filter); }
         }
     ));
