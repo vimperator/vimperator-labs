@@ -917,9 +917,13 @@ function Vimperator()
 
             if (vimperator.input.pendingMap)
             {
-                vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+                if (key != "<Esc>" && key != "<C-[>")
+                    vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+
                 vimperator.input.pendingMap = null;
                 vimperator.input.buffer = "";
+                event.preventDefault();
+                event.stopPropagation();
             }
             else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
             {
