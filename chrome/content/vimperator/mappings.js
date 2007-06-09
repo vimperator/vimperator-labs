@@ -653,7 +653,7 @@ function Mappings()//{{{
     ));
     // if you ever add/remove keys here, also check them in the vimperaotr.onEvent()
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Esc>", "<C-[>"],
-        onEscape,
+        vimperator.events.onEscape,
         {
             short_help: "Cancel any operation",
             help: "Exits any command line or hint mode and returns to browser mode.<br/>" +

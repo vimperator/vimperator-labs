@@ -1,6 +1,8 @@
 <pre>
 2007-05-02:
 	* version ???
+    * The RSS feed button in the address bar works again
+    * reload/stop buttons update enabled state again
 	* added marks support (thanks Viktor Kojouharov)
 	* temporary shortcut Y to yank current selection (for non UNIX-users)
 	* Flashing frame with ]f now works as expected

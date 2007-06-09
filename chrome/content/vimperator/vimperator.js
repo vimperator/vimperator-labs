@@ -48,6 +48,10 @@ function init()
     
     // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
+
+    // TODO: can these classes be moved into a namesspace to now clobber
+    // the main namespace?
+    Vimperator.prototype.events        = new Events;
     Vimperator.prototype.commands      = new Commands;
     Vimperator.prototype.bookmarks     = new Bookmarks;
     Vimperator.prototype.history       = new History;
@@ -71,7 +75,8 @@ function init()
 
     // this function adds all our required listeners to react on events
     // also stuff like window.onScroll is handled there.
-    addEventListeners();
+    //addEventListeners();
+    //vimperator.events();
 
     set_showtabline(get_pref("showtabline"));
     set_guioptions(get_pref("guioptions"));
@@ -126,26 +131,11 @@ function unload()
 }
 
 
-////////////////////////////////////////////////////////////////////////
-// focus and mode handling //////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-function onEscape()
+function Events() //{{{1
 {
-    if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
-    {
-        vimperator.setMode(vimperator.modes.NORMAL);
-        vimperator.echo("");
-        hah.disableHahMode();
-        vimperator.focusContent();
-        vimperator.statusline.updateUrl();
-    }
-}
-
-////////////////////////////////////////////////////////////////////////
-// event listeners //////////////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-function addEventListeners()
-{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// CONSTRUCTOR /////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // any window related events
     window.addEventListener("unload",   unload, false);
     window.addEventListener("keypress", vimperator.onEvent, true);
@@ -173,6 +163,7 @@ function addEventListeners()
         vimperator.statusline.updateTabCount();
         updateBufferList();
     }, false);
+
     // this adds an event which is is called on each page load, even if the
     // page is loaded in a background tab
     getBrowser().addEventListener("load", onPageLoad, true);
@@ -188,8 +179,100 @@ function addEventListeners()
         //alert("titlechanged");
     }, null);
 
-    // for setOverLink() XXX: maybe there is an addEventListener way
-    window.XULBrowserWindow = buffer_changed_listener;
+
+
+    this.progressListener =
+    {
+        QueryInterface: function(aIID)
+        {
+            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
+                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                    aIID.equals(Components.interfaces.nsISupports))
+                return this;
+            throw Components.results.NS_NOINTERFACE;
+        },
+
+        // XXX: function may later be needed to detect a canceled synchronous openURL()
+        onStateChange: function(webProgress, aRequest, flags, aStatus)
+        {
+            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
+            // receive statechange events for loading images and other parts of the web page
+            if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
+                        Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+            {
+                // This fires when the load event is initiated
+                if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+                {
+                    vimperator.statusline.updateProgress(0);
+                }
+                else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+                    ;// vimperator.statusline.updateUrl();
+            }
+        },
+        // for notifying the user about secure web pages
+        onSecurityChange: function (webProgress, aRequest, aState)
+        {
+            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+                vimperator.statusline.setClass("insecure");
+            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+                vimperator.statusline.setClass("broken");
+            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+                vimperator.statusline.setClass("secure");
+        },
+        onStatusChange: function(webProgress, request, status, message)
+        {
+            vimperator.statusline.updateUrl(message);
+        },
+        onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
+        {
+            vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+        },
+        // happens when the users switches tabs
+        onLocationChange: function()
+        {
+            // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+            //     hah.disableHahMode();
+
+            vimperator.statusline.updateUrl();
+            vimperator.statusline.updateProgress();
+
+            // if this is not delayed we get the wrong position of the old buffer
+            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
+        },
+        // called at the very end of a page load
+        asyncUpdateUI: function()
+        {  
+            vimperator.statusline.updateUrl();
+        },
+        setOverLink : function(link, b)
+        {
+            var ssli = get_pref("showstatuslinks");
+            if (link && ssli)
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl("Link: " + link);
+                else if (ssli == 2)
+                    vimperator.echo("Link: " + link);
+            }
+                
+            if (link == "")
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl();
+                else if (ssli == 2)
+                    vimperator.setMode(); // trick to reshow the mode in the command line
+            }
+        },
+
+        // stub functions for the interfaces
+        setJSStatus : function(status) { },
+        setJSDefaultStatus : function(status) { },
+        setDefaultStatus : function(status) { },
+        onLinkIconAvailable: function() { }
+    }
+    window.XULBrowserWindow = this.progressListener;
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIWebNavigation)
         .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
@@ -198,130 +281,57 @@ function addEventListeners()
         .XULBrowserWindow = window.XULBrowserWindow;
 
     // for onStateChange(), etc.:
-    getBrowser().addProgressListener(buffer_changed_listener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-}
+    getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
 
-function onPageLoad(event)
-{
-    if (event.originalTarget instanceof HTMLDocument)
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    function onPageLoad(event)
     {
-        var doc = event.originalTarget;
-        // document is part of a frameset
-        if (doc.defaultView.frameElement)
+        if (event.originalTarget instanceof HTMLDocument)
         {
-            // hacky way to get rid of "Transfering data from ..." on sites with frames
-            // when you click on a link inside a frameset, because asyncUpdateUI
-            // is not triggered there (firefox bug?)
-            setTimeout(vimperator.statusline.updateUrl, 10);
-            return; 
-        }
+            var doc = event.originalTarget;
+            // document is part of a frameset
+            if (doc.defaultView.frameElement)
+            {
+                // hacky way to get rid of "Transfering data from ..." on sites with frames
+                // when you click on a link inside a frameset, because asyncUpdateUI
+                // is not triggered there (firefox bug?)
+                setTimeout(vimperator.statusline.updateUrl, 10);
+                return; 
+            }
 
-        // code which should happen for all (also background) newly loaded tabs goes here:
-        updateBufferList();
+            // code which should happen for all (also background) newly loaded tabs goes here:
+            updateBufferList();
 
-        //update history
-        var url = getCurrentLocation();
-        var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
-        vimperator.history.add(url, title);
+            //update history
+            var url = getCurrentLocation();
+            var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
+            vimperator.history.add(url, title);
 
-        // code which is only relevant if the page load is the current tab goes here:
-        if(doc == getBrowser().selectedBrowser.contentDocument)
-        {
-            /* none yet */
+            // code which is only relevant if the page load is the current tab goes here:
+            if(doc == getBrowser().selectedBrowser.contentDocument)
+            {
+                /* none yet */
+            }
         }
     }
-}
 
-var buffer_changed_listener =
-{
-    QueryInterface: function(aIID)
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    this.onEscape = function()
     {
-        if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
-                aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                aIID.equals(Components.interfaces.nsISupports))
-            return this;
-        throw Components.results.NS_NOINTERFACE;
-    },
-
-    // XXX: function may later be needed to detect a canceled synchronous openURL()
-    onStateChange: function(webProgress, aRequest, flags, aStatus)
-    {
-        // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
-        // receive statechange events for loading images and other parts of the web page
-        if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
-                    Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+        if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
-            // This fires when the load event is initiated
-            if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
-            {
-                vimperator.statusline.updateProgress(0);
-            }
-            else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-                ;// vimperator.statusline.updateUrl();
+            vimperator.setMode(vimperator.modes.NORMAL);
+            vimperator.echo("");
+            hah.disableHahMode();
+            vimperator.focusContent();
+            vimperator.statusline.updateUrl();
         }
-    },
-    // for notifying the user about secure web pages
-    onSecurityChange: function (webProgress, aRequest, aState)
-    {
-        const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-        if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-            vimperator.statusline.setClass("insecure");
-        else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-            vimperator.statusline.setClass("broken");
-        else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-            vimperator.statusline.setClass("secure");
-    },
-    onStatusChange: function(webProgress, request, status, message)
-    {
-        vimperator.statusline.updateUrl(message);
-    },
-    onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
-    {
-        vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
-    },
-    // happens when the users switches tabs
-    onLocationChange: function()
-    {
-        // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-        //     hah.disableHahMode();
-
-        vimperator.statusline.updateUrl();
-        vimperator.statusline.updateProgress();
-
-        // if this is not delayed we get the wrong position of the old buffer
-        setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
-    },
-    // called at the very end of a page load
-    asyncUpdateUI: function()
-    {  
-        vimperator.statusline.updateUrl();
-    },
-    setOverLink : function(link, b)
-    {
-        var ssli = get_pref("showstatuslinks");
-        if (link && ssli)
-        {
-            if (ssli == 1)
-                vimperator.statusline.updateUrl("Link: " + link);
-            else if (ssli == 2)
-                vimperator.echo("Link: " + link);
-        }
-            
-        if (link == "")
-        {
-            if (ssli == 1)
-                vimperator.statusline.updateUrl();
-            else if (ssli == 2)
-                vimperator.setMode(); // trick to reshow the mode in the command line
-        }
-    },
-
-    // stub functions for the interfaces
-    setJSStatus : function(status) { },
-    setJSDefaultStatus : function(status) { },
-    setDefaultStatus : function(status) { },
-    onLinkIconAvailable: function() { }
+    }
 }
 
 
@@ -532,7 +542,7 @@ function getLinkNodes(doc)
     return links;
 }//}}}
 
-function Vimperator()
+function Vimperator() //{{{1
 {
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -910,7 +920,7 @@ function Vimperator()
  * Firefox 3.0, then this class should go away and their tab methods should be used
  * @deprecated
  */
-function Tabs()
+function Tabs() //{{{1
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////

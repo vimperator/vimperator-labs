@@ -4,32 +4,26 @@ Priority list:
 
 BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
-- The RSS feed button in the address bar no longer works.
 - autoupdate does not work
 - multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
-- reload/stop buttons don't update enabled state
 - http://en.wikipedia.org/wiki/Portal:Current_events - 'f' shows more hints than 'F' (on left side of nav bar)
 - gu and gU don't work on local files properly
 - dpb| 09:09:56  dpb :: when I save a page with vimperator, it adds <hints
      id="hah_hints"></hints> near the end of it.. kinda annoying
   dpb| 09:11:50  dpb :: and this happens only when saving the complete
      webpage, saving  only the html works just fine..
-- <ESC> key closes :addons window
+- <ESC> key closes :addons and other XUL windows
 
 
 FEATURES:
-9 marks of a Location, [m a-zA-Z] to set it, [` a-zA-Z] to go there
-  [m 0-9] marks a buffer instead [' 0-9] goes there
-  also mark bookmarks (with M[a-zA-Z] maybe and use only lowercase marks for inbuffer marks?)
-  also support :mark and :marks
-8 :map commands to keys
-8 :command for new commands
+9 :map commands to keys
+9 :command for new commands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 Use our own find-as-you-type mechanism (like conkeror does)
+8 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 7 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
   with color support (for things like :echo line1\nline2)
-7 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 Ctrl-6/Ctrl-^ -> jump to the previously active tab
 7 3d should delete 3 tabs
