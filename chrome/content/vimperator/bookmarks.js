@@ -380,6 +380,25 @@ function QM()
 function Marks()
 {
     var marks = {};
+    var pendingMarks = [];
+    var appcontent = document.getElementById("appcontent");
+    if (appcontent)
+        appcontent.addEventListener("load", onPageLoad, true);
+
+    function onPageLoad(event)
+    {
+        var win = event.originalTarget.defaultView;
+        for (var i = 0, length = pendingMarks.length; i < length; i++)
+        {
+            var mark = pendingMarks[i];
+            if (win.location.href == mark.location)
+            {
+                win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
+                pendingMarks.splice(i, 1);
+                return;
+            }
+        }
+    }
 
     function remove(mark)
     {
@@ -485,21 +504,14 @@ function Marks()
                 vimperator.tabs.select(vimperator.tabs.index(slice.tab));
                 if (!slice.tab.parentNode)
                 {
-                    /* FIXME: this doesn't work
-                    setTimeout(function()
-                        {
-                            vimperator.getCurrentBuffer().addEventListener('load', function()
-                                {
-                                    this.scrollTo(slice.position.x, slice.position.y);
-                                }, false);
-                        }, 100);
-                    */
+                    pendingMarks.push(slice);
                     openURLsInNewTab(slice.location);
                     return;
                 }
                 var win = slice.tab.linkedBrowser.contentWindow;
                 if (win.location.href != slice.location)
                 {
+                    pendingMarks.push(slice);
                     win.location.href = slice.location;
                     return;
                 }
