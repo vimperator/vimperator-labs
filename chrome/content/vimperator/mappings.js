@@ -651,7 +651,7 @@ function Mappings()//{{{
             help: "Stops loading the current webpage."
         }
     ));
-    // if you ever add/remove keys here, also check them in the vimperaotr.onEvent()
+    // if you ever add/remove keys here, also check them in the vimperator.events.onKeyPress()
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Esc>", "<C-[>"],
         vimperator.events.onEscape,
         {

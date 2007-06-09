@@ -114,6 +114,7 @@ function init()
         logMessage("~/.vimperatorrc sourced");
     }, 50);
 
+    window.addEventListener("unload",   unload, false);
     logMessage("Vimperator fully initialized");
 }
 
@@ -122,7 +123,7 @@ function unload()
     /*** save our preferences ***/
     vimperator.commandline.saveHistory();
 
-    // BIG TODO: removeEventListeners() to avoid mem leaks
+    vimperator.events.destroy();
 
     // reset some modified firefox prefs
     if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
@@ -131,14 +132,173 @@ function unload()
 }
 
 
+
+function Vimperator() //{{{1
+{
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////// PRIVATE SECTION /////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+    this.modes = { // actually not private, but Firefox complains if this doesn't come first
+        // main modes
+        NONE:             0,
+        NORMAL:           1 << 0,
+        INSERT:           1 << 1,
+        VISUAL:           1 << 2,
+        HINTS:            1 << 3,
+        COMMAND_LINE:     1 << 4,
+        // extended modes
+        EX:               1 << 10,
+        SEARCH_FORWARD:   1 << 11,
+        SEARCH_BACKWARD:  1 << 12,
+        ESCAPE_ONE_KEY:   1 << 13,
+        ESCAPE_ALL_KEYS:  1 << 14,
+        QUICK_HINT:       1 << 15,
+        EXTENDED_HINT:    1 << 16,
+        ALWAYS_HINT:      1 << 17
+    }
+    var mode_messages = {};
+    mode_messages[this.modes.NORMAL]          = "";
+    mode_messages[this.modes.INSERT]          = "INSERT";
+    mode_messages[this.modes.VISUAL]          = "VISUAL";
+    mode_messages[this.modes.HINTS]           = "HINTS";
+    mode_messages[this.modes.ESCAPE_ONE_KEY]  = "escape one key";
+    mode_messages[this.modes.ESCAPE_ALL_KEYS] = "escape all keys";
+    mode_messages[this.modes.ESCAPE_ONE_KEY | this.modes.ESCAPE_ALL_KEYS] = "pass one key";
+    mode_messages[this.modes.QUICK_HINT]      = "quick";
+    mode_messages[this.modes.EXTENDED_HINT]   = "extended";
+    mode_messages[this.modes.ALWAYS_HINT]     = "always";
+
+	var callbacks = new Array();
+    var mode = this.modes.NORMAL;
+    var extended_mode = this.modes.NONE;
+    var count = -1;
+    var inputbuffer = "";
+
+    function showMode()
+    {
+        if (!get_pref("showmode"))
+            return;
+
+        var str_mode = mode_messages[mode];
+        var str_extended = mode_messages[extended_mode];
+        if(!str_mode && !str_extended)
+        {
+            vimperator.echo("");
+            return;
+        }
+
+        if(str_mode && str_extended)
+            str_extended = " (" + str_extended + ")";
+        else
+        {
+            str_extended = "(" + str_extended + ")";
+            str_mode = "";
+        }
+
+        vimperator.echo("-- " + str_mode + str_extended + " --");
+    }
+
+	////////////////////////////////////////////////////////////////////////////////
+	////////////////////// PUBLIC SECTION //////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+    this.ver  = "###VERSION### CVS (created: ###DATE###)";
+    this.commandline = new CommandLine();
+//    this.search = new Search();
+
+    /////////////// callbacks ////////////////////////////
+	/**
+     * @param type Can be:
+     *  "submit": when the user pressed enter in the command line
+     *  "change"
+     *  "cancel"
+     *  "complete"
+     */
+	this.registerCallback = function(type, mode, func)
+	{
+		// TODO: check if callback is already registered
+		callbacks.push([type, mode, func]);
+	}
+	this.triggerCallback = function(type, data)
+	{
+		for (var i in callbacks)
+		{
+			var [thistype, thismode, thisfunc] = callbacks[i];
+			if (vimperator.hasMode(thismode) && type == thistype)
+				return thisfunc.call(this, data);
+		}
+		return false;
+	}
+
+    // just forward these echo commands
+    this.echo = this.commandline.echo;
+    this.echoerr = this.commandline.echoErr;
+
+    // set current mode
+    // use "null" if you only want to set one of those modes
+    this.setMode = function(main, extended, silent)
+    {
+        // if a main mode is set, the extended is always cleared
+        if (main)
+        {
+            mode = main;
+            extended_mode = this.modes.NONE;
+        }
+        if (typeof(extended) === "number")
+            extended_mode = extended;
+
+        if (typeof(silent) == "undefined" || !silent)
+            showMode();
+    }
+    // returns true if "whichmode" is found in either the main or
+    // extended mode
+    this.hasMode = function(whichmode)
+    {
+        return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
+    }
+    this.addMode = function(main, extended)
+    {
+        if (main)
+            mode |= main;
+        if (extended)
+            extended_mode |= extended;
+
+        showMode();
+    }
+    // always show the new mode in the statusline
+    this.removeMode = function(main, extended)
+    {
+        if (main)
+            mode = (mode | main) ^ main;
+        if (extended)
+            extended_mode = (extended_mode | extended) ^ extended;
+
+        showMode();
+    }
+
+    // After pressing Escape, put focus on a non-input field of the browser document
+    this.focusContent = function()
+    {
+        var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
+                 getService(Components.interfaces.nsIWindowWatcher);
+
+        if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
+            document.commandDispatcher.focusedElement.blur();
+
+        content.focus();
+    }
+
+
+    this.getCurrentBuffer = function()
+    {
+        return document.commandDispatcher.focusedWindow;
+    }
+}
+
 function Events() //{{{1
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// CONSTRUCTOR /////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
-    // any window related events
-    window.addEventListener("unload",   unload, false);
-    window.addEventListener("keypress", vimperator.onEvent, true);
 
     // this handler is for middle click only in the content
     //window.addEventListener("mousedown", onVimperatorKeypress, true);
@@ -179,111 +339,6 @@ function Events() //{{{1
         //alert("titlechanged");
     }, null);
 
-
-
-    this.progressListener =
-    {
-        QueryInterface: function(aIID)
-        {
-            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
-                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                    aIID.equals(Components.interfaces.nsISupports))
-                return this;
-            throw Components.results.NS_NOINTERFACE;
-        },
-
-        // XXX: function may later be needed to detect a canceled synchronous openURL()
-        onStateChange: function(webProgress, aRequest, flags, aStatus)
-        {
-            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
-            // receive statechange events for loading images and other parts of the web page
-            if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
-                        Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
-            {
-                // This fires when the load event is initiated
-                if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
-                {
-                    vimperator.statusline.updateProgress(0);
-                }
-                else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-                    ;// vimperator.statusline.updateUrl();
-            }
-        },
-        // for notifying the user about secure web pages
-        onSecurityChange: function (webProgress, aRequest, aState)
-        {
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                vimperator.statusline.setClass("insecure");
-            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                vimperator.statusline.setClass("broken");
-            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-                vimperator.statusline.setClass("secure");
-        },
-        onStatusChange: function(webProgress, request, status, message)
-        {
-            vimperator.statusline.updateUrl(message);
-        },
-        onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
-        {
-            vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
-        },
-        // happens when the users switches tabs
-        onLocationChange: function()
-        {
-            // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-            //     hah.disableHahMode();
-
-            vimperator.statusline.updateUrl();
-            vimperator.statusline.updateProgress();
-
-            // if this is not delayed we get the wrong position of the old buffer
-            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
-        },
-        // called at the very end of a page load
-        asyncUpdateUI: function()
-        {  
-            vimperator.statusline.updateUrl();
-        },
-        setOverLink : function(link, b)
-        {
-            var ssli = get_pref("showstatuslinks");
-            if (link && ssli)
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl("Link: " + link);
-                else if (ssli == 2)
-                    vimperator.echo("Link: " + link);
-            }
-                
-            if (link == "")
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl();
-                else if (ssli == 2)
-                    vimperator.setMode(); // trick to reshow the mode in the command line
-            }
-        },
-
-        // stub functions for the interfaces
-        setJSStatus : function(status) { },
-        setJSDefaultStatus : function(status) { },
-        setDefaultStatus : function(status) { },
-        onLinkIconAvailable: function() { }
-    }
-    window.XULBrowserWindow = this.progressListener;
-    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIWebNavigation)
-        .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
-        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIXULWindow)
-        .XULBrowserWindow = window.XULBrowserWindow;
-
-    // for onStateChange(), etc.:
-    getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-
-
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -314,6 +369,8 @@ function Events() //{{{1
             if(doc == getBrowser().selectedBrowser.contentDocument)
             {
                 /* none yet */
+                //vimperator.statusline.updateUrl();
+                //logMessage("onpageLoad");
             }
         }
     }
@@ -321,6 +378,12 @@ function Events() //{{{1
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
+    this.destroy = function()
+    {
+        // BIG TODO: removeEventListeners() to avoid mem leaks
+        window.dump("TODO: remove eventlisteners");
+    };
+
     this.onEscape = function()
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
@@ -331,14 +394,511 @@ function Events() //{{{1
             vimperator.focusContent();
             vimperator.statusline.updateUrl();
         }
-    }
+    };
+
+    this.onKeyPress = function(event)
+    {
+        if (event.type != "keypress")
+            return false;
+
+        // change the event to a usable string representation
+        var key = keyToString(event);
+         //alert(key);
+        if (key == null)
+             return false;
+        // sometimes the non-content area has focus, making our keys not work
+        //    if (event.target.id == "main-window")
+        //        alert("focusContent();");
+
+
+        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+        // also fixes key navigation in menus, etc.
+        if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+            return false;
+
+        // XXX: for now only, later: input mappings if form element focused
+        if (isFormElemFocused())
+            return false;
+        
+        // handle Escape-one-key mode (Ctrl-v)
+        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+        {
+            vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
+            return false;
+        }
+        // handle Escape-all-keys mode (I)
+        if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+        {
+            if(vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+                vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
+            else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
+                ; // let flow continue to handle these keys
+            else
+                return false;
+        }
+
+    //  // FIXME: handle middle click in content area {{{
+    //  //     alert(event.target.id);
+    //  if (/*event.type == 'mousedown' && */event.button == 1 && event.target.id == 'content')
+    //  {
+    //      //echo("foo " + event.target.id);
+    //      //if (document.commandDispatcher.focusedElement == command_line.inputField)
+    //      {
+    //      //alert(command_line.value.substring(0, command_line.selectionStart));
+    //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
+    //                               readFromClipboard() +
+    //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
+    //         alert(command_line.value);
+    //      }
+    //      //else
+    // //       {
+    // //           openURLs(readFromClipboard());
+    // //       }
+    //      return true;
+    //  } }}}
+
+
+
+        // if Hit-a-hint mode is on, special handling of keys is required
+        // g_hint_mappings is used
+        // FIXME: total mess
+        if (vimperator.hasMode(vimperator.modes.HINTS))
+        {
+            // never propagate this key to firefox, when hints are visible
+            event.preventDefault();
+            event.stopPropagation();
+
+            for (i = 0; i < g_hint_mappings.length; i++)
+            {
+                if(g_hint_mappings[i][0] == key)
+                {
+                    if(g_hint_mappings[i][3] == true || hah.currentState() == 1)
+                    {
+                        //g_hint_mappings[i][1].call(this, event);
+                        eval(g_hint_mappings[i][1]);
+                        if (g_hint_mappings[i][2] == true) // stop processing this event
+                        {
+                            hah.disableHahMode();
+                            vimperator.input.buffer = "";
+                            vimperator.statusline.updateInputBuffer("");
+                            return false;
+                        }
+                        else
+                        {
+                            // FIXME: make sure that YOU update the statusbar message yourself
+                            // first in g_hint_mappings when in this mode!
+                            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // no mapping found, beep()
+            if (hah.currentState() == 1)
+            {
+                beep();
+                hah.disableHahMode();
+                vimperator.input.buffer = "";
+                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                return true;
+            }
+
+            // if we came here, let hit-a-hint process the key as it is part
+            // of a partial link
+            var res = hah.processEvent(event);
+            if (res < 0) // error occured processing this key
+            {
+                beep();
+                //if(hah.currentMode() == HINT_MODE_QUICK)
+                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                    hah.disableHahMode();
+                else // ALWAYS mode
+                    hah.resetHintedElements();
+                vimperator.input.buffer = "";
+            }
+            //else if (res == 0 || hah.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
+            else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
+                vimperator.input.buffer += key;
+            else // this key completed a quick hint
+            {
+                // if the hint is all in UPPERCASE, open it in new tab
+                vimperator.input.buffer += key;
+                if (vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
+                    hah.openHints(true, false);
+                else // open in current window
+                    hah.openHints(false, false);
+
+                //if(hah.currentMode() == HINT_MODE_QUICK)
+                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                    hah.disableHahMode();
+                else // ALWAYS mode
+                    hah.resetHintedElements();
+
+                vimperator.input.buffer = "";
+            }
+
+            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+            return true;
+        }
+
+        if (vimperator.hasMode(vimperator.modes.NORMAL))
+        {
+            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
+            var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
+            var map;
+
+            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
+            {
+                vimperator.input.buffer += key;
+                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                return true;
+            }
+
+            if (vimperator.input.pendingMap)
+            {
+                if (key != "<Esc>" && key != "<C-[>")
+                    vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+
+                vimperator.input.pendingMap = null;
+                vimperator.input.buffer = "";
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
+            {
+                vimperator.input.count = parseInt(count_str, 10);
+                if (isNaN(vimperator.input.count))
+                    vimperator.input.count = -1;
+                if (map.flags & Mappings.flags.ARGUMENT)
+                {
+                    vimperator.input.pendingMap = map;
+                    vimperator.input.buffer += key;
+                }
+                else
+                {
+                    map.execute(null, vimperator.input.count);
+                    vimperator.input.buffer = "";
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
+            {
+                vimperator.input.buffer += key;
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            else
+            {
+                vimperator.input.buffer = "";
+                vimperator.input.pendingMap = null;
+                beep();
+            }
+        }
+        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+        return false;
+    };
+    window.addEventListener("keypress", this.onKeyPress, true);
+
+
+    this.progressListener =
+    {
+        QueryInterface: function(aIID)
+        {
+            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
+                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                    aIID.equals(Components.interfaces.nsISupports))
+                return this;
+            throw Components.results.NS_NOINTERFACE;
+        },
+
+        // XXX: function may later be needed to detect a canceled synchronous openURL()
+        onStateChange: function(webProgress, aRequest, flags, aStatus)
+        {
+            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
+            // receive statechange events for loading images and other parts of the web page
+            if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
+                        Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+            {
+                // This fires when the load event is initiated
+                if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+                {
+                    vimperator.statusline.updateProgress(0);
+                }
+                else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+                    logMessage("stop");// vimperator.statusline.updateUrl();
+            }
+        },
+        // for notifying the user about secure web pages
+        onSecurityChange: function (webProgress, aRequest, aState)
+        {
+            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+                vimperator.statusline.setClass("insecure");
+            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+                vimperator.statusline.setClass("broken");
+            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+                vimperator.statusline.setClass("secure");
+        },
+        onStatusChange: function(webProgress, request, status, message)
+        {
+            //logMessage("status: " + message);
+            vimperator.statusline.updateUrl(message);
+        },
+        onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
+        {
+            vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+        },
+        // happens when the users switches tabs
+        onLocationChange: function()
+        {
+            // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+            //     hah.disableHahMode();
+
+            vimperator.statusline.updateUrl();
+            vimperator.statusline.updateProgress();
+
+            // if this is not delayed we get the wrong position of the old buffer
+            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
+        },
+        // called at the very end of a page load
+        asyncUpdateUI: function()
+        {  
+            //logMessage("async");
+            setTimeout(vimperator.statusline.updateUrl, 100);
+        },
+        setOverLink : function(link, b)
+        {
+            var ssli = get_pref("showstatuslinks");
+            if (link && ssli)
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl("Link: " + link);
+                else if (ssli == 2)
+                    vimperator.echo("Link: " + link);
+            }
+                
+            if (link == "")
+            {
+                if (ssli == 1)
+                    vimperator.statusline.updateUrl();
+                else if (ssli == 2)
+                    vimperator.setMode(); // trick to reshow the mode in the command line
+            }
+        },
+
+        // stub functions for the interfaces
+        setJSStatus : function(status) { },
+        setJSDefaultStatus : function(status) { },
+        setDefaultStatus : function(status) { },
+        onLinkIconAvailable: function() { }
+    };
+    window.XULBrowserWindow = this.progressListener;
+    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+        .getInterface(Components.interfaces.nsIWebNavigation)
+        .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
+        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+        .getInterface(Components.interfaces.nsIXULWindow)
+        .XULBrowserWindow = window.XULBrowserWindow;
+    getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    
 }
+
+
+/** provides functions for working with tabs
+ * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
+ * Firefox 3.0, then this class should go away and their tab methods should be used
+ * @deprecated
+ */
+function Tabs() //{{{1
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    /** @param spec can either be:
+     * - an absolute integer
+     * - "" for the current tab
+     * - "+1" for the next tab
+     * - "-3" for the tab, which is 3 positions left of the current
+     * - "$" for the last tab
+     */
+    function indexFromSpec(spec, wrap)
+    {
+        var position = getBrowser().tabContainer.selectedIndex;
+        var length   = getBrowser().mTabs.length;
+        var last     = length - 1;
+
+        if (typeof(spec) === "undefined" || spec === "")
+            return position;
+
+        if (typeof(spec) === "number")
+            position = spec;
+        else if (spec === "$")
+            return last;
+        else if (!spec.match(/^([+-]?\d+|)$/))
+        {
+            // TODO: move error reporting to ex-command?
+            vimperator.echoerr("E488: Trailing characters");
+            return false;
+        }
+        else
+        {
+            if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
+                position += parseInt(spec);
+            else                           // absolute position
+                position = parseInt(spec);
+        }
+
+        if (position > last)
+            position = wrap ? position % length : last;
+        else if (position < 0)
+            position = wrap ? (position % length) + length: 0;
+
+        return position;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // @returns the index of the currently selected tab starting with 0
+    this.index = function(tab)
+    {
+        if(tab)
+        {
+            var length = getBrowser().mTabs.length;
+            for (var i = 0; i < length; i++)
+            {
+                if (getBrowser().mTabs[i] == tab)
+                    return i;
+            }
+            return false;
+        }
+
+        return getBrowser().tabContainer.selectedIndex;
+    }
+    this.count = function()
+    {
+        return getBrowser().mTabs.length;
+    }
+
+    // TODO: implement filter
+    // @returns an array of tabs which match filter
+    this.get = function(filter)
+    {
+        var buffers = [];
+        var browsers = getBrowser().browsers;
+        for (var i in browsers)
+        {
+            var title = browsers[i].contentTitle || "(Untitled)";
+            var uri = browsers[i].currentURI.spec;
+            var number = i + 1;
+            buffers.push([number, title, uri]);
+        }
+        return buffers;
+    }
+
+    this.getTab = function(index)
+    {
+        if (index)
+            return getBrowser().mTabs[index];
+
+        return getBrowser().tabContainer.selectedItem;
+    }
+
+    /*  spec == "" moves the tab to the last position as per Vim
+     *  wrap causes the movement to wrap around the start and end of the tab list
+     *  NOTE: position is a 0 based index
+     *  FIXME: tabmove! N should probably produce an error
+     */
+    this.move = function(tab, spec, wrap)
+    {
+        if (spec === "")
+            spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
+
+        var index = indexFromSpec(spec, false); // XXX: really no wrap?
+        getBrowser().moveTabTo(tab, index);
+    }
+
+    /* quit_on_last_tab = 1: quit without saving session
+     * quit_on_last_tab = 2: quit and save session
+     */
+    this.remove = function(tab, count, focus_left_tab, quit_on_last_tab)
+    {
+        if (count < 1) count = 1;
+
+        if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
+            quit(quit_on_last_tab == 2);
+
+        if(focus_left_tab && tab.previousSibling)
+            this.select("-1", false);
+
+        getBrowser().removeTab(tab);
+    }
+
+    this.keepOnly = function(tab)
+    {
+        getBrowser().removeAllTabsBut(tab);
+    }
+
+    this.select = function(spec, wrap)
+    {
+        var index = indexFromSpec(spec, wrap);
+        if (index === false)
+        {
+            beep(); // XXX: move to ex-handling?
+            return false;
+        }
+        getBrowser().mTabContainer.selectedIndex = index;
+    }
+
+    /* XXX: disabled until we find a better way where to update the titles, right now
+     * it has O(n^2) complexity on firefox start when we load 50 tabs
+     * (c) by hrist
+     
+         window.addEventListener("TabMove",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+         window.addEventListener("TabOpen",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+         window.addEventListener("TabClose",   function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
+
+    this.updateTitles = function(forceclear)
+    {    
+        for(var i=0;i < vimperator.tabs.count();i++)
+        {    
+            var old_title = getBrowser().mTabContainer.childNodes[i].getAttribute("label");
+            var split_title = old_title.match(/^(\d+:\s+)(.*)/);
+            if(forceclear)
+            {    
+                for(var i=0;i<vimperator.tabs.count();i++)
+                getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
+                return;
+            }    
+
+            var numbertabs = get_pref('numbertabs');
+            if(numbertabs)
+            {    
+                if(split_title)
+                {    
+                    var new_title = (i+1) + ": "+ split_title[2];
+                }    
+                else  var new_title = (i+1) + ": " + old_title;
+                getBrowser().mTabContainer.childNodes[i].setAttribute("label", new_title);
+            }    
+            else getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
+        }    
+    }
+    */
+}
+
 
 
 
 ////////////////////////////////////////////////////////////////////////
 // text input functions /////////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
+//TODO: convert all these functions to methods
 function isFormElemFocused()
 {
     var elt = document.commandDispatcher.focusedElement;
@@ -541,564 +1101,6 @@ function getLinkNodes(doc)
 
     return links;
 }//}}}
-
-function Vimperator() //{{{1
-{
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////// PRIVATE SECTION /////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
-    this.modes = { // actually not private, but Firefox complains if this doesn't come first
-        // main modes
-        NONE:             0,
-        NORMAL:           1 << 0,
-        INSERT:           1 << 1,
-        VISUAL:           1 << 2,
-        HINTS:            1 << 3,
-        COMMAND_LINE:     1 << 4,
-        // extended modes
-        EX:               1 << 10,
-        SEARCH_FORWARD:   1 << 11,
-        SEARCH_BACKWARD:  1 << 12,
-        ESCAPE_ONE_KEY:   1 << 13,
-        ESCAPE_ALL_KEYS:  1 << 14,
-        QUICK_HINT:       1 << 15,
-        EXTENDED_HINT:    1 << 16,
-        ALWAYS_HINT:      1 << 17
-    }
-    var mode_messages = {};
-    mode_messages[this.modes.NORMAL]          = "";
-    mode_messages[this.modes.INSERT]          = "INSERT";
-    mode_messages[this.modes.VISUAL]          = "VISUAL";
-    mode_messages[this.modes.HINTS]           = "HINTS";
-    mode_messages[this.modes.ESCAPE_ONE_KEY]  = "escape one key";
-    mode_messages[this.modes.ESCAPE_ALL_KEYS] = "escape all keys";
-    mode_messages[this.modes.ESCAPE_ONE_KEY | this.modes.ESCAPE_ALL_KEYS] = "pass one key";
-    mode_messages[this.modes.QUICK_HINT]      = "quick";
-    mode_messages[this.modes.EXTENDED_HINT]   = "extended";
-    mode_messages[this.modes.ALWAYS_HINT]     = "always";
-
-	var callbacks = new Array();
-    var mode = this.modes.NORMAL;
-    var extended_mode = this.modes.NONE;
-    var count = -1;
-    var inputbuffer = "";
-
-    function showMode()
-    {
-        if (!get_pref("showmode"))
-            return;
-
-        var str_mode = mode_messages[mode];
-        var str_extended = mode_messages[extended_mode];
-        if(!str_mode && !str_extended)
-        {
-            vimperator.echo("");
-            return;
-        }
-
-        if(str_mode && str_extended)
-            str_extended = " (" + str_extended + ")";
-        else
-        {
-            str_extended = "(" + str_extended + ")";
-            str_mode = "";
-        }
-
-        vimperator.echo("-- " + str_mode + str_extended + " --");
-    }
-
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////// PUBLIC SECTION //////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
-    this.ver  = "###VERSION### CVS (created: ###DATE###)";
-    this.commandline = new CommandLine();
-//    this.search = new Search();
-
-    /////////////// callbacks ////////////////////////////
-	/**
-     * @param type Can be:
-     *  "submit": when the user pressed enter in the command line
-     *  "change"
-     *  "cancel"
-     *  "complete"
-     */
-	this.registerCallback = function(type, mode, func)
-	{
-		// TODO: check if callback is already registered
-		callbacks.push([type, mode, func]);
-	}
-	this.triggerCallback = function(type, data)
-	{
-		for (var i in callbacks)
-		{
-			var [thistype, thismode, thisfunc] = callbacks[i];
-			if (vimperator.hasMode(thismode) && type == thistype)
-				return thisfunc.call(this, data);
-		}
-		return false;
-	}
-
-    // just forward these echo commands
-    this.echo = this.commandline.echo;
-    this.echoerr = this.commandline.echoErr;
-
-    // set current mode
-    // use "null" if you only want to set one of those modes
-    this.setMode = function(main, extended, silent)
-    {
-        // if a main mode is set, the extended is always cleared
-        if (main)
-        {
-            mode = main;
-            extended_mode = this.modes.NONE;
-        }
-        if (typeof(extended) === "number")
-            extended_mode = extended;
-
-        if (typeof(silent) == "undefined" || !silent)
-            showMode();
-    }
-    // returns true if "whichmode" is found in either the main or
-    // extended mode
-    this.hasMode = function(whichmode)
-    {
-        return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
-    }
-    this.addMode = function(main, extended)
-    {
-        if (main)
-            mode |= main;
-        if (extended)
-            extended_mode |= extended;
-
-        showMode();
-    }
-    // always show the new mode in the statusline
-    this.removeMode = function(main, extended)
-    {
-        if (main)
-            mode = (mode | main) ^ main;
-        if (extended)
-            extended_mode = (extended_mode | extended) ^ extended;
-
-        showMode();
-    }
-
-    // After pressing Escape, put focus on a non-input field of the browser document
-    this.focusContent = function()
-    {
-        var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
-                 getService(Components.interfaces.nsIWindowWatcher);
-
-        if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
-            document.commandDispatcher.focusedElement.blur();
-
-        content.focus();
-    }
-
-    this.onEvent = function(event)/*{{{*/
-    {
-        if (event.type != "keypress")
-            return false;
-
-        // change the event to a usable string representation
-        var key = keyToString(event);
-         //alert(key);
-        if (key == null)
-             return false;
-
-        if(event.type == "keydown")
-        {
-            logObject(event);
-            logObject(event.target);
-            return;//alert(event.target.id);
-        }
-        // sometimes the non-content area has focus, making our keys not work
-    //    if (event.target.id == "main-window")
-    //        alert("focusContent();");
-
-
-        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
-        // also fixes key navigation in menus, etc.
-        if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
-            return false;
-
-        // XXX: for now only, later: input mappings if form element focused
-        if (isFormElemFocused())
-            return false;
-        
-        // handle Escape-one-key mode (Ctrl-v)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
-        {
-            vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
-            return false;
-        }
-        // handle Escape-all-keys mode (I)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
-        {
-            if(vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
-                vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
-            else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
-                ; // let flow continue to handle these keys
-            else
-                return false;
-        }
-
-    //  // FIXME: handle middle click in content area {{{
-    //  //     alert(event.target.id);
-    //  if (/*event.type == 'mousedown' && */event.button == 1 && event.target.id == 'content')
-    //  {
-    //      //echo("foo " + event.target.id);
-    //      //if (document.commandDispatcher.focusedElement == command_line.inputField)
-    //      {
-    //      //alert(command_line.value.substring(0, command_line.selectionStart));
-    //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
-    //                               readFromClipboard() +
-    //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
-    //         alert(command_line.value);
-    //      }
-    //      //else
-    // //       {
-    // //           openURLs(readFromClipboard());
-    // //       }
-    //      return true;
-    //  } }}}
-
-
-
-        // if Hit-a-hint mode is on, special handling of keys is required
-        // g_hint_mappings is used
-        // FIXME: total mess
-        if (vimperator.hasMode(vimperator.modes.HINTS))
-        {
-            // never propagate this key to firefox, when hints are visible
-            event.preventDefault();
-            event.stopPropagation();
-
-            for (i = 0; i < g_hint_mappings.length; i++)
-            {
-                if(g_hint_mappings[i][0] == key)
-                {
-                    if(g_hint_mappings[i][3] == true || hah.currentState() == 1)
-                    {
-                        //g_hint_mappings[i][1].call(this, event);
-                        eval(g_hint_mappings[i][1]);
-                        if (g_hint_mappings[i][2] == true) // stop processing this event
-                        {
-                            hah.disableHahMode();
-                            vimperator.input.buffer = "";
-                            vimperator.statusline.updateInputBuffer("");
-                            return false;
-                        }
-                        else
-                        {
-                            // FIXME: make sure that YOU update the statusbar message yourself
-                            // first in g_hint_mappings when in this mode!
-                            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            // no mapping found, beep()
-            if (hah.currentState() == 1)
-            {
-                beep();
-                hah.disableHahMode();
-                vimperator.input.buffer = "";
-                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                return true;
-            }
-
-            // if we came here, let hit-a-hint process the key as it is part
-            // of a partial link
-            var res = hah.processEvent(event);
-            if (res < 0) // error occured processing this key
-            {
-                beep();
-                //if(hah.currentMode() == HINT_MODE_QUICK)
-                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    hah.disableHahMode();
-                else // ALWAYS mode
-                    hah.resetHintedElements();
-                vimperator.input.buffer = "";
-            }
-            //else if (res == 0 || hah.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
-            else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
-                vimperator.input.buffer += key;
-            else // this key completed a quick hint
-            {
-                // if the hint is all in UPPERCASE, open it in new tab
-                vimperator.input.buffer += key;
-                if (vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
-                    hah.openHints(true, false);
-                else // open in current window
-                    hah.openHints(false, false);
-
-                //if(hah.currentMode() == HINT_MODE_QUICK)
-                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    hah.disableHahMode();
-                else // ALWAYS mode
-                    hah.resetHintedElements();
-
-                vimperator.input.buffer = "";
-            }
-
-            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-            return true;
-        }
-
-        if (vimperator.hasMode(vimperator.modes.NORMAL))
-        {
-            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-            var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
-            var map;
-
-            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
-            {
-                vimperator.input.buffer += key;
-                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                return true;
-            }
-
-            if (vimperator.input.pendingMap)
-            {
-                if (key != "<Esc>" && key != "<C-[>")
-                    vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
-
-                vimperator.input.pendingMap = null;
-                vimperator.input.buffer = "";
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
-            {
-                vimperator.input.count = parseInt(count_str, 10);
-                if (isNaN(vimperator.input.count))
-                    vimperator.input.count = -1;
-                if (map.flags & Mappings.flags.ARGUMENT)
-                {
-                    vimperator.input.pendingMap = map;
-                    vimperator.input.buffer += key;
-                }
-                else
-                {
-                    map.execute(null, vimperator.input.count);
-                    vimperator.input.buffer = "";
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
-            {
-                vimperator.input.buffer += key;
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else
-            {
-                vimperator.input.buffer = "";
-                vimperator.input.pendingMap = null;
-                beep();
-            }
-        }
-        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-        return false;
-    }/*}}}*/
-
-    this.getCurrentBuffer = function()
-    {
-        return document.commandDispatcher.focusedWindow;
-    }
-}
-
-/** provides functions for working with tabs
- * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
- * Firefox 3.0, then this class should go away and their tab methods should be used
- * @deprecated
- */
-function Tabs() //{{{1
-{
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    /** @param spec can either be:
-     * - an absolute integer
-     * - "" for the current tab
-     * - "+1" for the next tab
-     * - "-3" for the tab, which is 3 positions left of the current
-     * - "$" for the last tab
-     */
-    function indexFromSpec(spec, wrap)
-    {
-        var position = getBrowser().tabContainer.selectedIndex;
-        var length   = getBrowser().mTabs.length;
-        var last     = length - 1;
-
-        if (typeof(spec) === "undefined" || spec === "")
-            return position;
-
-        if (typeof(spec) === "number")
-            position = spec;
-        else if (spec === "$")
-            return last;
-        else if (!spec.match(/^([+-]?\d+|)$/))
-        {
-            // TODO: move error reporting to ex-command?
-            vimperator.echoerr("E488: Trailing characters");
-            return false;
-        }
-        else
-        {
-            if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
-                position += parseInt(spec);
-            else                           // absolute position
-                position = parseInt(spec);
-        }
-
-        if (position > last)
-            position = wrap ? position % length : last;
-        else if (position < 0)
-            position = wrap ? (position % length) + length: 0;
-
-        return position;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    // @returns the index of the currently selected tab starting with 0
-    this.index = function(tab)
-    {
-        if(tab)
-        {
-            var length = getBrowser().mTabs.length;
-            for (var i = 0; i < length; i++)
-            {
-                if (getBrowser().mTabs[i] == tab)
-                    return i;
-            }
-            return false;
-        }
-
-        return getBrowser().tabContainer.selectedIndex;
-    }
-    this.count = function()
-    {
-        return getBrowser().mTabs.length;
-    }
-
-    // TODO: implement filter
-    // @returns an array of tabs which match filter
-    this.get = function(filter)
-    {
-        var buffers = [];
-        var browsers = getBrowser().browsers;
-        for (var i in browsers)
-        {
-            var title = browsers[i].contentTitle || "(Untitled)";
-            var uri = browsers[i].currentURI.spec;
-            var number = i + 1;
-            buffers.push([number, title, uri]);
-        }
-        return buffers;
-    }
-
-    this.getTab = function(index)
-    {
-        if (index)
-            return getBrowser().mTabs[index];
-
-        return getBrowser().tabContainer.selectedItem;
-    }
-
-    /*  spec == "" moves the tab to the last position as per Vim
-     *  wrap causes the movement to wrap around the start and end of the tab list
-     *  NOTE: position is a 0 based index
-     *  FIXME: tabmove! N should probably produce an error
-     */
-    this.move = function(tab, spec, wrap)
-    {
-        if (spec === "")
-            spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
-
-        var index = indexFromSpec(spec, false); // XXX: really no wrap?
-        getBrowser().moveTabTo(tab, index);
-    }
-
-    /* quit_on_last_tab = 1: quit without saving session
-     * quit_on_last_tab = 2: quit and save session
-     */
-    this.remove = function(tab, count, focus_left_tab, quit_on_last_tab)
-    {
-        if (count < 1) count = 1;
-
-        if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
-            quit(quit_on_last_tab == 2);
-
-        if(focus_left_tab && tab.previousSibling)
-            this.select("-1", false);
-
-        getBrowser().removeTab(tab);
-    }
-
-    this.keepOnly = function(tab)
-    {
-        getBrowser().removeAllTabsBut(tab);
-    }
-
-    this.select = function(spec, wrap)
-    {
-        var index = indexFromSpec(spec, wrap);
-        if (index === false)
-        {
-            beep(); // XXX: move to ex-handling?
-            return false;
-        }
-        getBrowser().mTabContainer.selectedIndex = index;
-    }
-
-    /* XXX: disabled until we find a better way where to update the titles, right now
-     * it has O(n^2) complexity on firefox start when we load 50 tabs
-     * (c) by hrist
-     
-         window.addEventListener("TabMove",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
-         window.addEventListener("TabOpen",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
-         window.addEventListener("TabClose",   function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
-
-    this.updateTitles = function(forceclear)
-    {    
-        for(var i=0;i < vimperator.tabs.count();i++)
-        {    
-            var old_title = getBrowser().mTabContainer.childNodes[i].getAttribute("label");
-            var split_title = old_title.match(/^(\d+:\s+)(.*)/);
-            if(forceclear)
-            {    
-                for(var i=0;i<vimperator.tabs.count();i++)
-                getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
-                return;
-            }    
-
-            var numbertabs = get_pref('numbertabs');
-            if(numbertabs)
-            {    
-                if(split_title)
-                {    
-                    var new_title = (i+1) + ": "+ split_title[2];
-                }    
-                else  var new_title = (i+1) + ": " + old_title;
-                getBrowser().mTabContainer.childNodes[i].setAttribute("label", new_title);
-            }    
-            else getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
-        }    
-    }
-    */
-}
-
-
 
 
 // vim: set fdm=marker sw=4 ts=4 et:
