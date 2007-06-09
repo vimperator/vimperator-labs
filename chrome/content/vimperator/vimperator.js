@@ -35,125 +35,6 @@ var popup_allowed_events; // need to change and reset this firefox pref
 var prev_match = new Array(5);
 var heredoc = '';
 
-// FIXME: if I rename this to another class name, it doesn't work, find the reason
-function nsBrowserStatusHandler() /*{{{*/
-{
-    this.init();
-}
-nsBrowserStatusHandler.prototype =
-{
-    QueryInterface : function(aIID)
-    {
-        if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
-                aIID.equals(Components.interfaces.nsISupports))
-            return this;
-        throw Components.results.NS_NOINTERFACE;
-    },
-
-    init : function()
-    {
-    },
-
-    setOverLink : function(link, b)
-    {
-        var ssli = get_pref("showstatuslinks");
-        if (link && ssli)
-        {
-            if (ssli == 1)
-                vimperator.statusline.updateUrl("Link: " + link);
-            else if (ssli == 2)
-                vimperator.echo("Link: " + link);
-        }
-            
-        if (link == "")
-        {
-            if (ssli == 1)
-                vimperator.statusline.updateUrl();
-            else if (ssli == 2)
-            {
-                //vimperator.echo("");
-                vimperator.setMode(); // trick to reshow the mode in the command line
-            }
-        }
-    },
-    setJSStatus : function(status) { },
-    setJSDefaultStatus : function(status) { },
-    setDefaultStatus : function(status) { },
-
-
-    onStateChange:function(aProgress,aRequest,aFlag,aStatus)
-    {
-        const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-        //const nsIChannel = Components.interfaces.nsIChannel;
-        if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
-        {
-            vimperator.statusline.updateProgress(0);
-        }
-        // this is called when all loading was done (or when the user canceled the load
-        else if (aFlag & nsIWebProgressListener.STATE_STOP)
-        {
-            //alert('stop: ' + aRequest.URI.spec);
-            vimperator.statusline.updateUrl(aRequest.URI.spec);
-            vimperator.statusline.updateProgress("");
-            // also reset the buffer list, since the url titles are valid here
-            updateBufferList();
-        }
-        return 0;
-    },
-    onLocationChange:function (aWebProgress, aRequest, aLocation)
-        {
-            // firefox 3.0 doesn't seem to have this function anymore
-            if (typeof UpdateBackForwardButtons == "function")
-                UpdateBackForwardButtons();
-
-            var url = aLocation.spec;
-
-            // also update the original firefox location bar
-            if (gURLBar)
-                gURLBar.value = url;
-
-            // onLocationChange is also called when switching/deleting tabs
-            //if (hah.currentMode() != HINT_MODE_ALWAYS)
-            if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-                hah.disableHahMode();
-            
-            vimperator.statusline.updateUrl(url);
-            vimperator.statusline.updateProgress();
-            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); // if not delayed we get the wrong position of the old buffer
-
-            // updating history cache is not done here but in the 'pageshow' event
-            // handler, because at this point I don't have access to the url title
-            return 0;
-        },
-    onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
-        {
-            vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
-            return 0;
-        },
-    onStatusChange:function (aWebProgress, aRequest, aStatus, aMessage)
-        {
-            //alert('change');
-            vimperator.statusline.updateUrl(aMessage);
-            return 0;
-        },
-    onSecurityChange:function (aWebProgress, aRequest, aState)
-        {
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                vimperator.statusline.setClass("insecure");
-            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                vimperator.statusline.setClass("broken");
-            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-                vimperator.statusline.setClass("secure");
-
-            return 0;
-        }
-    //onLinkIconAvailable:function(a){}
-
-};/*}}}*/
-
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load", init, false);
 
@@ -187,25 +68,6 @@ function init()
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
-    //vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return moo();; } );
-
-    // Setup our main status handler - from browser.js
-    // this function reacts to status bar and url changes which are sent from the mozilla core
-    window.XULBrowserWindow = new vimperator.browserStatusHandler;
-
-    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIWebNavigation)
-        .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
-        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIXULWindow)
-        .XULBrowserWindow = window.XULBrowserWindow;
-
-    var interfaceRequestor = QueryInterface(Components.interfaces.nsIInterfaceRequestor);
-//    var webProgress = interfaceRequestor.getInterface(Components.interfaces.nsIWebProgress);
-//    webProgress.addProgressListener(window.XULBrowserWindow, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-
-
-
 
     // this function adds all our required listeners to react on events
     // also stuff like window.onScroll is handled there.
@@ -255,7 +117,7 @@ function unload()
     /*** save our preferences ***/
     vimperator.commandline.saveHistory();
 
-    // TODO: removeEventListeners();
+    // BIG TODO: removeEventListeners() to avoid mem leaks
 
     // reset some modified firefox prefs
     if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
@@ -284,52 +146,36 @@ function onEscape()
 ////////////////////////////////////////////////////////////////////////
 function addEventListeners()
 {
+    // any window related events
     window.addEventListener("unload",   unload, false);
-
     window.addEventListener("keypress", vimperator.onEvent, true);
-    //window.addEventListener("keypress",  onVimperatorKeypress, true);
 
     // this handler is for middle click only in the content
     //window.addEventListener("mousedown", onVimperatorKeypress, true);
     //content.mPanelContainer.addEventListener("mousedown", onVimperatorKeypress, true);
     //document.getElementById("content").onclick = function(event) { alert("foo"); };
 
-    // these 4 events require >=firefox-2.0 beta1
-    window.addEventListener("TabMove",   vimperator.statusline.updateTabCount, false);
-    window.addEventListener("TabOpen",   vimperator.statusline.updateTabCount, false);
-    window.addEventListener("TabClose",  vimperator.statusline.updateTabCount, false);
-    window.addEventListener("TabSelect", function(event)
-    { 
-    // FIXME:
-//        if (hah.currentMode == HINT_MODE_ALWAYS)
-//        {
-//            hah.disableHahMode();
-//            hah.enableHahMode(HINT_MODE_ALWAYS);
-//        }
-        vimperator.statusline.updateTabCount();
+    // any tab related events
+    var tabcontainer = getBrowser().tabContainer;
+    tabcontainer.addEventListener("TabMove",   function(event) {
+        vimperator.statusline.updateTabCount()
+        updateBufferList();
     }, false);
-
-    // update our history cache when a new page is shown
-    // XXX: there should be a cleaner way with onload() handler, but it just
-    //      does not work out well for me :(
-    window.document.addEventListener("pageshow", function(event)
-    {
-        if (!event.persisted) // only if not bypassing cache
-        {
-            var url = getCurrentLocation();
-            var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
-            vimperator.history.add(url, title);
-        }
-        //alert("moo");
-    }
-    , null);
-
-    window.document.addEventListener("DOMTitleChanged", function(event)
-            {
-        //alert("tit");
-        }
-        , null);
-
+    tabcontainer.addEventListener("TabOpen",   function(event) {
+        vimperator.statusline.updateTabCount();
+        updateBufferList();
+    }, false);
+    tabcontainer.addEventListener("TabClose",  function(event) {
+        vimperator.statusline.updateTabCount()
+        updateBufferList();
+    }, false);
+    tabcontainer.addEventListener("TabSelect", function(event) { 
+        vimperator.statusline.updateTabCount();
+        updateBufferList();
+    }, false);
+    // this adds an event which is is called on each page load, even if the
+    // page is loaded in a background tab
+    getBrowser().addEventListener("load", onPageLoad, true);
 
     // called when the window is scrolled.
     window.onscroll = function (event)
@@ -337,21 +183,53 @@ function addEventListeners()
         vimperator.statusline.updateBufferPosition();
     };
 
-    // adds listeners to buffer actions.
-    var container = getBrowser().tabContainer;
-    container.addEventListener("TabOpen", function(event)
+    window.document.addEventListener("DOMTitleChanged", function(event)
     {
-        var browser = event.target.linkedBrowser;
-        browser.addProgressListener(buffer_changed_listener, Components.interfaces.nsIWebProgress.NOTIFY_STATE_DOCUMENT);
-    }, false);
-    container.addEventListener("TabClose", function(event)
+        //alert("titlechanged");
+    }, null);
+
+    // for setOverLink() XXX: maybe there is an addEventListener way
+    window.XULBrowserWindow = buffer_changed_listener;
+    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+        .getInterface(Components.interfaces.nsIWebNavigation)
+        .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
+        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+        .getInterface(Components.interfaces.nsIXULWindow)
+        .XULBrowserWindow = window.XULBrowserWindow;
+
+    // for onStateChange(), etc.:
+    getBrowser().addProgressListener(buffer_changed_listener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+}
+
+function onPageLoad(event)
+{
+    if (event.originalTarget instanceof HTMLDocument)
     {
-        var browser = event.target.linkedBrowser;
-        browser.removeProgressListener(buffer_changed_listener);
+        var doc = event.originalTarget;
+        // document is part of a frameset
+        if (doc.defaultView.frameElement)
+        {
+            // hacky way to get rid of "Transfering data from ..." on sites with frames
+            // when you click on a link inside a frameset, because asyncUpdateUI
+            // is not triggered there (firefox bug?)
+            setTimeout(vimperator.statusline.updateUrl, 10);
+            return; 
+        }
+
+        // code which should happen for all (also background) newly loaded tabs goes here:
         updateBufferList();
-    }, false);
-    container.addEventListener("TabSelect", updateBufferList, false);
-    container.addEventListener("TabMove",   updateBufferList, false);
+
+        //update history
+        var url = getCurrentLocation();
+        var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
+        vimperator.history.add(url, title);
+
+        // code which is only relevant if the page load is the current tab goes here:
+        if(doc == getBrowser().selectedBrowser.contentDocument)
+        {
+            /* none yet */
+        }
+    }
 }
 
 var buffer_changed_listener =
@@ -359,31 +237,91 @@ var buffer_changed_listener =
     QueryInterface: function(aIID)
     {
         if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
                 aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
                 aIID.equals(Components.interfaces.nsISupports))
             return this;
         throw Components.results.NS_NOINTERFACE;
     },
 
-    onStateChange: function(aProgress, aRequest, aFlag, aStatus)
+    // XXX: function may later be needed to detect a canceled synchronous openURL()
+    onStateChange: function(webProgress, aRequest, flags, aStatus)
     {
-        if(aFlag & Components.interfaces.nsIWebProgressListener.STATE_START)
+        // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
+        // receive statechange events for loading images and other parts of the web page
+        if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
+                    Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
         {
-          // This fires when the load event is initiated
+            // This fires when the load event is initiated
+            if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+            {
+                vimperator.statusline.updateProgress(0);
+            }
+            else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+                ;// vimperator.statusline.updateUrl();
         }
-        else if(aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+    },
+    // for notifying the user about secure web pages
+    onSecurityChange: function (webProgress, aRequest, aState)
+    {
+        const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+        if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+            vimperator.statusline.setClass("insecure");
+        else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+            vimperator.statusline.setClass("broken");
+        else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+            vimperator.statusline.setClass("secure");
+    },
+    onStatusChange: function(webProgress, request, status, message)
+    {
+        vimperator.statusline.updateUrl(message);
+    },
+    onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
+    {
+        vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+    },
+    // happens when the users switches tabs
+    onLocationChange: function()
+    {
+        // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+        //     hah.disableHahMode();
+
+        vimperator.statusline.updateUrl();
+        vimperator.statusline.updateProgress();
+
+        // if this is not delayed we get the wrong position of the old buffer
+        setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
+    },
+    // called at the very end of a page load
+    asyncUpdateUI: function()
+    {  
+        vimperator.statusline.updateUrl();
+    },
+    setOverLink : function(link, b)
+    {
+        var ssli = get_pref("showstatuslinks");
+        if (link && ssli)
         {
-            //alert('stopchange');
-            //buffer_preview_update();
+            if (ssli == 1)
+                vimperator.statusline.updateUrl("Link: " + link);
+            else if (ssli == 2)
+                vimperator.echo("Link: " + link);
         }
-        return 0;
+            
+        if (link == "")
+        {
+            if (ssli == 1)
+                vimperator.statusline.updateUrl();
+            else if (ssli == 2)
+                vimperator.setMode(); // trick to reshow the mode in the command line
+        }
     },
 
-    onLocationChange: function(aProgress, aRequest, aURI) { /*alert('locchange');*/ setTimeout( updateBufferList, 250); return 0; },
-    onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress){ return 0; },
-    onStatusChange: function() {return 0;},
-    onSecurityChange: function() {return 0;},
-    onLinkIconAvailable: function() {return 0;}
+    // stub functions for the interfaces
+    setJSStatus : function(status) { },
+    setJSDefaultStatus : function(status) { },
+    setDefaultStatus : function(status) { },
+    onLinkIconAvailable: function() { }
 }
 
 
@@ -608,14 +546,14 @@ function Vimperator()
         HINTS:            1 << 3,
         COMMAND_LINE:     1 << 4,
         // extended modes
-        EX:               1 << 5,
-        SEARCH_FORWARD:   1 << 6,
-        SEARCH_BACKWARD:  1 << 7,
-        ESCAPE_ONE_KEY:   1 << 8,
-        ESCAPE_ALL_KEYS:  1 << 9,
-        QUICK_HINT:       1 << 10,
-        EXTENDED_HINT:    1 << 11,
-        ALWAYS_HINT:      1 << 12
+        EX:               1 << 10,
+        SEARCH_FORWARD:   1 << 11,
+        SEARCH_BACKWARD:  1 << 12,
+        ESCAPE_ONE_KEY:   1 << 13,
+        ESCAPE_ALL_KEYS:  1 << 14,
+        QUICK_HINT:       1 << 15,
+        EXTENDED_HINT:    1 << 16,
+        ALWAYS_HINT:      1 << 17
     }
     var mode_messages = {};
     mode_messages[this.modes.NORMAL]          = "";
@@ -965,129 +903,13 @@ function Vimperator()
     {
         return document.commandDispatcher.focusedWindow;
     }
-
-
-    // FIXME: is not called for onLocationChange etc, find the reason
-    this.browserStatusHandler = function() { this.init(); }
-    this.browserStatusHandler.prototype =
-    {
-        QueryInterface : function(aIID)
-        {
-            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
-                    aIID.equals(Components.interfaces.nsISupports))
-                return this;
-            throw Components.results.NS_NOINTERFACE;
-        },
-
-        init : function()
-        {
-        },
-
-        setOverLink : function(link, b)
-        {
-            var ssli = get_pref("showstatuslinks");
-            if (link && ssli)
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl("Link: " + link);
-                else if (ssli == 2)
-                    vimperator.echo("Link: " + link);
-            }
-                
-            if (link == "")
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl();
-                else if (ssli == 2)
-                {
-                    //vimperator.echo("");
-                    vimperator.setMode(); // trick to reshow the mode in the command line
-                }
-            }
-        },
-        setJSStatus : function(status) { },
-        setJSDefaultStatus : function(status) { },
-        setDefaultStatus : function(status) { },
-
-
-        onStateChange:function(aProgress,aRequest,aFlag,aStatus)
-        {
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            //const nsIChannel = Components.interfaces.nsIChannel;
-            if (aFlag & nsIWebProgressListener.STATE_START && aRequest && aRequest.URI)
-            {
-                vimperator.statusline.updateProgress(0);
-            }
-            // this is called when all loading was done (or when the user canceled the load
-            else if (aFlag & nsIWebProgressListener.STATE_STOP)
-            {
-                //alert('stop: ' + aRequest.URI.spec);
-                vimperator.statusline.updateUrl(aRequest.URI.spec);
-                vimperator.statusline.updateProgress("");
-                // also reset the buffer list, since the url titles are valid here
-                updateBufferList();
-            }
-            return 0;
-        },
-        onLocationChange:function (aWebProgress, aRequest, aLocation)
-            {
-                // firefox 3.0 doesn't seem to have this function anymore
-                if (typeof UpdateBackForwardButtons == "function")
-                    UpdateBackForwardButtons();
-
-                var url = aLocation.spec;
-
-                // also update the original firefox location bar
-                if (gURLBar)
-                    gURLBar.value = url;
-
-                // onLocationChange is also called when switching/deleting tabs
-                //if (hah.currentMode() != HINT_MODE_ALWAYS)
-                if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-                    hah.disableHahMode();
-                
-                vimperator.statusline.updateUrl(url);
-                vimperator.statusline.updateProgress();
-                setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); // if not delayed we get the wrong position of the old buffer
-
-                // updating history cache is not done here but in the 'pageshow' event
-                // handler, because at this point I don't have access to the url title
-                return 0;
-            },
-        onProgressChange:function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
-            {
-                vimperator.statusline.updateProgress(aCurTotalProgress/aMaxTotalProgress);
-                return 0;
-            },
-        onStatusChange:function (aWebProgress, aRequest, aStatus, aMessage)
-            {
-                alert('change');
-                vimperator.statusline.updateUrl(aMessage);
-                return 0;
-            },
-        onSecurityChange:function (aWebProgress, aRequest, aState)
-            {
-                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-                if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                    vimperator.statusline.setColor("transparent");
-                else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                    vimperator.statusline.setColor("orange");
-                else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
-                    vimperator.statusline.setColor("yellow");
-
-                return 0;
-            }
-        //onLinkIconAvailable:function(a){}
-
-    };/*}}}*/
-    // alert('end');
 }
 
-// provides functions for working with tabs
-// XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
-// Firefox 3.0, then this class should go away and their tab methods should be used
+/** provides functions for working with tabs
+ * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
+ * Firefox 3.0, then this class should go away and their tab methods should be used
+ * @deprecated
+ */
 function Tabs()
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1265,5 +1087,8 @@ function Tabs()
     }
     */
 }
+
+
+
 
 // vim: set fdm=marker sw=4 ts=4 et:
