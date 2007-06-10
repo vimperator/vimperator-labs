@@ -197,8 +197,6 @@ function Commands()//{{{
 
     function commandsIterator()
     {
-        var commands;
-
         for (var i = 0; i < ex_commands.length; i++)
             yield ex_commands[i];
 
