@@ -1594,6 +1594,33 @@ function source(filename, silent)
     if (!filename)
         return;
 
+    function getEnv(variable)
+    {
+            var environment = Components.classes["@mozilla.org/process/environment;1"]
+                                        .getService(Components.interfaces.nsIEnvironment); 
+            return environment.get(variable);
+    }
+
+    // convert "~" to HOME on Windows
+    if (navigator.platform == "Win32")
+    {
+        // TODO: proper pathname separator translation like Vim
+        filename = filename.replace('/', '\\', 'g');
+        var matches = filename.match(/^~(.*)/)
+        if (matches)
+        {
+            var home_dir = getEnv("HOME");
+            if (!home_dir)
+                home_dir = getEnv("USERPROFILE");
+            if (!home_dir)
+            {
+                // TODO: are these guaranteed to be set?
+                home_dir = getEnv("HOMEDRIVE") + getEnv("HOMEPATH");
+            }
+            filename = home_dir + "\\" + matches[1];
+        }
+    }
+
     try
     {
         var fd = fopen(filename, "<");
