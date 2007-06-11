@@ -253,7 +253,8 @@ function get_file_completions(filter)/*{{{*/
 
 function get_help_completions(filter)/*{{{*/
 {
-    var help_array = [[["mappings"], "Normal mode commands"],
+    var help_array = [[["introduction"], "Introductory text"],
+                      [["mappings"], "Normal mode commands"],
                       [["commands"], "Ex commands"],
                       [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
     g_substrings = [];

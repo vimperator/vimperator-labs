@@ -48,7 +48,7 @@ hr { /* horizontal lines */
 	/*border-color: #6A97D4;*/
 	border-color: white;
 }
-td.tag {
+td.taglist {
     text-align: right;
 	vertical-align: top;
 	/* white-space: -moz-pre-wrap !important; // DJK */
@@ -56,20 +56,22 @@ td.tag {
 	border-width: 0px 10px 0px 10px;
 	border-color: blue !important;
 }
-td.tag td {
+td.taglist td {
     width: 100px;
     padding: 3px 0px 3px 0px;
 }
-tr.tag code, td.usage code {
+tr.taglist code, td.usage code {
     margin: 0px 2px;
 }
 td.usage code {
     white-space: nowrap;
 }
-td.tag code {
+td.taglist code {
+    margin-left: 2em;
+}
+code.tag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
-    margin-left: 2em;
 }
 tr.description {
     margin-bottom: 4px;

@@ -90,7 +90,7 @@ function help(section, easter)
             else
                 ret += "Sorry, no help available";
             // the tags which are printed on the top right
-            ret += '</td><td class="tag" valign="top">';
+            ret += '</td><td class="taglist" valign="top">';
             var names = commands[i][COMMANDS];
             for (var j=0; j < names.length; j++)
             {
@@ -100,7 +100,7 @@ function help(section, easter)
                 // cmd_name = cmd_name.replace(/"/g, "&quot;");
                 // cmd_name = cmd_name.replace(/'/g, "&apos;");
                 // cmd_name = cmd_name.replace(/&/g, "&amp;");
-                ret += '<code id="' +beg+ /*commands[i][COMMANDS][j]*/ cmd_name +end+ '">' +beg+ cmd_name +end+ '</code><br/>';
+                ret += '<code class="tag">' +beg+ cmd_name +end+ '</code><br/>';
             }
             ret += '</td></tr>';
 
@@ -137,7 +137,7 @@ function help(section, easter)
         '<p class="tagline">First there was a Navigator, then there was an Explorer.\n' +
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</p>\n';
 
-    var introduction = '<div><h2 id="introduction">Introduction</h2></div>' +
+    var introduction = '<span style="float: right"><code class="tag">introduction</code></span><h2 id="introduction">Introduction</h2>' +
         '<p><a href="http://vimperator.mozdev.org">Vimperator</a> is a free browser add-on for Firefox, which makes it look and behave like the <a href="http://www.vim.org">Vim</a> text editor. ' +
         'It has similar key bindings, and you could call it a modal web browser, as key bindings differ according to which mode you are in.</p>\n' +
 
@@ -161,7 +161,7 @@ function help(section, easter)
 
         '<p>Of course as a believer in free open source software, only make a donation if you really like Vimperator, and the money doesn\'t hurt - otherwise just use it, recommend it and like it :)</p>\n'
 
-    var mappings = '<div><h2 id="mappings">Mappings</h2></div>\n' +
+    var mappings = '<span style="float: right"><code class="tag">mappings</code></span><h2 id="mappings">Mappings</h2>\n' +
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
         '<table class="vimperator mappings">'
     // FIXME: fix this when Command() is added and help patch is merged -- djk
@@ -173,7 +173,7 @@ function help(section, easter)
     if (section && section == 'holy-grail')
         mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';
 
-    var commands = '<div><h2 id="commands">Commands</h2></div>\n' +
+    var commands = '<span style="float: right"><code class="tag">commands</code></span><h2 id="commands">Commands</h2>\n' +
         '<table class="vimperator commands">\n';
     var all_commands = [];
     for (var command in vimperator.commands)
@@ -186,7 +186,7 @@ function help(section, easter)
                     'now dead, unfortunately.  So now you might wonder what the meaning of death<br/>' +
                     'is...</p>\n';
 
-    var options = '<div><h2 id="options">Options</h2></div>\n' +
+    var options = '<span style="float: right"><code class="tag">options</code></span><h2 id="options">Options</h2>\n' +
         '<table class="vimperator options">\n';
     options += makeHelpString(g_options, "'", "'", makeOptionsHelpString);
     options += '</table>';
@@ -245,15 +245,21 @@ function help(section, easter)
 
     if (section)
     {
-        var element = doc.getElementById(section);
+        function findSectionElement(section)
+        {
+            return evaluateXPath('//code[@class="tag" and text()="' + section + '"]')
+                   .snapshotItem(0);
+        }
+
+        element = findSectionElement(section);
         if (!element)
         {
             var firstChar = section.charAt(0);
             if (firstChar != ':' && firstChar != "'")
             {
-                element = doc.getElementById(':' + section);
+                element = findSectionElement(':' + section);
                 if (!element)
-                    element = doc.getElementById("'" + section + "'");
+                    element = findSectionElement("'" + section + "'");
             }
         }
         if (!element)
