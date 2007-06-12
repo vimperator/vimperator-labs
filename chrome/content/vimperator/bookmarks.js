@@ -501,22 +501,26 @@ function Marks()
             var slice = marks[mark];
             if (slice && slice.tab && slice.tab.linkedBrowser)
             {
-                vimperator.tabs.select(vimperator.tabs.index(slice.tab));
                 if (!slice.tab.parentNode)
                 {
                     pendingMarks.push(slice);
-                    openURLsInNewTab(slice.location);
+                    openURLsInNewTab(slice.location, true);
                     return;
                 }
-                var win = slice.tab.linkedBrowser.contentWindow;
-                if (win.location.href != slice.location)
+                var index = vimperator.tabs.index(slice.tab);
+                if (index)
                 {
-                    pendingMarks.push(slice);
-                    win.location.href = slice.location;
-                    return;
+                    vimperator.tabs.select(index);
+                    var win = slice.tab.linkedBrowser.contentWindow;
+                    if (win.location.href != slice.location)
+                    {
+                        pendingMarks.push(slice);
+                        win.location.href = slice.location;
+                        return;
+                    }
+                    win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                    ok = true;
                 }
-                win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
-                ok = true;
             }
         }
         else if (mark.match(/^[a-z]$/))
