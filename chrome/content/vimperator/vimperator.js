@@ -64,19 +64,16 @@ function init()
     Vimperator.prototype.mappings      = new Mappings;
     Vimperator.prototype.marks         = new Marks;
 
+    // XXX: move into Vimperator() ?
     vimperator.input = {
         buffer: "",                 // partial command storage
         pendingMap: null,           // pending map storage
         count: -1,                  // parsed count from the input buffer
     };
+
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
-
-    // this function adds all our required listeners to react on events
-    // also stuff like window.onScroll is handled there.
-    //addEventListeners();
-    //vimperator.events();
 
     set_showtabline(get_pref("showtabline"));
     set_guioptions(get_pref("guioptions"));
@@ -121,7 +118,7 @@ function init()
 function unload()
 {
     /*** save our preferences ***/
-    vimperator.commandline.saveHistory();
+    vimperator.commandline.destroy();
 
     vimperator.events.destroy();
 
@@ -233,6 +230,12 @@ function Vimperator() //{{{1
     this.echo = this.commandline.echo;
     this.echoerr = this.commandline.echoErr;
 
+
+    this.getMode = function()
+    {
+        return [mode, extended_mode];
+    }
+
     // set current mode
     // use "null" if you only want to set one of those modes
     this.setMode = function(main, extended, silent)
@@ -314,14 +317,17 @@ function Events() //{{{1
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
         updateBufferList();
+        vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
         updateBufferList();
+        vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) { 
         vimperator.statusline.updateTabCount();
         updateBufferList();
+        vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
 
     // this adds an event which is is called on each page load, even if the
@@ -332,6 +338,7 @@ function Events() //{{{1
     window.onscroll = function (event)
     {
         vimperator.statusline.updateBufferPosition();
+        vimperator.setMode(); // trick to reshow the mode in the command line
     };
 
     window.document.addEventListener("DOMTitleChanged", function(event)

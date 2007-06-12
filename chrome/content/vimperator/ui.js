@@ -63,7 +63,7 @@ function CommandLine ()
     var history_index = UNINITIALIZED;
     var history_start = "";
 
-    // for the example command "open sometext| othertext" (| is the cursor pos)
+    // for the example command "open sometext| othertext" (| is the cursor pos):
     var completion_start_index = 0;  // will be 5 because we want to complete arguments for the :open command
     var completion_prefix = ""       // will be: "open sometext"
     var completion_postfix = "";     // will be: " othertext"
@@ -76,13 +76,31 @@ function CommandLine ()
     // The command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
 
-    // load the history
+    // we need to save the mode which were in before opening the command line
+    // this is then used if we focus the command line again without the "official"
+    // way of calling "open"
+    var cur_extended_mode = null;     // the extended mode which we last openend the command line for
+    var cur_prompt = null;
+    var cur_command = null;
+    var old_mode = null; // when we leave the command prompt this mode is restored
+    var old_extended_mode = null;
+
+    // an ugly hack that we allow the :echo(err) commands after hitting enter
+    // and before the blur() event gets fired
+    var echo_allowed = false;
+
+    // load the commandline history
     var hist = get_pref("commandline_history", "");
     history = hist.split("\n");
 
+    // TODO: these styles should be moved to the .css file
     function setNormalStyle()
     {
         command_widget.inputField.setAttribute("style","font-family: monospace;");
+    }
+    function setMessageStyle()
+    {
+        command_widget.inputField.setAttribute("style", "font-family: monospace; color:magenta; font-weight: bold");
     }
     function setErrorStyle()
     {
@@ -118,13 +136,16 @@ function CommandLine ()
 
     function addToHistory(str)
     {
+        if(str.length < 1)
+            return;
+
         // first remove all old history elements which have this string
         history = history.filter(function(elem) {
                 return elem != str;
         });
         // add string to the command line history
-        if (str.length >= 1 && history.push(str) > HISTORY_SIZE)
-            history.shift();
+        if (history.push(str) > HISTORY_SIZE) //remove the first 10% of the history
+            history = history.slice(HISTORY_SIZE / 10);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -137,46 +158,63 @@ function CommandLine ()
     };
 
     /**
-     * All arguments can be ommited and will be defaulted to ""
+     * All arguments can be ommited and will be defaulted to "" or null
      */
-    this.open = function(prompt, cmd, minor_mode)
+    this.open = function(prompt, cmd, ext_mode)
     {
-        if (!prompt)
-            prompt = "";
-        if (!cmd)
-            cmd = "";
-        //if (minor_mode)
-        vimperator.setMode(vimperator.modes.COMMAND_LINE, minor_mode);
+        // save the current prompts, we need it later if the command widget
+        // receives focus without calling the this.open() method
+        cur_prompt = prompt || "";
+        cur_command = cmd || "";
+        cur_extended_mode = ext_mode || null;
 
         setNormalStyle();
-        setPrompt(prompt);
-        setCommand(cmd);
         history_index = UNINITIALIZED;
         completion_index = UNINITIALIZED;
+
+        // the command_widget.focus() method calls setPrompt() and setCommand()
+        // this is done, because for follow-mouse window managers, we receive
+        // blur and focus events once the user leaves the Firefox window with the mouse
         command_widget.focus();
     };
 
     this.echo = function(str)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (focused && focused == command_widget.inputField)
-            return;
+        if (!echo_allowed && focused && focused == command_widget.inputField)
+            return false;
 
         setNormalStyle();
         setPrompt("");
         setCommand(str);
+        cur_extended_mode = null;
+        return true;
     };
 
     this.echoErr = function(str)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (focused && focused == command_widget.inputField)
-            return;
+        if (!echo_allowed && focused && focused == command_widget.inputField)
+            return false;
 
         setErrorStyle();
         setPrompt("");
         setCommand(str);
+        cur_extended_mode = null;
+        return true;
     };
+
+    // this will prompt the user for a string
+    // vimperator.commandline.input("(s)ave or (o)pen the file?")
+    this.input = function(str)
+    {
+        // TODO: unfinished, need to find out how/if we can block the execution of code
+        // to make this code synchronous
+        setPrompt("");
+        setMessageStyle();
+        setCommand(str);
+        return "not implemented";
+    }
 
     this.clear = function()
     {
@@ -188,18 +226,53 @@ function CommandLine ()
 
     this.onEvent = function(event)
     {
-        //var end = false;
         var command = this.getCommand();
 
         if(event.type == "blur")
         {
+            logMessage("blur");
             // when we do a command_widget.focus() we get a blur event immediately,
             // so check if the target is the actualy input field
             if (event.target == command_widget.inputField)
             {
-                addToHistory(command);
+                var silent = false;
+                if (old_mode == vimperator.modes.NORMAL)
+                    silent = true;
+                vimperator.setMode(old_mode || vimperator.modes.NORMAL, old_extended_mode || null, silent);
+                cur_command = command;
+
+                // don't add the echoed command to the history, on pressing <cr>, the 
+                // command is saved right into the kepress handler
+                if(!echo_allowed)
+                    addToHistory(command);
+
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+            }
+        }
+        else if(event.type == "focus")
+        {
+            // if we manually click into the command line, don't open it
+            if (event.target == command_widget.inputField && cur_extended_mode != null)
+            {
+                // save the mode, because we need to restore it on blur()
+                [old_mode, old_extended_mode] = vimperator.getMode();
+                vimperator.setMode(vimperator.modes.COMMAND_LINE, cur_extended_mode);
+
+                setPrompt(cur_prompt);
+                setCommand(cur_command);
+            }
+            else
+            {
+                //event.stopPropagation(); // XXX: doesnt seem to work
+                //event.preventDefault();  // so we need to use the hack
+                
+                // NOTE: echo_allowed is a misleading name here, actually this flag is set
+                // so that we don't save a history entry if the user clicks into the text field
+                echo_allowed = true;
+                event.target.blur();
+                echo_allowed = false;
+                return false;
             }
         }
         else if(event.type == "input")
@@ -213,6 +286,7 @@ function CommandLine ()
             if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
             {
                 //              FIXME: move to execute() in commands.js
+                //              var end = false;
                 //              try {
                 //                  [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
                 //              } catch(e) {
@@ -225,19 +299,20 @@ function CommandLine ()
                 //              if (!end)
                 //                  command_line.value = "";
 
-                // NOTE: the command is saved to the history in the blur() handler
-                vimperator.focusContent();
+                echo_allowed = true;
+                addToHistory(command);
                 var res = vimperator.triggerCallback("submit", command);
-                vimperator.setMode(vimperator.modes.NORMAL, null, true);
+                vimperator.focusContent();
+                echo_allowed = false;
                 return res;
             }
             /* user pressed ESCAPE to cancel this prompt */
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-c>")
             {
                 var res = vimperator.triggerCallback("cancel");
-                addToHistory(command);
-                this.clear();
+                // the command history item is saved in the blur() handler
                 vimperator.focusContent();
+                this.clear();
                 return res;
             }
 
@@ -423,7 +498,7 @@ function CommandLine ()
     }
 
     // it would be better if we had a destructor in javascript ...
-    this.saveHistory = function()
+    this.destroy = function()
     {
         set_pref("commandline_history", history.join("\n"));
     }

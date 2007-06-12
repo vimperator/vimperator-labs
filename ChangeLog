@@ -1,6 +1,7 @@
 <pre>
 2007-05-02:
 	* version ???
+	* Command line is now cleared on most redraws like in vim
     * The RSS feed button in the address bar works again
     * reload/stop buttons update enabled state again
 	* added marks support (thanks Viktor Kojouharov)

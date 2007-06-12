@@ -97,7 +97,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
                     <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
 						onkeypress="vimperator.commandline.onEvent(event);"
 						oninput="vimperator.commandline.onEvent(event);"
-                        onblur="vimperator.commandline.onEvent(event);" style="font-family: monospace"/>
+						onfocus="vimperator.commandline.onEvent(event);"
+                        onblur="vimperator.commandline.onEvent(event);"
+                        style="font-family: monospace; -moz-user-focus:ignore;"/>
                 </hbox>
 			</vbox>
 		</toolbar>

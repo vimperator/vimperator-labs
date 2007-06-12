@@ -461,14 +461,11 @@ function Search()
     logMessage("Search initialized");
 }
 
-// @todo nicer way to register commands?
+// @TODO should be moved into commands.js
 vimperator.commands.add(new Command(["noh[lsearch]"],
         clearSelection,
         {
-            usage: ["noh[lsearch]"],
-            short_help: "Clear the current selection",
-            help: null,
-            completer: null
+            short_help: "Clear the current selection"
         }
 ));
 
