@@ -66,14 +66,10 @@ function Mappings()//{{{
 
     function addDefaultMap(map)
     {
-        if (!map)
-            return false;
-
         if (!main[map.mode])
             main[map.mode] = [];
 
         main[map.mode].push(map);
-        return true;
     }
 
     function getFrom(mode, cmd, stack)

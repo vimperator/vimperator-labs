@@ -187,12 +187,7 @@ function Commands()//{{{
 
     function addDefaultCommand(command)
     {
-        if (!command)
-            return false;
-
         ex_commands.push(command);
-
-        return true;
     }
 
     function commandsIterator()
