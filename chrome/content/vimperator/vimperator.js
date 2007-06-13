@@ -249,7 +249,7 @@ function Vimperator() //{{{1
         if (typeof(extended) === "number")
             extended_mode = extended;
 
-        if (typeof(silent) == "undefined" || !silent)
+        if (!silent)
             showMode();
     }
     // returns true if "whichmode" is found in either the main or
@@ -739,7 +739,7 @@ function Tabs() //{{{1
         var length   = getBrowser().mTabs.length;
         var last     = length - 1;
 
-        if (typeof(spec) === "undefined" || spec === "")
+        if (spec === undefined || spec === "")
             return position;
 
         if (typeof(spec) === "number")

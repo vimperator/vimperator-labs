@@ -1506,7 +1506,7 @@ function set(args, special)
             return;
         }
 
-        var no = true; if (matches[1] == undefined) no = false;
+        var no = true; if (matches[1] === undefined) no = false;
         var opt = matches[2];
         var option = get_option(opt);
         if (!option)
@@ -1516,10 +1516,10 @@ function set(args, special)
         }
 
         var get = false; if (matches[3] == "?" ||
-            (option[TYPE] != 'boolean' && matches[4] == undefined)) get = true;
+            (option[TYPE] != 'boolean' && matches[4] === undefined)) get = true;
         var reset = false; if (matches[3] == "&") reset = true;
         var oper = matches[5];
-        var val = matches[6]; if (val == undefined) val = "";
+        var val = matches[6]; if (val === undefined) val = "";
 
         // reset a variable to its default value.
         if (reset)
