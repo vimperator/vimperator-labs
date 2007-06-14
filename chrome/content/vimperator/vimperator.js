@@ -246,7 +246,7 @@ function Vimperator() //{{{1
             mode = main;
             extended_mode = this.modes.NONE;
         }
-        if (typeof(extended) === "number")
+        if (typeof extended === "number")
             extended_mode = extended;
 
         if (!silent)
@@ -742,7 +742,7 @@ function Tabs() //{{{1
         if (spec === undefined || spec === "")
             return position;
 
-        if (typeof(spec) === "number")
+        if (typeof spec === "number")
             position = spec;
         else if (spec === "$")
             return last;

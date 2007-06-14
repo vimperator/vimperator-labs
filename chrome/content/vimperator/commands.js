@@ -1347,7 +1347,7 @@ function zoom_to(value)
         value = 100;
 
     // convert to int, if string was given
-    if (typeof(value) != "number")
+    if (typeof value != "number")
     {
         oldval = value;
         value = parseInt(oldval, 10);

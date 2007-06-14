@@ -110,7 +110,7 @@ function CommandLine ()
     // Sets the prompt - for example, : or /
     function setPrompt(prompt)
     {
-        if (typeof(prompt) != "string")
+        if (typeof prompt != "string")
             prompt = "";
 
         prompt_widget.value = prompt;
@@ -738,7 +738,7 @@ function StatusLine()
 
     this.updateUrl = function(url)
     {
-        if (!url || typeof(url) != "string")
+        if (!url || typeof url != "string")
             url = getCurrentLocation();
 
         url_widget.value = url;
@@ -746,7 +746,7 @@ function StatusLine()
 
     this.updateInputBuffer = function(buffer)
     {
-        if (!buffer || typeof(buffer) != "string")
+        if (!buffer || typeof buffer != "string")
             buffer = "";
 
         inputbuffer_widget.value = buffer;
@@ -757,9 +757,9 @@ function StatusLine()
         if (!progress)
             progress = "";
 
-        if (typeof(progress) == "string")
+        if (typeof progress == "string")
             progress_widget.value = progress;
-        else if (typeof(progress) == "number")
+        else if (typeof progress == "number")
         {
             var progress_str = "";
             if (progress <= 0)
@@ -785,9 +785,9 @@ function StatusLine()
     // you can omit either of the 2 arguments
     this.updateTabCount = function(cur_index, total_tabs)
     {
-        if(!cur_index || typeof(cur_index != "number"))
+        if(!cur_index || typeof cur_index != "number")
             cur_index = vimperator.tabs.index() + 1;
-        if(!total_tabs || typeof(cur_index != "number"))
+        if(!total_tabs || typeof cur_index != "number")
             total_tabs = vimperator.tabs.count();
 
         tabcount_widget.value = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
@@ -796,7 +796,7 @@ function StatusLine()
     // percent is given between 0 and 1
     this.updateBufferPosition = function(percent)
     {
-        if(!percent || typeof(percent) != "number")
+        if(!percent || typeof percent != "number")
         {
             var win = document.commandDispatcher.focusedWindow;
             percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;

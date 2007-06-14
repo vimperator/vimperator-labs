@@ -413,11 +413,11 @@ function get_pref(name, forced_default)
 
     try
     {
-        if (typeof(default_value) == "string")
+        if (typeof default_value == "string")
             pref = g_vimperator_prefs.getCharPref(name);
-        else if (typeof(default_value) == "number")
+        else if (typeof default_value == "number")
             pref = g_vimperator_prefs.getIntPref(name);
-        else if (typeof(default_value) == "boolean")
+        else if (typeof default_value == "boolean")
             pref = g_vimperator_prefs.getBoolPref(name);
         else
             pref = default_value;
@@ -436,11 +436,11 @@ function get_firefox_pref(name, default_value)
     var pref;
     try
     {
-        if (typeof(default_value) == "string")
+        if (typeof default_value == "string")
             pref = g_firefox_prefs.getCharPref(name);
-        else if (typeof(default_value) == "number")
+        else if (typeof default_value == "number")
             pref = g_firefox_prefs.getIntPref(name);
-        else if (typeof(default_value) == "boolean")
+        else if (typeof default_value == "boolean")
             pref = g_firefox_prefs.getBoolPref(name);
         else
             pref = default_value;
@@ -460,28 +460,28 @@ function set_pref(name, value)
     if (!g_vimperator_prefs)
         g_vimperator_prefs = g_firefox_prefs.getBranch("extensions.vimperator.");
 
-    if (typeof(value) == "string")
+    if (typeof value == "string")
         g_vimperator_prefs.setCharPref(name, value);
-    else if (typeof(value) == "number")
+    else if (typeof value == "number")
         g_vimperator_prefs.setIntPref(name, value);
-    else if (typeof(value) == "boolean")
+    else if (typeof value == "boolean")
         g_vimperator_prefs.setBoolPref(name, value);
     else
-        vimperator.echoerr("Unkown typeof pref: " + value);
+        vimperator.echoerr("Unknown typeof pref: " + value);
 }
 
 function set_firefox_pref(name, value)
 {
     // NOTE: firefox prefs are always inititialized, no need to re-init
 
-    if (typeof(value) == "string")
+    if (typeof value == "string")
         g_firefox_prefs.setCharPref(name, value);
-    else if (typeof(value) == "number")
+    else if (typeof value == "number")
         g_firefox_prefs.setIntPref(name, value);
-    else if (typeof(value) == "boolean")
+    else if (typeof value == "boolean")
         g_firefox_prefs.setBoolPref(name, value);
     else
-        vimperator.echoerr("Unkown typeof pref: " + value);
+        vimperator.echoerr("Unknown typeof pref: " + value);
 }
 
 
@@ -524,7 +524,7 @@ function set_showtabline(value)
 
 function set_titlestring(value)
 {
-    if (!value || typeof(value) != "string")
+    if (!value || typeof value != "string")
         value = get_pref("titlestring");
 
 	document.getElementById("main-window").setAttribute("titlemodifier", value);
