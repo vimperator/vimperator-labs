@@ -83,6 +83,7 @@ function Command(specs, action, extra_info)//{{{
     {
         var short_names = [];
         var long_names  = [];
+        var names = [];
         for (var i = 0; i < specs.length; i++)
         {
             var match;
@@ -90,11 +91,14 @@ function Command(specs, action, extra_info)//{{{
             {
                 short_names.push(match[1]);
                 long_names.push(match[1] + match[2]);
+                // order as long1, short1, long2, short2
+                names.push(match[1] + match[2]);
+                names.push(match[1]);
             }
             else
                 long_names.push(specs[i]);
         }
-        return { long_names: long_names, short_names: short_names };
+        return { names: names, long_names: long_names, short_names: short_names };
     }
 
     this.specs = specs;
@@ -106,7 +110,7 @@ function Command(specs, action, extra_info)//{{{
     this.name = this.long_names[0];
 
     // return all command name aliases
-    this.names = this.short_names.concat(this.long_names);
+    this.names = expanded_specs.names;
 
     this.action = action;
 
