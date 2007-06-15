@@ -319,7 +319,8 @@ function get_options_completions(filter, unfiltered)/*{{{*/
         if (no_mode && $_[TYPE] != "boolean") return false;
         else return true;
     }).map(function($_) {
-        return [$_[COMMANDS][0], $_[SHORTHELP]];
+        var prefix = no_mode ? 'no' : '';
+        return [prefix + $_[COMMANDS][0], $_[SHORTHELP]];
     });
 
 
