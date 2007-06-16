@@ -86,7 +86,7 @@ function Bookmarks()
     var bookmarks = null;
     var keywords = null;
 
-    if(get_pref("preload"))
+    if(vimperator.options["preload"])
         setTimeout(function() { load(); } , 100);
 
     function load()
@@ -230,7 +230,7 @@ function Bookmarks()
     {
         var url = null;
         if(!engine_name || engine_name == "")
-            engine_name = get_pref("defsearch", "google");
+            engine_name = vimperator.options["defsearch"];
 
         // first checks the search engines for a match
         var engine = search_service.getEngineByAlias(engine_name);
@@ -273,7 +273,7 @@ function History()
 
     var history = null;
 
-    if(get_pref("preload"))
+    if(vimperator.options["preload"])
         setTimeout(function() { load(); } , 100);
 
     function load()

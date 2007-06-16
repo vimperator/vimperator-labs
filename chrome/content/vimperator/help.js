@@ -48,13 +48,13 @@ function help(section, easter)
     function makeHelpString(commands, beg, end, func)
     {
         var ret = "";
-        for (var i=0; i < commands.length; i++)
+        for (var command in commands)
         {
             // the usage information for the command
             ret += '<tr class="description"><td class="usage" valign="top">';
-            for (var j=0; j < commands[i][USAGE].length; j++)
+            for (var j=0; j < command.usage.length; j++)
             {
-                var usage = commands[i][USAGE][j];
+                var usage = command.usage[j];
 
                 // keep <br/>
                 //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
@@ -71,19 +71,19 @@ function help(section, easter)
             ret += '</td><td valign="top">';
 
             // the actual help text with the first line in bold
-            if (commands[i][SHORTHELP])
+            if (command.short_help)
             {
                 ret += '<span class="shorthelp">';
-                ret += commands[i][SHORTHELP]; // the help description
+                ret += command.short_help; // the help description
                 ret += "</span><br/>";
                 if(func) // for options we print default values here, e.g.
                 {
-                    ret += func.call(this, commands[i]);
+                    ret += func.call(this, command);
                     ret += "<br/>";
                 }
-                if (commands[i][HELP])
+                if (command.help)
                 {
-                    ret += commands[i][HELP]; // the help description
+                    ret += command.help; // the help description
                     ret += "<br/>";
                 }
             }
@@ -91,7 +91,7 @@ function help(section, easter)
                 ret += "Sorry, no help available";
             // the tags which are printed on the top right
             ret += '</td><td class="taglist" valign="top">';
-            var names = commands[i][COMMANDS];
+            var names = command.names;
             for (var j=0; j < names.length; j++)
             {
                 var cmd_name = names[j];
@@ -100,12 +100,12 @@ function help(section, easter)
                 // cmd_name = cmd_name.replace(/"/g, "&quot;");
                 // cmd_name = cmd_name.replace(/'/g, "&apos;");
                 // cmd_name = cmd_name.replace(/&/g, "&amp;");
-                ret += '<code class="tag">' +beg+ cmd_name +end+ '</code><br/>';
+                ret += '<code class="tag">' + beg + cmd_name + end + '</code><br/>';
             }
             ret += '</td></tr>';
 
             // add more space between entries
-            if (i < commands.length-1)
+            // FIXME: if (i < commands.length-1)
                 ret += '<tr class="separator"><td colspan="3"><hr/></td></tr>\n';
         }
         return ret;
@@ -113,20 +113,20 @@ function help(section, easter)
     function makeOptionsHelpString(command)
     {
         var ret = "";
-        ret = command[TYPE] + ' (default: <span style="font-family: monospace;">';
-        if (command[TYPE] == "boolean")
+        ret = command.type + ' (default: <span style="font-family: monospace;">';
+        if (command.type == "boolean")
         {
-            if(command[DEFAULT] == true)
+            if(command.default_value == true)
                 ret += "on";
             else
                 ret += "off";
         }
         else
         {
-            if (typeof command[DEFAULT] == 'string' && command[DEFAULT].length == 0)
+            if (typeof command.default_value == 'string' && command.default_value.length == 0)
                 ret += "''";
             else
-                ret += command[DEFAULT];
+                ret += command.default_value;
         }
 
         ret += "</span>)<br/>";
@@ -165,20 +165,14 @@ function help(section, easter)
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
         '<table class="vimperator mappings">'
     // FIXME: fix this when Command() is added and help patch is merged -- djk
-    var all_maps = [];
-    for (var map in vimperator.mappings)
-        all_maps.push([map.commands, [map.usage], map.short_help, map.help])
-    mappings += makeHelpString(all_maps, "", "", null);
+    mappings += makeHelpString(vimperator.mappings, "", "", null);
     mappings += '</table>';
     if (section && section == 'holy-grail')
         mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';
 
     var commands = '<span style="float: right"><code class="tag">commands</code></span><h2 id="commands">Commands</h2>\n' +
         '<table class="vimperator commands">\n';
-    var all_commands = [];
-    for (var command in vimperator.commands)
-        all_commands.push([command.names, command.usage, command.short_help, command.help]);
-    commands += makeHelpString(all_commands, ":", "", null);
+    commands += makeHelpString(vimperator.commands, ":", "", null);
     commands += '</table>';
     if (section && section == '42')
         commands += '<p id="42">What is the meaning of life, the universe and everything?<br/>' +
@@ -188,7 +182,7 @@ function help(section, easter)
 
     var options = '<span style="float: right"><code class="tag">options</code></span><h2 id="options">Options</h2>\n' +
         '<table class="vimperator options">\n';
-    options += makeHelpString(g_options, "'", "'", makeOptionsHelpString);
+    options += makeHelpString(vimperator.options, "'", "'", makeOptionsHelpString);
     options += '</table>';
 
     var fulldoc = '<?xml version="1.0"?>\n' +

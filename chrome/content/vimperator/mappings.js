@@ -5,7 +5,7 @@ function Map(mode, cmds, act, extra_info) //{{{
         return null;
 
     this.mode = mode;
-    this.commands = cmds;
+    this.names = cmds;
     this.action = act;
 
     if (extra_info)
@@ -19,9 +19,10 @@ function Map(mode, cmds, act, extra_info) //{{{
             this.usage = "";
             if (this.flags & Mappings.flags.COUNT)
                 this.usage = "{count}";
-            this.usage += this.commands[0]; // only the first command name
+            this.usage += this.names[0]; // only the first command name
             if (this.flags & Mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
+            this.usage = [this.usage]; // FIXME: usage an array - needed for the help
         }
 
         this.help = extra_info.help || null;
@@ -48,7 +49,7 @@ Map.prototype.toString = function()
     // FIXME: -- djk
     return "Map {" +
         "\n\tmode: " + this.mode +
-        "\n\tcommands: " + this.commands +
+        "\n\tnames: " + this.names +
         "\n\taction: " + this.action +
         "\n\tusage: " + this.usage +
         "\n\tshort_help: " + this.short_help +
@@ -68,7 +69,6 @@ function Mappings()//{{{
     {
         if (!main[map.mode])
             main[map.mode] = [];
-
         main[map.mode].push(map);
     }
 
@@ -81,8 +81,8 @@ function Mappings()//{{{
         var stack_length = substack.length;
         for (var i = 0; i < stack_length; i++)
         {
-            for (var j = 0; j < substack[i].commands.length; j++)
-                if (substack[i].commands[j] == cmd)
+            for (var j = 0; j < substack[i].names.length; j++)
+                if (substack[i].names[j] == cmd)
                     return substack[i];
         }
     }
@@ -167,9 +167,9 @@ function Mappings()//{{{
         for (var i = 0; i < main[mode].length; i++) // FIXME: just the main/default map space for now -- djk
         {
             var map = main[mode][i];
-            for (var j = 0; j < map.commands.length; j++)
+            for (var j = 0; j < map.names.length; j++)
             {
-                if (map.commands[j].indexOf(cmd) == 0)
+                if (map.names[j].indexOf(cmd) == 0)
                     matching.push(map)
             }
         }
@@ -187,7 +187,7 @@ function Mappings()//{{{
         function (mark) { vimperator.marks.jumpTo(mark) },
         {
             short_help: "Jump to the mark in the current buffer",
-            usage: "'{a-zA-Z0-9}",
+            usage: ["'{a-zA-Z0-9}"],
             help: "Marks a-z are local to the buffer, whereas A-Z and 0-9 are valid between buffers.",
             flags: Mappings.flags.ARGUMENT
         }
@@ -271,7 +271,7 @@ function Mappings()//{{{
         function(mark) { vimperator.marks.add(mark) },
         {
             short_help: "Set mark at the cursor position",
-            usage: "m{a-zA-Z0-9}",
+            usage: ["m{a-zA-Z0-9}"],
             help: "Marks a-z are local to the buffer, whereas A-Z and 0-9 are valid between buffers.",
             flags: Mappings.flags.ARGUMENT
         }

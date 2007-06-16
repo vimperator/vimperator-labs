@@ -90,7 +90,7 @@ function CommandLine ()
     var echo_allowed = false;
 
     // load the commandline history
-    var hist = get_pref("commandline_history", "");
+    var hist = Options.getPref("commandline_history", "");
     history = hist.split("\n");
 
     // TODO: these styles should be moved to the .css file
@@ -381,7 +381,7 @@ function CommandLine ()
                         [completion_start_index, completions] = res;
 
                     // Sort the completion list
-                    if (get_pref('wildoptions').match(/\bsort\b/))
+                    if (vimperator.options["wildoptions"].match(/\bsort\b/))
                     {
                         completions.sort(function(a, b) {
                                 if (a[0] < b[0])
@@ -403,7 +403,7 @@ function CommandLine ()
                     return;
                 }
 
-                var wim = get_pref('wildmode').split(/,/);
+                var wim = vimperator.options["wildmode"].split(/,/);
                 var has_list = false;
                 var longest = false;
                 var full = false;
@@ -500,7 +500,7 @@ function CommandLine ()
     // it would be better if we had a destructor in javascript ...
     this.destroy = function()
     {
-        set_pref("commandline_history", history.join("\n"));
+        Options.setPref("commandline_history", history.join("\n"));
     }
     logMessage("CommandLine initialized.");
 }
@@ -606,7 +606,7 @@ function InformationList(id, options)
      */
     this.show = function(compl)
     {
-        //max_items = get_pref("previewheight");
+        //max_items = vimperator.options["previewheight"];
 
         if (compl)
         {

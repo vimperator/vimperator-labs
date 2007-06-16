@@ -78,7 +78,7 @@ function hit_a_hint()
             wins.push(win);
         }
         //    logMessage("winId:"+win.winId);
-        win.res = evaluateXPath(get_pref("hinttags"), doc);
+        win.res = evaluateXPath(vimperator.options["hinttags"], doc);
         win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
     }
  
@@ -135,12 +135,12 @@ function hit_a_hint()
         area[3] = area[1] + win.innerHeight;
  
         var doc = win.document;
-        var res = evaluateXPath(get_pref("hinttags"), doc);
+        var res = evaluateXPath(vimperator.options["hinttags"], doc);
  
         var elem, i;
  
         hintElemSpan = doc.createElement('SPAN');
-        hintElemSpan.style.cssText = get_pref("hintstyle");
+        hintElemSpan.style.cssText = vimperator.options["hintstyle"];
         hintElemSpan.setAttribute('name', 'hah_hint');
  
         var hintContainer = doc.getElementById('hah_hints');
@@ -153,7 +153,7 @@ function hit_a_hint()
         hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
  
         var hints = hintContainer.childNodes;
-        var maxhints = get_pref("maxhints");
+        var maxhints = vimperator.options["maxhints"];
         for (i = 0; i < res.snapshotLength; i++)
         {
             // this saves from script timeouts on pages with some thousand links
@@ -261,7 +261,7 @@ function hit_a_hint()
         for (i = 0; i < res.snapshotLength; i++)
         {
             elem = res.snapshotItem(i);
-            setHintStyle(elem, get_pref("hintstyle"));  
+            setHintStyle(elem, vimperator.options["hintstyle"]);  
             elem.style.display = 'none';
         }
  
@@ -328,7 +328,7 @@ function hit_a_hint()
  
     function formatHint(hintNum)
     {
-        var hintCharacters = get_pref("hintchars");
+        var hintCharacters = vimperator.options["hintchars"];
         var str = hintNum.toString(hintCharacters.length); // turn hintNum into a base(length) number
  
         // map the number onto the chars in the numbers string
@@ -364,8 +364,8 @@ function hit_a_hint()
  
     function changeHintFocus(linkNumString, oldLinkNumString)
     {
-        var styleString = get_pref("hintstyle");
-        var styleStringFocus = get_pref("focusedhintstyle");
+        var styleString = vimperator.options["hintstyle"];
+        var styleStringFocus = vimperator.options["focusedhintstyle"];
         var hintElem;
  
         if (oldLinkNumString.length > 0)
@@ -432,7 +432,7 @@ function hit_a_hint()
         //hintmode = HINT_MODE_QUICK;
         linkNumString = '';
         hintedElems = [];
-//        if (!silent && get_pref("showmode"))
+//        if (!silent && vimperator.options["showmode"])
 //            vimperator.echo('');
  
         removeHints(win);
@@ -450,7 +450,7 @@ function hit_a_hint()
             if (!elem)
                 return 0;
             // reset style attribute
-            setHintStyle(elem, get_pref("hintstyle"));  
+            setHintStyle(elem, vimperator.options["hintstyle"]);  
         }
     };
         
@@ -480,7 +480,7 @@ function hit_a_hint()
             if (!elem)
                 return 0;
 
-            setHintStyle(elem, get_pref("hintstyle"));  
+            setHintStyle(elem, vimperator.options["hintstyle"]);  
             elem = elem.refElem;
             var elemTagName = elem.tagName;
             elem.focus();
@@ -601,7 +601,7 @@ function hit_a_hint()
         state = 0;
  
         var num = String.fromCharCode(event.charCode).toUpperCase();
-        var hintCharacters = get_pref("hintchars");
+        var hintCharacters = vimperator.options["hintchars"];
         if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
         {
             var oldLinkNumString = linkNumString;

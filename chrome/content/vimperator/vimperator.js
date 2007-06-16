@@ -51,11 +51,12 @@ function init()
 
     // TODO: can these classes be moved into a namesspace to now clobber
     // the main namespace?
+    Vimperator.prototype.options       = new Options;
     Vimperator.prototype.events        = new Events;
     Vimperator.prototype.commands      = new Commands;
     Vimperator.prototype.bookmarks     = new Bookmarks;
     Vimperator.prototype.history       = new History;
-//    Vimperator.prototype.commandline   = new CommandLine;
+    Vimperator.prototype.commandline   = new CommandLine;
     Vimperator.prototype.search        = new Search;
     Vimperator.prototype.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
@@ -63,6 +64,10 @@ function init()
     Vimperator.prototype.tabs          = new Tabs;
     Vimperator.prototype.mappings      = new Mappings;
     Vimperator.prototype.marks         = new Marks;
+
+    // DJK FIXME
+    Vimperator.prototype.echo    = vimperator.commandline.echo;
+    Vimperator.prototype.echoerr = vimperator.commandline.echoErr;
 
     // XXX: move into Vimperator() ?
     vimperator.input = {
@@ -75,34 +80,34 @@ function init()
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
 
-    set_showtabline(get_pref("showtabline"));
-    set_guioptions(get_pref("guioptions"));
-    set_titlestring();
+    // this function adds all our required listeners to react on events
+    // also stuff like window.onScroll is handled there.
+    //addEventListeners();
+    //vimperator.events();
 
     // work around firefox popup blocker
-    popup_allowed_events = get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
+    popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
     if (!popup_allowed_events.match("keypress"))
-        set_firefox_pref('dom.popup_allowed_events', popup_allowed_events + " keypress");
+        Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events + " keypress");
 
     // we have our own typeahead find implementation
-    set_firefox_pref('accessibility.typeaheadfind.autostart', false);
-    set_firefox_pref('accessibility.typeaheadfind', false); // actually the above setting should do it, but has no effect in firefox
+    Options.setFirefoxPref('accessibility.typeaheadfind.autostart', false);
+    Options.setFirefoxPref('accessibility.typeaheadfind', false); // actually the above setting should do it, but has no effect in firefox
 
     // first time intro message
-    if (get_pref("firsttime", true))
+    if (Options.getPref("firsttime", true))
     {
         setTimeout(function() {
             help(null, null, null, { inTab: true });
-            set_pref("firsttime", false);
+            Options.setPref("firsttime", false);
         }, 1000); 
     }
-
 
     gURLBar.blur();
     vimperator.focusContent();
 
     // firefox preferences which we need to be changed to work well with vimperator
-    set_firefox_pref("browser.startup.page", 3); // start with saved session
+    Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
 
     // Finally, read a ~/.vimperatorrc
     // Make sourcing asynchronous, otherwise commands that open new tabs won't work
@@ -123,9 +128,9 @@ function unload()
     vimperator.events.destroy();
 
     // reset some modified firefox prefs
-    if (get_firefox_pref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
+    if (Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
             == popup_allowed_events + " keypress")
-        set_firefox_pref('dom.popup_allowed_events', popup_allowed_events);
+        Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events);
 }
 
 
@@ -173,7 +178,7 @@ function Vimperator() //{{{1
 
     function showMode()
     {
-        if (!get_pref("showmode"))
+        if (!vimperator.options["showmode"])
             return;
 
         var str_mode = mode_messages[mode];
@@ -199,7 +204,8 @@ function Vimperator() //{{{1
 	////////////////////// PUBLIC SECTION //////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
     this.ver  = "###VERSION### CVS (created: ###DATE###)";
-    this.commandline = new CommandLine();
+    // DJK FIXME
+    // this.commandline = new CommandLine();
 //    this.search = new Search();
 
     /////////////// callbacks ////////////////////////////
@@ -227,8 +233,8 @@ function Vimperator() //{{{1
 	}
 
     // just forward these echo commands
-    this.echo = this.commandline.echo;
-    this.echoerr = this.commandline.echoErr;
+    // DJK FIXME: this.echo = this.commandline.echo;
+    // DJK FIXME: this.echoerr = this.commandline.echoErr;
 
 
     this.getMode = function()
@@ -680,7 +686,7 @@ function Events() //{{{1
         },
         setOverLink : function(link, b)
         {
-            var ssli = get_pref("showstatuslinks");
+            var ssli = vimperator.options["showstatuslinks"];
             if (link && ssli)
             {
                 if (ssli == 1)
@@ -883,7 +889,7 @@ function Tabs() //{{{1
                 return;
             }    
 
-            var numbertabs = get_pref('numbertabs');
+            var numbertabs = vimperator.options["numbertabs"];
             if(numbertabs)
             {    
                 if(split_title)

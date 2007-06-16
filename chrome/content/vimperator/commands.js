@@ -1390,7 +1390,7 @@ function copyToClipboard(str)
 
 function beep()
 {
-    if (get_pref("beep") == false)
+    if (!vimperator.options["beep"])
         return;
 
     var gBeepService = Components.classes['@mozilla.org/sound;1']
@@ -1406,9 +1406,9 @@ function beep()
 function quit(save_session)
 {
     if (save_session)
-        set_firefox_pref("browser.startup.page", 3); // start with saved session
+        Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
     else
-        set_firefox_pref("browser.startup.page", 1); // start with default homepage session
+        Options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
 
     goQuitApplication();
 }
@@ -1507,7 +1507,7 @@ function set(args, special)
 
         var no = true; if (matches[1] === undefined) no = false;
         var opt = matches[2];
-        var option = get_option(opt);
+        var option = vimperator.options.get(opt);
         if (!option)
         {
             vimperator.echoerr("E518: Unknown option: " + opt);
@@ -1515,7 +1515,7 @@ function set(args, special)
         }
 
         var get = false; if (matches[3] == "?" ||
-            (option[TYPE] != 'boolean' && matches[4] === undefined)) get = true;
+            (option.type != 'boolean' && matches[4] === undefined)) get = true;
         var reset = false; if (matches[3] == "&") reset = true;
         var oper = matches[5];
         var val = matches[6]; if (val === undefined) val = "";
@@ -1523,42 +1523,42 @@ function set(args, special)
         // reset a variable to its default value.
         if (reset)
         {
-            var def = option[DEFAULT];
-            option[SETFUNC].call(this, def);
+            option.value = option.default_value;
         }
         // read access
         else if (get)
         {
-            var cur_val = option[GETFUNC].call(this);
-            vimperator.echo("  " + option[COMMANDS][0] + "=" + cur_val);
+            vimperator.echo("  " + option.name + "=" + option.value);
+            //vimperator.echo("  " + option.name + "=" + vimperator.options[option.name]);
         }
         // write access
         else
         {
-            var type = option[TYPE];
+            var type = option.type;
             if (type == "boolean")
             {
-                option[SETFUNC].call(this, !no);
+                option.value = !no;
             }
             else if (type == "number")
             {
                 var num = parseInt(val, 10);
                 if (isNaN(num))
-                    vimperator.echoerr("Invalid argument type to option " + option[COMMANDS][0] + ": Expects number");
+                    vimperator.echoerr("Invalid argument type to option " + option.name + ": Expects number");
                 else
                 {
-                    var cur_val = option[GETFUNC].call(this);
+                    var cur_val = option.value;
                     if (oper == '+') num = cur_val + num;
                     if (oper == '-') num = cur_val - num;
-                    if (option[CHECKFUNC] != null && option[CHECKFUNC].call(this, num) == false)
-                        vimperator.echoerr("Invalid argument to option " + option[COMMANDS][0] + ": Check help for more details");
+                    // FIXME
+                    if (option.validator != null && option.validator.call(this, num) == false)
+                        vimperator.echoerr("Invalid argument to option " + option.name + ": Check help for more details");
                     else // all checks passed, execute option handler
-                        option[SETFUNC].call(this, num);
+                        option.value = num;
                 }
             }
             else if (type == "charlist" || type == "stringlist" || type == "string")
             {
-                var cur_val = option[GETFUNC].call(this);
+                var cur_val = option.value;
                 if (type == "charlist" || type == "string")
                 {
                     if (oper == '+' && !cur_val.match(val))
@@ -1575,10 +1575,11 @@ function set(args, special)
                         val = val.replace(/^,?/, '');
                     }
                 }
-                if (option[CHECKFUNC] != null && option[CHECKFUNC].call(this, val) == false)
-                    vimperator.echoerr("Invalid argument to option " + option[COMMANDS][0] + ": Check help for more details");
+                // FIXME
+                if (option.validator != null && option.validator.call(this, val) == false)
+                    vimperator.echoerr("Invalid argument to option " + option.name + ": Check help for more details");
                 else // all checks passed, execute option handler
-                    option[SETFUNC].call(this, val);
+                    option.value = val;
             }
             else
                 vimperator.echoerr("Internal error, option format `" + type + "' not supported");
@@ -1689,105 +1690,105 @@ function evaluateXPath(expression, doc, ordered)
 
 
 
-// list all installed themes and extensions
-function outputAddonsList(aTarget)
-{
-    var RDFService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-        .getService(Components.interfaces.nsIRDFService);
-    var Container = Components.classes["@mozilla.org/rdf/container;1"]
-        .getService(Components.interfaces.nsIRDFContainer);
-    var stream = Components.classes['@mozilla.org/network/file-output-stream;1']
-        .createInstance(Components.interfaces.nsIFileOutputStream);
-    var fp = Components.classes["@mozilla.org/filepicker;1"]
-        .createInstance(Components.interfaces.nsIFilePicker);
+//// list all installed themes and extensions
+//function outputAddonsList(aTarget)
+//{
+//    var RDFService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+//        .getService(Components.interfaces.nsIRDFService);
+//    var Container = Components.classes["@mozilla.org/rdf/container;1"]
+//        .getService(Components.interfaces.nsIRDFContainer);
+//    var stream = Components.classes['@mozilla.org/network/file-output-stream;1']
+//        .createInstance(Components.interfaces.nsIFileOutputStream);
+//    var fp = Components.classes["@mozilla.org/filepicker;1"]
+//        .createInstance(Components.interfaces.nsIFilePicker);
+//
+//    fp.init(window, aTarget+'s List', fp.modeSave);
+//    fp.defaultString=aTarget+"sList.txt";
+//    fp.appendFilters(fp.filterText);
+//    fp.appendFilters(fp.filterAll);
+//    if (fp.show() == fp.returnCancel)
+//        return;
+//
+//    var extensionDS= Components.classes["@mozilla.org/extensions/manager;1"]
+//        .getService(Components.interfaces.nsIExtensionManager).datasource;
+//    var root = RDFService
+//        .GetResource("urn:mozilla:"+aTarget.toLowerCase()+":root");
+//    var nameArc = RDFService
+//        .GetResource("http://www.mozilla.org/2004/em-rdf#name");
+//    var versionArc = RDFService
+//        .GetResource("http://www.mozilla.org/2004/em-rdf#version");
+//    var disabledArc = RDFService
+//        .GetResource("http://www.mozilla.org/2004/em-rdf#disabled");
+//
+//    var list="";
+//    var disabledlist="";
+//
+//    Container.Init(extensionDS,root);
+//    var elements=Container.GetElements();
+//
+//    while(elements.hasMoreElements())
+//    {
+//        var element=elements.getNext();
+//        var name="";
+//        var version="";
+//        var disabled="";
+//        element.QueryInterface(Components.interfaces.nsIRDFResource);
+//        var target=extensionDS.GetTarget(element, nameArc ,true);
+//        if(target)
+//            name=target
+//                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+//        target=extensionDS.GetTarget(element, versionArc ,true);
+//        if(target)
+//            version=target
+//                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+//        target=extensionDS.GetTarget(element, disabledArc ,true);
+//        if(target)
+//            disabled=target
+//                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+//        if( disabled && disabled=="true")
+//            disabledlist += name + " " + version +"\n";
+//        else if(name)
+//            list += name + " " + version +"\n"
+//    }
+//
+//    if(disabledlist)
+//        list += "\n#Disabled Extensions\n" + disabledlist;
+//
+//    stream.init(fp.file, 0x20|0x02|0x08, 0666, 0);
+//    stream.write(list, list.length);
+//    stream.close();
+//}
 
-    fp.init(window, aTarget+'s List', fp.modeSave);
-    fp.defaultString=aTarget+"sList.txt";
-    fp.appendFilters(fp.filterText);
-    fp.appendFilters(fp.filterAll);
-    if (fp.show() == fp.returnCancel)
-        return;
+///* selects the first input box */
+//function selectInput()
+//{
+////  if (! (ev.charCode == 47 /* ord('/') */ && ev.ctrlKey))
+////      return;
+//
+//    var texts = evaluateXPath("//input[@type='text']");
+//
+//    texts.snapshotItem(0).focus();
+//}
 
-    var extensionDS= Components.classes["@mozilla.org/extensions/manager;1"]
-        .getService(Components.interfaces.nsIExtensionManager).datasource;
-    var root = RDFService
-        .GetResource("urn:mozilla:"+aTarget.toLowerCase()+":root");
-    var nameArc = RDFService
-        .GetResource("http://www.mozilla.org/2004/em-rdf#name");
-    var versionArc = RDFService
-        .GetResource("http://www.mozilla.org/2004/em-rdf#version");
-    var disabledArc = RDFService
-        .GetResource("http://www.mozilla.org/2004/em-rdf#disabled");
-
-    var list="";
-    var disabledlist="";
-
-    Container.Init(extensionDS,root);
-    var elements=Container.GetElements();
-
-    while(elements.hasMoreElements())
-    {
-        var element=elements.getNext();
-        var name="";
-        var version="";
-        var disabled="";
-        element.QueryInterface(Components.interfaces.nsIRDFResource);
-        var target=extensionDS.GetTarget(element, nameArc ,true);
-        if(target)
-            name=target
-                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
-        target=extensionDS.GetTarget(element, versionArc ,true);
-        if(target)
-            version=target
-                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
-        target=extensionDS.GetTarget(element, disabledArc ,true);
-        if(target)
-            disabled=target
-                .QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
-        if( disabled && disabled=="true")
-            disabledlist += name + " " + version +"\n";
-        else if(name)
-            list += name + " " + version +"\n"
-    }
-
-    if(disabledlist)
-        list += "\n#Disabled Extensions\n" + disabledlist;
-
-    stream.init(fp.file, 0x20|0x02|0x08, 0666, 0);
-    stream.write(list, list.length);
-    stream.close();
-}
-
-/* selects the first input box */
-function selectInput()
-{
-//  if (! (ev.charCode == 47 /* ord('/') */ && ev.ctrlKey))
-//      return;
-
-    var texts = evaluateXPath("//input[@type='text']");
-
-    texts.snapshotItem(0).focus();
-}
-
-function toggle_images() {
-    if (!gPrefService) {
-    message("EEP: no gPrefService");
-    return 0;
-    }
-
-
-    var pref;
-    if (!gPrefService.prefHasUserValue("network.image.imageBehavior")) {
-    pref = 0;
-    } else {
-    pref = gPrefService.getIntPref("network.image.imageBehavior");
-    }
-
-
-    set_pref("network.image.imageBehavior", pref ? 0 : 2);
-    pref = gPrefService.getIntPref("network.image.imageBehavior");
-//    redraw();
-    message ("imageBehavior set to " + pref);
-}
+//function toggle_images() {
+//    if (!gPrefService) {
+//    message("EEP: no gPrefService");
+//    return 0;
+//    }
+//
+//
+//    var pref;
+//    if (!gPrefService.prefHasUserValue("network.image.imageBehavior")) {
+//    pref = 0;
+//    } else {
+//    pref = gPrefService.getIntPref("network.image.imageBehavior");
+//    }
+//
+//
+//    set_pref("network.image.imageBehavior", pref ? 0 : 2);
+//    pref = gPrefService.getIntPref("network.image.imageBehavior");
+////    redraw();
+//    message ("imageBehavior set to " + pref);
+//}
 
 // vim: set fdm=marker sw=4 ts=4 et:

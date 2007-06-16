@@ -109,7 +109,7 @@ function get_url_completions(filter, complete)/*{{{*/
     var completions = new Array();
     g_substrings = [];
 
-    var cpt = complete || get_pref("complete");
+    var cpt = complete || vimperator.options["complete"];
     // join all completion arrays together
     for (var i = 0; i < cpt.length; i++)
     {
@@ -273,7 +273,7 @@ function get_help_completions(filter)/*{{{*/
             ];
     }));
     for (var map in vimperator.mappings)
-        help_array.push([map.commands, map.short_help])
+        help_array.push([map.names, map.short_help])
 
     if (!filter) return help_array.map(function($_) {
         return [$_[COMMANDS][0], $_[1]]; // unfiltered, use the first command
@@ -309,34 +309,42 @@ function get_options_completions(filter, unfiltered)/*{{{*/
         no_mode = true;
         filter = filter.substr(2);
     }
-    if (unfiltered) return g_options.filter(function($_) {
-        if (no_mode && $_[TYPE] != "boolean") return false;
-        else return true;
-    }).map(function($_) {
-        return [$_[COMMANDS], $_[SHORTHELP]];
-    });
-    if (!filter) return g_options.filter(function($_) {
-        if (no_mode && $_[TYPE] != "boolean") return false;
-        else return true;
-    }).map(function($_) {
-        var prefix = no_mode ? 'no' : '';
-        return [prefix + $_[COMMANDS][0], $_[SHORTHELP]];
-    });
 
+    if (unfiltered)
+    {
+        var options = [];
+        for (var option in vimperator.options)
+        {
+            if (no_mode && option.type != "boolean")
+                continue;
+            options.push([option.names, option.short_help])
+        }
+        return options;
+    }
+
+    if (!filter)
+    {
+        var options = [];
+        for (var option in vimperator.options)
+        {
+            if (no_mode && option.type != "boolean")
+                continue;
+            var prefix = no_mode ? 'no' : '';
+            options.push([prefix + option.name, option.short_help])
+        }
+        return options;
+    }
 
     // check if filter ends with =, then complete current value
     else if(filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
     {
         filter = filter.substr(0, filter.length-1);
-        for(var i=0; i<g_options.length; i++)
+        for (var option in vimperator.options)
         {
-            for(var j=0; j<g_options[i][COMMANDS].length; j++)
+            if (option.hasName(filter))
             {
-                if (g_options[i][COMMANDS][j] == filter)
-                {
-                    options_completions.push([filter + "=" + g_options[i][GETFUNC].call(this), ""]);
+                    options_completions.push([filter + "=" + option.value, ""]);
                     return options_completions;
-                }
             }
         }
         return options_completions;
@@ -344,28 +352,28 @@ function get_options_completions(filter, unfiltered)/*{{{*/
 
     // can't use b_l_s_s, since this has special requirements (the prefix)
     var filter_length = filter.length;
-    for (var i = 0; i < g_options.length; i++)
+    for (var option in vimperator.options)
     {
-        if (no_mode && g_options[i][TYPE] != "boolean")
+        if (no_mode && option.type != "boolean")
             continue;
-
         var prefix = no_mode ? 'no' : '';
-        for (var j = 0; j < g_options[i][COMMANDS].length; j++)
+        for (var j = 0; j < option.names.length; j++)
         {
-            if (g_options[i][COMMANDS][j].indexOf(filter) != 0) continue;
+            if (option.names[j].indexOf(filter) != 0)
+                continue;
             if (g_substrings.length == 0)
             {
-                var length = g_options[i][COMMANDS][j].length;
+                var length = option.names[j].length;
                 for (var k = filter_length; k <= length; k++)
-                    g_substrings.push(prefix + g_options[i][COMMANDS][j].substring(0, k));
+                    g_substrings.push(prefix + option.names[j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return g_options[i][COMMANDS][j].indexOf($_) == 0;
+                    return option.names[j].indexOf($_) == 0;
                 });
             }
-            options_completions.push([prefix + g_options[i][COMMANDS][j], g_options[i][SHORTHELP]]);
+            options_completions.push([prefix + option.names[j], option.short_help]);
             break;
         }
     }
