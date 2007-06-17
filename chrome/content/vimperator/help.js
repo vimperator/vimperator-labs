@@ -38,8 +38,6 @@ function help(section, easter)
     else
         openURLs("about:blank");
 
-// xxx: for firebug: :js Firebug.toggleBar(true)
-
     /* commands = array where help information is located
      * beg = string which is printed before the commmand/option/mapping name
      * end = string which is printed after the commmand/option/mapping name
@@ -113,7 +111,7 @@ function help(section, easter)
     function makeOptionsHelpString(command)
     {
         var ret = "";
-        ret = command.type + ' (default: <span style="font-family: monospace;">';
+        ret = command.type + ' (default: ">';
         if (command.type == "boolean")
         {
             if(command.default_value == true)
@@ -129,7 +127,7 @@ function help(section, easter)
                 ret += command.default_value;
         }
 
-        ret += "</span>)<br/>";
+        ret += ")<br/>";
         return ret;
     }
 
