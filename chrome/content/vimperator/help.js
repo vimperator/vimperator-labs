@@ -111,7 +111,7 @@ function help(section, easter)
     function makeOptionsHelpString(command)
     {
         var ret = "";
-        ret = command.type + ' (default: ">';
+        ret = command.type + ' (default: ';
         if (command.type == "boolean")
         {
             if(command.default_value == true)
