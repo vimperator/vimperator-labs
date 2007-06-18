@@ -705,7 +705,7 @@ function Commands()//{{{
             if (special)
                 openURLs("about:");
             else
-                vimperator.echo("Vimperator version: " + vimperator.ver);
+                vimperator.echo("Vimperator version: " + vimperator.version);
         },
         {
             usage: ["ve[rsion][!]"],

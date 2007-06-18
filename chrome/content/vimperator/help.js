@@ -189,7 +189,7 @@ function help(section, easter)
         // XXX: stylesheet broken here? Have to add it in the vimperator.xul file
         '<link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css"/>\n' +
         '</head>\n<body>\n<div class="main">\n' +
-        '<span class="version">version ' + vimperator.ver + '</span>\n' +
+        '<span class="version">version ' + vimperator.version + '</span>\n' +
         header +
         introduction +
         mappings +
