@@ -167,17 +167,16 @@ Command.prototype.hasName = function(name)
 
 Command.prototype.toString = function()
 {
-    // FIXME: -- djk
     return "Command {" +
-         "\nname: " + this.name +
-         "\nnames: " + this.names +
-         "\nshort_names: " + this.short_names  +
-         "\nlong_names: " + this.long_names +
-         "\nusage: " + this.usage +
-         "\nshort_help: " + this.short_help +
-         "\nhelp: " + this.help +
-         "\naction: " + this.action +
-         "\ncompleter: " + this.completer +
+         "\n\tname: " + this.name +
+         "\n\tnames: " + this.names +
+         "\n\tshort_names: " + this.short_names  +
+         "\n\tlong_names: " + this.long_names +
+         "\n\tusage: " + this.usage +
+         "\n\tshort_help: " + this.short_help +
+         "\n\thelp: " + this.help +
+         "\n\taction: " + this.action +
+         "\n\tcompleter: " + this.completer +
          "\n}"
 }
 

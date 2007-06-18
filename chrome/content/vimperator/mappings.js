@@ -46,7 +46,6 @@ Map.prototype.execute = function(motion, count, argument)
 
 Map.prototype.toString = function()
 {
-    // FIXME: -- djk
     return "Map {" +
         "\n\tmode: " + this.mode +
         "\n\tnames: " + this.names +
