@@ -26,11 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-const COMMANDS = 0;
-const USAGE = 1;
-const SHORTHELP = 2;
-const HELP = 3;
-
 /* [command, action, cancel_hint_mode, always_active] */
 var g_hint_mappings = [ /*{{{*/
     /* hint action keys */

@@ -74,23 +74,23 @@ function build_longest_starting_substring(list, filter)/*{{{*/
     //var filter_length = filter.length;
     for (var i = 0; i < list.length; i++)
     {
-        for (var j = 0; j < list[i][COMMANDS].length; j++)
+        for (var j = 0; j < list[i][0].length; j++)
         {
             if (list[i][0][j].indexOf(filter) != 0)
                 continue;
             if (g_substrings.length == 0)
             {
-                var length = list[i][COMMANDS][j].length;
+                var length = list[i][0][j].length;
                 for (var k = filter.length; k <= length; k++)
-                    g_substrings.push(list[i][COMMANDS][j].substring(0, k));
+                    g_substrings.push(list[i][0][j].substring(0, k));
             }
             else
             {
                 g_substrings = g_substrings.filter(function($_) {
-                    return list[i][COMMANDS][j].indexOf($_) == 0;
+                    return list[i][0][j].indexOf($_) == 0;
                 });
             }
-            filtered.push([list[i][COMMANDS][j], list[i][SHORTHELP]]);
+            filtered.push([list[i][0][j], list[i][1]]);
             break;
         }
     }
@@ -268,7 +268,7 @@ function get_help_completions(filter)/*{{{*/
     options = get_options_completions(filter, true);
     help_array = help_array.concat(options.map(function($_) {
         return [
-                $_[COMMANDS].map(function($_) { return "'" + $_ + "'"; }),
+                $_[0].map(function($_) { return "'" + $_ + "'"; }),
                 $_[1]
             ];
     }));
@@ -276,7 +276,7 @@ function get_help_completions(filter)/*{{{*/
         help_array.push([map.names, map.short_help])
 
     if (!filter) return help_array.map(function($_) {
-        return [$_[COMMANDS][0], $_[1]]; // unfiltered, use the first command
+        return [$_[0][0], $_[1]]; // unfiltered, use the first command
     });
 
     return build_longest_common_substring(help_array, filter);
@@ -295,7 +295,7 @@ function get_command_completions(filter)/*{{{*/
     }
 
     for (var command in vimperator.commands)
-        completions.push([command.long_names, null, command.short_help]); // # FIXME: just return it in the format expected by blss() for now -- djk
+        completions.push([command.long_names, command.short_help]); // # FIXME: just return it in the format expected by blss() for now -- djk
     return build_longest_starting_substring(completions, filter);
 }/*}}}*/
 
@@ -438,9 +438,9 @@ function exTabCompletion(str)
 		if (command && command.completer)
 		{
 			completions = command.completer.call(this, args);
-//			if (command[COMMANDS][0] == "open" ||
-//					command[COMMANDS][0] == "tabopen" ||
-//					command[COMMANDS][0] == "winopen")
+//			if (command[0][0] == "open" ||
+//					command[0][0] == "tabopen" ||
+//					command[0][0] == "winopen")
 //				start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
 //			else
 			matches = str.match(/^:*\d*\w+\s+/); // up to the first spaces only
