@@ -7,17 +7,6 @@ function Option(names, type, extra_info)//{{{
     this.names = names;
     this.type = type;
 
-    // add noOPTION variant of boolean OPTION to this.names
-    if (this.type == "boolean")
-    {
-        this.names = [];
-        for (var i = 0; i < names.length; i++)
-        {
-            this.names.push(names[i]);
-            this.names.push("no" + names[i]);
-        }
-    }
-
     this.setter = function(value) { Options.setPref(this.name, value); };
     this.getter = function() { return Options.getPref(this.name); };
 
@@ -44,6 +33,17 @@ function Option(names, type, extra_info)//{{{
 
         this.completer = extra_info.completer || null;
         this.validator = extra_info.validator || null;
+    }
+
+    // add noOPTION variant of boolean OPTION to this.names
+    if (this.type == "boolean")
+    {
+        this.names = [];
+        for (var i = 0; i < names.length; i++)
+        {
+            this.names.push(names[i]);
+            this.names.push("no" + names[i]);
+        }
     }
 
     // NOTE: forced defaults need to use Options.getPref
