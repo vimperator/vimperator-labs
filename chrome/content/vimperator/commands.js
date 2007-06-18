@@ -257,7 +257,7 @@ function Commands()//{{{
         {
             usage: ["{count}bd[elete][!]"],
             short_help: "Delete current buffer (=tab)",
-            help: "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab."
+            help: "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one to the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab."
         }
     ));
     addDefaultCommand(new Command(["beep"],
