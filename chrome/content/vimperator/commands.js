@@ -91,7 +91,10 @@ function Command(specs, action, extra_info)//{{{
                 names.push(match[1]);
             }
             else
+            {
                 long_names.push(specs[i]);
+                names.push(specs[i]);
+            }
         }
         return { names: names, long_names: long_names, short_names: short_names };
     }
