@@ -234,7 +234,7 @@ function Bookmarks()
                         return null;
 
                     str = match_title[match_title.length-1]; // the last captured parenthesis is the rest of the string
-                    title = match_title[3];
+                    var title = match_title[3];
                     if(title.charAt(0) == '"')
                         title = title.substring(1,title.length-1);
                     res.title = title;
