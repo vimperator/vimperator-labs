@@ -189,6 +189,10 @@ function Commands()//{{{
     function addDefaultCommand(command)
     {
         ex_commands.push(command);
+        Commands.prototype[command.name] = function(args, special, count, modifiers)
+        {
+            command.execute(args, special, count, modifiers);
+        }
     }
 
     function commandsIterator()
