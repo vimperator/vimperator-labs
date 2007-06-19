@@ -233,7 +233,7 @@ function Commands()//{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     addDefaultCommand(new Command(["addo[ns]"],
-        function(args) { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
+        function() { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
         {
             usage: ["addo[ns]"],
             short_help: "Show available Browser Extensions and Themes",
@@ -256,7 +256,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
-        function (args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
+        function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
         {
             usage: ["{count}bd[elete][!]"],
             short_help: "Delete current buffer (=tab)",
@@ -313,7 +313,7 @@ function Commands()//{{{
             usage: ["b[uffer] {url|index}"],
             short_help: "Go to buffer from buffer list",
             help: "Argument can be either the buffer index or the full URL.",
-            completer: function (filter) { return get_buffer_completions(filter); }
+            completer: function(filter) { return get_buffer_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
@@ -325,7 +325,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["delm[arks]"],
-        function(marks, special) { vimperator.marks.remove(marks, special); },
+        function(args, special) { vimperator.marks.remove(args, special); },
         {
             usage: ["delm[arks]! {marks}"],
             short_help: "Delete the specified marks {a-zA-Z}",
@@ -369,7 +369,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["exu[sage]"],
-        function () { help("commands"); },
+        function() { help("commands"); },
         {
             usage: ["exu[sage]"],
             short_help: "Show help for Ex commands"
@@ -446,17 +446,21 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
-        function(mark) { vimperator.marks.add(mark) },
+        function(args) { vimperator.marks.add(args) },
         {
             usage: ["ma[rk] {arg}"],
             short_help: "Mark current location within the webpage",
         }
     ));
     addDefaultCommand(new Command(["marks"],
-        function(mark) { vimperator.marks.list(mark) },
+        function(args) {
+            vimperator.echo("marks not implemented yet");
+            //vimperator.marks.list(args)
+        },
         {
             usage: ["marks {arg}"],
             short_help: "Show all location marks of current webpage",
+            help: "Not implemented yet."
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
@@ -515,7 +519,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["q[uit]"],
-        function (args) { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
+        function() { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         {
             usage: ["q[uit]"],
             short_help: "Quit current tab or quit Vimperator if this was the last tab",
@@ -523,7 +527,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
-        function (args) { quit(false); },
+        function() { quit(false); },
         {
             usage: ["quita[ll]"],
             short_help: "Quit Vimperator",
@@ -586,7 +590,7 @@ function Commands()//{{{
             help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>" +
                   "~ is supported as a shortcut for the $HOME directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
-            completer: function (filter) { return get_file_completions(filter); }
+            completer: function(filter) { return get_file_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["st[op]"],
@@ -607,7 +611,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["tabl[ast]"],
-        function(args, count) { vimperator.tabs.select("$", false); },
+        function() { vimperator.tabs.select("$", false); },
         {
             usage: ["tabl[ast]"],
             short_help: "Switch to the last tab"
@@ -623,7 +627,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
-        function(args, special, count) { vimperator.tabs.select("+1", true); },
+        function() { vimperator.tabs.select("+1", true); },
         {
             usage: ["tabn[ext]"],
             short_help: "Switch to the next tab",
@@ -638,7 +642,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
-        function (args, special)
+        function(args, special)
         {
             if (args.length > 0)
                 openURLsInNewTab(args, !special);
@@ -650,11 +654,11 @@ function Commands()//{{{
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
-            completer: function (filter) { return get_url_completions(filter); }
+            completer: function(filter) { return get_url_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
-        function(args, count) { vimperator.tabs.select("-1", true); },
+        function() { vimperator.tabs.select("-1", true); },
         {
             usage: ["tabp[revious]", "tabN[ext]"],
             short_help: "Switch to the previous tab",
@@ -662,14 +666,14 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["tabr[ewind]", "tabfir[st]"],
-        function(args, count) { vimperator.tabs.select(0, false); },
+        function() { vimperator.tabs.select(0, false); },
         {
             usage: ["tabr[ewind]", "tabfir[st]"],
             short_help: "Switch to the first tab"
         }
     ));
     addDefaultCommand(new Command(["u[ndo]"],
-        function(args, special, count) { if(count < 1) count = 1; undoCloseTab(count-1); },
+        function(args, special, count) { if (count < 1) count = 1; undoCloseTab(count-1); },
         {
             usage: ["{count}u[ndo]"],
             short_help: "Undo closing of a tab",
@@ -677,7 +681,10 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
-        function(args) { set_url_mark("mark", "url"); }, // FIXME
+        function(args) {
+            vimperator.echo("qmarkadd not implemented yet");
+            //set_url_mark("mark", "url");
+        }, // FIXME
         {
             usage: ["qmarka[dd] {a-zA-Z0-9} [url]"],
             short_help: "Mark a URL with a letter for quick access",
@@ -686,7 +693,10 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["qmarkd[el]", "qmd[el]"],
-        function(args) { set_url_mark("mark", "url"); }, // FIXME
+        function(args) {
+            vimperator.echo("qmarkdel not implemented yet");
+            //set_url_mark("mark", "url");
+        }, // FIXME
         {
             usage: ["qmarkd[el] {a-zA-Z0-9}"],
             short_help: "Remove a marked URL",
@@ -695,7 +705,10 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["qmarks", "qms"],
-        function(args) { show_url_marks(args); }, // FIXME
+        function(args) {
+            vimperator.echo("qmarks not implemented yet");
+            //show_url_marks(args);
+        }, // FIXME
         {
             usage: ["qmarks"],
             short_help: "Shows marked URLs",
@@ -703,7 +716,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["ve[rsion]"],
-        function (args, special)
+        function(args, special)
         {
             if (special)
                 openURLs("about:");
@@ -717,14 +730,16 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["viu[sage]"],
-        function () { help("mappings"); },
+        function() { help("mappings"); },
         {
             usage: ["viu[sage]"],
             short_help: "Show help for normal mode commands"
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
-        function () { vimperator.echo("winopen not yet implemented"); },
+        function() {
+            vimperator.echo("winopen not implemented yet");
+        },
         {
             usage: ["wino[pen] [url] [| url]"],
             short_help: "Open an URL in a new window",
@@ -732,7 +747,7 @@ function Commands()//{{{
         }
     ));
     addDefaultCommand(new Command(["xa[ll]", "wqa[ll]", "wq"],
-        function (args) { quit(true); },
+        function() { quit(true); },
         {
             usage: ["wqa[ll]", "xa[ll]"],
             short_help: "Save the session and quit",
@@ -1628,7 +1643,7 @@ function source(filename, silent)
         var prev_match = new Array(5);
         var heredoc = '';
         var end = false;
-        s.split('\n').forEach(function (line) {
+        s.split('\n').forEach(function(line) {
             [prev_match, heredoc, end] = multiliner(line, prev_match, heredoc);
         });
     }
