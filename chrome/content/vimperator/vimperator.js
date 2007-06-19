@@ -31,10 +31,6 @@ var vimperator = null;
 
 var popup_allowed_events; // need to change and reset this firefox pref
 
-// handles multi-line commands
-var prev_match = new Array(5);
-var heredoc = '';
-
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load", init, false);
 
