@@ -681,8 +681,6 @@ function hit_a_hint()
 
     window.document.addEventListener("pageshow", initDoc, null);
     window.addEventListener("resize", onResize, null);
-
-    logMessage("Hints initialized");
 }
 
 var hah = new hit_a_hint();

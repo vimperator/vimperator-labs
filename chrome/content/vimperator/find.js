@@ -457,8 +457,6 @@ function Search()
                 point, matchRange, matchRange, dir);
         }
     }
-
-    logMessage("Search initialized");
 }
 
 // @TODO should be moved into commands.js

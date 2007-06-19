@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // The only global object, a handler to the main Vimperator object
 var vimperator = null;
 
-var popup_allowed_events; // need to change and reset this firefox pref
+var popup_allowed_events; // need to change and reset this firefox pref XXX: move to options class
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load", init, false);
@@ -39,27 +39,40 @@ window.addEventListener("load", init, false);
 ////////////////////////////////////////////////////////////////////////
 function init()
 {
+    window.dump("in init\n");
     // init the main object
     vimperator = new Vimperator;
+    vimperator.log("Initializing vimperator object...", 1);
     
     // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
-
-    // TODO: can these classes be moved into a namesspace to now clobber
-    // the main namespace?
+    vimperator.log("Loading module options...", 3);
     Vimperator.prototype.options       = new Options;
+    vimperator.log("Loading module events...", 3);
     Vimperator.prototype.events        = new Events;
+    vimperator.log("Loading module commands...", 3);
     Vimperator.prototype.commands      = new Commands;
+    vimperator.log("Loading module bookmarks...", 3);
     Vimperator.prototype.bookmarks     = new Bookmarks;
+    vimperator.log("Loading module history...", 3);
     Vimperator.prototype.history       = new History;
+    vimperator.log("Loading module commandline...", 3);
     Vimperator.prototype.commandline   = new CommandLine;
+    vimperator.log("Loading module search...", 3);
     Vimperator.prototype.search        = new Search;
+    vimperator.log("Loading module preview window...", 3);
     Vimperator.prototype.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
+    vimperator.log("Loading module buffer window...", 3);
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
-    Vimperator.prototype.statusline    = new StatusLine;
-    Vimperator.prototype.tabs          = new Tabs;
+    vimperator.log("Loading module mappings...", 3);
     Vimperator.prototype.mappings      = new Mappings;
+    vimperator.log("Loading module statusline...", 3);
+    Vimperator.prototype.statusline    = new StatusLine;
+    vimperator.log("Loading module tabs...", 3);
+    Vimperator.prototype.tabs          = new Tabs;
+    vimperator.log("Loading module marks...", 3);
     Vimperator.prototype.marks         = new Marks;
+    vimperator.log("All modules loaded", 3);
 
     // DJK FIXME
     Vimperator.prototype.echo    = vimperator.commandline.echo;
@@ -69,7 +82,7 @@ function init()
     vimperator.input = {
         buffer: "",                 // partial command storage
         pendingMap: null,           // pending map storage
-        count: -1,                  // parsed count from the input buffer
+        count: -1                  // parsed count from the input buffer
     };
 
     // XXX: move elsewhere
@@ -109,11 +122,11 @@ function init()
     // Make sourcing asynchronous, otherwise commands that open new tabs won't work
     setTimeout(function() {
         source("~/.vimperatorrc", true);
-        logMessage("~/.vimperatorrc sourced");
+        vimperator.log("~/.vimperatorrc sourced", 1);
     }, 50);
 
     window.addEventListener("unload",   unload, false);
-    logMessage("Vimperator fully initialized");
+    vimperator.log("Vimperator fully initialized", 1);
 }
 
 function unload()
@@ -172,6 +185,10 @@ function Vimperator() //{{{1
     var count = -1;
     var inputbuffer = "";
 
+    // our services
+    var console_service = Components.classes['@mozilla.org/consoleservice;1']
+                          .getService(Components.interfaces.nsIConsoleService);
+
     function showMode()
     {
         if (!vimperator.options["showmode"])
@@ -200,11 +217,9 @@ function Vimperator() //{{{1
 	////////////////////// PUBLIC SECTION //////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
     this.version  = "###VERSION### CVS (created: ###DATE###)";
-    // DJK FIXME
-    // this.commandline = new CommandLine();
-//    this.search = new Search();
 
     /////////////// callbacks ////////////////////////////
+    // XXX: shouldn't that callback be moved to commandline? --mst
 	/**
      * @param type Can be:
      *  "submit": when the user pressed enter in the command line
@@ -296,6 +311,38 @@ function Vimperator() //{{{1
     this.getCurrentBuffer = function()
     {
         return document.commandDispatcher.focusedWindow;
+    }
+
+    /**
+     * logs any object to the javascript error console
+     * also prints all properties of thie object
+     */
+    this.log = function(msg, level)
+    {
+//        if(Options.getPref("verbose") >= level) FIXME: hangs vimperator
+            console_service.logStringMessage('vimperator: ' + msg);
+    }
+
+    /**
+     * logs any object to the javascript error console
+     * also prints all properties of thie object
+     */
+    this.logObject = function(object, level)
+    {
+        if (typeof object != 'object')
+            return false;
+
+        var string = object + '::\n';
+        for (var i in object)
+        {
+            var value;
+            try {
+                var value = object[i];
+            } catch (e) { value = '' }
+
+            string += i + ': ' + value + '\n';
+        }
+        this.log(string, level);
     }
 }
 
@@ -639,7 +686,7 @@ function Events() //{{{1
                     vimperator.statusline.updateProgress(0);
                 }
                 else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-                    logMessage("stop");// vimperator.statusline.updateUrl();
+                    ;// vimperator.statusline.updateUrl();
             }
         },
         // for notifying the user about secure web pages
@@ -655,7 +702,6 @@ function Events() //{{{1
         },
         onStatusChange: function(webProgress, request, status, message)
         {
-            //logMessage("status: " + message);
             vimperator.statusline.updateUrl(message);
         },
         onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
@@ -677,7 +723,6 @@ function Events() //{{{1
         // called at the very end of a page load
         asyncUpdateUI: function()
         {  
-            //logMessage("async");
             setTimeout(vimperator.statusline.updateUrl, 100);
         },
         setOverLink : function(link, b)

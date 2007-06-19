@@ -230,7 +230,6 @@ function CommandLine ()
 
         if(event.type == "blur")
         {
-            logMessage("blur");
             // when we do a command_widget.focus() we get a blur event immediately,
             // so check if the target is the actualy input field
             if (event.target == command_widget.inputField)
@@ -502,7 +501,6 @@ function CommandLine ()
     {
         Options.setPref("commandline_history", history.join("\n"));
     }
-    logMessage("CommandLine initialized.");
 }
 
 /**
@@ -704,8 +702,6 @@ function InformationList(id, options)
         else
             return false;
     }
-
-    logMessage("InformationList initialized for widget id: " + id);
 }
 
 function StatusLine()
@@ -812,8 +808,6 @@ function StatusLine()
 
         bufferposition_widget.value = bufferposition_str;
     };
-
-    logMessage("StatusLine initialized");
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

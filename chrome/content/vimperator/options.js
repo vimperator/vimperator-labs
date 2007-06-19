@@ -440,6 +440,14 @@ function Options()//{{{
             default_value: false
         }
     ));
+    addOption(new Option(["verbose", "vbs"], "number",
+        {
+            short_help: "Define which type of messages are logged",
+            help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
+                  "The highest value is 9, being the most verbose mode.",
+            default_value: 0
+        }
+    ));
     addOption(new Option(["wildmode", "wim"], "stringlist",
         {
             short_help: "Define how command line completion works",
@@ -476,8 +484,6 @@ function Options()//{{{
     setShowTabline(this.showtabline);
     setGuiOptions(this.guioptions);
     setTitleString(this.titlestring);
-
-    logMessage("Options initialized");
 }//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

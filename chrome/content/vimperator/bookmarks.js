@@ -261,7 +261,6 @@ function Bookmarks()
         }
         return res;
     }
-    logMessage("Bookmarks initialized");
 }
 
 function History()
@@ -334,48 +333,15 @@ function History()
         if(!history)
             load();
 
-        // XXX: check if fast enough
         history = history.filter(function(elem) {
                 return elem[0] != url;
         });
-//        for(var i in history)
-//        {
-//            if(history[i][0] == url)
-//                return;
-//        }
 
         history.unshift([url, title]);
-        //history.push([url, title]);
         return true;
     };
-
-    logMessage("History initialized");
 }
 
-/*Vimperator.prototype.quickmarks = new function()
-{
-    //logObject(vimperator);
-    //setTimeout(function() {logObject(vimperator)}, 1000);
-    //Vimperator.echo("test");
-    //alert(vimperator.getpr("hinttags"));
-    this.add = function() { alert('add');};
-    this.rem = function() { vimperator.echo("rem"); logObject(vimperator)};
-
-    logMessage("quickmarks initialized.");
-}
-
-
-function QM()
-{
-    //logObject(vimperator);
-    //logMessage(vimperator.getpr("complete"));
-
-    this.add = function() { alert('add');};
-    this.rem = function() { vimperator.echo("rem"); logObject(vimperator)};
-    this.zoom = function() { vimperator.zoom_to(200); logObject(vimperator)};
-
-    logMessage("QM initialized.");
-}*/
 
 function Marks()
 {
