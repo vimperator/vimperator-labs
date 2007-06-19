@@ -1,74 +1,3 @@
-/* call the function like this:
-   var res = new Object();
-   parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at", res);
-   res.tags is an array of tags
-   res.title is the title or "" if no one was given
-   res.url is the url as a string
-
-   returns false, if parsing failed
-*/
-function parseBookmarkString(str, res)
-{
-    res.tags = [];
-    res.title = null;
-    res.url = null;
-
-    var re_title = /^\s*((-t|--title)\s+(\w+|\".*\"))(.*)/;
-    var re_tags = /^\s*((-T|--tags)\s+((\w+)(,\w+)*))(.*)/;
-    var re_url = /^\s*(\".+\"|\S+)(.*)/;
-
-    var match_tags = null;
-    var match_title = null;
-    var match_url = null;
-
-    while(!str.match(/^\s*$/))
-    {
-        /* first check for --tags */
-        match_tags = str.match(re_tags);
-        if(match_tags != null)
-        {
-            str = match_tags[match_tags.length-1]; // the last captured parenthesis is the rest of the string
-            tags = match_tags[3].split(",");
-            res.tags = res.tags.concat(tags);
-        }
-        else /* then for --titles */
-        {
-
-            match_title = str.match(re_title);
-            if(match_title != null)
-            {
-                // only one title allowed
-                if (res.title != null)
-                    return false;
-
-                str = match_title[match_title.length-1]; // the last captured parenthesis is the rest of the string
-                title = match_title[3];
-                if(title.charAt(0) == '"')
-                    title = title.substring(1,title.length-1);
-                res.title = title;
-            }
-            else /* at last check for an url */
-            {
-                match_url = str.match(re_url);
-                if (match_url != null)
-                {
-                    // only one url allowed
-                    if (res.url != null)
-                        return false;
-
-                    str = match_url[match_url.length-1]; // the last captured parenthesis is the rest of the string
-                    url = match_url[1];
-                    if(url.charAt(0) == '"')
-                        url = url.substring(1,url.length-1);
-                    res.url = url;
-                }
-                else return false; // no url, tag or title found but still text left, abort
-            }
-        }
-    }
-    return true;
-}
-
 /*
  * also includes methods for dealing with
  * keywords and search engines
@@ -260,6 +189,77 @@ function Bookmarks()
 
         // if we came here, the engine_name is neither a search engine or URL
         return url;
+    }
+
+    /*
+       res = parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at");
+       res.tags is an array of tags
+       res.title is the title or "" if no one was given
+       res.url is the url as a string
+       returns null, if parsing failed
+    */
+    Bookmarks.parseBookmarkString = function(str)
+    {
+        var res = {};
+        res.tags = [];
+        res.title = null;
+        res.url = null;
+
+        var re_title = /^\s*((-t|--title)\s+(\w+|\".*\"))(.*)/;
+        var re_tags = /^\s*((-T|--tags)\s+((\w+)(,\w+)*))(.*)/;
+        var re_url = /^\s*(\".+\"|\S+)(.*)/;
+
+        var match_tags = null;
+        var match_title = null;
+        var match_url = null;
+
+        while(!str.match(/^\s*$/))
+        {
+            /* first check for --tags */
+            match_tags = str.match(re_tags);
+            if(match_tags != null)
+            {
+                str = match_tags[match_tags.length-1]; // the last captured parenthesis is the rest of the string
+                tags = match_tags[3].split(",");
+                res.tags = res.tags.concat(tags);
+            }
+            else /* then for --titles */
+            {
+
+                match_title = str.match(re_title);
+                if(match_title != null)
+                {
+                    // only one title allowed
+                    if (res.title != null)
+                        return null;
+
+                    str = match_title[match_title.length-1]; // the last captured parenthesis is the rest of the string
+                    title = match_title[3];
+                    if(title.charAt(0) == '"')
+                        title = title.substring(1,title.length-1);
+                    res.title = title;
+                }
+                else /* at last check for an url */
+                {
+                    match_url = str.match(re_url);
+                    if (match_url != null)
+                    {
+                        // only one url allowed
+                        if (res.url != null)
+                            return null;
+
+                        str = match_url[match_url.length-1]; // the last captured parenthesis is the rest of the string
+                        url = match_url[1];
+                        if(url.charAt(0) == '"')
+                            url = url.substring(1,url.length-1);
+                        res.url = url;
+                    }
+                    else
+                        return null; // no url, tag or title found but still text left, abort
+                }
+            }
+        }
+        return res;
     }
     logMessage("Bookmarks initialized");
 }

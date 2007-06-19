@@ -1140,8 +1140,8 @@ function getCurrentLinkLocation()
 // converts that string to a useful url and title, and calls addBookmark
 function bmadd(str)
 {
-    var res = new Object();
-    if (parseBookmarkString(str, res))
+    var res = Bookmarks.parseBookmarkString(str);
+    if (res)
     {
         if(res.url == null)
         {
@@ -1163,8 +1163,8 @@ function bmadd(str)
 
 function bmdel(str)
 {
-    var res = new Object();
-    if (parseBookmarkString(str, res))
+    var res = Bookmarks.parseBookmarkString(str);
+    if (res)
     {
         if(res.url == null)
             res.url = getCurrentLocation();
