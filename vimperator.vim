@@ -16,12 +16,12 @@ unlet b:current_syntax
 syn keyword vimperatorTodo    FIXME NOTE TODO XXX contained
 syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
 
-syn keyword vimperatorCommand addons ba[ck] bd[elete] bw[ipeout] bun[load] tabc[lose] beep bmadd bmdel bookmarks bm b[uffer]
-	\ buffers files ls downloads dl ec[ho] echoe[rr] exe[cute] forward fw ha[rdcopy] h[elp] history hs javascript js ma[rk]
-	\ marks o[pen] e[dit] pc[lose] preferences prefs q[uit] quita[ll] qa[ll] re[load] restart restart sav[eas] se[t] so[urce]
-	\ st[op] tab tabn[ext] tn[ext] tabopen t to topen tabnew tabe[dit] tabo[nly] tabm[ove] tp[revious] tN[ext] tabr[ewind]
-	\ tabfir[st] tabl[ast] tabp[revious] tabN[ext] u[ndo] qmarkadd qmadd qmarkdel qmdel qmarks qms ve[rsion] w wo[pen]
-	\ wine[dit] win[open] wq wqa[ll] xa[ll] zo[om] noh[ilight]
+syn keyword vimperatorCommand addo[ns] ba[ck] bd[elete] bw[ipeout] bun[load] tabc[lose] beep bma[dd] bmd[el] bookm[arks] bm
+	\ b[uffer] buffers files ls delm[arks] downl[oads] dl ec[ho] echoe[rr] exe[cute] exu[sage] fo[rward] fw ha[rdcopy] h[elp]
+	\ hist[ory] hs javas[cript] js ma[rk] marks o[pen] e[dit] pc[lose] pref[erences] prefs q[uit] quita[ll] qa[ll] re[load]
+	\ reloada[ll] res[tart] sav[eas] se[t] so[urce] st[op] tab tabl[ast] tabm[ove] tabn[ext] tn[ext] tabo[nly] tabopen t[open]
+	\ tabnew tabe[dit] tabp[revious] tp[revious] tabN[ext] tN[ext] tabr[ewind] tabfir[st] u[ndo] qmarka[dd] qma[dd] qmarkd[el]
+	\ qmd[el] qmarks qms ve[rsion] viu[sage] win[open] w[open] wine[dit] wqa[ll] wq xa[ll] zo[om] noh[ilight]
 	\ contained
 
 " FIXME
