@@ -264,7 +264,7 @@ function CommandLine ()
             else
             {
                 //event.stopPropagation(); // XXX: doesnt seem to work
-                //event.preventDefault();  // so we need to use the hack
+                //event.preventDefault();  // so we need to use the hack below --mst
                 
                 // NOTE: echo_allowed is a misleading name here, actually this flag is set
                 // so that we don't save a history entry if the user clicks into the text field
@@ -280,7 +280,7 @@ function CommandLine ()
         }
         else if(event.type == "keypress")
         {
-            var key = keyToString(event);
+            var key = event.toString();
             /* user pressed ENTER to carry out a command */
             if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
             {

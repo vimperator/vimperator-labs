@@ -325,7 +325,7 @@ function Vimperator() //{{{1
 
     /**
      * logs any object to the javascript error console
-     * also prints all properties of thie object
+     * also prints all properties of the object
      */
     this.logObject = function(object, level)
     {
@@ -452,14 +452,14 @@ function Events() //{{{1
         }
     };
 
+
     this.onKeyPress = function(event)
     {
         if (event.type != "keypress")
             return false;
 
-        // change the event to a usable string representation
-        var key = keyToString(event);
-         //alert(key);
+        var key = event.toString()
+        //alert(key);
         if (key == null)
              return false;
         // sometimes the non-content area has focus, making our keys not work
@@ -762,6 +762,98 @@ function Events() //{{{1
     
 }
 
+// this function converts the given event to
+// a keycode which can be used in mappings
+// e.g. pressing ctrl+n would result in the string "<C-n>"
+// null if unknown key
+KeyboardEvent.prototype.toString = function ()
+{
+    var key = String.fromCharCode(this.charCode);
+    var modifier = "";
+    if (this.ctrlKey)
+        modifier += "C-";
+    if (this.altKey)
+        modifier += "A-";
+    if (this.metaKey)
+        modifier += "M-";
+
+    if (this.charCode == 0)
+    {
+        if (this.shiftKey)
+            modifier += "S-";
+        if (this.keyCode == KeyEvent.DOM_VK_ESCAPE)
+            key = "Esc";
+        else if (this.keyCode == KeyEvent.DOM_VK_RETURN)
+            key = "Return";
+        else if (this.keyCode == KeyEvent.DOM_VK_TAB)
+            key = "Tab";
+        else if (this.keyCode == KeyEvent.DOM_VK_DELETE)
+            key = "Del";
+        else if (this.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
+            key = "BS";
+        else if (this.keyCode == KeyEvent.DOM_VK_HOME)
+            key = "Home";
+        else if (this.keyCode == KeyEvent.DOM_VK_END)
+            key = "End";
+        else if (this.keyCode == KeyEvent.DOM_VK_LEFT)
+            key = "Left";
+        else if (this.keyCode == KeyEvent.DOM_VK_RIGHT)
+            key = "Right";
+        else if (this.keyCode == KeyEvent.DOM_VK_UP)
+            key = "Up";
+        else if (this.keyCode == KeyEvent.DOM_VK_DOWN)
+            key = "Down";
+        else if (this.keyCode == KeyEvent.DOM_VK_PAGE_UP)
+            key = "PageUp";
+        else if (this.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
+            key = "PageDown";
+        else if (this.keyCode == KeyEvent.DOM_VK_F1)
+            key = "F1";
+        else if (this.keyCode == KeyEvent.DOM_VK_F2)
+            key = "F2";
+        else if (this.keyCode == KeyEvent.DOM_VK_F3)
+            key = "F3";
+        else if (this.keyCode == KeyEvent.DOM_VK_F4)
+            key = "F4";
+        else if (this.keyCode == KeyEvent.DOM_VK_F5)
+            key = "F5";
+        else if (this.keyCode == KeyEvent.DOM_VK_F6)
+            key = "F6";
+        else if (this.keyCode == KeyEvent.DOM_VK_F7)
+            key = "F7";
+        else if (this.keyCode == KeyEvent.DOM_VK_F8)
+            key = "F8";
+        else if (this.keyCode == KeyEvent.DOM_VK_F9)
+            key = "F9";
+        else if (this.keyCode == KeyEvent.DOM_VK_F10)
+            key = "F10";
+        else if (this.keyCode == KeyEvent.DOM_VK_F11)
+            key = "F11";
+        else if (this.keyCode == KeyEvent.DOM_VK_F12)
+            key = "F12";
+        else
+            return null;
+    }
+
+    // special handling of the Space key
+    if (this.charCode == 32)
+    {
+        if (this.shiftKey)
+            modifier += "S-";
+        key = "Space";
+    }
+
+    // a normal key like a, b, c, 0, etc.
+    if (this.charCode > 0)
+    {
+        if (modifier.length > 0 || this.charCode == 32)
+            return "<" + modifier + key + ">";
+        else
+            return key;
+    }
+    else // a key like F1 is always enclosed in < and >
+        return "<" + modifier + key + ">";
+}
 
 /** provides functions for working with tabs
  * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
@@ -946,13 +1038,9 @@ function Tabs() //{{{1
     */
 }
 
-
-
-
 ////////////////////////////////////////////////////////////////////////
-// text input functions /////////////////////////////////////////// {{{1
+// DOM related helper functions /////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
-//TODO: convert all these functions to methods
 function isFormElemFocused()
 {
     var elt = document.commandDispatcher.focusedElement;
@@ -971,190 +1059,5 @@ function isFormElemFocused()
 
     return false;
 }
-
-
-////////////////////////////////////////////////////////////////////////
-// logging //////////////////////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-
-var gConsoleService = Components.classes['@mozilla.org/consoleservice;1']
-                    .getService(Components.interfaces.nsIConsoleService);
-
-/**
- * logs any object to the javascript error console
- * also prints all properties of thie object
- */
-function logMessage(msg)
-{
-    gConsoleService.logStringMessage('vimperator: ' + msg);
-}
-
-/**
- * logs any object to the javascript error console
- * also prints all properties of thie object
- */
-function logObject(object)
-{
-    if (typeof object != 'object')
-        return;
-
-    var string = object + '::\n';
-    for (var i in object)
-    {
-        var value;
-        try {
-            var value = object[i];
-        } catch (e) { value = '' }
-
-        string += i + ': ' + value + '\n';
-    }
-    logMessage(string);
-}
-
-
-////////////////////////////////////////////////////////////////////////
-// misc helper functions ////////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-// this function gets an event as the input and converts it to 
-// a keycode which can be used in mappings
-// e.g. pressing ctrl+n would result in the string "<C-n>"
-// null if unknown key
-function keyToString(event)
-{
-    var key = String.fromCharCode(event.charCode);
-    var modifier = "";
-    if (event.ctrlKey)
-        modifier += "C-";
-    if (event.altKey)
-        modifier += "A-";
-    if (event.metaKey)
-        modifier += "M-";
-
-    if (event.charCode == 0)
-    {
-        if (event.shiftKey)
-            modifier += "S-";
-        if (event.keyCode == KeyEvent.DOM_VK_ESCAPE)
-            key = "Esc";
-        else if (event.keyCode == KeyEvent.DOM_VK_RETURN)
-            key = "Return";
-        else if (event.keyCode == KeyEvent.DOM_VK_TAB)
-            key = "Tab";
-        else if (event.keyCode == KeyEvent.DOM_VK_DELETE)
-            key = "Del";
-        else if (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
-            key = "BS";
-        else if (event.keyCode == KeyEvent.DOM_VK_HOME)
-            key = "Home";
-        else if (event.keyCode == KeyEvent.DOM_VK_END)
-            key = "End";
-        else if (event.keyCode == KeyEvent.DOM_VK_LEFT)
-            key = "Left";
-        else if (event.keyCode == KeyEvent.DOM_VK_RIGHT)
-            key = "Right";
-        else if (event.keyCode == KeyEvent.DOM_VK_UP)
-            key = "Up";
-        else if (event.keyCode == KeyEvent.DOM_VK_DOWN)
-            key = "Down";
-        else if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP)
-            key = "PageUp";
-        else if (event.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
-            key = "PageDown";
-        else if (event.keyCode == KeyEvent.DOM_VK_F1)
-            key = "F1";
-        else if (event.keyCode == KeyEvent.DOM_VK_F2)
-            key = "F2";
-        else if (event.keyCode == KeyEvent.DOM_VK_F3)
-            key = "F3";
-        else if (event.keyCode == KeyEvent.DOM_VK_F4)
-            key = "F4";
-        else if (event.keyCode == KeyEvent.DOM_VK_F5)
-            key = "F5";
-        else if (event.keyCode == KeyEvent.DOM_VK_F6)
-            key = "F6";
-        else if (event.keyCode == KeyEvent.DOM_VK_F7)
-            key = "F7";
-        else if (event.keyCode == KeyEvent.DOM_VK_F8)
-            key = "F8";
-        else if (event.keyCode == KeyEvent.DOM_VK_F9)
-            key = "F9";
-        else if (event.keyCode == KeyEvent.DOM_VK_F10)
-            key = "F10";
-        else if (event.keyCode == KeyEvent.DOM_VK_F11)
-            key = "F11";
-        else if (event.keyCode == KeyEvent.DOM_VK_F12)
-            key = "F12";
-        else
-            return null;
-    }
-
-    // special handling of the Space key
-    if (event.charCode == 32)
-    {
-        if (event.shiftKey)
-            modifier += "S-";
-        key = "Space";
-    }
-
-    // a normal key like a, b, c, 0, etc.
-    if (event.charCode > 0)
-    {
-        if (modifier.length > 0 || event.charCode == 32)
-            return "<" + modifier + key + ">";
-        else
-            return key;
-    }
-    else // a key like F1 is always enclosed in < and >
-        return "<" + modifier + key + ">";
-}
-
-////////////////////////////////////////////////////////////////////////
-// DOM related helper functsion /////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-// Handle frames if they're present
-function getPageLinkNodes()
-{
-    var frames = window._content.frames;
-
-    // The main content may have link nodes as well as it's frames.
-    var nodes = getLinkNodes(_content.content.document);
-    var tmp;
-    for (var i=0; i<frames.length; i++) {
-    tmp = getLinkNodes(frames[i].document);
-    // is javascript this crappy?
-    for (var j=0; j<tmp.length; j++)
-        nodes.push(tmp[j]);
-    }
-    return nodes;
-}
-
-// For a single document, grab all the nodes
-function getLinkNodes(doc)
-{
-    var a_nodes = doc.getElementsByTagName('a');
-    var i_nodes = doc.getElementsByTagName('input');
-    var s_nodes = doc.getElementsByTagName('select');
-    var t_nodes = doc.getElementsByTagName('textarea');
-
-    var links = [];
-
-    for (var i=0; i<t_nodes.length; i++) {
-    links.push(t_nodes[i]);
-    }
-    for (var i=0; i<s_nodes.length; i++) {
-    links.push(s_nodes[i]);
-    }
-    for (var i=0; i<i_nodes.length; i++) {
-    if (i_nodes[i].type == "hidden") continue;
-    links.push(i_nodes[i]);
-    }
-    for (var i=0; i<a_nodes.length; i++) {
-    if (!a_nodes[i].hasAttribute('href')) continue;
-    links.push(a_nodes[i]);
-    }
-
-    return links;
-}//}}}
-
 
 // vim: set fdm=marker sw=4 ts=4 et:
