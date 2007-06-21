@@ -295,7 +295,7 @@ function get_command_completions(filter)/*{{{*/
     }
 
     for (var command in vimperator.commands)
-        completions.push([command.long_names, command.short_help]); // # FIXME: just return it in the format expected by blss() for now -- djk
+        completions.push([command.long_names, command.short_help]);
     return build_longest_starting_substring(completions, filter);
 }/*}}}*/
 
