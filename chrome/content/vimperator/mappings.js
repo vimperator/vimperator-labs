@@ -191,12 +191,18 @@ function Mappings()//{{{
             flags: Mappings.flags.ARGUMENT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"],
-        focusNextFrame,
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"], function(count) { focusNextFrame(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
-            help: "Flashes the next frame in order with a red color, to quickly show where keyboard focus is.<br/>" +
-                  "This may not work correctly for frames with lots of CSS code."
+            help: "Transfers keyboard focus to the [count]th next frame in order. The newly focused frame is briefly colored red.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["[f"], function(count) { focusNextFrame(count > 1 ? count : 1, false); },
+        {
+            short_help: "Focus previous frame",
+            help: "Transfers keyboard focus to the [count]th previous frame in order. The newly focused frame is briefly colored red.",
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["b"],

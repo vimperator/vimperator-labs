@@ -1031,34 +1031,78 @@ function isDirectory(url)
 // frame related functions //////////////////////////////////////// {{{1
 ////////////////////////////////////////////////////////////////////////
 
-function focusNextFrame(count)
+// TODO: allow callback for filtering out unwanted frames? User defined?
+function focusNextFrame(count, forward)
 {
     try
     {
-        var frames = window.content.frames;
-        if (frames.length == 0)
-        {
-            vimperator.echo("No frames found");
-            beep();
+        var frames = [];
+
+        // find all frames - depth-first search
+        (function(frame)
+        {   
+            if (frame.document.body.localName.toLowerCase() == "body")
+                frames.push(frame);
+            for (var i = 0; i < frame.frames.length; i++)
+                arguments.callee(frame.frames[i])
+        })(window.content);
+
+        if (frames.length == 0) // currently top is always included
             return;
-        }
 
-        var w = document.commandDispatcher.focusedWindow;
-        var next = 0;
+        // remove all unfocusable frames
+        var start = document.commandDispatcher.focusedWindow;
+        frames = frames.filter(function(frame) {
+                frame.focus();
+                if (document.commandDispatcher.focusedWindow == frame)
+                    return frame;
+        });
+        start.focus();
 
-        // Find the next frame to focus
-        for (var i=0; i<frames.length; i++) {
-            if (w == frames[i]) {
-                next = i+1;
+        // find the currently focused frame index
+        // TODO: If the window is a frameset then the first _frame_ should be
+        //       focused.  Since this is not the current FF behaviour,
+        //       we initalise current to -1 so the first call takes us to the
+        //       first frame.
+        var current = -1;
+        for (var i = 0; i < frames.length; i++)
+        {
+            if (frames[i] == document.commandDispatcher.focusedWindow)
+            {
+                var current = i;
                 break;
             }
         }
-        // Focus the next one, 0 if we're at the last one
-        if (next >= frames.length)
-            next = 0;
 
+        // calculate the next frame to focus
+        var next = current;
+        if (forward)
+        {
+            if (count > 1)
+                next = current + count;
+            else
+                next++;
+
+            if (next > frames.length - 1)
+                next = frames.length - 1;
+        }
+        else
+        {
+            if (count > 1)
+                next = current - count;
+            else
+                next--;
+
+            if (next < 0)
+                next = 0;
+        }
+
+        // focus next frame and scroll into view
         frames[next].focus();
+        if (frames[next] != window.content)
+            frames[next].frameElement.scrollIntoView(false);
 
+        // add the frame indicator
         var doc = frames[next].document;
         var indicator = doc.createElement("div");
         indicator.id = "vimperator-frame-indicator";
@@ -1068,11 +1112,15 @@ function focusNextFrame(count)
         indicator.setAttribute("style", style);
         doc.body.appendChild(indicator);
 
-        setTimeout(function() { doc.body.removeChild(indicator); }, 300);
-    } catch(e) { alert(e); }
+        // remove the frame indicator
+        setTimeout(function() { doc.body.removeChild(indicator); }, 500);
+    }
+    catch (e)
+    {
+        //vimperator.echoerr(e);
+        // FIXME: fail silently here for now
+    }
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////
 // location handling ////////////////////////////////////////////// {{{1
