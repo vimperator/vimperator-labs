@@ -1,4 +1,4 @@
-/**
+/***** BEGIN LICENSE BLOCK ***** {{{
  *
  * Mozilla Public License Notice
  *
@@ -20,9 +20,9 @@
  * Contributor(s): Pekka Sillanpaa, Paul Stone
  * adapted for vimperator use by: Martin Stubenschrott
  *
- */
+}}} ***** END LICENSE BLOCK *****/
 
-function hit_a_hint()
+function hit_a_hint() //{{{
 {
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 
@@ -39,12 +39,12 @@ function hit_a_hint()
     var linkNumString = ""; // the typed link number is in this string
     var linkCount = 0;
     var state = 0; // 0: empty or processing, 1: a full hint was parsed
- 
+
     var wins; // frame array
- 
+
     // each hint element is a clone of this element
     var hintElemSpan;
- 
+
     ////////////////////////////////////////////////////////////////////////////////
     // configuration and initialization related functions
     ////////////////////////////////////////////////////////////////////////////////
@@ -54,17 +54,17 @@ function hit_a_hint()
 //      isHahModeEnabled = false;
 //      hintedElem = null;
 //  }
-  
+
     ////////////////////////////////////////////////////////////////////////////////
     // hint activating and loading related functions
     ////////////////////////////////////////////////////////////////////////////////
- 
+
     function startCoordLoader(doc)
     {
         win = doc.defaultView;
         if (!win)
             return;
- 
+
         if (win.winId != null)
         {
             window.clearTimeout(win.coordLoaderId);
@@ -73,31 +73,31 @@ function hit_a_hint()
         {
             if (!wins)
                 wins = new Array();
- 
-            win.winId = wins.length; 
+
+            win.winId = wins.length;
             wins.push(win);
         }
         //    logMessage("winId:"+win.winId);
         win.res = evaluateXPath(vimperator.options["hinttags"], doc);
         win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
     }
- 
+
     this.loadCoord = function(winId, i)
     {
         win = wins[winId];
         var elem = win.res.snapshotItem(i);
- 
+
         if (elem)
             genElemCoords(elem);
- 
+
         i++;
- 
+
         if (i < win.res.snapshotLength && !isHahModeEnabled)
             window.setTimeout("hah.loadCoord(" + winId + ", "+ i +");", 1);
         else
             win.coordLoaderId = null;
     };
- 
+
     function genElemCoords(elem)
     {
         if (typeof(elem.validCoord) != "undefined")
@@ -105,7 +105,7 @@ function hit_a_hint()
             if (elem.validCoord == elem.ownerDocument.validCoords)
                 return;
         }
- 
+
         if (elem.offsetParent)
         {
             genElemCoords(elem.offsetParent);
@@ -119,7 +119,7 @@ function hit_a_hint()
         }
         elem.validCoord = elem.ownerDocument.validCoords;
     }
- 
+
     function createHints(win)
     {
         if (!win)
@@ -127,31 +127,31 @@ function hit_a_hint()
             win = window._content;
             linkCount = 0;
         }
- 
+
         var area = new Array(4);
         area[0] = win.pageXOffset - 5;
         area[1] = win.pageYOffset - 5;
         area[2] = area[0] + win.innerWidth;
         area[3] = area[1] + win.innerHeight;
- 
+
         var doc = win.document;
         var res = evaluateXPath(vimperator.options["hinttags"], doc);
- 
+
         var elem, i;
- 
+
         hintElemSpan = doc.createElement('SPAN');
         hintElemSpan.style.cssText = vimperator.options["hintstyle"];
         hintElemSpan.setAttribute('name', 'hah_hint');
- 
+
         var hintContainer = doc.getElementById('hah_hints');
- 
+
         if (hintContainer == null)
         {
             genHintContainer(doc);
             hintContainer = doc.getElementById('hah_hints');
         }
         hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
- 
+
         var hints = hintContainer.childNodes;
         var maxhints = vimperator.options["maxhints"];
         for (i = 0; i < res.snapshotLength; i++)
@@ -162,22 +162,22 @@ function hit_a_hint()
 
             elem = res.snapshotItem(i);
             genElemCoords(elem);
- 
+
             // for extended hint mode, show all - even currently hidden - hints
             //if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
             if (vimperator.hasMode(vimperator.modes.QUICK_HINT) && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
                     elem.absoLeft > area[2] || elem.absoLeft < area[0]))
                 continue;
- 
+
             // XXX: what does that do
             // if (elem.offsetWidth == 0 && elem.offsetHeight == 0)
             //     continue;
- 
+
             var cs = doc.defaultView.getComputedStyle(elem, null);
- 
+
             if (cs.getPropertyValue("visibility") == "hidden")
                 continue;
- 
+
             if (linkCount < hints.length)
                 hintElem = hints[linkCount];
             else // need to attach this new hintElem to the hint container
@@ -185,22 +185,22 @@ function hit_a_hint()
                 hintElem = hintElemSpan.cloneNode(false);
                 hintContainer.appendChild(hintElem);
             }
- 
+
             hintElem.style.display = 'none';
             hintElem.style.top = elem.absoTop + "px";
             hintElem.style.left = elem.absoLeft + "px";
             hintElem.refElem = elem;
- 
+
             hintContainer.valid_hint_count++; // one more visible hint in this frame
             linkCount++;                      // and one more total hint
         }
- 
+
         doc.coordsInvalidated = false;
- 
+
         // recursively create hints
         for (i = 0; i < win.frames.length; i++)
             createHints(win.frames[i]);
- 
+
     }
 
     function showHints(win, off)
@@ -245,7 +245,7 @@ function hit_a_hint()
         for (j = 0; j < win.frames.length; j++)
             showHints(win.frames[j], offset);
     }
- 
+
     /* removes all visible hints from doc
      * or from current document, if win == null
      */
@@ -253,22 +253,22 @@ function hit_a_hint()
     {
         if (!win)
             win = window.content;
- 
+
         var doc = win.document;
         var res = evaluateXPath("//HINTS/SPAN", doc)
         var elem, i;
- 
+
         for (i = 0; i < res.snapshotLength; i++)
         {
             elem = res.snapshotItem(i);
-            setHintStyle(elem, vimperator.options["hintstyle"]);  
+            setHintStyle(elem, vimperator.options["hintstyle"]);
             elem.style.display = 'none';
         }
- 
+
         for (i = 0; i < win.frames.length; i++)
             removeHints(win.frames[i]);
     }
- 
+
     function onResize(event)
     {
         if(event)
@@ -279,7 +279,7 @@ function hit_a_hint()
         invalidateCoords(doc);
         startCoordLoader(doc);
     }
- 
+
     function invalidateCoords(doc)
     {
         if (!doc.coordsInvalidated)
@@ -297,19 +297,19 @@ function hit_a_hint()
             //      logMessage(doc.validCoords);
         }
     }
- 
+
     function getHintById(id, win)
     {
         if (!win)
             win = window._content;
- 
+
         var doc = win.document;
         var elem, i;
- 
+
         //var hintId = parseInt(id, nums.length);
         //elem = doc.getElementById(prefix + hintId);
         elem = doc.getElementById(HINT_PREFIX + id);
- 
+
         if (elem)
         {
             return elem;
@@ -319,18 +319,18 @@ function hit_a_hint()
             for (i = 0; i < win.frames.length; i++)
             {
                 elem = getHintById(id, win.frames[i]);
-                if (elem) 
+                if (elem)
                     return elem;
             }
         }
         return null;
     }
- 
+
     function formatHint(hintNum)
     {
         var hintCharacters = vimperator.options["hintchars"];
         var str = hintNum.toString(hintCharacters.length); // turn hintNum into a base(length) number
- 
+
         // map the number onto the chars in the numbers string
         var result = '';
         // make all links the same length
@@ -343,15 +343,15 @@ function hit_a_hint()
             result += hintCharacters.charAt(0).toUpperCase();
             hintLength--;
         }
-        
+
         for (var i = 0; i < str.length; i++)
             result += (hintCharacters.charAt(parseInt(str[i], hintCharacters.length))).toUpperCase();
 
         return result;
     }
- 
+
     function setHintStyle(hintElem, styleString)
-    { 
+    {
         if (hintElem && hintElem.style)
         {
             xTemp = hintElem.style.left;
@@ -361,13 +361,13 @@ function hit_a_hint()
             hintElem.style.top = yTemp;
         }
     }
- 
+
     function changeHintFocus(linkNumString, oldLinkNumString)
     {
         var styleString = vimperator.options["hintstyle"];
         var styleStringFocus = vimperator.options["focusedhintstyle"];
         var hintElem;
- 
+
         if (oldLinkNumString.length > 0)
         {
             hintElem = getHintById(oldLinkNumString);
@@ -376,16 +376,16 @@ function hit_a_hint()
         if (linkNumString.length > 0)
         {
             hintElem = getHintById(linkNumString);
-            setHintStyle(hintElem, styleStringFocus);  
+            setHintStyle(hintElem, styleStringFocus);
             if(hintElem)
                 setMouseOverElement(hintElem.refElem);
         }
     }
- 
+
     ////////////////////////////////////////////////////////////////////////////////
     // basic functionality
     ////////////////////////////////////////////////////////////////////////////////
- 
+
     /**
      * Enables the HaH-mode by showing the hints and prepare to input the
      * hint numbers
@@ -404,13 +404,13 @@ function hit_a_hint()
         linkCount = 0;
         linkNumString = '';
         isHahModeEnabled = true;
- 
+
         createHints();
         showHints(null, 0);
- 
+
         return true;
     };
- 
+
     /**
      * Disables the HaH-mode by hiding the hints and disabling the input mode
      *
@@ -434,7 +434,7 @@ function hit_a_hint()
         hintedElems = [];
 //        if (!silent && vimperator.options["showmode"])
 //            vimperator.echo('');
- 
+
         removeHints(win);
         return 0;
     };
@@ -443,17 +443,17 @@ function hit_a_hint()
     {
         linkNumString = '';
         state = 0;
- 
+
         while(hintedElems.length > 0)
         {
             var elem = hintedElems.pop();
             if (!elem)
                 return 0;
             // reset style attribute
-            setHintStyle(elem, vimperator.options["hintstyle"]);  
+            setHintStyle(elem, vimperator.options["hintstyle"]);
         }
     };
-        
+
 
     this.reshowHints = function()
     {
@@ -466,8 +466,8 @@ function hit_a_hint()
             showHints(null, 0);
         }
     };
- 
- 
+
+
     // this function 'click' an element, which also works
     // for javascript links
     this.openHints = function(new_tab, new_window)
@@ -480,7 +480,7 @@ function hit_a_hint()
             if (!elem)
                 return 0;
 
-            setHintStyle(elem, vimperator.options["hintstyle"]);  
+            setHintStyle(elem, vimperator.options["hintstyle"]);
             elem = elem.refElem;
             var elemTagName = elem.tagName;
             elem.focus();
@@ -559,7 +559,7 @@ function hit_a_hint()
     function setMouseOverElement(elem)
     {
         var doc = window.document;
- 
+
         if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
         {
             elem.contentWindow.focus();
@@ -569,7 +569,7 @@ function hit_a_hint()
         {
             //elem.focus();
         }
- 
+
         var evt = doc.createEvent('MouseEvents');
         var x = 0;
         var y = 0;
@@ -580,15 +580,15 @@ function hit_a_hint()
             x = Number(coords[0]);
             y = Number(coords[1]);
         }
- 
+
         evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evt);
     }
- 
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers
     ////////////////////////////////////////////////////////////////////////////////
- 
+
     // returns nr. of fully parsed links when a new hint has been found,
     // otherwise 0 if current state is part of a hint, or -1 if an error occured
     // (like we have typed keys which never can become a hint
@@ -599,7 +599,7 @@ function hit_a_hint()
 
         // reset state to show that we are in processing mode
         state = 0;
- 
+
         var num = String.fromCharCode(event.charCode).toUpperCase();
         var hintCharacters = vimperator.options["hintchars"];
         if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
@@ -633,38 +633,38 @@ function hit_a_hint()
         // an unparseable or wrong key
         return -1;
     }
- 
+
     function genHintContainer(doc)
     {
         if (doc.getElementsByTagName('HINTS').length > 0)
             return;
- 
+
         hints = doc.createElement('HINTS');
         hints.id = "hah_hints";
         hints.valid_hint_count = 0; // initially 0 elements are usable as hints
         doc.body.appendChild(hints);
     }
- 
+
     function initDoc(event)
     {
         doc = event.originalTarget;
         genHintContainer(doc);
         isHahModeEnabled = false;
         hintedElems = [];
- 
+
         if (!doc.validCoords)
             doc.validCoords = true;
         else
             doc.validCoords = false;
- 
+
         // XXX: prepend a ! ?
         if (doc.coordsInvalidated)
             doc.coordsInvalidated = true;
         else
             doc.coordsInvalidated = false;
- 
+
         startCoordLoader(doc);
- 
+
         //if (hintmode == HINT_MODE_ALWAYS)
         if (vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
@@ -681,7 +681,7 @@ function hit_a_hint()
 
     window.document.addEventListener("pageshow", initDoc, null);
     window.addEventListener("resize", onResize, null);
-}
+} //}}}
 
 var hah = new hit_a_hint();
 

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function help(section, easter)
+function help(section, easter) //{{{
 {
     if (easter)
     {
@@ -264,6 +264,6 @@ function help(section, easter)
         // horizontal offset is annoying, set it to 0 (use pos[0] if you want horizontal offset)
         window.content.scrollTo(0, pos[1]);
     }
-}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -1,4 +1,4 @@
-/***** BEGIN LICENSE BLOCK *****
+/***** BEGIN LICENSE BLOCK ***** {{{
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -26,7 +26,7 @@ decision by deleting the provisions above and replace them with the notice
 and other provisions required by the GPL or the LGPL. If you do not delete
 the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
-***** END LICENSE BLOCK *****/
+}}} ***** END LICENSE BLOCK *****/
 
 // Finder for vimperator
 // Author: Nigel McNie <http://nigel.mcnie.name/>
@@ -175,7 +175,7 @@ function highlightFind(str, color, wrapped, dir, pt)
 	    selectionRange = retRange.cloneRange();
 	    // 	    highlightAllBut(str, retRange, color);
 	} else {
-	    
+
 	}
 
 	return selectionRange;
@@ -185,7 +185,7 @@ function highlightFind(str, color, wrapped, dir, pt)
 function clearHighlight()
 {
     gFindBar.highlightDoc();
-    var win = window._content; 
+    var win = window._content;
     var doc = win.document;
     if (!document)
 	return;
@@ -214,7 +214,7 @@ function abs_point (node) {
     var orig = node;
     var pt = {};
     try {
-        pt.x = node.offsetLeft;                                                                                                                  
+        pt.x = node.offsetLeft;
         pt.y = node.offsetTop;
 
         // Find imagemap's coordinates
@@ -241,7 +241,7 @@ function abs_point (node) {
 // Vimperator searcher
 // make sure you only create this object when the "vimperator" object is ready
 //Vimperator.prototype.search = new function()
-function Search()
+function Search() //{{{
 {
     var self = this; // needed for callbacks since "this" is the "vimperator" object in a callback
     this.gWin = null;
@@ -319,7 +319,7 @@ function Search()
     }
 
     // Called when the user types a key in the search dialog. Triggers a find attempt
-    this.searchKeyPressed = function(command) { 
+    this.searchKeyPressed = function(command) {
         if (command != "") {
             var str = vimperator.commandline.getCommand();
             this.find(str, true, this.lastFindState()["point"]);
@@ -408,7 +408,7 @@ function Search()
     this.lastFindState = function() {
         return this.gFindState[this.gFindState.length - 1];
     }
-    
+
     // Adds a find state to the stack of such states. This is done every time a find is successful
     this.addFindState = function(screenX, screenY, searchStr, wrapped, point, range, selection, direction) {
         var state = new Array();
@@ -422,7 +422,7 @@ function Search()
         state["direction"] = direction;
         this.gFindState.push(state);
     }
-    
+
     // Finds text in a page
     this.find = function(str, dir, pt)
     {
@@ -434,7 +434,7 @@ function Search()
         // Should we wrap this time?
         var wrapped = this.lastFindState()["wrapped"];
         var point = pt;
-        if (this.lastFindState()["wrapped"] == false 
+        if (this.lastFindState()["wrapped"] == false
         && this.lastFindState()["range"] == null
         && this.lastFindState()["search-str"] == str
         && this.lastFindState()["direction"] == dir) {
@@ -457,7 +457,7 @@ function Search()
                 point, matchRange, matchRange, dir);
         }
     }
-}
+} //}}}
 
 // @TODO should be moved into commands.js
 vimperator.commands.add(new Command(["noh[lsearch]"],

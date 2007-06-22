@@ -1,6 +1,5 @@
 // XXX: move somehere else!
-
-function multiliner(line, prev_match, heredoc)
+function multiliner(line, prev_match, heredoc) //{{{
 {
     var end = true;
     var match = tokenize_ex(line, prev_match[4]);
@@ -39,8 +38,7 @@ function multiliner(line, prev_match, heredoc)
         }
     }
     return [prev_match, heredoc, end];
-}
-
+} //}}}
 
 /*
  * This class is used for prompting of user input and echoing of messages
@@ -48,11 +46,12 @@ function multiliner(line, prev_match, heredoc)
  * it consists of a prompt and command field
  * be sure to only create objects of this class when the chrome is ready
  */
-function CommandLine ()
+function CommandLine() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
     const HISTORY_SIZE = 500;
 
@@ -148,9 +147,9 @@ function CommandLine ()
             history = history.slice(HISTORY_SIZE / 10);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     this.getCommand = function()
     {
@@ -240,7 +239,7 @@ function CommandLine ()
                 vimperator.setMode(old_mode || vimperator.modes.NORMAL, old_extended_mode || null, silent);
                 cur_command = command;
 
-                // don't add the echoed command to the history, on pressing <cr>, the 
+                // don't add the echoed command to the history, on pressing <cr>, the
                 // command is saved right into the kepress handler
                 if(!echo_allowed)
                     addToHistory(command);
@@ -265,7 +264,7 @@ function CommandLine ()
             {
                 //event.stopPropagation(); // XXX: doesnt seem to work
                 //event.preventDefault();  // so we need to use the hack below --mst
-                
+
                 // NOTE: echo_allowed is a misleading name here, actually this flag is set
                 // so that we don't save a history entry if the user clicks into the text field
                 echo_allowed = true;
@@ -319,7 +318,7 @@ function CommandLine ()
             else if (key == "<Up>" || key == "<Down>")
             {
                 //always reset the tab completion if we use up/down keys
-                completion_index = UNINITIALIZED; 
+                completion_index = UNINITIALIZED;
 
                 /* save 'start' position for iterating through the history */
                 if (history_index == UNINITIALIZED)
@@ -366,7 +365,7 @@ function CommandLine ()
                 history_index = UNINITIALIZED;
 
                 // we need to build our completion list first
-                if (completion_index == UNINITIALIZED) 
+                if (completion_index == UNINITIALIZED)
                 {
                     completion_start_index = 0;
 
@@ -501,7 +500,8 @@ function CommandLine ()
     {
         Options.setPref("commandline_history", history.join("\n"));
     }
-}
+    //}}}
+} //}}}
 
 /**
  * The list which is used for the completion box, the preview window and the buffer preview window
@@ -509,11 +509,15 @@ function CommandLine ()
  * @param id: the id of the the XUL widget which we want to fill
  * @param options: an optional hash which modifies the behavior of the list
  */
-function InformationList(id, options)
+function InformationList(id, options) //{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     const CONTEXT_LINES = 3;
-    var max_items = 10; 
-    var min_items = 1; 
+    var max_items = 10;
+    var min_items = 1;
     var incremental_fill = true; // make display faster, but does not show scrollbar
 
     if(options)
@@ -555,7 +559,7 @@ function InformationList(id, options)
 
     /**
      * uses the entries in completions to fill the listbox
-     * 
+     *
      * @param startindex: start at this index and show max_items
      * @returns the number of items
      */
@@ -591,10 +595,10 @@ function InformationList(id, options)
         return (i-startindex);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     /**
      * Show the completion list window
      *
@@ -702,13 +706,15 @@ function InformationList(id, options)
         else
             return false;
     }
-}
+    //}}}
+} //}}}
 
-function StatusLine()
+function StatusLine() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // our status bar fields
     var statusline_widget     = document.getElementById("vimperator-statusline");
     var url_widget            = document.getElementById("vimperator-statusline-field-url");
@@ -717,9 +723,10 @@ function StatusLine()
     var tabcount_widget       = document.getElementById("vimperator-statusline-field-tabcount");
     var bufferposition_widget = document.getElementById("vimperator-statusline-field-bufferposition");
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // use names for the color or "transparent" to remove color information
     this.setColor = function(color)
     {
@@ -808,6 +815,7 @@ function StatusLine()
 
         bufferposition_widget.value = bufferposition_str;
     };
-}
+    //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

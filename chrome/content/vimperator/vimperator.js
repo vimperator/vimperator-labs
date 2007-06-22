@@ -35,15 +35,16 @@ var popup_allowed_events; // need to change and reset this firefox pref XXX: mov
 window.addEventListener("load", init, false);
 
 ////////////////////////////////////////////////////////////////////////
-// init/uninit //////////////////////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
-function init()
+// init/uninit /////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////{{{
+
+function init() //{{{
 {
     window.dump("in init\n");
     // init the main object
     vimperator = new Vimperator;
     vimperator.log("Initializing vimperator object...", 1);
-    
+
     // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
     vimperator.log("Loading module options...", 3);
@@ -109,7 +110,7 @@ function init()
         setTimeout(function() {
             help(null, null, null, { inTab: true });
             Options.setPref("firsttime", false);
-        }, 1000); 
+        }, 1000);
     }
 
     gURLBar.blur();
@@ -127,9 +128,9 @@ function init()
 
     window.addEventListener("unload",   unload, false);
     vimperator.log("Vimperator fully initialized", 1);
-}
+} //}}}
 
-function unload()
+function unload() //{{{
 {
     /*** save our preferences ***/
     vimperator.commandline.destroy();
@@ -140,15 +141,15 @@ function unload()
     if (Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
             == popup_allowed_events + " keypress")
         Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events);
-}
+} //}}}
+//}}}
 
-
-
-function Vimperator() //{{{1
+function Vimperator() //{{{
 {
 	////////////////////////////////////////////////////////////////////////////////
 	////////////////////// PRIVATE SECTION /////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////{{{
+
     this.modes = { // actually not private, but Firefox complains if this doesn't come first
         // main modes
         NONE:             0,
@@ -213,9 +214,10 @@ function Vimperator() //{{{1
         vimperator.echo("-- " + str_mode + str_extended + " --");
     }
 
-	////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////}}}
 	////////////////////// PUBLIC SECTION //////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////{{{
+
     this.version  = "###VERSION### CVS (created: ###DATE###)";
 
     /////////////// callbacks ////////////////////////////
@@ -344,13 +346,14 @@ function Vimperator() //{{{1
         }
         this.log(string, level);
     }
-}
+    //}}}
+} //}}}
 
-function Events() //{{{1
+function Events() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// CONSTRUCTOR /////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     // this handler is for middle click only in the content
     //window.addEventListener("mousedown", onVimperatorKeypress, true);
@@ -373,7 +376,7 @@ function Events() //{{{1
         updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
-    tabcontainer.addEventListener("TabSelect", function(event) { 
+    tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
         updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
@@ -395,9 +398,10 @@ function Events() //{{{1
         //alert("titlechanged");
     }, null);
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     function onPageLoad(event)
     {
         if (event.originalTarget instanceof HTMLDocument)
@@ -410,7 +414,7 @@ function Events() //{{{1
                 // when you click on a link inside a frameset, because asyncUpdateUI
                 // is not triggered there (firefox bug?)
                 setTimeout(vimperator.statusline.updateUrl, 10);
-                return; 
+                return;
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
@@ -431,9 +435,10 @@ function Events() //{{{1
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     this.destroy = function()
     {
         // BIG TODO: removeEventListeners() to avoid mem leaks
@@ -475,7 +480,7 @@ function Events() //{{{1
         // XXX: for now only, later: input mappings if form element focused
         if (isFormElemFocused())
             return false;
-        
+
         // handle Escape-one-key mode (Ctrl-v)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
         {
@@ -718,11 +723,11 @@ function Events() //{{{1
             vimperator.statusline.updateProgress();
 
             // if this is not delayed we get the wrong position of the old buffer
-            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100); 
+            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100);
         },
         // called at the very end of a page load
         asyncUpdateUI: function()
-        {  
+        {
             setTimeout(vimperator.statusline.updateUrl, 100);
         },
         setOverLink : function(link, b)
@@ -735,7 +740,7 @@ function Events() //{{{1
                 else if (ssli == 2)
                     vimperator.echo("Link: " + link);
             }
-                
+
             if (link == "")
             {
                 if (ssli == 1)
@@ -759,14 +764,14 @@ function Events() //{{{1
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
     getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-    
-}
+    //}}}
+} //}}}
 
 // this function converts the given event to
 // a keycode which can be used in mappings
 // e.g. pressing ctrl+n would result in the string "<C-n>"
 // null if unknown key
-KeyboardEvent.prototype.toString = function ()
+KeyboardEvent.prototype.toString = function() //{{{
 {
     var key = String.fromCharCode(this.charCode);
     var modifier = "";
@@ -853,18 +858,18 @@ KeyboardEvent.prototype.toString = function ()
     }
     else // a key like F1 is always enclosed in < and >
         return "<" + modifier + key + ">";
-}
+} //}}}
 
 /** provides functions for working with tabs
  * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
  * Firefox 3.0, then this class should go away and their tab methods should be used
  * @deprecated
  */
-function Tabs() //{{{1
+function Tabs() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
     /** @param spec can either be:
      * - an absolute integer
      * - "" for the current tab
@@ -907,9 +912,9 @@ function Tabs() //{{{1
         return position;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
     // @returns the index of the currently selected tab starting with 0
     this.index = function(tab)
     {
@@ -1004,43 +1009,44 @@ function Tabs() //{{{1
     /* XXX: disabled until we find a better way where to update the titles, right now
      * it has O(n^2) complexity on firefox start when we load 50 tabs
      * (c) by hrist
-     
+
          window.addEventListener("TabMove",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
          window.addEventListener("TabOpen",    function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
          window.addEventListener("TabClose",   function() { vimperator.statusline.updateTabCount(); vimperator.tabs.updateTitles(); }, false);
 
     this.updateTitles = function(forceclear)
-    {    
+    {
         for(var i=0;i < vimperator.tabs.count();i++)
-        {    
+        {
             var old_title = getBrowser().mTabContainer.childNodes[i].getAttribute("label");
             var split_title = old_title.match(/^(\d+:\s+)(.*)/);
             if(forceclear)
-            {    
+            {
                 for(var i=0;i<vimperator.tabs.count();i++)
                 getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
                 return;
-            }    
+            }
 
             var numbertabs = vimperator.options["numbertabs"];
             if(numbertabs)
-            {    
+            {
                 if(split_title)
-                {    
+                {
                     var new_title = (i+1) + ": "+ split_title[2];
-                }    
+                }
                 else  var new_title = (i+1) + ": " + old_title;
                 getBrowser().mTabContainer.childNodes[i].setAttribute("label", new_title);
-            }    
+            }
             else getBrowser().mTabContainer.childNodes[i].setAttribute("label", split_title[2]);
-        }    
+        }
     }
     */
-}
+    //}}}
+} //}}}
 
 ////////////////////////////////////////////////////////////////////////
-// DOM related helper functions /////////////////////////////////// {{{1
-////////////////////////////////////////////////////////////////////////
+// DOM related helper functions ////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////{{{
 function isFormElemFocused()
 {
     var elt = document.commandDispatcher.focusedElement;
@@ -1059,5 +1065,6 @@ function isFormElemFocused()
 
     return false;
 }
+//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

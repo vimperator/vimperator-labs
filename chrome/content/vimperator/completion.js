@@ -6,7 +6,7 @@ var g_substrings = [];
  * used for the 'longest' setting for wildmode
  *
  */
-function get_longest_substring()/*{{{*/
+function get_longest_substring() //{{{
 {
     if (g_substrings.length == 0)
         return '';
@@ -18,11 +18,11 @@ function get_longest_substring()/*{{{*/
     }
     //alert(longest);
     return longest;
-}/*}}}*/
+} //}}}
 
 // function uses smartcase
 // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
-function build_longest_common_substring(list, filter)/*{{{*/
+function build_longest_common_substring(list, filter) //{{{
 {
     var filtered = [];
     //var filter_length = filter.length;
@@ -65,10 +65,10 @@ function build_longest_common_substring(list, filter)/*{{{*/
         }
     }
     return filtered;
-}/*}}}*/
+} //}}}
 
 /* this function is case sensitive */
-function build_longest_starting_substring(list, filter)/*{{{*/
+function build_longest_starting_substring(list, filter) //{{{
 {
     var filtered = [];
     //var filter_length = filter.length;
@@ -95,7 +95,7 @@ function build_longest_starting_substring(list, filter)/*{{{*/
         }
     }
     return filtered;
-}/*}}}*/
+} //}}}
 
 /*
  * filter a list of urls
@@ -104,7 +104,7 @@ function build_longest_starting_substring(list, filter)/*{{{*/
  * depending on the 'complete' option
  * if the 'complete' argument is passed like "h", it temproarily overrides the complete option
  */
-function get_url_completions(filter, complete)/*{{{*/
+function get_url_completions(filter, complete) //{{{
 {
     var completions = new Array();
     g_substrings = [];
@@ -124,10 +124,10 @@ function get_url_completions(filter, complete)/*{{{*/
     }
 
     return completions;
-}/*}}}*/
+} //}}}
 
 /* discard all entries in the 'urls' array, which don't match 'filter */
-function filter_url_array(urls, filter)/*{{{*/
+function filter_url_array(urls, filter) //{{{
 {
     var filtered = [];
     // completions which don't match the url but just the description
@@ -184,9 +184,9 @@ function filter_url_array(urls, filter)/*{{{*/
     }
 
     return filtered.concat(additional_completions);
-}/*}}}*/
+} //}}}
 
-function get_search_completions(filter)/*{{{*/
+function get_search_completions(filter) //{{{
 {
     var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
@@ -197,21 +197,21 @@ function get_search_completions(filter)/*{{{*/
         return [[$_[0]], $_[1]];
     });
     return build_longest_common_substring(mapped, filter);
-}/*}}}*/
+} //}}}
 
-function get_history_completions(filter)
+function get_history_completions(filter) //{{{
 {
     var items = vimperator.history.get();
     return filter_url_array(items, filter);
-}
+} //}}}
 
-function get_bookmark_completions(filter)
+function get_bookmark_completions(filter) //{{{
 {
     var bookmarks = vimperator.bookmarks.get();
     return filter_url_array(bookmarks, filter);
-}
+} //}}}
 
-function get_file_completions(filter)/*{{{*/
+function get_file_completions(filter) //{{{
 {
     //var completions = new Array();
     /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
@@ -249,9 +249,9 @@ function get_file_completions(filter)/*{{{*/
     });
 
     return build_longest_starting_substring(mapped, new_filter);
-}/*}}}*/
+} //}}}
 
-function get_help_completions(filter)/*{{{*/
+function get_help_completions(filter) //{{{
 {
     var help_array = [[["introduction"], "Introductory text"],
                       [["mappings"], "Normal mode commands"],
@@ -280,9 +280,9 @@ function get_help_completions(filter)/*{{{*/
     });
 
     return build_longest_common_substring(help_array, filter);
-}/*}}}*/
+} //}}}
 
-function get_command_completions(filter)/*{{{*/
+function get_command_completions(filter) //{{{
 {
     //g_completions = [];
     g_substrings = [];
@@ -297,9 +297,9 @@ function get_command_completions(filter)/*{{{*/
     for (var command in vimperator.commands)
         completions.push([command.long_names, command.short_help]);
     return build_longest_starting_substring(completions, filter);
-}/*}}}*/
+} //}}}
 
-function get_options_completions(filter, unfiltered)/*{{{*/
+function get_options_completions(filter, unfiltered) //{{{
 {
     g_substrings = [];
     var options_completions = [];
@@ -379,9 +379,9 @@ function get_options_completions(filter, unfiltered)/*{{{*/
     }
 
     return options_completions;
-}/*}}}*/
+} //}}}
 
-function get_buffer_completions(filter)/*{{{*/
+function get_buffer_completions(filter) //{{{
 {
     g_substrings = [];
     var items = [];
@@ -415,9 +415,9 @@ function get_buffer_completions(filter)/*{{{*/
         return [$_[0][0], $_[1]];
     });
     return build_longest_common_substring(items, filter);
-}/*}}}*/
+} //}}}
 
-function exTabCompletion(str)
+function exTabCompletion(str) //{{{
 {
 	var [count, cmd, special, args] = tokenize_ex(str);
 	var completions = new Array;
@@ -448,6 +448,6 @@ function exTabCompletion(str)
 		}
 	}
 	return [start, completions];
-}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

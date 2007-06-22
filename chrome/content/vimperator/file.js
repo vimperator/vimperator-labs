@@ -46,7 +46,7 @@ function fopen (path, mode, perms, tmp)
     return new LocalFile(path, mode, perms, tmp);
 }
 
-function LocalFile(file, mode, perms, tmp)
+function LocalFile(file, mode, perms, tmp) // {{{
 {
     const classes = Components.classes;
     const interfaces = Components.interfaces;
@@ -55,13 +55,13 @@ function LocalFile(file, mode, perms, tmp)
     const FILEIN_CTRID = "@mozilla.org/network/file-input-stream;1";
     const FILEOUT_CTRID = "@mozilla.org/network/file-output-stream;1";
     const SCRIPTSTREAM_CTRID = "@mozilla.org/scriptableinputstream;1";
-    
+
     const nsIFile = interfaces.nsIFile;
     const nsILocalFile = interfaces.nsILocalFile;
     const nsIFileOutputStream = interfaces.nsIFileOutputStream;
     const nsIFileInputStream = interfaces.nsIFileInputStream;
     const nsIScriptableInputStream = interfaces.nsIScriptableInputStream;
-    
+
     if (typeof perms == "undefined")
         perms = 0666 & ~(PERM_IWOTH | PERM_IWGRP);
 
@@ -82,7 +82,7 @@ function LocalFile(file, mode, perms, tmp)
                 throw "Invalid mode ``" + mode + "''";
         }
     }
-        
+
     if (typeof file == "string")
     {
         this.localFile = classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
@@ -102,14 +102,14 @@ function LocalFile(file, mode, perms, tmp)
     }
 
     this.path = this.localFile.path;
-    
+
     if (mode & (MODE_WRONLY | MODE_RDWR))
     {
-        this.outputStream = 
+        this.outputStream =
             classes[FILEOUT_CTRID].createInstance(nsIFileOutputStream);
         this.outputStream.init(this.localFile, mode, perms, 0);
     }
-    
+
     if (mode & (MODE_RDONLY | MODE_RDWR))
     {
         var is = classes[FILEIN_CTRID].createInstance(nsIFileInputStream);
@@ -117,7 +117,7 @@ function LocalFile(file, mode, perms, tmp)
         this.inputStream =
             classes[SCRIPTSTREAM_CTRID].createInstance(nsIScriptableInputStream);
         this.inputStream.init(is);
-    }    
+    }
 }
 
 
@@ -126,7 +126,7 @@ function fo_write(buf)
 {
     if (!("outputStream" in this))
         throw "file not open for writing.";
-    
+
     return this.outputStream.write(buf, buf.length);
 }
 
@@ -154,8 +154,8 @@ function fo_read(max)
         max = av;
 
     if (!av)
-        return null;    
-    
+        return null;
+
     var rv = this.inputStream.read(max);
     return rv;
 }
@@ -174,5 +174,6 @@ function fo_close()
 {
     return this.outputStream.flush();
 }
+//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

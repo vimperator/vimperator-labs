@@ -2,7 +2,7 @@
  * also includes methods for dealing with
  * keywords and search engines
  */
-function Bookmarks()//{{{
+function Bookmarks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -11,7 +11,7 @@ function Bookmarks()//{{{
                            getService(Components.interfaces.nsIBrowserSearchService);
     const rdf_service    = Components.classes["@mozilla.org/rdf/rdf-service;1"].
                            getService( Components.interfaces.nsIRDFService );
-    
+
     var bookmarks = null;
     var keywords = null;
 
@@ -76,36 +76,36 @@ function Bookmarks()//{{{
      * @returns number of deleted bookmarks
      */
     this.remove = function(url)
-    { 
+    {
         var deleted = 0;
         if(!url)
             return 0;
 
-        // gNC_NS for trunk, NC_NS for 1.X 
-        //try { var pNC_NS; pNC_NS = gNC_NS;} catch (err) { pNC_NS = NC_NS;} 
+        // gNC_NS for trunk, NC_NS for 1.X
+        //try { var pNC_NS; pNC_NS = gNC_NS;} catch (err) { pNC_NS = NC_NS;}
         if (!BMSVC || !BMDS || !RDF || !gNC_NS) // defined from firefox
-            return 0; 
+            return 0;
 
         var curfolder = RDF.GetResource("NC:BookmarksRoot");
-        var urlArc = RDF.GetResource(gNC_NS + "URL"); 
+        var urlArc = RDF.GetResource(gNC_NS + "URL");
         var urlLiteral = RDF.GetLiteral(url);
         if (BMDS.hasArcIn(urlLiteral, urlArc))
-        { 
-            var bmResources, bmResource, title, uri, type, ptype; 
-            bmResources = BMSVC.GetSources(urlArc, urlLiteral, true); 
+        {
+            var bmResources, bmResource, title, uri, type, ptype;
+            bmResources = BMSVC.GetSources(urlArc, urlLiteral, true);
             while (bmResources.hasMoreElements())
-            { 
-                bmResource = bmResources.getNext(); 
-                type = BookmarksUtils.resolveType(bmResource); 
-                if (type != "ImmutableBookmark") { 
-                    ptype = BookmarksUtils.resolveType(BMSVC.getParent(bmResource)); 
+            {
+                bmResource = bmResources.getNext();
+                type = BookmarksUtils.resolveType(bmResource);
+                if (type != "ImmutableBookmark") {
+                    ptype = BookmarksUtils.resolveType(BMSVC.getParent(bmResource));
                     //              alert(type);
                     //              if ( type == "Folder")  // store the current folder
                     //                  curfolder = bmResource;
                     if ( (type == "Bookmark" || type == "IEFavorite") && ptype != "Livemark")
-                    { 
-                        title = BookmarksUtils.getProperty(bmResource, gNC_NS + "Name"); 
-                        uri = BookmarksUtils.getProperty(bmResource, gNC_NS + "URL"); 
+                    {
+                        title = BookmarksUtils.getProperty(bmResource, gNC_NS + "Name");
+                        uri = BookmarksUtils.getProperty(bmResource, gNC_NS + "URL");
 
                         if (uri == url)
                         {
@@ -113,16 +113,16 @@ function Bookmarks()//{{{
                             RDFC.RemoveElement(bmResource, true);
                             deleted++;
                         }
-                    } 
-                } 
-            } 
-        } 
+                    }
+                }
+            }
+        }
 
         // also update bookmark cache, if we removed at least one bookmark
         if(deleted > 0)
             load();
 
-        return deleted; 
+        return deleted;
     }
 
     /* also ensures that each search engine has a vimperator-friendly alias */
@@ -262,9 +262,9 @@ function Bookmarks()//{{{
         return res;
     }
     //}}}
-}//}}}
+} //}}}
 
-function History()//{{{
+function History() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -345,9 +345,9 @@ function History()//{{{
         return true;
     };
     //}}}
-}//}}}
+} //}}}
 
-function Marks()//{{{
+function Marks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -408,7 +408,7 @@ function Marks()//{{{
         }
         return ok;
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -520,13 +520,13 @@ function Marks()//{{{
         }
         return this;
     }
-    
+
     // TODO: show marks like vim does (when the multiline echo impl is done) or in the preview windwo right now
     this.list = function()
     {
         return this;
     }
     //}}}
-}//}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

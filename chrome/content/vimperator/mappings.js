@@ -1,4 +1,3 @@
-// TODO: document
 function Map(mode, cmds, act, extra_info) //{{{
 {
     if (!mode || (!cmds || !cmds.length) || !act)
@@ -56,7 +55,7 @@ Map.prototype.toString = function()
         "\n}"
 } //}}}
 
-function Mappings()//{{{
+function Mappings() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -664,7 +663,7 @@ function Mappings()//{{{
 //}}}
 
     // TODO: Convert these to the new mappings model
-    var hint_maps = [
+    var hint_maps = [ //{{{
     /* hint action keys */
     ["o",          "hah.openHints(false, false);", true, false],
     ["t",          "hah.openHints(true,  false);", true, false],
@@ -701,7 +700,7 @@ function Mappings()//{{{
     ["<C-g>",      "", true, true],
     ["<C-[>",      "", true, true],
     ["<Esc>",      "", true, true]
-    ];
-}//}}}
+    ]; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

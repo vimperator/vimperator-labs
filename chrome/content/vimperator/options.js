@@ -1,4 +1,4 @@
-function Option(names, type, extra_info)//{{{
+function Option(names, type, extra_info) //{{{
 {
     if (!names || !type)
         return null;
@@ -79,9 +79,9 @@ function Option(names, type, extra_info)//{{{
              "\n\tvalidator: " + this.validator +
              "\n}"
     }
-}//}}}
+} //}}}
 
-function Options()//{{{
+function Options() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -484,6 +484,6 @@ function Options()//{{{
     setShowTabline(this.showtabline);
     setGuiOptions(this.guioptions);
     setTitleString(this.titlestring);
-}//}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
