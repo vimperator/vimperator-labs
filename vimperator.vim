@@ -40,6 +40,7 @@ syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
 
 " Note: match vim.vim highlighting groups
 hi def link vimperatorCommand			Statement
+hi def link vimperatorTodo			Todo
 hi def link vimperatorComment			Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
 hi def link vimperatorOption			PreProc
