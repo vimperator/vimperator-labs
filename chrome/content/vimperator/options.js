@@ -339,7 +339,6 @@ function Options() //{{{
                   "<li><b>b</b>: bookmark bar</li>" +
                   "<li><b>s</b>: original Firefox statusbar</li></ul>",
             setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
-            getter: function() { return Options.getPref("guioptions"); },
             default_value: "",
             validator: function (value) { if (/[^mTbs]/.test(value)) return false; else return true; }
         }
@@ -418,7 +417,6 @@ function Options() //{{{
                   "<li><b>2</b>: Always show tab bar</li></ul>" +
                   "Not implemented yet.",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
-            getter: function() { return Options.getPref("showtabline"); },
             default_value: 2,
             validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
         }
@@ -430,7 +428,6 @@ function Options() //{{{
                   "\"Title of webpage - Vimperator\".<br/>If you don't like that, you can restore it with: " +
                   "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
             setter: function(value) { Options.setPref("titlestring", value); setTitleString(value); },
-            getter: function() { return Options.getPref("titlestring"); },
             default_value: "Vimperator"
         }
     ));
