@@ -90,7 +90,7 @@ function Options() //{{{
     var firefox_prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch);
     var vimperator_prefs = firefox_prefs.getBranch("extensions.vimperator.");
-    var options = []
+    var options = [];
 
     function addOption(option)
     {
@@ -292,7 +292,8 @@ function Options() //{{{
                   "<li><b>h</b>: History</li></ul>" +
                   "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
                   "Add 'sort' to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
-            default_value: "sfbh"
+            default_value: "sfbh",
+            validator: function (value) { if (/[^sfbh]/.test(value)) return false; else return true; }
         }
     ));
     addOption(new Option(["defsearch", "ds"], "string",
@@ -339,7 +340,8 @@ function Options() //{{{
                   "<li><b>s</b>: original Firefox statusbar</li></ul>",
             setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
             getter: function() { return Options.getPref("guioptions"); },
-            default_value: ""
+            default_value: "",
+            validator: function (value) { if (/[^mTbs]/.test(value)) return false; else return true; }
         }
     ));
     addOption(new Option(["hintchars", "hc"], "charlist",
@@ -403,7 +405,8 @@ function Options() //{{{
                   "<li><b>0</b>: Don't show link destination</li>" +
                   "<li><b>1</b>: Show the link in the status line</li>" +
                   "<li><b>2</b>: Show the link in the command line</li></ul>",
-            default_value: 1
+            default_value: 1,
+            validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
         }
     ));
     addOption(new Option(["showtabline", "stal"], "number",
@@ -445,7 +448,8 @@ function Options() //{{{
             short_help: "Define which type of messages are logged",
             help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
                   "The highest value is 9, being the most verbose mode.",
-            default_value: 0
+            default_value: 0,
+            validator: function (value) { if (value>=0 && value <=9) return true; else return false; }
         }
     ));
     addOption(new Option(["wildmode", "wim"], "stringlist",
@@ -465,7 +469,13 @@ function Options() //{{{
                   "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
                   "</table>" +
                   "When there is only a single match, it is fully completed regardless of the case.",
-            default_value: "list:full"
+            default_value: "list:full",
+            validator: function (value) {
+                if (/^(?:(?:full|longest|list|list:full|list:longest)(?:,(?!,))?){0,3}(?:full|longest|list|list:full|list:longest)?$/.test(value))
+                    return true;
+                else
+                    return false;
+            }
         }
     ));
     addOption(new Option(["wildoptions", "wop"], "stringlist",
@@ -476,7 +486,8 @@ function Options() //{{{
                   "<table>" +
                   "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
                   "</table>",
-            default_value: ""
+            default_value: "",
+            validator: function (value) { if (/^sort$/.test(value)) return true; else return false; }
         }
     ));
     //}}}

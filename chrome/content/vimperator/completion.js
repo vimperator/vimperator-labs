@@ -102,7 +102,7 @@ function build_longest_starting_substring(list, filter) //{{{
  *
  * may consist of searchengines, filenames, bookmarks and history,
  * depending on the 'complete' option
- * if the 'complete' argument is passed like "h", it temproarily overrides the complete option
+ * if the 'complete' argument is passed like "h", it tempoarily overrides the complete option
  */
 function get_url_completions(filter, complete) //{{{
 {
