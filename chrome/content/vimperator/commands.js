@@ -1616,7 +1616,7 @@ function set(args, special)
             {
                 var num = parseInt(val, 10);
                 if (isNaN(num))
-                    vimperator.echoerr("Invalid argument type to option " + option.name + ": Expects number");
+                    vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
                 else
                 {
                     var cur_val = option.value;
@@ -1624,7 +1624,7 @@ function set(args, special)
                     if (oper == '-') num = cur_val - num;
                     // FIXME
                     if (option.validator != null && option.validator.call(this, num) == false)
-                        vimperator.echoerr("Invalid argument to option " + option.name + ": Check help for more details");
+                        vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
                     else // all checks passed, execute option handler
                         option.value = num;
                 }
@@ -1650,12 +1650,12 @@ function set(args, special)
                 }
                 // FIXME
                 if (option.validator != null && option.validator.call(this, val) == false)
-                    vimperator.echoerr("Invalid argument to option " + option.name + ": Check help for more details");
+                    vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
                 else // all checks passed, execute option handler
                     option.value = val;
             }
             else
-                vimperator.echoerr("Internal error, option format `" + type + "' not supported");
+                vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
         }
     }
 }
