@@ -1610,7 +1610,10 @@ function set(args, special)
             var type = option.type;
             if (type == "boolean")
             {
-                option.value = !no;
+                if (matches[4])
+                    vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                else
+                    option.value = !no;
             }
             else if (type == "number")
             {
