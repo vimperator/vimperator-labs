@@ -422,7 +422,6 @@ function exTabCompletion(str) //{{{
 	var [count, cmd, special, args] = tokenize_ex(str);
 	var completions = new Array;
 	var start = 0;
-	var s = 0; //FIXME, command specific start setting
 
 	// if there is no space between the command name and the cursor
 	// then get completions of the command name
