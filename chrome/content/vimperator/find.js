@@ -459,12 +459,12 @@ function Search() //{{{
     }
 } //}}}
 
-// @TODO should be moved into commands.js
-vimperator.commands.add(new Command(["noh[lsearch]"],
-        clearSelection,
-        {
-            short_help: "Clear the current selection"
-        }
-));
+//// @TODO should be moved into commands.js
+//vimperator.commands.add(new Command(["noh[lsearch]"],
+//        clearSelection,
+//        {
+//            short_help: "Clear the current selection"
+//        }
+//));
 
 // vim: set fdm=marker sw=4 ts=4 et:
