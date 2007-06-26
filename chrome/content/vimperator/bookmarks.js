@@ -521,8 +521,6 @@ function Marks() //{{{
 
         if (!ok)
             vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
-
-        return ok;
     }
 
     // TODO: show marks like vim does (when the multiline echo impl is done) or in the preview window right now

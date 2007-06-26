@@ -510,7 +510,7 @@ function Commands() //{{{
         },
         {
             usage: ["ma[rk] {arg}"],
-            short_help: "Mark current location within the webpage",
+            short_help: "Mark current location within the webpage"
         }
     ));
     addDefaultCommand(new Command(["marks"],
