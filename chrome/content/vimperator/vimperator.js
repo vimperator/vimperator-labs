@@ -309,12 +309,6 @@ function Vimperator() //{{{
         content.focus();
     }
 
-
-    this.getCurrentBuffer = function()
-    {
-        return document.commandDispatcher.focusedWindow;
-    }
-
     /**
      * logs any object to the javascript error console
      * also prints all properties of thie object
@@ -918,7 +912,7 @@ function Tabs() //{{{
     // @returns the index of the currently selected tab starting with 0
     this.index = function(tab)
     {
-        if(tab)
+        if (tab)
         {
             var length = getBrowser().mTabs.length;
             for (var i = 0; i < length; i++)
@@ -926,7 +920,7 @@ function Tabs() //{{{
                 if (getBrowser().mTabs[i] == tab)
                     return i;
             }
-            return false;
+            return -1;
         }
 
         return getBrowser().tabContainer.selectedIndex;

@@ -329,12 +329,53 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["delm[arks]"],
-        function(args, special) { vimperator.marks.remove(args, special); },
+        function(args, special) {
+            if (!special && !args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (special && args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return
+            }
+            var matches;
+            if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
+            {
+                // TODO: this currently differs from Vim's behaviour which
+                // deletes any valid marks in the arg list, up to the first
+                // invalid arg, as well as giving the error message. Do we want
+                // to match this behaviour?
+                vimperator.echoerr("E475: Invalid argument: " + matches[0]);
+                return;
+            }
+            // check for illegal ranges - only allow a-z A-Z 0-9
+            if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/))
+            {
+                for (var i = 0; i < matches.length; i++)
+                {
+                    var start = matches[i][0];
+                    var end   = matches[i][2];
+                    if (/[a-z]/.test(start) != /[a-z]/.test(end) ||
+                        /[A-Z]/.test(start) != /[A-Z]/.test(end) ||
+                        /[0-9]/.test(start) != /[0-9]/.test(end) ||
+                        start > end)
+                    {
+                        vimperator.echoerr("E475: Invalid argument: " + args.match(new RegExp(matches[i] + ".*"))[0]);
+                        return;
+                    }
+                }
+            }
+
+            vimperator.marks.remove(args, special);
+        },
         {
             usage: ["delm[arks]! {marks}"],
             short_help: "Delete the specified marks {a-zA-Z}",
             help: "Marks are presented as a list. Example:<br/>" +
                 "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
+                "<code class=\"command\">:delmarks b-p</code> will delete all marks in the range b to p<br/>" +
                 "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer",
         }
 
@@ -450,7 +491,23 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
-        function(args) { vimperator.marks.add(args) },
+        function(args) {
+            if (!args) {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (args.length > 1) {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+            if (!/[a-zA-Z]/.test(args))
+            {
+                vimperator.echoerr("E191: Argument must be a letter or forward/backward quote");
+                return;
+            }
+
+            vimperator.marks.add(args);
+        },
         {
             usage: ["ma[rk] {arg}"],
             short_help: "Mark current location within the webpage",
@@ -458,8 +515,8 @@ function Commands() //{{{
     ));
     addDefaultCommand(new Command(["marks"],
         function(args) {
-            vimperator.echo("marks not implemented yet");
-            //vimperator.marks.list(args)
+            //vimperator.echo("marks not implemented yet");
+            vimperator.marks.list(args)
         },
         {
             usage: ["marks {arg}"],
