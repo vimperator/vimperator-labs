@@ -376,7 +376,7 @@ function Commands() //{{{
             help: "Marks are presented as a list. Example:<br/>" +
                 "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
                 "<code class=\"command\">:delmarks b-p</code> will delete all marks in the range b to p<br/>" +
-                "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer",
+                "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer"
         }
 
     ));
