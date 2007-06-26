@@ -734,9 +734,9 @@ function StatusLine() //{{{
             color = "transparent";
         statusline_widget.setAttribute("style", "background-color: " + color);
     };
-    this.setClass = function(class)
+    this.setClass = function(type)
     {
-        statusline_widget.setAttribute("class", "status_" + class);
+        statusline_widget.setAttribute("class", "status_" + type);
     };
 
     this.updateUrl = function(url)
