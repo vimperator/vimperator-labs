@@ -40,7 +40,7 @@ window.addEventListener("load", init, false);
 
 function init() //{{{
 {
-    window.dump("in init\n");
+    window.dump("Vimperator init\n");
     // init the main object
     vimperator = new Vimperator;
     vimperator.log("Initializing vimperator object...", 1);
@@ -315,7 +315,7 @@ function Vimperator() //{{{
      */
     this.log = function(msg, level)
     {
-//        if(Options.getPref("verbose") >= level) FIXME: hangs vimperator
+        // if(Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
             console_service.logStringMessage('vimperator: ' + msg);
     }
 

@@ -74,6 +74,9 @@ function CommandLine() //{{{
     var prompt_widget = document.getElementById('vimperator-commandline-prompt');
     // The command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
+    // The widget used for multiline in-/output
+    var multiline_widget = document.getElementById("vimperator-multiline"); 
+    multiline_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
 
     // we need to save the mode which were in before opening the command line
     // this is then used if we focus the command line again without the "official"
@@ -130,7 +133,20 @@ function CommandLine() //{{{
     // Sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
-        command_widget.value = cmd;
+        // FIXME: very simple, buggy version as of yet, just a tech-demo --mst
+        //multiline_widget.contentDocument.designMode ="on";
+        // multiline
+        if (cmd.indexOf("\n") > -1 || cmd.indexOf("\\n") > -1 || cmd.indexOf("<br>") > -1 || cmd.indexOf("<br/>") > -1)
+        {
+            multiline_widget.collapsed = false;
+            cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
+            multiline_widget.contentDocument.body.innerHTML = cmd;
+        }
+        else
+        {
+            multiline_widget.collapsed = true;
+            command_widget.value = cmd;
+        }
     }
 
     function addToHistory(str)
