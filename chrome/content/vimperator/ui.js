@@ -587,7 +587,7 @@ function InformationList(id, options) //{{{
         list_offset = startindex;
         list_index = -1;
 
-        for(i = startindex; i < complength && i < startindex + max_items; i++)
+        for (var i = startindex; i < complength && i < startindex + max_items; i++)
         {
             addItem(completions[i], false);
         }
