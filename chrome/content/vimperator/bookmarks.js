@@ -526,6 +526,30 @@ function Marks() //{{{
     // TODO: show marks like vim does (when the multiline echo impl is done) or in the preview window right now
     this.list = function()
     {
+        //        FIXME: hashes don't have a .length property --mst
+//        if (local_marks.length + url_marks.length < 1)
+//        {
+//            vimperator.echoerr("No marks defined");
+//            return;
+//        }
+
+        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>line</td><td>col</td><td>file</td></tr>";
+        for (var i in local_marks)
+        {
+            list += "<tr><td align=\"right\">" + i + "</td><td align=\"right\">"
+                + Math.round(local_marks[i][0].position.y *100)+ "%</td><td align=\"right\">"
+                + Math.round(local_marks[i][0].position.x *100)+ "%</td><td>"
+                + local_marks[i][0].location + "</td></tr>";
+        }
+        for (var j in url_marks)
+        {
+            list += "<tr><td align=\"right\">" + j + "</td><td align=\"right\">"
+                + Math.round(url_marks[j].position.y *100)+ "%</td><td align=\"right\">"
+                + Math.round(url_marks[j].position.x *100)+ "%</td><td>"
+                + url_marks[j].location + "</td></tr>";
+        }
+        list += "</table>";
+        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
     }
     //}}}
 } //}}}

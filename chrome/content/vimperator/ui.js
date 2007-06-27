@@ -133,20 +133,14 @@ function CommandLine() //{{{
     // Sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
-        // FIXME: very simple, buggy version as of yet, just a tech-demo --mst
-        //multiline_widget.contentDocument.designMode ="on";
-        // multiline
-        if (cmd.indexOf("\n") > -1 || cmd.indexOf("\\n") > -1 || cmd.indexOf("<br>") > -1 || cmd.indexOf("<br/>") > -1)
-        {
-            multiline_widget.collapsed = false;
-            cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
-            multiline_widget.contentDocument.body.innerHTML = cmd;
-        }
-        else
-        {
-            multiline_widget.collapsed = true;
-            command_widget.value = cmd;
-        }
+        command_widget.value = cmd;
+    }
+
+    function setMultiline(cmd)
+    {
+        multiline_widget.collapsed = false;
+        cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
+        multiline_widget.contentDocument.body.innerHTML = cmd;
     }
 
     function addToHistory(str)
@@ -193,15 +187,24 @@ function CommandLine() //{{{
         command_widget.focus();
     };
 
-    this.echo = function(str)
+    // FIXME: flags not yet really functional --mst
+    this.echo = function(str, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
         if (!echo_allowed && focused && focused == command_widget.inputField)
             return false;
 
         setNormalStyle();
-        setPrompt("");
-        setCommand(str);
+        if (flags || str.indexOf("\n") > -1 || str.indexOf("\\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
+        {
+            setMultiline(str);
+        }
+        else
+        {
+            multiline_widget.collapsed = true;
+            setPrompt("");
+            setCommand(str);
+        }
         cur_extended_mode = null;
         return true;
     };
