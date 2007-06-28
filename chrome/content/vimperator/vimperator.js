@@ -73,6 +73,8 @@ function init() //{{{
     Vimperator.prototype.tabs          = new Tabs;
     vimperator.log("Loading module marks...", 3);
     Vimperator.prototype.marks         = new Marks;
+    vimperator.log("Loading module hints...", 3);
+    vimperator.hints = new hit_a_hint();
     vimperator.log("All modules loaded", 3);
 
     // DJK FIXME
@@ -445,7 +447,7 @@ function Events() //{{{
         {
             vimperator.setMode(vimperator.modes.NORMAL);
             vimperator.echo("");
-            hah.disableHahMode();
+            vimperator.hints.disableHahMode();
             vimperator.focusContent();
             vimperator.statusline.updateUrl();
         }
@@ -527,13 +529,13 @@ function Events() //{{{
             {
                 if(g_hint_mappings[i][0] == key)
                 {
-                    if(g_hint_mappings[i][3] == true || hah.currentState() == 1)
+                    if(g_hint_mappings[i][3] == true || vimperator.hints.currentState() == 1)
                     {
                         //g_hint_mappings[i][1].call(this, event);
                         eval(g_hint_mappings[i][1]);
                         if (g_hint_mappings[i][2] == true) // stop processing this event
                         {
-                            hah.disableHahMode();
+                            vimperator.hints.disableHahMode();
                             vimperator.input.buffer = "";
                             vimperator.statusline.updateInputBuffer("");
                             return false;
@@ -550,10 +552,10 @@ function Events() //{{{
             }
 
             // no mapping found, beep()
-            if (hah.currentState() == 1)
+            if (vimperator.hints.currentState() == 1)
             {
                 beep();
-                hah.disableHahMode();
+                vimperator.hints.disableHahMode();
                 vimperator.input.buffer = "";
                 vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
                 return true;
@@ -561,18 +563,18 @@ function Events() //{{{
 
             // if we came here, let hit-a-hint process the key as it is part
             // of a partial link
-            var res = hah.processEvent(event);
+            var res = vimperator.hints.processEvent(event);
             if (res < 0) // error occured processing this key
             {
                 beep();
-                //if(hah.currentMode() == HINT_MODE_QUICK)
+                //if(vimperator.hints.currentMode() == HINT_MODE_QUICK)
                 if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    hah.disableHahMode();
+                    vimperator.hints.disableHahMode();
                 else // ALWAYS mode
-                    hah.resetHintedElements();
+                    vimperator.hints.resetHintedElements();
                 vimperator.input.buffer = "";
             }
-            //else if (res == 0 || hah.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
+            //else if (res == 0 || vimperator.hints.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
             else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
                 vimperator.input.buffer += key;
             else // this key completed a quick hint
@@ -580,15 +582,15 @@ function Events() //{{{
                 // if the hint is all in UPPERCASE, open it in new tab
                 vimperator.input.buffer += key;
                 if (vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
-                    hah.openHints(true, false);
+                    vimperator.hints.openHints(true, false);
                 else // open in current window
-                    hah.openHints(false, false);
+                    vimperator.hints.openHints(false, false);
 
-                //if(hah.currentMode() == HINT_MODE_QUICK)
+                //if(vimperator.hints.currentMode() == HINT_MODE_QUICK)
                 if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    hah.disableHahMode();
+                    vimperator.hints.disableHahMode();
                 else // ALWAYS mode
-                    hah.resetHintedElements();
+                    vimperator.hints.resetHintedElements();
 
                 vimperator.input.buffer = "";
             }
@@ -711,7 +713,7 @@ function Events() //{{{
         onLocationChange: function()
         {
             // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-            //     hah.disableHahMode();
+            //     vimperator.hints.disableHahMode();
 
             vimperator.statusline.updateUrl();
             vimperator.statusline.updateProgress();

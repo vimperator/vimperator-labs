@@ -79,7 +79,7 @@ function hit_a_hint() //{{{
         }
         //    logMessage("winId:"+win.winId);
         win.res = evaluateXPath(vimperator.options["hinttags"], doc);
-        win.coordLoaderId = window.setTimeout("hah.loadCoord(" + win.winId + ", 0);", 1);
+        win.coordLoaderId = window.setTimeout("vimperator.hints.loadCoord(" + win.winId + ", 0);", 1);
     }
 
     this.loadCoord = function(winId, i)
@@ -93,7 +93,7 @@ function hit_a_hint() //{{{
         i++;
 
         if (i < win.res.snapshotLength && !isHahModeEnabled)
-            window.setTimeout("hah.loadCoord(" + winId + ", "+ i +");", 1);
+            window.setTimeout("vimperator.hints.loadCoord(" + winId + ", "+ i +");", 1);
         else
             win.coordLoaderId = null;
     };
@@ -521,7 +521,7 @@ function hit_a_hint() //{{{
     this.yankUrlHints = function()
     {
         var loc = "";
-        var elems = hah.hintedElements();
+        var elems = this.hintedElements();
         var tmp = "";
         for(i=0; i<elems.length; i++)
         {
@@ -540,7 +540,7 @@ function hit_a_hint() //{{{
     this.yankTextHints = function()
     {
         var loc = "";
-        var elems = hah.hintedElements();
+        var elems = this.hintedElements();
         var tmp = "";
         for(i=0; i<elems.length; i++)
         {
@@ -680,9 +680,8 @@ function hit_a_hint() //{{{
     }
 
     window.document.addEventListener("pageshow", initDoc, null);
-    window.addEventListener("resize", onResize, null);
+    // FIXME: add resize support
+    //window.addEventListener("resize", onResize, null);
 } //}}}
-
-var hah = new hit_a_hint();
 
 // vim: set fdm=marker sw=4 ts=4 et:

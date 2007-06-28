@@ -546,7 +546,7 @@ function Mappings() //{{{
 
     /* hint managment */
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["f"],
-        function(count) { hah.enableHahMode(vimperator.modes.QUICK_HINT); },
+        function(count) { vimperator.hints.enableHahMode(vimperator.modes.QUICK_HINT); },
         {
             short_help: "Start QuickHint mode",
             help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
@@ -555,7 +555,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["F"],
-        function(count) { hah.enableHahMode(vimperator.modes.ALWAYS_HINT); },
+        function(count) { vimperator.hints.enableHahMode(vimperator.modes.ALWAYS_HINT); },
         {
             short_help: "Start AlwaysHint mode",
             help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
@@ -565,7 +565,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, [";"],
-        function(count) { hah.enableHahMode(vimperator.modes.EXTENDED_HINT); },
+        function(count) { vimperator.hints.enableHahMode(vimperator.modes.EXTENDED_HINT); },
         {
             short_help: "Start ExtendedHint mode",
             help: "ExtendedHint mode is useful, since in this mode you can yank link locations, or open them in a new window.<br/>" +
@@ -665,13 +665,13 @@ function Mappings() //{{{
     // TODO: Convert these to the new mappings model
     var hint_maps = [ //{{{
     /* hint action keys */
-    ["o",          "hah.openHints(false, false);", true, false],
-    ["t",          "hah.openHints(true,  false);", true, false],
-    ["<C-w>",      "hah.openHints(false, true );", true, false],
+    ["o",          "vimperator.hints.openHints(false, false);", true, false],
+    ["t",          "vimperator.hints.openHints(true,  false);", true, false],
+    ["<C-w>",      "vimperator.hints.openHints(false, true );", true, false],
     ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
-    ["y",          "hah.yankUrlHints();", true, false],
-    ["Y",          "hah.yankTextHints();", true, false],
-    [",",          "vimperator.input.count+=','; hah.setCurrentState(0);", false, true],
+    ["y",          "vimperator.hints.yankUrlHints();", true, false],
+    ["Y",          "vimperator.hints.yankTextHints();", true, false],
+    [",",          "vimperator.input.count+=','; vimperator.hints.setCurrentState(0);", false, true],
     [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
     /* movement keys */
     ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],

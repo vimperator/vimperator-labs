@@ -29,13 +29,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 /* [command, action, cancel_hint_mode, always_active] */
 var g_hint_mappings = [ //{{{
     /* hint action keys */
-    ["o",          "hah.openHints(false, false);", true, false],
-    ["t",          "hah.openHints(true,  false);", true, false],
-    ["<C-w>",      "hah.openHints(false, true );", true, false],
+    ["o",          "vimperator.hints.openHints(false, false);", true, false],
+    ["t",          "vimperator.hints.openHints(true,  false);", true, false],
+    ["<C-w>",      "vimperator.hints.openHints(false, true );", true, false],
     ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
-    ["y",          "hah.yankUrlHints();", true, false],
-    ["Y",          "hah.yankTextHints();", true, false],
-    [",",          "g_inputbuffer+=','; hah.setCurrentState(0);", false, true],
+    ["y",          "vimperator.hints.yankUrlHints();", true, false],
+    ["Y",          "vimperator.hints.yankTextHints();", true, false],
+    [",",          "g_inputbuffer+=','; vimperator.hints.setCurrentState(0);", false, true],
     [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
     /* movement keys */
     ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
@@ -1467,7 +1467,7 @@ function zoom_in(factor)
 
         zoomMgr.textZoom = value;
 
-        hah.reshowHints();
+        vimperator.hints.reshowHints();
 
         vimperator.echo("Zoom value: " + value + "%");
     }
@@ -1502,7 +1502,7 @@ function zoom_to(value)
 
     zoomMgr.textZoom = value;
 
-    hah.reshowHints();
+    vimperator.hints.reshowHints();
 
     vimperator.echo("Zoom value: " + value + "%");
 }
