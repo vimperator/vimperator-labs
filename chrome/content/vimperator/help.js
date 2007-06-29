@@ -242,7 +242,7 @@ function help(section, easter) //{{{
                    .snapshotItem(0);
         }
 
-        element = findSectionElement(section);
+        var element = findSectionElement(section);
         if (!element)
         {
             var firstChar = section.charAt(0);
