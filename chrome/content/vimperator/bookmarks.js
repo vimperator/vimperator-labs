@@ -613,7 +613,7 @@ function QuickMarks() //{{{
         var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>URL</td></tr>";
         for (var i in marks)
         {
-            list += "<tr><td>&nbsp;" + i + "</td><td align=\"right\">"
+            list += "<tr><td>&nbsp;" + i + "</td><td>"
                 + marks[i] + "</td></tr>";
         }
         list += "</table>";
