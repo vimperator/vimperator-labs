@@ -458,12 +458,12 @@ function Marks() //{{{
         else
         {
             var pattern = new RegExp("[" + marks_str.replace(/\s+/g, '') + "]");
-            for (mark in url_marks)
+            for (var mark in url_marks)
             {
                 if (pattern.test(mark))
                     removeURLMark(mark);
             }
-            for (mark in local_marks)
+            for (var mark in local_marks)
             {
                 if (pattern.test(mark))
                     removeLocalMark(mark);
@@ -554,4 +554,83 @@ function Marks() //{{{
     //}}}
 } //}}}
 
+function QuickMarks() //{{{
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var marks = {};
+    // load the commandline history -- TODO: change to sqlite
+    var saved_marks = Options.getPref("quickmarks", "").split("\n");
+    for (var i=0; i < saved_marks.length -1; i+= 2)
+    {
+        marks[saved_marks[i]] = saved_marks[i+1];
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    this.add = function(mark, location)
+    {
+        marks[mark] = location;
+    }
+
+    this.remove = function(marks_str)
+    {
+        var pattern = new RegExp("[" + marks_str.replace(/\s+/g, '') + "]");
+        for (var mark in marks)
+        {
+            if (pattern.test(mark))
+                delete marks[mark];
+        }
+    }
+
+    this.jumpTo = function(mark, newtab)
+    {
+        var url = marks[mark];
+        if (url)
+        {
+            if(newtab)
+                openURLsInNewTab(url, true);
+            else
+                openURLs(url);
+        }
+        else
+            vimperator.echoerr("E20: QuickMark not set"); // FIXME: move up?
+    }
+
+    this.list = function()
+    {
+        //        FIXME: hashes don't have a .length property --mst
+//        if (local_marks.length + url_marks.length < 1)
+//        {
+//            vimperator.echoerr("No marks defined");
+//            return;
+//        }
+
+        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>URL</td></tr>";
+        for (var i in marks)
+        {
+            list += "<tr><td>&nbsp;" + i + "</td><td align=\"right\">"
+                + marks[i] + "</td></tr>";
+        }
+        list += "</table>";
+        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
+    }
+
+    this.destroy = function()
+    {
+        // save the marks
+        var saved_marks = "";
+        for (var i in marks)
+        {
+            saved_marks += i + "\n";
+            saved_marks += marks[i] + "\n";
+        }
+        Options.setPref("quickmarks", saved_marks);
+    }
+    //}}}
+} //}}}
 // vim: set fdm=marker sw=4 ts=4 et:

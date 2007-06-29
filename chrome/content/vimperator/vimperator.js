@@ -73,6 +73,8 @@ function init() //{{{
     Vimperator.prototype.tabs          = new Tabs();
     vimperator.log("Loading module marks...", 3);
     Vimperator.prototype.marks         = new Marks();
+    vimperator.log("Loading module quickmarks...", 3);
+    Vimperator.prototype.quickmarks    = new QuickMarks();
     vimperator.log("Loading module hints...", 3);
     Vimperator.prototype.hints         = new Hints();
     vimperator.log("All modules loaded", 3);
@@ -136,8 +138,8 @@ function unload() //{{{
 {
     /*** save our preferences ***/
     vimperator.commandline.destroy();
-
     vimperator.events.destroy();
+    vimperator.quickmarks.destroy();
 
     // reset some modified firefox prefs
     if (Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')

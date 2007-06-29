@@ -248,6 +248,24 @@ function Mappings() //{{{
             help: "Opens the homepage in a new tab."
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["go"],
+        function (mark) { vimperator.quickmarks.jumpTo(mark, false) },
+        {
+            short_help: "Jump to a QuickMark in the current buffer",
+            usage: ["go{a-zA-Z0-9}"],
+            help: "TODO",
+            flags: Mappings.flags.ARGUMENT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["gO"],
+        function (mark) { vimperator.quickmarks.jumpTo(mark, true) },
+        {
+            short_help: "Jump to a QuickMark in a new buffer",
+            usage: ["gO{a-zA-Z0-9}"],
+            help: "TODO",
+            flags: Mappings.flags.ARGUMENT
+        }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gP"],
         function(count) { openURLsInNewTab(readFromClipboard(), false); },
         {
@@ -277,6 +295,15 @@ function Mappings() //{{{
             short_help: "Set mark at the cursor position",
             usage: ["m{a-zA-Z0-9}"],
             help: "Marks a-z are local to the buffer, whereas A-Z and 0-9 are valid between buffers.",
+            flags: Mappings.flags.ARGUMENT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["M"],
+        function(mark) { vimperator.quickmarks.add(mark, getCurrentLocation()) },
+        {
+            short_help: "Add new QuickMark for current URL",
+            usage: ["M{a-zA-Z0-9}"],
+            help: "TODO.",
             flags: Mappings.flags.ARGUMENT
         }
     ));

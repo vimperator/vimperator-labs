@@ -515,7 +515,6 @@ function Commands() //{{{
     ));
     addDefaultCommand(new Command(["marks"],
         function(args) {
-            //vimperator.echo("marks not implemented yet");
             vimperator.marks.list(args)
         },
         {
@@ -743,37 +742,35 @@ function Commands() //{{{
     ));
     addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
         function(args) {
-            vimperator.echo("qmarkadd not implemented yet");
-            //set_url_mark("mark", "url");
-        }, // FIXME
+            var split = args.split(/\s+/);
+            vimperator.quickmarks.add(split[0], split[1] ? split[1] : getCurrentLocation());
+        },
         {
             usage: ["qmarka[dd] {a-zA-Z0-9} [url]"],
             short_help: "Mark a URL with a letter for quick access",
-            help: "Not implemented yet.",
+            help: "TODO.",
             completer: function(filter) { return [["a", ""], ["b", ""]]; }
         }
     ));
     addDefaultCommand(new Command(["qmarkd[el]", "qmd[el]"],
         function(args) {
-            vimperator.echo("qmarkdel not implemented yet");
-            //set_url_mark("mark", "url");
-        }, // FIXME
+            vimperator.quickmarks.remove(args);
+        },
         {
             usage: ["qmarkd[el] {a-zA-Z0-9}"],
             short_help: "Remove a marked URL",
-            help: "Not implemented yet.",
+            help: "TODO.",
             completer: function(filter) { return [["a", ""], ["b", ""]]; }
         }
     ));
     addDefaultCommand(new Command(["qmarks", "qms"],
         function(args) {
-            vimperator.echo("qmarks not implemented yet");
-            //show_url_marks(args);
-        }, // FIXME
+            vimperator.quickmarks.list(args);
+        },
         {
             usage: ["qmarks"],
             short_help: "Shows marked URLs",
-            help: "Not implemented yet."
+            help: "TODO."
         }
     ));
     addDefaultCommand(new Command(["ve[rsion]"],
