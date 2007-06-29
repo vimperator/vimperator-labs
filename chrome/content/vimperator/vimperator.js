@@ -42,39 +42,39 @@ function init() //{{{
 {
     window.dump("Vimperator init\n");
     // init the main object
-    vimperator = new Vimperator;
+    vimperator = new Vimperator();
     vimperator.log("Initializing vimperator object...", 1);
 
     // these inner classes are created here, because outside the init()
     // function, the chrome:// is not ready
     vimperator.log("Loading module options...", 3);
-    Vimperator.prototype.options       = new Options;
+    Vimperator.prototype.options       = new Options();
     vimperator.log("Loading module events...", 3);
-    Vimperator.prototype.events        = new Events;
+    Vimperator.prototype.events        = new Events();
     vimperator.log("Loading module commands...", 3);
-    Vimperator.prototype.commands      = new Commands;
+    Vimperator.prototype.commands      = new Commands();
     vimperator.log("Loading module bookmarks...", 3);
-    Vimperator.prototype.bookmarks     = new Bookmarks;
+    Vimperator.prototype.bookmarks     = new Bookmarks();
     vimperator.log("Loading module history...", 3);
-    Vimperator.prototype.history       = new History;
+    Vimperator.prototype.history       = new History();
     vimperator.log("Loading module commandline...", 3);
-    Vimperator.prototype.commandline   = new CommandLine;
+    Vimperator.prototype.commandline   = new CommandLine();
     vimperator.log("Loading module search...", 3);
-    Vimperator.prototype.search        = new Search;
+    Vimperator.prototype.search        = new Search();
     vimperator.log("Loading module preview window...", 3);
     Vimperator.prototype.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
     vimperator.log("Loading module buffer window...", 3);
     Vimperator.prototype.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
     vimperator.log("Loading module mappings...", 3);
-    Vimperator.prototype.mappings      = new Mappings;
+    Vimperator.prototype.mappings      = new Mappings();
     vimperator.log("Loading module statusline...", 3);
-    Vimperator.prototype.statusline    = new StatusLine;
+    Vimperator.prototype.statusline    = new StatusLine();
     vimperator.log("Loading module tabs...", 3);
-    Vimperator.prototype.tabs          = new Tabs;
+    Vimperator.prototype.tabs          = new Tabs();
     vimperator.log("Loading module marks...", 3);
-    Vimperator.prototype.marks         = new Marks;
+    Vimperator.prototype.marks         = new Marks();
     vimperator.log("Loading module hints...", 3);
-    vimperator.hints = new hit_a_hint();
+    Vimperator.prototype.hints         = new Hints();
     vimperator.log("All modules loaded", 3);
 
     // DJK FIXME

@@ -22,7 +22,7 @@
  *
 }}} ***** END LICENSE BLOCK *****/
 
-function hit_a_hint() //{{{
+function Hints() //{{{
 {
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 
