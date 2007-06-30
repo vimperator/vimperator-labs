@@ -1,10 +1,13 @@
 <pre>
-2007-05-02:
+2007-07-02:
 	* version ???
+	* QuickMarks support (new commands :qmarks/:qmarkadd/:qmarkdel and
+	  mappings go{a-z}, gn{a-z} and M{a-z}
+	* Multiline echo support
 	* Command line is now cleared on most redraws like in vim
     * The RSS feed button in the address bar works again
     * reload/stop buttons update enabled state again
-	* added marks support (thanks Viktor Kojouharov)
+	* added local/url marks support (thanks Viktor Kojouharov)
 	* temporary shortcut Y to yank current selection (for non UNIX-users)
 	* Flashing frame with ]f now works as expected
 	* many help fixes (most of them by Doug Kearns)

@@ -261,16 +261,17 @@ function Mappings() //{{{
         {
             short_help: "Jump to a QuickMark in the current buffer",
             usage: ["go{a-zA-Z0-9}"],
-            help: "TODO",
+            help: "Open any QuickMark in the current buffer. You can mark any URLs with <code class=\"mapping\">M{a-zA-Z0-9}</code>. " +
+                  "These QuickMarks are persistent across browser session.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["gO"],
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["gn"],
         function (mark) { vimperator.quickmarks.jumpTo(mark, true) },
         {
             short_help: "Jump to a QuickMark in a new buffer",
-            usage: ["gO{a-zA-Z0-9}"],
-            help: "TODO",
+            usage: ["gn{a-zA-Z0-9}"],
+            help: "Mnemonic: Go in a new buffer. <code class=\"mapping\">gt</code> would make more sense but is already taken.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
@@ -311,7 +312,8 @@ function Mappings() //{{{
         {
             short_help: "Add new QuickMark for current URL",
             usage: ["M{a-zA-Z0-9}"],
-            help: "TODO.",
+            help: "You can go to a marked url in the current tab with <code class=\"mapping\">go{a-zA-Z0-9}</code> or in a new tab with <code class=\"mapping\">gn{a-zA-Z0-9}</code>." +
+                  "These QuickMarks are persistent across browser session.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
