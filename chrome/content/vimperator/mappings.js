@@ -29,6 +29,7 @@ function Map(mode, cmds, act, extra_info) //{{{
     }
 
 }
+
 // Since we will add many Map-objects, we add some functions as prototypes
 // this will ensure we only have one copy of each function, not one for each object
 Map.prototype.execute = function(motion, count, argument)
@@ -60,6 +61,7 @@ function Mappings() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var main = []; // array of default Map() objects
     var user = []; // array of objects created by :map
 
@@ -89,7 +91,7 @@ function Mappings() //{{{
     {
         var mappings;
 
-        // FIXME: initialize empty map tables -- djk
+        // FIXME: initialize empty map tables
         if (user[mode])
             mappings = user[mode].concat(main[mode])
         else
@@ -111,13 +113,12 @@ function Mappings() //{{{
         ARGUMENT:   1 << 2
     };
 
-    // NOTE: just the main/default map for now -- djk
+    // NOTE: just normal mode for now
     this.__iterator__ = function()
     {
         return mappingsIterator(vimperator.modes.NORMAL);
     }
 
-    // TODO: remove duplication in addDefaultMap -- djk
     this.add = function(map)
     {
         if (!map)
@@ -127,6 +128,7 @@ function Mappings() //{{{
             user[map.mode] = [];
 
         user[map.mode].push(map);
+
         return true;
     }
 
@@ -153,31 +155,37 @@ function Mappings() //{{{
         return map;
     }
 
-    // same as this.get() but always returns an array of commands which start with "cmd"
+    // returns an array of mappings with names which start with "cmd"
     this.getCandidates = function(mode, cmd)
     {
-        var matching = [];
+        var mappings = [];
+        var matches = [];
 
         if (!mode || !cmd)
-            return matching;
+            return matches;
 
-        // fill matching array with maps which have commands starting with cmd
-        for (var i = 0; i < main[mode].length; i++) // FIXME: just the main/default map space for now -- djk
+        if (user[mode])
+            mappings = user[mode].concat(main[mode]);
+        else
+            mappings = main[mode];
+
+        for (var i = 0; i < mappings.length; i++)
         {
-            var map = main[mode][i];
+            var map = mappings[i];
             for (var j = 0; j < map.names.length; j++)
             {
                 if (map.names[j].indexOf(cmd) == 0)
-                    matching.push(map)
+                    matches.push(map)
             }
         }
 
-        return matching;
+        return matches;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     /*
      * Normal mode
      */
