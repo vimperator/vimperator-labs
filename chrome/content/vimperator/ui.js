@@ -141,6 +141,9 @@ function CommandLine() //{{{
         multiline_widget.collapsed = false;
         cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
         multiline_widget.contentDocument.body.innerHTML = cmd;
+
+        // size according to content -- TODO: if too large, leave a scrollbar)
+        multiline_widget.style.height = multiline_widget.contentDocument.height + "px";
     }
 
     function addToHistory(str)

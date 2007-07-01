@@ -647,6 +647,7 @@ function Hints() //{{{
 
     function initDoc(event)
     {
+        // vimperator.echo("Content loaded");
         doc = event.originalTarget;
         genHintContainer(doc);
         isHahModeEnabled = false;
@@ -676,10 +677,10 @@ function Hints() //{{{
             createHints();
             showHints(null, 0);
         }
-            //window.setTimeout("this.enableHahMode(HINT_MODE_ALWAYS);", 0);
+        // vimperator.echo("Done.");
     }
 
-    window.document.addEventListener("pageshow", initDoc, null);
+    window.document.addEventListener("DOMContentLoaded", initDoc, null);
     // FIXME: add resize support
     //window.addEventListener("resize", onResize, null);
 } //}}}
