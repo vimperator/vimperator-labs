@@ -980,7 +980,7 @@ function openURLsInNewTab(str, activate)
     var firsttab = getBrowser().addTab(urls[0]);
     if (activate)
         getBrowser().selectedTab = firsttab;
-    for (url=1; url < urls.length; url++)
+    for (var url = 1; url < urls.length; url++)
         gBrowser.addTab(urls[url]);
 
     return firsttab;
