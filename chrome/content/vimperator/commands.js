@@ -634,7 +634,115 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["se[t]"],
-        set,
+        function(args, special)
+        {
+            if (args == "")
+            {
+                var func = openURLs;
+                if (arguments[3] && arguments[3].inTab)
+                    func = openURLsInNewTab;
+
+                if (special) // open firefox settings gui dialog
+                    func.call(this, "chrome://browser/content/preferences/preferences.xul", true);
+                else
+                    func.call(this, "about:config", true);
+            }
+            else
+            {
+                var matches = args.match(/^\s*(no)?([a-z]+)(\?|&)?(([+-])?=(.*))?/);
+                if (!matches)
+                {
+                    vimperator.echoerr("E518: Unknown option: " + args);
+                    return;
+                }
+
+                var no = true; if (matches[1] === undefined) no = false;
+                var opt = matches[2];
+                var option = vimperator.options.get(opt);
+                if (!option)
+                {
+                    vimperator.echoerr("E518: Unknown option: " + opt);
+                    return;
+                }
+
+                var get = false; if (matches[3] == "?" ||
+                    (option.type != 'boolean' && matches[4] === undefined)) get = true;
+                var reset = false; if (matches[3] == "&") reset = true;
+                var oper = matches[5];
+                var val = matches[6]; if (val === undefined) val = "";
+
+                // reset a variable to its default value.
+                if (reset)
+                {
+                    option.value = option.default_value;
+                }
+                // read access
+                else if (get)
+                {
+                    if (option.type == 'boolean')
+                        vimperator.echo("  " + (option.value ? '' : 'no') + option.name);
+                    else
+                        vimperator.echo("  " + option.name + "=" + option.value);
+                        //vimperator.echo("  " + option.name + "=" + vimperator.options[option.name]);
+                }
+                // write access
+                else
+                {
+                    var type = option.type;
+                    if (type == "boolean")
+                    {
+                        if (matches[4])
+                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                        else
+                            option.value = !no;
+                    }
+                    else if (type == "number")
+                    {
+                        var num = parseInt(val, 10);
+                        if (isNaN(num))
+                            vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
+                        else
+                        {
+                            var cur_val = option.value;
+                            if (oper == '+') num = cur_val + num;
+                            if (oper == '-') num = cur_val - num;
+                            // FIXME
+                            if (option.validator != null && option.validator.call(this, num) == false)
+                                vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
+                            else // all checks passed, execute option handler
+                                option.value = num;
+                        }
+                    }
+                    else if (type == "charlist" || type == "stringlist" || type == "string")
+                    {
+                        var cur_val = option.value;
+                        if (type == "charlist" || type == "string")
+                        {
+                            if (oper == '+' && !cur_val.match(val))
+                                val = cur_val + val;
+                            if (oper == '-') val = cur_val.replace(val, '');
+                        }
+                        else
+                        {
+                            if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
+                                    val = cur_val + ',' + val;
+                            if (oper == '-')
+                            {
+                                val = cur_val.replace(new RegExp(',?' + val), '');
+                                val = val.replace(/^,?/, '');
+                            }
+                        }
+                        // FIXME
+                        if (option.validator != null && option.validator.call(this, val) == false)
+                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                        else // all checks passed, execute option handler
+                            option.value = val;
+                    }
+                    else
+                        vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
+                }
+            }
+        },
         {
             usage: ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
             short_help: "Set an option",
@@ -1581,114 +1689,6 @@ Vimperator.prototype.restart = function()
     }
     Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
         .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
-}
-
-// sets an vimperator option
-function set(args, special)
-{
-    if (args == "")
-    {
-        var func = openURLs;
-        if (arguments[3] && arguments[3].inTab)
-            func = openURLsInNewTab;
-
-        if (special) // open firefox settings gui dialog
-            func.call(this, "chrome://browser/content/preferences/preferences.xul", true);
-        else
-            func.call(this, "about:config", true);
-    }
-    else
-    {
-        var matches = args.match(/^\s*(no)?([a-z]+)(\?|&)?(([+-])?=(.*))?/);
-        if (!matches)
-        {
-            vimperator.echoerr("E518: Unknown option: " + args);
-            return;
-        }
-
-        var no = true; if (matches[1] === undefined) no = false;
-        var opt = matches[2];
-        var option = vimperator.options.get(opt);
-        if (!option)
-        {
-            vimperator.echoerr("E518: Unknown option: " + opt);
-            return;
-        }
-
-        var get = false; if (matches[3] == "?" ||
-            (option.type != 'boolean' && matches[4] === undefined)) get = true;
-        var reset = false; if (matches[3] == "&") reset = true;
-        var oper = matches[5];
-        var val = matches[6]; if (val === undefined) val = "";
-
-        // reset a variable to its default value.
-        if (reset)
-        {
-            option.value = option.default_value;
-        }
-        // read access
-        else if (get)
-        {
-            vimperator.echo("  " + option.name + "=" + option.value);
-            //vimperator.echo("  " + option.name + "=" + vimperator.options[option.name]);
-        }
-        // write access
-        else
-        {
-            var type = option.type;
-            if (type == "boolean")
-            {
-                if (matches[4])
-                    vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
-                else
-                    option.value = !no;
-            }
-            else if (type == "number")
-            {
-                var num = parseInt(val, 10);
-                if (isNaN(num))
-                    vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
-                else
-                {
-                    var cur_val = option.value;
-                    if (oper == '+') num = cur_val + num;
-                    if (oper == '-') num = cur_val - num;
-                    // FIXME
-                    if (option.validator != null && option.validator.call(this, num) == false)
-                        vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
-                    else // all checks passed, execute option handler
-                        option.value = num;
-                }
-            }
-            else if (type == "charlist" || type == "stringlist" || type == "string")
-            {
-                var cur_val = option.value;
-                if (type == "charlist" || type == "string")
-                {
-                    if (oper == '+' && !cur_val.match(val))
-                        val = cur_val + val;
-                    if (oper == '-') val = cur_val.replace(val, '');
-                }
-                else
-                {
-                    if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
-                            val = cur_val + ',' + val;
-                    if (oper == '-')
-                    {
-                        val = cur_val.replace(new RegExp(',?' + val), '');
-                        val = val.replace(/^,?/, '');
-                    }
-                }
-                // FIXME
-                if (option.validator != null && option.validator.call(this, val) == false)
-                    vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
-                else // all checks passed, execute option handler
-                    option.value = val;
-            }
-            else
-                vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
-        }
-    }
 }
 
 Vimperator.prototype.source = function(filename, silent)
