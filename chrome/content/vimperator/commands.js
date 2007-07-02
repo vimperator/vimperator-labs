@@ -601,7 +601,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["re[load]"],
-        function(args, special) { reload(getBrowser().mCurrentTab, special); },
+        function(args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); },
         {
             usage: ["re[load][!]"],
             short_help: "Reload current page",
@@ -609,7 +609,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["reloada[ll]"],
-        function(args, special) { reload_all(special); },
+        function(args, special) { vimperator.tabs.reloadAll(special); },
         {
             usage: ["reloada[ll][!]"],
             short_help: "Reload all pages",
@@ -1620,42 +1620,6 @@ Vimperator.prototype.quit = function(save_session)
         Options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
 
     goQuitApplication();
-}
-
-function reload(tab, bypass_cache)
-{
-    if (bypass_cache)
-    {
-        const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-        const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
-        getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
-    }
-    else
-    {
-        getBrowser().reloadTab(tab);
-    }
-}
-
-function reload_all(bypass_cache)
-{
-    if (bypass_cache)
-    {
-        for (var i = 0; i < getBrowser().mTabs.length; i++)
-        {
-            try
-            {
-                reload(getBrowser().mTabs[i], bypass_cache)
-            }
-            catch (e) {
-                // FIXME: can we do anything useful here without stopping the
-                //        other tabs from reloading?
-            }
-        }
-    }
-    else
-    {
-        getBrowser().reloadAllTabs();
-    }
 }
 
 Vimperator.prototype.restart = function()

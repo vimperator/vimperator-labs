@@ -373,14 +373,14 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["r"],
-        function(count) { reload(getBrowser().mCurrentTab, false); },
+        function(count) { vimperator.tabs.reload(getBrowser().mCurrentTab, false); },
         {
             short_help: "Reload",
             help: "Forces reloading of the current page."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["R"],
-        function(count) { reload(getBrowser().mCurrentTab, true); },
+        function(count) { vimperator.tabs.reload(getBrowser().mCurrentTab, true); },
         {
             short_help: "Reload while skipping the cache",
             help: "Forces reloading of the current page skipping the cache."

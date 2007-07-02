@@ -1021,6 +1021,41 @@ function Tabs() //{{{
 
     this.alternate = this.getTab();
 
+    this.reload = function(tab, bypass_cache)
+    {
+        if (bypass_cache)
+        {
+            const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+            const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
+            getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
+        }
+        else
+        {
+            getBrowser().reloadTab(tab);
+        }
+    }
+
+    this.reloadAll = function(bypass_cache)
+    {
+        if (bypass_cache)
+        {
+            for (var i = 0; i < getBrowser().mTabs.length; i++)
+            {
+                try
+                {
+                    this.reload(getBrowser().mTabs[i], bypass_cache)
+                }
+                catch (e) {
+                    // FIXME: can we do anything useful here without stopping the
+                    //        other tabs from reloading?
+                }
+            }
+        }
+        else
+        {
+            getBrowser().reloadAllTabs();
+        }
+    }
     //}}}
 } //}}}
 
