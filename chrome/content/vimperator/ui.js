@@ -361,13 +361,13 @@ function CommandLine() //{{{
                     if (history_index <= -1)
                     {
                         history_index = 0;
-                        beep();
+                        vimperator.beep();
                         break;
                     }
                     if (history_index >= history.length + 1)
                     {
                         history_index = history.length;
-                        beep();
+                        vimperator.beep();
                         break;
                     }
 
@@ -377,7 +377,7 @@ function CommandLine() //{{{
                         return;
                     }
                 }
-                beep();
+                vimperator.beep();
             }
 
             /* user pressed TAB to get completions of a command */
@@ -416,7 +416,7 @@ function CommandLine() //{{{
 
                 if (completions.length == 0)
                 {
-                    beep();
+                    vimperator.beep();
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();

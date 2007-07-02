@@ -558,7 +558,7 @@ function Events() //{{{
             // no mapping found, beep()
             if (vimperator.hints.currentState() == 1)
             {
-                beep();
+                vimperator.beep();
                 vimperator.hints.disableHahMode();
                 vimperator.input.buffer = "";
                 vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
@@ -570,7 +570,7 @@ function Events() //{{{
             var res = vimperator.hints.processEvent(event);
             if (res < 0) // error occured processing this key
             {
-                beep();
+                vimperator.beep();
                 //if(vimperator.hints.currentMode() == HINT_MODE_QUICK)
                 if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
                     vimperator.hints.disableHahMode();
@@ -656,7 +656,7 @@ function Events() //{{{
             {
                 vimperator.input.buffer = "";
                 vimperator.input.pendingMap = null;
-                beep();
+                vimperator.beep();
             }
         }
         vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
@@ -1003,7 +1003,7 @@ function Tabs() //{{{
         var index = indexFromSpec(spec, wrap);
         if (index === false)
         {
-            beep(); // XXX: move to ex-handling?
+            vimperator.beep(); // XXX: move to ex-handling?
             return false;
         }
         getBrowser().mTabContainer.selectedIndex = index;

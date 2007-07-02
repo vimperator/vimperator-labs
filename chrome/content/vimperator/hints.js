@@ -213,7 +213,7 @@ function Hints() //{{{
         //if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
         if (linkCount == 0 && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
-            beep();
+            vimperator.beep();
             //alert('h');
             this.disableHahMode(win);
             //alert('g');

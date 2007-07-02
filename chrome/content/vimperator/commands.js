@@ -268,7 +268,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["beep"],
-        /*vimperator.*/beep,
+        function() { vimperator.beep(); },
         {
             usage: ["beep"],
             short_help: "Play a system beep"
@@ -930,7 +930,7 @@ function stepInHistory(steps)
     }
     else
     {
-        beep();
+        vimperator.beep();
         if(index < 0)
             vimperator.echo("Cannot go past beginning of history");
         else
@@ -1402,20 +1402,20 @@ function scrollBufferRelative(right, down)
     // beep if we can't go there
     if (down > 0)
     {
-        if (win.scrollY == win.scrollMaxY) beep();
+        if (win.scrollY == win.scrollMaxY) vimperator.beep();
     }
     else if (down < 0)
     {
-        if (win.scrollY == 0) beep();
+        if (win.scrollY == 0) vimperator.beep();
     }
 
     if (right > 0)
     {
-        if (win.scrollX == win.scrollMaxX) beep();
+        if (win.scrollX == win.scrollMaxX) vimperator.beep();
     }
     else if (right < 0)
     {
-        if (win.scrollX == 0) beep();
+        if (win.scrollX == 0) vimperator.beep();
     }
 
     win.scrollBy(vimperator.input.count * right * 20, vimperator.input.count * down * 20);
@@ -1455,12 +1455,12 @@ function zoom_in(factor)
     if (zoomMgr.textZoom == 25 && factor < 0)
     {
         vimperator.echoerr("Minimum zoom level of 25% reached");
-        beep();
+        vimperator.beep();
     }
     else if (zoomMgr.textZoom == 500 && factor > 0)
     {
         vimperator.echoerr("Maximum zoom level of 500% reached");
-        beep();
+        vimperator.beep();
     }
     else
     {
@@ -1499,7 +1499,7 @@ function zoom_to(value)
     if (value < 25 || value > 500)
     {
         vimperator.echoerr("Zoom value must be between 25% and 500%");
-        beep();
+        vimperator.beep();
         return;
     }
 
@@ -1521,7 +1521,7 @@ function copyToClipboard(str)
     clipboardHelper.copyString(str);
 }
 
-function beep()
+Vimperator.prototype.beep = function()
 {
     if (!vimperator.options["beep"])
         return;
