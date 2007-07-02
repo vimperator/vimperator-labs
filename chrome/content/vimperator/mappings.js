@@ -338,8 +338,8 @@ function Mappings() //{{{
         {
             short_help: "Add new QuickMark for current URL",
             usage: ["M{a-zA-Z0-9}"],
-            help: "You can go to a marked url in the current tab with <code class=\"mapping\">go{a-zA-Z0-9}</code> or in a new tab with <code class=\"mapping\">gn{a-zA-Z0-9}</code>." +
-                  "These QuickMarks are persistent across browser session.",
+            help: "You can go to a marked url in the current tab with <code class=\"mapping\">go{a-zA-Z0-9}</code> or in a new tab with <code class=\"mapping\">gn{a-zA-Z0-9}</code>. " +
+                  "These QuickMarks are persistent across browser sessions.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
