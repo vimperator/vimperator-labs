@@ -1312,38 +1312,6 @@ function hsshow(filter, fullmode)
     }
 }
 
-
-/////////////////////////////////////////////////////////////////////}}}
-// url marks functions /////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-/* vimperator has a concept of URL marks
- * these provide quick access to URLs with a single character
- *
- * mark urls with e.g. Ma and you can go there with 'a or open a
- * new tab with the url with "a
- * valid characters for url marks are [a-zA-Z0-9]
- */
-function set_url_mark(mark, url)
-{
-
-}
-
-function get_url_mark(mark)
-{
-
-}
-
-function del_url_mark(mark)
-{
-
-}
-
-function show_url_marks(mark)
-{
-
-}
-
 /////////////////////////////////////////////////////////////////////}}}
 // tab/buffer related functions ////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
