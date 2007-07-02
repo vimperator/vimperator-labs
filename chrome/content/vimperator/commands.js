@@ -54,11 +54,11 @@ var g_hint_mappings = [ //{{{
     ["<C-n>",      "vimperator.tabs.select('+1', true)",       true,  true], // same as gt, but no count supported
     ["<C-p>",      "vimperator.tabs.select('-1', true)",       true,  true],
     /* navigation */
-    ["<C-o>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-i>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-h>",      "stepInHistory(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-l>",      "stepInHistory(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, g_count, false, 0);",                  true,  true],
+    ["<C-o>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
+    ["<C-i>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
+    ["<C-h>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
+    ["<C-l>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
+    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, g_count, false, 0);", true,  true],
     /* cancel hint mode keys */
     ["<C-c>",      "", true, true],
     ["<C-g>",      "", true, true],
@@ -247,10 +247,10 @@ function Commands() //{{{
     addDefaultCommand(new Command(["ba[ck]"],
         function(args, special, count)
         {
-            if(special)
-                historyGoToBeginning();
+            if (special)
+                vimperator.history.goToStart();
             else
-                stepInHistory(count > 0 ? -1 * count : -1);
+                vimperator.history.stepTo(count > 0 ? -1 * count : -1);
         },
         {
             usage: ["{count}ba[ck][!]"],
@@ -423,10 +423,10 @@ function Commands() //{{{
     addDefaultCommand(new Command(["fo[rward]", "fw"],
         function(args, special, count)
         {
-            if(special)
-                historyGoToEnd();
+            if (special)
+                vimperator.history.goToEnd();
             else
-                stepInHistory(count > 0 ? count : 1);
+                vimperator.history.stepTo(count > 0 ? count : 1);
         },
         {
             usage: ["{count}fo[rward][!]"],
@@ -460,7 +460,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["hist[ory]", "hs"],
-        hsshow,
+        function() { vimperator.history.list(); },
         {
             usage: ["hist[ory] {filter}"],
             short_help: "Show recently visited URLs",
@@ -475,9 +475,12 @@ function Commands() //{{{
             if (special) // open javascript console
                 openURLsInNewTab("chrome://global/content/console.xul", true);
             else
-                try {
+                try
+                {
                     eval(args);
-                } catch(e) {
+                }
+                catch (e)
+                {
                     vimperator.echoerr(e.name + ": " + e.message);
                 }
         },
@@ -532,7 +535,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
         function(args, special)
         {
-            if(args.length > 0)
+            if (args.length > 0)
                 openURLs(args);
             else
             {
@@ -1026,48 +1029,6 @@ function execute(string)
 }
 
 /////////////////////////////////////////////////////////////////////}}}
-// navigation functions ////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-function stepInHistory(steps)
-{
-    var index = getWebNavigation().sessionHistory.index + steps;
-    if (index >= 0 && index < getWebNavigation().sessionHistory.count)
-    {
-        getWebNavigation().gotoIndex(index);
-    }
-    else
-    {
-        vimperator.beep();
-        if(index < 0)
-            vimperator.echo("Cannot go past beginning of history");
-        else
-            vimperator.echo("Cannot go past end of history");
-    }
-}
-function historyGoToBeginning()
-{
-    var index = getWebNavigation().sessionHistory.index;
-    if (index == 0)
-    {
-            vimperator.echo("Already at beginning of history");
-            return;
-    }
-    getWebNavigation().gotoIndex(0);
-}
-function historyGoToEnd()
-{
-    var index = getWebNavigation().sessionHistory.index;
-    var max = getWebNavigation().sessionHistory.count -1;
-    if (index == max)
-    {
-            vimperator.echo("Already at end of history");
-            return;
-    }
-    getWebNavigation().gotoIndex(max);
-}
-
-/////////////////////////////////////////////////////////////////////}}}
 // url functions ///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
 
@@ -1106,14 +1067,14 @@ function openURLsInNewTab(str, activate)
 function stringToURLs(str)
 {
     var urls = str.split(/\s*\|\s*/);
-    begin: for(var url=0; url < urls.length; url++)
+    begin: for (var url = 0; url < urls.length; url++)
     {
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
             var newLocation = getCurrentLocation();
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1");
-            if(urls[url].match(/^\.(\/\S+)/))
+            if (urls[url].match(/^\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
 
             urls[url] = newLocation;
@@ -1123,7 +1084,7 @@ function stringToURLs(str)
         {
             var newLocation = getCurrentLocation();
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1/../");
-            if(urls[url].match(/^\.\.(\/\S+)/))
+            if (urls[url].match(/^\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
 
             urls[url] = newLocation;
@@ -1133,7 +1094,7 @@ function stringToURLs(str)
         {
             var newLocation = getCurrentLocation();
             newLocation = newLocation.replace(/([\s\S]+):\/\/\/?(\S+?)\/\S*/, "$1://$2/");
-            if(urls[url].match(/^\.\.\.(\/\S+)/))
+            if (urls[url].match(/^\.\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
 
             urls[url] = newLocation;
@@ -1322,7 +1283,7 @@ function goUp(count)
     if (count < 1)
         count = 1;
 
-    for(var i=0; i<count-1; i--)
+    for (var i = 0; i < count - 1; i--)
         gocmd += "../";
 
     openURLs(gocmd);
@@ -1366,15 +1327,15 @@ function bmadd(str)
     var res = Bookmarks.parseBookmarkString(str);
     if (res)
     {
-        if(res.url == null)
+        if (res.url == null)
         {
             res.url = getCurrentLocation();
             // also guess title if the current url is :bmadded
-            if(res.title == null)
+            if (res.title == null)
                 res.title = getCurrentTitle();
         }
 
-        if(res.title == null) // title could still be null
+        if (res.title == null) // title could still be null
             res.title = res.url;
 
         vimperator.bookmarks.add(res.title, res.url);
@@ -1389,7 +1350,7 @@ function bmdel(str)
     var res = Bookmarks.parseBookmarkString(str);
     if (res)
     {
-        if(res.url == null)
+        if (res.url == null)
             res.url = getCurrentLocation();
 
         var del = vimperator.bookmarks.remove(res.url);
@@ -1406,16 +1367,6 @@ function bmshow(filter, fullmode)
     else
     {
         var items = vimperator.bookmarks.get(filter);
-        vimperator.previewwindow.show(items);
-    }
-}
-function hsshow(filter, fullmode)
-{
-    if (fullmode)
-        openURLsInNewTab("chrome://browser/content/history/history-panel.xul", true);
-    else
-    {
-        var items = vimperator.history.get(filter);
         vimperator.previewwindow.show(items);
     }
 }
@@ -1703,9 +1654,9 @@ Vimperator.prototype.source = function(filename, silent)
             [prev_match, heredoc, end] = multiliner(line, prev_match, heredoc);
         });
     }
-    catch(e)
+    catch (e)
     {
-        if(!silent)
+        if (!silent)
             vimperator.echoerr(e);
     }
 }
@@ -1713,7 +1664,7 @@ Vimperator.prototype.source = function(filename, silent)
 // returns an XPathResult object
 function evaluateXPath(expression, doc, ordered)
 {
-    if(!doc)
+    if (!doc)
         doc = window.content.document;
 
     var res = doc.evaluate(expression, doc,

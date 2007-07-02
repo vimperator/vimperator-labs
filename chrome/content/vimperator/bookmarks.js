@@ -343,12 +343,64 @@ function History() //{{{
             load();
 
         history = history.filter(function(elem) {
-                return elem[0] != url;
+            return elem[0] != url;
         });
 
         history.unshift([url, title]);
         return true;
     };
+
+    // TODO: better names?
+    this.stepTo = function(steps)
+    {
+        var index = getWebNavigation().sessionHistory.index + steps;
+        if (index >= 0 && index < getWebNavigation().sessionHistory.count)
+        {
+            getWebNavigation().gotoIndex(index);
+        }
+        else
+        {
+            vimperator.beep();
+            if (index < 0)
+                vimperator.echo("Cannot go past beginning of history");
+            else
+                vimperator.echo("Cannot go past end of history");
+        }
+    }
+
+    this.goToStart = function()
+    {
+        var index = getWebNavigation().sessionHistory.index;
+        if (index == 0)
+        {
+            vimperator.echo("Already at beginning of history");
+            return;
+        }
+        getWebNavigation().gotoIndex(0);
+    }
+
+    this.goToEnd = function()
+    {
+        var index = getWebNavigation().sessionHistory.index;
+        var max = getWebNavigation().sessionHistory.count -1;
+        if (index == max)
+        {
+            vimperator.echo("Already at end of history");
+            return;
+        }
+        getWebNavigation().gotoIndex(max);
+    }
+
+    this.list = function(filter, fullmode)
+    {
+        if (fullmode)
+            openURLsInNewTab("chrome://browser/content/history/history-panel.xul", true);
+        else
+        {
+            var items = vimperator.history.get(filter);
+            vimperator.previewwindow.show(items);
+        }
+    }
     //}}}
 } //}}}
 
