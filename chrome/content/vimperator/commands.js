@@ -649,7 +649,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["so[urce]"],
-        source,
+        function(args) { vimperator.source(args); },
         {
             usage: ["so[urce][!] {file}"],
             short_help: "Read Ex commands from {file}",
@@ -1723,7 +1723,7 @@ function set(args, special)
     }
 }
 
-function source(filename, silent)
+Vimperator.prototype.source = function(filename, silent)
 {
     if (!filename)
         return;

@@ -126,7 +126,7 @@ function init() //{{{
     // Finally, read a ~/.vimperatorrc
     // Make sourcing asynchronous, otherwise commands that open new tabs won't work
     setTimeout(function() {
-        source("~/.vimperatorrc", true);
+        vimperator.source("~/.vimperatorrc", true);
         vimperator.log("~/.vimperatorrc sourced", 1);
     }, 50);
 
