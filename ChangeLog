@@ -1,6 +1,7 @@
 <pre>
 2007-07-02:
 	* version ???
+	* Ctrl-^ mapping for selecting the alternate tab/buffer
 	* QuickMarks support (new commands :qmarks/:qmarkadd/:qmarkdel and
 	  mappings go{a-z}, gn{a-z} and M{a-z}
 	* Multiline echo support

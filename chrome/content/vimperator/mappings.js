@@ -298,6 +298,32 @@ function Mappings() //{{{
             flags: Mappings.flags.COUNT
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ['<C-^>', '<C-6>'],
+            function (args) {
+                if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
+                {   
+                    vimperator.echoerr("E23: No alternate page");
+                    return;
+                }
+                
+                // NOTE: this currently relies on v.tabs.index() returning the
+                // currently selected tab index when passed null
+                var index = vimperator.tabs.index(vimperator.tabs.alternate);
+                
+                // TODO: since a tab close is more like a bdelete for us we
+                // should probably reopen the closed tab when a 'deleted'
+                // alternate is selected
+                if (index == -1)
+                    vimperator.echoerr("E86: Buffer does not exist")  // TODO: This should read "Buffer N does not exist"
+                else
+                    vimperator.tabs.select(index);
+            },
+            {   
+                short_help: "Select the alternate tab",
+                usage: ['<C-^>'],
+                help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
+            }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["m"],
         function(mark) { vimperator.marks.add(mark) },
         {

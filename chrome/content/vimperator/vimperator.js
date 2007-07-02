@@ -368,6 +368,7 @@ function Events() //{{{
         vimperator.statusline.updateTabCount();
         updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
+        vimperator.tabs.updateSelectionHistory();
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
@@ -378,6 +379,7 @@ function Events() //{{{
         vimperator.statusline.updateTabCount();
         updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
+        vimperator.tabs.updateSelectionHistory();
     }, false);
 
     // this adds an event which is is called on each page load, even if the
@@ -910,6 +912,8 @@ function Tabs() //{{{
         return position;
     }
 
+    var alternates = [null, null];
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -929,6 +933,7 @@ function Tabs() //{{{
 
         return getBrowser().tabContainer.selectedIndex;
     }
+
     this.count = function()
     {
         return getBrowser().mTabs.length;
@@ -1003,6 +1008,19 @@ function Tabs() //{{{
         }
         getBrowser().mTabContainer.selectedIndex = index;
     }
+
+    // TODO: when restarting a session FF selects the first tab and then the
+    // tab that was selected when the session was created.  As a result the
+    // alternate after a restart is often incorrectly tab 1 when there
+    // shouldn't be one yet.
+    this.updateSelectionHistory = function()
+    {
+        alternates = [this.getTab(), alternates[0]];
+        this.alternate = alternates[1];
+    }
+
+    this.alternate = this.getTab();
+
     //}}}
 } //}}}
 
