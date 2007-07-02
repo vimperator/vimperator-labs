@@ -617,7 +617,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["res[tart]"],
-        restart,
+        function() { vimperator.restart(); },
         {
             usage: ["res[tart]"],
             short_help: "Force the browser to restart",
@@ -1582,7 +1582,7 @@ function reload_all(bypass_cache)
     }
 }
 
-function restart()
+Vimperator.prototype.restart = function()
 {
     // if (!arguments[1]) return;
     const nsIAppStartup = Components.interfaces.nsIAppStartup;
