@@ -515,7 +515,13 @@ function Commands() //{{{
     ));
     addDefaultCommand(new Command(["marks"],
         function(args) {
-            vimperator.marks.list(args)
+            if (args.length > 1 && !/[a-zA-Z]/.test(args))
+            {
+                vimperator.echoerr("E283: No marks matching \"" + args + "\"");
+                return;
+            }
+            var filter = args.replace(/[^a-zA-Z]/g, '');
+            vimperator.marks.list(filter)
         },
         {
             usage: ["marks {arg}"],
