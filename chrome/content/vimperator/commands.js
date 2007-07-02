@@ -680,7 +680,7 @@ function Commands() //{{{
                 else if (get)
                 {
                     if (option.type == 'boolean')
-                        vimperator.echo("  " + (option.value ? '' : 'no') + option.name);
+                        vimperator.echo((option.value ? "  " : "no") + option.name);
                     else
                         vimperator.echo("  " + option.name + "=" + option.value);
                         //vimperator.echo("  " + option.name + "=" + vimperator.options[option.name]);
