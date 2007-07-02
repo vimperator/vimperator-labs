@@ -1302,20 +1302,6 @@ function yankCurrentSelection()
     vimperator.echo("Yanked " + sel);
 }
 
-// return null, if no link with a href focused
-function getCurrentLinkLocation()
-{
-    var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-        .getService(Components.interfaces.nsIWindowWatcher);
-    if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
-    {
-        var url = document.commandDispatcher.focusedElement.href;
-        if (url)
-            return url;
-    }
-    return null;
-}
-
 ////////////////////////////////////////////////////////////////////////
 // high level bookmark/history related functions ///////////////////////
 /////////////////////////////////////////////////////////////////////{{{
@@ -1537,6 +1523,7 @@ function zoom_to(value)
     vimperator.echo("Zoom value: " + value + "%");
 }
 //}}}
+
 ////////////////////////////////////////////////////////////////////////
 // misc helper functions ////////////////////////////////////////////{{{
 ////////////////////////////////////////////////////////////////////////
@@ -1546,6 +1533,27 @@ function copyToClipboard(str)
     var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
         .getService(Components.interfaces.nsIClipboardHelper);
     clipboardHelper.copyString(str);
+}
+
+// returns an XPathResult object
+function evaluateXPath(expression, doc, ordered)
+{
+    if (!doc)
+        doc = window.content.document;
+
+    var res = doc.evaluate(expression, doc,
+        function lookupNamespaceURI(prefix) {
+          switch (prefix) {
+            case 'xhtml':
+              return 'http://www.w3.org/1999/xhtml';
+            default:
+              return null;
+          }
+        },
+        ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+        null
+    );
+    return res;
 }
 
 Vimperator.prototype.beep = function()
@@ -1659,27 +1667,6 @@ Vimperator.prototype.source = function(filename, silent)
         if (!silent)
             vimperator.echoerr(e);
     }
-}
-
-// returns an XPathResult object
-function evaluateXPath(expression, doc, ordered)
-{
-    if (!doc)
-        doc = window.content.document;
-
-    var res = doc.evaluate(expression, doc,
-        function lookupNamespaceURI(prefix) {
-          switch (prefix) {
-            case 'xhtml':
-              return 'http://www.w3.org/1999/xhtml';
-            default:
-              return null;
-          }
-        },
-        ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-        null
-    );
-    return res;
 }
 //}}}
 
