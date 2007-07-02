@@ -985,7 +985,7 @@ function Tabs() //{{{
         if (count < 1) count = 1;
 
         if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
-            quit(quit_on_last_tab == 2);
+            vimperator.quit(quit_on_last_tab == 2);
 
         if(focus_left_tab && tab.previousSibling)
             this.select("-1", false);

@@ -460,14 +460,14 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["ZQ"],
-        function(count) { quit(false); },
+        function(count) { vimperator.quit(false); },
         {
             short_help: "Quit and don't save the session",
             help: "Works like <code class=\"command\">:qall</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["ZZ"],
-        function(count) { quit(true); },
+        function(count) { vimperator.quit(true); },
         {
             short_help: "Quit and save the session",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +

@@ -593,7 +593,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
-        function() { quit(false); },
+        function() { vimperator.quit(false); },
         {
             usage: ["quita[ll]"],
             short_help: "Quit Vimperator",
@@ -811,7 +811,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["xa[ll]", "wqa[ll]", "wq"],
-        function() { quit(true); },
+        function() { vimperator.quit(true); },
         {
             usage: ["wqa[ll]", "xa[ll]"],
             short_help: "Save the session and quit",
@@ -1536,7 +1536,7 @@ Vimperator.prototype.beep = function()
 }
 
 // quit vimperator, no matter how many tabs/windows are open
-function quit(save_session)
+Vimperator.prototype.quit = function(save_session)
 {
     if (save_session)
         Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
