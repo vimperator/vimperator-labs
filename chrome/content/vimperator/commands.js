@@ -26,46 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-/* [command, action, cancel_hint_mode, always_active] */
-var g_hint_mappings = [ //{{{
-    /* hint action keys */
-    ["o",          "vimperator.hints.openHints(false, false);", true, false],
-    ["t",          "vimperator.hints.openHints(true,  false);", true, false],
-    ["<C-w>",      "vimperator.hints.openHints(false, true );", true, false],
-    ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
-    ["y",          "vimperator.hints.yankUrlHints();", true, false],
-    ["Y",          "vimperator.hints.yankTextHints();", true, false],
-    [",",          "g_inputbuffer+=','; vimperator.hints.setCurrentState(0);", false, true],
-    [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
-    /* movement keys */
-    ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
-    ["<C-y>",      "scrollBufferRelative(0, -1);",       false, true],
-    ["<Home>",     "scrollBufferAbsolute(-1, 0);",       false, true],
-    ["<End>",      "scrollBufferAbsolute(-1, 100);",     false, true],
-    ["<C-b>",      "goDoCommand('cmd_scrollPageUp');",   false, true],
-    ["<PageUp>",   "goDoCommand('cmd_scrollPageUp');",   false, true],
-    ["<C-f>",      "goDoCommand('cmd_scrollPageDown');", false, true],
-    ["<PageDown>", "goDoCommand('cmd_scrollPageDown');", false, true],
-    ["<Left>",     "scrollBufferRelative(-1, 0);",       false, true],
-    ["<Down>",     "scrollBufferRelative(0, 1);",        false, true],
-    ["<Up>",       "scrollBufferRelative(0, -1);",       false, true],
-    ["<Right>",    "scrollBufferRelative(1, 0);",        false, true],
-    /* tab managment */
-    ["<C-n>",      "vimperator.tabs.select('+1', true)",       true,  true], // same as gt, but no count supported
-    ["<C-p>",      "vimperator.tabs.select('-1', true)",       true,  true],
-    /* navigation */
-    ["<C-o>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-i>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-h>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-l>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, g_count, false, 0);", true,  true],
-    /* cancel hint mode keys */
-    ["<C-c>",      "", true, true],
-    ["<C-g>",      "", true, true],
-    ["<C-[>",      "", true, true],
-    ["<Esc>",      "", true, true]
-]; //}}}
-
 function Command(specs, action, extra_info) //{{{
 {
     if (!specs || !action)
