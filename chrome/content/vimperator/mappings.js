@@ -220,7 +220,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["B"],
-        toggleBufferList,
+        function() { vimperator.commands.buffers(); },
         {
             short_help: "Toggle buffer list",
             help: "Toggles the display of the buffer list which shows all opened tabs."
@@ -402,7 +402,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["u"],
-        function(count) { execute_command(count, 'undo', false, ''); },
+        function(count) { vimperator.commands.undo("", false, count); },
         {
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the n'th last tab.",

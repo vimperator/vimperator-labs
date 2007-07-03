@@ -312,7 +312,19 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["b[uffer]"],
-        buffer_switch,
+        // TODO: move to v.tabs/buffers
+        function(args)
+        {
+            var match;
+            if (match = args.match(/^(\d+):?/))
+                return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
+            for (var i = 0; i < getBrowser().browsers.length; i++)
+            {
+                var url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
+                if (url == args)
+                    return vimperator.tabs.select(i, false);
+            }
+        },
         {
             usage: ["b[uffer] {url|index}"],
             short_help: "Go to buffer from buffer list",
@@ -321,7 +333,18 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
-        toggleBufferList,
+        // TODO: move to v.tabs/buffers
+        function()
+        {
+            if (vimperator.bufferwindow.visible())
+                vimperator.bufferwindow.hide();
+            else
+            {
+                var items = get_buffer_completions("");
+                vimperator.bufferwindow.show(items);
+                vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+            }
+        },
         {
             usage: ["buffers"],
             short_help: "Show a list of all buffers (=tabs)",
@@ -1366,31 +1389,6 @@ function tab()
     execute(arguments[0], null, null, {inTab: true});
 }
 
-function buffer_switch(string)
-{
-    var match;
-    if (match = string.match(/^(\d+):?/))
-        return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
-    for (var i = 0; i < getBrowser().browsers.length; i++)
-    {
-        var url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
-        if (url == string)
-            return vimperator.tabs.select(i, false);
-    }
-}
-
-//toggles the buffer preview window
-function toggleBufferList()
-{
-    if (vimperator.bufferwindow.visible())
-        vimperator.bufferwindow.hide();
-    else
-    {
-        var items = get_buffer_completions("");
-        vimperator.bufferwindow.show(items);
-        vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-    }
-}
 // updates the buffer preview in place only if list is visible
 function updateBufferList()
 {
@@ -1622,7 +1620,7 @@ Vimperator.prototype.source = function(filename, silent)
     function getEnv(variable)
     {
             var environment = Components.classes["@mozilla.org/process/environment;1"]
-                                        .getService(Components.interfaces.nsIEnvironment);
+                .getService(Components.interfaces.nsIEnvironment);
             return environment.get(variable);
     }
 

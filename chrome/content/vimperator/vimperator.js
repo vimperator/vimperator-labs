@@ -192,7 +192,7 @@ function Vimperator() //{{{
 
     // our services
     var console_service = Components.classes['@mozilla.org/consoleservice;1']
-                          .getService(Components.interfaces.nsIConsoleService);
+        .getService(Components.interfaces.nsIConsoleService);
 
     function showMode()
     {

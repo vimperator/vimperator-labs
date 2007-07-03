@@ -88,7 +88,7 @@ function Options() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var firefox_prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefBranch);
+        .getService(Components.interfaces.nsIPrefBranch);
     var vimperator_prefs = firefox_prefs.getBranch("extensions.vimperator.");
     var options = [];
 

@@ -239,7 +239,7 @@ function help(section, easter) //{{{
         function findSectionElement(section)
         {
             return evaluateXPath('//code[@class="tag" and text()="' + section + '"]')
-                   .snapshotItem(0);
+                .snapshotItem(0);
         }
 
         var element = findSectionElement(section);
