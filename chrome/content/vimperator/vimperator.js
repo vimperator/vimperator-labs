@@ -524,7 +524,6 @@ function Events() //{{{
 
 
         // if Hit-a-hint mode is on, special handling of keys is required
-        // g_hint_mappings is used
         // FIXME: total mess
         if (vimperator.hasMode(vimperator.modes.HINTS))
         {
@@ -532,28 +531,26 @@ function Events() //{{{
             event.preventDefault();
             event.stopPropagation();
 
-            for (i = 0; i < g_hint_mappings.length; i++)
+            var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
+            if (map)
             {
-                if(g_hint_mappings[i][0] == key)
+                if(map.always_active || vimperator.hints.currentState() == 1)
                 {
-                    if(g_hint_mappings[i][3] == true || vimperator.hints.currentState() == 1)
+                    //g_hint_mappings[i][1].call(this, event);
+                    map.execute();
+                    if (map.cancel_mode) // stop processing this event
                     {
-                        //g_hint_mappings[i][1].call(this, event);
-                        eval(g_hint_mappings[i][1]);
-                        if (g_hint_mappings[i][2] == true) // stop processing this event
-                        {
-                            vimperator.hints.disableHahMode();
-                            vimperator.input.buffer = "";
-                            vimperator.statusline.updateInputBuffer("");
-                            return false;
-                        }
-                        else
-                        {
-                            // FIXME: make sure that YOU update the statusbar message yourself
-                            // first in g_hint_mappings when in this mode!
-                            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                            return false;
-                        }
+                        vimperator.hints.disableHahMode();
+                        vimperator.input.buffer = "";
+                        vimperator.statusline.updateInputBuffer("");
+                        return false;
+                    }
+                    else
+                    {
+                        // FIXME: make sure that YOU update the statusbar message yourself
+                        // first in g_hint_mappings when in this mode!
+                        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                        return false;
                     }
                 }
             }

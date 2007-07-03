@@ -26,6 +26,10 @@ function Map(mode, cmds, act, extra_info) //{{{
 
         this.help = extra_info.help || null;
         this.short_help = extra_info.short_help || null;
+        // TODO: are these limited to HINTS mode?
+        // Only set for hints maps
+        this.cancel_mode = extra_info.cancel_mode || false;
+        this.always_active = extra_info.always_active || false;
     }
 
 }
@@ -117,6 +121,11 @@ function Mappings() //{{{
     this.__iterator__ = function()
     {
         return mappingsIterator(vimperator.modes.NORMAL);
+    }
+
+    this.getIterator = function(mode)
+    {
+        return mappingsIterator(mode);
     }
 
     this.add = function(map)
@@ -723,48 +732,52 @@ function Mappings() //{{{
                   "Also focuses the web page, in case a form field has focus and eats our key presses."
         }
     ));
+
+    /*
+     * Hints mode
+     */
+
+    /* action keys */
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["o"],     function() { vimperator.hints.openHints(false, false); },                            { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["t"],     function() { vimperator.hints.openHints(true,  false); },                            { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-w>"], function() { vimperator.hints.openHints(false, true ); },                            { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["s"],     function() { vimperator.echoerr('Saving of links not yet implemented'); },           { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["y"],     function() { vimperator.hints.yankUrlHints(); },                                     { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["Y"],     function() { vimperator.hints.yankTextHints(); },                                    { cancel_mode: true, always_active: false }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, [","],     function() { vimperator.input.buffer += ','; vimperator.hints.setCurrentState(0); }, { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, [":"],     function() { vimperator.commandline.open(':', '', vimperator.modes.EX); },           { cancel_mode: false, always_active: true }));
+
+    /* movement keys */
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-e>"],      function() { scrollBufferRelative(0, 1); },        { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-y>"],      function() { scrollBufferRelative(0, -1); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Home>"],     function() { scrollBufferAbsolute(-1, 0); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<End>"],      function() { scrollBufferAbsolute(-1, 100); },     { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-b>"],      function() { goDoCommand('cmd_scrollPageUp'); },   { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageUp>"],   function() { goDoCommand('cmd_scrollPageUp'); },   { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-f>"],      function() { goDoCommand('cmd_scrollPageDown'); }, { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageDown>"], function() { goDoCommand('cmd_scrollPageDown'); }, { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Left>"],     function() { scrollBufferRelative(-1, 0); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Down>"],     function() { scrollBufferRelative(0, 1); },        { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Up>"],       function() { scrollBufferRelative(0, -1); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Right>"],    function() { scrollBufferRelative(1, 0); },        { cancel_mode: false, always_active: true }));
+
+    /* tab managment */
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-n>"], function() { vimperator.tabs.select('+1', true); }, { cancel_mode: true, always_active: true })); // same as gt, but no count supported
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-p>"], function() { vimperator.tabs.select('-1', true); }, { cancel_mode: true, always_active: true }));
+
+    /* navigation */
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-o>"], function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); }, { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-i>"], function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-h>"], function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); }, { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-l>"], function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },       { cancel_mode: false, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-d>"], function() { vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0); },       { cancel_mode: true,  always_active: true }));
+
+    /* cancel_mode hint mode keys */
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-c>"], function() {}, { cancel_mode: true, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-g>"], function() {}, { cancel_mode: true, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-[>"], function() {}, { cancel_mode: true, always_active: true }));
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Esc>"], function() {}, { cancel_mode: true, always_active: true }));
     //}}}
 } //}}}
-
-// TODO: Convert these to the new mappings model
-/* [command, action, cancel_hint_mode, always_active] */
-var g_hint_mappings = [ //{{{
-    /* hint action keys */
-    ["o",          "vimperator.hints.openHints(false, false);", true, false],
-    ["t",          "vimperator.hints.openHints(true,  false);", true, false],
-    ["<C-w>",      "vimperator.hints.openHints(false, true );", true, false],
-    ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
-    ["y",          "vimperator.hints.yankUrlHints();", true, false],
-    ["Y",          "vimperator.hints.yankTextHints();", true, false],
-    [",",          "vimperator.input.buffer+=','; vimperator.hints.setCurrentState(0);", false, true],
-    [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
-    /* movement keys */
-    ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
-    ["<C-y>",      "scrollBufferRelative(0, -1);",       false, true],
-    ["<Home>",     "scrollBufferAbsolute(-1, 0);",       false, true],
-    ["<End>",      "scrollBufferAbsolute(-1, 100);",     false, true],
-    ["<C-b>",      "goDoCommand('cmd_scrollPageUp');",   false, true],
-    ["<PageUp>",   "goDoCommand('cmd_scrollPageUp');",   false, true],
-    ["<C-f>",      "goDoCommand('cmd_scrollPageDown');", false, true],
-    ["<PageDown>", "goDoCommand('cmd_scrollPageDown');", false, true],
-    ["<Left>",     "scrollBufferRelative(-1, 0);",       false, true],
-    ["<Down>",     "scrollBufferRelative(0, 1);",        false, true],
-    ["<Up>",       "scrollBufferRelative(0, -1);",       false, true],
-    ["<Right>",    "scrollBufferRelative(1, 0);",        false, true],
-    /* tab managment */
-    ["<C-n>",      "vimperator.tabs.select('+1', true)",       true,  true], // same as gt, but no count supported
-    ["<C-p>",      "vimperator.tabs.select('-1', true)",       true,  true],
-    /* navigation */
-    ["<C-o>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1);", false, true],
-    ["<C-i>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1);",       false, true],
-    ["<C-h>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1);", false, true],
-    ["<C-l>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1);",       false, true],
-    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0);", true,  true],
-    /* cancel hint mode keys */
-    ["<C-c>",      "", true, true],
-    ["<C-g>",      "", true, true],
-    ["<C-[>",      "", true, true],
-    ["<Esc>",      "", true, true]
-]; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
