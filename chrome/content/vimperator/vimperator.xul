@@ -101,7 +101,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                         onblur="vimperator.commandline.onEvent(event);"
                         style="font-family: monospace; -moz-user-focus:ignore;"/>
                 </hbox>
-                <iframe id="vimperator-multiline" src="about:blank" flex="100%" hidden="false" collapsed="true"/>
+                <iframe id="vimperator-multiline" src="about:blank" flex="1" hidden="false" collapsed="true"/>
 			</vbox>
 		</toolbar>
 

@@ -164,13 +164,14 @@ function Vimperator() //{{{
         COMMAND_LINE:     1 << 4,
         // extended modes
         EX:               1 << 10,
-        SEARCH_FORWARD:   1 << 11,
-        SEARCH_BACKWARD:  1 << 12,
-        ESCAPE_ONE_KEY:   1 << 13,
-        ESCAPE_ALL_KEYS:  1 << 14,
-        QUICK_HINT:       1 << 15,
-        EXTENDED_HINT:    1 << 16,
-        ALWAYS_HINT:      1 << 17
+        READ_MULTLINE:    1 << 11,
+        SEARCH_FORWARD:   1 << 12,
+        SEARCH_BACKWARD:  1 << 13,
+        ESCAPE_ONE_KEY:   1 << 14,
+        ESCAPE_ALL_KEYS:  1 << 15,
+        QUICK_HINT:       1 << 16,
+        EXTENDED_HINT:    1 << 17,
+        ALWAYS_HINT:      1 << 18
     }
     var mode_messages = {};
     mode_messages[this.modes.NORMAL]          = "";
@@ -386,12 +387,12 @@ function Events() //{{{
     // page is loaded in a background tab
     getBrowser().addEventListener("load", onPageLoad, true);
 
-    // called when the window is scrolled.
-    window.onscroll = function (event)
+    // called when the active document is scrolled
+    getBrowser().addEventListener("scroll", function (event)
     {
         vimperator.statusline.updateBufferPosition();
         vimperator.setMode(); // trick to reshow the mode in the command line
-    };
+    }, null);
 
     window.document.addEventListener("DOMTitleChanged", function(event)
     {
@@ -460,13 +461,15 @@ function Events() //{{{
 
     this.onKeyPress = function(event)
     {
-        if (event.type != "keypress")
-            return false;
-
+//        alert(event)
+//        if (event.type != "keypress")
+//            return false;
+//        vimperator.logObject(event);
         var key = event.toString()
-        //alert(key);
-        if (key == null)
+        if (!key)
              return false;
+//        event.stopPropagation();
+//        event.preventDefault();
         // sometimes the non-content area has focus, making our keys not work
         //    if (event.target.id == "main-window")
         //        alert("focusContent();");
@@ -1064,19 +1067,21 @@ function Tabs() //{{{
 /////////////////////////////////////////////////////////////////////{{{
 function isFormElemFocused()
 {
-    var elt = document.commandDispatcher.focusedElement;
+    var elt = window.document.commandDispatcher.focusedElement;
     if (elt == null)
         return false;
 
-    var tagname = elt.localName.toLowerCase();
-    var type = elt.type.toLowerCase();
+    try { // sometimes the elt doesn't have .localName
+        var tagname = elt.localName.toLowerCase();
+        var type = elt.type.toLowerCase();
 
-    if ( (tagname == "input" && (type != "image")) ||
-          tagname == "textarea" ||
-//            tagName == "SELECT" ||
-//            tagName == "BUTTON" ||
-          tagname == "isindex") // isindex is a deprecated one-line input box
-        return true;
+        if ( (tagname == "input" && (type != "image")) ||
+                tagname == "textarea" ||
+                //            tagName == "SELECT" ||
+                //            tagName == "BUTTON" ||
+                tagname == "isindex") // isindex is a deprecated one-line input box
+            return true;
+    } catch(e) {};
 
     return false;
 }

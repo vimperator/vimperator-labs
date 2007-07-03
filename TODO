@@ -12,7 +12,6 @@ BUGS:
      id="hah_hints"></hints> near the end of it.. kinda annoying
   dpb| 09:11:50  dpb :: and this happens only when saving the complete
      webpage, saving  only the html works just fine..
-- <ESC> key closes :addons and other XUL windows
 - add window resize support to hints
 
 FEATURES:
@@ -25,7 +24,6 @@ FEATURES:
 7 provide a buffer on the bottom where more than 1 line messages can be shown, preferrable
   with color support (for things like :echo line1\nline2)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
-7 Ctrl-6/Ctrl-^ -> jump to the previously active tab
 7 3d should delete 3 tabs
 6 downloading of links to filesystem (:save <filename>)
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
@@ -49,7 +47,6 @@ FEATURES:
 
 RANDOM IDEAS:
 * numbered tabs
-* make hints work with usermode
 * https://addons.mozilla.org/en-US/firefox/addon/4125 - use vim to edit text fields
 * Would it be possible to add a setting "maxcompletionsshown" and 
   "maxpreviewwindowheight" or something like this?

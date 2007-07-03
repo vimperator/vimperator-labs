@@ -230,12 +230,26 @@ function CommandLine() //{{{
     this.input = function(str)
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
-        // to make this code synchronous
+        // to make this code synchronous or at least use a callback
         setPrompt("");
         setMessageStyle();
         setCommand(str);
         return "not implemented";
-    }
+    };
+
+    // reads a multi line input and returns the string once the last line matches
+    // param until_regex
+    this.readMultiline = function(until_regex, callback_func)
+    {
+        // save the mode, because we need to restore it on blur()
+//        [old_mode, old_extended_mode] = vimperator.getMode();
+//        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.READ_MULTLINE, true);
+
+        multiline_widget.collapsed = false;
+        multiline_widget.contentDocument.body.innerHTML = "";
+        multiline_widget.contentDocument.designMode = "on";
+        multiline_widget.contentWindow.focus(); // FIXME: does not work
+    };
 
     this.clear = function()
     {
@@ -243,7 +257,6 @@ function CommandLine() //{{{
         setCommand("");
         setNormalStyle();
     };
-
 
     this.onEvent = function(event)
     {
