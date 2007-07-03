@@ -736,7 +736,7 @@ var g_hint_mappings = [ //{{{
     ["s",          "vimperator.echoerr('Saving of links not yet implemented');", true, false],
     ["y",          "vimperator.hints.yankUrlHints();", true, false],
     ["Y",          "vimperator.hints.yankTextHints();", true, false],
-    [",",          "g_inputbuffer+=','; vimperator.hints.setCurrentState(0);", false, true],
+    [",",          "vimperator.input.buffer+=','; vimperator.hints.setCurrentState(0);", false, true],
     [":",          "vimperator.commandline.open(':', '', vimperator.modes.EX);", false, true],
     /* movement keys */
     ["<C-e>",      "scrollBufferRelative(0, 1);",        false, true],
@@ -755,11 +755,11 @@ var g_hint_mappings = [ //{{{
     ["<C-n>",      "vimperator.tabs.select('+1', true)",       true,  true], // same as gt, but no count supported
     ["<C-p>",      "vimperator.tabs.select('-1', true)",       true,  true],
     /* navigation */
-    ["<C-o>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-i>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-h>",      "vimperator.history.stepTo(g_count > 0 ? -1 * g_count : -1);", false, true],
-    ["<C-l>",      "vimperator.history.stepTo(g_count > 0 ? g_count : 1);",       false, true],
-    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, g_count, false, 0);", true,  true],
+    ["<C-o>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1);", false, true],
+    ["<C-i>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1);",       false, true],
+    ["<C-h>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1);", false, true],
+    ["<C-l>",      "vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1);",       false, true],
+    ["<C-d>",      "vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0);", true,  true],
     /* cancel hint mode keys */
     ["<C-c>",      "", true, true],
     ["<C-g>",      "", true, true],
