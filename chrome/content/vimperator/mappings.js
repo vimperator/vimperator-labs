@@ -559,7 +559,7 @@ function Mappings() //{{{
 
     /* history manipulation and jumplist */
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-o>"],
-        function(count) { stepInHistory(count > 0 ? -1 * count : -1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? -1 * count : -1); },
         {
             short_help: "Go to an older position in the jump list",
             help: "The jump list is just the browser history for now.",
@@ -567,7 +567,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-i>"],
-        function(count) { stepInHistory(count > 0 ? count : 1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? count : 1); },
         {
             short_help: "Go to a newer position in the jump list",
             help: "The jump list is just the browser history for now.",
@@ -575,7 +575,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["H", "<A-Left>", "<M-Left>"],
-        function(count) { stepInHistory(count > 0 ? -1 * count : -1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? -1 * count : -1); },
         {
             short_help: "Go back in the browser history",
             help: "Count is supported, <code class=\"mapping\">3H</code> goes back 3 steps.",
@@ -583,7 +583,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["L", "<A-Right>", "<M-Right>"],
-        function(count) { stepInHistory(count > 0 ? count : 1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? count : 1); },
         {
             short_help: "Go forward in the browser history",
             help: "Count is supported, <code class=\"mapping\">3L</code> goes forward 3 steps.",
