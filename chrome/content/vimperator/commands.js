@@ -235,7 +235,31 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bma[dd]"],
-        bmadd,
+        // takes: -t "foo" -T "tag1,tag2", myurl
+        // converts that string to a useful url and title, and calls addBookmark
+        // TODO: proper ex-style arg parsing
+        function(args)
+        {
+            var res = Bookmarks.parseBookmarkString(args);
+            if (res)
+            {
+                if (res.url == null)
+                {
+                    res.url = getCurrentLocation();
+                    // also guess title if the current url is :bmadded
+                    if (res.title == null)
+                        res.title = getCurrentTitle();
+                }
+
+                if (res.title == null) // title could still be null
+                    res.title = res.url;
+
+                vimperator.bookmarks.add(res.title, res.url);
+                vimperator.echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
+            }
+            else
+                vimperator.echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");
+        },
         {
             usage: ["bma[dd] [-tTk] [url]"],
             short_help: "Add a bookmark",
@@ -249,7 +273,21 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bmd[el]"],
-        bmdel,
+        // TODO: proper ex-style arg parsing
+        function(args)
+        {
+            var res = Bookmarks.parseBookmarkString(args);
+            if (res)
+            {
+                if (res.url == null)
+                    res.url = getCurrentLocation();
+
+                var del = vimperator.bookmarks.remove(res.url);
+                vimperator.echo(del + " bookmark(s) with url `" + res.url + "' deleted");
+            }
+            else
+                vimperator.echo("Usage: :bmdel <url>");
+        },
         {
             usage: ["bmd[el] [-T] {url}"],
             short_help: "Delete a bookmark",
@@ -1284,50 +1322,6 @@ function yankCurrentSelection()
     var sel = window.content.document.getSelection();
     copyToClipboard(sel);
     vimperator.echo("Yanked " + sel);
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// high level bookmark/history related functions ///////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-// takes: -t "foo" -T "tag1,tag2", myurl
-// converts that string to a useful url and title, and calls addBookmark
-function bmadd(str)
-{
-    var res = Bookmarks.parseBookmarkString(str);
-    if (res)
-    {
-        if (res.url == null)
-        {
-            res.url = getCurrentLocation();
-            // also guess title if the current url is :bmadded
-            if (res.title == null)
-                res.title = getCurrentTitle();
-        }
-
-        if (res.title == null) // title could still be null
-            res.title = res.url;
-
-        vimperator.bookmarks.add(res.title, res.url);
-        vimperator.echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
-    }
-    else
-        vimperator.echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");
-}
-
-function bmdel(str)
-{
-    var res = Bookmarks.parseBookmarkString(str);
-    if (res)
-    {
-        if (res.url == null)
-            res.url = getCurrentLocation();
-
-        var del = vimperator.bookmarks.remove(res.url);
-        vimperator.echo(del + " bookmark(s) with url `" + res.url + "' deleted");
-    }
-    else
-        vimperator.echo("Usage: :bmdel <url>");
 }
 
 /////////////////////////////////////////////////////////////////////}}}
