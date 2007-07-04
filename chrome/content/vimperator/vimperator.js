@@ -586,7 +586,7 @@ function Events() //{{{
             {
                 // if the hint is all in UPPERCASE, open it in new tab
                 vimperator.input.buffer += key;
-                if (vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
+                if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
                     vimperator.hints.openHints(true, false);
                 else // open in current window
                     vimperator.hints.openHints(false, false);
