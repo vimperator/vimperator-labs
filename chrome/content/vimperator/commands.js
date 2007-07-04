@@ -260,7 +260,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bookm[arks]", "bm"],
-        bmshow,
+        function(args, special) { vimperator.bookmarks.list(args, special); },
         {
             usage: ["bm[!] [-T] {regexp}"],
             short_help: "Show bookmarks",
@@ -1328,17 +1328,6 @@ function bmdel(str)
     }
     else
         vimperator.echo("Usage: :bmdel <url>");
-}
-
-function bmshow(filter, fullmode)
-{
-    if (fullmode)
-        openURLsInNewTab("chrome://browser/content/bookmarks/bookmarksPanel.xul", true);
-    else
-    {
-        var items = vimperator.bookmarks.get(filter);
-        vimperator.previewwindow.show(items);
-    }
 }
 
 /////////////////////////////////////////////////////////////////////}}}

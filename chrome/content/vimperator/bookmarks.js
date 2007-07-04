@@ -193,6 +193,17 @@ function Bookmarks() //{{{
         return url;
     }
 
+    this.list = function(filter, fullmode)
+    {
+        if (fullmode)
+            openURLsInNewTab("chrome://browser/content/bookmarks/bookmarksPanel.xul", true);
+        else
+        {
+            var items = vimperator.bookmarks.get(filter);
+            vimperator.previewwindow.show(items);
+        }
+    }
+
     /*
        res = parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at");
        res.tags is an array of tags
