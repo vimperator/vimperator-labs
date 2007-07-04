@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function help(section, easter) //{{{
+Vimperator.prototype.help = function(section, easter) //{{{
 {
     if (easter)
     {
@@ -210,29 +210,29 @@ function help(section, easter) //{{{
             return false;
 
         openURLs("about:blank");
-        setTimeout(function () { help(section, false, null, {recursive: true}); }, 250);
+        setTimeout(function () { vimperator.help(section, false, null, {recursive: true}); }, 250);
         return;
     }
     doc.write(fulldoc);
     doc.close();
 
 
-	function cumulativeOffset(element)
-	{
-		var valueT = 0, valueL = 0;
-		if (!element)
-			return [0, 0];
+    function cumulativeOffset(element)
+    {
+        var valueT = 0, valueL = 0;
+        if (!element)
+            return [0, 0];
 
-		do
-		{
-			valueT += element.offsetTop  || 0;
-			valueL += element.offsetLeft || 0;
-			element = element.offsetParent;
-		}
-		while (element);
+        do
+        {
+            valueT += element.offsetTop  || 0;
+            valueL += element.offsetLeft || 0;
+            element = element.offsetParent;
+        }
+        while (element);
 
-		return [valueL, valueT];
-	}
+        return [valueL, valueT];
+    }
 
     if (section)
     {

@@ -397,7 +397,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["exu[sage]"],
-        function() { help("commands"); },
+        function(args, special, count, modifiers) { vimperator.help("commands", special, null, modifiers); },
         {
             usage: ["exu[sage]"],
             short_help: "Show help for Ex commands"
@@ -427,7 +427,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["h[elp]"],
-        help,
+        function(args, special, count, modifiers) { vimperator.help(args, special, null, modifiers); },
         {
             usage: ["h[elp] {subject}"],
             short_help: "Open the help window",
@@ -620,7 +620,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["se[t]"],
-        function(args, special)
+        function(args, special, count, modifiers)
         {
             if (args == "")
             {
@@ -888,7 +888,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["viu[sage]"],
-        function() { help("mappings"); },
+        function(args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
         {
             usage: ["viu[sage]"],
             short_help: "Show help for normal mode commands"

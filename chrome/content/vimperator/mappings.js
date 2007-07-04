@@ -199,7 +199,7 @@ function Mappings() //{{{
      * Normal mode
      */
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["'", "`"],
-        function (mark) { vimperator.marks.jumpTo(mark) },
+        function(mark) { vimperator.marks.jumpTo(mark) },
         {
             short_help: "Jump to the mark in the current buffer",
             usage: ["'{a-zA-Z0-9}"],
@@ -207,14 +207,16 @@ function Mappings() //{{{
             flags: Mappings.flags.ARGUMENT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"], function(count) { focusNextFrame(count > 1 ? count : 1, true); },
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"],
+        function(count) { focusNextFrame(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
             help: "Transfers keyboard focus to the [count]th next frame in order. The newly focused frame is briefly colored red.",
             flags: Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["[f"], function(count) { focusNextFrame(count > 1 ? count : 1, false); },
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["[f"],
+        function(count) { focusNextFrame(count > 1 ? count : 1, false); },
         {
             short_help: "Focus previous frame",
             help: "Transfers keyboard focus to the [count]th previous frame in order. The newly focused frame is briefly colored red.",
@@ -222,7 +224,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["b"],
-        function (args) { vimperator.commandline.open(":", "buffer ", vimperator.modes.EX); },
+        function(args) { vimperator.commandline.open(":", "buffer ", vimperator.modes.EX); },
         {
             short_help: "Open a prompt to switch buffers",
             help: "Typing the corresponding number opens switches to this buffer."
@@ -266,7 +268,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["go"],
-        function (mark) { vimperator.quickmarks.jumpTo(mark, false) },
+        function(mark) { vimperator.quickmarks.jumpTo(mark, false) },
         {
             short_help: "Jump to a QuickMark in the current buffer",
             usage: ["go{a-zA-Z0-9}"],
@@ -276,7 +278,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gn"],
-        function (mark) { vimperator.quickmarks.jumpTo(mark, true) },
+        function(mark) { vimperator.quickmarks.jumpTo(mark, true) },
         {
             short_help: "Jump to a QuickMark in a new buffer",
             usage: ["gn{a-zA-Z0-9}"],
@@ -308,30 +310,31 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ['<C-^>', '<C-6>'],
-            function (args) {
-                if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
-                {   
-                    vimperator.echoerr("E23: No alternate page");
-                    return;
-                }
-                
-                // NOTE: this currently relies on v.tabs.index() returning the
-                // currently selected tab index when passed null
-                var index = vimperator.tabs.index(vimperator.tabs.alternate);
-                
-                // TODO: since a tab close is more like a bdelete for us we
-                // should probably reopen the closed tab when a 'deleted'
-                // alternate is selected
-                if (index == -1)
-                    vimperator.echoerr("E86: Buffer does not exist")  // TODO: This should read "Buffer N does not exist"
-                else
-                    vimperator.tabs.select(index);
-            },
+        function()
+        {
+            if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
             {   
-                short_help: "Select the alternate tab",
-                usage: ['<C-^>'],
-                help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
+                vimperator.echoerr("E23: No alternate page");
+                return;
             }
+            
+            // NOTE: this currently relies on v.tabs.index() returning the
+            // currently selected tab index when passed null
+            var index = vimperator.tabs.index(vimperator.tabs.alternate);
+            
+            // TODO: since a tab close is more like a bdelete for us we
+            // should probably reopen the closed tab when a 'deleted'
+            // alternate is selected
+            if (index == -1)
+                vimperator.echoerr("E86: Buffer does not exist")  // TODO: This should read "Buffer N does not exist"
+            else
+                vimperator.tabs.select(index);
+        },
+        {   
+            short_help: "Select the alternate tab",
+            usage: ['<C-^>'],
+            help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["m"],
         function(mark) { vimperator.marks.add(mark) },
@@ -684,7 +687,7 @@ function Mappings() //{{{
 
     /* vimperator managment */
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<F1>"],
-        function(count) { help(null); },
+        function(count) { vimperator.help(null); },
         {
             short_help: "Open help window",
             help: "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet)."

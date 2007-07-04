@@ -112,7 +112,7 @@ function init() //{{{
     if (Options.getPref("firsttime", true))
     {
         setTimeout(function() {
-            help(null, null, null, { inTab: true });
+            vimperator.help(null, null, null, { inTab: true });
             Options.setPref("firsttime", false);
         }, 1000);
     }
