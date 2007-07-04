@@ -767,7 +767,8 @@ function Commands() //{{{
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
             help: "Works for only commands that support it.<br/>" +
-                  "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab."
+                  "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
+            completer: function(filter) { return get_command_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["tabl[ast]"],
