@@ -762,7 +762,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["tab"],
-        tab,
+        function() { execute(arguments[0], null, null, {inTab: true}); },
         {
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
@@ -1286,7 +1286,7 @@ function yankCurrentSelection()
     vimperator.echo("Yanked " + sel);
 }
 
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////}}}
 // high level bookmark/history related functions ///////////////////////
 /////////////////////////////////////////////////////////////////////{{{
 
@@ -1344,11 +1344,6 @@ function bmshow(filter, fullmode)
 /////////////////////////////////////////////////////////////////////}}}
 // tab/buffer related functions ////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
-
-function tab()
-{
-    execute(arguments[0], null, null, {inTab: true});
-}
 
 // updates the buffer preview in place only if list is visible
 function updateBufferList()
