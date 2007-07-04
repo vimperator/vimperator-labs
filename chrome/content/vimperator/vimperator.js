@@ -466,6 +466,7 @@ function Events() //{{{
 //            return false;
 //        vimperator.logObject(event);
         var key = event.toString()
+//        alert(key);
         if (!key)
              return false;
 //        event.stopPropagation();

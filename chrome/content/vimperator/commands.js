@@ -569,8 +569,8 @@ function Commands() //{{{
         {
             usage: ["o[pen] [url] [| url]"],
             short_help: "Open one or more URLs in the current tab",
-            help: "Multiple URLs can be separated with the | character.<br/>" +
-                  "Each |-separated token is analyzed and in this order:<br/>" +
+            help: "Multiple URLs can be separated with \", \". Note that the space after the comma is required.<br/>" +
+                  "Each token is analyzed and in this order:<br/>" +
                   "<ol>" +
                   "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>" +
                   "... is special and moves up the directory hierarchy as far as possible." +
@@ -581,7 +581,7 @@ function Commands() //{{{
                   "will open the wikipedia entry for linux torvalds).</li>" +
                   "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>" +
-                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com | www.slashdot.org</code> will " +
+                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
                   "open OSNews in the current, and Slashdot in a new background tab).</li>" +
                   "</ol>" +
                   "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
@@ -1088,7 +1088,7 @@ function openURLsInNewTab(str, activate)
  */
 function stringToURLs(str)
 {
-    var urls = str.split(/\s*\|\s*/);
+    var urls = str.split(/\s*\,\s+/);
     begin: for (var url = 0; url < urls.length; url++)
     {
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
