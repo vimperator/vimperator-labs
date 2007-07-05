@@ -477,7 +477,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zz"],
         zoom_to,
         {
-            short_help: "Set zoom value of the webpage",
+            short_help: "Set zoom value of the web page",
             help: "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
             flags: Mappings.flags.COUNT
         }
@@ -733,7 +733,7 @@ function Mappings() //{{{
             help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
                   "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
                   "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
-                  "in this mode to the webpage, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
+                  "in this mode to the web page, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-v>"],
@@ -742,14 +742,14 @@ function Mappings() //{{{
             short_help: "Escape next key",
             help: "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
                   "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
-                  "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the webpage."
+                  "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-c>"],
         BrowserStop,
         {
             short_help: "Stop loading",
-            help: "Stops loading the current webpage."
+            help: "Stops loading the current web page."
         }
     ));
     // if you ever add/remove keys here, also check them in the vimperator.events.onKeyPress()

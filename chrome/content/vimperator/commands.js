@@ -263,7 +263,7 @@ function Commands() //{{{
         {
             usage: ["bma[dd] [-tTk] [url]"],
             short_help: "Add a bookmark",
-            help: "If you don't add a custom title, either the title of the webpage or the URL will be taken as the title.<br/>" +
+            help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
                   "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
                   "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   " -t \"custom title\"<br/>" +
@@ -536,7 +536,7 @@ function Commands() //{{{
         },
         {
             usage: ["ma[rk] {arg}"],
-            short_help: "Mark current location within the webpage"
+            short_help: "Mark current location within the web page"
         }
     ));
     addDefaultCommand(new Command(["marks"],
@@ -552,7 +552,7 @@ function Commands() //{{{
         },
         {
             usage: ["marks {arg}"],
-            short_help: "Show all location marks of current webpage",
+            short_help: "Show all location marks of current web page",
             help: "Not implemented yet."
         }
     ));
@@ -954,7 +954,7 @@ function Commands() //{{{
         zoom_to,
         {
             usage: ["zo[om] {value}"],
-            short_help: "Set zoom value of the webpage",
+            short_help: "Set zoom value of the web page",
             help: "{value} can be between 25 and 500%. If it is omitted, zoom is reset to 100%."
         }
     ));

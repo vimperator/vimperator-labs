@@ -424,8 +424,8 @@ function Options() //{{{
     addOption(new Option(["titlestring"], "string",
         {
             short_help: "Change the title of the browser window",
-            help: "Vimperator changes the browser title from \"Title of webpage - Mozilla Firefox\" to " +
-                  "\"Title of webpage - Vimperator\".<br/>If you don't like that, you can restore it with: " +
+            help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
+                  "\"Title of web page - Vimperator\".<br/>If you don't like that, you can restore it with: " +
                   "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
             setter: function(value) { Options.setPref("titlestring", value); setTitleString(value); },
             default_value: "Vimperator"
