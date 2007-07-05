@@ -350,7 +350,8 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["delm[arks]"],
-        function(args, special) {
+        function(args, special)
+        {
             if (!special && !args)
             {
                 vimperator.echoerr("E471: Argument required");
@@ -515,7 +516,8 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
-        function(args) {
+        function(args)
+        {
             if (!args) {
                 vimperator.echoerr("E471: Argument required");
                 return;
@@ -538,7 +540,8 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["marks"],
-        function(args) {
+        function(args)
+        {
             if (args.length > 1 && !/[a-zA-Z]/.test(args))
             {
                 vimperator.echoerr("E283: No marks matching \"" + args + "\"");
@@ -880,7 +883,8 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
-        function(args) {
+        function(args)
+        {
             var split = args.split(/\s+/);
             vimperator.quickmarks.add(split[0], split[1] ? split[1] : getCurrentLocation());
         },
@@ -892,9 +896,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["qmarkd[el]", "qmd[el]"],
-        function(args) {
-            vimperator.quickmarks.remove(args);
-        },
+        function(args) { vimperator.quickmarks.remove(args); },
         {
             usage: ["qmarkd[el] {a-zA-Z0-9}"],
             short_help: "Remove a marked URL",
@@ -903,9 +905,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["qmarks", "qms"],
-        function(args) {
-            vimperator.quickmarks.list(args);
-        },
+        function(args) { vimperator.quickmarks.list(args); },
         {
             usage: ["qmarks"],
             short_help: "Shows marked URLs",
@@ -934,9 +934,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
-        function() {
-            vimperator.echo("winopen not implemented yet");
-        },
+        function() { vimperator.echo("winopen not implemented yet"); },
         {
             usage: ["wino[pen] [url] [| url]"],
             short_help: "Open an URL in a new window",
@@ -1322,21 +1320,6 @@ function yankCurrentSelection()
     var sel = window.content.document.getSelection();
     copyToClipboard(sel);
     vimperator.echo("Yanked " + sel);
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// tab/buffer related functions ////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-// updates the buffer preview in place only if list is visible
-function updateBufferList()
-{
-    if (!vimperator.bufferwindow.visible())
-        return false;
-
-    var items = get_buffer_completions("");
-    vimperator.bufferwindow.show(items);
-    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
 }
 
 /////////////////////////////////////////////////////////////////////}}}

@@ -363,22 +363,22 @@ function Events() //{{{
     var tabcontainer = getBrowser().tabContainer;
     tabcontainer.addEventListener("TabMove",   function(event) {
         vimperator.statusline.updateTabCount()
-        updateBufferList();
+        vimperator.tabs.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
-        updateBufferList();
+        vimperator.tabs.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
-        updateBufferList();
+        vimperator.tabs.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
-        updateBufferList();
+        vimperator.tabs.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
     }, false);
@@ -419,7 +419,7 @@ function Events() //{{{
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
-            updateBufferList();
+            vimperator.tabs.updateBufferList();
 
             //update history
             var url = getCurrentLocation();
@@ -1021,6 +1021,17 @@ function Tabs() //{{{
     }
 
     this.alternate = this.getTab();
+
+    // updates the buffer preview in place only if list is visible
+    this.updateBufferList = function()
+    {
+        if (!vimperator.bufferwindow.visible())
+            return false;
+
+        var items = get_buffer_completions("");
+        vimperator.bufferwindow.show(items);
+        vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+    }
 
     this.reload = function(tab, bypass_cache)
     {

@@ -467,7 +467,8 @@ function Options() //{{{
                   "</table>" +
                   "When there is only a single match, it is fully completed regardless of the case.",
             default_value: "list:full",
-            validator: function (value) {
+            validator: function (value)
+            {
                 if (/^(?:(?:full|longest|list|list:full|list:longest)(?:,(?!,))?){0,3}(?:full|longest|list|list:full|list:longest)?$/.test(value))
                     return true;
                 else
