@@ -752,10 +752,10 @@ function Events() //{{{
         },
 
         // stub functions for the interfaces
-        setJSStatus : function(status) { },
-        setJSDefaultStatus : function(status) { },
-        setDefaultStatus : function(status) { },
-        onLinkIconAvailable: function() { }
+        setJSStatus : function(status) { ; },
+        setJSDefaultStatus : function(status) { ; },
+        setDefaultStatus : function(status) { ; },
+        onLinkIconAvailable: function() { ; }
     };
     window.XULBrowserWindow = this.progressListener;
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
@@ -1080,7 +1080,8 @@ function isFormElemFocused()
     if (elt == null)
         return false;
 
-    try { // sometimes the elt doesn't have .localName
+    try
+    { // sometimes the elt doesn't have .localName
         var tagname = elt.localName.toLowerCase();
         var type = elt.type.toLowerCase();
 
@@ -1090,7 +1091,11 @@ function isFormElemFocused()
                 //            tagName == "BUTTON" ||
                 tagname == "isindex") // isindex is a deprecated one-line input box
             return true;
-    } catch(e) {};
+    }
+    catch (e)
+    {
+        // FIXME: do nothing?
+    }
 
     return false;
 }
