@@ -1205,6 +1205,7 @@ function focusNextFrame(count, forward)
             return;
 
         // remove all unfocusable frames
+        // TODO: find a better way to do this
         var start = document.commandDispatcher.focusedWindow;
         frames = frames.filter(function(frame) {
                 frame.focus();
@@ -1291,36 +1292,6 @@ function getCurrentTitle()
     return window.content.document.title;
 }
 
-
-function goUp(count)
-{
-    var gocmd = "";
-    if (isDirectory(getCurrentLocation()))
-        gocmd = "../";
-    else
-        gocmd = "./";
-
-    if (count < 1)
-        count = 1;
-
-    for (var i = 0; i < count - 1; i--)
-        gocmd += "../";
-
-    openURLs(gocmd);
-}
-
-function yankCurrentLocation()
-{
-    var loc = getCurrentLocation();
-    copyToClipboard(loc);
-    vimperator.echo("Yanked " + loc);
-}
-function yankCurrentSelection()
-{
-    var sel = window.content.document.getSelection();
-    copyToClipboard(sel);
-    vimperator.echo("Yanked " + sel);
-}
 
 /////////////////////////////////////////////////////////////////////}}}
 // scrolling ///////////////////////////////////////////////////////////

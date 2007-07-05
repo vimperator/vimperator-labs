@@ -423,14 +423,24 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["y"],
-        yankCurrentLocation,
+        function()
+        {
+            var loc = getCurrentLocation();
+            copyToClipboard(loc);
+            vimperator.echo("Yanked " + loc);
+        },
         {
             short_help: "Yank current location to the clipboard",
             help: "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["Y"],
-        yankCurrentSelection,
+        function()
+        {
+            var sel = window.content.document.getSelection();
+            copyToClipboard(sel);
+            vimperator.echo("Yanked " + sel);
+        },
         {
             short_help: "Copy selected text",
             help: "The currently selected text is copied to the system clipboard."
@@ -604,7 +614,22 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gu", "<BS>"],
-        goUp,
+        function(count)
+        {
+            var gocmd = "";
+            if (isDirectory(getCurrentLocation()))
+                gocmd = "../";
+            else
+                gocmd = "./";
+
+            if (count < 1)
+                count = 1;
+
+            for (var i = 0; i < count - 1; i--)
+                gocmd += "../";
+
+            openURLs(gocmd);
+        },
         {
             short_help: "Go to parent directory",
             help: "Count is supported, <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>.",
