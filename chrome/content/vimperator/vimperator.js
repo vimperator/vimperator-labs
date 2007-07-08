@@ -483,7 +483,27 @@ function Events() //{{{
 
         // XXX: for now only, later: input mappings if form element focused
         if (isFormElemFocused())
+        {
+            if (key == "<S-Insert>")
+            {
+                var elt = window.document.commandDispatcher.focusedElement;
+
+                if(elt.setSelectionRange) // to check if it's a selection?
+                {
+                    var rangeStart = elt.selectionStart; // caret position
+                    var rangeEnd = elt.selectionEnd;
+                    var tempStr1 = elt.value.substring(0,rangeStart);
+                    var tempStr2 = readFromClipboard();
+                    var tempStr3 = elt.value.substring(rangeEnd);
+                    elt.value = tempStr1 + tempStr2  + tempStr3;
+                    elt.selectionStart = rangeStart + tempStr2.length;
+                    elt.selectionEnd = elt.selectionStart;
+                }
+            }
+
             return false;
+        }
+
 
         // handle Escape-one-key mode (Ctrl-v)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
@@ -813,6 +833,8 @@ KeyboardEvent.prototype.toString = function() //{{{
             key = "PageUp";
         else if (this.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
             key = "PageDown";
+        else if (this.keyCode == KeyEvent.DOM_VK_INSERT)
+            key = "Insert";
         else if (this.keyCode == KeyEvent.DOM_VK_F1)
             key = "F1";
         else if (this.keyCode == KeyEvent.DOM_VK_F2)
