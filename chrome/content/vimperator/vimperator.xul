@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<!-- ***** BEGIN LICENSE BLOCK *****
+
+<!-- ***** BEGIN LICENSE BLOCK ***** {{{
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -25,7 +26,7 @@ decision by deleting the provisions above and replace them with the notice
 and other provisions required by the GPL or the LGPL. If you do not delete
 the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
-***** END LICENSE BLOCK ***** -->
+}}} ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
 
@@ -56,8 +57,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				<listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.bufferwindow.onEvent(event);"
                         ondblclick="vimperator.bufferwindow.onEvent(event);"
-                        onkeydown= "vimperator.bufferwindow.onEvent(event);"
-						style="font-family: monospace; overflow:-moz-scrollbars-none;">
+                        onkeydown= "vimperator.bufferwindow.onEvent(event);">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
@@ -67,39 +67,36 @@ the terms of any one of the MPL, the GPL or the LGPL.
 				<listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.previewwindow.onEvent(event);"
                         ondblclick="vimperator.previewwindow.onEvent(event);"
-                        onkeydown= "vimperator.previewwindow.onEvent(event);"
-						style="font-family: monospace; overflow:-moz-scrollbars-none;">
+                        onkeydown= "vimperator.previewwindow.onEvent(event);">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
 					</listcols>
 				</listbox>
 
-				<hbox id="vimperator-statusline" flex="1" height="10" hidden="false" style="-moz-user-focus:ignore;">
-					<textbox class="plain" id="vimperator-statusline-field-url"            flex="1" readonly="true" style="font-family: monospace; background-color: transparent; -moz-user-focus:ignore;"/>
-					<label   class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0" style="font-family: monospace; padding: 0px 0px 0px 8px"/>
-					<label   class="plain" id="vimperator-statusline-field-progress"       flex="0" style="font-family: monospace; padding: 0px 0px 0px 8px"/>
-					<label   class="plain" id="vimperator-statusline-field-tabcount"       flex="0" style="font-family: monospace; padding: 0px 0px 0px 8px"/>
-					<label   class="plain" id="vimperator-statusline-field-bufferposition" flex="0" style="font-family: monospace; padding: 0px 0px 0px 8px"/>
+				<hbox id="vimperator-statusline" flex="1" height="10" hidden="false">
+					<textbox class="plain" id="vimperator-statusline-field-url"            flex="1" readonly="true"/>
+					<label   class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
+					<label   class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
+					<label   class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
+					<label   class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
 				</hbox>
 
-				<listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true"
-					style="font-family: monospace; -moz-user-focus:ignore; overflow:-moz-scrollbars-none;">
+                <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
 					<listcols>
 						<listcol flex="1" width="50%"/>
 						<listcol flex="1" width="50%"/>
 					</listcols>
 				</listbox>
 
-                <hbox id="vimperator-commandline" flex="1" hidden="false" style="-moz-user-focus:ignore;">
+                <hbox id="vimperator-commandline" flex="1" hidden="false">
 					<textbox class="plain" id="vimperator-commandline-prompt"  flex="0" crop="right" value="" collapsed="true"
-						readonly="true" style="font-family: monospace; background-color:white; -moz-user-focus:ignore;"/>
+						readonly="true"/>
                     <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
 						onkeypress="vimperator.commandline.onEvent(event);"
 						oninput="vimperator.commandline.onEvent(event);"
 						onfocus="vimperator.commandline.onEvent(event);"
-                        onblur="vimperator.commandline.onEvent(event);"
-                        style="font-family: monospace; -moz-user-focus:ignore;"/>
+                        onblur="vimperator.commandline.onEvent(event);"/>
                 </hbox>
                 <iframe id="vimperator-multiline" src="about:blank" flex="1" hidden="false" collapsed="true"/>
 			</vbox>
@@ -113,4 +110,5 @@ the terms of any one of the MPL, the GPL or the LGPL.
 		</keyset>
 	</window>
 </overlay>
-<!-- vim: set et ts=4 sw=4 : -->
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->
