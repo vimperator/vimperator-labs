@@ -1299,8 +1299,8 @@ function getCurrentTitle()
 
 function scrollBufferRelative(right, down)
 {
-    //var win = window.document.commandDispatcher.focusedWindow;
-    var win = window.content;
+    var win = window.document.commandDispatcher.focusedWindow;
+    //var win = window.content; // XXX: This would fix scrolling when the tab has focus, but breaks when it has frames --MST
     if (vimperator.input.count < 1)
         vimperator.input.count = 1;
 
@@ -1329,8 +1329,8 @@ function scrollBufferRelative(right, down)
 /* both values are given in percent, -1 means no change */
 function scrollBufferAbsolute(horizontal, vertical)
 {
-    //var win = document.commandDispatcher.focusedWindow;
-    var win = window.content;
+    var win = document.commandDispatcher.focusedWindow;
+    //var win = window.content;
     var horiz, vert;
 
     if (horizontal < 0)

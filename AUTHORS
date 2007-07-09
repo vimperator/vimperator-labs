@@ -12,4 +12,5 @@ Patches:
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
   * Hannes Rist (:set titlestring support)
+  * Marco Candrian (shift-insert patch)
 </pre>
