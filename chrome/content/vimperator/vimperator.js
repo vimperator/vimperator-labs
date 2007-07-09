@@ -488,7 +488,9 @@ function Events() //{{{
             {
                 var elt = window.document.commandDispatcher.focusedElement;
 
-                if(elt.setSelectionRange) // to check if it's a selection?
+                if(elt.setSelectionRange && readFromClipboard())
+                    // readFromClipboard would return 'undefined' if not checked
+                    // dunno about .setSelectionRange
                 {
                     var rangeStart = elt.selectionStart; // caret position
                     var rangeEnd = elt.selectionEnd;
@@ -498,9 +500,10 @@ function Events() //{{{
                     elt.value = tempStr1 + tempStr2  + tempStr3;
                     elt.selectionStart = rangeStart + tempStr2.length;
                     elt.selectionEnd = elt.selectionStart;
+                    event.preventDefault();
+                    // prevents additional firefox-clipboard pasting
                 }
             }
-
             return false;
         }
 
