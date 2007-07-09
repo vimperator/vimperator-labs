@@ -652,7 +652,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["sav[eas]"],
-        function() { goDoCommand('Browser:SavePage'); },
+        function() { saveDocument(window.content.document); },
         {
             usage: ["sav[eas]"],
             short_help: "Save current web page to disk",
