@@ -812,6 +812,10 @@ KeyboardEvent.prototype.toString = function() //{{{
             modifier += "S-";
         if (this.keyCode == KeyEvent.DOM_VK_ESCAPE)
             key = "Esc";
+        else if (this.keyCode == KeyEvent.DOM_VK_LEFT_SHIFT)
+            key = "<";
+        else if (this.keyCode == KeyEvent.DOM_VK_RIGHT_SHIFT)
+            key = ">";
         else if (this.keyCode == KeyEvent.DOM_VK_RETURN)
             key = "Return";
         else if (this.keyCode == KeyEvent.DOM_VK_TAB)
@@ -822,6 +826,8 @@ KeyboardEvent.prototype.toString = function() //{{{
             key = "BS";
         else if (this.keyCode == KeyEvent.DOM_VK_HOME)
             key = "Home";
+        else if (this.keyCode == KeyEvent.DOM_VK_INSERT)
+            key = "Insert";
         else if (this.keyCode == KeyEvent.DOM_VK_END)
             key = "End";
         else if (this.keyCode == KeyEvent.DOM_VK_LEFT)
@@ -836,8 +842,6 @@ KeyboardEvent.prototype.toString = function() //{{{
             key = "PageUp";
         else if (this.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
             key = "PageDown";
-        else if (this.keyCode == KeyEvent.DOM_VK_INSERT)
-            key = "Insert";
         else if (this.keyCode == KeyEvent.DOM_VK_F1)
             key = "F1";
         else if (this.keyCode == KeyEvent.DOM_VK_F2)
@@ -862,6 +866,30 @@ KeyboardEvent.prototype.toString = function() //{{{
             key = "F11";
         else if (this.keyCode == KeyEvent.DOM_VK_F12)
             key = "F12";
+        else if (this.keyCode == KeyEvent.DOM_VK_F13)
+            key = "F13";
+        else if (this.keyCode == KeyEvent.DOM_VK_F14)
+            key = "F14";
+        else if (this.keyCode == KeyEvent.DOM_VK_F15)
+            key = "F15";
+        else if (this.keyCode == KeyEvent.DOM_VK_F16)
+            key = "F16";
+        else if (this.keyCode == KeyEvent.DOM_VK_F17)
+            key = "F17";
+        else if (this.keyCode == KeyEvent.DOM_VK_F18)
+            key = "F18";
+        else if (this.keyCode == KeyEvent.DOM_VK_F19)
+            key = "F19";
+        else if (this.keyCode == KeyEvent.DOM_VK_F20)
+            key = "F20";
+        else if (this.keyCode == KeyEvent.DOM_VK_F21)
+            key = "F21";
+        else if (this.keyCode == KeyEvent.DOM_VK_F22)
+            key = "F22";
+        else if (this.keyCode == KeyEvent.DOM_VK_F23)
+            key = "F23";
+        else if (this.keyCode == KeyEvent.DOM_VK_F24)
+            key = "F24";
         else
             return null;
     }
