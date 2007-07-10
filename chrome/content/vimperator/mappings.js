@@ -141,6 +141,7 @@ function Mappings() //{{{
         return true;
     }
 
+    // FIXME: this doesn't work
     this.remove = function(map)
     {
         var index;

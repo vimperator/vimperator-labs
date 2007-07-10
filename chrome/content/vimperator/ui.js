@@ -75,7 +75,7 @@ function CommandLine() //{{{
     // The command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
     // The widget used for multiline in-/output
-    var multiline_widget = document.getElementById("vimperator-multiline"); 
+    var multiline_widget = document.getElementById("vimperator-multiline");
     multiline_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
 
     // we need to save the mode which were in before opening the command line
@@ -138,17 +138,26 @@ function CommandLine() //{{{
 
     function setMultiline(cmd)
     {
-        multiline_widget.collapsed = false;
+        // TODO: we should retain any previous command output like Vim
+        if (!multiline_widget.collapsed)
+            multiline_widget.collapsed = true;
+
         cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
         multiline_widget.contentDocument.body.innerHTML = cmd;
 
-        // size according to content -- TODO: if too large, leave a scrollbar)
-        multiline_widget.style.height = multiline_widget.contentDocument.height + "px";
+        // TODO: resize upon a window resize
+        var available_height = getBrowser().mPanelContainer.boxObject.height;
+        var content_height = multiline_widget.contentDocument.height;
+        var height = content_height < available_height ? content_height : available_height;
+
+        multiline_widget.style.height = height + "px";
+        multiline_widget.collapsed = false;
+        multiline_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
     }
 
     function addToHistory(str)
     {
-        if(str.length < 1)
+        if (str.length < 1)
             return;
 
         // first remove all old history elements which have this string
@@ -262,7 +271,7 @@ function CommandLine() //{{{
     {
         var command = this.getCommand();
 
-        if(event.type == "blur")
+        if (event.type == "blur")
         {
             // when we do a command_widget.focus() we get a blur event immediately,
             // so check if the target is the actualy input field
@@ -276,14 +285,14 @@ function CommandLine() //{{{
 
                 // don't add the echoed command to the history, on pressing <cr>, the
                 // command is saved right into the kepress handler
-                if(!echo_allowed)
+                if (!echo_allowed)
                     addToHistory(command);
 
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
             }
         }
-        else if(event.type == "focus")
+        else if (event.type == "focus")
         {
             // if we manually click into the command line, don't open it
             if (event.target == command_widget.inputField && cur_extended_mode != null)
@@ -308,11 +317,11 @@ function CommandLine() //{{{
                 return false;
             }
         }
-        else if(event.type == "input")
+        else if (event.type == "input")
         {
             vimperator.triggerCallback("change", command);
         }
-        else if(event.type == "keypress")
+        else if (event.type == "keypress")
         {
             var key = event.toString();
             /* user pressed ENTER to carry out a command */
@@ -462,13 +471,13 @@ function CommandLine() //{{{
                     if (event.shiftKey)
                     {
                         completion_index--;
-                        if(completion_index < -1)
+                        if (completion_index < -1)
                             completion_index = completions.length -1;
                     }
                     else
                     {
                         completion_index++;
-                        if(completion_index >= completions.length)
+                        if (completion_index >= completions.length)
                             completion_index = -1;
                     }
 
@@ -516,7 +525,7 @@ function CommandLine() //{{{
                 completion_index = history_index = UNINITIALIZED;
 
                 // and blur the command line if there is no text left
-                if(command.length == 0)
+                if (command.length == 0)
                 {
                     this.clear();
                     vimperator.focusContent();
@@ -555,7 +564,7 @@ function InformationList(id, options) //{{{
     var min_items = 1;
     var incremental_fill = true; // make display faster, but does not show scrollbar
 
-    if(options)
+    if (options)
     {
         if (options.max_items) max_items = options.max_items;
         if (options.min_items) min_items = options.min_items;
@@ -606,7 +615,7 @@ function InformationList(id, options) //{{{
         var items = widget.getElementsByTagName("listitem");
         while (items.length > 0) { widget.removeChild(items[0]);}
 
-        if(!incremental_fill)
+        if (!incremental_fill)
         {
             for (i in completions)
                 addItem(completions[i], false);
@@ -682,10 +691,10 @@ function InformationList(id, options) //{{{
      */
     this.selectItem = function(index)
     {
-        if(widget.hidden)
+        if (widget.hidden)
             return;
 
-        if(!incremental_fill)
+        if (!incremental_fill)
         {
             widget.selectedIndex = index;
             return;
@@ -823,9 +832,9 @@ function StatusLine() //{{{
     // you can omit either of the 2 arguments
     this.updateTabCount = function(cur_index, total_tabs)
     {
-        if(!cur_index || typeof cur_index != "number")
+        if (!cur_index || typeof cur_index != "number")
             cur_index = vimperator.tabs.index() + 1;
-        if(!total_tabs || typeof cur_index != "number")
+        if (!total_tabs || typeof cur_index != "number")
             total_tabs = vimperator.tabs.count();
 
         tabcount_widget.value = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
@@ -834,7 +843,7 @@ function StatusLine() //{{{
     // percent is given between 0 and 1
     this.updateBufferPosition = function(percent)
     {
-        if(!percent || typeof percent != "number")
+        if (!percent || typeof percent != "number")
         {
             var win = document.commandDispatcher.focusedWindow;
             percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
