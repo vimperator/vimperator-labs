@@ -269,6 +269,11 @@ function Options() //{{{
     ////////////////////// DEFAULT OPTIONS /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const DEFAULT_HINTTAGS = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
+                             "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
+                             "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
+                             "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select"
+
     addOption(new Option(["activate"], "stringlist",
         {
             short_help: "Define when tabs are automatically activated",
@@ -308,11 +313,7 @@ function Options() //{{{
     addOption(new Option(["extendedhinttags", "eht"], "string",
         {
             short_help: "XPath string of hintable elements activated by ';'",
-            default_value: "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
-                           "//input[@type!='hidden' or not(boolean(@type))] | //a | //area | //iframe | //textarea | //button | //select | " +
-                           "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
-                           "//xhtml:input[@type!='hidden' or not(boolean(@type))] | //xhtml:a | //xhtml:area | //xhtml:iframe | " +
-                           "//xhtml:textarea | //xhtml:button | //xhtml:select"
+            default_value: DEFAULT_HINTTAGS
         }
     ));
     addOption(new Option(["focusedhintstyle", "fhs"], "string",
@@ -359,10 +360,7 @@ function Options() //{{{
     addOption(new Option(["hinttags"], "string",
         {
             short_help: "XPath string of hintable elements activated by <code class=\"mapping\">'f'</code> and <code class=\"mapping\">'F'</code>",
-            default_value: "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
-                           "//input[@type!='hidden'] | //a | //area | //iframe | //textarea | //button | //select | " +
-                           "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
-                           "//xhtml:input[@type!='hidden'] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select"
+            default_value: DEFAULT_HINTTAGS
         }
     ));
     addOption(new Option(["maxhints", "mh"], "number",
