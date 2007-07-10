@@ -37,7 +37,7 @@ table.vimperator td {
 tr.separator {
 /*    border-width: 3px 0px 0px 0px;
     border-style: solid none none none;*/
-    border-color: gray
+    border-color: gray;
     height: 10px !important;
 }
 hr { /* horizontal lines */
