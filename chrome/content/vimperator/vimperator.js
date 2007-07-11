@@ -188,8 +188,6 @@ function Vimperator() //{{{
 	var callbacks = new Array();
     var mode = this.modes.NORMAL;
     var extended_mode = this.modes.NONE;
-    var count = -1;
-    var inputbuffer = "";
 
     // our services
     var console_service = Components.classes['@mozilla.org/consoleservice;1']
