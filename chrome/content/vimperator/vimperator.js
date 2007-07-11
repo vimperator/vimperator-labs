@@ -369,7 +369,6 @@ function Events() //{{{
         vimperator.statusline.updateTabCount();
         vimperator.tabs.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
-        vimperator.tabs.updateSelectionHistory();
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
