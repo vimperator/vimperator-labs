@@ -1186,7 +1186,7 @@ function isDirectory(url)
 /////////////////////////////////////////////////////////////////////{{{
 
 // TODO: allow callback for filtering out unwanted frames? User defined?
-function focusNextFrame(count, forward)
+Vimperator.prototype.shiftFrameFocus = function(count, forward)
 {
     try
     {

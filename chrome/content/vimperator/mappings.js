@@ -210,7 +210,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"],
-        function(count) { focusNextFrame(count > 1 ? count : 1, true); },
+        function(count) { vimperator.shiftFrameFocus(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
             help: "Transfers keyboard focus to the [count]th next frame in order. The newly focused frame is briefly colored red.",
@@ -218,7 +218,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["[f"],
-        function(count) { focusNextFrame(count > 1 ? count : 1, false); },
+        function(count) { vimperator.shiftFrameFocus(count > 1 ? count : 1, false); },
         {
             short_help: "Focus previous frame",
             help: "Transfers keyboard focus to the [count]th previous frame in order. The newly focused frame is briefly colored red.",
