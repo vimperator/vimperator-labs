@@ -83,13 +83,6 @@ function init() //{{{
     Vimperator.prototype.echo    = vimperator.commandline.echo;
     Vimperator.prototype.echoerr = vimperator.commandline.echoErr;
 
-    // XXX: move into Vimperator() ?
-    vimperator.input = {
-        buffer: "",                 // partial command storage
-        pendingMap: null,           // pending map storage
-        count: -1                  // parsed count from the input buffer
-    };
-
     // XXX: move elsewhere
     vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
     vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
@@ -200,13 +193,13 @@ function Vimperator() //{{{
 
         var str_mode = mode_messages[mode];
         var str_extended = mode_messages[extended_mode];
-        if(!str_mode && !str_extended)
+        if (!str_mode && !str_extended)
         {
             vimperator.echo("");
             return;
         }
 
-        if(str_mode && str_extended)
+        if (str_mode && str_extended)
             str_extended = " (" + str_extended + ")";
         else
         {
@@ -223,6 +216,12 @@ function Vimperator() //{{{
 
     this.version  = "###VERSION### CVS (created: ###DATE###)";
 
+    this.input = {
+        buffer: "",                // partial command storage
+        pendingMap: null,          // pending map storage
+        count: -1                  // parsed count from the input buffer
+    };
+
     /////////////// callbacks ////////////////////////////
     // XXX: shouldn't that callback be moved to commandline? --mst
 	/**
@@ -237,6 +236,7 @@ function Vimperator() //{{{
 		// TODO: check if callback is already registered
 		callbacks.push([type, mode, func]);
 	}
+
 	this.triggerCallback = function(type, data)
 	{
 		for (var i in callbacks)
@@ -274,12 +274,14 @@ function Vimperator() //{{{
         if (!silent)
             showMode();
     }
+
     // returns true if "whichmode" is found in either the main or
     // extended mode
     this.hasMode = function(whichmode)
     {
         return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
     }
+
     this.addMode = function(main, extended)
     {
         if (main)
@@ -289,6 +291,7 @@ function Vimperator() //{{{
 
         showMode();
     }
+    
     // always show the new mode in the statusline
     this.removeMode = function(main, extended)
     {
@@ -318,7 +321,7 @@ function Vimperator() //{{{
      */
     this.log = function(msg, level)
     {
-        // if(Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
+        // if (Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
             console_service.logStringMessage('vimperator: ' + msg);
     }
 
@@ -424,7 +427,7 @@ function Events() //{{{
             vimperator.history.add(url, title);
 
             // code which is only relevant if the page load is the current tab goes here:
-            if(doc == getBrowser().selectedBrowser.contentDocument)
+            if (doc == getBrowser().selectedBrowser.contentDocument)
             {
                 /* none yet */
                 //vimperator.statusline.updateUrl();
@@ -441,7 +444,7 @@ function Events() //{{{
     {
         // BIG TODO: removeEventListeners() to avoid mem leaks
         window.dump("TODO: remove eventlisteners");
-    };
+    }
 
     this.onEscape = function()
     {
@@ -453,8 +456,7 @@ function Events() //{{{
             vimperator.focusContent();
             vimperator.statusline.updateUrl();
         }
-    };
-
+    }
 
     this.onKeyPress = function(event)
     {
@@ -485,7 +487,7 @@ function Events() //{{{
             {
                 var elt = window.document.commandDispatcher.focusedElement;
 
-                if(elt.setSelectionRange && readFromClipboard())
+                if (elt.setSelectionRange && readFromClipboard())
                     // readFromClipboard would return 'undefined' if not checked
                     // dunno about .setSelectionRange
                 {
@@ -514,7 +516,7 @@ function Events() //{{{
         // handle Escape-all-keys mode (I)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
         {
-            if(vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+            if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
                 vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                 ; // let flow continue to handle these keys
@@ -555,7 +557,7 @@ function Events() //{{{
             var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
             if (map)
             {
-                if(map.always_active || vimperator.hints.currentState() == 1)
+                if (map.always_active || vimperator.hints.currentState() == 1)
                 {
                     //g_hint_mappings[i][1].call(this, event);
                     map.execute();
@@ -592,8 +594,8 @@ function Events() //{{{
             if (res < 0) // error occured processing this key
             {
                 vimperator.beep();
-                //if(vimperator.hints.currentMode() == HINT_MODE_QUICK)
-                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                //if (vimperator.hints.currentMode() == HINT_MODE_QUICK)
+                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
                     vimperator.hints.resetHintedElements();
@@ -611,8 +613,8 @@ function Events() //{{{
                 else // open in current window
                     vimperator.hints.openHints(false, false);
 
-                //if(vimperator.hints.currentMode() == HINT_MODE_QUICK)
-                if(vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                //if (vimperator.hints.currentMode() == HINT_MODE_QUICK)
+                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
                     vimperator.hints.resetHintedElements();
@@ -682,7 +684,7 @@ function Events() //{{{
         }
         vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
         return false;
-    };
+    }
     window.addEventListener("keypress", this.onKeyPress, true);
 
 
@@ -703,11 +705,11 @@ function Events() //{{{
         {
             // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
             // receive statechange events for loading images and other parts of the web page
-            if(flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
+            if (flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
                         Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
             {
                 // This fires when the load event is initiated
-                if(flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+                if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                 {
                     vimperator.statusline.updateProgress(0);
                 }
@@ -719,11 +721,11 @@ function Events() //{{{
         onSecurityChange: function (webProgress, aRequest, aState)
         {
             const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if(aState & nsIWebProgressListener.STATE_IS_INSECURE)
+            if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
                 vimperator.statusline.setClass("insecure");
-            else if(aState & nsIWebProgressListener.STATE_IS_BROKEN)
+            else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
                 vimperator.statusline.setClass("broken");
-            else if(aState & nsIWebProgressListener.STATE_IS_SECURE)
+            else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
                 vimperator.statusline.setClass("secure");
         },
         onStatusChange: function(webProgress, request, status, message)
@@ -777,6 +779,7 @@ function Events() //{{{
         setDefaultStatus : function(status) { ; },
         onLinkIconAvailable: function() { ; }
     };
+
     window.XULBrowserWindow = this.progressListener;
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIWebNavigation)
@@ -1038,7 +1041,7 @@ function Tabs() //{{{
         if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
             vimperator.quit(quit_on_last_tab == 2);
 
-        if(focus_left_tab && tab.previousSibling)
+        if (focus_left_tab && tab.previousSibling)
             this.select("-1", false);
 
         getBrowser().removeTab(tab);
