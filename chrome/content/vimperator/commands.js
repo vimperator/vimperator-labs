@@ -72,17 +72,15 @@ function Command(specs, action, extra_info) //{{{
 
     this.action = action;
 
+    // TODO: build a better default usage string
+    this.usage = this.specs;
+
     if (extra_info)
     {
         //var flags = extra_info.flags || 0;
 
         if (extra_info.usage)
             this.usage = extra_info.usage;
-        else
-        {
-            // TODO: build a default usage string -- djk
-            this.usage = this.name;
-        }
 
         this.help = extra_info.help || null;
         this.short_help = extra_info.short_help || null;

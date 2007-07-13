@@ -35,6 +35,8 @@ function Map(mode, cmds, act, extra_info) //{{{
     this.names = cmds;
     this.action = act;
 
+    this.usage = [this.names[0]];
+
     if (extra_info)
     {
         this.flags = extra_info.flags || 0;
@@ -43,10 +45,9 @@ function Map(mode, cmds, act, extra_info) //{{{
             this.usage = extra_info.usage;
         else
         {
-            this.usage = "";
+            this.usage = this.names[0]; // only the first command name
             if (this.flags & Mappings.flags.COUNT)
-                this.usage = "{count}";
-            this.usage += this.names[0]; // only the first command name
+                this.usage = "{count}" + this.usage;
             if (this.flags & Mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
             this.usage = [this.usage]; // FIXME: usage an array - needed for the help
@@ -54,6 +55,7 @@ function Map(mode, cmds, act, extra_info) //{{{
 
         this.help = extra_info.help || null;
         this.short_help = extra_info.short_help || null;
+
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
         this.cancel_mode = extra_info.cancel_mode || false;
