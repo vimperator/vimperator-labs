@@ -33,6 +33,7 @@ Vimperator.prototype.help = function(section, easter) //{{{
         vimperator.echoerr("E478: Don't panic!");
         return;
     }
+
     if ((arguments[3] && arguments[3].inTab))// || !window.content.document.open)
         openURLsInNewTab("", true);
     else
@@ -46,6 +47,7 @@ Vimperator.prototype.help = function(section, easter) //{{{
     function makeHelpString(commands, beg, end, func)
     {
         var ret = "";
+        var separator = '<tr class="separator"><td colspan="3"><hr/></td></tr>\n';
         for (var command in commands)
         {
             // the usage information for the command
@@ -74,7 +76,7 @@ Vimperator.prototype.help = function(section, easter) //{{{
                 ret += '<span class="shorthelp">';
                 ret += command.short_help; // the help description
                 ret += "</span><br/>";
-                if(func) // for options we print default values here, e.g.
+                if (func) // for options we print default values here, e.g.
                 {
                     ret += func.call(this, command);
                     ret += "<br/>";
@@ -103,18 +105,19 @@ Vimperator.prototype.help = function(section, easter) //{{{
             ret += '</td></tr>';
 
             // add more space between entries
-            // FIXME: if (i < commands.length-1)
-                ret += '<tr class="separator"><td colspan="3"><hr/></td></tr>\n';
+            ret += separator;
         }
+        ret = ret.replace(new RegExp(separator + '$'), ''); // FIXME: far too tasty!
         return ret;
     }
+
     function makeOptionsHelpString(command)
     {
         var ret = "";
         ret = command.type + ' (default: ';
         if (command.type == "boolean")
         {
-            if(command.default_value == true)
+            if (command.default_value == true)
                 ret += "on";
             else
                 ret += "off";
