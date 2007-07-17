@@ -34,83 +34,82 @@ the terms of any one of the MPL, the GPL or the LGPL.
 <?xml-stylesheet href="chrome://vimperator/content/default.css" type="text/css"?>
 
 <overlay id="vimperator"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:nc="http://home.netscape.com/NC-rdf#"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="http://home.netscape.com/NC-rdf#"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript;version=1.7" src="vimperator.js"/>
-	<script type="application/x-javascript;version=1.7" src="events.js"/>
-	<script type="application/x-javascript;version=1.7" src="tabs.js"/>
-	<script type="application/x-javascript;version=1.7" src="help.js"/>
-	<script type="application/x-javascript;version=1.7" src="commands.js"/>
-	<script type="application/x-javascript;version=1.7" src="ui.js"/>
-	<script type="application/x-javascript;version=1.7" src="options.js"/>
-	<script type="application/x-javascript;version=1.7" src="completion.js"/>
-	<script type="application/x-javascript;version=1.7" src="bookmarks.js"/>
-	<script type="application/x-javascript;version=1.7" src="hints.js"/>
-	<script type="application/x-javascript;version=1.7" src="file.js"/>
-	<script type="application/x-javascript;version=1.7" src="find.js"/>
-	<script type="application/x-javascript;version=1.7" src="mappings.js"/>
+    <script type="application/x-javascript;version=1.7" src="vimperator.js"/>
+    <script type="application/x-javascript;version=1.7" src="events.js"/>
+    <script type="application/x-javascript;version=1.7" src="tabs.js"/>
+    <script type="application/x-javascript;version=1.7" src="help.js"/>
+    <script type="application/x-javascript;version=1.7" src="commands.js"/>
+    <script type="application/x-javascript;version=1.7" src="ui.js"/>
+    <script type="application/x-javascript;version=1.7" src="options.js"/>
+    <script type="application/x-javascript;version=1.7" src="completion.js"/>
+    <script type="application/x-javascript;version=1.7" src="bookmarks.js"/>
+    <script type="application/x-javascript;version=1.7" src="hints.js"/>
+    <script type="application/x-javascript;version=1.7" src="file.js"/>
+    <script type="application/x-javascript;version=1.7" src="find.js"/>
+    <script type="application/x-javascript;version=1.7" src="mappings.js"/>
 
-	<window id="main-window">
-		<toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
-			<vbox id="vimperator-container" flex="1" hidden="false">
-				<listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
+    <window id="main-window">
+        <toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
+            <vbox id="vimperator-container" flex="1" hidden="false">
+                <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.bufferwindow.onEvent(event);"
                         ondblclick="vimperator.bufferwindow.onEvent(event);"
                         onkeydown= "vimperator.bufferwindow.onEvent(event);">
-					<listcols>
-						<listcol flex="1" width="50%"/>
-						<listcol flex="1" width="50%"/>
-					</listcols>
-				</listbox>
+                    <listcols>
+                        <listcol flex="1" width="50%"/>
+                        <listcol flex="1" width="50%"/>
+                    </listcols>
+                </listbox>
 
-				<listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
+                <listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
                         onclick=   "vimperator.previewwindow.onEvent(event);"
                         ondblclick="vimperator.previewwindow.onEvent(event);"
                         onkeydown= "vimperator.previewwindow.onEvent(event);">
-					<listcols>
-						<listcol flex="1" width="50%"/>
-						<listcol flex="1" width="50%"/>
-					</listcols>
-				</listbox>
+                    <listcols>
+                        <listcol flex="1" width="50%"/>
+                        <listcol flex="1" width="50%"/>
+                    </listcols>
+                </listbox>
 
-				<hbox id="vimperator-statusline" flex="1" height="10" hidden="false">
-					<textbox class="plain" id="vimperator-statusline-field-url"            flex="1" readonly="true"/>
-					<label   class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
-					<label   class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
-					<label   class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
-					<label   class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
-				</hbox>
+                <hbox id="vimperator-statusline" flex="1" height="10" hidden="false">
+                    <label class="plain" id="vimperator-statusline-field-url"            flex="1"/>
+                    <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
+                    <label class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
+                    <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
+                    <label class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
+                </hbox>
 
                 <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
-					<listcols>
-						<listcol flex="1" width="50%"/>
-						<listcol flex="1" width="50%"/>
-					</listcols>
-				</listbox>
+                    <listcols>
+                        <listcol flex="1" width="50%"/>
+                        <listcol flex="1" width="50%"/>
+                    </listcols>
+                </listbox>
 
                 <hbox id="vimperator-commandline" flex="1" hidden="false">
-					<textbox class="plain" id="vimperator-commandline-prompt"  flex="0" crop="right" value="" collapsed="true"
-						readonly="true"/>
+                    <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="right" value="" collapsed="true"/>
                     <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
-						onkeypress="vimperator.commandline.onEvent(event);"
-						oninput="vimperator.commandline.onEvent(event);"
-						onfocus="vimperator.commandline.onEvent(event);"
+                        onkeypress="vimperator.commandline.onEvent(event);"
+                        oninput="vimperator.commandline.onEvent(event);"
+                        onfocus="vimperator.commandline.onEvent(event);"
                         onblur="vimperator.commandline.onEvent(event);"/>
                 </hbox>
                 <iframe id="vimperator-multiline" src="about:blank" flex="1" hidden="false" collapsed="true"/>
-			</vbox>
-		</toolbar>
+            </vbox>
+        </toolbar>
 
-		<keyset id="mainKeyset">
+        <keyset id="mainKeyset">
            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', MODE_EX);" modifiers=""/>
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
            <!--key id="key_a" key="a" oncommand="alert('a'); scrollBufferRelative(0, 1);"!/-->
            <!-- other keys are handled inside vimperator.js event loop -->
-		</keyset>
-	</window>
+        </keyset>
+    </window>
 </overlay>
 
 <!-- vim: set fdm=marker sw=4 ts=4 et: -->

@@ -8,8 +8,8 @@
 	  mappings go{a-z}, gn{a-z} and M{a-z}
 	* Multiline echo support
 	* Command line is now cleared on most redraws like in vim
-    * The RSS feed button in the address bar works again
-    * reload/stop buttons update enabled state again
+	* The RSS feed button in the address bar works again
+	* reload/stop buttons update enabled state again
 	* added local/url marks support (thanks Viktor Kojouharov)
 	* temporary shortcut Y to yank current selection (for non UNIX-users)
 	* Flashing frame with ]f now works as expected

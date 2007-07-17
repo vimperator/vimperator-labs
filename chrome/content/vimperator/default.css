@@ -88,10 +88,29 @@ fieldset.paypal {
     border: none;
 }
 
-.command { font-weight: bold; color: #632610; }
-.mapping { font-weight: bold; color: #102663; }
-.option { font-weight: bold; color: #106326; }
-.argument { color: #6A97D4; }
+.argument {
+    color: #6A97D4;
+}
+
+.command {
+    font-weight: bold;
+    color: #632610;
+}
+
+.mapping {
+    font-weight: bold;
+    color: #102663;
+}
+
+.option {
+    font-weight: bold;
+    color: #106326;
+}
+
+.shorthelp {
+    font-weight: bold;
+}
+
 .version {
     position: absolute;
     top: 10px;
@@ -99,11 +118,11 @@ fieldset.paypal {
     color: #C0C0C0;
     text-align: right;
 }
+
 .warning {
     font-weight: bold;
     color: red;
 }
-.shorthelp { font-weight: bold; }
 
 /*
  * XUL
@@ -111,42 +130,27 @@ fieldset.paypal {
  * TODO: move to the standard location: chrome/skin/vimperator.css...if I can
  * ever convince MS ;-) -- djk
  */
-#vimperator-bufferwindow  {
+#vimperator-toolbar  {
     font-family: monospace;
-    overflow:-moz-scrollbars-none;
 }
-#vimperator-previewwindow {
-    font-family: monospace;
-    overflow:-moz-scrollbars-none;
+
+#vimperator-bufferwindow, #vimperator-completion, #vimperator-previewwindow {
+    -moz-user-focus: ignore;
+    overflow: -moz-scrollbars-none;
 }
-#vimperator-statusline {
-    -moz-user-focus:ignore;
-}
-#vimperator-statusline-field-url {
-    font-family: monospace;
-    background-color: transparent;
-    -moz-user-focus:ignore;
-}
+
 #vimperator-statusline > label {
-    font-family: monospace;
     padding: 0px 0px 0px 8px;
 }
-#vimperator-completion {
-    font-family: monospace;
-    -moz-user-focus:ignore;
-    overflow:-moz-scrollbars-none;
-}
+
 #vimperator-commandline {
-    -moz-user-focus:ignore;
+    background-color: white;
+    color: black;
 }
 #vimperator-commandline-prompt {
-    font-family: monospace;
-    background-color:white;
-    -moz-user-focus:ignore;
-}
-#vimperator-commandline-command {
-    font-family: monospace;
-    -moz-user-focus:ignore;
+    /* FIXME: black on white or default skin colours? */
+    background-color: white;
+    color: black;
 }
 
 .status_insecure, .status_insecure * {

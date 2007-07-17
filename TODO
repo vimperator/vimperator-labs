@@ -13,6 +13,7 @@ BUGS:
   dpb| 09:11:50  dpb :: and this happens only when saving the complete
      webpage, saving  only the html works just fine..
 - add window resize support to hints
+- can't reverse tab through the vimperator toolbar
 
 FEATURES:
 9 :map commands to keys

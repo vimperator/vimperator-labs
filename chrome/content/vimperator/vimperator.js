@@ -291,7 +291,7 @@ function Vimperator() //{{{
 
         showMode();
     }
-    
+
     // always show the new mode in the statusline
     this.removeMode = function(main, extended)
     {
