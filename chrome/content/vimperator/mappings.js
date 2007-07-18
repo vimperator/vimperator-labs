@@ -127,7 +127,7 @@ function Mappings() //{{{
 
         // FIXME: initialize empty map tables
         if (user[mode])
-            mappings = user[mode].concat(main[mode])
+            mappings = user[mode].concat(main[mode]);
         else
             mappings = main[mode]
 
@@ -345,15 +345,15 @@ function Mappings() //{{{
         function()
         {
             if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
-            {   
+            {
                 vimperator.echoerr("E23: No alternate page");
                 return;
             }
-            
+
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null
             var index = vimperator.tabs.index(vimperator.tabs.alternate);
-            
+
             // TODO: since a tab close is more like a bdelete for us we
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
@@ -362,7 +362,7 @@ function Mappings() //{{{
             else
                 vimperator.tabs.select(index);
         },
-        {   
+        {
             short_help: "Select the alternate tab",
             usage: ['<C-^>'],
             help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
@@ -436,7 +436,7 @@ function Mappings() //{{{
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"mapping\">o</code> but open URLs in a new tab.<br/>" +
                   "See <code class=\"command\">:tabopen</code> for more details."
-               }
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["T"],
         function(count) { vimperator.commandline.open(":", "tabopen " + getCurrentLocation(), vimperator.modes.EX); },
@@ -719,7 +719,7 @@ function Mappings() //{{{
         }
     ));
 
-    // search managment
+    // search management
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["g/"],
         function(count) { vimperator.search.openSearchDialog(); },
         {
@@ -742,7 +742,7 @@ function Mappings() //{{{
         }
     ));
 
-    // vimperator managment
+    // vimperator management
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<F1>"],
         function(count) { vimperator.help(null); },
         {
@@ -881,7 +881,7 @@ function Mappings() //{{{
         { cancel_mode: false, always_active: true }
     ));
 
-    // tab managment
+    // tab management
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-n>"],
         function() { vimperator.tabs.select('+1', true); },
         { cancel_mode: true, always_active: true }
