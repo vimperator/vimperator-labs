@@ -73,7 +73,7 @@ function Command(specs, action, extra_info) //{{{
     this.action = action;
 
     // TODO: build a better default usage string
-    this.usage = this.specs;
+    this.usage = [this.specs[0]];
 
     if (extra_info)
     {
@@ -197,7 +197,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["addo[ns]"],
         function() { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
         {
-            usage: ["addo[ns]"],
             short_help: "Show available Browser Extensions and Themes",
             help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI."
         }
@@ -228,7 +227,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["beep"],
         function() { vimperator.beep(); },
         {
-            usage: ["beep"],
             short_help: "Play a system beep"
         }
     ));
@@ -342,7 +340,6 @@ function Commands() //{{{
             }
         },
         {
-            usage: ["buffers"],
             short_help: "Show a list of all buffers (=tabs)",
             help: "If the list is already shown, close the preview window."
         }
@@ -403,7 +400,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["downl[oads]", "dl"],
         function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
         {
-            usage: ["downl[oads]"],
             short_help: "Show progress of current downloads",
             help: "Open the original Firefox download dialog in a new tab.<br/>" +
                   "Here, downloads can be paused, canceled and resumed."
@@ -412,7 +408,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["ec[ho]"],
         function(args) { vimperator.echo(args); } ,
         {
-            usage: ["ec[ho]"],
             short_help: "Display a string at the bottom of the window",
             help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be separated by \\n."
         }
@@ -420,7 +415,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["echoe[rr]"],
         function(args) { vimperator.echoerr(args); } ,
         {
-            usage: ["echoe[rr]"],
             short_help: "Display an error string at the bottom of the window",
             help: "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be separated by \\n."
         }
@@ -436,7 +430,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["exu[sage]"],
         function(args, special, count, modifiers) { vimperator.help("commands", special, null, modifiers); },
         {
-            usage: ["exu[sage]"],
             short_help: "Show help for Ex commands"
         }
     ));
@@ -458,7 +451,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["ha[rdcopy]"],
         function() { getBrowser().contentWindow.print(); },
         {
-            usage: ["ha[rdcopy]"],
             short_help: "Print current document",
             help: "Open a GUI dialog where you can select the printer, number of copies, orientation, etc."
         }
@@ -596,14 +588,12 @@ function Commands() //{{{
     addDefaultCommand(new Command(["pc[lose]"],
         function() { vimperator.previewwindow.hide(); },
         {
-            usage: ["pc[lose]"],
             short_help: "Close preview window on bottom of screen"
         }
     ));
     addDefaultCommand(new Command(["pref[erences]", "prefs"],
         openPreferences,
         {
-            usage: ["pref[erences]"],
             short_help: "Show Browser Preferences",
             help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
                   "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>"
@@ -612,7 +602,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["q[uit]"],
         function() { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         {
-            usage: ["q[uit]"],
             short_help: "Quit current tab or quit Vimperator if this was the last tab",
             help: "When quitting Vimperator, the session is not stored."
         }
@@ -620,7 +609,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
         function() { vimperator.quit(false); },
         {
-            usage: ["quita[ll]"],
             short_help: "Quit Vimperator",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored."
         }
@@ -644,7 +632,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["res[tart]"],
         function() { vimperator.restart(); },
         {
-            usage: ["res[tart]"],
             short_help: "Force the browser to restart",
             help: "Useful when installing extensions."
         }
@@ -652,7 +639,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["sav[eas]"],
         function() { saveDocument(window.content.document); },
         {
-            usage: ["sav[eas]"],
             short_help: "Save current web page to disk",
             help: "Open the original Firefox \"Save page as...\" dialog in a new tab.<br/>" +
                   "There, you can save the current web page to disk with various options."
@@ -795,7 +781,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["st[op]"],
         BrowserStop,
         {
-            usage: ["st[op]"],
             short_help: "Stop loading",
             help: "Stop loading current web page."
         }
@@ -813,7 +798,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["tabl[ast]"],
         function() { vimperator.tabs.select("$", false); },
         {
-            usage: ["tabl[ast]"],
             short_help: "Switch to the last tab"
         }
     ));
@@ -829,7 +813,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
         function() { vimperator.tabs.select("+1", true); },
         {
-            usage: ["tabn[ext]"],
             short_help: "Switch to the next tab",
             help: "Cycles to the first tab, when the last is selected."
         }
@@ -837,7 +820,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["tabo[nly]"],
         function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
         {
-            usage: ["tabo[nly]"],
             short_help: "Close all other tabs"
         }
     ));
@@ -905,7 +887,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["qmarks", "qms"],
         function(args) { vimperator.quickmarks.list(args); },
         {
-            usage: ["qmarks"],
             short_help: "Show marked URLs",
             help: "TODO."
         }
@@ -927,7 +908,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["viu[sage]"],
         function(args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
         {
-            usage: ["viu[sage]"],
             short_help: "Show help for normal mode commands"
         }
     ));
@@ -939,7 +919,7 @@ function Commands() //{{{
             help: "Not implemented yet."
         }
     ));
-    addDefaultCommand(new Command(["xa[ll]", "wqa[ll]", "wq"],
+    addDefaultCommand(new Command(["wqa[ll]", "wq", "xa[ll]"],
         function() { vimperator.quit(true); },
         {
             usage: ["wqa[ll]", "xa[ll]"],
