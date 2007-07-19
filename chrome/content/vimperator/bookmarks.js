@@ -280,7 +280,7 @@ function Bookmarks() //{{{
                         title = title.substring(1,title.length-1);
                     res.title = title;
                 }
-                else /* at last check for an url */
+                else /* at last check for a URL */
                 {
                     match_url = str.match(re_url);
                     if (match_url != null)

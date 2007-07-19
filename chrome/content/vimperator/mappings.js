@@ -321,7 +321,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gP"],
         function(count) { openURLsInNewTab(readFromClipboard(), false); },
         {
-            short_help: "Open (put) an URL based on the current clipboard contents in a new buffer",
+            short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
         }
     ));
@@ -404,14 +404,14 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["p", "<MiddleMouse>"],
         function(count) { openURLs(readFromClipboard()); },
         {
-            short_help: "Open (put) an URL based on the current clipboard contents in the current buffer",
+            short_help: "Open (put) a URL based on the current clipboard contents in the current buffer",
             help: "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["P"],
         function(count) { openURLsInNewTab(readFromClipboard(), true); },
         {
-            short_help: "Open (put) an URL based on the current clipboard contents in a new buffer",
+            short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>" +
                   "Whether the new buffer is activated, depends on the <code class=\"option\">'activate'</code> option."
         }
