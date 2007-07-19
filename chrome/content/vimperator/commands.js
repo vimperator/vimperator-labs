@@ -906,7 +906,7 @@ function Commands() //{{{
         function(args) { vimperator.quickmarks.list(args); },
         {
             usage: ["qmarks"],
-            short_help: "Shows marked URLs",
+            short_help: "Show marked URLs",
             help: "TODO."
         }
     ));
@@ -935,7 +935,7 @@ function Commands() //{{{
         function() { vimperator.echo("winopen not implemented yet"); },
         {
             usage: ["wino[pen] [url] [| url]"],
-            short_help: "Open an URL in a new window",
+            short_help: "Open a URL in a new window",
             help: "Not implemented yet."
         }
     ));
