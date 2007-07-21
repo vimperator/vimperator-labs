@@ -497,7 +497,7 @@ function Commands() //{{{
                 }
         },
         {
-            usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}"], // \\n is changed to <br/> in the help.js code
+            usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}", "javascript[!]"], // \\n is changed to <br/> in the help.js code
             short_help: "Run any javascript command through eval()",
             help: "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
                   "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
