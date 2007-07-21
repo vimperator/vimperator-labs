@@ -388,7 +388,7 @@ function Commands() //{{{
             vimperator.marks.remove(args, special);
         },
         {
-            usage: ["delm[arks]! {marks}"],
+            usage: ["delm[arks][!] {marks}"],
             short_help: "Delete the specified marks {a-zA-Z}",
             help: "Marks are presented as a list. Example:<br/>" +
                 "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
