@@ -144,11 +144,11 @@ Vimperator.prototype.help = function(section, easter) //{{{
 
         '<p><span class="warning">Warning:</span> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden.<br/>' +
         'If you really need them, type: <code class="command">:set guioptions=mT</code> to get it back.\n' +
-        'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it.' +
+        'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it. ' +
         'If you like it, but can\'t remember the shortcuts, press <code class="mapping">F1</code> or <code class="command">:help</code> to get this help window back.</p>\n' +
 
         '<p>Since Vimperator\'s GUI is embedded into a toolbar, it may look too 3D-like with the default theme. ' +
-        'For best experience, I therefore recommend the <a href="https://addons.mozilla.org/firefox/364/">Whitehart</a> theme.</p>\n' +
+        'For the best experience, I therefore recommend the <a href="https://addons.mozilla.org/firefox/364/">Whitehart</a> theme.</p>\n' +
 
         '<p>Vimperator was written by <a href="mailto:stubenschrott@gmx.net">Martin Stubenschrott</a>. If you appreciate my work on Vimperator, you can either send me greetings, patches or make a donation: </p>\n' +
 
