@@ -187,6 +187,7 @@ function Commands() //{{{
             if (ex_commands[i].hasName(name))
                 return ex_commands[i];
         }
+
         return null;
     }
 
@@ -503,6 +504,73 @@ function Commands() //{{{
                   "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
                   "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
                   "The special version <code class=\"command\">:javascript!</code> will open the javascript console of Firefox."
+        }
+    ));
+    addDefaultCommand(new Command(["map"],
+        // 0 args -> list all maps
+        // 1 arg  -> list the maps starting with args
+        // 2 args -> map arg1 to arg*
+        function(args)
+        {
+            if (args.length == 0)
+            {
+                vimperator.mappings.list(vimperator.modes.NORMAL);
+                return;
+            }
+
+            var matches = args.match(/^([^ ]+)(?:\s+(.+))?$/);
+            var [lhs, rhs] = [matches[1], matches[2]];
+
+            if (rhs)
+            {
+                if (/^:/.test(rhs))
+                {
+                    vimperator.mappings.add(
+                        new Map(vimperator.modes.NORMAL, [lhs], function() { execute(rhs); }, { rhs: rhs })
+                    );
+                }
+                else
+                {
+                    var map = vimperator.mappings.get(vimperator.modes.NORMAL, rhs);
+
+                    // create a new Map for {lhs} with the same action as
+                    // {rhs}...until we have feedkeys().
+                    // NOTE: Currently only really useful for static use ie. from
+                    // the RC file
+                    if (map)
+                        vimperator.mappings.add(
+                            new Map(vimperator.modes.NORMAL, [lhs], map.action, { rhs: rhs })
+                        );
+                    else
+                        vimperator.echoerr("E475: Invalid argument: " + "{rhs} must be a existing singular mapping");
+                }
+            }
+            else
+            {
+                // FIXME: no filtering for now
+                vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
+            }
+        },
+        {
+            usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
+            short_help: "Map the key sequence {lhs} to {rhs}",
+            help: ""
+        }
+    ));
+    addDefaultCommand(new Command(["mapc[lear]"],
+        function(args)
+        {
+            if (args.length > 0)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            vimperator.mappings.removeAll(vimperator.modes.NORMAL);
+        },
+        {
+            short_help: "Remove all mappings",
+            help: ""
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
@@ -889,6 +957,28 @@ function Commands() //{{{
         {
             short_help: "Show marked URLs",
             help: "TODO."
+        }
+    ));
+    addDefaultCommand(new Command(["unm[ap]"],
+        function(args)
+        {
+            if (args.length == 0)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            var lhs = args;
+
+            if (vimperator.mappings.hasMap(vimperator.modes.NORMAL, lhs))
+                vimperator.mappings.remove(vimperator.modes.NORMAL, lhs);
+            else
+                vimperator.echoerr("E31: No such mapping");
+        },
+        {
+            usage: ["unm[ap] {lhs}"],
+            short_help: "Remove the mapping of {lhs}",
+            help: ""
         }
     ));
     addDefaultCommand(new Command(["ve[rsion]"],

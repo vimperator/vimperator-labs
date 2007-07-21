@@ -26,14 +26,14 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function Map(mode, cmds, act, extra_info) //{{{
+function Map(mode, cmds, action, extra_info) //{{{
 {
-    if (!mode || (!cmds || !cmds.length) || !act)
+    if (!mode || (!cmds || !cmds.length) || !action)
         return null;
 
     this.mode = mode;
     this.names = cmds;
-    this.action = act;
+    this.action = action;
 
     this.usage = [this.names[0]];
 
@@ -56,12 +56,25 @@ function Map(mode, cmds, act, extra_info) //{{{
         this.help = extra_info.help || null;
         this.short_help = extra_info.short_help || null;
 
+        this.rhs = extra_info.rhs || null;
+
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
         this.cancel_mode = extra_info.cancel_mode || false;
         this.always_active = extra_info.always_active || false;
     }
 
+}
+
+Map.prototype.hasName = function(name)
+{
+    for (var i = 0; i < this.names.length; i++)
+    {
+        if (this.names[i] == name)
+            return true;
+    }
+
+    return false;
 }
 
 // Since we will add many Map-objects, we add some functions as prototypes
@@ -96,6 +109,7 @@ function Mappings() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // TODO: initialize empty map tables?
     var main = []; // array of default Map() objects
     var user = []; // array of objects created by :map
 
@@ -103,33 +117,56 @@ function Mappings() //{{{
     {
         if (!main[map.mode])
             main[map.mode] = [];
+
         main[map.mode].push(map);
     }
 
-    function getFrom(mode, cmd, stack)
+    function getMap(mode, cmd, stack)
     {
-        if (!stack || !stack[mode] || !stack[mode].length)
-            return;
-
         var substack = stack[mode];
-        var stack_length = substack.length;
-        for (var i = 0; i < stack_length; i++)
+
+        for (var i = 0; i < substack.length; i++)
         {
             for (var j = 0; j < substack[i].names.length; j++)
                 if (substack[i].names[j] == cmd)
                     return substack[i];
         }
+
+        return null;
+    }
+
+    function removeMap(mode, cmd)
+    {
+        var maps = user[mode];
+        var names;
+
+        for (var i = 0; i < maps.length; i++)
+        {
+            names = maps[i].names;
+            for (var j = 0; j < names.length; j++)
+            {
+                if (names[j] == cmd)
+                {
+                    names.splice(j, 1)
+
+                    if (names.length == 0)
+                        maps.splice(i, 1);
+
+                    return;
+                }
+            }
+        }
     }
 
     function mappingsIterator(mode)
     {
-        var mappings;
+        var mappings = main[mode];
 
-        // FIXME: initialize empty map tables
-        if (user[mode])
-            mappings = user[mode].concat(main[mode]);
-        else
-            mappings = main[mode]
+        //// FIXME: do we want to document user commands by default?
+        //if (user[mode])
+        //    mappings = user[mode].concat(main[mode]);
+        //else
+        //    mappings = main[mode]
 
         for (var i = 0; i < mappings.length; i++)
             yield mappings[i];
@@ -158,39 +195,46 @@ function Mappings() //{{{
         return mappingsIterator(mode);
     }
 
+    this.hasMap = function(mode, cmd)
+    {
+        var user_maps = user[mode];
+
+        for (var i = 0; i < user_maps.length; i++)
+        {
+            if (user_maps[i].names.indexOf(cmd) != -1)
+                return true;
+        }
+
+        return false;
+    }
+
     this.add = function(map)
     {
-        if (!map)
-            return false;
-
         if (!user[map.mode])
             user[map.mode] = [];
 
-        user[map.mode].push(map);
+        for (var i = 0; i < map.names.length; i++)
+            removeMap(map.mode, map.names[i]);
 
-        return true;
+        user[map.mode].push(map);
     }
 
-    // FIXME: this doesn't work
-    this.remove = function(map)
+    this.remove = function(mode, cmd)
     {
-        var index;
+        removeMap(mode, cmd);
+    }
 
-        if (!map || !(index = user[map.mode].indexOf(map)))
-            return false;
-
-        user[map.mode].splice(index, 1);
-        return true;
+    this.removeAll = function(mode)
+    {
+        user[mode] = [];
     }
 
     this.get = function(mode, cmd)
     {
-        if (!mode || !cmd)
-            return null;
+        var map = getMap(mode, cmd, user);
 
-        var map = getFrom(mode, cmd, user);
         if (!map)
-            map = getFrom(mode, cmd, main);
+            map = getMap(mode, cmd, main);
 
         return map;
     }
@@ -200,9 +244,6 @@ function Mappings() //{{{
     {
         var mappings = [];
         var matches = [];
-
-        if (!mode || !cmd)
-            return matches;
 
         if (user[mode])
             mappings = user[mode].concat(main[mode]);
@@ -220,6 +261,35 @@ function Mappings() //{{{
         }
 
         return matches;
+    }
+
+    // TODO: implement filtering
+    this.list = function(mode, filter)
+    {
+        var maps = user[mode];
+
+        if (!maps || maps.length == 0)
+        {
+            vimperator.echo("No mappings found");
+            return;
+        }
+
+        var list = "<table>";
+
+        for (var i = 0; i < maps.length; i++)
+        {
+            for (var j = 0; j < maps[i].names.length; j++)
+            {
+                list += "<tr>";
+                list += "<td>&nbsp;" + maps[i].names[j].replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                if (maps[i].rhs)
+                    list += "<td>&nbsp;" + maps[i].rhs.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                list += "</tr>";
+            }
+        }
+        list += "</table>";
+
+        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -800,135 +870,228 @@ function Mappings() //{{{
     // action keys
     addDefaultMap(new Map(vimperator.modes.HINTS, ["o"],
         function() { vimperator.hints.openHints(false, false); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["t"],
         function() { vimperator.hints.openHints(true,  false); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-w>"],
         function() { vimperator.hints.openHints(false, true ); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["s"],
         function() { vimperator.echoerr('Saving of links not yet implemented'); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["y"],
         function() { vimperator.hints.yankUrlHints(); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["Y"],
         function() { vimperator.hints.yankTextHints(); },
-        { cancel_mode: true, always_active: false }
+        {
+            cancel_mode: true,
+            always_active: false
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, [","],
         function() { vimperator.input.buffer += ','; vimperator.hints.setCurrentState(0); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, [":"],
         function() { vimperator.commandline.open(':', '', vimperator.modes.EX); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
 
     // movement keys
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-e>"],
         function() { scrollBufferRelative(0, 1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-y>"],
         function() { scrollBufferRelative(0, -1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Home>"],
         function() { scrollBufferAbsolute(-1, 0); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<End>"],
         function() { scrollBufferAbsolute(-1, 100); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-b>"],
         function() { goDoCommand('cmd_scrollPageUp'); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageUp>"],
         function() { goDoCommand('cmd_scrollPageUp'); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-f>"],
         function() { goDoCommand('cmd_scrollPageDown'); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageDown>"],
         function() { goDoCommand('cmd_scrollPageDown'); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Left>"],
         function() { scrollBufferRelative(-1, 0); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Down>"],
         function() { scrollBufferRelative(0, 1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Up>"],
         function() { scrollBufferRelative(0, -1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Right>"],
         function() { scrollBufferRelative(1, 0); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
 
     // tab management
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-n>"],
         function() { vimperator.tabs.select('+1', true); },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     )); // same as gt, but no count supported
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-p>"],
         function() { vimperator.tabs.select('-1', true); },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
 
     // navigation
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-o>"],
         function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-i>"],
         function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-h>"],
         function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-l>"],
         function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },
-        { cancel_mode: false, always_active: true }
+        {
+            cancel_mode: false,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-d>"],
         function() { vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0); },
-        { cancel_mode: true,  always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
 
     // cancel_mode hint mode keys
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-c>"],
         function() { ; },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-g>"],
         function() { ; },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-[>"],
         function() { ; },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Esc>"],
         function() { ; },
-        { cancel_mode: true, always_active: true }
+        {
+            cancel_mode: true,
+            always_active: true
+        }
     ));
     //}}}
     //}}}
