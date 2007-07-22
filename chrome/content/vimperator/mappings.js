@@ -63,7 +63,6 @@ function Map(mode, cmds, action, extra_info) //{{{
         this.cancel_mode = extra_info.cancel_mode || false;
         this.always_active = extra_info.always_active || false;
     }
-
 }
 
 Map.prototype.hasName = function(name)
