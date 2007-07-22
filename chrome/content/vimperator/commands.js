@@ -556,7 +556,7 @@ function Commands() //{{{
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: ""
+            help: "The {rhs} is remapped, allowing for nested and recursive mappings."
         }
     ));
     addDefaultCommand(new Command(["mapc[lear]"],
@@ -614,6 +614,60 @@ function Commands() //{{{
             usage: ["marks {arg}"],
             short_help: "Show all location marks of current web page",
             help: "Not implemented yet."
+        }
+    ));
+    // TODO: remove duplication in :map
+    addDefaultCommand(new Command(["noremap"],
+        // 0 args -> list all maps
+        // 1 arg  -> list the maps starting with args
+        // 2 args -> map arg1 to arg*
+        function(args)
+        {
+            if (args.length == 0)
+            {
+                vimperator.mappings.list(vimperator.modes.NORMAL);
+                return;
+            }
+
+            var matches = args.match(/^([^ ]+)(?:\s+(.+))?$/);
+            var [lhs, rhs] = [matches[1], matches[2]];
+
+            if (rhs)
+            {
+                if (/^:/.test(rhs))
+                {
+                    vimperator.mappings.add(
+                        new Map(vimperator.modes.NORMAL, [lhs], function() { execute(rhs); }, { rhs: rhs })
+                    );
+                }
+                else
+                {
+                    // NOTE: we currently only allow one normal mode command in {rhs}
+                    var map = vimperator.mappings.getDefaultMap(vimperator.modes.NORMAL, rhs);
+
+                    // create a new Map for {lhs} with the same action as
+                    // {rhs}...until we have feedkeys().
+                    // NOTE: Currently only really intended for static use (e.g.
+                    // from the RC file) since {rhs} is evaluated when the map
+                    // is created not at runtime
+                    if (map)
+                        vimperator.mappings.add(
+                            new Map(vimperator.modes.NORMAL, [lhs], map.action, { flags: map.flags, rhs: rhs })
+                        );
+                    else
+                        vimperator.echoerr("E475: Invalid argument: " + "{rhs} must be a existing singular mapping");
+                }
+            }
+            else
+            {
+                // FIXME: no filtering for now
+                vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
+            }
+        },
+        {
+            usage: ["noremap {lhs} {rhs}", "noremap {lhs}", "noremap"],
+            short_help: "Map the key sequence {lhs} to {rhs}",
+            help: "No remapping of the {rhs} is performed."
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],

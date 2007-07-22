@@ -238,6 +238,12 @@ function Mappings() //{{{
         return map;
     }
 
+    // TODO: move default maps to their own v.normal namespace
+    this.getDefaultMap = function(mode, cmd)
+    {
+            return getMap(mode, cmd, main);
+    }
+
     // returns an array of mappings with names which start with "cmd"
     this.getCandidates = function(mode, cmd)
     {
