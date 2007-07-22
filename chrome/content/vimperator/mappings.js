@@ -122,6 +122,9 @@ function Mappings() //{{{
 
     function getMap(mode, cmd, stack)
     {
+        if (!stack || !stack[mode] || !stack[mode].length)
+            return null;
+
         var substack = stack[mode];
 
         for (var i = 0; i < substack.length; i++)
