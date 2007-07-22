@@ -108,9 +108,14 @@ function Mappings() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: initialize empty map tables?
     var main = []; // array of default Map() objects
     var user = []; // array of objects created by :map
+
+    for each (var mode in vimperator.modes)
+    {
+        main[mode] = [];
+        user[mode] = [];
+    }
 
     function addDefaultMap(map)
     {
@@ -122,16 +127,18 @@ function Mappings() //{{{
 
     function getMap(mode, cmd, stack)
     {
-        if (!stack || !stack[mode] || !stack[mode].length)
-            return null;
+        //if (!stack || !stack[mode] || !stack[mode].length)
+        //    return null;
 
-        var substack = stack[mode];
+        var maps = stack[mode];
+        var names;
 
-        for (var i = 0; i < substack.length; i++)
+        for (var i = 0; i < maps.length; i++)
         {
-            for (var j = 0; j < substack[i].names.length; j++)
-                if (substack[i].names[j] == cmd)
-                    return substack[i];
+            names = maps[i].names;
+            for (var j = 0; j < names.length; j++)
+                if (names[j] == cmd)
+                    return maps[i];
         }
 
         return null;
@@ -165,10 +172,7 @@ function Mappings() //{{{
         var mappings = main[mode];
 
         //// FIXME: do we want to document user commands by default?
-        //if (user[mode])
-        //    mappings = user[mode].concat(main[mode]);
-        //else
-        //    mappings = main[mode]
+        //mappings = user[mode].concat(main[mode]);
 
         for (var i = 0; i < mappings.length; i++)
             yield mappings[i];
@@ -212,9 +216,6 @@ function Mappings() //{{{
 
     this.add = function(map)
     {
-        if (!user[map.mode])
-            user[map.mode] = [];
-
         for (var i = 0; i < map.names.length; i++)
             removeMap(map.mode, map.names[i]);
 
@@ -253,10 +254,7 @@ function Mappings() //{{{
         var mappings = [];
         var matches = [];
 
-        if (user[mode])
-            mappings = user[mode].concat(main[mode]);
-        else
-            mappings = main[mode];
+        mappings = user[mode].concat(main[mode]);
 
         for (var i = 0; i < mappings.length; i++)
         {
