@@ -617,7 +617,7 @@ function Commands() //{{{
         }
     ));
     // TODO: remove duplication in :map
-    addDefaultCommand(new Command(["noremap"],
+    addDefaultCommand(new Command(["no[remap]"],
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
         // 2 args -> map arg1 to arg*
@@ -665,7 +665,7 @@ function Commands() //{{{
             }
         },
         {
-            usage: ["noremap {lhs} {rhs}", "noremap {lhs}", "noremap"],
+            usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
             help: "No remapping of the {rhs} is performed."
         }

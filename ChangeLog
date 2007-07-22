@@ -1,6 +1,7 @@
 <pre>
 2007-07-02:
 	* version ???
+	* new :map, :noremap, :mapclear and :unmap commands
 	* :saveas finally works (by calmar)
 	* Changed "|" to ", " as a url seperator in :open
 	* Ctrl-^ mapping for selecting the alternate tab/buffer
