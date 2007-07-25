@@ -1306,102 +1306,6 @@ function isDirectory(url)
 }
 
 /////////////////////////////////////////////////////////////////////}}}
-// frame related functions /////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-// TODO: allow callback for filtering out unwanted frames? User defined?
-Vimperator.prototype.shiftFrameFocus = function(count, forward)
-{
-    try
-    {
-        var frames = [];
-
-        // find all frames - depth-first search
-        (function(frame)
-        {
-            if (frame.document.body.localName.toLowerCase() == "body")
-                frames.push(frame);
-            for (var i = 0; i < frame.frames.length; i++)
-                arguments.callee(frame.frames[i])
-        })(window.content);
-
-        if (frames.length == 0) // currently top is always included
-            return;
-
-        // remove all unfocusable frames
-        // TODO: find a better way to do this
-        var start = document.commandDispatcher.focusedWindow;
-        frames = frames.filter(function(frame) {
-                frame.focus();
-                if (document.commandDispatcher.focusedWindow == frame)
-                    return frame;
-        });
-        start.focus();
-
-        // find the currently focused frame index
-        // TODO: If the window is a frameset then the first _frame_ should be
-        //       focused.  Since this is not the current FF behaviour,
-        //       we initalise current to -1 so the first call takes us to the
-        //       first frame.
-        var current = -1;
-        for (var i = 0; i < frames.length; i++)
-        {
-            if (frames[i] == document.commandDispatcher.focusedWindow)
-            {
-                var current = i;
-                break;
-            }
-        }
-
-        // calculate the next frame to focus
-        var next = current;
-        if (forward)
-        {
-            if (count > 1)
-                next = current + count;
-            else
-                next++;
-
-            if (next > frames.length - 1)
-                next = frames.length - 1;
-        }
-        else
-        {
-            if (count > 1)
-                next = current - count;
-            else
-                next--;
-
-            if (next < 0)
-                next = 0;
-        }
-
-        // focus next frame and scroll into view
-        frames[next].focus();
-        if (frames[next] != window.content)
-            frames[next].frameElement.scrollIntoView(false);
-
-        // add the frame indicator
-        var doc = frames[next].document;
-        var indicator = doc.createElement("div");
-        indicator.id = "vimperator-frame-indicator";
-        // NOTE: need to set a high z-index - it's a crapshoot!
-        var style = "background-color: red; opacity: 0.5; z-index: 999;" +
-                    "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
-        indicator.setAttribute("style", style);
-        doc.body.appendChild(indicator);
-
-        // remove the frame indicator
-        setTimeout(function() { doc.body.removeChild(indicator); }, 500);
-    }
-    catch (e)
-    {
-        //vimperator.echoerr(e);
-        // FIXME: fail silently here for now
-    }
-}
-
-/////////////////////////////////////////////////////////////////////}}}
 // location handling ///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
 
@@ -1415,7 +1319,6 @@ function getCurrentTitle()
 {
     return window.content.document.title;
 }
-
 
 /////////////////////////////////////////////////////////////////////}}}
 // scrolling ///////////////////////////////////////////////////////////
@@ -1506,7 +1409,7 @@ function zoom_in(factor)
     }
 }
 
-//Vimperator.prototype.zoom_to = function(value)
+//vimperator.zoom_to = function(value)
 function zoom_to(value)
 {
     var zoomMgr = ZoomManager.prototype.getInstance();
@@ -1539,11 +1442,39 @@ function zoom_to(value)
 
     vimperator.echo("Zoom value: " + value + "%");
 }
-//}}}
 
-////////////////////////////////////////////////////////////////////////
-// misc helper functions ////////////////////////////////////////////{{{
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////}}}
+// DOM related helper functions ////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////{{{
+function isFormElemFocused()
+{
+    var elt = window.document.commandDispatcher.focusedElement;
+    if (elt == null)
+        return false;
+
+    try
+    { // sometimes the elt doesn't have .localName
+        var tagname = elt.localName.toLowerCase();
+        var type = elt.type.toLowerCase();
+
+        if ( (tagname == "input" && (type != "image")) ||
+                tagname == "textarea" ||
+                //            tagName == "SELECT" ||
+                //            tagName == "BUTTON" ||
+                tagname == "isindex") // isindex is a deprecated one-line input box
+            return true;
+    }
+    catch (e)
+    {
+        // FIXME: do nothing?
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////}}}
+// misc helper functions ///////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////{{{
 
 function copyToClipboard(str)
 {
@@ -1571,119 +1502,6 @@ function evaluateXPath(expression, doc, ordered)
         null
     );
     return res;
-}
-
-Vimperator.prototype.beep = function()
-{
-    if (!vimperator.options["beep"])
-        return;
-
-    var gBeepService = Components.classes['@mozilla.org/sound;1']
-        .getService(Components.interfaces.nsISound);
-
-    if (gBeepService)
-        gBeepService.beep();
-    else
-        vimperator.echoerr('no beep service found');
-}
-
-// quit vimperator, no matter how many tabs/windows are open
-Vimperator.prototype.quit = function(save_session)
-{
-    if (save_session)
-        Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
-    else
-        Options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
-
-    goQuitApplication();
-}
-
-Vimperator.prototype.restart = function()
-{
-    // if (!arguments[1]) return;
-    const nsIAppStartup = Components.interfaces.nsIAppStartup;
-
-    // Notify all windows that an application quit has been requested.
-    var os = Components.classes["@mozilla.org/observer-service;1"]
-        .getService(Components.interfaces.nsIObserverService);
-    var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-        .createInstance(Components.interfaces.nsISupportsPRBool);
-    os.notifyObservers(cancelQuit, "quit-application-requested", null);
-
-    // Something aborted the quit process.
-    if (cancelQuit.data)
-        return;
-
-    // Notify all windows that an application quit has been granted.
-    os.notifyObservers(null, "quit-application-granted", null);
-
-    // Enumerate all windows and call shutdown handlers
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-        .getService(Components.interfaces.nsIWindowMediator);
-    var windows = wm.getEnumerator(null);
-    while (windows.hasMoreElements())
-    {
-        var win = windows.getNext();
-        if (("tryToClose" in win) && !win.tryToClose())
-            return;
-    }
-    Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-        .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
-}
-
-Vimperator.prototype.source = function(filename, silent)
-{
-    if (!filename)
-        return;
-
-    function getEnv(variable)
-    {
-            var environment = Components.classes["@mozilla.org/process/environment;1"]
-                .getService(Components.interfaces.nsIEnvironment);
-            return environment.get(variable);
-    }
-
-    // convert "~" to HOME on Windows
-    if (navigator.platform == "Win32")
-    {
-        // TODO: proper pathname separator translation like Vim
-        filename = filename.replace('/', '\\', 'g');
-        var matches = filename.match(/^~(.*)/)
-        if (matches)
-        {
-            var home_dir = getEnv("HOME");
-            if (!home_dir)
-                home_dir = getEnv("USERPROFILE");
-            if (!home_dir)
-            {
-                // TODO: are these guaranteed to be set?
-                home_dir = getEnv("HOMEDRIVE") + getEnv("HOMEPATH");
-            }
-            filename = home_dir + "\\" + matches[1];
-        }
-    }
-
-    try
-    {
-        var fd = fopen(filename, "<");
-        if (!fd)
-            return;
-
-        var s = fd.read();
-        fd.close();
-
-        var prev_match = new Array(5);
-        var heredoc = '';
-        var end = false;
-        s.split('\n').forEach(function(line) {
-            [prev_match, heredoc, end] = multiliner(line, prev_match, heredoc);
-        });
-    }
-    catch (e)
-    {
-        if (!silent)
-            vimperator.echoerr(e);
-    }
 }
 //}}}
 

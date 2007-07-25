@@ -240,7 +240,7 @@ function abs_point (node) {
 
 // Vimperator searcher
 // make sure you only create this object when the "vimperator" object is ready
-//Vimperator.prototype.search = new function()
+//vimperator.search = new function()
 function Search() //{{{
 {
     var self = this; // needed for callbacks since "this" is the "vimperator" object in a callback
