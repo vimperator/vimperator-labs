@@ -142,6 +142,9 @@ fieldset.paypal {
 #vimperator-statusline > label {
     padding: 0px 0px 0px 8px;
 }
+#vimperator-statusline > label:first-child {
+    padding: 0px;
+}
 
 #vimperator-commandline {
     background-color: white;
