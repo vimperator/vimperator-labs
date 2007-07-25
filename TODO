@@ -14,6 +14,7 @@ BUGS:
      webpage, saving  only the html works just fine..
 - add window resize support to hints
 - can't reverse tab through the vimperator toolbar
+- gu doesn't work when the current URL contains a trailing slash
 
 FEATURES:
 9 :map commands to keys

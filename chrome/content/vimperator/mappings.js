@@ -732,7 +732,7 @@ function Mappings() //{{{
             if (count < 1)
                 count = 1;
 
-            for (var i = 0; i < count - 1; i--)
+            for (var i = 0; i < count - 1; i++)
                 gocmd += "../";
 
             openURLs(gocmd);
