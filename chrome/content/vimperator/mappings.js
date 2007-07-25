@@ -369,7 +369,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gH"],
-        BrowserHome,
+        function(count) { openURLsInNewTab("", true); BrowserHome(); },
         {
             short_help: "Go home in a new tab",
             help: "Opens the homepage in a new tab."
