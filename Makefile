@@ -96,7 +96,7 @@ jar: ${JAR}
 
 install: needs_chrome_dir ${JAR}
 	@echo "Installing JAR..."
-	${Q}cp ${CP_V} ${JAR} ${INSTALL_CHROME}
+	${Q}cp ${CP_V} ${JAR} "${INSTALL_CHROME}"
 
 release: ${XPI} ${RDF}
 
