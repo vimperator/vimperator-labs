@@ -859,6 +859,14 @@ function Mappings() //{{{
             help: "Stops loading the current web page."
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Nop>"],
+        function() { return; },
+        {
+            short_help: "Do nothing",
+            help: "This command is useful for disabling a specific mapping. " +
+                  "<code class=\"command\">:map &lt;C-n&gt; &lt;Nop&gt;</code> will prevent <code class=\"mapping\">&lt;C-n&gt;</code> from doing anything."
+        }
+    ));
     // if you ever add/remove keys here, also check them in the vimperator.events.onKeyPress()
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Esc>", "<C-[>"],
         vimperator.events.onEscape,
