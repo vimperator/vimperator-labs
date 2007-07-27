@@ -1,8 +1,9 @@
 <pre>
 2007-07-02:
-	* version ???
+	* version 0.5
 	* new :map, :noremap, :mapclear and :unmap commands
 	* :saveas finally works (by calmar)
+	* Shift-insert pastes the selection content in text fields now
 	* Changed "|" to ", " as a url seperator in :open
 	* Ctrl-^ mapping for selecting the alternate tab/buffer
 	* QuickMarks support (new commands :qmarks/:qmarkadd/:qmarkdel and

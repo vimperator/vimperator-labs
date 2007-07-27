@@ -1178,7 +1178,7 @@ function execute(string)
 
 function openURLs(str)
 {
-    var urls = stringToURLs(str);
+    var urls = str.toURLArray();
     if (urls.length == 0)
         return false;
 
@@ -1192,7 +1192,7 @@ function openURLs(str)
 
 function openURLsInNewTab(str, activate)
 {
-    var urls = stringToURLs(str);
+    var urls = str.toURLArray();
     if (urls.length == 0)
         return null;
 
@@ -1208,9 +1208,10 @@ function openURLsInNewTab(str, activate)
 /* takes a string like 'google bla| www.osnews.com'
  * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
  */
-function stringToURLs(str)
+//function stringToURLs(str)
+String.prototype.toURLArray = function()
 {
-    var urls = str.split(/\s*\,\s+/);
+    var urls = this.split(/\s*\,\s+/);
     begin: for (var url = 0; url < urls.length; url++)
     {
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
