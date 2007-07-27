@@ -111,6 +111,13 @@ const vimperator = (function() //{{{
 
         modes: modes,
 
+        //openflags: { // XXX: maybe move these consts in a subnamespace?
+        CURRENT_TAB: 1,
+        NEW_TAB: 2,
+        NEW_BACKGROUND_TAB: 3,
+        //},
+
+        // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### CVS (created: ###DATE###)",
 
         input: {
@@ -240,6 +247,53 @@ const vimperator = (function() //{{{
                 string += i + ': ' + value + '\n';
             }
             this.log(string, level);
+        },
+
+        // open one or more URLs
+        //
+        // @param urls: either a string or an array of urls
+        // @param where: if ommited, CURRENT_TAB is assumed
+        // @param callback: not implmented, will be allowed to specifiy a callback function
+        //                  which is called, when the page finished loading
+        // @returns true when load was initiated, or false on error
+        open: function(urls, where, callback)
+        {
+            // convert the string to an array of converted URLs
+            // -> see String.prototype.toURLArray for more details
+            if (typeof urls == "string")
+                urls = urls.toURLArray();
+
+            if (urls.length == 0)
+                return false;
+
+            if (!where)
+                where = vimperator.CURRENT_TAB;
+
+            // decide where to load the first tab
+            if (where == vimperator.CURRENT_TAB)
+                getBrowser().loadURI(urls[0]);
+            else if (where == vimperator.NEW_TAB)
+            {
+                var firsttab = getBrowser().addTab(urls[0]);
+                getBrowser().selectedTab = firsttab;
+            }
+            else if (where == vimperator.NEW_BACKGROUND_TAB)
+            {
+                getBrowser().addTab(urls[0]);
+            }
+            else
+            {
+                vimperator.echoerr("Exxx: Invalid where directive in vimperator.open(...)");
+                return false;
+            }
+
+            // all other URLs are always loaded in background
+            for (var url=1; url < urls.length; url++)
+                getBrowser().addTab(urls[url]);
+
+            // TODO: register callbacks
+
+            return true;
         },
 
         // quit vimperator, no matter how many tabs/windows are open
@@ -470,11 +524,6 @@ const vimperator = (function() //{{{
             // XXX: move elsewhere
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
-
-            // this function adds all our required listeners to react on events
-            // also stuff like window.onScroll is handled there.
-            //addEventListeners();
-            //vimperator.events();
 
             // work around firefox popup blocker
             popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');

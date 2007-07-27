@@ -369,7 +369,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gH"],
-        function(count) { openURLsInNewTab("", true); BrowserHome(); },
+        function(count) { vimperator.open("", vimperator.NEW_TAB); BrowserHome(); },
         {
             short_help: "Go home in a new tab",
             help: "Opens the homepage in a new tab."
@@ -395,7 +395,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gP"],
-        function(count) { openURLsInNewTab(readFromClipboard(), false); },
+        function(count) { vimperator.open(readFromClipboard(), vimperator.NEW_BACKGROUND_TAB); },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
@@ -478,14 +478,14 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["p", "<MiddleMouse>"],
-        function(count) { openURLs(readFromClipboard()); },
+        function(count) { vimperator.open(readFromClipboard()); },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in the current buffer",
             help: "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["P"],
-        function(count) { openURLsInNewTab(readFromClipboard(), true); },
+        function(count) { vimperator.open(readFromClipboard(), vimperator.NEW_TAB); },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>" +
@@ -735,7 +735,7 @@ function Mappings() //{{{
             for (var i = 0; i < count - 1; i++)
                 gocmd += "../";
 
-            openURLs(gocmd);
+            vimperator.open(gocmd);
         },
         {
             short_help: "Go to parent directory",
@@ -744,7 +744,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gU", "<C-BS>"],
-        function(count) { openURLs("..."); },
+        function(count) { vimperator.open("..."); },
         {
             short_help: "Go to the root of the website",
             help: "<code class=\"mapping\">gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>" +

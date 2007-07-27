@@ -35,9 +35,9 @@ vimperator.help = function(section, easter) //{{{
     }
 
     if ((arguments[3] && arguments[3].inTab))// || !window.content.document.open)
-        openURLsInNewTab("", true);
+        vimperator.open("about:blank", vimperator.NEW_TAB);
     else
-        openURLs("about:blank");
+        vimperator.open("about:blank");
 
     /* commands = array where help information is located
      * beg = string which is printed before the commmand/option/mapping name
@@ -214,7 +214,7 @@ vimperator.help = function(section, easter) //{{{
         if (arguments[3] && arguments[3].recursive)
             return false;
 
-        openURLs("about:blank");
+        vimperator.open("about:blank");
         setTimeout(function () { vimperator.help(section, false, null, {recursive: true}); }, 250);
         return;
     }

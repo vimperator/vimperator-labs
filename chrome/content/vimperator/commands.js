@@ -196,7 +196,7 @@ function Commands() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     addDefaultCommand(new Command(["addo[ns]"],
-        function() { openURLsInNewTab("chrome://mozapps/content/extensions/extensions.xul", true); },
+        function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show available Browser Extensions and Themes",
             help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI."
@@ -399,7 +399,7 @@ function Commands() //{{{
 
     ));
     addDefaultCommand(new Command(["downl[oads]", "dl"],
-        function() { openURLsInNewTab("chrome://mozapps/content/downloads/downloads.xul", true); },
+        function() { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show progress of current downloads",
             help: "Open the original Firefox download dialog in a new tab.<br/>" +
@@ -486,7 +486,7 @@ function Commands() //{{{
         function(args, special)
         {
             if (special) // open javascript console
-                openURLsInNewTab("chrome://global/content/console.xul", true);
+                vimperator.open("chrome://global/content/console.xul", vimperator.NEW_TAB);
             else
                 try
                 {
@@ -674,7 +674,7 @@ function Commands() //{{{
         function(args, special)
         {
             if (args.length > 0)
-                openURLs(args);
+                vimperator.open(args);
             else
             {
                 if (special)
@@ -773,14 +773,15 @@ function Commands() //{{{
         {
             if (args == "")
             {
-                var func = openURLs;
+                // TODO: copy these snippets to more function which should work with :tab xxx
+                var where = vimperator.CURRENT_TAB;
                 if (arguments[3] && arguments[3].inTab)
-                    func = openURLsInNewTab;
+                    where = vimperator.NEW_TAB;
 
                 if (special) // open firefox settings gui dialog
-                    func.call(this, "chrome://browser/content/preferences/preferences.xul", true);
+                    vimperator.open("chrome://browser/content/preferences/preferences.xul", where);
                 else
-                    func.call(this, "about:config", true);
+                    vimperator.open("about:config", where);
             }
             else
             {
@@ -951,9 +952,9 @@ function Commands() //{{{
         function(args, special)
         {
             if (args.length > 0)
-                openURLsInNewTab(args, !special);
+                vimperator.open(args, special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
             else
-                openURLsInNewTab("about:blank", true);
+                vimperator.open("about:blank", vimperator.NEW_TAB);
         },
         {
             usage: ["tabopen [url] [| url]"],
@@ -989,13 +990,20 @@ function Commands() //{{{
     addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
         function(args)
         {
-            var split = args.split(/\s+/);
-            vimperator.quickmarks.add(split[0], split[1] ? split[1] : getCurrentLocation());
+            var matches1 = args.match(/([a-zA-Z0-9])\s+(.+)/);
+            var matches2 = args.match(/([a-zA-Z0-9])\s*$/);
+            if (matches1 && matches1[1])
+                vimperator.quickmarks.add(matches1[1], matches1[2]);
+            else if (matches2 && matches2)
+                vimperator.quickmarks.add(matches2[1], getCurrentLocation());
+            else
+                vimperator.echoerr("E488: Trailing characters");
         },
         {
             usage: ["qmarka[dd] {a-zA-Z0-9} [url]"],
             short_help: "Mark a URL with a letter for quick access",
-            help: "TODO.",
+            help: "You can also mark whole groups like this: <br/>"+
+                  "<code class=\"command\">:qmarkadd f http://forum1.com, http://forum2.com, imdb some artist</code>",
             completer: function(filter) { return [["a", ""], ["b", ""]]; }
         }
     ));
@@ -1041,7 +1049,7 @@ function Commands() //{{{
         function(args, special)
         {
             if (special)
-                openURLs("about:");
+                vimperator.open("about:");
             else
                 vimperator.echo("Vimperator version: " + vimperator.version);
         },
@@ -1172,38 +1180,6 @@ function execute(string)
     return execute_command.apply(this, tokens);
 }
 
-/////////////////////////////////////////////////////////////////////}}}
-// url functions ///////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-function openURLs(str)
-{
-    var urls = str.toURLArray();
-    if (urls.length == 0)
-        return false;
-
-    getBrowser().loadURI(urls[0]);
-
-    for (var url=1; url < urls.length; url++)
-        getBrowser().addTab(urls[url]);
-
-    return true;
-}
-
-function openURLsInNewTab(str, activate)
-{
-    var urls = str.toURLArray();
-    if (urls.length == 0)
-        return null;
-
-    var firsttab = getBrowser().addTab(urls[0]);
-    if (activate)
-        getBrowser().selectedTab = firsttab;
-    for (var url = 1; url < urls.length; url++)
-        gBrowser.addTab(urls[url]);
-
-    return firsttab;
-}
 
 /* takes a string like 'google bla| www.osnews.com'
  * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']

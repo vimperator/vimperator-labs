@@ -772,9 +772,9 @@ function InformationList(id, options) //{{{
         var index = (widget.selectedIndex * 2) + 0;
         var val = listcells[index].getAttribute("label");
         if (val && event.button == 0 && event.type == "dblclick") // left double click
-            openURLs(val);
+            vimperator.open(val);
         else if (val && event.button == 1) // middle click
-            openURLsInNewTab(val);
+            vimperator.open(val, vimperator.NEW_TAB);
         else
             return false;
     }

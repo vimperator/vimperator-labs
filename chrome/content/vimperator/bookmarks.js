@@ -224,7 +224,7 @@ function Bookmarks() //{{{
     this.list = function(filter, fullmode)
     {
         if (fullmode)
-            openURLsInNewTab("chrome://browser/content/bookmarks/bookmarksPanel.xul", true);
+            vimperator.open("chrome://browser/content/bookmarks/bookmarksPanel.xul", vimperator.NEW_TAB);
         else
         {
             var items = vimperator.bookmarks.get(filter);
@@ -433,7 +433,7 @@ function History() //{{{
     this.list = function(filter, fullmode)
     {
         if (fullmode)
-            openURLsInNewTab("chrome://browser/content/history/history-panel.xul", true);
+            vimperator.open("chrome://browser/content/history/history-panel.xul", vimperator.NEW_TAB);
         else
         {
             var items = vimperator.history.get(filter);
@@ -612,7 +612,7 @@ function Marks() //{{{
                     pending_jumps.push(slice);
                     // NOTE: this obviously won't work on generated pages using
                     // non-unique URLs, like Vimperator's help :(
-                    openURLsInNewTab(slice.location, true);
+                    vimperator.open(slice.location, vimperator.NEW_TAB);
                     return;
                 }
                 var index = vimperator.tabs.index(slice.tab);
@@ -728,14 +728,9 @@ function QuickMarks() //{{{
     {
         var url = marks[mark];
         if (url)
-        {
-            if (newtab)
-                openURLsInNewTab(url, true);
-            else
-                openURLs(url);
-        }
+            vimperator.open(url, newtab ? vimperator.NEW_TAB : vimperator.CURRENT_TAB);
         else
-            vimperator.echoerr("E20: QuickMark not set"); // FIXME: move up?
+            vimperator.echoerr("E20: QuickMark not set");
     }
 
     this.list = function()

@@ -101,16 +101,17 @@ function Hints() //{{{
     function genElemCoords(elem)
     {
         // NOTE: experiment for making the function faster, report problems
-        try {
-            var box = window.content.document.getBoxObjectFor(elem);
-            elem.absoLeft = box.x;
-            elem.absoTop = box.y;
-            elem.validCoord = elem.ownerDocument.validCoords;
-        } catch(e) { 
-            elem.absoLeft = 0;
-            elem.absoTop = 0;
-        }
-        return;
+        //       -> does not work on www.orf.at with frames
+        // try {
+        //     var box = window.content.document.getBoxObjectFor(elem);
+        //     elem.absoLeft = box.x;
+        //     elem.absoTop = box.y;
+        //     elem.validCoord = elem.ownerDocument.validCoords;
+        // } catch(e) { 
+        //     elem.absoLeft = 0;
+        //     elem.absoTop = 0;
+        // }
+        // return;
         if (typeof(elem.validCoord) != "undefined")
         {
             if (elem.validCoord == elem.ownerDocument.validCoords)
