@@ -126,7 +126,7 @@ const vimperator = (function() //{{{
             count: -1                  // parsed count from the input buffer
         },
 
-        /**
+        /** TODO: for now, these callbacks are mostly for the command line, move there?
          * @param type Can be:
          *  "submit": when the user pressed enter in the command line
          *  "change"
@@ -215,7 +215,7 @@ const vimperator = (function() //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
-            content.focus();
+            content.focus(); // FIXME: shouldn't be window.document.content?
         },
 
         /**
@@ -253,7 +253,7 @@ const vimperator = (function() //{{{
         //
         // @param urls: either a string or an array of urls
         // @param where: if ommited, CURRENT_TAB is assumed
-        // @param callback: not implmented, will be allowed to specifiy a callback function
+        // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
         // @returns true when load was initiated, or false on error
         open: function(urls, where, callback)
@@ -309,7 +309,6 @@ const vimperator = (function() //{{{
 
         restart: function()
         {
-            // if (!arguments[1]) return;
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
             // Notify all windows that an application quit has been requested.
@@ -466,6 +465,7 @@ const vimperator = (function() //{{{
                 var s = fd.read();
                 fd.close();
 
+                // TODO: simplify and get rid of multiliner (look at "javascript" in commands.js)
                 var prev_match = new Array(5);
                 var heredoc = '';
                 var end = false;
@@ -521,11 +521,13 @@ const vimperator = (function() //{{{
             vimperator.echo    = vimperator.commandline.echo;
             vimperator.echoerr = vimperator.commandline.echoErr;
 
-            // XXX: move elsewhere
+            // TODO: move elsewhere
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
 
-            // work around firefox popup blocker
+            //TODO: move most of the following code to Options constructor
+
+            // work around firefox popup blocker 
             popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
             if (!popup_allowed_events.match("keypress"))
                 Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events + " keypress");

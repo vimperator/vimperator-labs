@@ -488,14 +488,29 @@ function Commands() //{{{
             if (special) // open javascript console
                 vimperator.open("chrome://global/content/console.xul", vimperator.NEW_TAB);
             else
-                try
+            {
+                // check for a heredoc
+                var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                if (matches && matches[2])
                 {
-                    eval(args);
+                    vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                        function(code) {
+                            try { eval(matches[1] + "\n" + code); }
+                            catch (e) { vimperator.echoerr(e.name + ": " + e.message); }
+                        });
                 }
-                catch (e)
+                else // single line javascript code
                 {
-                    vimperator.echoerr(e.name + ": " + e.message);
+                    try
+                    {
+                        eval(args);
+                    }
+                    catch (e)
+                    {
+                        vimperator.echoerr(e.name + ": " + e.message);
+                    }
                 }
+            }
         },
         {
             usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}", "javascript[!]"], // \\n is changed to <br/> in the help.js code

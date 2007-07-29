@@ -102,9 +102,11 @@ function CommandLine() //{{{
     var prompt_widget = document.getElementById('vimperator-commandline-prompt');
     // The command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
-    // The widget used for multiline in-/output
-    var multiline_widget = document.getElementById("vimperator-multiline");
-    multiline_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
+    // The widget used for multiline output
+    var multiline_output_widget = document.getElementById("vimperator-multiline-output");
+    multiline_output_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
+    // The widget used for multiline output
+    var multiline_input_widget = document.getElementById("vimperator-multiline-input");
 
     // we need to save the mode which were in before opening the command line
     // this is then used if we focus the command line again without the "official"
@@ -118,6 +120,10 @@ function CommandLine() //{{{
     // an ugly hack that we allow the :echo(err) commands after hitting enter
     // and before the blur() event gets fired
     var echo_allowed = false;
+
+    // save the arguments for the inputMultiline method which are needed in the event handler
+    var multiline_regexp = null;
+    var multiline_callback = null;
 
     // load the commandline history
     var hist = Options.getPref("commandline_history", "");
@@ -167,20 +173,22 @@ function CommandLine() //{{{
     function setMultiline(cmd)
     {
         // TODO: we should retain any previous command output like Vim
-        if (!multiline_widget.collapsed)
-            multiline_widget.collapsed = true;
+        if (!multiline_output_widget.collapsed)
+            multiline_output_widget.collapsed = true;
+
+        multiline_input_widget.collapsed = true;
 
         cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
-        multiline_widget.contentDocument.body.innerHTML = cmd;
+        multiline_output_widget.contentDocument.body.innerHTML = cmd;
 
         // TODO: resize upon a window resize
         var available_height = getBrowser().mPanelContainer.boxObject.height;
-        var content_height = multiline_widget.contentDocument.height;
+        var content_height = multiline_output_widget.contentDocument.height;
         var height = content_height < available_height ? content_height : available_height;
 
-        multiline_widget.style.height = height + "px";
-        multiline_widget.collapsed = false;
-        multiline_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+        multiline_output_widget.style.height = height + "px";
+        multiline_output_widget.collapsed = false;
+        multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
     }
 
     function addToHistory(str)
@@ -234,6 +242,9 @@ function CommandLine() //{{{
         if (!echo_allowed && focused && focused == command_widget.inputField)
             return false;
 
+        if (typeof str != "string")
+            str = "";
+
         setNormalStyle();
         if (flags || str.indexOf("\n") > -1 || str.indexOf("\\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
         {
@@ -241,7 +252,8 @@ function CommandLine() //{{{
         }
         else
         {
-            multiline_widget.collapsed = true;
+            multiline_output_widget.collapsed = true;
+            multiline_input_widget.collapsed = true;
             setPrompt("");
             setCommand(str);
         }
@@ -275,17 +287,23 @@ function CommandLine() //{{{
     };
 
     // reads a multi line input and returns the string once the last line matches
-    // param until_regex
-    this.readMultiline = function(until_regex, callback_func)
+    // @param until_regexp
+    this.inputMultiline = function(until_regexp, callback_func)
     {
         // save the mode, because we need to restore it on blur()
 //        [old_mode, old_extended_mode] = vimperator.getMode();
 //        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.READ_MULTLINE, true);
 
-        multiline_widget.collapsed = false;
-        multiline_widget.contentDocument.body.innerHTML = "";
-        multiline_widget.contentDocument.designMode = "on";
-        multiline_widget.contentWindow.focus(); // FIXME: does not work
+        // save the arguments, they are needed in the event handler onEvent
+        multiline_regexp = until_regexp;
+        multiline_callback = callback_func;
+
+        multiline_input_widget.collapsed = false;
+        multiline_input_widget.value = "";
+        setTimeout(function() {
+            multiline_input_widget.focus();
+        }, 10);
+
     };
 
     this.clear = function()
@@ -355,20 +373,6 @@ function CommandLine() //{{{
             /* user pressed ENTER to carry out a command */
             if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
             {
-                //              FIXME: move to execute() in commands.js
-                //              var end = false;
-                //              try {
-                //                  [prev_match, heredoc, end] = multiliner(command, prev_match, heredoc);
-                //              } catch(e) {
-                //                  logObject(e);
-                //                  echoerr(e.name + ": " + e.message);
-                //                  prev_match = new Array(5);
-                //                  heredoc = '';
-                //                  return;
-                //              }
-                //              if (!end)
-                //                  command_line.value = "";
-
                 echo_allowed = true;
                 addToHistory(command);
                 var res = vimperator.triggerCallback("submit", command);
@@ -376,6 +380,7 @@ function CommandLine() //{{{
                 echo_allowed = false;
                 return res;
             }
+
             /* user pressed ESCAPE to cancel this prompt */
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-c>")
             {
@@ -563,6 +568,24 @@ function CommandLine() //{{{
             {
                 // reset the tab completion
                 completion_index = history_index = UNINITIALIZED;
+            }
+        }
+    }
+
+    this.onMultilineEvent = function(event)
+    {
+        // for now we just receive keypress events
+        
+        var key = event.toString();
+        if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+        {
+            //var lines = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart).split(/\n/);
+            var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
+            if (text.match(multiline_regexp))
+            {
+                text = text.replace(multiline_regexp, "");
+                multiline_callback.call(this, text);
+                multiline_input_widget.collapsed = true;
             }
         }
     }
