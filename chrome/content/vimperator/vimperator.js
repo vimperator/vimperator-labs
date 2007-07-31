@@ -252,6 +252,9 @@ const vimperator = (function() //{{{
         // open one or more URLs
         //
         // @param urls: either a string or an array of urls
+        //              The array can look like this:
+        //              ["url1", "url2", "url3", ...] or:
+        //              [["url1", postdata1], ["url2", postdata2], ...]
         // @param where: if ommited, CURRENT_TAB is assumed
         // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
@@ -269,17 +272,21 @@ const vimperator = (function() //{{{
             if (!where)
                 where = vimperator.CURRENT_TAB;
 
+            var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];
+            var postdata = typeof urls[0] == "string" ? null : urls[0][1];
+            //alert(postdata);
+
             // decide where to load the first tab
             if (where == vimperator.CURRENT_TAB)
-                getBrowser().loadURI(urls[0]);
+                /*getBrowser().*/loadURI(url, null, postdata);
             else if (where == vimperator.NEW_TAB)
             {
-                var firsttab = getBrowser().addTab(urls[0]);
+                var firsttab = getBrowser().addTab(url, null, null, postdata);
                 getBrowser().selectedTab = firsttab;
             }
             else if (where == vimperator.NEW_BACKGROUND_TAB)
             {
-                getBrowser().addTab(urls[0]);
+                getBrowser().addTab(url, null, null, postdata);
             }
             else
             {
@@ -288,8 +295,12 @@ const vimperator = (function() //{{{
             }
 
             // all other URLs are always loaded in background
-            for (var url=1; url < urls.length; url++)
-                getBrowser().addTab(urls[url]);
+            for (var i=1; i < urls.length; i++)
+            {
+                url =   typeof urls[i] == "string" ? urls[i] : urls[i][0];
+                postdata = typeof urls[i] == "string" ? null : urls[i][1];
+                getBrowser().addTab(url, null, null, postdata);
+            }
 
             // TODO: register callbacks
 

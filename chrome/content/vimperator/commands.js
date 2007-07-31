@@ -1207,6 +1207,7 @@ String.prototype.toURLArray = function()
     var urls = this.split(/\s*\,\s+/);
     begin: for (var url = 0; url < urls.length; url++)
     {
+        // FIXME: not really that good (doesn't handle .. in the middle), also problems with trailing slashes
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
@@ -1253,7 +1254,7 @@ String.prototype.toURLArray = function()
                 text = matches[3];
 
             var search_url = vimperator.bookmarks.getSearchURL(text, alias);
-            if (search_url && search_url.length >= 1)
+            if (search_url/* && search_url.length >= 1*/)
             {
                 urls[url] = search_url;
                 continue;
@@ -1261,7 +1262,7 @@ String.prototype.toURLArray = function()
             else // the first word was not a search engine, search for the whole string in the default engine
             {
                 search_url = vimperator.bookmarks.getSearchURL(urls[url], null);
-                if (search_url && search_url.length >= 1)
+                if (search_url/* && search_url.length >= 1*/)
                 {
                     urls[url] = search_url;
                     continue;

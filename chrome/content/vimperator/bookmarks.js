@@ -197,11 +197,13 @@ function Bookmarks() //{{{
         return keywords;
     }
 
-    // if the engine name is null, it uses the default search engine
+    // if @param engine_name is null, it uses the default search engine
     // @returns the url for the search string
+    //          if the search also requires a postdata, [url, postdata] is returned
     this.getSearchURL = function(text, engine_name)
     {
         var url = null;
+        var postdata = null;
         if (!engine_name || engine_name == "")
             engine_name = vimperator.options["defsearch"];
 
@@ -210,7 +212,11 @@ function Bookmarks() //{{{
         if (engine)
         {
             if (text)
-                url = engine.getSubmission(text, null).uri.spec;
+            {
+                var submission = engine.getSubmission(text, null);
+                url = submission.uri.spec;
+                postdata = submission.postData;
+            }
             else
                 url = engine.searchForm;
         }
@@ -232,7 +238,10 @@ function Bookmarks() //{{{
         }
 
         // if we came here, the engine_name is neither a search engine or URL
-        return url;
+        if (postdata)
+            return [url, postdata];
+        else
+            return url; // can be null
     }
 
     this.list = function(filter, fullmode)
