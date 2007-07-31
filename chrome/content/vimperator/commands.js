@@ -710,7 +710,7 @@ function Commands() //{{{
                   "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
-                  "will open the wikipedia entry for linux torvalds). The short name of a search engine is automatically guessed from it's name. " +
+                  "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from it's name. " +
                   "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
                   "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
