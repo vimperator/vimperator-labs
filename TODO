@@ -5,9 +5,8 @@ Priority list:
 BUGS:
 - switching tabs while HINT_MODE_ALWAYS is on does not redisplay hints in new tabs, but exits hint mode
 - autoupdate does not work
-- multiple windows to not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
+- multiple windows do not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
 - http://en.wikipedia.org/wiki/Portal:Current_events - 'f' shows more hints than 'F' (on left side of nav bar)
-- gu and gU don't work on local files properly
 - dpb| 09:09:56  dpb :: when I save a page with vimperator, it adds <hints
      id="hah_hints"></hints> near the end of it.. kinda annoying
   dpb| 09:11:50  dpb :: and this happens only when saving the complete
@@ -15,9 +14,9 @@ BUGS:
 - add window resize support to hints
 - can't reverse tab through the vimperator toolbar
 - gu doesn't work when the current URL contains a trailing slash
+- gu and gU don't work on local files properly
 
 FEATURES:
-9 :map commands to keys
 9 :command for new commands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 Use our own find-as-you-type mechanism (like conkeror does)

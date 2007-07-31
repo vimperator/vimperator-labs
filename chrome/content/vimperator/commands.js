@@ -709,8 +709,10 @@ function Commands() //{{{
                   "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>" +
                   "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
-                  "and the first word of the token is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
-                  "will open the wikipedia entry for linux torvalds).</li>" +
+                  "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
+                  "will open the wikipedia entry for linux torvalds). The short name of a search engine is automatically guessed from it's name. " +
+                  "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
+                  "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
                   "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a google search for linux torvalds).</li>" +
                   "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +

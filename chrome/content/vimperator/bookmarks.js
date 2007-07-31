@@ -162,11 +162,25 @@ function Bookmarks() //{{{
         var firefox_engines = search_service.getVisibleEngines({ });
         for (var i in firefox_engines)
         {
-            if (!firefox_engines[i].alias || !firefox_engines[i].alias.match(/^[a-z0-9_]+$/))
+            var alias = firefox_engines[i].alias;
+            if (!alias || !alias.match(/^[a-z0-9_-]+$/))
+                alias = firefox_engines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
+            if (!alias)
+                alias = "search"; // for search engines which we can't find a suitable alias
+
+            // make sure we can use search engines which would have the same alias (add numbers at the end)
+            var newalias = alias;
+            for (var j = 1; j <= 10; j++) // <=10 is intentional
             {
-                var alias = firefox_engines[i].name.replace(/^\W*(\w+).*/, "$1").toLowerCase();
-                firefox_engines[i].alias = alias;
+                if (!search_engines.some( function(item) { return (item[0] == newalias); } ))
+                    break;
+
+                newalias = alias + j.toString();
             }
+            // only write when it changed, writes are really slow
+            if (firefox_engines[i].alias != newalias)
+                firefox_engines[i].alias = newalias;
+
             search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
         }
 
