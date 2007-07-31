@@ -77,7 +77,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 </listbox>
 
                 <hbox id="vimperator-statusline" flex="1" height="10" hidden="false">
-                    <label class="plain" id="vimperator-statusline-field-url"            flex="1"/>
+                    <label class="plain" id="vimperator-statusline-field-url"            flex="1" crop="end"/>
                     <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
                     <label class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
                     <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
@@ -92,7 +92,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 </listbox>
 
                 <hbox id="vimperator-commandline" flex="1" hidden="false">
-                    <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="right" value="" collapsed="true"/>
+                    <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                     <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
                         onkeypress="vimperator.commandline.onEvent(event);"
                         oninput="vimperator.commandline.onEvent(event);"

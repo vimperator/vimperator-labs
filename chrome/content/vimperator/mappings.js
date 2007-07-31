@@ -616,8 +616,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["$"],
         function(count) { scrollBufferAbsolute(100, -1); },
         {
-            short_help: "Scroll to the absolute right of the document",
-            help: null
+            short_help: "Scroll to the absolute right of the document"
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gg", "<Home>"],
