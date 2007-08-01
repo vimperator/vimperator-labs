@@ -143,6 +143,15 @@ fieldset.paypal {
     overflow: -moz-scrollbars-none;
 }
 
+/* the selected item in listboxes is hardly readable without this */
+#vimperator-completion > listitem[selected="true"],
+#vimperator-bufferwindow > listitem[selected="true"],
+#vimperator-previewwindow > listitem[selected="true"]
+{
+   background-color: #C9DFFF !important; 
+}
+
+
 #vimperator-statusline > label {
     padding: 0px 0px 0px 8px;
 }
