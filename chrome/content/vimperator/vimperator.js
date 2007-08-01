@@ -115,6 +115,7 @@ const vimperator = (function() //{{{
         CURRENT_TAB: 1,
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,
+        NEW_WINDOW: 4,
         //},
 
         // ###VERSION### and ###DATE### are replaced by the Makefile
@@ -274,24 +275,35 @@ const vimperator = (function() //{{{
 
             var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];
             var postdata = typeof urls[0] == "string" ? null : urls[0][1];
-            //alert(postdata);
+            var whichwindow = window;
 
             // decide where to load the first tab
-            if (where == vimperator.CURRENT_TAB)
-                /*getBrowser().*/loadURI(url, null, postdata);
-            else if (where == vimperator.NEW_TAB)
+            switch (where)
             {
-                var firsttab = getBrowser().addTab(url, null, null, postdata);
-                getBrowser().selectedTab = firsttab;
-            }
-            else if (where == vimperator.NEW_BACKGROUND_TAB)
-            {
-                getBrowser().addTab(url, null, null, postdata);
-            }
-            else
-            {
-                vimperator.echoerr("Exxx: Invalid where directive in vimperator.open(...)");
-                return false;
+                case vimperator.CURRENT_TAB:
+                    window.loadURI(url, null, postdata); // getBrowser.loadURI() did not work with postdata in my quick experiments --mst
+                    break;
+
+                case vimperator.NEW_TAB:
+                    var firsttab = getBrowser().addTab(url, null, null, postdata);
+                    getBrowser().selectedTab = firsttab;
+                    break;
+
+                case vimperator.NEW_BACKGROUND_TAB:
+                    getBrowser().addTab(url, null, null, postdata);
+                    break;
+
+                case vimperator.NEW_WINDOW:
+                    window.open();
+                    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                               .getService(Components.interfaces.nsIWindowMediator);
+                    whichwindow = wm.getMostRecentWindow("navigator:browser");
+                    whichwindow.loadURI(url, null, postdata)
+                    break;
+
+                default:
+                    vimperator.echoerr("Exxx: Invalid 'where' directive in vimperator.open(...)");
+                    return false;
             }
 
             // all other URLs are always loaded in background
@@ -299,7 +311,7 @@ const vimperator = (function() //{{{
             {
                 url =   typeof urls[i] == "string" ? urls[i] : urls[i][0];
                 postdata = typeof urls[i] == "string" ? null : urls[i][1];
-                getBrowser().addTab(url, null, null, postdata);
+                whichwindow.getBrowser().addTab(url, null, null, postdata);
             }
 
             // TODO: register callbacks

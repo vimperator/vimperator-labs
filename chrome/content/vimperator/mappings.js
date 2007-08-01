@@ -376,26 +376,38 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["go"],
-        function(mark) { vimperator.quickmarks.jumpTo(mark, false) },
+        function(mark) { vimperator.quickmarks.jumpTo(mark, vimperator.CURRENT_TAB) },
         {
-            short_help: "Jump to a QuickMark in the current buffer",
+            short_help: "Jump to a QuickMark in the current tab",
             usage: ["go{a-zA-Z0-9}"],
-            help: "Open any QuickMark in the current buffer. You can mark any URLs with <code class=\"mapping\">M{a-zA-Z0-9}</code>. " +
+            help: "Open any QuickMark in the current tab. You can mark any URLs with <code class=\"mapping\">M{a-zA-Z0-9}</code>. " +
                   "These QuickMarks are persistent across browser session.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gn"],
-        function(mark) { vimperator.quickmarks.jumpTo(mark, true) },
+        function(mark)
         {
-            short_help: "Jump to a QuickMark in a new buffer",
+            vimperator.quickmarks.jumpTo(mark,
+                vimperator.options["activate"].search(/\bquickmark\b/) > -1 ?
+                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+        },
+        {
+            short_help: "Jump to a QuickMark in a new tab",
             usage: ["gn{a-zA-Z0-9}"],
-            help: "Mnemonic: Go in a new buffer. <code class=\"mapping\">gt</code> would make more sense but is already taken.",
+            help: "Works like <code class=\"mapping\">go{a-zA-Z0-9}</code> but opens the QuickMark in a new tab. " +
+                   "Whether the new tab is activated or not depends on the <code class=\"option\">'activate'</code> option.<br/>" +
+                   "Mnemonic: Go in a new tab. <code class=\"mapping\">gt</code> would make more sense but is already taken.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gP"],
-        function(count) { vimperator.open(readFromClipboard(), vimperator.NEW_BACKGROUND_TAB); },
+        function(count)
+        {
+            vimperator.open(readFromClipboard(),
+                vimperator.options["activate"].search(/\bpaste\b/) > -1 ?
+                vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
+        },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
@@ -485,7 +497,12 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["P"],
-        function(count) { vimperator.open(readFromClipboard(), vimperator.NEW_TAB); },
+        function(count)
+        {
+            vimperator.open(readFromClipboard(),
+                vimperator.options["activate"].search(/\bpaste\b/) > -1 ?
+                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+        },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>" +

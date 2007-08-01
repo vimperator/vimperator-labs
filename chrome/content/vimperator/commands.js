@@ -627,8 +627,7 @@ function Commands() //{{{
         },
         {
             usage: ["marks {arg}"],
-            short_help: "Show all location marks of current web page",
-            help: "Not implemented yet."
+            short_help: "Show all location marks of current web page"
         }
     ));
     // TODO: remove duplication in :map
@@ -699,7 +698,7 @@ function Commands() //{{{
             }
         },
         {
-            usage: ["o[pen] [url] [| url]"],
+            usage: ["o[pen] [url] [, url]"],
             short_help: "Open one or more URLs in the current tab",
             help: "Multiple URLs can be separated with \", \". Note that the space after the comma is required.<br/>" +
                   "Each token is analyzed and in this order:<br/>" +
@@ -824,7 +823,8 @@ function Commands() //{{{
                 var oper = matches[5];
                 var val = matches[6]; if (val === undefined) val = "";
 
-                // reset a variable to its default value.
+                // reset a variable to its default value
+                // TODO: remove the value from about:config instea of setting it to the current default value
                 if (reset)
                 {
                     option.value = option.default_value;
@@ -836,7 +836,6 @@ function Commands() //{{{
                         vimperator.echo((option.value ? "  " : "no") + option.name);
                     else
                         vimperator.echo("  " + option.name + "=" + option.value);
-                        //vimperator.echo("  " + option.name + "=" + vimperator.options[option.name]);
                 }
                 // write access
                 else
@@ -968,13 +967,17 @@ function Commands() //{{{
     addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
         function(args, special)
         {
+            var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
+            if (vimperator.options["activate"].search(/\bquickmark\b/) > -1)
+                where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
+
             if (args.length > 0)
-                vimperator.open(args, special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
+                vimperator.open(args, where);
             else
-                vimperator.open("about:blank", vimperator.NEW_TAB);
+                vimperator.open("about:blank", where);
         },
         {
-            usage: ["tabopen [url] [| url]"],
+            usage: ["tabopen [url] [, url]"],
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
@@ -1083,11 +1086,11 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
-        function() { vimperator.echo("winopen not implemented yet"); },
+        function(args) { vimperator.open(args, vimperator.NEW_WINDOW); },
         {
-            usage: ["wino[pen] [url] [| url]"],
-            short_help: "Open a URL in a new window",
-            help: "Not implemented yet."
+            usage: ["wino[pen] [url] [, url]"],
+            short_help: "Open one or more URLs in a new window",
+            help: "NOTE: Multiple windows are not really support by vimperator, use at your own risk!"
         }
     ));
     addDefaultCommand(new Command(["wqa[ll]", "wq", "xa[ll]"],

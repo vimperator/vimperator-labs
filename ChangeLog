@@ -1,10 +1,13 @@
 <pre>
 2007-07-02:
 	* version 0.5
+	* :winopen support (multiple windows still very very experimental)
+	* 'activate' option implemented
+	* search enginges which use POST instead of GET work now
 	* :javascript <<EOF uses a better multiline input widget now
 	* new :map, :noremap, :mapclear and :unmap commands
 	* :saveas finally works (by calmar)
-	* Shift-insert pastes the selection content in text fields now
+	* Shift-insert pastes the X11 selection content in text fields now
 	* Changed "|" to ", " as a url seperator in :open
 	* Ctrl-^ mapping for selecting the alternate tab/buffer
 	* QuickMarks support (new commands :qmarks/:qmarkadd/:qmarkdel and

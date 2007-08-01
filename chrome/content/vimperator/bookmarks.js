@@ -747,11 +747,11 @@ function QuickMarks() //{{{
         }
     }
 
-    this.jumpTo = function(mark, newtab)
+    this.jumpTo = function(mark, where)
     {
         var url = marks[mark];
         if (url)
-            vimperator.open(url, newtab ? vimperator.NEW_TAB : vimperator.CURRENT_TAB);
+            vimperator.open(url, where);
         else
             vimperator.echoerr("E20: QuickMark not set");
     }

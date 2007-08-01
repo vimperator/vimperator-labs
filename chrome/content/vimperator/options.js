@@ -305,7 +305,12 @@ function Options() //{{{
     addOption(new Option(["activate"], "stringlist",
         {
             short_help: "Define when tabs are automatically activated",
-            help: "Not implemented yet",
+            help: "Available items:<br/>" +
+                  "<table>" +
+                  "<tr><td><b>quickmark</b>:</td><td><code class=\"mapping\">go</code> and <code class=\"mapping\">gn</code> mappings</td>" +
+                  "<tr><td><b>tabopen</b>:  </td><td><code class=\"command\">:tabopen[!]</code> command</td>" +
+                  "<tr><td><b>paste</b>:    </td><td><code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</td>" +
+                  "</table>",
             default_value: "quickmark,tabopen,paste"
         }
     ));
@@ -441,7 +446,7 @@ function Options() //{{{
                   "<li><b>0</b>: Never show tab bar</li>" +
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li></ul>" +
-                  "Not implemented yet.",
+                  "NOTE: Not fully implemented yet and buggy with stal=0",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
