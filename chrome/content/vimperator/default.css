@@ -148,7 +148,8 @@ fieldset.paypal {
 #vimperator-bufferwindow > listitem[selected="true"],
 #vimperator-previewwindow > listitem[selected="true"]
 {
-   background-color: #C9DFFF !important; 
+   background-color: Highlight !important; 
+   color: HighlightText !important; 
 }
 
 
