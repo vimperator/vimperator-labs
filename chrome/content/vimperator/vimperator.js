@@ -277,7 +277,7 @@ const vimperator = (function() //{{{
             var postdata = typeof urls[0] == "string" ? null : urls[0][1];
             var whichwindow = window;
 
-            // decide where to load the first tab
+            // decide where to load the first url
             switch (where)
             {
                 case vimperator.CURRENT_TAB:
@@ -454,11 +454,14 @@ const vimperator = (function() //{{{
             }
         },
 
+        // files which end in .js are sourced as pure javascript files, 
+        // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function(filename, silent)
         {
             if (!filename)
                 return;
 
+            // TODO: move this to a seperate function
             // convert "~" to HOME on Windows
             if (navigator.platform == "Win32")
             {
@@ -488,13 +491,45 @@ const vimperator = (function() //{{{
                 var s = fd.read();
                 fd.close();
 
-                // TODO: simplify and get rid of multiliner (look at "javascript" in commands.js)
-                var prev_match = new Array(5);
-                var heredoc = '';
-                var end = false;
-                s.split('\n').forEach(function(line) {
-                    [prev_match, heredoc, end] = multiliner(line, prev_match, heredoc);
-                });
+                // handle pure javascript files special
+                if (filename.search("\.js$") != -1)
+                    eval(s);
+                else
+                {
+                    var heredoc = "";
+                    var heredocEnd = null; // the string which ends the heredoc
+                    s.split("\n").forEach(function(line) {
+                        if (heredocEnd) // we already are in a heredoc
+                        {
+                            if (line.search(heredocEnd) != -1)
+                            {
+                                eval(heredoc);
+                                heredoc = "";
+                                heredocEnd = null;
+                            }
+                            else
+                                heredoc += line + "\n";
+                        }
+                        else
+                        {
+                            // check for a heredoc
+                            var [count, cmd, special, args] = tokenize_ex(line);
+                            var command = vimperator.commands.get(cmd);
+                            if (command && command.name == "javascript")
+                            {
+                                var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                                if (matches && matches[2])
+                                {
+                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
+                                    if(matches[1])
+                                        heredoc = matches[1] + "\n";
+                                }
+                            }
+                            else // execute a normal vimperator command
+                                execute_command(count, cmd, special, args);
+                        }
+                    });
+                }
             }
             catch (e)
             {
@@ -577,8 +612,22 @@ const vimperator = (function() //{{{
             // Finally, read a ~/.vimperatorrc
             // Make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
-                vimperator.source("~/.vimperatorrc", true);
+                vimperator.source("~/.vimperatorrc", false);
                 vimperator.log("~/.vimperatorrc sourced", 1);
+
+                // also source plugins in ~/.vimperator/plugin/
+                var entries = [];
+                try {
+                    var fd = fopen("~/.vimperator/plugin", "<");
+                    var entries = fd.read();
+                    fd.close();
+                    entries.forEach(function(file) {
+                        if (!file.isDirectory())
+                            vimperator.source(file.path, false);
+                    });
+                } catch(e) {
+                    // thrown if directory does not exist
+                }
             }, 50);
 
             vimperator.log("Vimperator fully initialized", 1);

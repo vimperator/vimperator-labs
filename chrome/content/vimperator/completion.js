@@ -245,6 +245,7 @@ function get_file_completions(filter) //{{{
     /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
     if (!arguments[1])
         g_substrings = [];
+
     var match = filter.match(/^(.*[\/\\])(.*?)$/);
     var dir;
 

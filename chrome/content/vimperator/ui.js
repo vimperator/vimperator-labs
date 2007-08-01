@@ -27,46 +27,46 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // XXX: move somehere else!
-function multiliner(line, prev_match, heredoc) //{{{
-{
-    var end = true;
-    var match = tokenize_ex(line, prev_match[4]);
-    if (prev_match[3] === undefined) prev_match[3] = '';
-    if (match[4] === null)
-    {
-        vimperator.focusContent();
-        execute_command.apply(this, match);
-    }
-    else
-    {
-        if (match[4] === false)
-        {
-            prev_match[3] = prev_match[3].replace(new RegExp('<<\s*' + prev_match[4]), heredoc.replace(/\n$/, ''));
-            vimperator.focusContent(); // also sets comp_tab_index to -1
-            execute_command.apply(this, prev_match);
-            prev_match = new Array(5);
-            prev_match[3] = '';
-            heredoc = '';
-        }
-        else
-        {
-            end = false;
-            if (!prev_match[3])
-            {
-                prev_match[0] = match[0];
-                prev_match[1] = match[1];
-                prev_match[2] = match[2];
-                prev_match[3] = match[3];
-                prev_match[4] = match[4];
-            }
-            else
-            {
-                heredoc += match[3] + '\n';
-            }
-        }
-    }
-    return [prev_match, heredoc, end];
-} //}}}
+// function multiliner(line, prev_match, heredoc) //{{{
+// {
+//     var end = true;
+//     var match = tokenize_ex(line, prev_match[4]);
+//     if (prev_match[3] === undefined) prev_match[3] = '';
+//     if (match[4] === null)
+//     {
+//         vimperator.focusContent();
+//         execute_command.apply(this, match);
+//     }
+//     else
+//     {
+//         if (match[4] === false)
+//         {
+//             prev_match[3] = prev_match[3].replace(new RegExp('<<\s*' + prev_match[4]), heredoc.replace(/\n$/, ''));
+//             vimperator.focusContent(); // also sets comp_tab_index to -1
+//             execute_command.apply(this, prev_match);
+//             prev_match = new Array(5);
+//             prev_match[3] = '';
+//             heredoc = '';
+//         }
+//         else
+//         {
+//             end = false;
+//             if (!prev_match[3])
+//             {
+//                 prev_match[0] = match[0];
+//                 prev_match[1] = match[1];
+//                 prev_match[2] = match[2];
+//                 prev_match[3] = match[3];
+//                 prev_match[4] = match[4];
+//             }
+//             else
+//             {
+//                 heredoc += match[3] + '\n';
+//             }
+//         }
+//     }
+//     return [prev_match, heredoc, end];
+// } //}}}
 
 /*
  * This class is used for prompting of user input and echoing of messages

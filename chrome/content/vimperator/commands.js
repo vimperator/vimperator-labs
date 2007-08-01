@@ -913,7 +913,13 @@ function Commands() //{{{
         {
             usage: ["so[urce][!] {file}"],
             short_help: "Read Ex commands from {file}",
-            help: "The .vimperatorrc file in your home directory is always sourced at start up.<br/>" +
+            help: "You can either source files which mostly contain Ex commands like <code class=\"command\">map &lt; gt</code> " +
+                  "and put javascript code within a:<br/><code class=\"code\">" +
+                  "js &lt;&lt;EOF<br/>hello = function() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/>EOF<br/></code> section.<br/>" +
+                  "Or you can alternatively source a file which ends in .js, these files are automatically sourced as pure javascript files.<br/>" +
+                  "NOTE: In both cases you must add functions to the global window object like shown above, functions written as:<br/>" +
+                  "<code class=\"code\">function hello2() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/></code>are only available within the scope of the script. <br/><br/>" +
+                  "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
                   "~ is supported as a shortcut for the $HOME directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
             completer: function(filter) { return get_file_completions(filter); }
@@ -1117,6 +1123,7 @@ function execute_command(count, cmd, special, args, modifiers) //{{{
 {
     if (!cmd)
         return;
+
     if (!modifiers)
         modifiers = {};
 
@@ -1201,10 +1208,9 @@ function execute(string)
 }
 
 
-/* takes a string like 'google bla| www.osnews.com'
+/* takes a string like 'google bla, www.osnews.com'
  * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
  */
-//function stringToURLs(str)
 String.prototype.toURLArray = function()
 {
     var urls = this.split(/\s*\,\s+/);
