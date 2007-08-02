@@ -207,7 +207,18 @@ const vimperator = (function() //{{{
                 sound_service.beep();
         },
 
-        // After pressing Escape, put focus on a non-input field of the browser document
+        execute: function(string, modifiers)
+        {
+            if (!string)
+                return;
+
+            var tokens = tokenize_ex(string.replace(/^'(.*)'$/, '$1'));
+            tokens[4] = modifiers;
+
+            return execute_command.apply(this, tokens);
+        },
+
+        // after pressing Escape, put focus on a non-input field of the browser document
         focusContent: function()
         {
             var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
@@ -454,7 +465,7 @@ const vimperator = (function() //{{{
             }
         },
 
-        // files which end in .js are sourced as pure javascript files, 
+        // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function(filename, silent)
         {
@@ -491,7 +502,7 @@ const vimperator = (function() //{{{
                 var s = fd.read();
                 fd.close();
 
-                // handle pure javascript files special
+                // handle pure javascript files specially
                 if (filename.search("\.js$") != -1)
                     eval(s);
                 else
@@ -580,12 +591,12 @@ const vimperator = (function() //{{{
             vimperator.echoerr = vimperator.commandline.echoErr;
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { /*vimperator.*/execute(command); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
 
             //TODO: move most of the following code to Options constructor
 
-            // work around firefox popup blocker 
+            // work around firefox popup blocker
             popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
             if (!popup_allowed_events.match("keypress"))
                 Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events + " keypress");
@@ -637,7 +648,7 @@ const vimperator = (function() //{{{
         {
             window.dump("Vimperator shutdown\n");
 
-            /*** save our preferences ***/
+            // save our preferences
             vimperator.commandline.destroy();
             vimperator.events.destroy();
             vimperator.quickmarks.destroy();

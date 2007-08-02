@@ -421,7 +421,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
-        execute,
+        function(args) { vimperator.execute(args) },
         {
             usage: ["exe[cute] {expr1} [ ... ]"],
             short_help: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
@@ -541,7 +541,7 @@ function Commands() //{{{
                 if (/^:/.test(rhs))
                 {
                     vimperator.mappings.add(
-                        new Map(vimperator.modes.NORMAL, [lhs], function() { execute(rhs); }, { rhs: rhs })
+                        new Map(vimperator.modes.NORMAL, [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
                     );
                 }
                 else
@@ -651,7 +651,7 @@ function Commands() //{{{
                 if (/^:/.test(rhs))
                 {
                     vimperator.mappings.add(
-                        new Map(vimperator.modes.NORMAL, [lhs], function() { execute(rhs); }, { rhs: rhs })
+                        new Map(vimperator.modes.NORMAL, [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
                     );
                 }
                 else
@@ -933,7 +933,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["tab"],
-        function() { execute(arguments[0], null, null, {inTab: true}); },
+        function(args) { vimperator.execute(args, { inTab: true }); },
         {
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
@@ -1194,19 +1194,6 @@ function tokenize_ex(string, tag)
 
     return matches;
 }
-
-
-function execute(string)
-{
-    if (!string)
-        return;
-
-    var tokens = tokenize_ex(string.replace(/^'(.*)'$/, '$1'));
-    tokens[4] = arguments[3];
-
-    return execute_command.apply(this, tokens);
-}
-
 
 /* takes a string like 'google bla, www.osnews.com'
  * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
