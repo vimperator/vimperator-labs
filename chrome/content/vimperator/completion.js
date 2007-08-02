@@ -448,7 +448,7 @@ function get_buffer_completions(filter) //{{{
 
 function exTabCompletion(str) //{{{
 {
-	var [count, cmd, special, args] = tokenize_ex(str);
+	var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
 	var completions = new Array;
 	var start = 0;
 

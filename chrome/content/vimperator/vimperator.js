@@ -209,13 +209,32 @@ const vimperator = (function() //{{{
 
         execute: function(string, modifiers)
         {
-            if (!string)
+            // skip comments and blank lines
+            if (/^\s*("|$)/.test(string))
                 return;
 
-            var tokens = tokenize_ex(string.replace(/^'(.*)'$/, '$1'));
-            tokens[4] = modifiers;
+            if (!modifiers)
+                modifiers = {};
 
-            return execute_command.apply(this, tokens);
+            var [count, cmd, special, args] = vimperator.commands.parseCommand(string.replace(/^'(.*)'$/, '$1'));
+            var command = vimperator.commands.get(cmd);
+
+            if (command === null)
+            {
+                vimperator.echoerr("E492: Not an editor command: " + cmd);
+                vimperator.focusContent();
+                return;
+            }
+
+            // TODO: need to perform this test? -- djk
+            if (command.action === null)
+            {
+                vimperator.echoerr("E666: Internal error: command.action === null");
+                return;
+            }
+
+            // valid command, call it:
+            command.execute(args, special, count, modifiers);
         },
 
         // after pressing Escape, put focus on a non-input field of the browser document
@@ -509,7 +528,8 @@ const vimperator = (function() //{{{
                 {
                     var heredoc = "";
                     var heredocEnd = null; // the string which ends the heredoc
-                    s.split("\n").forEach(function(line) {
+                    s.split("\n").forEach(function(line)
+                    {
                         if (heredocEnd) // we already are in a heredoc
                         {
                             if (line.search(heredocEnd) != -1)
@@ -524,7 +544,7 @@ const vimperator = (function() //{{{
                         else
                         {
                             // check for a heredoc
-                            var [count, cmd, special, args] = tokenize_ex(line);
+                            var [count, cmd, special, args] = vimperator.commands.parseCommand(line);
                             var command = vimperator.commands.get(cmd);
                             if (command && command.name == "javascript")
                             {
@@ -532,12 +552,12 @@ const vimperator = (function() //{{{
                                 if (matches && matches[2])
                                 {
                                     heredocEnd = new RegExp("^" + matches[2] + "$", "m");
-                                    if(matches[1])
+                                    if (matches[1])
                                         heredoc = matches[1] + "\n";
                                 }
                             }
                             else // execute a normal vimperator command
-                                execute_command(count, cmd, special, args);
+                                vimperator.execute(line);
                         }
                     });
                 }

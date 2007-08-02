@@ -191,6 +191,52 @@ function Commands() //{{{
         return null;
     }
 
+
+    // FIXME: doesn't really belong here...
+    // return [null, null, null, null, heredoc_tag || false];
+    //        [count, cmd, special, args] = match;
+    this.parseCommand = function(string, tag)
+    {
+        // removing comments
+        string.replace(/\s*".*$/, '');
+        if (tag) // we already have a multiline heredoc construct
+        {
+            if (string == tag)
+                return [null, null, null, null, false];
+            else
+                return [null, null, null, string, tag];
+        }
+
+        // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
+        var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?)\s*)?$/);
+        if (!matches)
+            return [null, null, null, null, null];
+        matches.shift();
+
+        // parse count
+        if (matches[0])
+        {
+            matches[0] = parseInt(matches[0]);
+            if (isNaN(matches[0]))
+                matches[0] = 0; // 0 is the default if no count given
+        }
+        else
+            matches[0] = 0;
+
+        matches[2] = !!matches[2];
+        matches.push(null);
+        if (matches[3])
+        {
+            tag = matches[3].match(/<<\s*(\w+)\s*$/);
+            if (tag && tag[1])
+                matches[4] = tag[1];
+        }
+        else
+            matches[3] = '';
+
+        return matches;
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -1118,82 +1164,6 @@ function Commands() //{{{
     ));
     //}}}
 } //}}}
-
-function execute_command(count, cmd, special, args, modifiers) //{{{
-{
-    if (!cmd)
-        return;
-
-    if (!modifiers)
-        modifiers = {};
-
-    var command = vimperator.commands.get(cmd);
-    if (command === null)
-    {
-        vimperator.echoerr("E492: Not an editor command: " + cmd);
-        vimperator.focusContent();
-        return;
-    }
-
-    // TODO: need to perform this test? -- djk
-    if (command.action === null)
-    {
-        vimperator.echoerr("E666: Internal error: command.action === null");
-        return;
-    }
-
-    // valid command, call it:
-    command.execute(args, special, count, modifiers);
-
-} //}}}
-
-/////////////////////////////////////////////////////////////////////}}}
-// Ex command parsing and execution ////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-// return [null, null, null, null, heredoc_tag || false];
-//        [count, cmd, special, args] = match;
-function tokenize_ex(string, tag)
-{
-    // removing comments
-    string.replace(/\s*".*$/, '');
-    if (tag) // we already have a multiline heredoc construct
-    {
-        if (string == tag)
-            return [null, null, null, null, false];
-        else
-            return [null, null, null, string, tag];
-    }
-
-    // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-    var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?)\s*)?$/);
-    if (!matches)
-        return [null, null, null, null, null];
-    matches.shift();
-
-    // parse count
-    if (matches[0])
-    {
-        matches[0] = parseInt(matches[0]);
-        if (isNaN(matches[0]))
-            matches[0] = 0; // 0 is the default if no count given
-    }
-    else
-        matches[0] = 0;
-
-    matches[2] = !!matches[2];
-    matches.push(null);
-    if (matches[3])
-    {
-        tag = matches[3].match(/<<\s*(\w+)\s*$/);
-        if (tag && tag[1])
-            matches[4] = tag[1];
-    }
-    else
-        matches[3] = '';
-
-    return matches;
-}
 
 /* takes a string like 'google bla, www.osnews.com'
  * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
