@@ -26,15 +26,11 @@ function Hints() //{{{
 {
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 
-    // public accessors
-    //this.hintsVisible = function() { return isHahModeEnabled; };
     this.hintedElements = function() { return hintedElems; };
     this.currentState = function() { return state;};
     this.setCurrentState = function(s) { state = s;};
-    //this.currentMode = function() { return hintmode;};
 
     var isHahModeEnabled = false; // is typing mode on
-    //var hintmode = HINT_MODE_QUICK;
     var hintedElems = [];
     var linkNumString = ""; // the typed link number is in this string
     var linkCount = 0;
@@ -46,19 +42,9 @@ function Hints() //{{{
     var hintElemSpan;
 
     ////////////////////////////////////////////////////////////////////////////////
-    // configuration and initialization related functions
-    ////////////////////////////////////////////////////////////////////////////////
-
-//  function load()
-//  {
-//      isHahModeEnabled = false;
-//      hintedElem = null;
-//  }
-
-    ////////////////////////////////////////////////////////////////////////////////
     // hint activating and loading related functions
     ////////////////////////////////////////////////////////////////////////////////
-
+    
     function startCoordLoader(doc)
     {
         win = doc.defaultView;
@@ -101,17 +87,15 @@ function Hints() //{{{
     function genElemCoords(elem)
     {
         // NOTE: experiment for making the function faster, report problems
-        //       -> does not work on www.orf.at with frames
-        // try {
-        //     var box = window.content.document.getBoxObjectFor(elem);
-        //     elem.absoLeft = box.x;
-        //     elem.absoTop = box.y;
-        //     elem.validCoord = elem.ownerDocument.validCoords;
-        // } catch(e) { 
-        //     elem.absoLeft = 0;
-        //     elem.absoTop = 0;
-        // }
-        // return;
+        // only works for FF3.0:
+        //var rect = elem.getBoundingClientRect();
+        //if (rect)
+        //{
+        //    elem.absoLeft = rect.left;
+        //    elem.absoTop = rect.top;
+        //}
+        //return;
+
         if (typeof(elem.validCoord) != "undefined")
         {
             if (elem.validCoord == elem.ownerDocument.validCoords)
@@ -136,7 +120,7 @@ function Hints() //{{{
     {
         if (!win)
         {
-            win = window._content;
+            win = window.content;
             linkCount = 0;
         }
 
@@ -156,7 +140,6 @@ function Hints() //{{{
         hintElemSpan.setAttribute('name', 'hah_hint');
 
         var hintContainer = doc.getElementById('hah_hints');
-
         if (hintContainer == null)
         {
             genHintContainer(doc);
@@ -176,12 +159,11 @@ function Hints() //{{{
             genElemCoords(elem);
 
             // for extended hint mode, show all - even currently hidden - hints
-            //if (hintmode == HINT_MODE_QUICK && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
-            if (vimperator.hasMode(vimperator.modes.QUICK_HINT) && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
+            //if (vimperator.hasMode(vimperator.modes.QUICK_HINT) && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
+            if ((elem.absoTop < area[1] || elem.absoTop > area[3] ||
                     elem.absoLeft > area[2] || elem.absoLeft < area[0]))
                 continue;
 
-            // XXX: what does that do
             // if (elem.offsetWidth == 0 && elem.offsetHeight == 0)
             //     continue;
 
@@ -222,17 +204,10 @@ function Hints() //{{{
         if (!win)
             win = window.content;
 
-        //if (linkCount == 0 && hintmode != HINT_MODE_ALWAYS)
         if (linkCount == 0 && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
             vimperator.beep();
-            //alert('h');
             this.disableHahMode(win);
-            //alert('g');
-//            setCurrentMode(MODE_NORMAL);
-//            linkNumString = '';
-//            hintedElems = [];
-//            isHahModeEnabled = false;
             return;
         }
 
@@ -409,9 +384,7 @@ function Hints() //{{{
     //function enableHahMode(event, mode)
     this.enableHahMode = function(mode)
     {
-        //setCurrentMode(mode);
         vimperator.setMode(vimperator.modes.HINTS, mode);
-        //hintmode = mode;
         state = 0;
         linkCount = 0;
         linkNumString = '';
@@ -438,14 +411,10 @@ function Hints() //{{{
         if(!isHahModeEnabled)
             return;
 
-        //setCurrentMode(MODE_NORMAL);
         vimperator.setMode(vimperator.modes.NORMAL);
         isHahModeEnabled = false;
-        //hintmode = HINT_MODE_QUICK;
         linkNumString = '';
         hintedElems = [];
-//        if (!silent && vimperator.options["showmode"])
-//            vimperator.echo('');
 
         removeHints(win);
         return 0;
@@ -519,7 +488,6 @@ function Hints() //{{{
             evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
             elem.dispatchEvent(evt);
 
-
             // for 'pure' open calls without a new tab or window it doesn't
             // make sense to open more hints in the current tab, open new tabs
             // for it
@@ -539,7 +507,11 @@ function Hints() //{{{
         {
             tmp = elems[i].refElem.href;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
-                loc += tmp + "\n";
+            {
+                if (i > 0)
+                    loc += "\n";
+                loc += tmp;
+            }
         }
 
         // disable the hints before we can echo() an information
@@ -558,7 +530,11 @@ function Hints() //{{{
         {
             tmp = elems[i].refElem.textContent;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
-                loc += tmp + "\n";
+            {
+                if (i > 0)
+                    loc += "\n";
+                loc += tmp;
+            }
         }
 
         // disable the hints before we can echo() an information
@@ -659,7 +635,8 @@ function Hints() //{{{
 
     function initDoc(event)
     {
-        // vimperator.echo("Content loaded");
+        // vimperator.echoerr("Content loaded");
+
         doc = event.originalTarget;
         genHintContainer(doc);
         isHahModeEnabled = false;
@@ -678,7 +655,6 @@ function Hints() //{{{
 
         startCoordLoader(doc);
 
-        //if (hintmode == HINT_MODE_ALWAYS)
         if (vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
             state = 0;
@@ -686,10 +662,11 @@ function Hints() //{{{
             linkNumString = '';
             isHahModeEnabled = true;
 
-            createHints();
-            showHints(null, 0);
+            setTimeout( function() { 
+                createHints();
+                showHints(null, 0);
+            }, 100);
         }
-        // vimperator.echo("Done.");
     }
 
     window.document.addEventListener("DOMContentLoaded", initDoc, null);

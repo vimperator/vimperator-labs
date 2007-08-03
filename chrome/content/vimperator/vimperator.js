@@ -677,7 +677,42 @@ const vimperator = (function() //{{{
             if (Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
                     == popup_allowed_events + " keypress")
                 Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events);
+        },
+
+        // @param value MUST be a string, it can have the following form: "+20%", "200%", "-30"
+        // @return false if argument could not be parsed or zoom level too high
+        zoom: function(value)
+        {
+            if (typeof value != "string")
+                return false;
+
+            var zoomMgr = ZoomManager.prototype.getInstance();
+            var new_zoom_value = 100;
+
+            var matches = value.match(/^\s*(\+|-)?(\d+)(%)?\s*/);
+            if (!matches || !matches[2])
+                return false;
+
+            if (matches[1] == "+")
+                new_zoom_value = zoomMgr.textZoom + parseInt(matches[2]);
+            else if (matches[1] == "-")
+                new_zoom_value = zoomMgr.textZoom - parseInt(matches[2]);
+            else
+                new_zoom_value = parseInt(matches[2]);
+
+
+            if (new_zoom_value < 25 || new_zoom_value > 500)
+            {
+                vimperator.echoerr("Zoom value must be between 25% and 500%");
+                vimperator.beep();
+                return false;
+            }
+
+            zoomMgr.textZoom = new_zoom_value;
+            vimperator.hints.reshowHints();
+            vimperator.echo("Zoom value: " + new_zoom_value + "%");
         }
+
     } //}}}
 })(); //}}}
 

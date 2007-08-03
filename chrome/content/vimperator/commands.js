@@ -1155,11 +1155,11 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["zo[om]"],
-        zoom_to,
+        vimperator.zoom,
         {
-            usage: ["zo[om] {value}"],
+            usage: ["zo[om] [+-]{value}[%]"],
             short_help: "Set zoom value of the web page",
-            help: "{value} can be between 25 and 500%. If it is omitted, zoom is reset to 100%."
+            help: "{value} can be an absolute value between 25 and 500% or a relative value if prefixed with - or +. If {value} is omitted, zoom is reset to 100%."
         }
     ));
     //}}}
@@ -1332,76 +1332,6 @@ function scrollBufferAbsolute(horizontal, vertical)
         vert = win.scrollMaxY/100 * vertical;
 
     win.scrollTo(horiz, vert);
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// zooming /////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-/* also used to zoom out, when factor is negative */
-function zoom_in(factor)
-{
-    if (vimperator.input.count < 1)
-        vimperator.input.count = 1;
-
-    //ZoomManager.prototype.getInstance().enlarge();
-    var zoomMgr = ZoomManager.prototype.getInstance();
-    if (zoomMgr.textZoom == 25 && factor < 0)
-    {
-        vimperator.echoerr("Minimum zoom level of 25% reached");
-        vimperator.beep();
-    }
-    else if (zoomMgr.textZoom == 500 && factor > 0)
-    {
-        vimperator.echoerr("Maximum zoom level of 500% reached");
-        vimperator.beep();
-    }
-    else
-    {
-        var value = zoomMgr.textZoom + factor*vimperator.input.count*25;
-        if (value < 25) value = 25;
-        if (value > 500) value = 500;
-
-        zoomMgr.textZoom = value;
-
-        vimperator.hints.reshowHints();
-
-        vimperator.echo("Zoom value: " + value + "%");
-    }
-}
-
-//vimperator.zoom_to = function(value)
-function zoom_to(value)
-{
-    var zoomMgr = ZoomManager.prototype.getInstance();
-    value = parseInt(value);
-    if (!value || isNaN(value) || value <= 0)
-        value = 100;
-
-    // convert to int, if string was given
-    if (typeof value != "number")
-    {
-        oldval = value;
-        value = parseInt(oldval, 10);
-        if (isNaN(value))
-        {
-            vimperator.echoerr("Cannot convert " + oldval + " to a number");
-            return;
-        }
-    }
-
-    if (value < 25 || value > 500)
-    {
-        vimperator.echoerr("Zoom value must be between 25% and 500%");
-        vimperator.beep();
-        return;
-    }
-
-    zoomMgr.textZoom = value;
-
-    vimperator.hints.reshowHints();
-
-    vimperator.echo("Zoom value: " + value + "%");
 }
 
 /////////////////////////////////////////////////////////////////////}}}

@@ -137,16 +137,9 @@ function Events() //{{{
 
     this.onKeyPress = function(event)
     {
-//        alert(event)
-//        if (event.type != "keypress")
-//            return false;
-//        vimperator.logObject(event);
         var key = event.toString()
-//        alert(key);
         if (!key)
              return false;
-//        event.stopPropagation();
-//        event.preventDefault();
         // sometimes the non-content area has focus, making our keys not work
         //    if (event.target.id == "main-window")
         //        alert("focusContent();");
@@ -182,7 +175,6 @@ function Events() //{{{
             }
             return false;
         }
-
 
         // handle Escape-one-key mode (Ctrl-v)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
@@ -222,7 +214,6 @@ function Events() //{{{
     //  } }}}
 
 
-
         // if Hit-a-hint mode is on, special handling of keys is required
         // FIXME: total mess
         if (vimperator.hasMode(vimperator.modes.HINTS))
@@ -236,7 +227,6 @@ function Events() //{{{
             {
                 if (map.always_active || vimperator.hints.currentState() == 1)
                 {
-                    //g_hint_mappings[i][1].call(this, event);
                     map.execute();
                     if (map.cancel_mode) // stop processing this event
                     {
