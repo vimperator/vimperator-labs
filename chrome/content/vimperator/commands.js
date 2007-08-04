@@ -120,21 +120,7 @@ Command.prototype.hasName = function(name)
     }
     return false;
 }
-
-Command.prototype.toString = function()
-{
-    return "Command {" +
-         "\n\tname: " + this.name +
-         "\n\tnames: " + this.names +
-         "\n\tshort_names: " + this.short_names  +
-         "\n\tlong_names: " + this.long_names +
-         "\n\tusage: " + this.usage +
-         "\n\tshort_help: " + this.short_help +
-         "\n\thelp: " + this.help +
-         "\n\taction: " + this.action +
-         "\n\tcompleter: " + this.completer +
-         "\n}"
-} //}}}
+//}}}
 
 function Commands() //{{{
 {

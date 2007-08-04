@@ -90,23 +90,6 @@ function Option(names, type, extra_info) //{{{
         }
         return false;
     }
-
-    this.toString = function()
-    {
-        return "Option {" +
-             "\n\tname: " + this.name +
-             "\n\tnames: " + this.names +
-             "\n\tusage: " + this.usage +
-             "\n\tshort_help: " + this.short_help +
-             "\n\thelp: " + this.help +
-             "\n\ttype: " + this.type +
-             "\n\tvalue: " + this.value +
-             "\n\tgetter: " + this.getter +
-             "\n\tsetter: " + this.setter +
-             "\n\tcompleter: " + this.completer +
-             "\n\tvalidator: " + this.validator +
-             "\n}"
-    }
 } //}}}
 
 function Options() //{{{
@@ -261,14 +244,6 @@ function Options() //{{{
                 return options[i];
         }
         return null;
-    }
-
-    this.toString = function()
-    {
-        str = "";
-        for (var i = 0; i < options.length; i++)
-            str += "\n\t" + options[i].name + "=" + options[i].value;
-        return "Options {" + str + "\n}"
     }
 
     // TODO: separate Preferences from Options? Would these utility functions

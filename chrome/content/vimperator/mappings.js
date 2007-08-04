@@ -89,18 +89,7 @@ Map.prototype.execute = function(motion, count, argument)
         args.push(argument);
     this.action.apply(this, args);
 }
-
-Map.prototype.toString = function()
-{
-    return "Map {" +
-        "\n\tmode: " + this.mode +
-        "\n\tnames: " + this.names +
-        "\n\taction: " + this.action +
-        "\n\tusage: " + this.usage +
-        "\n\tshort_help: " + this.short_help +
-        "\n\thelp: " + this.help +
-        "\n}"
-} //}}}
+//}}}
 
 function Mappings() //{{{
 {
