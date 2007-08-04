@@ -146,6 +146,9 @@ function CommandLine() //{{{
 
         multiline_output_widget.style.height = height + "px";
         multiline_output_widget.collapsed = false;
+        setTimeout(function() {
+            multiline_output_widget.focus();
+        }, 10);
         multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
     }
 
@@ -530,7 +533,7 @@ function CommandLine() //{{{
         }
     }
 
-    this.onMultilineEvent = function(event)
+    this.onMultilineInputEvent = function(event)
     {
         // for now we just receive keypress events
         
@@ -545,6 +548,16 @@ function CommandLine() //{{{
                 multiline_callback.call(this, text);
                 multiline_input_widget.collapsed = true;
             }
+        }
+    }
+
+    this.onMultilineOutputEvent = function(event)
+    {
+        var key = event.toString();
+        if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+        {
+            multiline_output_widget.collapsed = true;
+            vimperator.focusContent();
         }
     }
 
