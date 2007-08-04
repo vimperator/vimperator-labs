@@ -1236,7 +1236,7 @@ function isDirectory(url)
     if (url.match(/^file:\/\//) || url.match(/^\//))
     {
         var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-        var file = fopen(stripedFilename, '<');
+        var file = vimperator.fopen(stripedFilename, '<');
         if (!file)
             return false;
 

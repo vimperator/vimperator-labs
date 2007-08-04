@@ -254,7 +254,7 @@ function get_file_completions(filter) //{{{
 
     var compl = match[2] || '';
     try {
-        var fd = fopen(dir, "<");
+        var fd = vimperator.fopen(dir, "<");
     } catch(e) {
         // thrown if file does not exist
         return [ ];

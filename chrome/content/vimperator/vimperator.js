@@ -249,6 +249,11 @@ const vimperator = (function() //{{{
             content.focus(); // FIXME: shouldn't be window.document.content?
         },
 
+        fopen: function(path, mode, perms, tmp)
+        {
+            return new LocalFile(path, mode, perms, tmp);
+        },
+
         /**
          * logs a message to the javascript error console
          */
@@ -514,7 +519,7 @@ const vimperator = (function() //{{{
 
             try
             {
-                var fd = fopen(filename, "<");
+                var fd = vimperator.fopen(filename, "<");
                 if (!fd)
                     return;
 
@@ -649,7 +654,7 @@ const vimperator = (function() //{{{
                 // also source plugins in ~/.vimperator/plugin/
                 var entries = [];
                 try {
-                    var fd = fopen("~/.vimperator/plugin", "<");
+                    var fd = vimperator.fopen("~/.vimperator/plugin", "<");
                     var entries = fd.read();
                     fd.close();
                     entries.forEach(function(file) {

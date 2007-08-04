@@ -41,11 +41,6 @@ const MODE_SYNC     = 0x40;
 const MODE_EXCL     = 0x80;
 
 
-function fopen (path, mode, perms, tmp)
-{
-    return new LocalFile(path, mode, perms, tmp);
-}
-
 function LocalFile(file, mode, perms, tmp) // {{{
 {
     const classes = Components.classes;
