@@ -185,7 +185,7 @@ function highlightFind(str, color, wrapped, dir, pt)
 function clearHighlight()
 {
     gFindBar.highlightDoc();
-    var win = window._content;
+    var win = window.content;
     var doc = win.document;
     if (!document)
 	return;

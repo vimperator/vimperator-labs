@@ -288,7 +288,7 @@ function Hints() //{{{
     function getHintById(id, win)
     {
         if (!win)
-            win = window._content;
+            win = window.content;
 
         var doc = win.document;
         var elem, i;
@@ -476,7 +476,7 @@ function Hints() //{{{
                 x = Number(coords[0]);
                 y = Number(coords[1]);
             }
-            doc = window._content.document;
+            doc = window.content.document;
             view = window.document.defaultView;
 
 
