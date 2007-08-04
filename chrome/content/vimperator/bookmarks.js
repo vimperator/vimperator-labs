@@ -175,7 +175,7 @@ function Bookmarks() //{{{
                 if (!search_engines.some( function(item) { return (item[0] == newalias); } ))
                     break;
 
-                newalias = alias + j.toString();
+                newalias = alias + j;
             }
             // only write when it changed, writes are really slow
             if (firefox_engines[i].alias != newalias)
@@ -279,7 +279,7 @@ function Bookmarks() //{{{
 
         while (!str.match(/^\s*$/))
         {
-            /* first check for --tags */
+            // first check for --tags
             match_tags = str.match(re_tags);
             if (match_tags != null)
             {
@@ -287,7 +287,7 @@ function Bookmarks() //{{{
                 tags = match_tags[3].split(",");
                 res.tags = res.tags.concat(tags);
             }
-            else /* then for --titles */
+            else // then for --titles
             {
 
                 match_title = str.match(re_title);
@@ -303,7 +303,7 @@ function Bookmarks() //{{{
                         title = title.substring(1,title.length-1);
                     res.title = title;
                 }
-                else /* at last check for a URL */
+                else // at last check for a URL
                 {
                     match_url = str.match(re_url);
                     if (match_url != null)
