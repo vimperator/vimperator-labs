@@ -472,7 +472,7 @@ function CommandLine() //{{{
                             completion_index = -1;
                     }
 
-                    vimperator.statusline.updateProgress("match " + (completion_index+1).toString() + " of " + completions.length.toString());
+                    vimperator.statusline.updateProgress("match " + (completion_index + 1) + " of " + completions.length);
                     // if the list is hidden, this function does nothing
                     completionlist.selectItem(completion_index);
                 }
@@ -846,7 +846,7 @@ function StatusLine() //{{{
         if (!total_tabs || typeof cur_index != "number")
             total_tabs = vimperator.tabs.count();
 
-        tabcount_widget.value = "[" + cur_index.toString() + "/" + total_tabs.toString() + "]";
+        tabcount_widget.value = "[" + cur_index + "/" + total_tabs + "]";
     };
 
     // percent is given between 0 and 1
@@ -862,9 +862,9 @@ function StatusLine() //{{{
         percent = Math.round(percent*100);
         if (percent < 0)          bufferposition_str = "All";
         else if (percent == 0)    bufferposition_str = "Top";
-        else if (percent < 10)    bufferposition_str = " " + percent.toString() + "%";
+        else if (percent < 10)    bufferposition_str = " " + percent + "%";
         else if (percent >= 100)  bufferposition_str = "Bot";
-        else                      bufferposition_str = percent.toString() + "%";
+        else                      bufferposition_str = percent + "%";
 
         bufferposition_widget.value = bufferposition_str;
     };
