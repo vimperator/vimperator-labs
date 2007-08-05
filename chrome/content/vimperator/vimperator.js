@@ -349,7 +349,7 @@ const vimperator = (function() //{{{
             }
 
             // all other URLs are always loaded in background
-            for (var i=1; i < urls.length; i++)
+            for (var i = 1; i < urls.length; i++)
             {
                 url =   typeof urls[i] == "string" ? urls[i] : urls[i][0];
                 postdata = typeof urls[i] == "string" ? null : urls[i][1];
@@ -376,21 +376,21 @@ const vimperator = (function() //{{{
         {
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
-            // Notify all windows that an application quit has been requested.
+            // notify all windows that an application quit has been requested.
             var os = Components.classes["@mozilla.org/observer-service;1"]
                 .getService(Components.interfaces.nsIObserverService);
             var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
                 .createInstance(Components.interfaces.nsISupportsPRBool);
             os.notifyObservers(cancelQuit, "quit-application-requested", null);
 
-            // Something aborted the quit process.
+            // something aborted the quit process.
             if (cancelQuit.data)
                 return;
 
-            // Notify all windows that an application quit has been granted.
+            // notify all windows that an application quit has been granted.
             os.notifyObservers(null, "quit-application-granted", null);
 
-            // Enumerate all windows and call shutdown handlers
+            // enumerate all windows and call shutdown handlers
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                 .getService(Components.interfaces.nsIWindowMediator);
             var windows = wm.getEnumerator(null);
@@ -626,7 +626,7 @@ const vimperator = (function() //{{{
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
 
-            //TODO: move most of the following code to Options constructor
+            // TODO: move most of the following code to Options constructor
 
             // work around firefox popup blocker
             popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
@@ -652,8 +652,8 @@ const vimperator = (function() //{{{
             // firefox preferences which we need to be changed to work well with vimperator
             Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
 
-            // Finally, read a ~/.vimperatorrc
-            // Make sourcing asynchronous, otherwise commands that open new tabs won't work
+            // finally, read a ~/.vimperatorrc
+            // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
                 vimperator.source("~/.vimperatorrc", false);
                 vimperator.log("~/.vimperatorrc sourced", 1);

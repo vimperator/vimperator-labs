@@ -281,11 +281,11 @@ function Options() //{{{
         {
             short_help: "Define when tabs are automatically activated",
             help: "Available items:<br/>" +
-                  "<table>" +
-                  "<tr><td><b>quickmark</b>:</td><td><code class=\"mapping\">go</code> and <code class=\"mapping\">gn</code> mappings</td>" +
-                  "<tr><td><b>tabopen</b>:  </td><td><code class=\"command\">:tabopen[!]</code> command</td>" +
-                  "<tr><td><b>paste</b>:    </td><td><code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</td>" +
-                  "</table>",
+                  "<ul>" +
+                  "<li><b>quickmark</b>: <code class=\"mapping\">go</code> and <code class=\"mapping\">gn</code> mappings</li>" +
+                  "<li><b>tabopen</b>:   <code class=\"command\">:tabopen[!]</code> command</li>" +
+                  "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
+                  "</ul>",
             default_value: "quickmark,tabopen,paste"
         }
     ));
