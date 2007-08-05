@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 function Events() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// CONSTRUCTOR /////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // this handler is for middle click only in the content
@@ -76,9 +76,31 @@ function Events() //{{{
         //alert("titlechanged");
     }, null);
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+    function isFormElemFocused()
+    {
+        var elt = window.document.commandDispatcher.focusedElement;
+        if (elt == null)
+            return false;
+
+        try
+        { // sometimes the elt doesn't have .localName
+            var tagname = elt.localName.toLowerCase();
+            var type = elt.type.toLowerCase();
+
+            if ( (tagname == "input" && (type != "image")) ||
+                    tagname == "textarea" ||
+                    //            tagName == "SELECT" ||
+                    //            tagName == "BUTTON" ||
+                    tagname == "isindex") // isindex is a deprecated one-line input box
+                return true;
+        }
+        catch (e)
+        {
+            // FIXME: do nothing?
+        }
+
+        return false;
+    }
 
     function onPageLoad(event)
     {

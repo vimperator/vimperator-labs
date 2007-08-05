@@ -536,7 +536,7 @@ function CommandLine() //{{{
     this.onMultilineInputEvent = function(event)
     {
         // for now we just receive keypress events
-        
+
         var key = event.toString();
         if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
         {

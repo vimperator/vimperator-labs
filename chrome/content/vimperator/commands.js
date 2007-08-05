@@ -1321,35 +1321,6 @@ function scrollBufferAbsolute(horizontal, vertical)
 }
 
 /////////////////////////////////////////////////////////////////////}}}
-// DOM related helper functions ////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-function isFormElemFocused()
-{
-    var elt = window.document.commandDispatcher.focusedElement;
-    if (elt == null)
-        return false;
-
-    try
-    { // sometimes the elt doesn't have .localName
-        var tagname = elt.localName.toLowerCase();
-        var type = elt.type.toLowerCase();
-
-        if ( (tagname == "input" && (type != "image")) ||
-                tagname == "textarea" ||
-                //            tagName == "SELECT" ||
-                //            tagName == "BUTTON" ||
-                tagname == "isindex") // isindex is a deprecated one-line input box
-            return true;
-    }
-    catch (e)
-    {
-        // FIXME: do nothing?
-    }
-
-    return false;
-}
-
-/////////////////////////////////////////////////////////////////////}}}
 // misc helper functions ///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
 
