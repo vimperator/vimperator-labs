@@ -1324,13 +1324,6 @@ function scrollBufferAbsolute(horizontal, vertical)
 // misc helper functions ///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{
 
-function copyToClipboard(str)
-{
-    var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-        .getService(Components.interfaces.nsIClipboardHelper);
-    clipboardHelper.copyString(str);
-}
-
 // returns an XPathResult object
 function evaluateXPath(expression, doc, ordered)
 {

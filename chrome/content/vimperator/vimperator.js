@@ -207,6 +207,13 @@ const vimperator = (function() //{{{
                 sound_service.beep();
         },
 
+        copyToClipboard: function(str)
+        {
+            var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+                .getService(Components.interfaces.nsIClipboardHelper);
+            clipboardHelper.copyString(str);
+        },
+
         execute: function(string, modifiers)
         {
             // skip comments and blank lines

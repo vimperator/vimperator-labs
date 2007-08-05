@@ -517,7 +517,7 @@ function Hints() //{{{
         // disable the hints before we can echo() an information
         this.disableHahMode(null, true);
 
-        copyToClipboard(loc);
+        vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc);
     };
 
@@ -540,7 +540,7 @@ function Hints() //{{{
         // disable the hints before we can echo() an information
         this.disableHahMode(null, true);
 
-        copyToClipboard(loc);
+        vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc);
     };
 

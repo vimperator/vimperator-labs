@@ -539,7 +539,7 @@ function Mappings() //{{{
         function()
         {
             var loc = getCurrentLocation();
-            copyToClipboard(loc);
+            vimperator.copyToClipboard(loc);
             vimperator.echo("Yanked " + loc);
         },
         {
@@ -551,7 +551,7 @@ function Mappings() //{{{
         function()
         {
             var sel = window.content.document.getSelection();
-            copyToClipboard(sel);
+            vimperator.copyToClipboard(sel);
             vimperator.echo("Yanked " + sel);
         },
         {
