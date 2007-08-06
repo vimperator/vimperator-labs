@@ -26,72 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function Option(names, type, extra_info) //{{{
-{
-    if (!names || !type)
-        return null;
-
-    this.name = names[0];
-    this.names = names;
-    this.type = type;
-
-    this.setter = function(value) { Options.setPref(this.name, value); };
-    this.getter = function() { return Options.getPref(this.name); };
-
-    if (extra_info)
-    {
-        if (extra_info.usage)
-            this.usage = extra_info.usage;
-        else
-            this.usage = this.names;
-
-        this.help = extra_info.help || null;
-        this.short_help = extra_info.short_help || null;
-
-        // "", 0 are valid default values
-        if (extra_info.default_value !== undefined)
-            this.default_value = extra_info.default_value;
-        else
-            this.default_value = null;
-
-        if (extra_info.setter)
-            this.setter = extra_info.setter;
-        if (extra_info.getter)
-            this.getter = extra_info.getter;
-
-        this.completer = extra_info.completer || null;
-        this.validator = extra_info.validator || null;
-    }
-
-    // add noOPTION variant of boolean OPTION to this.names
-    if (this.type == "boolean")
-    {
-        this.names = [];
-        for (var i = 0; i < names.length; i++)
-        {
-            this.names.push(names[i]);
-            this.names.push("no" + names[i]);
-        }
-    }
-
-    // NOTE: forced defaults need to use Options.getPref
-    Option.prototype.__defineGetter__("value", function() { return this.getter.call(this); });
-    Option.prototype.__defineSetter__("value", function(value) { this.setter.call(this, value); });
-
-    // TODO: add is[Type]() queries for use in set()?
-    //     : add isValid() or just throw an exception?
-
-    this.hasName = function(name)
-    {
-        for (var i = 0; i < this.names.length; i++)
-        {
-            if (this.names[i] == name)
-                return true;
-        }
-        return false;
-    }
-} //}}}
-
 function Options() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -182,9 +116,9 @@ function Options() //{{{
         }
         catch (e)
         {
-            //alert("error: " + e);
             pref = default_value;
         }
+
         return pref;
     }
 
@@ -227,6 +161,22 @@ function Options() //{{{
         document.title = window.content.document.title + " - " + value; // not perfect fix, but good enough
     }
 
+    //
+    // firefox preferences which we need to be changed to work well with vimperator
+    //
+
+    // work around firefox popup blocker
+    var popup_allowed_events = loadPreference('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
+    if (!popup_allowed_events.match("keypress"))
+        storePreference('dom.popup_allowed_events', popup_allowed_events + " keypress");
+
+    // TODO: should we be resetting these in destroy too?
+    // we have our own typeahead find implementation
+    storePreference('accessibility.typeaheadfind.autostart', false);
+    storePreference('accessibility.typeaheadfind', false); // actually the above setting should do it, but has no effect in firefox
+
+    storePreference("browser.startup.page", 3); // start with saved session
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -248,29 +198,103 @@ function Options() //{{{
 
     // TODO: separate Preferences from Options? Would these utility functions
     // be better placed in the 'core' vimperator namespace somewhere?
-    Options.setPref = function(name, value)
+    this.setPref = function(name, value)
     {
         return storePreference(name, value, true);
     }
 
-    Options.getPref = function(name, forced_default)
+    this.getPref = function(name, forced_default)
     {
         return loadPreference(name, forced_default, true);
     }
 
-    Options.setFirefoxPref = function(name, value)
+    this.setFirefoxPref = function(name, value)
     {
         return storePreference(name, value);
     }
 
-    Options.getFirefoxPref = function(name, forced_default)
+    this.getFirefoxPref = function(name, forced_default)
     {
         return loadPreference(name, forced_default);
+    }
+
+    this.destroy = function()
+    {
+        // reset some modified firefox prefs
+        if (this.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
+                == popup_allowed_events + " keypress")
+            this.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT OPTIONS /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
+    function Option(names, type, extra_info) //{{{
+    {
+        if (!names || !type)
+            return null;
+
+        this.name = names[0];
+        this.names = names;
+        this.type = type;
+
+        this.setter = function(value) { storePreference(this.name, value, true); };
+        this.getter = function() { return loadPreference(this.name, true); };
+
+        if (extra_info)
+        {
+            if (extra_info.usage)
+                this.usage = extra_info.usage;
+            else
+                this.usage = this.names;
+
+            this.help = extra_info.help || null;
+            this.short_help = extra_info.short_help || null;
+
+            // "", 0 are valid default values
+            if (extra_info.default_value !== undefined)
+                this.default_value = extra_info.default_value;
+            else
+                this.default_value = null;
+
+            if (extra_info.setter)
+                this.setter = extra_info.setter;
+            if (extra_info.getter)
+                this.getter = extra_info.getter;
+
+            this.completer = extra_info.completer || null;
+            this.validator = extra_info.validator || null;
+        }
+
+        // add noOPTION variant of boolean OPTION to this.names
+        if (this.type == "boolean")
+        {
+            this.names = [];
+            for (var i = 0; i < names.length; i++)
+            {
+                this.names.push(names[i]);
+                this.names.push("no" + names[i]);
+            }
+        }
+
+        // NOTE: forced defaults need to use vimperator.options.getPref
+        this.__defineGetter__("value", function() { return this.getter.call(this); });
+        this.__defineSetter__("value", function(value) { this.setter.call(this, value); });
+
+        // TODO: add is[Type]() queries for use in set()?
+        //     : add isValid() or just throw an exception?
+
+        this.hasName = function(name)
+        {
+            for (var i = 0; i < this.names.length; i++)
+            {
+                if (this.names[i] == name)
+                    return true;
+            }
+            return false;
+        }
+    } //}}}
 
     const DEFAULT_HINTTAGS = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
@@ -347,7 +371,7 @@ function Options() //{{{
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
                   "<li><b>s</b>: original Firefox statusbar</li></ul>",
-            setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
+            setter: function(value) { this.setPref("guioptions", value); setGuiOptions(value); },
             default_value: "",
             validator: function (value) { if (/[^mTbs]/.test(value)) return false; else return true; }
         }
@@ -422,7 +446,7 @@ function Options() //{{{
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li></ul>" +
                   "NOTE: Not fully implemented yet and buggy with stal=0",
-            setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
+            setter: function(value) { this.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
         }
@@ -433,7 +457,7 @@ function Options() //{{{
             help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
                   "\"Title of web page - Vimperator\".<br/>If you don't like that, you can restore it with: " +
                   "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
-            setter: function(value) { Options.setPref("titlestring", value); setTitleString(value); },
+            setter: function(value) { this.setPref("titlestring", value); setTitleString(value); },
             default_value: "Vimperator"
         }
     ));

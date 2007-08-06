@@ -84,7 +84,7 @@ function CommandLine() //{{{
     var multiline_callback = null;
 
     // load the commandline history
-    var hist = Options.getPref("commandline_history", "");
+    var hist = vimperator.options.getPref("commandline_history", "");
     history = hist.split("\n");
 
     // TODO: these styles should be moved to the .css file
@@ -564,7 +564,7 @@ function CommandLine() //{{{
     // it would be better if we had a destructor in javascript ...
     this.destroy = function()
     {
-        Options.setPref("commandline_history", history.join("\n"));
+        vimperator.options.setPref("commandline_history", history.join("\n"));
     }
     //}}}
 } //}}}
