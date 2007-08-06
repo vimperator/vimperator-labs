@@ -655,7 +655,7 @@ const vimperator = (function() //{{{
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
-                vimperator.source("~/.vimperatorrc", false);
+                vimperator.source("~/.vimperatorrc", true);
                 vimperator.log("~/.vimperatorrc sourced", 1);
 
                 // also source plugins in ~/.vimperator/plugin/
