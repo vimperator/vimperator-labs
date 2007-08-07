@@ -1006,7 +1006,7 @@ function Commands() //{{{
         function(args, special)
         {
             var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
-            if (vimperator.options["activate"].search(/\bquickmark\b/) > -1)
+            if (/\btabopen\b/.test(vimperator.options["activate"]))
                 where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
 
             if (args.length > 0)

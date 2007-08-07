@@ -378,7 +378,7 @@ function Mappings() //{{{
         function(mark)
         {
             vimperator.quickmarks.jumpTo(mark,
-                vimperator.options["activate"].search(/\bquickmark\b/) > -1 ?
+                /\bquickmark\b/.test(vimperator.options["activate"]) ?
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
@@ -394,7 +394,7 @@ function Mappings() //{{{
         function()
         {
             vimperator.open(readFromClipboard(),
-                vimperator.options["activate"].search(/\bpaste\b/) > -1 ?
+                /\bpaste\b/.test(vimperator.options["activate"]) ?
                 vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
         },
         {
@@ -489,7 +489,7 @@ function Mappings() //{{{
         function()
         {
             vimperator.open(readFromClipboard(),
-                vimperator.options["activate"].search(/\bpaste\b/) > -1 ?
+                /\bpaste\b/.test(vimperator.options["activate"]) ?
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
