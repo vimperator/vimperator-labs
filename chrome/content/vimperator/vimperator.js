@@ -69,8 +69,6 @@ const vimperator = (function() //{{{
 
 	var callbacks = [];
 
-    var popup_allowed_events; // need to change and reset this firefox pref XXX: move to options class
-
     // our services
     var sound_service = Components.classes['@mozilla.org/sound;1']
         .getService(Components.interfaces.nsISound);
@@ -626,17 +624,6 @@ const vimperator = (function() //{{{
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
 
-            // TODO: move most of the following code to Options constructor
-
-            // work around firefox popup blocker
-            popup_allowed_events = Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
-            if (!popup_allowed_events.match("keypress"))
-                Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events + " keypress");
-
-            // we have our own typeahead find implementation
-            Options.setFirefoxPref('accessibility.typeaheadfind.autostart', false);
-            Options.setFirefoxPref('accessibility.typeaheadfind', false); // actually the above setting should do it, but has no effect in firefox
-
             // first time intro message
             if (Options.getPref("firsttime", true))
             {
@@ -648,9 +635,6 @@ const vimperator = (function() //{{{
 
             //gURLBar.blur(); // TODO: needed anymore?
             vimperator.focusContent();
-
-            // firefox preferences which we need to be changed to work well with vimperator
-            Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
 
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
@@ -683,12 +667,8 @@ const vimperator = (function() //{{{
             // save our preferences
             vimperator.commandline.destroy();
             vimperator.events.destroy();
+            vimperator.options.destroy();
             vimperator.quickmarks.destroy();
-
-            // reset some modified firefox prefs
-            if (Options.getFirefoxPref('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
-                    == popup_allowed_events + " keypress")
-                Options.setFirefoxPref('dom.popup_allowed_events', popup_allowed_events);
         },
 
         // @param value MUST be a string, it can have the following form: "+20%", "200%", "-30"

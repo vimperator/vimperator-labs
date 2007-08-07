@@ -227,6 +227,23 @@ function Options() //{{{
         document.title = window.content.document.title + " - " + value; // not perfect fix, but good enough
     }
 
+    //
+    // firefox preferences which need to be changed to work well with vimperator
+    //
+
+    // work around firefox popup blocker
+    var popup_allowed_events = loadPreference('dom.popup_allowed_events', 'change click dblclick mouseup reset submit');
+    if (!popup_allowed_events.match("keypress"))
+        storePreference('dom.popup_allowed_events', popup_allowed_events + " keypress");
+
+    // TODO: shouldn't we be resetting these in destroy() as well?
+    // we have our own typeahead find implementation
+    storePreference('accessibility.typeaheadfind.autostart', false);
+    storePreference('accessibility.typeaheadfind', false); // actually the above setting should do it, but has no effect in firefox
+
+    // start with saved session
+    storePreference("browser.startup.page", 3);
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -244,6 +261,14 @@ function Options() //{{{
                 return options[i];
         }
         return null;
+    }
+
+    this.destroy = function()
+    {
+        // reset some modified firefox prefs
+        if (loadPreference('dom.popup_allowed_events', 'change click dblclick mouseup reset submit')
+                == popup_allowed_events + " keypress")
+            storePreference('dom.popup_allowed_events', popup_allowed_events);
     }
 
     // TODO: separate Preferences from Options? Would these utility functions
