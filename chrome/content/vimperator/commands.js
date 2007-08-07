@@ -274,10 +274,10 @@ function Commands() //{{{
             {
                 if (res.url == null)
                 {
-                    res.url = getCurrentLocation();
+                    res.url = vimperator.buffer.location;
                     // also guess title if the current url is :bmadded
                     if (res.title == null)
-                        res.title = getCurrentTitle();
+                        res.title = vimperator.buffer.title;
                 }
 
                 if (res.title == null) // title could still be null
@@ -309,7 +309,7 @@ function Commands() //{{{
             if (res)
             {
                 if (res.url == null)
-                    res.url = getCurrentLocation();
+                    res.url = vimperator.buffer.location;
 
                 var del = vimperator.bookmarks.remove(res.url);
                 vimperator.echo(del + " bookmark(s) with url `" + res.url + "' deleted");
@@ -983,7 +983,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["tabm[ove]"],
         function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
         {
-            usage: ["tabm[ove] [N]", "tabm[ove][!] [+|-N]"],
+            usage: ["tabm[ove] [N]", "tabm[ove][!] +N | -N"],
             short_help: "Move the current tab after tab N",
             help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
                   "N can also be prefixed with '+' or '-' to indicate a relative movement. If <code class=\"command\">!</code> is specified the movement wraps around the start or end of the tab list."
@@ -1053,7 +1053,7 @@ function Commands() //{{{
             if (matches1 && matches1[1])
                 vimperator.quickmarks.add(matches1[1], matches1[2]);
             else if (matches2 && matches2)
-                vimperator.quickmarks.add(matches2[1], getCurrentLocation());
+                vimperator.quickmarks.add(matches2[1], vimperator.buffer.location);
             else
                 vimperator.echoerr("E488: Trailing characters");
         },
@@ -1141,11 +1141,41 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["zo[om]"],
-        vimperator.zoom,
+        function(args)
         {
-            usage: ["zo[om] [+-]{value}[%]"],
+            var level;
+
+            if (args.length == 0)
+            {
+                level = 100;
+            }
+            else if (/^\d+$/.test(args))
+            {
+                level = parseInt(args);
+            }
+            else if (/^[+-]\d+$/.test(args))
+            {
+                level = vimperator.buffer.textZoom + parseInt(args);
+
+                // relative args shouldn't take us out of range
+                if (level < 1)
+                    level = 1;
+                if (level > 2000)
+                    level = 2000;
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            vimperator.buffer.textZoom = level;
+        },
+        {
+            usage: ["zo[om] [value]", "zo[om] +{value} | -{value}"],
             short_help: "Set zoom value of the web page",
-            help: "{value} can be an absolute value between 25 and 500% or a relative value if prefixed with - or +. If {value} is omitted, zoom is reset to 100%."
+            help: "{value} can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
+                  "If {value} is omitted, zoom is reset to 100%."
         }
     ));
     //}}}
@@ -1163,7 +1193,7 @@ String.prototype.toURLArray = function()
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
-            var newLocation = getCurrentLocation();
+            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1");
             if (urls[url].match(/^\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
@@ -1173,7 +1203,7 @@ String.prototype.toURLArray = function()
         }
         else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
         {
-            var newLocation = getCurrentLocation();
+            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1/../");
             if (urls[url].match(/^\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
@@ -1183,7 +1213,7 @@ String.prototype.toURLArray = function()
         }
         else if (urls[url].match(/^(\.\.\.$|\.\.\.\/[\S]*)/))
         {
-            var newLocation = getCurrentLocation();
+            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+):\/\/\/?(\S+?)\/\S*/, "$1://$2/");
             if (urls[url].match(/^\.\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
@@ -1250,74 +1280,6 @@ function isDirectory(url)
         return true;
     else
         return false;
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// location handling ///////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-function getCurrentLocation()
-{
-    return window.content.document.location.href;
-}
-
-/* returns the current title or null */
-function getCurrentTitle()
-{
-    return window.content.document.title;
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// scrolling ///////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-function scrollBufferRelative(right, down)
-{
-    var win = window.document.commandDispatcher.focusedWindow;
-    //var win = window.content; // XXX: This would fix scrolling when the tab has focus, but breaks when it has frames --MST
-    if (vimperator.input.count < 1)
-        vimperator.input.count = 1;
-
-    // beep if we can't go there
-    if (down > 0)
-    {
-        if (win.scrollY == win.scrollMaxY) vimperator.beep();
-    }
-    else if (down < 0)
-    {
-        if (win.scrollY == 0) vimperator.beep();
-    }
-
-    if (right > 0)
-    {
-        if (win.scrollX == win.scrollMaxX) vimperator.beep();
-    }
-    else if (right < 0)
-    {
-        if (win.scrollX == 0) vimperator.beep();
-    }
-
-    win.scrollBy(vimperator.input.count * right * 20, vimperator.input.count * down * 20);
-}
-
-/* both values are given in percent, -1 means no change */
-function scrollBufferAbsolute(horizontal, vertical)
-{
-    var win = document.commandDispatcher.focusedWindow;
-    //var win = window.content;
-    var horiz, vert;
-
-    if (horizontal < 0)
-        horiz = win.scrollX;
-    else
-        horiz = win.scrollMaxX/100 * horizontal;
-
-    if (vertical < 0)
-        vert = win.scrollY;
-    else
-        vert = win.scrollMaxY/100 * vertical;
-
-    win.scrollTo(horiz, vert);
 }
 
 /////////////////////////////////////////////////////////////////////}}}

@@ -40,18 +40,19 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript;version=1.7" src="vimperator.js"/>
-    <script type="application/x-javascript;version=1.7" src="events.js"/>
-    <script type="application/x-javascript;version=1.7" src="tabs.js"/>
-    <script type="application/x-javascript;version=1.7" src="help.js"/>
-    <script type="application/x-javascript;version=1.7" src="commands.js"/>
-    <script type="application/x-javascript;version=1.7" src="ui.js"/>
-    <script type="application/x-javascript;version=1.7" src="options.js"/>
-    <script type="application/x-javascript;version=1.7" src="completion.js"/>
     <script type="application/x-javascript;version=1.7" src="bookmarks.js"/>
-    <script type="application/x-javascript;version=1.7" src="hints.js"/>
+    <script type="application/x-javascript;version=1.7" src="buffers.js"/>
+    <script type="application/x-javascript;version=1.7" src="commands.js"/>
+    <script type="application/x-javascript;version=1.7" src="completion.js"/>
+    <script type="application/x-javascript;version=1.7" src="events.js"/>
     <script type="application/x-javascript;version=1.7" src="file.js"/>
     <script type="application/x-javascript;version=1.7" src="find.js"/>
+    <script type="application/x-javascript;version=1.7" src="help.js"/>
+    <script type="application/x-javascript;version=1.7" src="hints.js"/>
     <script type="application/x-javascript;version=1.7" src="mappings.js"/>
+    <script type="application/x-javascript;version=1.7" src="options.js"/>
+    <script type="application/x-javascript;version=1.7" src="tabs.js"/>
+    <script type="application/x-javascript;version=1.7" src="ui.js"/>
 
     <window id="main-window">
         <toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
@@ -111,7 +112,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <keyset id="mainKeyset">
            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', MODE_EX);" modifiers=""/>
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
-           <!--key id="key_a" key="a" oncommand="alert('a'); scrollBufferRelative(0, 1);"!/-->
+           <!--key id="key_a" key="a" oncommand="alert('a'); vimperator.buffer.scrollRelative(0, 1);"!/-->
            <!-- other keys are handled inside vimperator.js event loop -->
         </keyset>
     </window>

@@ -296,7 +296,7 @@ function Mappings() //{{{
     // {{{
 
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["'", "`"],
-        function(mark) { vimperator.marks.jumpTo(mark) },
+        function(arg) { vimperator.marks.jumpTo(arg) },
         {
             short_help: "Jump to the mark in the current buffer",
             usage: ["'{a-zA-Z0-9}"],
@@ -305,7 +305,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"],
-        function(count) { vimperator.shiftFrameFocus(count > 1 ? count : 1, true); },
+        function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
             help: "Transfers keyboard focus to the [count]th next frame in order. The newly focused frame is briefly colored red.",
@@ -313,7 +313,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["[f"],
-        function(count) { vimperator.shiftFrameFocus(count > 1 ? count : 1, false); },
+        function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
         {
             short_help: "Focus previous frame",
             help: "Transfers keyboard focus to the [count]th previous frame in order. The newly focused frame is briefly colored red.",
@@ -365,7 +365,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["go"],
-        function(mark) { vimperator.quickmarks.jumpTo(mark, vimperator.CURRENT_TAB) },
+        function(arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB) },
         {
             short_help: "Jump to a QuickMark in the current tab",
             usage: ["go{a-zA-Z0-9}"],
@@ -375,7 +375,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gn"],
-        function(mark)
+        function(arg)
         {
             vimperator.quickmarks.jumpTo(mark,
                 /\bquickmark\b/.test(vimperator.options["activate"]) ?
@@ -446,7 +446,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["m"],
-        function(mark) { vimperator.marks.add(mark) },
+        function(arg) { vimperator.marks.add(arg) },
         {
             short_help: "Set mark at the cursor position",
             usage: ["m{a-zA-Z0-9}"],
@@ -455,7 +455,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["M"],
-        function(mark) { vimperator.quickmarks.add(mark, getCurrentLocation()) },
+        function(arg) { vimperator.quickmarks.add(arg, vimperator.buffer.location) },
         {
             short_help: "Add new QuickMark for current URL",
             usage: ["M{a-zA-Z0-9}"],
@@ -472,7 +472,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["O"],
-        function() { vimperator.commandline.open(":", "open " + getCurrentLocation(), vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "open " + vimperator.buffer.location, vimperator.modes.EX); },
         {
             short_help: "Open one or more URLs in the current tab, based on current location",
             help: "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query."
@@ -521,7 +521,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["T"],
-        function() { vimperator.commandline.open(":", "tabopen " + getCurrentLocation(), vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.location, vimperator.modes.EX); },
         {
             short_help: "Open one ore more URLs in a new tab, based on current location",
             help: "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query."
@@ -560,7 +560,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zi", "+"],
-        function(count) { vimperator.zoom("+" + (count > 0 ? count * 25 : 25) + "%"); },
+        function(count) { vimperator.buffer.zoomIn(count > 0 ? count : 1); },
         {
             short_help: "Zoom in current web page by 25%",
             help: "Currently no count supported.",
@@ -568,7 +568,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zI"],
-        function(count) { vimperator.zoom("+" + (count > 0 ? count * 100 : 100) + "%"); },
+        function(count) { vimperator.buffer.zoomIn((count > 0 ? count : 1) * 4); },
         {
             short_help: "Zoom in current web page by 100%",
             help: "Currently no count supported.",
@@ -576,7 +576,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zo", "-"],
-        function(count) { vimperator.zoom("-" + (count > 0 ? count * 25 : 25) + "%"); },
+        function(count) { vimperator.buffer.zoomOut(count > 0 ? count : 1); },
         {
             short_help: "Zoom out current web page by 25%",
             help: "Currently no count supported.",
@@ -584,7 +584,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zO"],
-        function(count) { vimperator.zoom("-" + (count > 0 ? count * 100 : 100) + "%"); },
+        function(count) { vimperator.buffer.zoomOut((count > 0 ? count : 1) * 4); },
         {
             short_help: "Zoom out current web page by 100%",
             help: "Currently no count supported.",
@@ -592,7 +592,8 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zz"],
-        function(count) { vimperator.zoom(count > 0 ? "" + count + "%" : "100%"); },
+        // FIXME: does it make sense to use count for this?  Just use it for returning to 100%?
+        function(count) { vimperator.buffer.textZoom = count > 0 ? count : 100; },
         {
             short_help: "Set zoom value of the web page",
             help: "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
@@ -617,20 +618,20 @@ function Mappings() //{{{
 
     // scrolling commands
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["0", "^"],
-        function() { scrollBufferAbsolute(0, -1); },
+        function() { vimperator.buffer.scrollAbsolute(0, -1); },
         {
             short_help: "Scroll to the absolute left of the document",
             help: "Unlike in vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["$"],
-        function() { scrollBufferAbsolute(100, -1); },
+        function() { vimperator.buffer.scrollAbsolute(100, -1); },
         {
             short_help: "Scroll to the absolute right of the document"
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gg", "<Home>"],
-        function(count) { scrollBufferAbsolute(-1, count >  0 ? count : 0); },
+        function(count) { vimperator.buffer.scrollAbsolute(-1, count >  0 ? count : 0); },
         {
             short_help: "Goto the top of the document",
             help: "Count is supported, <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
@@ -638,7 +639,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["G", "<End>"],
-        function(count) { scrollBufferAbsolute(-1, count >= 0 ? count : 100); },
+        function(count) { vimperator.buffer.scrollAbsolute(-1, count >= 0 ? count : 100); },
         {
             short_help: "Goto the end of the document",
             help: "Count is supported, <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
@@ -646,7 +647,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["h", "<Left>"],
-        function(count) { scrollBufferRelative(-1, 0); },
+        function(count) { vimperator.buffer.scrollRelative(count > 1 ? -count : -1, 0); },
         {
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
@@ -655,7 +656,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["j", "<Down>", "<C-e>"],
-        function(count) { scrollBufferRelative(0, 1); },
+        function(count) { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
         {
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
@@ -664,7 +665,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["k", "<Up>", "<C-y>"],
-        function(count) { scrollBufferRelative(0, -1); },
+        function(count) { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
         {
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
@@ -673,7 +674,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["l", "<Right>"],
-        function(count) { scrollBufferRelative(1, 0); },
+        function(count) { vimperator.buffer.scrollRelative(count > 1 ? count : 1, 0); },
         {
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
@@ -733,7 +734,7 @@ function Mappings() //{{{
         function(count)
         {
             var gocmd = "";
-            if (isDirectory(getCurrentLocation()))
+            if (isDirectory(vimperator.buffer.location))
                 gocmd = "../";
             else
                 gocmd = "./";
@@ -950,28 +951,28 @@ function Mappings() //{{{
 
     // movement keys
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-e>"],
-        function() { scrollBufferRelative(0, 1); },
+        function() { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-y>"],
-        function() { scrollBufferRelative(0, -1); },
+        function() { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Home>"],
-        function() { scrollBufferAbsolute(-1, 0); },
+        function() { vimperator.buffer.scrollAbsolute(-1, 0); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<End>"],
-        function() { scrollBufferAbsolute(-1, 100); },
+        function() { vimperator.buffer.scrollAbsolute(-1, 100); },
         {
             cancel_mode: false,
             always_active: true
@@ -1006,28 +1007,28 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Left>"],
-        function() { scrollBufferRelative(-1, 0); },
+        function() { vimperator.buffer.scrollRelative(count > 1 ? -count : -1, 0); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Down>"],
-        function() { scrollBufferRelative(0, 1); },
+        function() { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Up>"],
-        function() { scrollBufferRelative(0, -1); },
+        function() { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Right>"],
-        function() { scrollBufferRelative(1, 0); },
+        function() { vimperator.buffer.scrollRelative(count > 1 ? count : 1, 0); },
         {
             cancel_mode: false,
             always_active: true

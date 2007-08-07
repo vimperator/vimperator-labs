@@ -808,7 +808,7 @@ function StatusLine() //{{{
     this.updateUrl = function(url)
     {
         if (!url || typeof url != "string")
-            url = getCurrentLocation();
+            url = vimperator.buffer.location;
 
         url_widget.value = url;
     };

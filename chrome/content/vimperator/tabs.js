@@ -26,7 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-/** provides functions for working with tabs
+/**
+ * provides functions for working with tabs
  * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
  * Firefox 3.0, then this class should go away and their tab methods should be used
  * @deprecated
@@ -36,6 +37,7 @@ function Tabs() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     /** @param spec can either be:
      * - an absolute integer
      * - "" for the current tab
@@ -83,6 +85,7 @@ function Tabs() //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     // @returns the index of the currently selected tab starting with 0
     this.index = function(tab)
     {
@@ -186,17 +189,6 @@ function Tabs() //{{{
     }
 
     this.alternate = this.getTab();
-
-    // updates the buffer preview in place only if list is visible
-    this.updateBufferList = function()
-    {
-        if (!vimperator.bufferwindow.visible())
-            return false;
-
-        var items = get_buffer_completions("");
-        vimperator.bufferwindow.show(items);
-        vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-    }
 
     this.reload = function(tab, bypass_cache)
     {

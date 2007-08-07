@@ -41,21 +41,21 @@ function Events() //{{{
     var tabcontainer = getBrowser().tabContainer;
     tabcontainer.addEventListener("TabMove",   function(event) {
         vimperator.statusline.updateTabCount()
-        vimperator.tabs.updateBufferList();
+        vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
-        vimperator.tabs.updateBufferList();
+        vimperator.buffer.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
-        vimperator.tabs.updateBufferList();
+        vimperator.buffer.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
-        vimperator.tabs.updateBufferList();
+        vimperator.buffer.updateBufferList();
         vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
     }, false);
@@ -118,11 +118,11 @@ function Events() //{{{
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
-            vimperator.tabs.updateBufferList();
+            vimperator.buffer.updateBufferList();
 
             //update history
-            var url = getCurrentLocation();
-            var title = getCurrentTitle(); // not perfect "- Vimperator" in the title
+            var url = vimperator.buffer.location;
+            var title = vimperator.buffer.title;
             vimperator.history.add(url, title);
 
             // code which is only relevant if the page load is the current tab goes here:
