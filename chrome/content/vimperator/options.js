@@ -421,6 +421,14 @@ function Options() //{{{
             validator: function (value) { if (value>=1 && value <=50) return true; else return false; }
         }
     ));
+    addOption(new Option(["scroll", "scr"], "number",
+        {
+            short_help: "Number of lines to scroll with <code class=\"mapping\">C-u</code> and <code class=\"mapping\">C-d</code> commands",
+            help: "TODO",
+            default_value: 0,
+            validator: function (value) { if (value >= 0) return true; else return false; }
+        }
+    ));
     addOption(new Option(["showmode", "smd"], "boolean",
         {
             short_help: "Show the current mode in the command line",
@@ -436,7 +444,7 @@ function Options() //{{{
                   "<li><b>1</b>: Show the link in the status line</li>" +
                   "<li><b>2</b>: Show the link in the command line</li></ul>",
             default_value: 1,
-            validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
+            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
     addOption(new Option(["showtabline", "stal"], "number",

@@ -892,7 +892,7 @@ function Commands() //{{{
                             if (oper == '-') num = cur_val - num;
                             // FIXME
                             if (option.validator != null && option.validator.call(this, num) == false)
-                                vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
+                                vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val); // FIXME: need to be able to specify unique parse error messages
                             else // all checks passed, execute option handler
                                 option.value = num;
                         }

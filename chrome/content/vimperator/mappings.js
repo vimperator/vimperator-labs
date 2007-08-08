@@ -308,7 +308,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
-            help: "Transfers keyboard focus to the [count]th next frame in order. The newly focused frame is briefly colored red.",
+            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th next frame in order. The newly focused frame is briefly colored red.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -316,7 +316,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
         {
             short_help: "Focus previous frame",
-            help: "Transfers keyboard focus to the [count]th previous frame in order. The newly focused frame is briefly colored red.",
+            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th previous frame in order. The newly focused frame is briefly colored red.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -673,6 +673,39 @@ function Mappings() //{{{
             flags: Mappings.flags.COUNT
         }
     ));
+    function getScrollSize(count)
+    {
+        var lines;
+
+        if (count > 1)
+            vimperator.options["scroll"] = count;
+
+        if (vimperator.options["scroll"] == 0) // the default value of half a page
+            // FIXME: when updating the scroll methods in v.buffer!
+            lines = vimperator.buffer.pageHeight / (2 * 20); // NOTE: a line is currently 20 pixels rather than a true line.
+        else
+            lines = vimperator.options["scroll"];
+
+        return lines;
+    }
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-d>"],
+        function(count) { vimperator.buffer.scrollRelative(0, getScrollSize(count)); },
+        {
+            short_help: "Scroll window downwards in the buffer",
+            help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
+                  "If <code class=\"argument\">[count]</code> is given <code class=\"option\">'scroll'</code> is first set to this value.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-u>"],
+        function(count) { vimperator.buffer.scrollRelative(0, -getScrollSize(count)); },
+        {
+            short_help: "Scroll window upwards in the buffer",
+            help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
+                  "If <code class=\"argument\">[count]</code> is given <code class=\"option\">'scroll'</code> is first set to this value.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["l", "<Right>"],
         function(count) { vimperator.buffer.scrollRelative(count > 1 ? count : 1, 0); },
         {
@@ -682,14 +715,14 @@ function Mappings() //{{{
             flags: Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-b>", "<C-u>", "<PageUp>", "<S-Space>"],
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-b>", "<PageUp>", "<S-Space>"],
         function() { goDoCommand('cmd_scrollPageUp'); },
         {
             short_help: "Scroll up a full page of the current document",
             help: "No count support for now."
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-f>", "<C-d>", "<PageDown>", "<Space>"],
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-f>", "<PageDown>", "<Space>"],
         function() { goDoCommand('cmd_scrollPageDown'); },
         {
             short_help: "Scroll down a full page of the current document",

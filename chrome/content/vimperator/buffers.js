@@ -75,6 +75,11 @@ function Buffer() //{{{
         return window.content.document.location.href;
     });
 
+    this.__defineGetter__("pageHeight", function()
+    {
+        return getBrowser().mPanelContainer.boxObject.height; // FIXME: best way to do this?
+    });
+
     this.__defineGetter__("textZoom", function()
     {
         return zoom_manager.textZoom;

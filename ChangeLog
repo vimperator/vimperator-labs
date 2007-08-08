@@ -1,6 +1,8 @@
 <pre>
 2007-07-02:
 	* version 0.5
+	* Ctrl-U/Ctrl-D for scrolling the window up/down and the associated
+	'scroll' option
 	* files in ~/.vimperator/plugin/ are auto-sourced
 	* :winopen support (multiple windows still very very experimental)
 	* 'activate' option implemented
