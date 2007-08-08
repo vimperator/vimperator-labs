@@ -1258,30 +1258,6 @@ String.prototype.toURLArray = function()
     return urls;
 }
 
-/* returns true if the currently loaded URI is
- * a directory or false if it is a file
- */
-function isDirectory(url)
-{
-    if (url.match(/^file:\/\//) || url.match(/^\//))
-    {
-        var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-        var file = vimperator.fopen(stripedFilename, '<');
-        if (!file)
-            return false;
-
-        if (file.localFile.isDirectory())
-            return true;
-        else
-            return false;
-    }
-    // for all other locations just check if the URL ends with /
-    if (url.match(/\/$/))
-        return true;
-    else
-        return false;
-}
-
 /////////////////////////////////////////////////////////////////////}}}
 // misc helper functions ///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////{{{

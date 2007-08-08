@@ -759,6 +759,26 @@ function Mappings() //{{{
             flags: Mappings.flags.COUNT
         }
     ));
+    function isDirectory(url)
+    {
+        if (url.match(/^file:\/\//) || url.match(/^\//))
+        {
+            var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
+            var file = vimperator.fopen(stripedFilename, '<');
+            if (!file)
+                return false;
+
+            if (file.localFile.isDirectory())
+                return true;
+            else
+                return false;
+        }
+        // for all other locations just check if the URL ends with /
+        if (url.match(/\/$/))
+            return true;
+        else
+            return false;
+    }
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gu", "<BS>"],
         function(count)
         {
