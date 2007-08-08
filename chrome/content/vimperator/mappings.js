@@ -47,7 +47,7 @@ function Map(mode, cmds, action, extra_info) //{{{
         {
             this.usage = this.names[0]; // only the first command name
             if (this.flags & Mappings.flags.COUNT)
-                this.usage = "{count}" + this.usage;
+                this.usage = "[count]" + this.usage;
             if (this.flags & Mappings.flags.ARGUMENT)
                 this.usage += " {arg}";
             this.usage = [this.usage]; // FIXME: usage an array - needed for the help
@@ -406,7 +406,7 @@ function Mappings() //{{{
         function(count) { vimperator.tabs.select(count > 0 ? count -1: "+1", count > 0 ? false : true); },
         {
             short_help: "Go to the next tab",
-            help: "Cycles to the first tab, when the last is selected.<br/>Count is supported, <code class=\"mapping\">3gt</code> goes to the third tab.",
+            help: "Cycles to the first tab, when the last is selected.<br/>Count is supported: <code class=\"mapping\">3gt</code> goes to the third tab.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -414,7 +414,7 @@ function Mappings() //{{{
         function(count) { vimperator.tabs.select(count > 0 ? count -1: "-1", count > 0 ? false : true); },
         {
             short_help: "Go to the previous tab",
-            help: "Cycles to the last tab, when the first is selected.<br/>Count is supported, <code class=\"mapping\">3gT</code> goes to the third tab.",
+            help: "Cycles to the last tab, when the first is selected.<br/>Count is supported: <code class=\"mapping\">3gT</code> goes to the third tab.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -531,7 +531,7 @@ function Mappings() //{{{
         function(count) { vimperator.commands.undo("", false, count); },
         {
             short_help: "Undo closing of a tab",
-            help: "If a count is given, don't close the last but the n'th last tab.",
+            help: "If a count is given, don't close the last but the <code class=\"argument\">count</code>th last tab.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -563,7 +563,6 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.zoomIn(count > 0 ? count : 1); },
         {
             short_help: "Zoom in current web page by 25%",
-            help: "Currently no count supported.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -571,7 +570,6 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.zoomIn((count > 0 ? count : 1) * 4); },
         {
             short_help: "Zoom in current web page by 100%",
-            help: "Currently no count supported.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -579,7 +577,6 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.zoomOut(count > 0 ? count : 1); },
         {
             short_help: "Zoom out current web page by 25%",
-            help: "Currently no count supported.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -587,7 +584,6 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.zoomOut((count > 0 ? count : 1) * 4); },
         {
             short_help: "Zoom out current web page by 100%",
-            help: "Currently no count supported.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -596,7 +592,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.textZoom = count > 0 ? count : 100; },
         {
             short_help: "Set zoom value of the web page",
-            help: "Zoom value can be between 25 and 500%. If it is omitted, zoom is reset to 100%.",
+            help: "Zoom value can be between 1 and 2000%. If it is omitted, zoom is reset to 100%.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -634,7 +630,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.scrollAbsolute(-1, count >  0 ? count : 0); },
         {
             short_help: "Goto the top of the document",
-            help: "Count is supported, <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
+            help: "Count is supported: <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -642,7 +638,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.scrollAbsolute(-1, count >= 0 ? count : 100); },
         {
             short_help: "Goto the end of the document",
-            help: "Count is supported, <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
+            help: "Count is supported: <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -751,7 +747,7 @@ function Mappings() //{{{
         function(count) { vimperator.history.stepTo(count > 0 ? -1 * count : -1); },
         {
             short_help: "Go back in the browser history",
-            help: "Count is supported, <code class=\"mapping\">3H</code> goes back 3 steps.",
+            help: "Count is supported: <code class=\"mapping\">3H</code> goes back 3 steps.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -759,7 +755,7 @@ function Mappings() //{{{
         function(count) { vimperator.history.stepTo(count > 0 ? count : 1); },
         {
             short_help: "Go forward in the browser history",
-            help: "Count is supported, <code class=\"mapping\">3L</code> goes forward 3 steps.",
+            help: "Count is supported: <code class=\"mapping\">3L</code> goes forward 3 steps.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -782,7 +778,7 @@ function Mappings() //{{{
         },
         {
             short_help: "Go to parent directory",
-            help: "Count is supported, <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>.",
+            help: "Count is supported: <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>.",
             flags: Mappings.flags.COUNT
         }
     ));

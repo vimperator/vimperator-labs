@@ -62,10 +62,10 @@ vimperator.help = function(section, easter) //{{{
                 usage = usage.replace(/</g, "&lt;");
                 usage = usage.replace(/>/g, "&gt;");
                 usage = usage.replace(/\\n/g, "<br/>");
-                // color {count}, [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
-                usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                  // required args
-                usage = usage.replace(/([^A-Za-z])(\[[^!\]]+\])/g, "$1<span class=\"argument\">$2</span>"); // optional args
-                usage = usage.replace(/\[!\]/, "<span class=\"argument\">[!]</span>");                      // special
+                // color [count], [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
+                usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                    // required args
+                usage = usage.replace(/(^|[^A-Za-z])(\[[^!\]]+\])/g, "$1<span class=\"argument\">$2</span>"); // optional args
+                usage = usage.replace(/\[!\]/, "<span class=\"argument\">[!]</span>");                        // special
                 // and the 'option' in a different color
                 usage = usage.replace(/^'(\w+)'/gm, "'<span class=\"option\">$1</span>'");
                 ret += "<code>" + beg + usage + end + '</code><br/>';

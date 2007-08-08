@@ -243,7 +243,7 @@ function Commands() //{{{
                 vimperator.history.stepTo(count > 0 ? -1 * count : -1);
         },
         {
-            usage: ["{count}ba[ck][!]"],
+            usage: ["[count]ba[ck][!]"],
             short_help: "Go back in the browser history",
             help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history."
@@ -252,7 +252,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
         {
-            usage: ["{count}bd[elete][!]"],
+            usage: ["[count]bd[elete][!]"],
             short_help: "Delete current buffer (=tab)",
             help: "Count WILL be supported in future releases, then <code class=\"command\">:2bd</code> removes two tabs and the one to the right is selected.<br/>Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab."
         }
@@ -475,7 +475,7 @@ function Commands() //{{{
                 vimperator.history.stepTo(count > 0 ? count : 1);
         },
         {
-            usage: ["{count}fo[rward][!]"],
+            usage: ["[count]fo[rward][!]"],
             short_help: "Go forward in the browser history",
             help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history."
@@ -1040,7 +1040,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["u[ndo]"],
         function(args, special, count) { if (count < 1) count = 1; undoCloseTab(count-1); },
         {
-            usage: ["{count}u[ndo]"],
+            usage: ["[count]u[ndo]"],
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the n'th last tab."
         }
