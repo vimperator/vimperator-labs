@@ -257,7 +257,7 @@ function Buffer() //{{{
         if (!vimperator.bufferwindow.visible())
             return false;
 
-        var items = get_buffer_completions("");
+        var items = vimperator.completion.get_buffer_completions("");
         vimperator.bufferwindow.show(items);
         vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
     }

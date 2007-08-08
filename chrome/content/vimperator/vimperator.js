@@ -532,7 +532,7 @@ const vimperator = (function() //{{{
 
             // TODO: move elsewhere
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
-            vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return exTabCompletion(str); } );
+            vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return vimperator.completion.exTabCompletion(str); } );
 
             // first time intro message
             if (Options.getPref("firsttime", true))

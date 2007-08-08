@@ -323,7 +323,7 @@ function Commands() //{{{
             help: "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list <br/>",
-            completer: function(filter) { return get_bookmark_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["bookm[arks]", "bm"],
@@ -335,7 +335,7 @@ function Commands() //{{{
                   "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list <br/>",
-            completer: function(filter) { return get_bookmark_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["b[uffer]"],
@@ -356,7 +356,7 @@ function Commands() //{{{
             usage: ["b[uffer] {url|index}"],
             short_help: "Go to buffer from buffer list",
             help: "Argument can be either the buffer index or the full URL.",
-            completer: function(filter) { return get_buffer_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
@@ -367,7 +367,7 @@ function Commands() //{{{
                 vimperator.bufferwindow.hide();
             else
             {
-                var items = get_buffer_completions("");
+                var items = vimperator.completion.get_buffer_completions("");
                 vimperator.bufferwindow.show(items);
                 vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
             }
@@ -501,7 +501,7 @@ function Commands() //{{{
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
                   "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
-            completer: function(filter) { return get_help_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_help_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["hist[ory]", "hs"],
@@ -511,7 +511,7 @@ function Commands() //{{{
             short_help: "Show recently visited URLs",
             help: "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL. " +
                   "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
-            completer: function(filter) { return get_history_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_history_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["javas[cript]", "js"],
@@ -754,7 +754,7 @@ function Commands() //{{{
                   "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
-            completer: function(filter) { return get_url_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["pc[lose]"],
@@ -937,7 +937,7 @@ function Commands() //{{{
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>" +
                   "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>" +
                   "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
-            completer: function(filter) { return get_options_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["so[urce]"],
@@ -954,7 +954,7 @@ function Commands() //{{{
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
                   "~ is supported as a shortcut for the $HOME directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
-            completer: function(filter) { return get_file_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_file_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["st[op]"],
@@ -971,7 +971,7 @@ function Commands() //{{{
             short_help: "Execute {cmd} and tell it to output in a new tab",
             help: "Works for only commands that support it.<br/>" +
                   "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
-            completer: function(filter) { return get_command_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_command_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["tabl[ast]"],
@@ -1019,7 +1019,7 @@ function Commands() //{{{
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
-            completer: function(filter) { return get_url_completions(filter); }
+            completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],

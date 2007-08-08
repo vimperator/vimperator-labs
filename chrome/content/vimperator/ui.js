@@ -491,7 +491,7 @@ function CommandLine() //{{{
                 else
                 {
                     if (longest && completions.length > 1)
-                        var compl = get_longest_substring();
+                        var compl = vimperator.completion.get_longest_substring();
                     else if (full)
                         var compl = completions[completion_index][0];
                     else if (completions.length == 1)
