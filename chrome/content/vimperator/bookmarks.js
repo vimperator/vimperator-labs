@@ -423,10 +423,6 @@ function History() //{{{
         else
         {
             vimperator.beep();
-            if (index < 0)
-                vimperator.echo("Cannot go past beginning of history");
-            else
-                vimperator.echo("Cannot go past end of history");
         }
     }
 
@@ -435,7 +431,7 @@ function History() //{{{
         var index = getWebNavigation().sessionHistory.index;
         if (index == 0)
         {
-            vimperator.echo("Already at beginning of history");
+            vimperator.beep();
             return;
         }
         getWebNavigation().gotoIndex(0);
@@ -447,7 +443,7 @@ function History() //{{{
         var max = getWebNavigation().sessionHistory.count -1;
         if (index == max)
         {
-            vimperator.echo("Already at end of history");
+            vimperator.beep();
             return;
         }
         getWebNavigation().gotoIndex(max);
