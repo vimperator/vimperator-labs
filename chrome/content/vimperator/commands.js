@@ -1109,7 +1109,7 @@ function Commands() //{{{
             if (special)
                 vimperator.open("about:");
             else
-                vimperator.echo("Vimperator version: " + vimperator.version);
+                vimperator.echo("Vimperator " + vimperator.version);
         },
         {
             usage: ["ve[rsion][!]"],

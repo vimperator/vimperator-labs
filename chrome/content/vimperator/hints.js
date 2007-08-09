@@ -44,7 +44,7 @@ function Hints() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     // hint activating and loading related functions
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     function startCoordLoader(doc)
     {
         win = doc.defaultView;
@@ -662,7 +662,7 @@ function Hints() //{{{
             linkNumString = '';
             isHahModeEnabled = true;
 
-            setTimeout( function() { 
+            setTimeout( function() {
                 createHints();
                 showHints(null, 0);
             }, 100);
