@@ -503,12 +503,12 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for(i=0; i<elems.length; i++)
+        for(i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.href;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
             {
-                if (i > 0)
+                if (i > 0 && elems.length > 1)
                     loc += "\n";
                 loc += tmp;
             }
@@ -526,12 +526,12 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for(i=0; i<elems.length; i++)
+        for(i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.textContent;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
             {
-                if (i > 0)
+                if (i > 0 && elems.length > 1)
                     loc += "\n";
                 loc += tmp;
             }
