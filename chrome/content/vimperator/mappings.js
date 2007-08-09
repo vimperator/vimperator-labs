@@ -538,7 +538,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["y"],
         function()
         {
-            var loc = getCurrentLocation();
+            var loc = vimperator.buffer.location;
             vimperator.copyToClipboard(loc);
             vimperator.echo("Yanked " + loc);
         },
