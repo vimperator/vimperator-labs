@@ -15,6 +15,7 @@ BUGS:
 - can't reverse tab through the vimperator toolbar
 - gu doesn't work when the current URL contains a trailing slash
 - gu and gU don't work on local files properly
+- http://www.suckless.org/pipermail/dwm/2007-July/003075.html
 
 FEATURES:
 9 :command for new commands

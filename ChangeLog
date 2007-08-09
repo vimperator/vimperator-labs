@@ -6,7 +6,7 @@
 	* files in ~/.vimperator/plugin/ are auto-sourced
 	* :winopen support (multiple windows still very very experimental)
 	* 'activate' option implemented
-	* search enginges which use POST instead of GET work now
+	* search engines which use POST instead of GET work now
 	* :javascript <<EOF uses a better multiline input widget now
 	* new :map, :noremap, :mapclear and :unmap commands
 	* :saveas finally works (by calmar)
@@ -20,7 +20,7 @@
 	* The RSS feed button in the address bar works again
 	* reload/stop buttons update enabled state again
 	* added local/url marks support (thanks Viktor Kojouharov)
-	* temporary shortcut Y to yank current selection (for non UNIX-users)
+	* temporary shortcut Y to yank current selection (for non X11-users)
 	* Flashing frame with ]f now works as expected
 	* many help fixes (most of them by Doug Kearns)
 	* new :reloadall command

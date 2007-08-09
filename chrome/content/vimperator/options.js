@@ -302,16 +302,17 @@ function Options() //{{{
                              "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select"
 
-    addOption(new Option(["activate"], "stringlist",
+    addOption(new Option(["activate", "act"], "stringlist",
         {
             short_help: "Define when tabs are automatically activated",
             help: "Available items:<br/>" +
                   "<ul>" +
+                  "<li><b>homepage</b>:  <code class=\"mapping\">gH</code> mapping</li>" +
                   "<li><b>quickmark</b>: <code class=\"mapping\">go</code> and <code class=\"mapping\">gn</code> mappings</li>" +
                   "<li><b>tabopen</b>:   <code class=\"command\">:tabopen[!]</code> command</li>" +
                   "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
                   "</ul>",
-            default_value: "quickmark,tabopen,paste"
+            default_value: "homepage,quickmark,tabopen,paste"
         }
     ));
     addOption(new Option(["beep"], "boolean",

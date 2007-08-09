@@ -358,10 +358,16 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gH"],
-        function() { vimperator.open("", vimperator.NEW_TAB); BrowserHome(); },
+        function()
+        {
+            var homepages = gHomeButton.getHomePage();
+            vimperator.open(homepages, /\bhomepage\b/.test(vimperator.options["activate"]) ?
+                    vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+        },
         {
             short_help: "Go home in a new tab",
-            help: "Opens the homepage in a new tab."
+            help: "Opens the homepage in a new tab. " +
+                  "Whether the new tab is activated or not depends on the <code class=\"option\">'activate'</code> option.<br/>"
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["go"],
@@ -377,7 +383,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gn"],
         function(arg)
         {
-            vimperator.quickmarks.jumpTo(mark,
+            vimperator.quickmarks.jumpTo(arg,
                 /\bquickmark\b/.test(vimperator.options["activate"]) ?
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
