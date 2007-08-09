@@ -7,7 +7,7 @@
   </RDF:Seq>
 
   <!--<RDF:Seq RDF:about="urn:mozilla:overlays">-->
-	<!--<RDF:li RDF:resource="chrome://browser/content/browser.xul"/>-->
+  <!--<RDF:li RDF:resource="chrome://browser/content/browser.xul"/>-->
   <!--</RDF:Seq>-->
 
   <RDF:Seq RDF:about="chrome://browser/content/browser.xul">
@@ -16,9 +16,9 @@
 
   <RDF:Description RDF:about="urn:mozilla:package:vimperator"
         chrome:displayName="Vimperator"
-		chrome:author="Martin Stubenschrott"
+        chrome:author="Martin Stubenschrott"
         chrome:name="vimperator"
         chrome:extension="true"
-		chrome:description="Make Firefox behave like Vim">
+        chrome:description="Make Firefox behave like Vim">
   </RDF:Description>
 </RDF:RDF>
