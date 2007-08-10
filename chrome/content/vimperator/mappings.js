@@ -679,7 +679,7 @@ function Mappings() //{{{
     {
         var lines;
 
-        if (count > 1)
+        if (count > 0)
             vimperator.options["scroll"] = count;
 
         if (vimperator.options["scroll"] == 0) // the default value of half a page
