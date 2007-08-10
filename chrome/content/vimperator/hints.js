@@ -70,6 +70,10 @@ function Hints() //{{{
 
     this.loadCoord = function(winId, i)
     {
+        // win.res is not ready when loading has not finished yet
+        if(!win.res)
+            return;
+
         win = wins[winId];
         var elem = win.res.snapshotItem(i);
 
@@ -88,7 +92,7 @@ function Hints() //{{{
     {
         // NOTE: experiment for making the function faster, report problems
         // only works for FF3.0:
-        //var rect = elem.getBoundingClientRect();
+        //var rect = elem.getClientRects()[0];
         //if (rect)
         //{
         //    elem.absoLeft = rect.left;
@@ -144,6 +148,8 @@ function Hints() //{{{
         {
             genHintContainer(doc);
             hintContainer = doc.getElementById('hah_hints');
+            if (!hintContainer)
+                return false;
         }
         hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
 
@@ -207,7 +213,13 @@ function Hints() //{{{
         if (linkCount == 0 && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
         {
             vimperator.beep();
-            this.disableHahMode(win);
+
+            // FIXME: this.disableHahMode(win);
+            vimperator.setMode(vimperator.modes.NORMAL);
+            isHahModeEnabled = false;
+            linkNumString = '';
+            hintedElems = [];
+
             return;
         }
 
@@ -406,7 +418,7 @@ function Hints() //{{{
      * @return -1 if already disabled
      */
     //function disableHahMode(event)
-    this.disableHahMode = function(win, silent)
+    this.disableHahMode = function(win)
     {
         if(!isHahModeEnabled)
             return;
@@ -630,7 +642,8 @@ function Hints() //{{{
         hints = doc.createElement('HINTS');
         hints.id = "hah_hints";
         hints.valid_hint_count = 0; // initially 0 elements are usable as hints
-        doc.body.appendChild(hints);
+        if(doc.body)
+            doc.body.appendChild(hints);
     }
 
     function initDoc(event)
