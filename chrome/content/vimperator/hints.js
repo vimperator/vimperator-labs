@@ -70,11 +70,12 @@ function Hints() //{{{
 
     this.loadCoord = function(winId, i)
     {
+        win = wins[winId];
+
         // win.res is not ready when loading has not finished yet
-        if(!win.res)
+        if (!win.res)
             return;
 
-        win = wins[winId];
         var elem = win.res.snapshotItem(i);
 
         if (elem)
@@ -270,7 +271,7 @@ function Hints() //{{{
 
     function onResize(event)
     {
-        if(event)
+        if (event)
             doc = event.originalTarget;
         else
             doc = window.content.document;
@@ -335,9 +336,9 @@ function Hints() //{{{
         // make all links the same length
         var hintLength = 1;
         var tmp = linkCount;
-        while((tmp /= hintCharacters.length) > 1.0)
+        while ((tmp /= hintCharacters.length) > 1.0)
             hintLength++;
-        while(str.length < hintLength)
+        while (str.length < hintLength)
         {
             result += hintCharacters.charAt(0).toUpperCase();
             hintLength--;
@@ -376,7 +377,7 @@ function Hints() //{{{
         {
             hintElem = getHintById(linkNumString);
             setHintStyle(hintElem, styleStringFocus);
-            if(hintElem)
+            if (hintElem)
                 setMouseOverElement(hintElem.refElem);
         }
     }
@@ -420,7 +421,7 @@ function Hints() //{{{
     //function disableHahMode(event)
     this.disableHahMode = function(win)
     {
-        if(!isHahModeEnabled)
+        if (!isHahModeEnabled)
             return;
 
         vimperator.setMode(vimperator.modes.NORMAL);
@@ -437,7 +438,7 @@ function Hints() //{{{
         linkNumString = '';
         state = 0;
 
-        while(hintedElems.length > 0)
+        while (hintedElems.length > 0)
         {
             var elem = hintedElems.pop();
             if (!elem)
@@ -467,7 +468,7 @@ function Hints() //{{{
     {
         var x = 0, y = 0;
 
-        while(hintedElems.length > 0)
+        while (hintedElems.length > 0)
         {
             var elem = hintedElems.pop();
             if (!elem)
@@ -515,7 +516,7 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for(i = 0; i < elems.length; i++)
+        for (i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.href;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
@@ -538,7 +539,7 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for(i = 0; i < elems.length; i++)
+        for (i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.textContent;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
@@ -622,7 +623,7 @@ function Hints() //{{{
             //calculate how many characters a hint must have
             var hintLength = 1;
             var tmp = linkCount;
-            while((tmp /= hintCharacters.length) > 1.0)
+            while ((tmp /= hintCharacters.length) > 1.0)
                 hintLength++;
 
             if (linkNumString.length >= hintLength)
@@ -642,7 +643,7 @@ function Hints() //{{{
         hints = doc.createElement('HINTS');
         hints.id = "hah_hints";
         hints.valid_hint_count = 0; // initially 0 elements are usable as hints
-        if(doc.body)
+        if (doc.body)
             doc.body.appendChild(hints);
     }
 
