@@ -120,6 +120,7 @@ function Events() //{{{
         [ KeyEvent.DOM_VK_F24, ["F24"] ],
     ];
 
+    // FIXME: how to support <Space> ?
     function getKeyCode(str)
     {
         str = str.toLowerCase();
@@ -247,11 +248,13 @@ function Events() //{{{
                     }
                     else //an invalid key like <A-xxx> was found, stop propagation here (like vim)
                         return;
-                        i += matches[0].length + 1;
+
+                    i += matches[0].length + 1;
                 }
             }
             var evt = doc.createEvent('KeyEvents');
             evt.initKeyEvent('keypress', true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
+
             var elem = window.document.commandDispatcher.focusedElement;
             if(!elem)
                 elem = window;
@@ -599,6 +602,7 @@ function Events() //{{{
 // a keycode which can be used in mappings
 // e.g. pressing ctrl+n would result in the string "<C-n>"
 // null if unknown key
+// XXX: _Maybe_ move to another method inside vimperator.events.
 KeyboardEvent.prototype.toString = function() //{{{
 {
     var key = String.fromCharCode(this.charCode);
