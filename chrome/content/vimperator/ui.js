@@ -60,9 +60,15 @@ function CommandLine() //{{{
     var prompt_widget = document.getElementById('vimperator-commandline-prompt');
     // The command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
+
     // The widget used for multiline output
     var multiline_output_widget = document.getElementById("vimperator-multiline-output");
     multiline_output_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
+    multiline_output_widget.contentDocument.body.innerHTML = "";
+    // we need this hack, or otherwise the first use of setMultiline() will have a wrong height
+    multiline_output_widget.collapsed = false;
+    setTimeout(function() { multiline_output_widget.collapsed = true; }, 0);
+
     // The widget used for multiline output
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
 
@@ -136,12 +142,14 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = true;
 
+        vimperator.log(content_height);
         cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
         multiline_output_widget.contentDocument.body.innerHTML = cmd;
 
         // TODO: resize upon a window resize
         var available_height = getBrowser().mPanelContainer.boxObject.height;
         var content_height = multiline_output_widget.contentDocument.height;
+        vimperator.log(content_height);
         var height = content_height < available_height ? content_height : available_height;
 
         multiline_output_widget.style.height = height + "px";
@@ -149,6 +157,7 @@ function CommandLine() //{{{
         setTimeout(function() {
             multiline_output_widget.focus();
         }, 10);
+        vimperator.log(content_height);
         multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
     }
 
