@@ -516,12 +516,12 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for (i = 0; i < elems.length; i++)
+        for (var i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.href;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
             {
-                if (i > 0 && elems.length > 1)
+                if (i > 0)
                     loc += "\n";
                 loc += tmp;
             }
@@ -539,12 +539,12 @@ function Hints() //{{{
         var loc = "";
         var elems = this.hintedElements();
         var tmp = "";
-        for (i = 0; i < elems.length; i++)
+        for (var i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.textContent;
             if (typeof(tmp) != 'undefined' && tmp.length > 0)
             {
-                if (i > 0 && elems.length > 1)
+                if (i > 0)
                     loc += "\n";
                 loc += tmp;
             }
@@ -566,10 +566,10 @@ function Hints() //{{{
             elem.contentWindow.focus();
             return;
         }
-        else
-        {
-            //elem.focus();
-        }
+        //else
+        //{
+        //    elem.focus();
+        //}
 
         var evt = doc.createEvent('MouseEvents');
         var x = 0;
@@ -643,6 +643,7 @@ function Hints() //{{{
         hints = doc.createElement('HINTS');
         hints.id = "hah_hints";
         hints.valid_hint_count = 0; // initially 0 elements are usable as hints
+
         if (doc.body)
             doc.body.appendChild(hints);
     }
