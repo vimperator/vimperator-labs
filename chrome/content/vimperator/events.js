@@ -76,6 +76,66 @@ function Events() //{{{
         //alert("titlechanged");
     }, null);
 
+    // TODO: use this table also for KeyboardEvent.prototype.toString
+    var keyTable = [
+        [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ], 
+        [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
+        [ KeyEvent.DOM_VK_RIGHT_SHIFT, [">"] ],
+        [ KeyEvent.DOM_VK_RETURN, ["Return", "CR"] ],
+        [ KeyEvent.DOM_VK_TAB, ["Tab"] ],
+        [ KeyEvent.DOM_VK_DELETE, ["Del"] ],
+        [ KeyEvent.DOM_VK_BACK_SPACE, ["BS"] ],
+        [ KeyEvent.DOM_VK_HOME, ["Home"] ],
+        [ KeyEvent.DOM_VK_INSERT, ["Insert", "Ins"] ],
+        [ KeyEvent.DOM_VK_END, ["End"] ],
+        [ KeyEvent.DOM_VK_LEFT, ["Left"] ],
+        [ KeyEvent.DOM_VK_RIGHT, ["Right"] ],
+        [ KeyEvent.DOM_VK_UP, ["Up"] ],
+        [ KeyEvent.DOM_VK_DOWN, ["Down"] ],
+        [ KeyEvent.DOM_VK_PAGE_UP, ["PageUp"] ],
+        [ KeyEvent.DOM_VK_PAGE_DOWN, ["PageDown"] ],
+        [ KeyEvent.DOM_VK_F1, ["F1"] ],
+        [ KeyEvent.DOM_VK_F2, ["F2"] ],
+        [ KeyEvent.DOM_VK_F3, ["F3"] ],
+        [ KeyEvent.DOM_VK_F4, ["F4"] ],
+        [ KeyEvent.DOM_VK_F5, ["F5"] ],
+        [ KeyEvent.DOM_VK_F6, ["F6"] ],
+        [ KeyEvent.DOM_VK_F7, ["F7"] ],
+        [ KeyEvent.DOM_VK_F8, ["F8"] ],
+        [ KeyEvent.DOM_VK_F9, ["F9"] ],
+        [ KeyEvent.DOM_VK_F10, ["F10"] ],
+        [ KeyEvent.DOM_VK_F11, ["F11"] ],
+        [ KeyEvent.DOM_VK_F12, ["F12"] ],
+        [ KeyEvent.DOM_VK_F13, ["F13"] ],
+        [ KeyEvent.DOM_VK_F14, ["F14"] ],
+        [ KeyEvent.DOM_VK_F15, ["F15"] ],
+        [ KeyEvent.DOM_VK_F16, ["F16"] ],
+        [ KeyEvent.DOM_VK_F17, ["F17"] ],
+        [ KeyEvent.DOM_VK_F18, ["F18"] ],
+        [ KeyEvent.DOM_VK_F19, ["F19"] ],
+        [ KeyEvent.DOM_VK_F20, ["F20"] ],
+        [ KeyEvent.DOM_VK_F21, ["F21"] ],
+        [ KeyEvent.DOM_VK_F22, ["F22"] ],
+        [ KeyEvent.DOM_VK_F23, ["F23"] ],
+        [ KeyEvent.DOM_VK_F24, ["F24"] ],
+    ];
+
+    function getKeyCode(str)
+    {
+        str = str.toLowerCase();
+        for (var i in keyTable)
+        {
+            for (var k in keyTable[i][1])
+            {
+                // we don't store lowercase keys in the keyTable, because we
+                // also need to get good looking strings for the reverse action
+                if (keyTable[i][1][k].toLowerCase() == str)
+                    return keyTable[i][0];
+            }
+        }
+        return 0;
+    }
+
     function isFormElemFocused()
     {
         var elt = window.document.commandDispatcher.focusedElement;
@@ -143,6 +203,61 @@ function Events() //{{{
     {
         // BIG TODO: removeEventListeners() to avoid mem leaks
         window.dump("TODO: remove eventlisteners");
+    }
+
+    // This method pushes keys into the event queue from vimperator
+    // it is similar to vim's feedkeys() method, but cannot cope with 
+    // 2 partially feeded strings, you have to feed one parsable string
+    //
+    // @param keys: a string like "2<C-f>" to pass
+    //              if you want < to be taken literally, prepend it with a \\
+    this.feedkeys = function(keys)
+    {
+        var doc = window.content.document;
+        var view = window.document.defaultView;
+        var escapeKey = false; // \ to escape some special keys
+
+        for (var i = 0; i < keys.length; i++)
+        {
+            var charCode = keys.charCodeAt(i);
+            var keyCode = 0;
+            var shift = false, ctrl = false, alt = false, meta = false;
+            //if (charCode == 92) // the '\' key FIXME: support the escape key
+            if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
+            {
+                var matches = keys.substr(i+1).match(/([CSMAcsma]-)*([^>]+)/);
+                if (matches && matches[2])
+                {
+                    if (matches[1]) // check for modifiers
+                    {
+                        ctrl  = /[cC]-/.test(matches[1]);
+                        alt   = /[aA]-/.test(matches[1]);
+                        shift = /[sS]-/.test(matches[1]);
+                        meta  = /[mM]-/.test(matches[1]);
+                    }
+                    if (matches[2].length == 1)
+                    {
+                        if (!ctrl && !alt && !shift && !meta)
+                            return; // an invalid key like <a>
+                        charCode = matches[2].charCodeAt(0);
+                    }
+                    else if (keyCode = getKeyCode(matches[2]))
+                    {
+                        charCode = 0;
+                    }
+                    else //an invalid key like <A-xxx> was found, stop propagation here (like vim)
+                        return;
+                        i += matches[0].length + 1;
+                }
+            }
+            var evt = doc.createEvent('KeyEvents');
+            evt.initKeyEvent('keypress', true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
+            var elem = window.document.commandDispatcher.focusedElement;
+            if(!elem)
+                elem = window;
+
+            elem.dispatchEvent(evt);
+        }
     }
 
     this.onEscape = function()

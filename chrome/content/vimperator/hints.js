@@ -113,10 +113,15 @@ function Hints() //{{{
             elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
             elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
         }
+        else if (elem.offsetLeft && elem.offsetTop) // TODO: ugly and broken temporary fix until FF3
+        {
+            elem.absoLeft = elem.offsetLeft;
+            elem.absoTop = elem.offsetTop;
+        }
         else
         {
-            elem.absoLeft = elem.offsetLeft - 5;
-            elem.absoTop = elem.offsetTop;
+            elem.absoLeft = 0;
+            elem.absoTop = 0;
         }
         elem.validCoord = elem.ownerDocument.validCoords;
     }
@@ -491,7 +496,6 @@ function Hints() //{{{
             }
             doc = window.content.document;
             view = window.document.defaultView;
-
 
             var evt = doc.createEvent('MouseEvents');
             evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
