@@ -81,7 +81,7 @@ function Events() //{{{
         [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ], 
         [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
         [ KeyEvent.DOM_VK_RIGHT_SHIFT, [">"] ],
-        [ KeyEvent.DOM_VK_RETURN, ["Return", "CR"] ],
+        [ KeyEvent.DOM_VK_RETURN, ["Return", "CR", "Enter"] ],
         [ KeyEvent.DOM_VK_TAB, ["Tab"] ],
         [ KeyEvent.DOM_VK_DELETE, ["Del"] ],
         [ KeyEvent.DOM_VK_BACK_SPACE, ["BS"] ],
