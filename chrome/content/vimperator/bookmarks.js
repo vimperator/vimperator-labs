@@ -722,15 +722,14 @@ function QuickMarks() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var qmarks = {};
-    // load the saved quickmarks -- TODO: change to sqlite
     var saved_marks = Options.getPref("quickmarks", "").split("\n");
 
+    // load the saved quickmarks -- TODO: change to sqlite
     for (var i = 0; i < saved_marks.length - 1; i += 2)
     {
         qmarks[saved_marks[i]] = saved_marks[i + 1];
     }
 
-    // TODO: should we sort by a-zA-Z0-9 rather than 0-9A-Za-z?
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -749,6 +748,11 @@ function QuickMarks() //{{{
             if (pattern.test(qmark))
                 delete qmarks[qmark];
         }
+    }
+
+    this.removeAll = function()
+    {
+        qmarks = {};
     }
 
     this.jumpTo = function(qmark, where)

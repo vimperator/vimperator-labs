@@ -445,7 +445,10 @@ function Commands() //{{{
                 return
             }
 
-            vimperator.quickmarks.remove(args);
+            if (special)
+                vimperator.quickmarks.removeAll();
+            else
+                vimperator.quickmarks.remove(args);
         },
         {
             usage: ["delqm[arks] {marks}", "delqm[arks]!"],
