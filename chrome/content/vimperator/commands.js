@@ -401,7 +401,7 @@ function Commands() //{{{
                 return;
             }
             // check for illegal ranges - only allow a-z A-Z 0-9
-            if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/))
+            if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))
             {
                 for (var i = 0; i < matches.length; i++)
                 {
