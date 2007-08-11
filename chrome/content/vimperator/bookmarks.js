@@ -532,6 +532,7 @@ function Marks() //{{{
     {
         // local marks
         var lmarks = [];
+
         for (var mark in local_marks)
         {
             for (var i = 0; i < local_marks[mark].length; i++)
@@ -544,17 +545,18 @@ function Marks() //{{{
 
         // URL marks
         var umarks = [];
+
         for (var mark in url_marks)
             umarks.push([mark, url_marks[mark]]);
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
         umarks.sort(function(a, b) {
-                if (a[0] < b[0])
-                    return -1;
-                else if (a[0] > b[0])
-                    return 1;
-                else
-                    return 0;
+            if (a[0] < b[0])
+                return -1;
+            else if (a[0] > b[0])
+                return 1;
+            else
+                return 0;
         });
 
         return lmarks.concat(umarks);
@@ -578,6 +580,7 @@ function Marks() //{{{
         var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
         var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
         var position = { x: x, y: y };
+
         if (isURLMark(mark))
         {
             vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
@@ -621,6 +624,7 @@ function Marks() //{{{
     this.jumpTo = function(mark)
     {
         var ok = false;
+
         if (isURLMark(mark))
         {
             var slice = url_marks[mark];
@@ -655,6 +659,7 @@ function Marks() //{{{
         {
             var win = window.content;
             var slice = local_marks[mark] || [];
+
             for (var i = 0; i < slice.length; i++)
             {
                 if (win.location.href == slice[i].location)
@@ -716,70 +721,96 @@ function QuickMarks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var marks = {};
+    var qmarks = {};
     // load the saved quickmarks -- TODO: change to sqlite
     var saved_marks = Options.getPref("quickmarks", "").split("\n");
+
     for (var i = 0; i < saved_marks.length - 1; i += 2)
     {
-        marks[saved_marks[i]] = saved_marks[i + 1];
+        qmarks[saved_marks[i]] = saved_marks[i + 1];
     }
 
+    // TODO: should we sort by a-zA-Z0-9 rather than 0-9A-Za-z?
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.add = function(mark, location)
+    this.add = function(qmark, location)
     {
-        marks[mark] = location;
+        qmarks[qmark] = location;
     }
 
     this.remove = function(filter)
     {
         var pattern = new RegExp("[" + filter.replace(/\s+/g, '') + "]");
-        for (var mark in marks)
+
+        for (var qmark in qmarks)
         {
-            if (pattern.test(mark))
-                delete marks[mark];
+            if (pattern.test(qmark))
+                delete qmarks[qmark];
         }
     }
 
-    this.jumpTo = function(mark, where)
+    this.jumpTo = function(qmark, where)
     {
-        var url = marks[mark];
+        var url = qmarks[qmark];
+
         if (url)
             vimperator.open(url, where);
         else
             vimperator.echoerr("E20: QuickMark not set");
     }
 
-    this.list = function()
+    this.list = function(filter)
     {
-        var is_empty = true;
-        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>URL</td></tr>";
-        for (var i in marks)
+        var marks = [];
+
+        // TODO: should we sort these in a-zA-Z0-9 order?
+        for (var mark in qmarks)
+            marks.push([mark, qmarks[mark]]);
+        marks.sort();
+
+        if (marks.length == 0)
         {
-            is_empty = false;
-            list += "<tr><td>&nbsp;" + i + "</td><td>"
-                + marks[i] + "</td></tr>";
+            vimperator.echoerr("No marks set");
+            return;
+        }
+
+        if (filter.length > 0)
+        {
+            marks = marks.filter(function(mark) {
+                    if (filter.indexOf(mark[0]) > -1)
+                        return mark;
+            });
+            if (marks.length == 0)
+            {
+                vimperator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                return;
+            }
+        }
+
+        var list = "<table><tr style=\"color: magenta\"><td>QuickMark</td><td>URL</td></tr>";
+        for (var i = 0; i < marks.length; i++)
+        {
+            list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] + "</td><td>" + marks[i][1] + "</td></tr>";
         }
         list += "</table>";
 
-        if (!is_empty)
-            vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
-        else
-            vimperator.echoerr("No quickmarks defined");
+        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
     }
 
     this.destroy = function()
     {
-        // save the marks
-        var saved_marks = "";
-        for (var i in marks)
+        // save the quickmarks
+        var saved_qmarks = "";
+
+        for (var i in qmarks)
         {
-            saved_marks += i + "\n";
-            saved_marks += marks[i] + "\n";
+            saved_qmarks += i + "\n";
+            saved_qmarks += qmarks[i] + "\n";
         }
-        Options.setPref("quickmarks", saved_marks);
+
+        Options.setPref("quickmarks", saved_qmarks);
     }
     //}}}
 } //}}}

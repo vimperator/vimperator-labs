@@ -299,8 +299,8 @@ function Mappings() //{{{
         function(arg) { vimperator.marks.jumpTo(arg) },
         {
             short_help: "Jump to the mark in the current buffer",
-            usage: ["'{a-zA-Z0-9}"],
-            help: "Marks a-z are local to the buffer, whereas A-Z and 0-9 are valid between buffers.",
+            usage: ["'{a-zA-Z}"],
+            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
@@ -452,16 +452,34 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["m"],
-        function(arg) { vimperator.marks.add(arg) },
+        function(arg)
+        {
+            if (/[^a-zA-Z]/.test(arg))
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.marks.add(arg)
+        },
         {
             short_help: "Set mark at the cursor position",
-            usage: ["m{a-zA-Z0-9}"],
-            help: "Marks a-z are local to the buffer, whereas A-Z and 0-9 are valid between buffers.",
+            usage: ["m{a-zA-Z}"],
+            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["M"],
-        function(arg) { vimperator.quickmarks.add(arg, vimperator.buffer.location) },
+        function(arg)
+        {
+            if (/[^a-zA-Z0-9]/.test(arg))
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.quickmarks.add(arg, vimperator.buffer.location)
+        },
         {
             short_help: "Add new QuickMark for current URL",
             usage: ["M{a-zA-Z0-9}"],

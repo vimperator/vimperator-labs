@@ -421,14 +421,40 @@ function Commands() //{{{
             vimperator.marks.remove(args, special);
         },
         {
-            usage: ["delm[arks][!] {marks}"],
-            short_help: "Delete the specified marks {a-zA-Z}",
+            usage: ["delm[arks] {marks}", "delm[arks]!"],
+            short_help: "Delete the specified marks",
             help: "Marks are presented as a list. Example:<br/>" +
                 "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
                 "<code class=\"command\">:delmarks b-p</code> will delete all marks in the range b to p<br/>" +
                 "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer"
         }
 
+    ));
+    addDefaultCommand(new Command(["delqm[arks]"],
+        function(args, special)
+        {
+            // TODO: finish arg parsing - we really need a proper way to do this. :)
+            if (!special && !args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (special && args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return
+            }
+
+            vimperator.quickmarks.remove(args);
+        },
+        {
+            usage: ["delqm[arks] {marks}", "delqm[arks]!"],
+            short_help: "Delete the specified QuickMarks",
+            help: "QuickMarks are presented as a list. Example:<br/>" +
+                "<code class=\"command\">:delqmarks Aa b p</code> will delete QuickMarks A, a, b and p<br/>" +
+                "<code class=\"command\">:delqmarks b-p</code> will delete all QuickMarks in the range b to p<br/>" +
+                "<code class=\"command\">:delqmarks!</code> will delete all QuickMarks"
+        }
     ));
     addDefaultCommand(new Command(["downl[oads]", "dl"],
         function() { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); },
@@ -619,7 +645,7 @@ function Commands() //{{{
         },
         {
             short_help: "Remove all mappings",
-            help: ""
+            help: "TODO"
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
@@ -642,24 +668,27 @@ function Commands() //{{{
             vimperator.marks.add(args);
         },
         {
-            usage: ["ma[rk] {arg}"],
+            usage: ["ma[rk] {a-zA-Z}"],
             short_help: "Mark current location within the web page"
         }
     ));
     addDefaultCommand(new Command(["marks"],
         function(args)
         {
-            if (args.length > 1 && !/[a-zA-Z]/.test(args))
+            // ignore invalid mark characters unless there are no valid mark chars
+            if (args.length > 0 && !/[a-zA-Z]/.test(args))
             {
                 vimperator.echoerr("E283: No marks matching \"" + args + "\"");
                 return;
             }
+
             var filter = args.replace(/[^a-zA-Z]/g, '');
             vimperator.marks.list(filter)
         },
         {
-            usage: ["marks {arg}"],
-            short_help: "Show all location marks of current web page"
+            usage: ["marks [arg]"],
+            short_help: "Show all location marks of current web page",
+            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to the those marks mentioned."
         }
     ));
     // TODO: remove duplication in :map
@@ -769,6 +798,50 @@ function Commands() //{{{
             short_help: "Show Browser Preferences",
             help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
                   "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>"
+        }
+    ));
+    addDefaultCommand(new Command(["qma[rk]"],
+        function(args)
+        {
+            if (!args) {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+
+            var matches1 = args.match(/([a-zA-Z0-9])\s+(.+)/);
+            var matches2 = args.match(/([a-zA-Z0-9])\s*$/);
+
+            if (matches1 && matches1[1])
+                vimperator.quickmarks.add(matches1[1], matches1[2]);
+            else if (matches2 && matches2)
+                vimperator.quickmarks.add(matches2[1], vimperator.buffer.location);
+            else
+                vimperator.echoerr("E488: Trailing characters");
+        },
+        {
+            usage: ["qma[rk] {a-zA-Z0-9} [url]"],
+            short_help: "Mark a URL with a letter for quick access",
+            help: "You can also mark whole groups like this: <br/>"+
+                  "<code class=\"command\">:qmark f http://forum1.com, http://forum2.com, imdb some artist</code>"
+        }
+    ));
+    addDefaultCommand(new Command(["qmarks"],
+        function(args)
+        {
+            // ignore invalid mark characters unless there are no valid mark chars
+            if (args.length > 0 && !/[a-zA-Z0-9]/.test(args))
+            {
+                vimperator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
+                return;
+            }
+
+            var filter = args.replace(/[^a-zA-Z0-9]/g, '');
+            vimperator.quickmarks.list(filter);
+        },
+        {
+            usage: ["qmarks [arg]"],
+            short_help: "Show all QuickMarks",
+            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to the those QuickMarks mentioned."
         }
     ));
     addDefaultCommand(new Command(["q[uit]"],
@@ -1043,42 +1116,6 @@ function Commands() //{{{
             usage: ["[count]u[ndo]"],
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the n'th last tab."
-        }
-    ));
-    addDefaultCommand(new Command(["qmarka[dd]", "qma[dd]"],
-        function(args)
-        {
-            var matches1 = args.match(/([a-zA-Z0-9])\s+(.+)/);
-            var matches2 = args.match(/([a-zA-Z0-9])\s*$/);
-            if (matches1 && matches1[1])
-                vimperator.quickmarks.add(matches1[1], matches1[2]);
-            else if (matches2 && matches2)
-                vimperator.quickmarks.add(matches2[1], vimperator.buffer.location);
-            else
-                vimperator.echoerr("E488: Trailing characters");
-        },
-        {
-            usage: ["qmarka[dd] {a-zA-Z0-9} [url]"],
-            short_help: "Mark a URL with a letter for quick access",
-            help: "You can also mark whole groups like this: <br/>"+
-                  "<code class=\"command\">:qmarkadd f http://forum1.com, http://forum2.com, imdb some artist</code>",
-            completer: function(filter) { return [["a", ""], ["b", ""]]; }
-        }
-    ));
-    addDefaultCommand(new Command(["qmarkd[el]", "qmd[el]"],
-        function(args) { vimperator.quickmarks.remove(args); },
-        {
-            usage: ["qmarkd[el] {a-zA-Z0-9}"],
-            short_help: "Remove a marked URL",
-            help: "TODO.",
-            completer: function(filter) { return [["a", ""], ["b", ""]]; }
-        }
-    ));
-    addDefaultCommand(new Command(["qmarks", "qms"],
-        function(args) { vimperator.quickmarks.list(args); },
-        {
-            short_help: "Show marked URLs",
-            help: "TODO."
         }
     ));
     addDefaultCommand(new Command(["unm[ap]"],
