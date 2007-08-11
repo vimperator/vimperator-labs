@@ -76,7 +76,10 @@ function Events() //{{{
         //alert("titlechanged");
     }, null);
 
-    // TODO: use this table also for KeyboardEvent.prototype.toString
+    // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
+    //       matters, so use that string as the first item, that you
+    //       want to refer to within vimperator's source code for
+    //       comparisons like if (key == "Esc") { ... }
     var keyTable = [
         [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],
         [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
@@ -120,7 +123,6 @@ function Events() //{{{
         [ KeyEvent.DOM_VK_F24, ["F24"] ],
     ];
 
-    // FIXME: how to support <Space> ?
     function getKeyCode(str)
     {
         str = str.toLowerCase();
@@ -242,6 +244,10 @@ function Events() //{{{
                             return; // an invalid key like <a>
                         charCode = matches[2].charCodeAt(0);
                     }
+                    else if (matches[2].toLowerCase() == "space")
+                    {
+                        charCode = 32;
+                    }
                     else if (keyCode = getKeyCode(matches[2]))
                     {
                         charCode = 0;
@@ -263,6 +269,54 @@ function Events() //{{{
         }
     }
 
+    // this function converts the given event to
+    // a keycode which can be used in mappings
+    // e.g. pressing ctrl+n would result in the string "<C-n>"
+    // null if unknown key
+    this.eventToString = function(event) //{{{
+    {
+        var key = String.fromCharCode(event.charCode);
+        var modifier = "";
+        if (event.ctrlKey)
+            modifier += "C-";
+        if (event.altKey)
+            modifier += "A-";
+        if (event.metaKey)
+            modifier += "M-";
+
+        if (event.charCode == 0)
+        {
+            if (event.shiftKey)
+                modifier += "S-";
+            for (var i in keyTable)
+            {
+                if (keyTable[i][0] == event.keyCode)
+                {
+                    key = keyTable[i][1][0];
+                    break;
+                }
+            }
+            return null;
+        }
+        // special handling of the Space key
+        else if (event.charCode == 32)
+        {
+            if (event.shiftKey)
+                modifier += "S-";
+            key = "Space";
+        }
+        // a normal key like a, b, c, 0, etc.
+        else if (event.charCode > 0)
+        {
+            if (modifier.length > 0 || event.charCode == 32)
+                return "<" + modifier + key + ">";
+            else
+                return key;
+        }
+        else // a key like F1 is always enclosed in < and >
+            return "<" + modifier + key + ">";
+    } //}}}
+
     this.onEscape = function()
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
@@ -277,7 +331,8 @@ function Events() //{{{
 
     this.onKeyPress = function(event)
     {
-        var key = event.toString()
+        //var key = event.toString()
+        var key = vimperator.events.eventToString(event);
         if (!key)
              return false;
         // sometimes the non-content area has focus, making our keys not work
@@ -401,14 +456,12 @@ function Events() //{{{
             if (res < 0) // error occured processing this key
             {
                 vimperator.beep();
-                //if (vimperator.hints.currentMode() == HINT_MODE_QUICK)
                 if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
                     vimperator.hints.resetHintedElements();
                 vimperator.input.buffer = "";
             }
-            //else if (res == 0 || vimperator.hints.currentMode() == HINT_MODE_EXTENDED) // key processed, part of a larger hint
             else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
                 vimperator.input.buffer += key;
             else // this key completed a quick hint
@@ -596,130 +649,6 @@ function Events() //{{{
         .XULBrowserWindow = window.XULBrowserWindow;
     getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
     //}}}
-} //}}}
-
-// this function converts the given event to
-// a keycode which can be used in mappings
-// e.g. pressing ctrl+n would result in the string "<C-n>"
-// null if unknown key
-// XXX: _Maybe_ move to another method inside vimperator.events.
-KeyboardEvent.prototype.toString = function() //{{{
-{
-    var key = String.fromCharCode(this.charCode);
-    var modifier = "";
-    if (this.ctrlKey)
-        modifier += "C-";
-    if (this.altKey)
-        modifier += "A-";
-    if (this.metaKey)
-        modifier += "M-";
-
-    if (this.charCode == 0)
-    {
-        if (this.shiftKey)
-            modifier += "S-";
-        if (this.keyCode == KeyEvent.DOM_VK_ESCAPE)
-            key = "Esc";
-        else if (this.keyCode == KeyEvent.DOM_VK_LEFT_SHIFT)
-            key = "<";
-        else if (this.keyCode == KeyEvent.DOM_VK_RIGHT_SHIFT)
-            key = ">";
-        else if (this.keyCode == KeyEvent.DOM_VK_RETURN)
-            key = "Return";
-        else if (this.keyCode == KeyEvent.DOM_VK_TAB)
-            key = "Tab";
-        else if (this.keyCode == KeyEvent.DOM_VK_DELETE)
-            key = "Del";
-        else if (this.keyCode == KeyEvent.DOM_VK_BACK_SPACE)
-            key = "BS";
-        else if (this.keyCode == KeyEvent.DOM_VK_HOME)
-            key = "Home";
-        else if (this.keyCode == KeyEvent.DOM_VK_INSERT)
-            key = "Insert";
-        else if (this.keyCode == KeyEvent.DOM_VK_END)
-            key = "End";
-        else if (this.keyCode == KeyEvent.DOM_VK_LEFT)
-            key = "Left";
-        else if (this.keyCode == KeyEvent.DOM_VK_RIGHT)
-            key = "Right";
-        else if (this.keyCode == KeyEvent.DOM_VK_UP)
-            key = "Up";
-        else if (this.keyCode == KeyEvent.DOM_VK_DOWN)
-            key = "Down";
-        else if (this.keyCode == KeyEvent.DOM_VK_PAGE_UP)
-            key = "PageUp";
-        else if (this.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)
-            key = "PageDown";
-        else if (this.keyCode == KeyEvent.DOM_VK_F1)
-            key = "F1";
-        else if (this.keyCode == KeyEvent.DOM_VK_F2)
-            key = "F2";
-        else if (this.keyCode == KeyEvent.DOM_VK_F3)
-            key = "F3";
-        else if (this.keyCode == KeyEvent.DOM_VK_F4)
-            key = "F4";
-        else if (this.keyCode == KeyEvent.DOM_VK_F5)
-            key = "F5";
-        else if (this.keyCode == KeyEvent.DOM_VK_F6)
-            key = "F6";
-        else if (this.keyCode == KeyEvent.DOM_VK_F7)
-            key = "F7";
-        else if (this.keyCode == KeyEvent.DOM_VK_F8)
-            key = "F8";
-        else if (this.keyCode == KeyEvent.DOM_VK_F9)
-            key = "F9";
-        else if (this.keyCode == KeyEvent.DOM_VK_F10)
-            key = "F10";
-        else if (this.keyCode == KeyEvent.DOM_VK_F11)
-            key = "F11";
-        else if (this.keyCode == KeyEvent.DOM_VK_F12)
-            key = "F12";
-        else if (this.keyCode == KeyEvent.DOM_VK_F13)
-            key = "F13";
-        else if (this.keyCode == KeyEvent.DOM_VK_F14)
-            key = "F14";
-        else if (this.keyCode == KeyEvent.DOM_VK_F15)
-            key = "F15";
-        else if (this.keyCode == KeyEvent.DOM_VK_F16)
-            key = "F16";
-        else if (this.keyCode == KeyEvent.DOM_VK_F17)
-            key = "F17";
-        else if (this.keyCode == KeyEvent.DOM_VK_F18)
-            key = "F18";
-        else if (this.keyCode == KeyEvent.DOM_VK_F19)
-            key = "F19";
-        else if (this.keyCode == KeyEvent.DOM_VK_F20)
-            key = "F20";
-        else if (this.keyCode == KeyEvent.DOM_VK_F21)
-            key = "F21";
-        else if (this.keyCode == KeyEvent.DOM_VK_F22)
-            key = "F22";
-        else if (this.keyCode == KeyEvent.DOM_VK_F23)
-            key = "F23";
-        else if (this.keyCode == KeyEvent.DOM_VK_F24)
-            key = "F24";
-        else
-            return null;
-    }
-
-    // special handling of the Space key
-    if (this.charCode == 32)
-    {
-        if (this.shiftKey)
-            modifier += "S-";
-        key = "Space";
-    }
-
-    // a normal key like a, b, c, 0, etc.
-    if (this.charCode > 0)
-    {
-        if (modifier.length > 0 || this.charCode == 32)
-            return "<" + modifier + key + ">";
-        else
-            return key;
-    }
-    else // a key like F1 is always enclosed in < and >
-        return "<" + modifier + key + ">";
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
