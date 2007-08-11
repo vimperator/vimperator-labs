@@ -136,7 +136,8 @@ function Buffer() //{{{
         // beep if we can't go there
         if (down > 0)
         {
-            if (win.scrollY == win.scrollMaxY)
+            // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
+            if (win.scrollY >= win.scrollMaxY)
                 vimperator.beep();
         }
         else if (down < 0)
@@ -147,7 +148,7 @@ function Buffer() //{{{
 
         if (right > 0)
         {
-            if (win.scrollX == win.scrollMaxX)
+            if (win.scrollX >= win.scrollMaxX)
                 vimperator.beep();
         }
         else if (right < 0)
