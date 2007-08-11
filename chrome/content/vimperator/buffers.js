@@ -213,7 +213,12 @@ function Buffer() //{{{
                     next++;
 
                 if (next > frames.length - 1)
+                {
+                    if (current == frames.length - 1)
+                        vimperator.beep(); // still allow the frame indicator to be activated
+
                     next = frames.length - 1;
+                }
             }
             else
             {
@@ -223,7 +228,12 @@ function Buffer() //{{{
                     next--;
 
                 if (next < 0)
+                {
+                    if (current == 0)
+                        vimperator.beep(); // still allow the frame indicator to be activated
+
                     next = 0;
+                }
             }
 
             // focus next frame and scroll into view
