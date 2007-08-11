@@ -1017,7 +1017,16 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["so[urce]"],
-        function(args) { vimperator.source(args); },
+        function(args)
+        {
+            if (/[^\\]\s/.test(args))
+            {
+                vimperator.echoerr("E172: Only one file name allowed");
+                return;
+            }
+
+            vimperator.source(args);
+        },
         {
             usage: ["so[urce][!] {file}"],
             short_help: "Read Ex commands from {file}",
