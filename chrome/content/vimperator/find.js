@@ -378,7 +378,7 @@ function Search() //{{{
 
     // Creates a default find state
     this.createInitialFindState = function() {
-        var state = new Array();
+        var state = [];
         state["screenx"] = this.gWin.scrollX;
         state["screeny"] = this.gWin.scrollY;
         state["search-str"] = "";
@@ -411,7 +411,7 @@ function Search() //{{{
 
     // Adds a find state to the stack of such states. This is done every time a find is successful
     this.addFindState = function(screenX, screenY, searchStr, wrapped, point, range, selection, direction) {
-        var state = new Array();
+        var state = [];
         state["screenx"] = screenX;
         state["screeny"] = screenY;
         state["search-str"] = searchStr;

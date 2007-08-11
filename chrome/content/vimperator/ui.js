@@ -42,9 +42,9 @@ function CommandLine() //{{{
     const HISTORY_SIZE = 500;
 
     var completionlist = new InformationList("vimperator-completion", { min_items: 2, max_items: 10 });
-    var completions = new Array();
+    var completions = [];
 
-    var history = new Array();
+    var history = [];
     var history_index = UNINITIALIZED;
     var history_start = "";
 

@@ -78,7 +78,7 @@ function Events() //{{{
 
     // TODO: use this table also for KeyboardEvent.prototype.toString
     var keyTable = [
-        [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ], 
+        [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],
         [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
         [ KeyEvent.DOM_VK_RIGHT_SHIFT, [">"] ],
         [ KeyEvent.DOM_VK_RETURN, ["Return", "CR", "Enter"] ],
@@ -207,7 +207,7 @@ function Events() //{{{
     }
 
     // This method pushes keys into the event queue from vimperator
-    // it is similar to vim's feedkeys() method, but cannot cope with 
+    // it is similar to vim's feedkeys() method, but cannot cope with
     // 2 partially feeded strings, you have to feed one parsable string
     //
     // @param keys: a string like "2<C-f>" to pass

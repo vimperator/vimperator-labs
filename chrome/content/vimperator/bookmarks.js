@@ -51,8 +51,8 @@ function Bookmarks() //{{{
     {
         // update our bookmark cache
         var root = rdf_service.GetResource("NC:BookmarksRoot");
-        bookmarks  = new Array(); // also clear our bookmark cache
-        keywords   = new Array();
+        bookmarks = []; // also clear our bookmark cache
+        keywords  = [];
 
         var bmarks = [];   // here getAllChildren will store the bookmarks
         BookmarksUtils.getAllChildren(root, bmarks);
@@ -158,7 +158,7 @@ function Bookmarks() //{{{
     /* also ensures that each search engine has a vimperator-friendly alias */
     this.getSearchEngines = function()
     {
-        var search_engines = new Array();
+        var search_engines = [];
         var firefox_engines = search_service.getVisibleEngines({ });
         for (var i in firefox_engines)
         {
@@ -346,7 +346,7 @@ function History() //{{{
 
     function load()
     {
-        history = new Array();
+        history = [];
 
         var historytree = document.getElementById("hiddenHistoryTree");
         if (!historytree)

@@ -198,7 +198,7 @@ vimperator.completion = (function() // {{{
          */
         get_url_completions: function(filter, complete) //{{{
         {
-            var completions = new Array();
+            var completions = [];
             g_substrings = [];
 
             var cpt = complete || vimperator.options["complete"];
@@ -245,7 +245,7 @@ vimperator.completion = (function() // {{{
 
         get_file_completions: function(filter) //{{{
         {
-            //var completions = new Array();
+            //var completions = [];
             /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
             if (!arguments[1])
                 g_substrings = [];

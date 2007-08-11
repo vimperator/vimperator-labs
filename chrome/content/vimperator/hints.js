@@ -58,7 +58,7 @@ function Hints() //{{{
         else
         {
             if (!wins)
-                wins = new Array();
+                wins = [];
 
             win.winId = wins.length;
             wins.push(win);
