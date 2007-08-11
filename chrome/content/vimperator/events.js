@@ -273,9 +273,12 @@ function Events() //{{{
     // a keycode which can be used in mappings
     // e.g. pressing ctrl+n would result in the string "<C-n>"
     // null if unknown key
-    this.eventToString = function(event) //{{{
+    this.toString = function(event) //{{{
     {
-        var key = String.fromCharCode(event.charCode);
+        if(!event)
+            return;
+
+        var key = null;
         var modifier = "";
         if (event.ctrlKey)
             modifier += "C-";
@@ -288,6 +291,7 @@ function Events() //{{{
         {
             if (event.shiftKey)
                 modifier += "S-";
+
             for (var i in keyTable)
             {
                 if (keyTable[i][0] == event.keyCode)
@@ -296,7 +300,6 @@ function Events() //{{{
                     break;
                 }
             }
-            return null;
         }
         // special handling of the Space key
         else if (event.charCode == 32)
@@ -308,14 +311,26 @@ function Events() //{{{
         // a normal key like a, b, c, 0, etc.
         else if (event.charCode > 0)
         {
-            if (modifier.length > 0 || event.charCode == 32)
-                return "<" + modifier + key + ">";
-            else
+            key = String.fromCharCode(event.charCode);
+            if (modifier.length == 0)
                 return key;
         }
-        else // a key like F1 is always enclosed in < and >
-            return "<" + modifier + key + ">";
+
+        if (key == null)
+            return null;
+
+        // a key like F1 is always enclosed in < and >
+        return "<" + modifier + key + ">";
     } //}}}
+
+    this.isAcceptKey = function(key)
+    {
+        return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
+    }
+    this.isCancelKey = function(key)
+    {
+        return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
+    }
 
     this.onEscape = function()
     {
@@ -332,7 +347,7 @@ function Events() //{{{
     this.onKeyPress = function(event)
     {
         //var key = event.toString()
-        var key = vimperator.events.eventToString(event);
+        var key = vimperator.events.toString(event);
         if (!key)
              return false;
         // sometimes the non-content area has focus, making our keys not work

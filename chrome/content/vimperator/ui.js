@@ -339,9 +339,10 @@ function CommandLine() //{{{
         }
         else if (event.type == "keypress")
         {
-            var key = event.toString();
+            var key = vimperator.events.toString(event);
+
             /* user pressed ENTER to carry out a command */
-            if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+            if (vimperator.events.isAcceptKey(key))
             {
                 echo_allowed = true;
                 addToHistory(command);
@@ -352,7 +353,7 @@ function CommandLine() //{{{
             }
 
             /* user pressed ESCAPE to cancel this prompt */
-            else if (key == "<Esc>" || key == "<C-[>" || key == "<C-c>")
+            else if (vimperator.events.isCancelKey(key))
             {
                 var res = vimperator.triggerCallback("cancel");
                 // the command history item is saved in the blur() handler
@@ -544,10 +545,8 @@ function CommandLine() //{{{
 
     this.onMultilineInputEvent = function(event)
     {
-        // for now we just receive keypress events
-
-        var key = event.toString();
-        if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+        var key = vimperator.events.toString(event);
+        if (vimperator.events.isAcceptKey(key))
         {
             //var lines = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart).split(/\n/);
             var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
@@ -562,8 +561,8 @@ function CommandLine() //{{{
 
     this.onMultilineOutputEvent = function(event)
     {
-        var key = event.toString();
-        if (key == "<Return>" || key == "<C-j>" || key == "<C-m>")
+        var key = vimperator.events.toString(event);
+        if (vimperator.events.isAcceptKey(key))
         {
             multiline_output_widget.collapsed = true;
             vimperator.focusContent();
