@@ -40,6 +40,24 @@ function Buffer() //{{{
     for (var i = ZOOM_INTERVAL; i <= zoom_manager.MAX; i += ZOOM_INTERVAL)
         zoom_manager.zoomFactors.push(i);
 
+    function setZoom(value)
+    {
+        try
+        {
+            zoom_manager.textZoom = value;
+            vimperator.echo("Text zoom: " + zoom_manager.textZoom + "%");
+            // TODO: shouldn't this just recalculate hint coords, rather than
+            // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
+            // on the recalculation side effect? -- djk
+            // NOTE: we could really do with a zoom event...
+            vimperator.hints.reshowHints();
+        }
+        catch (e) // Components.results.NS_ERROR_INVALID_ARG
+        {
+            vimperator.echoerr("Zoom value out of range (" + zoom_manager.MIN + "-" + zoom_manager.MAX + ")");
+        }
+    }
+
     // NOTE: this is only needed as there's currently no way to specify a
     // {count} when calling ZM.reduce()/ZM.enlarge().  TODO: see if we can get
     // this added to ZoomManager.
@@ -62,8 +80,7 @@ function Buffer() //{{{
         else if (next > end)
             next = end;
 
-        zoom_manager.textZoom = zoom_manager.zoomFactors[next];
-        vimperator.hints.reshowHints();
+        setZoom(zoom_manager.zoomFactors[next]);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -87,20 +104,7 @@ function Buffer() //{{{
 
     this.__defineSetter__("textZoom", function(value)
     {
-        try
-        {
-            zoom_manager.textZoom = value;
-        }
-        catch (e) // Components.results.NS_ERROR_INVALID_ARG
-        {
-            vimperator.echoerr("Zoom value out of range (" + zoom_manager.MIN + "-" + zoom_manager.MAX + ")");
-        }
-
-        // TODO: shouldn't this just recalculate hint coords, rather than
-        // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
-        // on the recalculation side effect? -- djk
-        // NOTE: we could really do with a zoom event...
-        vimperator.hints.reshowHints();
+        setZoom(value);
     });
 
     this.__defineGetter__("title", function()
