@@ -32,6 +32,9 @@ const vimperator = (function() //{{{
 	////////////////////// PRIVATE SECTION /////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////{{{
 
+    const RC_FILE = "~/.vimperatorrc";
+    const PLUGIN_DIR = "~/.vimperator/plugin";
+
     var modes = {
         // main modes
         NONE:             0,
@@ -101,6 +104,47 @@ const vimperator = (function() //{{{
         vimperator.echo("-- " + str_mode + str_extended + " --");
     }
 
+    function expandPath(path)
+    {
+        const WINDOWS = navigator.platform == "Win32";
+
+        // TODO: proper pathname separator translation like Vim
+        if (WINDOWS)
+            path = path.replace('/', '\\', 'g');
+
+        // expand "~" to HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+        if (/^~/.test(path))
+        {
+            var home = environment_service.get("HOME");
+
+            if (WINDOWS && !home)
+            {
+                home = environment_service.get("USERPROFILE");
+                if (!home)
+                    home = environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
+            }
+
+            path = path.replace("~", home);
+        }
+
+        // expand any $ENV vars
+        var env_vars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
+
+        if (env_vars)
+        {
+            var expansion;
+
+            for (var i = 0; i < env_vars.length; i++)
+            {
+                expansion = environment_service.get(env_vars[i].replace("$", ""));
+                if (expansion)
+                    path = path.replace(env_vars[i], expansion);
+            }
+        }
+
+        return path;
+    }
+
 	/////////////////////////////////////////////////////////////////////////////}}}
 	////////////////////// PUBLIC SECTION //////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////{{{
@@ -125,7 +169,7 @@ const vimperator = (function() //{{{
             count: -1                  // parsed count from the input buffer
         },
 
-        /** 
+        /**
          * @param type can be:
          *  "submit": when the user pressed enter in the command line
          *  "change"
@@ -403,33 +447,12 @@ const vimperator = (function() //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function(filename, silent)
         {
-            if (!filename)
-                return;
-
-            // TODO: move this to a seperate function
-            // convert "~" to HOME on Windows
-            if (navigator.platform == "Win32")
-            {
-                // TODO: proper pathname separator translation like Vim
-                filename = filename.replace('/', '\\', 'g');
-                var matches = filename.match(/^~(.*)/)
-                if (matches)
-                {
-                    var home_dir = environment_service.get("HOME");
-                    if (!home_dir)
-                        home_dir = environment_service.get("USERPROFILE");
-                    if (!home_dir)
-                    {
-                        // TODO: are these guaranteed to be set?
-                        home_dir = environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
-                    }
-                    filename = home_dir + "\\" + matches[1];
-                }
-            }
+            filename = expandPath(filename);
 
             try
             {
@@ -475,11 +498,16 @@ const vimperator = (function() //{{{
                                         heredoc = matches[1] + "\n";
                                 }
                             }
-                            else // execute a normal vimperator command
+                            else
+                            {
+                                // execute a normal vimperator command
                                 vimperator.execute(line);
+                            }
                         }
                     });
                 }
+
+                vimperator.log("Sourced: " + filename, 1);
             }
             catch (e)
             {
@@ -550,21 +578,27 @@ const vimperator = (function() //{{{
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
-                vimperator.source("~/.vimperatorrc", true);
-                vimperator.log("~/.vimperatorrc sourced", 1);
+
+                vimperator.source(RC_FILE, true);
 
                 // also source plugins in ~/.vimperator/plugin/
                 var entries = [];
-                try {
-                    var fd = vimperator.fopen("~/.vimperator/plugin", "<");
+                try
+                {
+                    var plugin_dir = expandPath(PLUGIN_DIR);
+                    var fd = vimperator.fopen(plugin_dir, "<");
                     var entries = fd.read();
                     fd.close();
                     entries.forEach(function(file) {
                         if (!file.isDirectory())
                             vimperator.source(file.path, false);
                     });
-                } catch(e) {
+                }
+                catch(e)
+                {
                     // thrown if directory does not exist
+                    vimperator.echoerr(e);
+                    vimperator.log(e);
                 }
             }, 50);
 

@@ -1036,11 +1036,12 @@ function Commands() //{{{
     addDefaultCommand(new Command(["so[urce]"],
         function(args)
         {
-            if (/[^\\]\s/.test(args))
-            {
-                vimperator.echoerr("E172: Only one file name allowed");
-                return;
-            }
+            // FIXME: implement proper filename quoting
+            //if (/[^\\]\s/.test(args))
+            //{
+            //    vimperator.echoerr("E172: Only one file name allowed");
+            //    return;
+            //}
 
             vimperator.source(args);
         },
