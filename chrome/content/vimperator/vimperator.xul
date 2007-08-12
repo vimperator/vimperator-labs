@@ -105,12 +105,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
                         onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>
 
                 <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="10" hidden="false" collapsed="true" multiline="true"
-                        onkeypress="vimperator.commandline.onMultilineInputEvent(event);"/>
+                        onkeypress="vimperator.commandline.onMultilineInputEvent(event);"
+                        oninput="vimperator.commandline.onMultilineInputEvent(event);"
+                        onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
             </vbox>
         </toolbar>
 
         <keyset id="mainKeyset">
-           <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.MODE_EX);" modifiers=""/>
+           <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
            <!-- other keys are handled inside vimperator.js event loop -->
         </keyset>

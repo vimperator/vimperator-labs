@@ -46,18 +46,19 @@ function Events() //{{{
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        vimperator.setMode(); // trick to reshow the mode in the command line
+        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
         vimperator.buffer.updateBufferList();
-        vimperator.setMode(); // trick to reshow the mode in the command line
+        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        vimperator.setMode(); // trick to reshow the mode in the command line
+        //vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
+        setTimeout(vimperator.focusContent, 10); // just make sure, that no widget has focus
     }, false);
 
     // this adds an event which is is called on each page load, even if the
@@ -205,7 +206,9 @@ function Events() //{{{
     this.destroy = function()
     {
         // BIG TODO: removeEventListeners() to avoid mem leaks
-        window.dump("TODO: remove eventlisteners");
+        window.dump("TODO: remove all eventlisteners");
+
+        getBrowser().removeProgressListener(this.progressListener);
     }
 
     // This method pushes keys into the event queue from vimperator
@@ -337,16 +340,15 @@ function Events() //{{{
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
             vimperator.setMode(vimperator.modes.NORMAL);
-            vimperator.echo("");
+            vimperator.commandline.clear();
             vimperator.hints.disableHahMode();
-            vimperator.focusContent();
             vimperator.statusline.updateUrl();
+            vimperator.focusContent();
         }
     }
 
     this.onKeyPress = function(event)
     {
-        //var key = event.toString()
         var key = vimperator.events.toString(event);
         if (!key)
              return false;
@@ -561,7 +563,6 @@ function Events() //{{{
         return false;
     }
     window.addEventListener("keypress", this.onKeyPress, true);
-
 
     this.progressListener =
     {

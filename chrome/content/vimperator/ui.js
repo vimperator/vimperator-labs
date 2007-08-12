@@ -69,7 +69,7 @@ function CommandLine() //{{{
     multiline_output_widget.collapsed = false;
     setTimeout(function() { multiline_output_widget.collapsed = true; }, 0);
 
-    // The widget used for multiline output
+    // The widget used for multiline iutput
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
 
     // we need to save the mode which were in before opening the command line
@@ -80,10 +80,6 @@ function CommandLine() //{{{
     var cur_command = null;
     var old_mode = null; // when we leave the command prompt this mode is restored
     var old_extended_mode = null;
-
-    // an ugly hack that we allow the :echo(err) commands after hitting enter
-    // and before the blur() event gets fired
-    var echo_allowed = false;
 
     // save the arguments for the inputMultiline method which are needed in the event handler
     var multiline_regexp = null;
@@ -100,7 +96,8 @@ function CommandLine() //{{{
     }
     function setMessageStyle()
     {
-        command_widget.inputField.setAttribute("style", "font-family: monospace; color:magenta; font-weight: bold");
+        prompt_widget.setAttribute("style", "font-family: monospace; color:magenta; font-weight: bold");
+        command_widget.inputField.setAttribute("style","font-family: monospace;");
     }
     function setErrorStyle()
     {
@@ -142,14 +139,14 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = true;
 
-        vimperator.log(content_height);
+        // vimperator.log(content_height);
         cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
         multiline_output_widget.contentDocument.body.innerHTML = cmd;
 
         // TODO: resize upon a window resize
         var available_height = getBrowser().mPanelContainer.boxObject.height;
         var content_height = multiline_output_widget.contentDocument.height;
-        vimperator.log(content_height);
+        // vimperator.log(content_height);
         var height = content_height < available_height ? content_height : available_height;
 
         multiline_output_widget.style.height = height + "px";
@@ -157,8 +154,24 @@ function CommandLine() //{{{
         setTimeout(function() {
             multiline_output_widget.focus();
         }, 10);
-        vimperator.log(content_height);
+        //vimperator.log(content_height);
         multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+    }
+
+    function autosizeMultilineInputWidget()
+    {
+        // XXX: faster/better method?
+        
+        var lines = 0;
+        var str = multiline_input_widget.value;
+        for (var i = 0; i < str.length; i++)
+        {
+            if (str[i] == "\n")
+                lines++;
+        }
+        if (lines == 0)
+            lines = 1;
+        multiline_input_widget.setAttribute("rows", lines.toString());
     }
 
     function addToHistory(str)
@@ -199,9 +212,12 @@ function CommandLine() //{{{
         history_index = UNINITIALIZED;
         completion_index = UNINITIALIZED;
 
-        // the command_widget.focus() method calls setPrompt() and setCommand()
-        // this is done, because for follow-mouse window managers, we receive
-        // blur and focus events once the user leaves the Firefox window with the mouse
+        // save the mode, because we need to restore it
+        [old_mode, old_extended_mode] = vimperator.getMode();
+        vimperator.setMode(vimperator.modes.COMMAND_LINE, cur_extended_mode, true);
+        setPrompt(cur_prompt);
+        setCommand(cur_command);
+
         command_widget.focus();
     };
 
@@ -209,7 +225,7 @@ function CommandLine() //{{{
     this.echo = function(str, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (!echo_allowed && focused && focused == command_widget.inputField)
+        if (/*!echo_allowed && focused && */focused == command_widget.inputField)
             return false;
 
         if (typeof str != "string")
@@ -222,8 +238,6 @@ function CommandLine() //{{{
         }
         else
         {
-            multiline_output_widget.collapsed = true;
-            multiline_input_widget.collapsed = true;
             setPrompt("");
             setCommand(str);
         }
@@ -234,7 +248,7 @@ function CommandLine() //{{{
     this.echoErr = function(str)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (!echo_allowed && focused && focused == command_widget.inputField)
+        if (/*!echo_allowed && focused && */focused == command_widget.inputField)
             return false;
 
         setErrorStyle();
@@ -250,9 +264,9 @@ function CommandLine() //{{{
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
         // to make this code synchronous or at least use a callback
-        setPrompt("");
         setMessageStyle();
-        setCommand(str);
+        setPrompt(str);
+        setCommand("");
         return "not implemented";
     };
 
@@ -261,8 +275,8 @@ function CommandLine() //{{{
     this.inputMultiline = function(until_regexp, callback_func)
     {
         // save the mode, because we need to restore it on blur()
-//        [old_mode, old_extended_mode] = vimperator.getMode();
-//        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.READ_MULTLINE, true);
+        [old_mode, old_extended_mode] = vimperator.getMode();
+        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.READ_MULTILINE, true);
 
         // save the arguments, they are needed in the event handler onEvent
         multiline_regexp = until_regexp;
@@ -270,15 +284,19 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = false;
         multiline_input_widget.value = "";
+        autosizeMultilineInputWidget();
+
         setTimeout(function() {
             multiline_input_widget.focus();
         }, 10);
-
     };
 
     this.clear = function()
     {
-        setPrompt(" "); // looks faster than an empty string
+        multiline_input_widget.collapsed = true;
+        multiline_output_widget.collapsed = true;
+
+        setPrompt(" "); // looks faster than an empty string as most prompts are 1 char long
         setCommand("");
         setNormalStyle();
     };
@@ -289,53 +307,18 @@ function CommandLine() //{{{
 
         if (event.type == "blur")
         {
-            // when we do a command_widget.focus() we get a blur event immediately,
-            // so check if the target is the actualy input field
-            if (event.target == command_widget.inputField)
-            {
-                var silent = false;
-                if (old_mode == vimperator.modes.NORMAL)
-                    silent = true;
-                vimperator.setMode(old_mode || vimperator.modes.NORMAL, old_extended_mode || null, silent);
-                cur_command = command;
-
-                // don't add the echoed command to the history, on pressing <cr>, the
-                // command is saved right into the kepress handler
-                if (!echo_allowed)
-                    addToHistory(command);
-
-                completionlist.hide();
-                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
-            }
+            // prevent losing focus, there should be a better way, but it just didn't work otherwise
+            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                    setTimeout(function() { command_widget.inputField.focus(); }, 0);
         }
         else if (event.type == "focus")
         {
-            // if we manually click into the command line, don't open it
-            if (event.target == command_widget.inputField && cur_extended_mode != null)
-            {
-                // save the mode, because we need to restore it on blur()
-                [old_mode, old_extended_mode] = vimperator.getMode();
-                vimperator.setMode(vimperator.modes.COMMAND_LINE, cur_extended_mode);
-
-                setPrompt(cur_prompt);
-                setCommand(cur_command);
-            }
-            else
-            {
-                //event.stopPropagation(); // XXX: doesnt seem to work
-                //event.preventDefault();  // so we need to use the hack below --mst
-
-                // NOTE: echo_allowed is a misleading name here, actually this flag is set
-                // so that we don't save a history entry if the user clicks into the text field
-                echo_allowed = true;
+            if (!cur_extended_mode)
                 event.target.blur();
-                echo_allowed = false;
-                return false;
-            }
         }
         else if (event.type == "input")
         {
-            vimperator.triggerCallback("change", command);
+            vimperator.triggerCallback("change", cur_extended_mode, command);
         }
         else if (event.type == "keypress")
         {
@@ -344,20 +327,24 @@ function CommandLine() //{{{
             /* user pressed ENTER to carry out a command */
             if (vimperator.events.isAcceptKey(key))
             {
-                echo_allowed = true;
+                var mode = cur_extended_mode; // save it here, as setMode() resets it
                 addToHistory(command);
-                var res = vimperator.triggerCallback("submit", command);
+                vimperator.setMode(old_mode, old_extended_mode);
                 vimperator.focusContent();
-                echo_allowed = false;
-                return res;
+                completionlist.hide();
+                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+                return vimperator.triggerCallback("submit", mode, command);
             }
 
             /* user pressed ESCAPE to cancel this prompt */
             else if (vimperator.events.isCancelKey(key))
             {
-                var res = vimperator.triggerCallback("cancel");
-                // the command history item is saved in the blur() handler
+                var res = vimperator.triggerCallback("cancel", cur_extended_mode);
+                addToHistory(command);
+                vimperator.setMode(old_mode, old_extended_mode);
                 vimperator.focusContent();
+                completionlist.hide();
+                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 this.clear();
                 return res;
             }
@@ -422,12 +409,12 @@ function CommandLine() //{{{
 
                     completion_prefix = command.substring(0, command_widget.selectionStart);
                     completion_postfix = command.substring(command_widget.selectionStart);
-                    var res = vimperator.triggerCallback("complete", completion_prefix);
+                    var res = vimperator.triggerCallback("complete", cur_extended_mode, completion_prefix);
                     if (res)
                         [completion_start_index, completions] = res;
 
                     // Sort the completion list
-                    if (vimperator.options["wildoptions"].match(/\bsort\b/))
+                    if (vimperator.options["wildoptions"].search(/\bsort\b/))
                     {
                         completions.sort(function(a, b) {
                                 if (a[0] < b[0])
@@ -545,24 +532,42 @@ function CommandLine() //{{{
 
     this.onMultilineInputEvent = function(event)
     {
-        var key = vimperator.events.toString(event);
-        if (vimperator.events.isAcceptKey(key))
+        if (event.type == "keypress")
         {
-            //var lines = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart).split(/\n/);
-            var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
-            if (text.match(multiline_regexp))
+            var key = vimperator.events.toString(event);
+            if (vimperator.events.isAcceptKey(key))
             {
-                text = text.replace(multiline_regexp, "");
-                multiline_callback.call(this, text);
+                //var lines = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart).split(/\n/);
+                var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
+                if (text.match(multiline_regexp))
+                {
+                    text = text.replace(multiline_regexp, "");
+                    vimperator.setMode(old_mode, old_extended_mode);
+                    multiline_input_widget.collapsed = true;
+                    multiline_callback.call(this, text);
+                }
+            }
+            else if (vimperator.events.isCancelKey(key))
+            {
+                vimperator.setMode(old_mode, old_extended_mode);
                 multiline_input_widget.collapsed = true;
             }
+        }
+        else if (event.type == "blur")
+        {
+            if (vimperator.hasMode(vimperator.modes.READ_MULTILINE))
+                setTimeout(function() { multiline_input_widget.inputField.focus(); }, 0);
+        }
+        else if (event.type == "input")
+        {
+            autosizeMultilineInputWidget();
         }
     }
 
     this.onMultilineOutputEvent = function(event)
     {
         var key = vimperator.events.toString(event);
-        if (vimperator.events.isAcceptKey(key))
+        if (vimperator.events.isAcceptKey(key) || vimperator.events.isCancelKey(key))
         {
             multiline_output_widget.collapsed = true;
             vimperator.focusContent();

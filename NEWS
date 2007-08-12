@@ -1,6 +1,7 @@
 <pre>
 2007-08-*:
 	* version 0.5
+	* the command line keeps focus now, even when clicking outside of it
 	* vimperator.events.feedkeys("2zi") support for scripts
 	* Ctrl-U/Ctrl-D for scrolling the window up/down and the associated
 	'scroll' option

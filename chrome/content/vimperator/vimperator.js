@@ -42,7 +42,7 @@ const vimperator = (function() //{{{
         COMMAND_LINE:     1 << 4,
         // extended modes
         EX:               1 << 10,
-        READ_MULTLINE:    1 << 11,
+        READ_MULTILINE:   1 << 11,
         SEARCH_FORWARD:   1 << 12,
         SEARCH_BACKWARD:  1 << 13,
         ESCAPE_ONE_KEY:   1 << 14,
@@ -125,12 +125,13 @@ const vimperator = (function() //{{{
             count: -1                  // parsed count from the input buffer
         },
 
-        /** TODO: for now, these callbacks are mostly for the command line, move there?
-         * @param type Can be:
+        /** 
+         * @param type can be:
          *  "submit": when the user pressed enter in the command line
          *  "change"
          *  "cancel"
          *  "complete"
+         *  TODO: "zoom": if the zoom value of the current buffer changed
          */
         registerCallback: function(type, mode, func)
         {
@@ -138,12 +139,12 @@ const vimperator = (function() //{{{
             callbacks.push([type, mode, func]);
         },
 
-        triggerCallback: function(type, data)
+        triggerCallback: function(type, mode, data)
         {
             for (var i in callbacks)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
-                if (vimperator.hasMode(thismode) && type == thistype)
+                if (mode == thismode && type == thistype)
                     return thisfunc.call(this, data);
             }
             return false;
