@@ -576,7 +576,6 @@ function Mappings() //{{{
         {
             var sel = window.content.document.getSelection();
             vimperator.copyToClipboard(sel);
-            vimperator.echo("Yanked " + sel);
         },
         {
             short_help: "Copy selected text",
