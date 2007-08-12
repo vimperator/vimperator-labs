@@ -588,7 +588,7 @@ function Commands() //{{{
         // 2 args -> map arg1 to arg*
         function(args)
         {
-            if (args.length == 0)
+            if (!args)
             {
                 vimperator.mappings.list(vimperator.modes.NORMAL);
                 return;
@@ -694,6 +694,23 @@ function Commands() //{{{
             help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to the those marks mentioned."
         }
     ));
+    addDefaultCommand(new Command(["norm[al]"],
+        function(args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+
+            vimperator.events.feedkeys(args);
+        },
+        {
+            usage: ["norm[al][!] {commands}"],
+            short_help: "Execute Normal mode commands",
+            help: "TODO"
+        }
+    ));
     // TODO: remove duplication in :map
     addDefaultCommand(new Command(["no[remap]"],
         // 0 args -> list all maps
@@ -701,7 +718,7 @@ function Commands() //{{{
         // 2 args -> map arg1 to arg*
         function(args)
         {
-            if (args.length == 0)
+            if (!args)
             {
                 vimperator.mappings.list(vimperator.modes.NORMAL);
                 return;
@@ -1133,7 +1150,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["unm[ap]"],
         function(args)
         {
-            if (args.length == 0)
+            if (!args)
             {
                 vimperator.echoerr("E474: Invalid argument");
                 return;
@@ -1194,7 +1211,7 @@ function Commands() //{{{
         {
             var level;
 
-            if (args.length == 0)
+            if (!args)
             {
                 level = 100;
             }

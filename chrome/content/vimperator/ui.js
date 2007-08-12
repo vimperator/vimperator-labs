@@ -69,7 +69,7 @@ function CommandLine() //{{{
     multiline_output_widget.collapsed = false;
     setTimeout(function() { multiline_output_widget.collapsed = true; }, 0);
 
-    // The widget used for multiline iutput
+    // The widget used for multiline intput
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
 
     // we need to save the mode which were in before opening the command line
@@ -97,7 +97,7 @@ function CommandLine() //{{{
     function setMessageStyle()
     {
         prompt_widget.setAttribute("style", "font-family: monospace; color:magenta; font-weight: bold");
-        command_widget.inputField.setAttribute("style","font-family: monospace;");
+        command_widget.inputField.setAttribute("style", "font-family: monospace;");
     }
     function setErrorStyle()
     {
