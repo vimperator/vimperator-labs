@@ -586,7 +586,7 @@ const vimperator = (function() //{{{
                 try
                 {
                     var plugin_dir = expandPath(PLUGIN_DIR);
-                    var fd = vimperator.fopen(plugin_dir, "<");
+                    var fd = vimperator.fopen(plugin_dir);
                     var entries = fd.read();
                     fd.close();
                     entries.forEach(function(file) {
