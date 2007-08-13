@@ -66,8 +66,11 @@ function CommandLine() //{{{
     multiline_output_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multiline_output_widget.contentDocument.body.innerHTML = "";
     // we need this hack, or otherwise the first use of setMultiline() will have a wrong height
-    multiline_output_widget.collapsed = false;
-    setTimeout(function() { multiline_output_widget.collapsed = true; }, 0);
+    setTimeout(function() {
+        multiline_output_widget.collapsed = false;
+        var content_height = multiline_output_widget.contentDocument.height;
+        multiline_output_widget.collapsed = true;
+    }, 100);
 
     // The widget used for multiline intput
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
@@ -149,7 +152,8 @@ function CommandLine() //{{{
         // vimperator.log(content_height);
         var height = content_height < available_height ? content_height : available_height;
 
-        multiline_output_widget.style.height = height + "px";
+        //multiline_output_widget.style.height = height + "px";
+        multiline_output_widget.height = height + "px";
         multiline_output_widget.collapsed = false;
         setTimeout(function() {
             multiline_output_widget.focus();
@@ -414,7 +418,7 @@ function CommandLine() //{{{
                         [completion_start_index, completions] = res;
 
                     // Sort the completion list
-                    if (vimperator.options["wildoptions"].search(/\bsort\b/))
+                    if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
                     {
                         completions.sort(function(a, b) {
                                 if (a[0] < b[0])
