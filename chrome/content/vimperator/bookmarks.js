@@ -699,7 +699,7 @@ function Marks() //{{{
             }
         }
 
-        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>line</td><td>col</td><td>file</td></tr>";
+        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
@@ -794,7 +794,7 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = "<table><tr style=\"color: magenta\"><td>QuickMark</td><td>URL</td></tr>";
+        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] + "</td><td>" + marks[i][1] + "</td></tr>";
