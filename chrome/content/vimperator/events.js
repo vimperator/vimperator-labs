@@ -439,7 +439,7 @@ function Events() //{{{
             {
                 if (map.always_active || vimperator.hints.currentState() == 1)
                 {
-                    map.execute();
+                    map.execute(null, vimperator.input.count);
                     if (map.cancel_mode) // stop processing this event
                     {
                         vimperator.hints.disableHahMode();

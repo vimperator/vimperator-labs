@@ -583,28 +583,28 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zi", "+"],
-        function(count) { vimperator.buffer.zoomIn(count > 0 ? count : 1); },
+        function(count) { vimperator.buffer.zoomIn(count > 1 ? count : 1); },
         {
             short_help: "Zoom in current web page by 25%",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zI"],
-        function(count) { vimperator.buffer.zoomIn((count > 0 ? count : 1) * 4); },
+        function(count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 4); },
         {
             short_help: "Zoom in current web page by 100%",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zo", "-"],
-        function(count) { vimperator.buffer.zoomOut(count > 0 ? count : 1); },
+        function(count) { vimperator.buffer.zoomOut(count > 1 ? count : 1); },
         {
             short_help: "Zoom out current web page by 25%",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zO"],
-        function(count) { vimperator.buffer.zoomOut((count > 0 ? count : 1) * 4); },
+        function(count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 4); },
         {
             short_help: "Zoom out current web page by 100%",
             flags: Mappings.flags.COUNT
@@ -612,7 +612,7 @@ function Mappings() //{{{
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zz"],
         // FIXME: does it make sense to use count for this?  Just use it for returning to 100%?
-        function(count) { vimperator.buffer.textZoom = count > 0 ? count : 100; },
+        function(count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
         {
             short_help: "Set zoom value of the web page",
             help: "Zoom value can be between 1 and 2000%. If it is omitted, zoom is reset to 100%.",
@@ -637,20 +637,20 @@ function Mappings() //{{{
 
     // scrolling commands
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["0", "^"],
-        function() { vimperator.buffer.scrollAbsolute(0, -1); },
+        function() { vimperator.buffer.scrollStart(); },
         {
             short_help: "Scroll to the absolute left of the document",
             help: "Unlike in vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["$"],
-        function() { vimperator.buffer.scrollAbsolute(100, -1); },
+        function() { vimperator.buffer.scrollEnd(); },
         {
             short_help: "Scroll to the absolute right of the document"
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["gg", "<Home>"],
-        function(count) { vimperator.buffer.scrollAbsolute(-1, count >  0 ? count : 0); },
+        function(count) { vimperator.buffer.scrollToPercentile(count >  0 ? count : 0); },
         {
             short_help: "Goto the top of the document",
             help: "Count is supported: <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
@@ -658,7 +658,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["G", "<End>"],
-        function(count) { vimperator.buffer.scrollAbsolute(-1, count >= 0 ? count : 100); },
+        function(count) { vimperator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
         {
             short_help: "Goto the end of the document",
             help: "Count is supported: <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
@@ -666,7 +666,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["h", "<Left>"],
-        function(count) { vimperator.buffer.scrollRelative(count > 1 ? -count : -1, 0); },
+        function(count) { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
         {
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
@@ -675,7 +675,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["j", "<Down>", "<C-e>"],
-        function(count) { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
+        function(count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
         {
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
@@ -684,7 +684,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["k", "<Up>", "<C-y>"],
-        function(count) { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
+        function(count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         {
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
@@ -692,23 +692,24 @@ function Mappings() //{{{
             flags: Mappings.flags.COUNT
         }
     ));
-    function getScrollSize(count)
+    function scrollByScrollSize(count, direction)
     {
-        var lines;
-
         if (count > 0)
             vimperator.options["scroll"] = count;
 
-        if (vimperator.options["scroll"] == 0) // the default value of half a page
-            // FIXME: when updating the scroll methods in v.buffer!
-            lines = vimperator.buffer.pageHeight / (2 * 20); // NOTE: a line is currently 20 pixels rather than a true line.
+        if (vimperator.options["scroll"] > 0)
+        {
+            vimperator.buffer.scrollLines(vimperator.options["scroll"] * direction);
+        }
         else
-            lines = vimperator.options["scroll"];
-
-        return lines;
+        {
+            // scroll half a page down in pixels
+            var win = document.commandDispatcher.focusedWindow;
+            win.scrollBy(0, vimperator.buffer.pageHeight / 2 * direction);
+        }
     }
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-d>"],
-        function(count) { vimperator.buffer.scrollRelative(0, getScrollSize(count)); },
+        function(count) { scrollByScrollSize(count, 1); },
         {
             short_help: "Scroll window downwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
@@ -717,7 +718,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-u>"],
-        function(count) { vimperator.buffer.scrollRelative(0, -getScrollSize(count)); },
+        function(count) { scrollByScrollSize(count, -1); },
         {
             short_help: "Scroll window upwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
@@ -726,7 +727,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["l", "<Right>"],
-        function(count) { vimperator.buffer.scrollRelative(count > 1 ? count : 1, 0); },
+        function(count) { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
         {
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
@@ -735,23 +736,25 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-b>", "<PageUp>", "<S-Space>"],
-        function() { goDoCommand('cmd_scrollPageUp'); },
+        function(count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
         {
             short_help: "Scroll up a full page of the current document",
-            help: "No count support for now."
+            help: "TODO",
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-f>", "<PageDown>", "<Space>"],
-        function() { goDoCommand('cmd_scrollPageDown'); },
+        function(count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
         {
             short_help: "Scroll down a full page of the current document",
-            help: "No count support for now."
+            help: "TODO",
+            flags: Mappings.flags.COUNT
         }
     ));
 
     // history manipulation and jumplist
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-o>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? -1 * count : -1); },
+        function(count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
         {
             short_help: "Go to an older position in the jump list",
             help: "The jump list is just the browser history for now.",
@@ -759,7 +762,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-i>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? count : 1); },
+        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
             short_help: "Go to a newer position in the jump list",
             help: "The jump list is just the browser history for now.",
@@ -767,7 +770,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["H", "<A-Left>", "<M-Left>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? -1 * count : -1); },
+        function(count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
         {
             short_help: "Go back in the browser history",
             help: "Count is supported: <code class=\"mapping\">3H</code> goes back 3 steps.",
@@ -775,7 +778,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["L", "<A-Right>", "<M-Right>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? count : 1); },
+        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
             short_help: "Go forward in the browser history",
             help: "Count is supported: <code class=\"mapping\">3L</code> goes forward 3 steps.",
@@ -1023,87 +1026,81 @@ function Mappings() //{{{
 
     // movement keys
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-e>"],
-        function() { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
+        function(count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-y>"],
-        function() { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
+        function(count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Home>"],
-        function() { vimperator.buffer.scrollAbsolute(-1, 0); },
+        function() { vimperator.buffer.scrollTop(); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<End>"],
-        function() { vimperator.buffer.scrollAbsolute(-1, 100); },
+        function() { vimperator.buffer.scrollBottom(); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-b>"],
-        function() { goDoCommand('cmd_scrollPageUp'); },
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageUp>", "<C-b>"],
+        function(count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageUp>"],
-        function() { goDoCommand('cmd_scrollPageUp'); },
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageDown>", "<C-f>"],
+        function(count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-f>"],
-        function() { goDoCommand('cmd_scrollPageDown'); },
-        {
-            cancel_mode: false,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.HINTS, ["<PageDown>"],
-        function() { goDoCommand('cmd_scrollPageDown'); },
-        {
-            cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Left>"],
-        function() { vimperator.buffer.scrollRelative(count > 1 ? -count : -1, 0); },
+        function() { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Down>"],
-        function() { vimperator.buffer.scrollRelative(0, count > 1 ? count : 1); },
+        function() { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Up>"],
-        function() { vimperator.buffer.scrollRelative(0, count > 1 ? -count : -1); },
+        function() { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<Right>"],
-        function() { vimperator.buffer.scrollRelative(count > 1 ? count : 1, 0); },
+        function() { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
 
@@ -1125,31 +1122,35 @@ function Mappings() //{{{
 
     // navigation
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-o>"],
-        function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-i>"],
-        function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },
+        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-h>"],
-        function() { vimperator.history.stepTo(vimperator.input.count > 0 ? -1 * vimperator.input.count : -1); },
+        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-l>"],
-        function() { vimperator.history.stepTo(vimperator.input.count > 0 ? vimperator.input.count : 1); },
+        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
             cancel_mode: false,
-            always_active: true
+            always_active: true,
+            flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.HINTS, ["<C-d>"],

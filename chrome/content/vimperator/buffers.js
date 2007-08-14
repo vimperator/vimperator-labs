@@ -59,8 +59,8 @@ function Buffer() //{{{
     }
 
     // NOTE: this is only needed as there's currently no way to specify a
-    // {count} when calling ZM.reduce()/ZM.enlarge().  TODO: see if we can get
-    // this added to ZoomManager.
+    // multiplier when calling ZM.reduce()/ZM.enlarge().  TODO: see if we can
+    // get this added to ZoomManager
     function bumpZoomLevel(steps)
     {
         var adjusted_zoom = zoom_manager.snap(zoom_manager.textZoom);
@@ -81,6 +81,32 @@ function Buffer() //{{{
             next = end;
 
         setZoom(zoom_manager.zoomFactors[next]);
+    }
+
+    function checkScrollYBounds(win, direction)
+    {
+        // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
+        if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY == 0)
+            vimperator.beep();
+    }
+
+    // both values are given in percent, -1 means no change
+    function scrollToPercentiles(horizontal, vertical)
+    {
+        var win = document.commandDispatcher.focusedWindow;
+        var h, v;
+
+        if (horizontal < 0)
+            h = win.scrollX;
+        else
+            h = win.scrollMaxX / 100 * horizontal;
+
+        if (vertical < 0)
+            v = win.scrollY;
+        else
+            v = win.scrollMaxY / 100 * vertical;
+
+        win.scrollTo(h, v);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -112,56 +138,54 @@ function Buffer() //{{{
         return window.content.document.title;
     });
 
-    // both values are given in percent, -1 means no change
-    this.scrollAbsolute = function(horizontal, vertical)
+    this.scrollBottom = function()
     {
-        var win = document.commandDispatcher.focusedWindow;
-        //var win = window.content;
-        var horiz, vert;
-
-        if (horizontal < 0)
-            horiz = win.scrollX;
-        else
-            horiz = win.scrollMaxX / 100 * horizontal;
-
-        if (vertical < 0)
-            vert = win.scrollY;
-        else
-            vert = win.scrollMaxY / 100 * vertical;
-
-        win.scrollTo(horiz, vert);
+        scrollToPercentiles(-1, 100);
     }
 
-    this.scrollRelative = function(right, down)
+    this.scrollColumns = function(cols)
     {
         var win = window.document.commandDispatcher.focusedWindow;
-        //var win = window.content; // XXX: This would fix scrolling when the tab has focus, but breaks when it has frames --MST
+        const COL_WIDTH = 20;
 
-        // beep if we can't go there
-        if (down > 0)
-        {
-            // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
-            if (win.scrollY >= win.scrollMaxY)
-                vimperator.beep();
-        }
-        else if (down < 0)
-        {
-            if (win.scrollY == 0)
-                vimperator.beep();
-        }
+        if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
+            vimperator.beep();
 
-        if (right > 0)
-        {
-            if (win.scrollX >= win.scrollMaxX)
-                vimperator.beep();
-        }
-        else if (right < 0)
-        {
-            if (win.scrollX == 0)
-                vimperator.beep();
-        }
+        win.scrollBy(COL_WIDTH * cols, 0);
+    }
 
-        win.scrollBy(right * 20, down * 20);
+    this.scrollEnd = function()
+    {
+        scrollToPercentiles(100, -1);
+    }
+
+    this.scrollLines = function(lines)
+    {
+        var win = window.document.commandDispatcher.focusedWindow;
+        checkScrollYBounds(win, lines);
+        win.scrollByLines(lines);
+    }
+
+    this.scrollPages = function(pages)
+    {
+        var win = window.document.commandDispatcher.focusedWindow;
+        checkScrollYBounds(win, pages);
+        win.scrollByPages(pages);
+    }
+
+    this.scrollToPercentile = function(percentage)
+    {
+        scrollToPercentiles(-1, percentage);
+    }
+
+    this.scrollStart = function()
+    {
+        scrollToPercentiles(0, -1);
+    }
+
+    this.scrollTop = function()
+    {
+        scrollToPercentiles(-1, 0);
     }
 
     // TODO: allow callback for filtering out unwanted frames? User defined?
@@ -261,8 +285,8 @@ function Buffer() //{{{
         }
         catch (e)
         {
-            //vimperator.echoerr(e);
             // FIXME: fail silently here for now
+            //vimperator.log(e);
         }
     }
 

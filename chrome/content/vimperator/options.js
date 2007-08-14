@@ -425,7 +425,9 @@ function Options() //{{{
     addOption(new Option(["scroll", "scr"], "number",
         {
             short_help: "Number of lines to scroll with <code class=\"mapping\">C-u</code> and <code class=\"mapping\">C-d</code> commands",
-            help: "TODO",
+            help: "The number of lines scrolled defaults to half the window size. " +
+                  "When a <code class=\"argument\">{count}</code> is specified to the <code class=\"mapping\">&lt;C-u&gt;</code> or <code class=\"mapping\">&lt;C-d&gt;</code> commands this is used to set the value of <code class=\"option\">'scroll'</code> and also used for the current command. " +
+                  "The value can be reset to half the window height with <code class=\"command\">:set scroll=0</code>.",
             default_value: 0,
             validator: function (value) { if (value >= 0) return true; else return false; }
         }
