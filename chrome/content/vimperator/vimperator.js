@@ -597,8 +597,7 @@ const vimperator = (function() //{{{
                 catch(e)
                 {
                     // thrown if directory does not exist
-                    vimperator.echoerr(e);
-                    vimperator.log(e);
+                    //vimperator.log("Error sourcing plugin directory: " + e);
                 }
             }, 50);
 
