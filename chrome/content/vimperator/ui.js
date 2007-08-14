@@ -165,7 +165,7 @@ function CommandLine() //{{{
     function autosizeMultilineInputWidget()
     {
         // XXX: faster/better method?
-        
+
         var lines = 0;
         var str = multiline_input_widget.value;
         for (var i = 0; i < str.length; i++)
@@ -652,7 +652,10 @@ function InformationList(id, options) //{{{
 
         // remove all old items first
         var items = widget.getElementsByTagName("listitem");
-        while (items.length > 0) { widget.removeChild(items[0]);}
+        while (items.length > 0)
+        {
+            widget.removeChild(items[0]);
+        }
 
         if (!incremental_fill)
         {

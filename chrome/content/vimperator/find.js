@@ -196,7 +196,7 @@ function clearHighlight()
 	var docfrag = doc.createDocumentFragment();
 	var next = elem.nextSibling;
 	var parent = elem.parentNode;
-	while((child = elem.firstChild)) {
+	while ((child = elem.firstChild)) {
 	    docfrag.appendChild(child);
 	}
 	parent.removeChild(elem);

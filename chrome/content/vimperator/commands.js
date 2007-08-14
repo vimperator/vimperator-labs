@@ -556,8 +556,14 @@ function Commands() //{{{
                 {
                     vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
                         function(code) {
-                            try { eval(matches[1] + "\n" + code); }
-                            catch (e) { vimperator.echoerr(e.name + ": " + e.message); }
+                            try
+                            {
+                                eval(matches[1] + "\n" + code);
+                            }
+                            catch (e)
+                            {
+                                vimperator.echoerr(e.name + ": " + e.message);
+                            }
                         });
                 }
                 else // single line javascript code
@@ -654,11 +660,13 @@ function Commands() //{{{
     addDefaultCommand(new Command(["ma[rk]"],
         function(args)
         {
-            if (!args) {
+            if (!args)
+            {
                 vimperator.echoerr("E471: Argument required");
                 return;
             }
-            if (args.length > 1) {
+            if (args.length > 1)
+            {
                 vimperator.echoerr("E488: Trailing characters");
                 return;
             }
@@ -823,7 +831,8 @@ function Commands() //{{{
     addDefaultCommand(new Command(["qma[rk]"],
         function(args)
         {
-            if (!args) {
+            if (!args)
+            {
                 vimperator.echoerr("E471: Argument required");
                 return;
             }

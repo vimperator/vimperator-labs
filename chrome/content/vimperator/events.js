@@ -265,7 +265,7 @@ function Events() //{{{
             evt.initKeyEvent('keypress', true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
 
             var elem = window.document.commandDispatcher.focusedElement;
-            if(!elem)
+            if (!elem)
                 elem = window;
 
             elem.dispatchEvent(evt);
@@ -278,7 +278,7 @@ function Events() //{{{
     // null if unknown key
     this.toString = function(event) //{{{
     {
-        if(!event)
+        if (!event)
             return;
 
         var key = null;

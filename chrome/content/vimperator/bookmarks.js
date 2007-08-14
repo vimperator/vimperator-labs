@@ -127,7 +127,8 @@ function Bookmarks() //{{{
             {
                 bmResource = bmResources.getNext();
                 type = BookmarksUtils.resolveType(bmResource);
-                if (type != "ImmutableBookmark") {
+                if (type != "ImmutableBookmark")
+                {
                     ptype = BookmarksUtils.resolveType(BMSVC.getParent(bmResource));
                     //              alert(type);
                     //              if ( type == "Folder")  // store the current folder
@@ -172,7 +173,7 @@ function Bookmarks() //{{{
             var newalias = alias;
             for (var j = 1; j <= 10; j++) // <=10 is intentional
             {
-                if (!search_engines.some( function(item) { return (item[0] == newalias); } ))
+                if (!search_engines.some(function(item) { return (item[0] == newalias); }))
                     break;
 
                 newalias = alias + j;

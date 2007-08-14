@@ -132,7 +132,7 @@ function fo_read(max)
     {
         var entries = this.localFile.directoryEntries;
         var array = [];
-        while(entries.hasMoreElements())
+        while (entries.hasMoreElements())
         {
             var entry = entries.getNext();
             entry.QueryInterface(Components.interfaces.nsIFile);

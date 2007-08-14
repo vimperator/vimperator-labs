@@ -326,9 +326,14 @@ const vimperator = (function() //{{{
             for (var i in object)
             {
                 var value;
-                try {
+                try
+                {
                     var value = object[i];
-                } catch (e) { value = '' }
+                }
+                catch (e)
+                {
+                    value = '';
+                }
 
                 string += i + ': ' + value + '\n';
             }
@@ -594,7 +599,7 @@ const vimperator = (function() //{{{
                             vimperator.source(file.path, false);
                     });
                 }
-                catch(e)
+                catch (e)
                 {
                     // thrown if directory does not exist
                     //vimperator.log("Error sourcing plugin directory: " + e);

@@ -39,7 +39,7 @@ vimperator.completion = (function() // {{{
         //var filter_length = filter.length;
         //filter = filter.toLowerCase();
         var ignorecase = false;
-        if(filter == filter.toLowerCase())
+        if (filter == filter.toLowerCase())
             ignorecase = true;
 
         for (var i = 0; i < list.length; i++)
@@ -47,7 +47,7 @@ vimperator.completion = (function() // {{{
             for (var j = 0; j < list[i][0].length; j++)
             {
                 var item = list[i][0][j];
-                if(ignorecase)
+                if (ignorecase)
                     item = item.toLowerCase();
 
                 if (item.indexOf(filter) == -1)
@@ -122,7 +122,7 @@ vimperator.completion = (function() // {{{
 
         //var filter_length = filter.length;
         var ignorecase = false;
-        if(filter == filter.toLowerCase())
+        if (filter == filter.toLowerCase())
             ignorecase = true;
 
         /*
@@ -134,7 +134,7 @@ vimperator.completion = (function() // {{{
         {
             var url = urls[i][0] || "";
             var title = urls[i][1] || "";
-            if(ignorecase)
+            if (ignorecase)
             {
                 url = url.toLowerCase();
                 title = title.toLowerCase();
@@ -257,9 +257,12 @@ vimperator.completion = (function() // {{{
                 return [];
 
             var compl = match[2] || '';
-            try {
+            try
+            {
                 var fd = vimperator.fopen(dir, "<");
-            } catch(e) {
+            }
+            catch(e)
+            {
                 // thrown if file does not exist
                 return [ ];
             }
@@ -369,7 +372,7 @@ vimperator.completion = (function() // {{{
             }
 
             // check if filter ends with =, then complete current value
-            else if(filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
+            else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
             {
                 filter = filter.substr(0, filter.length-1);
                 for (var option in vimperator.options)
@@ -459,7 +462,7 @@ vimperator.completion = (function() // {{{
             // if there is no space between the command name and the cursor
             // then get completions of the command name
             var matches = str.match(/^(:*\d*)\w*$/);
-            if(matches)
+            if (matches)
             {
                 completions = this.get_command_completions(cmd);
                 start = matches[1].length;
