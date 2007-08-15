@@ -268,12 +268,6 @@ function Commands() //{{{
         // converts that string to a useful url and title, and calls addBookmark
         function(args)
         {
-            if (/-[Tk]/.test(args))
-            {
-                vimperator.echoerr("-T {taglist} and -k {keyword} not implemented yet");
-                return;
-            }
-
             var result = Bookmarks.parseBookmarkString(args);
 
             if (result)
@@ -311,16 +305,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bmarks"],
-        function(args, special)
-        {
-            if (/-T/.test(args))
-            {
-                vimperator.echoerr("-T {taglist} not implemented yet");
-                return;
-            }
-
-            vimperator.bookmarks.list(args, special);
-        },
+        function(args, special) { vimperator.bookmarks.list(args, special); },
         {
             usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
@@ -364,12 +349,6 @@ function Commands() //{{{
     addDefaultCommand(new Command(["delbm[arks]"],
         function(args, special)
         {
-            if (special || /-T/.test(args))
-            {
-                vimperator.echoerr("[!] and -T {taglist} not implemented yet");
-                return;
-            }
-
             var result = Bookmarks.parseBookmarkString(args);
 
             if (result)
