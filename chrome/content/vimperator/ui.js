@@ -155,11 +155,9 @@ function CommandLine() //{{{
         //multiline_output_widget.style.height = height + "px";
         multiline_output_widget.height = height + "px";
         multiline_output_widget.collapsed = false;
-        setTimeout(function() {
-            multiline_output_widget.focus();
-        }, 10);
         //vimperator.log(content_height);
         multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+        multiline_output_widget.contentWindow.focus();
     }
 
     function autosizeMultilineInputWidget()
