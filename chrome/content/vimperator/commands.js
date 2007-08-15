@@ -623,29 +623,9 @@ function Commands() //{{{
 
             if (rhs)
             {
-                if (/^:/.test(rhs))
-                {
-                    vimperator.mappings.add(
-                        new Map(vimperator.modes.NORMAL, [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
-                    );
-                }
-                else
-                {
-                    // NOTE: we currently only allow one normal mode command in {rhs}
-                    var map = vimperator.mappings.get(vimperator.modes.NORMAL, rhs);
-
-                    // create a new Map for {lhs} with the same action as
-                    // {rhs}...until we have feedkeys().
-                    // NOTE: Currently only really intended for static use (e.g.
-                    // from the RC file) since {rhs} is evaluated when the map
-                    // is created not at runtime
-                    if (map)
-                        vimperator.mappings.add(
-                            new Map(vimperator.modes.NORMAL, [lhs], map.action, { flags: map.flags, rhs: rhs })
-                        );
-                    else
-                        vimperator.echoerr("E475: Invalid argument: " + "{rhs} must be a existing singular mapping");
-                }
+                vimperator.mappings.add(new Map(vimperator.modes.NORMAL, [lhs],
+                    function() { vimperator.events.feedkeys(rhs); }, { rhs: rhs }
+                ));
             }
             else
             {
