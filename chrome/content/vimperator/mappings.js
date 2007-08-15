@@ -328,7 +328,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["B"],
-        function() { vimperator.commands.buffers(); },
+        function() { vimperator.buffer.list(true); },
         {
             short_help: "Toggle buffer list",
             help: "Toggles the display of the buffer list which shows all opened tabs."

@@ -353,21 +353,12 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
-        // TODO: move to v.tabs/buffers
-        function()
+        function(args, special) { vimperator.buffer.list(special); },
         {
-            if (vimperator.bufferwindow.visible())
-                vimperator.bufferwindow.hide();
-            else
-            {
-                var items = vimperator.completion.get_buffer_completions("");
-                vimperator.bufferwindow.show(items);
-                vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-            }
-        },
-        {
+            usage: ["buffers[!]"],
             short_help: "Show a list of all buffers (=tabs)",
-            help: "If the list is already shown, close the preview window."
+            help: "The special version <code class=\"command\">:buffers!</code> opens the buffer list in a persistent preview window. " +
+                  "Call the special version of this command again to close the window."
         }
     ));
     addDefaultCommand(new Command(["delbm[arks]"],
@@ -561,10 +552,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["hist[ory]", "hs"],
-        function(args, special)
-        {
-            vimperator.history.list(args, special);
-        },
+        function(args, special) { vimperator.history.list(args, special); },
         {
             usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",

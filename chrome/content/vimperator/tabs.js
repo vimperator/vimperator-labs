@@ -188,6 +188,7 @@ function Tabs() //{{{
         this.alternate = alternates[1];
     }
 
+    // TODO: move to v.buffers
     this.alternate = this.getTab();
 
     this.reload = function(tab, bypass_cache)

@@ -138,6 +138,50 @@ function Buffer() //{{{
         return window.content.document.title;
     });
 
+    // TODO: move to v.buffers.list()
+    this.list = function(fullmode)
+    {
+        if (fullmode)
+        {
+            // toggle the special buffer previw window
+            if (vimperator.bufferwindow.visible())
+            {
+                vimperator.bufferwindow.hide();
+            }
+            else
+            {
+                var items = vimperator.completion.get_buffer_completions("");
+                vimperator.bufferwindow.show(items);
+                vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+            }
+        }
+        else
+        {
+            // TODO: move this to vimperator.buffers.get()
+            var items = vimperator.completion.get_buffer_completions("");
+            var number, indicator, title, url;
+
+            var list = "<table>"
+            for (var i = 0; i < items.length; i++)
+            {
+                if (i == vimperator.tabs.index())
+                   indicator = "&nbsp;%&nbsp;";
+                else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
+                   indicator = "&nbsp;#&nbsp;";
+                else
+                   indicator = "&nbsp;&nbsp;&nbsp;";
+
+                [number, title] = items[i][0].split(/:\s+/, 2);
+                url = items[i][1];
+
+                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td>" + url + "</td></tr>";
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, true);
+        }
+    }
+
     this.scrollBottom = function()
     {
         scrollToPercentiles(-1, 100);
