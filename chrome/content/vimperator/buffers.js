@@ -165,16 +165,16 @@ function Buffer() //{{{
             for (var i = 0; i < items.length; i++)
             {
                 if (i == vimperator.tabs.index())
-                   indicator = "&nbsp;%&nbsp;";
+                   indicator = "&nbsp;<span style=\"color: blue\">%</span>&nbsp;";
                 else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
-                   indicator = "&nbsp;#&nbsp;";
+                   indicator = "&nbsp;<span style=\"color: blue\">#</span>&nbsp;";
                 else
                    indicator = "&nbsp;&nbsp;&nbsp;";
 
                 [number, title] = items[i][0].split(/:\s+/, 2);
                 url = items[i][1];
 
-                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td>" + url + "</td></tr>";
+                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
             }
             list += "</table>";
 
