@@ -738,16 +738,16 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-b>", "<PageUp>", "<S-Space>"],
         function(count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
         {
-            short_help: "Scroll up a full page of the current document",
-            help: "TODO",
+            short_help: "Scroll up a full page",
+            help: "Scroll window <code class=\"argument\">[count]</code> pages Backwards (upwards) in the buffer.",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-f>", "<PageDown>", "<Space>"],
         function(count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
         {
-            short_help: "Scroll down a full page of the current document",
-            help: "TODO",
+            short_help: "Scroll down a full page",
+            help: "Scroll window <code class=\"argument\">[count]</code> pages Forwards (downwards) in the buffer.",
             flags: Mappings.flags.COUNT
         }
     ));

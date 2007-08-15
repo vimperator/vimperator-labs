@@ -35,7 +35,7 @@ function Buffer() //{{{
     var zoom_manager = ZoomManager.prototype.getInstance();
     const ZOOM_INTERVAL = 25;
 
-    // initialise the zoom levels
+    // initialize the zoom levels
     zoom_manager.zoomFactors = [zoom_manager.MIN];
     for (var i = ZOOM_INTERVAL; i <= zoom_manager.MAX; i += ZOOM_INTERVAL)
         zoom_manager.zoomFactors.push(i);
@@ -220,7 +220,7 @@ function Buffer() //{{{
             // find the currently focused frame index
             // TODO: If the window is a frameset then the first _frame_ should be
             //       focused.  Since this is not the current FF behaviour,
-            //       we initalise current to -1 so the first call takes us to the
+            //       we initalize current to -1 so the first call takes us to the
             //       first frame.
             var current = -1;
             for (var i = 0; i < frames.length; i++)
