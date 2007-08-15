@@ -1,3 +1,75 @@
+2007-08-15 19:47  stubenschrott
+
+	* chrome/content/vimperator/ui.js: fixed focusing the MOW
+
+2007-08-15 19:45  stubenschrott
+
+	* chrome/content/vimperator/vimperator.xul: overflow: hidden for
+	  the MOW
+
+2007-08-15 19:31  stubenschrott
+
+	* chrome/content/vimperator/buffers.js: added colors to :ls
+
+2007-08-15 19:21  dougkearns
+
+	* chrome/content/vimperator/commands.js: use
+	  vimperator.events.feedkeys() for :map
+
+2007-08-15 18:45  dougkearns
+
+	* chrome/content/vimperator/: buffers.js, commands.js, mappings.js,
+	  tabs.js: use the multiline output window for :buffers and move
+	  the existing persistent window functionality to :buffers!
+
+2007-08-15 17:32  dougkearns
+
+	* NEWS, chrome/content/vimperator/commands.js: update NEWS to
+	  mention the renaming of bookmark related commands and fix some
+	  trivial help typos
+
+2007-08-15 15:24  dougkearns
+
+	* chrome/content/vimperator/: bookmarks.js, commands.js: rename
+	  :bm, :bmadd, :bmdel to :bmarks, :bmark, :delbmarks respectively
+	  and use the multiline output window for :bmarks and :history
+
+2007-08-15 02:08  stubenschrott
+
+	* chrome/content/vimperator/: buffers.js, mappings.js:
+	  australian/british english -> american english in comments added
+	  more help
+
+2007-08-14 18:16  dougkearns
+
+	* chrome/content/vimperator/bookmarks.js: use TH to markup the
+	  table headers in :marks/:qmarks output
+
+2007-08-14 17:32  dougkearns
+
+	* chrome/content/vimperator/: buffers.js, events.js, mappings.js,
+	  options.js: break up buffer.scrollAbsolute and
+	  buffer.scrollRelative into smaller, more specific, methods
+
+2007-08-14 17:24  dougkearns
+
+	* chrome/content/vimperator/: bookmarks.js, commands.js,
+	  completion.js, default.css, events.js, file.js, find.js, ui.js,
+	  vimperator.js: some trivial formatting fixes
+
+2007-08-14 17:23  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: don't echo an error
+	  message if no plugin directory is found
+
+2007-08-13 20:12  stubenschrott
+
+	* ChangeLog, chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/ui.js,
+	  chrome/content/vimperator/vimperator.xul: hopefully made the MOW
+	  hack better, so that it doesn't show during startup fixed
+	  wildoptions=sort
+
 2007-08-13 11:29  dougkearns
 
 	* chrome/content/vimperator/vimperator.js: fix plugin directory

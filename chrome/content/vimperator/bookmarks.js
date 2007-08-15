@@ -262,7 +262,10 @@ function Bookmarks() //{{{
                 var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    list += "<tr><td>" + items[i][1] + "</td><td>" + items[i][0] + "</td></tr>";
+                    list += "<tr><td>" + items[i][1] + "</td><td style=\"color: green\">" + items[i][0] + "</td></tr>";
+                    // TODO: change that list to something like this when we have keywords
+                    //list += "<tr><td width=\"30%\"><span style=\"font-weight: bold\">" + items[i][1].substr(0,20) + "</span></td><td width=\"70%\"><span style=\"color: green\">" + items[i][0] + "</span><br/>" + "Keyword: <span style=\"color: blue\">foo</span> Tags: <span style=\"color: red\">computer, news</span>" + "</td></tr>";
+
                 }
                 list += "</table>";
 
