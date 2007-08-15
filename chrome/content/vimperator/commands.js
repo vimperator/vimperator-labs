@@ -324,8 +324,8 @@ function Commands() //{{{
         {
             usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
-            help: "Open the message window at the bottom of the screen with all bookmarks which match <code class\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.</br>" +
+            help: "Open the message window at the bottom of the screen with all bookmarks which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
+                  "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list<br/>",
             completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
@@ -568,7 +568,7 @@ function Commands() //{{{
         {
             usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",
-            help: "Open the message window at the bottom of the screen with all history items which match <code class\"argument\">[filter]</code> either in the title or URL.<br/>" +
+            help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
                   "The special version <code class=\"command\">:history!</code> will open the default Firefox history window.",
             completer: function(filter) { return vimperator.completion.get_history_completions(filter); }
         }
