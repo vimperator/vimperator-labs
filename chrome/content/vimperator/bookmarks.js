@@ -26,10 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-/*
- * also includes methods for dealing with
- * keywords and search engines
- */
+// also includes methods for dealing with keywords and search engines
 function Bookmarks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -71,9 +68,8 @@ function Bookmarks() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    /*
-     * @return a new Array() of our bookmarks
-     */
+    // FIXME: add filtering here rather than having to calling
+    // get_bookmark_completions()
     this.get = function()
     {
         if (!bookmarks)
@@ -82,9 +78,7 @@ function Bookmarks() //{{{
         return bookmarks;
     }
 
-    /**
-     * @TODO: keyword support
-     */
+    // TODO: keyword support
     this.add = function (title, uri, keyword)
     {
         if (!bookmarks)
@@ -101,10 +95,8 @@ function Bookmarks() //{{{
         return true;
     }
 
-    /* no idea what it does, it Just Works (TM)
-     *
-     * @returns number of deleted bookmarks
-     */
+    // NOTE: no idea what it does, it Just Works (TM)
+    // returns number of deleted bookmarks
     this.remove = function(url)
     {
         var deleted = 0;
@@ -156,7 +148,7 @@ function Bookmarks() //{{{
         return deleted;
     }
 
-    /* also ensures that each search engine has a vimperator-friendly alias */
+    // also ensures that each search engine has a vimperator-friendly alias
     this.getSearchEngines = function()
     {
         var search_engines = [];
@@ -248,21 +240,42 @@ function Bookmarks() //{{{
     this.list = function(filter, fullmode)
     {
         if (fullmode)
+        {
             vimperator.open("chrome://browser/content/bookmarks/bookmarksPanel.xul", vimperator.NEW_TAB);
+        }
         else
         {
-            var items = vimperator.bookmarks.get(filter);
-            vimperator.previewwindow.show(items);
+            var items = vimperator.completion.get_bookmark_completions(filter);
+
+            if (items.length == 0)
+            {
+                if (filter.length > 0)
+                    vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
+                else
+                    vimperator.echoerr("No bookmarks set");
+
+                return;
+            }
+
+            for (var i = 0; i < items.length; i++)
+            {
+                var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    list += "<tr><td>" + items[i][1] + "</td><td>" + items[i][0] + "</td></tr>";
+                }
+                list += "</table>";
+
+                vimperator.commandline.echo(list, true);
+            }
         }
     }
 
-    /*
-       res = parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at");
-       res.tags is an array of tags
-       res.title is the title or "" if no one was given
-       res.url is the url as a string
-       returns null, if parsing failed
-    */
+    //  res = parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at");
+    //  res.tags is an array of tags
+    //  res.title is the title or "" if no one was given
+    //  res.url is the url as a string
+    //  returns null, if parsing failed
     Bookmarks.parseBookmarkString = function(str)
     {
         var res = {};
@@ -298,10 +311,10 @@ function Bookmarks() //{{{
                     if (res.title != null)
                         return null;
 
-                    str = match_title[match_title.length-1]; // the last captured parenthesis is the rest of the string
+                    str = match_title[match_title.length - 1]; // the last captured parenthesis is the rest of the string
                     var title = match_title[3];
                     if (title.charAt(0) == '"')
-                        title = title.substring(1,title.length-1);
+                        title = title.substring(1, title.length - 1);
                     res.title = title;
                 }
                 else // at last check for a URL
@@ -313,10 +326,10 @@ function Bookmarks() //{{{
                         if (res.url != null)
                             return null;
 
-                        str = match_url[match_url.length-1]; // the last captured parenthesis is the rest of the string
+                        str = match_url[match_url.length - 1]; // the last captured parenthesis is the rest of the string
                         url = match_url[1];
                         if (url.charAt(0) == '"')
-                            url = url.substring(1,url.length-1);
+                            url = url.substring(1, url.length - 1);
                         res.url = url;
                     }
                     else
@@ -389,9 +402,8 @@ function History() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    /*
-     * @return a new Array() of our bookmarks
-     */
+    // FIXME: add filtering here rather than having to call
+    // get_bookmark_completions()
     this.get = function()
     {
         if (!history)
@@ -417,6 +429,7 @@ function History() //{{{
     this.stepTo = function(steps)
     {
         var index = getWebNavigation().sessionHistory.index + steps;
+
         if (index >= 0 && index < getWebNavigation().sessionHistory.count)
         {
             getWebNavigation().gotoIndex(index);
@@ -430,34 +443,61 @@ function History() //{{{
     this.goToStart = function()
     {
         var index = getWebNavigation().sessionHistory.index;
+
         if (index == 0)
         {
             vimperator.beep();
             return;
         }
+
         getWebNavigation().gotoIndex(0);
     }
 
     this.goToEnd = function()
     {
         var index = getWebNavigation().sessionHistory.index;
-        var max = getWebNavigation().sessionHistory.count -1;
+        var max = getWebNavigation().sessionHistory.count - 1;
+
         if (index == max)
         {
             vimperator.beep();
             return;
         }
+
         getWebNavigation().gotoIndex(max);
     }
 
     this.list = function(filter, fullmode)
     {
         if (fullmode)
+        {
             vimperator.open("chrome://browser/content/history/history-panel.xul", vimperator.NEW_TAB);
+        }
         else
         {
-            var items = vimperator.history.get(filter);
-            vimperator.previewwindow.show(items);
+            var items = vimperator.completion.get_history_completions(filter);
+
+            if (items.length == 0)
+            {
+                if (filter.length > 0)
+                    vimperator.echoerr("E283: No history matching \"" + filter + "\"");
+                else
+                    vimperator.echoerr("No history set");
+
+                return;
+            }
+
+            for (var i = 0; i < items.length; i++)
+            {
+                var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    list += "<tr><td>" + items[i][1] + "</td><td>" + items[i][0] + "</td></tr>";
+                }
+                list += "</table>";
+
+                vimperator.commandline.echo(list, true);
+            }
         }
     }
     //}}}
@@ -473,6 +513,7 @@ function Marks() //{{{
     var url_marks = {};
     var pending_jumps = [];
     var appcontent = document.getElementById("appcontent");
+
     if (appcontent)
         appcontent.addEventListener("load", onPageLoad, true);
 
@@ -574,7 +615,7 @@ function Marks() //{{{
 
         if (win.document.body.localName.toLowerCase() == "frameset")
         {
-            vimperator.echo("marks support for frameset pages not implemented yet");
+            vimperator.echoerr("marks support for frameset pages not implemented yet");
             return;
         }
 
@@ -699,7 +740,7 @@ function Marks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>line</td><td>col</td><td>file</td></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
@@ -794,7 +835,7 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>QuickMark</th><th>URL</th></tr>";
+        var list = "<table><tr style=\"color: magenta\"><td>QuickMark</td><td>URL</td></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] + "</td><td>" + marks[i][1] + "</td></tr>";

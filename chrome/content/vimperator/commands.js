@@ -263,78 +263,71 @@ function Commands() //{{{
             short_help: "Play a system beep"
         }
     ));
-    addDefaultCommand(new Command(["bma[dd]"],
-        // takes: -t "foo" -T "tag1,tag2", myurl
+    addDefaultCommand(new Command(["bma[rk]"],
+        // takes: -t "foo" myurl
         // converts that string to a useful url and title, and calls addBookmark
-        // TODO: proper ex-style arg parsing
         function(args)
         {
-            var res = Bookmarks.parseBookmarkString(args);
-            if (res)
+            if (/-[Tk]/.test(args))
             {
-                if (res.url == null)
+                vimperator.echoerr("-T {taglist} and -k {keyword} not implemented yet");
+                return;
+            }
+
+            var result = Bookmarks.parseBookmarkString(args);
+
+            if (result)
+            {
+                if (result.url == null)
                 {
-                    res.url = vimperator.buffer.location;
-                    // also guess title if the current url is :bmadded
-                    if (res.title == null)
-                        res.title = vimperator.buffer.title;
+                    result.url = vimperator.buffer.location;
+                    // also guess title if the current url is :bmarked
+                    if (result.title == null)
+                        result.title = vimperator.buffer.title;
                 }
 
-                if (res.title == null) // title could still be null
-                    res.title = res.url;
+                if (result.title == null) // title could still be null
+                    result.title = result.url;
 
-                vimperator.bookmarks.add(res.title, res.url);
-                vimperator.echo("Bookmark `" + res.title + "' added with url `" + res.url + "'");
+                vimperator.bookmarks.add(result.title, result.url);
+                vimperator.echo("Bookmark `" + result.title + "' added with url `" + result.url + "'");
             }
             else
-                vimperator.echo("Usage: :bmadd [-t \"My Title\"] [-T tag1,tag2] <url>");
+            {
+                //vimperator.echo("Usage: :bmark [-t \"My Title\"] [-T tag1,tag2] <url>");
+                vimperator.echoerr("E474: Invalid argument");
+            }
         },
         {
-            usage: ["bma[dd] [-tTk] [url]"],
+            usage: ["bma[rk] [-t {title}] [url]"],
             short_help: "Add a bookmark",
             help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
-                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags.<br/>" +
-                  "You can omit the optional [url] field, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
+                  "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   " -t \"custom title\"<br/>" +
                   "The following options will be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list <br/>" +
-                  " -k keyword <br/>"
+                  " -T comma,separated,tag,list<br/>" +
+                  " -k keyword<br/>" +
+                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags."
         }
     ));
-    addDefaultCommand(new Command(["bmd[el]"],
-        // TODO: proper ex-style arg parsing
-        function(args)
+    addDefaultCommand(new Command(["bmarks"],
+        function(args, special)
         {
-            var res = Bookmarks.parseBookmarkString(args);
-            if (res)
+            if (/-T/.test(args))
             {
-                if (res.url == null)
-                    res.url = vimperator.buffer.location;
-
-                var del = vimperator.bookmarks.remove(res.url);
-                vimperator.echo(del + " bookmark(s) with url `" + res.url + "' deleted");
+                vimperator.echoerr("-T {taglist} not implemented yet");
+                return;
             }
-            else
-                vimperator.echo("Usage: :bmdel <url>");
+
+            vimperator.bookmarks.list(args, special);
         },
         {
-            usage: ["bmd[el] [-T] {url}"],
-            short_help: "Delete a bookmark",
-            help: "Deletes <b>all</b> bookmarks which matches the url AND the specified tags. Use <code>&lt;Tab&gt;</code> key on a regular expression to complete the url which you want to delete.<br/>" +
-                  "The following options WILL be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list <br/>",
-            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
-        }
-    ));
-    addDefaultCommand(new Command(["bookm[arks]", "bm"],
-        function(args, special) { vimperator.bookmarks.list(args, special); },
-        {
-            usage: ["bm[!] [-T] {regexp}"],
+            usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
-            help: "Open the preview window at the bottom of the screen for all bookmarks which match the regexp either in the title or URL.<br/>" +
-                  "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.<br/>" +
+            help: "Open the message window at the bottom of the screen with all bookmarks which match <code class\"argument\">[filter]</code> either in the title or URL.<br/>" +
+                  "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.</br>" +
                   "The following options WILL be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list <br/>",
+                  " -T comma,separated,tag,list<br/>",
             completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
         }
     ));
@@ -375,6 +368,40 @@ function Commands() //{{{
         {
             short_help: "Show a list of all buffers (=tabs)",
             help: "If the list is already shown, close the preview window."
+        }
+    ));
+    addDefaultCommand(new Command(["delbm[arks]"],
+        function(args, special)
+        {
+            if (special || /-T/.test(args))
+            {
+                vimperator.echoerr("[!] and -T {taglist} not implemented yet");
+                return;
+            }
+
+            var result = Bookmarks.parseBookmarkString(args);
+
+            if (result)
+            {
+                if (result.url == null)
+                    result.url = vimperator.buffer.location;
+
+                var deleted_count = vimperator.bookmarks.remove(result.url);
+                vimperator.echo(deleted_count + " bookmark(s) with url `" + result.url + "' deleted");
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+            }
+        },
+        {
+            usage: ["delbm[arks] {url}"],
+            short_help: "Delete a bookmark",
+            help: "Deletes <b>all</b> bookmarks which match the <code class=\"argument\">{url}</code>. Use <code>&lt;Tab&gt;</code> key on a string to complete the url which you want to delete.<br/>" +
+                  "The following options WILL be interpreted in the future:<br/>" +
+                  " [!] a special version to delete ALL bookmarks <br/>" +
+                  " -T comma,separated,tag,list <br/>",
+            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
         }
     ));
     addDefaultCommand(new Command(["delm[arks]"],
@@ -534,12 +561,15 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["hist[ory]", "hs"],
-        function() { vimperator.history.list(); },
+        function(args, special)
         {
-            usage: ["hist[ory] {filter}"],
+            vimperator.history.list(args, special);
+        },
+        {
+            usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",
-            help: "Open the preview window at the bottom of the screen for all history items which match the filter string either in the title or URL. " +
-                  "Close this window with <code class=\"command\">:pclose</code> or open entries with double click in the current tab or middle click in a new tab.",
+            help: "Open the message window at the bottom of the screen with all history items which match <code class\"argument\">[filter]</code> either in the title or URL.<br/>" +
+                  "The special version <code class=\"command\">:history!</code> will open the default Firefox history window.",
             completer: function(filter) { return vimperator.completion.get_history_completions(filter); }
         }
     ));
