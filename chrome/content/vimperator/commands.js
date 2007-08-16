@@ -601,7 +601,6 @@ function Commands() //{{{
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
 
-            // alert(">>" + lhs + "<<");
             if (rhs)
             {
                 vimperator.mappings.add(new Map(vimperator.modes.NORMAL, [lhs],

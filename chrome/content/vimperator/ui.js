@@ -310,8 +310,10 @@ function CommandLine() //{{{
         if (event.type == "blur")
         {
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
-            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                    setTimeout(function() { command_widget.inputField.focus(); }, 0);
+            setTimeout(function() {
+                if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                        command_widget.inputField.focus();
+            }, 0);
         }
         else if (event.type == "focus")
         {
