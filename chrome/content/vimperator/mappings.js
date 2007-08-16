@@ -951,7 +951,7 @@ function Mappings() //{{{
         {
             short_help: "Find next",
             help: "Repeat the last \"g/\" 1 time (until count is supported). <br/>" +
-                  "NOTE: As \"g/\" is a little broken right now, use <F3> to go to the next search item of the \"/\" search for now."
+                  "NOTE: As \"g/\" is a little broken right now, use &lt;F3&gt; to go to the next search item of the \"/\" search for now."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["N"],
@@ -959,7 +959,7 @@ function Mappings() //{{{
         {
             short_help: "Find previous",
             help: "Repeat the last \"g/\" 1 time (until count is supported) in the opposite direction.<br/>" +
-                  "NOTE: As \"g/\" is a little broken right now, use <S-F3> to go to the previous search item of the \"/\" search for now."
+                  "NOTE: As \"g/\" is a little broken right now, use &lt;S-F3&gt; to go to the previous search item of the \"/\" search for now."
         }
     ));
 
