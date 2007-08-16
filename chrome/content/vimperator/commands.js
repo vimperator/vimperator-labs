@@ -598,7 +598,7 @@ function Commands() //{{{
                 return;
             }
 
-            var matches = args.match(/^([^\s]+)\s+(.+)$/);
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
 
             // alert(">>" + lhs + "<<");
