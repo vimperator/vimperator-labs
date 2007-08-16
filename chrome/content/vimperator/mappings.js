@@ -312,7 +312,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["I"],
         function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS); },
         {
-            short_help: "Disable vimperator keys",
+            short_help: "Disable Vimperator keys",
             help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
                   "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
                   "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
@@ -323,8 +323,8 @@ function Mappings() //{{{
         function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ONE_KEY); },
         {
             short_help: "Escape next key",
-            help: "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
-                  "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in vimperator.<br/>" +
+            help: "If you need to pass a certain key to a JavaScript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
+                  "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
                   "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
         }
     ));
