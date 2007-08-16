@@ -64,7 +64,7 @@ function Hints() //{{{
             wins.push(win);
         }
         //    logMessage("winId:"+win.winId);
-        win.res = evaluateXPath(vimperator.options["hinttags"], doc);
+        win.res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc);
         win.coordLoaderId = window.setTimeout("vimperator.hints.loadCoord(" + win.winId + ", 0);", 1);
     }
 
@@ -141,7 +141,7 @@ function Hints() //{{{
         area[3] = area[1] + win.innerHeight;
 
         var doc = win.document;
-        var res = evaluateXPath(vimperator.options["hinttags"], doc);
+        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc);
 
         var elem, i;
 
@@ -260,7 +260,7 @@ function Hints() //{{{
             win = window.content;
 
         var doc = win.document;
-        var res = evaluateXPath("//HINTS/SPAN", doc)
+        var res = vimperator.buffer.evaluateXPath("//HINTS/SPAN", doc)
         var elem, i;
 
         for (i = 0; i < res.snapshotLength; i++)

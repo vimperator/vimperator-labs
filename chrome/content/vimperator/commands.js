@@ -1237,12 +1237,12 @@ function Commands() //{{{
     //}}}
 } //}}}
 
-/* takes a string like 'google bla, www.osnews.com'
- * and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
- */
-String.prototype.toURLArray = function()
+// takes a string like 'google bla, www.osnews.com'
+// and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
+String.prototype.toURLArray = function() // {{{
 {
     var urls = this.split(/\s*\,\s+/);
+
     begin: for (var url = 0; url < urls.length; url++)
     {
         // FIXME: not really that good (doesn't handle .. in the middle), also problems with trailing slashes
@@ -1311,33 +1311,8 @@ String.prototype.toURLArray = function()
         // if we are here let Firefox handle the url and hope it does
         // something useful with it :)
     }
+
     return urls;
-}
-
-/////////////////////////////////////////////////////////////////////}}}
-// misc helper functions ///////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////{{{
-
-// returns an XPathResult object
-function evaluateXPath(expression, doc, ordered)
-{
-    if (!doc)
-        doc = window.content.document;
-
-    var res = doc.evaluate(expression, doc,
-        function lookupNamespaceURI(prefix) {
-          switch (prefix) {
-            case 'xhtml':
-              return 'http://www.w3.org/1999/xhtml';
-            default:
-              return null;
-          }
-        },
-        ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-        null
-    );
-    return res;
-}
-//}}}
+} // }}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

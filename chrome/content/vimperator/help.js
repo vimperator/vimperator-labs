@@ -152,7 +152,7 @@ vimperator.help = function(section, easter) //{{{
         '<p>Since Vimperator\'s GUI is embedded into a toolbar, it may look too 3D-like with the default theme. ' +
         'For the best experience, I therefore recommend the <a href="https://addons.mozilla.org/firefox/364/">Whitehart</a> theme or any other flat theme.</p>\n' +
 
-        '<p>Vimperator was written by <a href="mailto:stubenschrott@gmx.net">Martin Stubenschrott</a>.' +
+        '<p>Vimperator was written by <a href="mailto:stubenschrott@gmx.net">Martin Stubenschrott</a>. ' +
         'If you appreciate my work on Vimperator and want to encourge me working on it more, you can either send me greetings, patches or make a donation: </p>\n' +
 
         '<form action="https://www.paypal.com/cgi-bin/webscr" method="post">\n<fieldset class="paypal">' +
@@ -245,7 +245,7 @@ vimperator.help = function(section, easter) //{{{
     {
         function findSectionElement(section)
         {
-            return evaluateXPath('//code[@class="tag" and text()="' + section + '"]')
+            return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"]')
                 .snapshotItem(0);
         }
 

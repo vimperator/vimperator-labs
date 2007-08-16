@@ -138,6 +138,28 @@ function Buffer() //{{{
         return window.content.document.title;
     });
 
+    // returns an XPathResult object
+    this.evaluateXPath = function(expression, doc, ordered)
+    {
+        if (!doc)
+            doc = window.content.document;
+
+        var result = doc.evaluate(expression, doc,
+            function lookupNamespaceURI(prefix) {
+              switch (prefix) {
+                case 'xhtml':
+                  return 'http://www.w3.org/1999/xhtml';
+                default:
+                  return null;
+              }
+            },
+            ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+            null
+        );
+
+        return result;
+    }
+
     // TODO: move to v.buffers.list()
     this.list = function(fullmode)
     {
