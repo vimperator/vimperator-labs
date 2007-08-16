@@ -519,11 +519,12 @@ function Events() //{{{
 
             if (vimperator.input.pendingMap)
             {
+                vimperator.input.buffer = "";
+
                 if (key != "<Esc>" && key != "<C-[>")
                     vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
 
                 vimperator.input.pendingMap = null;
-                vimperator.input.buffer = "";
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -539,8 +540,8 @@ function Events() //{{{
                 }
                 else
                 {
-                    map.execute(null, vimperator.input.count);
                     vimperator.input.buffer = "";
+                    map.execute(null, vimperator.input.count);
                 }
 
                 event.preventDefault();
