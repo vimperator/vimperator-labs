@@ -1246,11 +1246,16 @@ String.prototype.toURLArray = function() // {{{
 
     begin: for (var url = 0; url < urls.length; url++)
     {
+        var newLocation = vimperator.buffer.location;
+
+        // FIXME: classic '10 second hack' to fix "gu" foobar//../ problem
+        newLocation = newLocation.replace(/\/+$/, '');
+
         // FIXME: not really that good (doesn't handle .. in the middle), also problems with trailing slashes
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
+
         if (urls[url].match(/^(\.$|\.\/\S*)/))
         {
-            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1");
             if (urls[url].match(/^\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
@@ -1260,7 +1265,6 @@ String.prototype.toURLArray = function() // {{{
         }
         else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
         {
-            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1/../");
             if (urls[url].match(/^\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
@@ -1270,7 +1274,6 @@ String.prototype.toURLArray = function() // {{{
         }
         else if (urls[url].match(/^(\.\.\.$|\.\.\.\/[\S]*)/))
         {
-            var newLocation = vimperator.buffer.location;
             newLocation = newLocation.replace(/([\s\S]+):\/\/\/?(\S+?)\/\S*/, "$1://$2/");
             if (urls[url].match(/^\.\.\.(\/\S+)/))
                 newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
