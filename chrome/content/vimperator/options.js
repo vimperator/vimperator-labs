@@ -417,7 +417,8 @@ function Options() //{{{
         {
             short_help: "Default height for preview window",
             help: "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. " +
-                  "Close the preview window with <code class=\"command\">:pclose</code>.",
+                  "Close the preview window with <code class=\"command\">:pclose</code>." +
+                  "NOTE: Option currently disabled",
             default_value: 10,
             validator: function (value) { if (value>=1 && value <=50) return true; else return false; }
         }

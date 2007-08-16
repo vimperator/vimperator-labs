@@ -296,7 +296,7 @@ function Commands() //{{{
             usage: ["bma[rk] [-t {title}] [url]"],
             short_help: "Add a bookmark",
             help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
-                  "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmadd</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
+                  "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmark</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   " -t \"custom title\"<br/>" +
                   "The following options will be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list<br/>" +
@@ -333,7 +333,8 @@ function Commands() //{{{
         {
             usage: ["b[uffer] {url|index}"],
             short_help: "Go to buffer from buffer list",
-            help: "Argument can be either the buffer index or the full URL.",
+            help: "Argument can be either the buffer index or the full URL.<br/>" +
+                  "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
             completer: function(filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
     ));
@@ -468,14 +469,14 @@ function Commands() //{{{
         function(args) { vimperator.echo(args); } ,
         {
             short_help: "Display a string at the bottom of the window",
-            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines WILL be separated by \\n."
+            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines can be separated by \\n."
         }
     ));
     addDefaultCommand(new Command(["echoe[rr]"],
         function(args) { vimperator.echoerr(args); } ,
         {
             short_help: "Display an error string at the bottom of the window",
-            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages.<br/>Multiple lines WILL be separated by \\n."
+            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages."
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
@@ -483,7 +484,7 @@ function Commands() //{{{
         {
             usage: ["exe[cute] {expr1} [ ... ]"],
             short_help: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-            help: "<code class=\"command\">:execute &#34;echo test&#34;</code> would show a message with the text &#34;test&#34;.<br/>"
+            help: "<code class=\"command\">:execute echo test</code> would show a message with the text &#34;test&#34;.<br/>"
         }
     ));
     addDefaultCommand(new Command(["exu[sage]"],
@@ -615,7 +616,8 @@ function Commands() //{{{
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "The {rhs} is remapped, allowing for nested and recursive mappings."
+            help: "The {rhs} is remapped, allowing for nested and recursive mappings.<br/>" +
+                  "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
         }
     ));
     addDefaultCommand(new Command(["mapc[lear]"],
@@ -631,7 +633,8 @@ function Commands() //{{{
         },
         {
             short_help: "Remove all mappings",
-            help: "TODO"
+            help: "All user-defined mappings which were set by " +
+                  "<code class=\"command\">:map</code> or <code class=\"command\">:noremap</code> are cleared."
         }
     ));
     addDefaultCommand(new Command(["ma[rk]"],
@@ -693,7 +696,7 @@ function Commands() //{{{
         {
             usage: ["norm[al][!] {commands}"],
             short_help: "Execute Normal mode commands",
-            help: "TODO"
+            help: "<code class=\"command\">:normal 20j</code> would scroll 20 lines down."
         }
     ));
     // TODO: remove duplication in :map
@@ -747,7 +750,7 @@ function Commands() //{{{
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "No remapping of the {rhs} is performed."
+            help: "No remapping of the {rhs} is performed.<br/> NOTE: :noremap does not yet work as reliable as :map."
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
@@ -891,7 +894,7 @@ function Commands() //{{{
         function() { saveDocument(window.content.document); },
         {
             short_help: "Save current web page to disk",
-            help: "Open the original Firefox \"Save page as...\" dialog in a new tab.<br/>" +
+            help: "Opens the original Firefox \"Save page as...\" dialog.<br/>" +
                   "There, you can save the current web page to disk with various options."
         }
     ));

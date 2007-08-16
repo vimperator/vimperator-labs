@@ -294,21 +294,69 @@ function Mappings() //{{{
     //
     // Normal mode
     // {{{
-
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["'", "`"],
-        function(arg) { vimperator.marks.jumpTo(arg) },
+    // vimperator management
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<F1>"],
+        function() { vimperator.help(null); },
         {
-            short_help: "Jump to the mark in the current buffer",
-            usage: ["'{a-zA-Z}"],
-            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
-            flags: Mappings.flags.ARGUMENT
+            short_help: "Open help window",
+            help: "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code>."
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, [":"],
+        function() { vimperator.commandline.open(":", "", vimperator.modes.EX); },
+        {
+            short_help: "Start command line mode",
+            help: "In command line mode, you can perform extended commands, which may require arguments."
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["I"],
+        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS); },
+        {
+            short_help: "Disable vimperator keys",
+            help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
+                  "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
+                  "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
+                  "in this mode to the web page, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-v>"],
+        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ONE_KEY); },
+        {
+            short_help: "Escape next key",
+            help: "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
+                  "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in vimperator.<br/>" +
+                  "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-c>"],
+        BrowserStop,
+        {
+            short_help: "Stop loading",
+            help: "Stops loading the current web page."
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Nop>"],
+        function() { return; },
+        {
+            short_help: "Do nothing",
+            help: "This command is useful for disabling a specific mapping. " +
+                  "<code class=\"command\">:map &lt;C-n&gt; &lt;Nop&gt;</code> will prevent <code class=\"mapping\">&lt;C-n&gt;</code> from doing anything."
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Esc>", "<C-[>"],
+        vimperator.events.onEscape,
+        {
+            short_help: "Focus content",
+            help: "Exits any command line or hint mode and returns to browser mode.<br/>" +
+                  "Also focuses the web page, in case a form field has focus and eats our key presses."
+        }
+    ));
+
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["]f"],
         function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
         {
             short_help: "Focus next frame",
-            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th next frame in order. The newly focused frame is briefly colored red.",
+            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th next frame in order. The newly focused frame is briefly colored red. Does not wrap.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -316,7 +364,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
         {
             short_help: "Focus previous frame",
-            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th previous frame in order. The newly focused frame is briefly colored red.",
+            help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th previous frame in order. The newly focused frame is briefly colored red. Does not wrap.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -331,7 +379,8 @@ function Mappings() //{{{
         function() { vimperator.buffer.list(true); },
         {
             short_help: "Toggle buffer list",
-            help: "Toggles the display of the buffer list which shows all opened tabs."
+            help: "Toggles the display of the buffer list which shows all opened tabs.<br/>" +
+                  "Warning: This mapping may be removed/changed in future."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["d"],
@@ -469,6 +518,15 @@ function Mappings() //{{{
             flags: Mappings.flags.ARGUMENT
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["'", "`"],
+        function(arg) { vimperator.marks.jumpTo(arg) },
+        {
+            short_help: "Jump to the mark in the current buffer",
+            usage: ["'{a-zA-Z}"],
+            help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
+            flags: Mappings.flags.ARGUMENT
+        }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["M"],
         function(arg)
         {
@@ -506,7 +564,7 @@ function Mappings() //{{{
         function() { vimperator.open(readFromClipboard()); },
         {
             short_help: "Open (put) a URL based on the current clipboard contents in the current buffer",
-            help: "You can also just select some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
+            help: "You can also just select (for non-X11 users: copy) some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["P"],
@@ -555,7 +613,7 @@ function Mappings() //{{{
         function(count) { vimperator.commands.undo("", false, count); },
         {
             short_help: "Undo closing of a tab",
-            help: "If a count is given, don't close the last but the <code class=\"argument\">count</code>th last tab.",
+            help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -568,7 +626,7 @@ function Mappings() //{{{
         },
         {
             short_help: "Yank current location to the clipboard",
-            help: "Under UNIX the location is also put into the selection, which can be pasted with the middle mouse button."
+            help: "When running in X11 the location is also put into the selection, which can be pasted with the middle mouse button."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["Y"],
@@ -653,7 +711,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.scrollToPercentile(count >  0 ? count : 0); },
         {
             short_help: "Goto the top of the document",
-            help: "Count is supported: <code class=\"mapping\">35gg</code> vertically goes to 35% of the document.",
+            help: "When used with <code class=\"argument\">[count]</code> like in <code class=\"mapping\">35gg</code>, it scrolls to 35% of the document.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -661,7 +719,7 @@ function Mappings() //{{{
         function(count) { vimperator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
         {
             short_help: "Goto the end of the document",
-            help: "Count is supported: <code class=\"mapping\">35G</code> vertically goes to 35% of the document.",
+            help: "When used with <code class=\"argument\">[count]</code> like in <code class=\"mapping\">35G</code>, it scrolls to 35% of the document.",
             flags: Mappings.flags.COUNT
         }
     ));
@@ -892,75 +950,19 @@ function Mappings() //{{{
         function() { vimperator.search.findNext(); },
         {
             short_help: "Find next",
-            help: "Repeat the last \"/\" 1 time (until count is supported)."
+            help: "Repeat the last \"g/\" 1 time (until count is supported). <br/>" +
+                  "NOTE: As \"g/\" is a little broken right now, use <F3> to go to the next search item of the \"/\" search for now."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["N"],
         function() { vimperator.search.findPrevious(); },
         {
             short_help: "Find previous",
-            help: "Repeat the last \"/\" 1 time (until count is supported) in the opposite direction."
+            help: "Repeat the last \"g/\" 1 time (until count is supported) in the opposite direction.<br/>" +
+                  "NOTE: As \"g/\" is a little broken right now, use <S-F3> to go to the previous search item of the \"/\" search for now."
         }
     ));
 
-    // vimperator management
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<F1>"],
-        function() { vimperator.help(null); },
-        {
-            short_help: "Open help window",
-            help: "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code> (jumping to a specific section not implemented yet)."
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, [":"],
-        function() { vimperator.commandline.open(":", "", vimperator.modes.EX); },
-        {
-            short_help: "Start command line mode",
-            help: "In command line mode, you can perform extended commands, which may require arguments."
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["I"],
-        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS); },
-        {
-            short_help: "Disable vimperator keys",
-            help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
-                  "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
-                  "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
-                  "in this mode to the web page, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-v>"],
-        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ONE_KEY); },
-        {
-            short_help: "Escape next key",
-            help: "If you need to pass a certain key to a javascript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
-                  "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in vimperator.<br/>" +
-                  "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;I&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<C-c>"],
-        BrowserStop,
-        {
-            short_help: "Stop loading",
-            help: "Stops loading the current web page."
-        }
-    ));
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Nop>"],
-        function() { return; },
-        {
-            short_help: "Do nothing",
-            help: "This command is useful for disabling a specific mapping. " +
-                  "<code class=\"command\">:map &lt;C-n&gt; &lt;Nop&gt;</code> will prevent <code class=\"mapping\">&lt;C-n&gt;</code> from doing anything."
-        }
-    ));
-    // if you ever add/remove keys here, also check them in the vimperator.events.onKeyPress()
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["<Esc>", "<C-[>"],
-        vimperator.events.onEscape,
-        {
-            short_help: "Cancel any operation",
-            help: "Exits any command line or hint mode and returns to browser mode.<br/>" +
-                  "Also focuses the web page, in case a form field has focus and eats our key presses."
-        }
-    ));
 
     // }}}
     // Hints mode
