@@ -13,9 +13,10 @@ BUGS:
      webpage, saving  only the html works just fine..
 - add window resize support to hints
 - can't reverse tab through the vimperator toolbar
-- gu doesn't work when the current URL contains a trailing slash
 - gu and gU don't work on local files properly
 - http://www.suckless.org/pipermail/dwm/2007-July/003075.html
+- :noremap does not work fully
+- n and N are broken with /
 
 FEATURES:
 9 :command for new commands
@@ -51,8 +52,8 @@ RANDOM IDEAS:
 * Would it be possible to add a setting "maxcompletionsshown" and 
   "maxpreviewwindowheight" or something like this?
 * 16:06:04       bartman| maxauthority: feature idea: what if :n and :N searched the 
-                        page and if they found a unique <a href=...>.*next.*</a> or <a 
-                        href=...>.*prev.*<a/> they would follow that link?
+                        page and if they found a unique href=*next.* or 
+                        href=.*prev.* they would follow that link?
 * hide scrollbars: http://rafb.net/p/YHRhEe47.html (window.content.document.body.style.overflow = "hidden")
 
 </pre>

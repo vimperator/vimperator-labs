@@ -145,7 +145,7 @@ vimperator.help = function(section, easter) //{{{
         'It has similar key bindings, and you could call it a modal web browser, as key bindings differ according to which mode you are in.</p>\n' +
 
         '<p><span class="warning">Warning:</span> To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden.<br/>' +
-        'If you really need them, type: <code class="command">:set guioptions=mT</code> to get it back.\n' +
+        'If you really need them, type: <code class="command">:set guioptions+=mT</code> to get it back.\n' +
         'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it. ' +
         'If you like it, but can\'t remember the shortcuts, press <code class="mapping">F1</code> or <code class="command">:help</code> to get this help window back.</p>\n' +
 

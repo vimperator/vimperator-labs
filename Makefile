@@ -16,7 +16,7 @@ JAR_FILES     = ${shell find chrome/content -type f 		\
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
 JAR           = chrome/vimperator.jar
 
-XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators ChangeLog
+XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS
 XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
 XPI_BIN_FILES = ${JAR} Makefile
 XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
