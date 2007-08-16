@@ -1,3 +1,45 @@
+2007-08-16 16:19  stubenschrott
+
+	* chrome/content/vimperator/: commands.js, help.js, vimperator.js:
+	  Fixed :map partly, still cannot cope with :map commans, where lhs
+	  is a 2-char string
+
+2007-08-16 14:25  dougkearns
+
+	* chrome/content/vimperator/: commands.js, mappings.js: fix some
+	  trivial capitalization errors in help
+
+2007-08-16 13:21  dougkearns
+
+	* chrome/content/vimperator/mappings.js: replace '<' and '>' with
+	  HTML entities in help for n and N mappings
+
+2007-08-16 13:14  dougkearns
+
+	* chrome/content/vimperator/: buffers.js, commands.js, help.js,
+	  hints.js: move the global evaluateXPath() function to
+	  vimperator.buffer
+
+2007-08-16 12:58  dougkearns
+
+	* chrome/content/vimperator/: bookmarks.js, commands.js, events.js,
+	  hints.js, mappings.js, options.js: fix some help typos
+
+2007-08-16 11:31  stubenschrott
+
+	* chrome/content/vimperator/: commands.js, default.css, help.js,
+	  mappings.js, options.js: many small help fixes
+
+2007-08-15 20:49  dougkearns
+
+	* chrome/content/vimperator/commands.js: remove half-baked guard
+	  clauses for unimplemented bookmark commands
+
+2007-08-15 20:27  stubenschrott
+
+	* ChangeLog, chrome/content/vimperator/bookmarks.js: added colors
+	  to :ls
+
 2007-08-15 19:47  stubenschrott
 
 	* chrome/content/vimperator/ui.js: fixed focusing the MOW

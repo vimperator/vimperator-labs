@@ -1,5 +1,5 @@
 <pre>
-2007-08-*:
+2007-08-16:
 	* version 0.5
 	* :bmarks and :history now use the multiline message window for output
 	* rename :bm, :bmadd, and :bmdel to :bmarks, :bmark, and :delbmarks respectively
