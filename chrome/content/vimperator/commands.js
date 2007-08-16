@@ -462,7 +462,7 @@ function Commands() //{{{
         {
             short_help: "Show progress of current downloads",
             help: "Open the original Firefox download dialog in a new tab.<br/>" +
-                  "Here, downloads can be paused, cancelled and resumed."
+                  "Here, downloads can be paused, canceled and resumed."
         }
     ));
     addDefaultCommand(new Command(["ec[ho]"],
@@ -598,9 +598,10 @@ function Commands() //{{{
                 return;
             }
 
-            var matches = args.match(/^([^ ]+)(?:\s+(.+))?$/);
+            var matches = args.match(/^([^\s]+)\s+(.+)$/);
             var [lhs, rhs] = [matches[1], matches[2]];
 
+            // alert(">>" + lhs + "<<");
             if (rhs)
             {
                 vimperator.mappings.add(new Map(vimperator.modes.NORMAL, [lhs],
@@ -777,7 +778,7 @@ function Commands() //{{{
                   "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>" +
                   "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
-                  "and the first word is the name of a search engine (<code class=\"command\">:open Wikipedia linus torvalds</code> " +
+                  "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
                   "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
                   "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
