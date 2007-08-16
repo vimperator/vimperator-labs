@@ -399,7 +399,7 @@ function Options() //{{{
     ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
-            short_help: "Maximum number of simultanously shown hints",
+            short_help: "Maximum number of simultaneously shown hints",
             help: "If you want to speed up display of hints, choose a smaller value",
             default_value: 250,
             validator: function (value) { if (value>=1 && value <=1000) return true; else return false; }

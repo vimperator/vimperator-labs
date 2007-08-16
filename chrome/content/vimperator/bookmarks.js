@@ -148,7 +148,7 @@ function Bookmarks() //{{{
         return deleted;
     }
 
-    // also ensures that each search engine has a vimperator-friendly alias
+    // also ensures that each search engine has a Vimperator-friendly alias
     this.getSearchEngines = function()
     {
         var search_engines = [];

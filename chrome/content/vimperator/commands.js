@@ -301,7 +301,7 @@ function Commands() //{{{
                   "The following options will be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list<br/>" +
                   " -k keyword<br/>" +
-                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a url with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags."
+                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a URL with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags."
         }
     ));
     addDefaultCommand(new Command(["bmarks"],
@@ -368,7 +368,7 @@ function Commands() //{{{
         {
             usage: ["delbm[arks] {url}"],
             short_help: "Delete a bookmark",
-            help: "Deletes <b>all</b> bookmarks which match the <code class=\"argument\">{url}</code>. Use <code>&lt;Tab&gt;</code> key on a string to complete the url which you want to delete.<br/>" +
+            help: "Deletes <b>all</b> bookmarks which match the <code class=\"argument\">{url}</code>. Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " [!] a special version to delete ALL bookmarks <br/>" +
                   " -T comma,separated,tag,list <br/>",
@@ -462,7 +462,7 @@ function Commands() //{{{
         {
             short_help: "Show progress of current downloads",
             help: "Open the original Firefox download dialog in a new tab.<br/>" +
-                  "Here, downloads can be paused, canceled and resumed."
+                  "Here, downloads can be paused, cancelled and resumed."
         }
     ));
     addDefaultCommand(new Command(["ec[ho]"],
@@ -579,11 +579,11 @@ function Commands() //{{{
         },
         {
             usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}", "javascript[!]"], // \\n is changed to <br/> in the help.js code
-            short_help: "Run any javascript command through eval()",
-            help: "Acts as a javascript interpreter by passing the argument to <code>eval()</code>.<br/>" +
+            short_help: "Run any JavaScript command through eval()",
+            help: "Acts as a JavaScript interpreter by passing the argument to <code>eval()</code>.<br/>" +
                   "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
                   "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-                  "The special version <code class=\"command\">:javascript!</code> will open the javascript console of Firefox."
+                  "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox."
         }
     ));
     addDefaultCommand(new Command(["map"],
@@ -679,7 +679,7 @@ function Commands() //{{{
         {
             usage: ["marks [arg]"],
             short_help: "Show all location marks of current web page",
-            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to the those marks mentioned."
+            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those marks mentioned."
         }
     ));
     addDefaultCommand(new Command(["norm[al]"],
@@ -750,7 +750,7 @@ function Commands() //{{{
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "No remapping of the {rhs} is performed.<br/> NOTE: :noremap does not yet work as reliable as :map."
+            help: "No remapping of the {rhs} is performed.<br/> NOTE: :noremap does not yet work as reliably as :map."
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
@@ -778,7 +778,7 @@ function Commands() //{{{
                   "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
-                  "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from it's name. " +
+                  "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
                   "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
                   "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
@@ -850,7 +850,7 @@ function Commands() //{{{
         {
             usage: ["qmarks [arg]"],
             short_help: "Show all QuickMarks",
-            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to the those QuickMarks mentioned."
+            help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those QuickMarks mentioned."
         }
     ));
     addDefaultCommand(new Command(["q[uit]"],
@@ -1038,9 +1038,9 @@ function Commands() //{{{
             usage: ["so[urce][!] {file}"],
             short_help: "Read Ex commands from {file}",
             help: "You can either source files which mostly contain Ex commands like <code class=\"command\">map &lt; gt</code> " +
-                  "and put javascript code within a:<br/><code class=\"code\">" +
+                  "and put JavaScript code within a:<br/><code class=\"code\">" +
                   "js &lt;&lt;EOF<br/>hello = function() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/>EOF<br/></code> section.<br/>" +
-                  "Or you can alternatively source a file which ends in .js, these files are automatically sourced as pure javascript files.<br/>" +
+                  "Or you can alternatively source a file which ends in .js, these files are automatically sourced as pure JavaScript files.<br/>" +
                   "NOTE: In both cases you must add functions to the global window object like shown above, functions written as:<br/>" +
                   "<code class=\"code\">function hello2() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/></code>are only available within the scope of the script. <br/><br/>" +
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
@@ -1061,7 +1061,7 @@ function Commands() //{{{
         {
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
-            help: "Works for only commands that support it.<br/>" +
+            help: "Works only for commands that support it.<br/>" +
                   "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
             completer: function(filter) { return vimperator.completion.get_command_completions(filter); }
         }
@@ -1134,7 +1134,7 @@ function Commands() //{{{
         {
             usage: ["[count]u[ndo]"],
             short_help: "Undo closing of a tab",
-            help: "If a count is given, don't close the last but the n'th last tab."
+            help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab."
         }
     ));
     addDefaultCommand(new Command(["unm[ap]"],
@@ -1184,7 +1184,7 @@ function Commands() //{{{
         {
             usage: ["wino[pen] [url] [, url]"],
             short_help: "Open one or more URLs in a new window",
-            help: "NOTE: Multiple windows are not really support by vimperator, use at your own risk!"
+            help: "NOTE: Multiple windows are not really supported by Vimperator, use at your own risk!"
         }
     ));
     addDefaultCommand(new Command(["wqa[ll]", "wq", "xa[ll]"],

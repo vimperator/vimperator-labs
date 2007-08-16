@@ -79,7 +79,7 @@ function Events() //{{{
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
-    //       want to refer to within vimperator's source code for
+    //       want to refer to within Vimperator's source code for
     //       comparisons like if (key == "Esc") { ... }
     var keyTable = [
         [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],

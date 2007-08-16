@@ -18,7 +18,7 @@
  * (C) 2004.  All Rights Reserved.
  *
  * Contributor(s): Pekka Sillanpaa, Paul Stone
- * adapted for vimperator use by: Martin Stubenschrott
+ * adapted for Vimperator use by: Martin Stubenschrott
  *
 }}} ***** END LICENSE BLOCK *****/
 
