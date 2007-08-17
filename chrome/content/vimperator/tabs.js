@@ -142,7 +142,7 @@ function Tabs() //{{{
         if (spec === "")
             spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
 
-        var index = indexFromSpec(spec, false); // XXX: really no wrap?
+        var index = indexFromSpec(spec, wrap);
         getBrowser().moveTabTo(tab, index);
     }
 
