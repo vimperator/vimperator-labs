@@ -88,6 +88,14 @@ fieldset.paypal {
     border: none;
 }
 
+/* NOTE: explicitly set here to override the default mozdev styles when viewing
+ * the help page at vimperator.mozdev.org */
+li {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: disc;
+}
+
 .argument {
     color: #6A97D4;
 }
