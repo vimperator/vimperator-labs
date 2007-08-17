@@ -12,7 +12,7 @@ for the specific language governing rights and limitations under the
 License.
 
 (c) 2006-2007: Martin Stubenschrott <stubenschrott@gmx.net>
-	Code based on venkman
+    Code based on venkman
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or

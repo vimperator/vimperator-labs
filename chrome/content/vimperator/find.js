@@ -92,93 +92,93 @@ function highlightFind(str, color, wrapped, dir, pt)
         alert('gWin does not exist here...');
         alert(vimperator.search.gWin);
     }
-	var doc = gWin.document;
-	var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"].createInstance()
-	    .QueryInterface(Components.interfaces.nsIFind);
-	var searchRange;
-	var startPt;
-	var endPt;
-	var body = doc.body;
+    var doc = gWin.document;
+    var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"].createInstance()
+        .QueryInterface(Components.interfaces.nsIFind);
+    var searchRange;
+    var startPt;
+    var endPt;
+    var body = doc.body;
 
-	finder.findBackwards = !dir;
+    finder.findBackwards = !dir;
 
-	searchRange = doc.createRange();
-	startPt = doc.createRange();
-	endPt = doc.createRange();
+    searchRange = doc.createRange();
+    startPt = doc.createRange();
+    endPt = doc.createRange();
 
-	var count = body.childNodes.length;
+    var count = body.childNodes.length;
 
-	// Search range in the doc
-	searchRange.setStart(body,0);
-	searchRange.setEnd(body, count);
+    // Search range in the doc
+    searchRange.setStart(body,0);
+    searchRange.setEnd(body, count);
 
-	if (!dir) {
-	    if (pt == null) {
-		startPt.setStart(body, count);
-		startPt.setEnd(body, count);
-	    } else {
-		startPt.setStart(pt.startContainer, pt.startOffset);
-		startPt.setEnd(pt.startContainer, pt.startOffset);
-	    }
-	    endPt.setStart(body, 0);
-	    endPt.setEnd(body, 0);
-	} else {
-	    if (pt == null) {
-		startPt.setStart(body, 0);
-		startPt.setEnd(body, 0);
-	    } else {
-		startPt.setStart(pt.endContainer, pt.endOffset);
-		startPt.setEnd(pt.endContainer, pt.endOffset);
-	    }
-	    endPt.setStart(body, count);
-	    endPt.setEnd(body, count);
-	}
-	// search the doc
-	var retRange = null;
-	var selectionRange = null;
+    if (!dir) {
+        if (pt == null) {
+        startPt.setStart(body, count);
+        startPt.setEnd(body, count);
+        } else {
+        startPt.setStart(pt.startContainer, pt.startOffset);
+        startPt.setEnd(pt.startContainer, pt.startOffset);
+        }
+        endPt.setStart(body, 0);
+        endPt.setEnd(body, 0);
+    } else {
+        if (pt == null) {
+        startPt.setStart(body, 0);
+        startPt.setEnd(body, 0);
+        } else {
+        startPt.setStart(pt.endContainer, pt.endOffset);
+        startPt.setEnd(pt.endContainer, pt.endOffset);
+        }
+        endPt.setStart(body, count);
+        endPt.setEnd(body, count);
+    }
+    // search the doc
+    var retRange = null;
+    var selectionRange = null;
 
-	if (!wrapped) {
-	    do {
-		retRange = finder.Find(str, searchRange, startPt, endPt);
-		var keepSearching = false;
-		if (retRange) {
-		    var sc = retRange.startContainer;
-		    var ec = retRange.endContainer;
-		    var scp = sc.parentNode;
-		    var ecp = ec.parentNode;
-		    var sy1 = abs_point(scp).y;
-		    var ey2 = abs_point(ecp).y + ecp.offsetHeight;
+    if (!wrapped) {
+        do {
+        retRange = finder.Find(str, searchRange, startPt, endPt);
+        var keepSearching = false;
+        if (retRange) {
+            var sc = retRange.startContainer;
+            var ec = retRange.endContainer;
+            var scp = sc.parentNode;
+            var ecp = ec.parentNode;
+            var sy1 = abs_point(scp).y;
+            var ey2 = abs_point(ecp).y + ecp.offsetHeight;
 
-		    startPt = retRange.startContainer.ownerDocument.createRange();
-		    if (!dir) {
-			startPt.setStart(retRange.startContainer, retRange.startOffset);
-			startPt.setEnd(retRange.startContainer, retRange.startOffset);
-		    } else {
-			startPt.setStart(retRange.endContainer, retRange.endOffset);
-			startPt.setEnd(retRange.endContainer, retRange.endOffset);
-		    }
-		    // We want to find a match that is completely
-		    // visible, otherwise the view will scroll just a
-		    // bit to fit the selection in completely.
-// 		    alert ("sy1: " + sy1 + " scry: " + gWin.scrollY);
-// 		    alert ("ey2: " + ey2 + " bot: " + (gWin.scrollY + gWin.innerHeight));
-		    keepSearching = (dir && sy1 < gWin.scrollY)
-			|| (!dir && ey2 >= gWin.scrollY + gWin.innerHeight);
-		}
-	    } while (retRange && keepSearching);
-	} else {
-	    retRange = finder.Find(str, searchRange, startPt, endPt);
-	}
+            startPt = retRange.startContainer.ownerDocument.createRange();
+            if (!dir) {
+            startPt.setStart(retRange.startContainer, retRange.startOffset);
+            startPt.setEnd(retRange.startContainer, retRange.startOffset);
+            } else {
+            startPt.setStart(retRange.endContainer, retRange.endOffset);
+            startPt.setEnd(retRange.endContainer, retRange.endOffset);
+            }
+            // We want to find a match that is completely
+            // visible, otherwise the view will scroll just a
+            // bit to fit the selection in completely.
+//          alert ("sy1: " + sy1 + " scry: " + gWin.scrollY);
+//          alert ("ey2: " + ey2 + " bot: " + (gWin.scrollY + gWin.innerHeight));
+            keepSearching = (dir && sy1 < gWin.scrollY)
+            || (!dir && ey2 >= gWin.scrollY + gWin.innerHeight);
+        }
+        } while (retRange && keepSearching);
+    } else {
+        retRange = finder.Find(str, searchRange, startPt, endPt);
+    }
 
-	if (retRange) {
-	    setSelection(retRange);
-	    selectionRange = retRange.cloneRange();
-	    // 	    highlightAllBut(str, retRange, color);
-	} else {
+    if (retRange) {
+        setSelection(retRange);
+        selectionRange = retRange.cloneRange();
+        //      highlightAllBut(str, retRange, color);
+    } else {
 
-	}
+    }
 
-	return selectionRange;
+    return selectionRange;
     } catch(e) { alert('highlightFind:'+e); }
 }
 
@@ -188,19 +188,19 @@ function clearHighlight()
     var win = window.content;
     var doc = win.document;
     if (!document)
-	return;
+    return;
 
     var elem = null;
     while ((elem = doc.getElementById("__vimperator-findbar-search-id"))) {
-	var child = null;
-	var docfrag = doc.createDocumentFragment();
-	var next = elem.nextSibling;
-	var parent = elem.parentNode;
-	while ((child = elem.firstChild)) {
-	    docfrag.appendChild(child);
-	}
-	parent.removeChild(elem);
-	parent.insertBefore(docfrag, next);
+    var child = null;
+    var docfrag = doc.createDocumentFragment();
+    var next = elem.nextSibling;
+    var parent = elem.parentNode;
+    while ((child = elem.firstChild)) {
+        docfrag.appendChild(child);
+    }
+    parent.removeChild(elem);
+    parent.insertBefore(docfrag, next);
     }
 }
 

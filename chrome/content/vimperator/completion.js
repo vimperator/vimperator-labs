@@ -473,11 +473,11 @@ vimperator.completion = (function() // {{{
                 if (command && command.completer)
                 {
                     completions = command.completer.call(this, args);
-        //			if (command[0][0] == "open" ||
-        //					command[0][0] == "tabopen" ||
-        //					command[0][0] == "winopen")
-        //				start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
-        //			else
+        //          if (command[0][0] == "open" ||
+        //                  command[0][0] == "tabopen" ||
+        //                  command[0][0] == "winopen")
+        //              start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
+        //          else
                     matches = str.match(/^:*\d*\w+\s+/); // up to the first spaces only
                     start = matches[0].length;
                 }
