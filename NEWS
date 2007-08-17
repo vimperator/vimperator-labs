@@ -1,6 +1,10 @@
 <pre>
+2007-xx-xx:
+	* version 0.6
+
 2007-08-16:
 	* version 0.5
+	* :map support (also :noremap, :unmap)
 	* :bmarks and :history now use the multiline message window for output
 	* rename :bm, :bmadd, and :bmdel to :bmarks, :bmark, and :delbmarks respectively
 	* new :normal command
