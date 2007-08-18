@@ -1245,39 +1245,28 @@ String.prototype.toURLArray = function() // {{{
 
     begin: for (var url = 0; url < urls.length; url++)
     {
-        var newLocation = vimperator.buffer.URL;
+        var new_url = vimperator.buffer.URL;
+        var matches;
 
-        // FIXME: classic '10 second hack' to fix "gu" foobar//../ problem
-        newLocation = newLocation.replace(/\/+$/, '');
-
-        // FIXME: not really that good (doesn't handle .. in the middle), also problems with trailing slashes
+        // FIXME: not really that good (doesn't handle .. in the middle)
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
-
-        if (urls[url].match(/^(\.$|\.\/\S*)/))
+        if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
         {
-            newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1");
-            if (urls[url].match(/^\.(\/\S+)/))
-                newLocation += urls[url].replace(/^\.(\/\S+)/, "$1");
-
-            urls[url] = newLocation;
+            var tail = matches[1] ? matches[1] : "";
+            urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
             continue;
         }
-        else if (urls[url].match(/^(\.\.$|\.\.\/[\S]*)/))
+        else if (matches = urls[url].match(/^(?:\.\.$|\.\.\/(\S*))/))
         {
-            newLocation = newLocation.replace(/([\s\S]+\/)[^\/]*/, "$1/../");
-            if (urls[url].match(/^\.\.(\/\S+)/))
-                newLocation += urls[url].replace(/^\.\.\/(\S+)/, "$1");
-
-            urls[url] = newLocation;
+            var tail = matches[1] ? matches[1] : "";
+            urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1../" + tail);
             continue;
         }
-        else if (urls[url].match(/^(\.\.\.$|\.\.\.\/[\S]*)/))
+        else if (matches = urls[url].match(/^(?:\.\.\.$|\.\.\.\/(\S*))/))
         {
-            newLocation = newLocation.replace(/([\s\S]+):\/\/\/?(\S+?)\/\S*/, "$1://$2/");
-            if (urls[url].match(/^\.\.\.(\/\S+)/))
-                newLocation += urls[url].replace(/^\.\.\.\/(\S+)/, "$1");
-
-            urls[url] = newLocation;
+            var location = window.content.document.location;
+            var tail = matches[1] ? matches[1] : "";
+            urls[url] = location.protocol + "//" + location.host + "/" + tail
             continue;
         }
 
@@ -1286,9 +1275,11 @@ String.prototype.toURLArray = function() // {{{
         if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
         {
             // check if the first word is a search engine
-            var matches = urls[url].match(/^\s*(.*?)(\s+|$)(.*)/);
             var alias = null;
             var text = null;
+
+            matches = urls[url].match(/^\s*(.*?)(\s+|$)(.*)/);
+
             if (matches && matches[1])
                 alias = matches[1];
             if (matches && matches[3] && matches[3].length >= 1)
@@ -1315,6 +1306,7 @@ String.prototype.toURLArray = function() // {{{
         // something useful with it :)
     }
 
+vimperator.log(urls)
     return urls;
 } // }}}
 
