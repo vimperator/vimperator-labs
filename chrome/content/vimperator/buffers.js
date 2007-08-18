@@ -113,9 +113,9 @@ function Buffer() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.__defineGetter__("location", function()
+    this.__defineGetter__("URL", function()
     {
-        return window.content.document.location.href;
+        return window.content.document.URL;
     });
 
     this.__defineGetter__("pageHeight", function()

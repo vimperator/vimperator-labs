@@ -185,7 +185,7 @@ function Events() //{{{
             vimperator.buffer.updateBufferList();
 
             //update history
-            var url = vimperator.buffer.location;
+            var url = vimperator.buffer.URL;
             var title = vimperator.buffer.title;
             vimperator.history.add(url, title);
 

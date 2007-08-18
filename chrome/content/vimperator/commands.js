@@ -274,7 +274,7 @@ function Commands() //{{{
             {
                 if (result.url == null)
                 {
-                    result.url = vimperator.buffer.location;
+                    result.url = vimperator.buffer.URL;
                     // also guess title if the current url is :bmarked
                     if (result.title == null)
                         result.title = vimperator.buffer.title;
@@ -355,7 +355,7 @@ function Commands() //{{{
             if (result)
             {
                 if (result.url == null)
-                    result.url = vimperator.buffer.location;
+                    result.url = vimperator.buffer.URL;
 
                 var deleted_count = vimperator.bookmarks.remove(result.url);
                 vimperator.echo(deleted_count + " bookmark(s) with url `" + result.url + "' deleted");
@@ -823,7 +823,7 @@ function Commands() //{{{
             if (matches1 && matches1[1])
                 vimperator.quickmarks.add(matches1[1], matches1[2]);
             else if (matches2 && matches2)
-                vimperator.quickmarks.add(matches2[1], vimperator.buffer.location);
+                vimperator.quickmarks.add(matches2[1], vimperator.buffer.URL);
             else
                 vimperator.echoerr("E488: Trailing characters");
         },
@@ -1245,7 +1245,7 @@ String.prototype.toURLArray = function() // {{{
 
     begin: for (var url = 0; url < urls.length; url++)
     {
-        var newLocation = vimperator.buffer.location;
+        var newLocation = vimperator.buffer.URL;
 
         // FIXME: classic '10 second hack' to fix "gu" foobar//../ problem
         newLocation = newLocation.replace(/\/+$/, '');

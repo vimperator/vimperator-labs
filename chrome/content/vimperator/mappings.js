@@ -536,7 +536,7 @@ function Mappings() //{{{
                 return;
             }
 
-            vimperator.quickmarks.add(arg, vimperator.buffer.location)
+            vimperator.quickmarks.add(arg, vimperator.buffer.URL)
         },
         {
             short_help: "Add new QuickMark for current URL",
@@ -554,7 +554,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["O"],
-        function() { vimperator.commandline.open(":", "open " + vimperator.buffer.location, vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); },
         {
             short_help: "Open one or more URLs in the current tab, based on current location",
             help: "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query."
@@ -603,7 +603,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["T"],
-        function() { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.location, vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
         {
             short_help: "Open one ore more URLs in a new tab, based on current location",
             help: "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query."
@@ -620,9 +620,9 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["y"],
         function()
         {
-            var loc = vimperator.buffer.location;
-            vimperator.copyToClipboard(loc);
-            vimperator.echo("Yanked " + loc);
+            var url = vimperator.buffer.URL;
+            vimperator.copyToClipboard(url);
+            vimperator.echo("Yanked " + url);
         },
         {
             short_help: "Yank current location to the clipboard",
@@ -867,7 +867,7 @@ function Mappings() //{{{
         function(count)
         {
             var gocmd = "";
-            if (isDirectory(vimperator.buffer.location))
+            if (isDirectory(vimperator.buffer.URL))
                 gocmd = "../";
             else
                 gocmd = "./";
