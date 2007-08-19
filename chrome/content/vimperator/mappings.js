@@ -669,7 +669,6 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["zz"],
-        // FIXME: does it make sense to use count for this?  Just use it for returning to 100%?
         function(count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
         {
             short_help: "Set zoom value of the web page",
