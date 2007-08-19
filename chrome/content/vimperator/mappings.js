@@ -605,7 +605,7 @@ function Mappings() //{{{
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["T"],
         function() { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
         {
-            short_help: "Open one ore more URLs in a new tab, based on current location",
+            short_help: "Open one or more URLs in a new tab, based on current location",
             help: "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query."
         }
     ));
