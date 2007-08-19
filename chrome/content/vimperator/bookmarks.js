@@ -300,7 +300,7 @@ function Bookmarks() //{{{
             match_tags = str.match(re_tags);
             if (match_tags != null)
             {
-                str = match_tags[match_tags.length-1]; // the last captured parenthesis is the rest of the string
+                str = match_tags[match_tags.length - 1]; // the last captured parenthesis is the rest of the string
                 tags = match_tags[3].split(",");
                 res.tags = res.tags.concat(tags);
             }
@@ -382,7 +382,7 @@ function History() //{{{
         var builder = historytree.builder.QueryInterface(Components.interfaces.nsIXULTreeBuilder);
 
         var count = historytree.view.rowCount;
-        for (var i = count-1; i >= 0; i--)
+        for (var i = count - 1; i >= 0; i--)
         {
             var res = builder.getResourceAtIndex(i);
             var url = res.Value;
@@ -743,7 +743,7 @@ function Marks() //{{{
             }
         }
 
-        var list = "<table><tr style=\"color: magenta\"><td>mark</td><td>line</td><td>col</td><td>file</td></tr>";
+        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
@@ -838,7 +838,7 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = "<table><tr style=\"color: magenta\"><td>QuickMark</td><td>URL</td></tr>";
+        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] + "</td><td>" + marks[i][1] + "</td></tr>";
