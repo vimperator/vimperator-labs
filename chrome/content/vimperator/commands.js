@@ -1248,6 +1248,9 @@ String.prototype.toURLArray = function() // {{{
         var new_url = vimperator.buffer.URL;
         var matches;
 
+        // strip each 'URL' - makes things simpler later on
+        urls[url] = urls[url].replace(/^\s+/, '').replace(/\s+$/, '');
+
         // FIXME: not really that good (doesn't handle .. in the middle)
         // check for ./ and ../ (or even .../) to go to a file in the upper directory
         if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
@@ -1270,21 +1273,23 @@ String.prototype.toURLArray = function() // {{{
             continue;
         }
 
-        /* if the string contains a space or does not contain any of: .:/
-         * open it with default search engine */
-        if (urls[url].match(/\s+/) || urls[url].match(/\.|:|\//) == null)
+        // if the string doesn't look like a valid URL (i.e. contains a space
+        // or does not contain any of: .:/) try opening it with a search engine
+        // or keyword bookmark
+        if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
         {
+            matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/)
+
+            var alias = matches[1];
+            var text = matches[2] ? matches[2] : null;
+
+            // TODO: it would be clearer if the appropriate call to
+            // getSearchURL was made based on whether or not the first word was
+            // indeed an SE alias rather than seeing if getSearchURL can
+            // process the call usefully and trying again if it fails - much
+            // like the comments below ;-)
+
             // check if the first word is a search engine
-            var alias = null;
-            var text = null;
-
-            matches = urls[url].match(/^\s*(.*?)(\s+|$)(.*)/);
-
-            if (matches && matches[1])
-                alias = matches[1];
-            if (matches && matches[3] && matches[3].length >= 1)
-                text = matches[3];
-
             var search_url = vimperator.bookmarks.getSearchURL(text, alias);
             if (search_url/* && search_url.length >= 1*/)
             {
@@ -1306,7 +1311,6 @@ String.prototype.toURLArray = function() // {{{
         // something useful with it :)
     }
 
-vimperator.log(urls)
     return urls;
 } // }}}
 
