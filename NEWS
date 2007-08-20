@@ -1,6 +1,7 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* added :set {option}! support to toggle a boolean option's value
 
 2007-08-16:
 	* version 0.5
