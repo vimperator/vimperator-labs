@@ -901,7 +901,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["se[t]"],
         function(args, special, count, modifiers)
         {
-            if (args == "")
+            if (!args)
             {
                 // TODO: copy these snippets to more function which should work with :tab xxx
                 var where = vimperator.CURRENT_TAB;
@@ -915,14 +915,16 @@ function Commands() //{{{
             }
             else
             {
-                var matches = args.match(/^\s*(no)?([a-z]+)(\?|&)?(([+-])?=(.*))?/);
+                var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?(([+-])?=(.*))?/);
                 if (!matches)
                 {
                     vimperator.echoerr("E518: Unknown option: " + args);
                     return;
                 }
 
-                var no = true; if (matches[1] === undefined) no = false;
+                var no = false;
+                if (matches[1] == 'no')
+                    no = true;
                 var opt = matches[2];
                 var option = vimperator.options.get(opt);
                 if (!option)
@@ -931,14 +933,22 @@ function Commands() //{{{
                     return;
                 }
 
-                var get = false; if (matches[3] == "?" ||
-                    (option.type != 'boolean' && matches[4] === undefined)) get = true;
-                var reset = false; if (matches[3] == "&") reset = true;
+                var get = false;
+                if (matches[3] == "?" || (option.type != 'boolean' && matches[4] === undefined))
+                    get = true;
+                var reset = false;
+                if (matches[3] == "&")
+                    reset = true;
+                var invert = false;
+                if (matches[1] == 'inv' || matches[3] == "!")
+                    invert = true;
                 var oper = matches[5];
-                var val = matches[6]; if (val === undefined) val = "";
+                var val = matches[6];
+                if (val === undefined)
+                    val = "";
 
                 // reset a variable to its default value
-                // TODO: remove the value from about:config instea of setting it to the current default value
+                // TODO: remove the value from about:config instead of setting it to the current default value
                 if (reset)
                 {
                     option.value = option.default_value;
@@ -959,6 +969,8 @@ function Commands() //{{{
                     {
                         if (matches[4])
                             vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                        else if (invert)
+                            option.value = !option.value;
                         else
                             option.value = !no;
                     }
@@ -1010,15 +1022,17 @@ function Commands() //{{{
             }
         },
         {
-            usage: ["se[t][!]", "se[t] {option}[?]", "se[t] {option}[+-]={value}"],
-            short_help: "Set an option",
-            help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>" +
-                  "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>.<br/>" +
+            usage: ["se[t][!]", "se[t] {option}?", "se[t] [no]{option}", "se[t] {option}[+-]={value}", "se[t] {option}! | inv{option}", "se[t] {option}&"],
+            short_help: "Set an option", help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>" +
                   "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>" +
                   "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>" +
-                  "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code> shows the current value of the option.<br/>" +
-                  "<code class=\"command\">:set option&amp;</code> resets 'option' to the default value.<br/>" +
-                  "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> WILL add/remove foo from list options.<br/>",
+                  "There are three types of options: boolean, number and string. " +
+                  "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>. " +
+                  "Number and string option types must be set with <code class=\"command\">:set option={value}</code>.<br/>" +
+                  "<code class=\"command\">:set option!</code> and <code class=\"command\">:set invoption</code> invert the value of a boolean option.<br/>" +
+                  "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code>(for string and list options) shows the current value of an option.<br/>" +
+                  "<code class=\"command\">:set option&amp;</code> resets an option to its default value.<br/>" +
+                  "<code class=\"command\">:set option+=foo</code> and <code class=\"command\">:set option-=foo</code> add/remove 'foo' from a string option.<br/>",
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
