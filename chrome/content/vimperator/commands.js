@@ -1060,7 +1060,7 @@ function Commands() //{{{
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code>(for string and list options) shows the current value of an option.<br/>" +
                   "<code class=\"command\">:set option&amp;</code> resets an option to its default value.<br/>" +
                   "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> will add/subtract {value} to a number option and append/remove {value} to a string option.<br/>" +
-                  "<code class=\"command\">:set all</code> will show the current value of all options and <code class=\"command\">:set all&</code> will reset all options to their default values.<br/>",
+                  "<code class=\"command\">:set all</code> will show the current value of all options and <code class=\"command\">:set all&amp;</code> will reset all options to their default values.<br/>",
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
