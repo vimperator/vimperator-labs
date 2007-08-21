@@ -59,9 +59,9 @@ vimperator.help = function(section, easter) //{{{
                 // keep <br/>
                 //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
                 //usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
+                usage = usage.replace(/&/g, "&amp;");
                 usage = usage.replace(/</g, "&lt;");
                 usage = usage.replace(/>/g, "&gt;");
-                usage = usage.replace(/&/g, "&amp;");
                 usage = usage.replace(/\\n/g, "<br/>");
                 // color [count], [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                    // required args
