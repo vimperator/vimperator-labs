@@ -616,7 +616,7 @@ function Commands() //{{{
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "The {rhs} is remapped, allowing for nested and recursive mappings.<br/>" +
+            help: "The <code class=\"argument\">{rhs}</code> is remapped, allowing for nested and recursive mappings.<br/>" +
                   "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
         }
     ));
@@ -750,7 +750,7 @@ function Commands() //{{{
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "No remapping of the {rhs} is performed.<br/> NOTE: :noremap does not yet work as reliably as :map."
+            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed.<br/>NOTE: :noremap does not yet work as reliably as :map."
         }
     ));
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
@@ -1235,7 +1235,7 @@ function Commands() //{{{
             usage: ["wqa[ll]", "xa[ll]"],
             short_help: "Save the session and quit",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
-                  "<code class=\"command\">:wq</code> is different as in vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that."
+                  "<code class=\"command\">:wq</code> is different as in Vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that."
         }
     ));
     addDefaultCommand(new Command(["zo[om]"],

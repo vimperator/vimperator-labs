@@ -372,7 +372,7 @@ function Mappings() //{{{
         function() { vimperator.commandline.open(":", "buffer ", vimperator.modes.EX); },
         {
             short_help: "Open a prompt to switch buffers",
-            help: "Typing the corresponding number opens switches to this buffer."
+            help: "Typing the corresponding number switches to this buffer."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["B"],
@@ -380,7 +380,7 @@ function Mappings() //{{{
         {
             short_help: "Toggle buffer list",
             help: "Toggles the display of the buffer list which shows all opened tabs.<br/>" +
-                  "Warning: This mapping may be removed/changed in future."
+                  "WARNING: This mapping may be removed/changed in future."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["d"],
@@ -425,7 +425,7 @@ function Mappings() //{{{
             short_help: "Jump to a QuickMark in the current tab",
             usage: ["go{a-zA-Z0-9}"],
             help: "Open any QuickMark in the current tab. You can mark any URLs with <code class=\"mapping\">M{a-zA-Z0-9}</code>. " +
-                  "These QuickMarks are persistent across browser session.",
+                  "These QuickMarks are persistent across browser sessions.",
             flags: Mappings.flags.ARGUMENT
         }
     ));
@@ -697,7 +697,7 @@ function Mappings() //{{{
         function() { vimperator.buffer.scrollStart(); },
         {
             short_help: "Scroll to the absolute left of the document",
-            help: "Unlike in vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way."
+            help: "Unlike in Vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["$"],
