@@ -33,6 +33,7 @@ function Option(names, type, extra_info) //{{{
 
     this.name = names[0];
     this.names = names;
+    this.usage = this.names;
     this.type = type;
 
     this.setter = function(value) { Options.setPref(this.name, value); };
@@ -42,8 +43,6 @@ function Option(names, type, extra_info) //{{{
     {
         if (extra_info.usage)
             this.usage = extra_info.usage;
-        else
-            this.usage = this.names;
 
         this.help = extra_info.help || null;
         this.short_help = extra_info.short_help || null;
@@ -64,9 +63,10 @@ function Option(names, type, extra_info) //{{{
     }
 
     // add noOPTION variant of boolean OPTION to this.names
+    // FIXME: are these variants really considered names?
     if (this.type == "boolean")
     {
-        this.names = [];
+        this.names = []; // reset since order is important
         for (var i = 0; i < names.length; i++)
         {
             this.names.push(names[i]);
