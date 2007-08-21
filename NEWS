@@ -2,6 +2,8 @@
 2007-xx-xx:
 	* version 0.6
 	* added :set {option}! support to toggle a boolean option's value
+	* added :set all and :set all& support to show the current value of all
+	options and to reset all options to their default value
 
 2007-08-16:
 	* version 0.5
