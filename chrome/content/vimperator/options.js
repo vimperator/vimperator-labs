@@ -387,7 +387,7 @@ function Options() //{{{
     ));
     addOption(new Option(["fullscreen", "fs"], "boolean",
         {
-            short_help: "Shows the current window fullscreen",
+            short_help: "Show the current window fullscreen",
             setter: function(value) { window.fullScreen = value; },
             getter: function() { return window.fullScreen; },
             default_value: false
@@ -395,7 +395,7 @@ function Options() //{{{
     ));
     addOption(new Option(["guioptions", "go"], "charlist",
         {
-            short_help: "Shows or hide the menu, toolbar and scrollbars",
+            short_help: "Show or hide the menu, toolbar and scrollbars",
             help: "Supported characters:<br/><ul>" +
                   "<li><b>m</b>: menubar</li>" +
                   "<li><b>T</b>: toolbar</li>" +
