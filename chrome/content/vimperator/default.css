@@ -17,6 +17,7 @@ h1 {
 p.tagline {
     text-align: center;
     font-weight: bold;
+    margin-top: -35px; /* don't leave so much space between "Vimperator" and "First there was..." */
 }
 
 /* the text in the tables is too large without that */
@@ -164,7 +165,7 @@ fieldset.paypal {
     color: black;
 }
 #vimperator-commandline-prompt {
-    /* FIXME: black on white or default skin colours? */
+    /* FIXME: black on white or default skin colors? */
     background-color: white;
     color: black;
 }

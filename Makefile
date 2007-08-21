@@ -12,6 +12,7 @@ JAR_FILES     = ${shell find chrome/content -type f 		\
 				     -o  -path '*.css' 	\
 				     -o  -path '*.xul' 	\
 				     -o  -path '*.rdf' 	\
+				     -o  -path '*.png' 	\
 				   \) } chrome.manifest
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
 JAR           = chrome/vimperator.jar
