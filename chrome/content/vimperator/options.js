@@ -271,6 +271,34 @@ function Options() //{{{
             storePreference('dom.popup_allowed_events', popup_allowed_events);
     }
 
+    this.list = function()
+    {
+        // TODO: columns like Vim?
+        var list = "<table style=\"white-space: nowrap;\">" +
+                   "<tr align=\"left\" style=\"color: magenta\"><th>--- Options ---</th></tr>";
+        var name, value;
+
+        for (var i = 0; i < options.length; i++)
+        {
+            name  = options[i].name;
+            value = options[i].value;
+
+            if (options[i].type == "boolean")
+            {
+                name = value ? "&nbsp;&nbsp;" + name : "no" + name;
+                list += "<tr><td>" + name + "</td></tr>";
+            }
+            else
+            {
+                list += "<tr><td>" + "&nbsp;&nbsp;" + name + "=" + value + "</td></tr>";
+            }
+        }
+
+        list += "</table>";
+
+        vimperator.commandline.echo(list, true);
+    }
+
     // TODO: separate Preferences from Options? Would these utility functions
     // be better placed in the 'core' vimperator namespace somewhere?
     Options.setPref = function(name, value)
