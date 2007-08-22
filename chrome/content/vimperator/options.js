@@ -430,7 +430,7 @@ function Options() //{{{
             short_help: "Maximum number of simultaneously shown hints",
             help: "If you want to speed up display of hints, choose a smaller value",
             default_value: 250,
-            validator: function (value) { if (value>=1 && value <=1000) return true; else return false; }
+            validator: function (value) { if (value >= 1 && value <= 1000) return true; else return false; }
         }
     ));
     addOption(new Option(["preload"], "boolean",
@@ -445,10 +445,10 @@ function Options() //{{{
         {
             short_help: "Default height for preview window",
             help: "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. " +
-                  "Close the preview window with <code class=\"command\">:pclose</code>." +
+                  "Close the preview window with <code class=\"command\">:pclose</code>.<br/>" +
                   "NOTE: Option currently disabled",
             default_value: 10,
-            validator: function (value) { if (value>=1 && value <=50) return true; else return false; }
+            validator: function (value) { if (value >= 1 && value <= 50) return true; else return false; }
         }
     ));
     addOption(new Option(["scroll", "scr"], "number",
@@ -489,7 +489,7 @@ function Options() //{{{
                   "NOTE: Not fully implemented yet and buggy with stal=0",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
-            validator: function (value) { if (value>=0 && value <=2) return true; else return false; }
+            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
     addOption(new Option(["titlestring"], "string",
@@ -517,7 +517,7 @@ function Options() //{{{
             help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
                   "The highest value is 9, being the most verbose mode.",
             default_value: 0,
-            validator: function (value) { if (value>=0 && value <=9) return true; else return false; }
+            validator: function (value) { if (value >= 0 && value <= 9) return true; else return false; }
         }
     ));
     addOption(new Option(["wildmode", "wim"], "stringlist",
