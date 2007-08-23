@@ -32,9 +32,6 @@ const vimperator = (function() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const RC_FILE = "~/.vimperatorrc";
-    const PLUGIN_DIR = "~/.vimperator/plugin";
-
     var modes = {
         // main modes
         NONE:             0,
@@ -118,11 +115,8 @@ const vimperator = (function() //{{{
             var home = environment_service.get("HOME");
 
             if (WINDOWS && !home)
-            {
-                home = environment_service.get("USERPROFILE");
-                if (!home)
-                    home = environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
-            }
+                home = environment_service.get("USERPROFILE") ||
+                       environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
 
             path = path.replace("~", home);
         }
@@ -143,6 +137,46 @@ const vimperator = (function() //{{{
         }
 
         return path;
+    }
+
+    // TODO: add this functionality to LocalFile or wait for Scriptable I/O in FUEL
+    function pathExists(path)
+    {
+        var p = Components.classes["@mozilla.org/file/local;1"]
+            .createInstance(Components.interfaces.nsILocalFile);
+        p.initWithPath(expandPath(path));
+
+        return p.exists();
+    }
+
+    function getPluginDir()
+    {
+        var plugin_dir;
+
+        if (navigator.platform == "Win32")
+            plugin_dir = "~/vimperator/plugin";
+        else
+            plugin_dir = "~/.vimperator/plugin";
+
+        plugin_dir = expandPath(plugin_dir);
+
+        return pathExists(plugin_dir) ? plugin_dir : null;
+    }
+
+    function getRCFile()
+    {
+        var rc_file1 = expandPath("~/.vimperatorrc");
+        var rc_file2 = expandPath("~/_vimperatorrc");
+
+        if (navigator.platform == "Win32")
+            [rc_file1, rc_file2] = [rc_file2, rc_file1]
+
+        if (pathExists(rc_file1))
+            return rc_file1;
+        else if (pathExists(rc_file2))
+            return rc_file2;
+        else
+            return null;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -169,14 +203,12 @@ const vimperator = (function() //{{{
             count: -1                  // parsed count from the input buffer
         },
 
-        /**
-         * @param type can be:
-         *  "submit": when the user pressed enter in the command line
-         *  "change"
-         *  "cancel"
-         *  "complete"
-         *  TODO: "zoom": if the zoom value of the current buffer changed
-         */
+        // @param type can be:
+        //  "submit": when the user pressed enter in the command line
+        //  "change"
+        //  "cancel"
+        //  "complete"
+        //  TODO: "zoom": if the zoom value of the current buffer changed
         registerCallback: function(type, mode, func)
         {
             // TODO: check if callback is already registered
@@ -207,7 +239,7 @@ const vimperator = (function() //{{{
             if (main)
             {
                 mode = main;
-                extended_mode = this.modes.NONE;
+                extended_mode = vimperator.modes.NONE;
             }
             if (typeof extended === "number")
                 extended_mode = extended;
@@ -304,19 +336,15 @@ const vimperator = (function() //{{{
             return new LocalFile(path, mode, perms, tmp);
         },
 
-        /**
-         * logs a message to the javascript error console
-         */
+        // logs a message to the javascript error console
         log: function(msg, level)
         {
             // if (Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
                 console_service.logStringMessage('vimperator: ' + msg);
         },
 
-        /**
-         * logs an object to the javascript error console also prints all
-         * properties of the object
-         */
+        // logs an object to the javascript error console also prints all
+        // properties of the object
         logObject: function(object, level)
         {
             if (typeof object != 'object')
@@ -337,7 +365,7 @@ const vimperator = (function() //{{{
 
                 string += i + ': ' + value + '\n';
             }
-            this.log(string, level);
+            vimperator.log(string, level);
         },
 
         // open one or more URLs
@@ -512,7 +540,7 @@ const vimperator = (function() //{{{
                     });
                 }
 
-                vimperator.log("Sourced: " + filename, 1);
+                vimperator.log("Sourced: " + filename, 3);
             }
             catch (e)
             {
@@ -584,20 +612,34 @@ const vimperator = (function() //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
 
-                vimperator.source(RC_FILE, true);
+                var rc_file = getRCFile();
+
+                if (rc_file)
+                    vimperator.source(rc_file, true);
+                else
+                    vimperator.log("No user RC file found", 3);
 
                 // also source plugins in ~/.vimperator/plugin/
                 var entries = [];
                 try
                 {
-                    var plugin_dir = expandPath(PLUGIN_DIR);
-                    var fd = vimperator.fopen(plugin_dir);
-                    var entries = fd.read();
-                    fd.close();
-                    entries.forEach(function(file) {
-                        if (!file.isDirectory())
-                            vimperator.source(file.path, false);
-                    });
+                    var plugin_dir = getPluginDir();
+
+                    if (plugin_dir)
+                    {
+                        var fd = vimperator.fopen(plugin_dir);
+                        var entries = fd.read();
+                        fd.close();
+                        vimperator.log("Sourcing plugin directory...", 3);
+                        entries.forEach(function(file) {
+                            if (!file.isDirectory())
+                                vimperator.source(file.path, false);
+                        });
+                    }
+                    else
+                    {
+                        vimperator.log("No user plugin directory found", 3);
+                    }
                 }
                 catch (e)
                 {
