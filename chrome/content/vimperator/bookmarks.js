@@ -200,6 +200,10 @@ function Bookmarks() //{{{
         if (!engine_name || engine_name == "")
             engine_name = vimperator.options["defsearch"];
 
+        // we need to make sure our custom alias have been set, even if the user
+        // did not :open <tab> once before
+        this.getSearchEngines();
+
         // first checks the search engines for a match
         var engine = search_service.getEngineByAlias(engine_name);
         if (engine)
