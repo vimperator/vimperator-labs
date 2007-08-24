@@ -89,8 +89,7 @@ function CommandLine() //{{{
     var multiline_callback = null;
 
     // load the commandline history
-    var hist = Options.getPref("commandline_history", "");
-    history = hist.split("\n");
+    history = Options.getPref("commandline_history", "").split("\n");
 
     // TODO: these styles should be moved to the .css file
     function setNormalStyle()
