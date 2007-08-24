@@ -71,11 +71,10 @@ function Bookmarks() //{{{
 
             folders.shift();
             // iterate over the immediate children of this folder
-            for (var i = 0; i < rootNode.childCount; i ++)
+            for (var i = 0; i < rootNode.childCount; i++)
             {
                 var node = rootNode.getChild(i);
-                //dump("Child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
-                if (node.type == node.RESULT_TYPE_FOLDER) // folder
+                if (node.type == node.RESULT_TYPE_FOLDER)   // folder
                     folders.push(node.itemId);
                 else if (node.type == node.RESULT_TYPE_URI) // bookmark
                 {
@@ -346,11 +345,8 @@ function History() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
-    const rdf_service    = Components.classes["@mozilla.org/rdf/rdf-service;1"].
-                           getService( Components.interfaces.nsIRDFService );
-//    const global_history_service = Components.classes["@mozilla.org/browser/global-history;2"].
-//                           getService(Components.interfaces.nsIRDFDataSource);
+    const history_service   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+                             .getService(Components.interfaces.nsINavHistoryService);
 
     var history = null;
 
@@ -361,40 +357,29 @@ function History() //{{{
     {
         history = [];
 
-//        var historytree = document.getElementById("hiddenHistoryTree");
-//        if (!historytree)
-//            return;
-//
-//        if (historytree.hidden)
-//        {
-//            historytree.hidden = false;
-//            historytree.database.AddDataSource(global_history_service);
-//        }
-//
-//        if (!historytree.ref)
-//            historytree.ref = "NC:HistoryRoot";
-//
-//        var nameResource = rdf_service.GetResource(gNC_NS + "Name");
-//        var builder = historytree.builder.QueryInterface(Components.interfaces.nsIXULTreeBuilder);
-//
-//        var count = historytree.view.rowCount;
-//        for (var i = count - 1; i >= 0; i--)
-//        {
-//            var res = builder.getResourceAtIndex(i);
-//            var url = res.Value;
-//            var title;
-//            var titleRes = historytree.database.GetTarget(res, nameResource, true);
-//            if (!titleRes)
-//                continue;
-//
-//            var titleLiteral = titleRes.QueryInterface(Components.interfaces.nsIRDFLiteral);
-//            if (titleLiteral)
-//                title = titleLiteral.Value;
-//            else
-//                title = "";
-//
-//            history.push([url, title]);
-//        }
+        // no query parameters will get all history
+        // XXX default sorting is... ?
+        var options = history_service.getNewQueryOptions();
+        var query = history_service.getNewQuery();
+
+        // execute the query
+        var result = history_service.executeQuery(query, options);
+        var rootNode = result.root;
+        rootNode.containerOpen = true;
+        // iterate over the immediate children of this folder
+        for (var i = 0; i < rootNode.childCount; i++)
+        {
+            var node = rootNode.getChild(i);
+            if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
+            {
+                history.push([node.uri, node.title]);
+            }
+            else
+                dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
+        }
+
+        // close a container after using it!
+        rootNode.containerOpen = false;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
