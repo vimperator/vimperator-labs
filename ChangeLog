@@ -1,3 +1,231 @@
+2007-08-24 15:08  stubenschrott
+
+	* chrome/content/vimperator/bookmarks.js: updated history service
+	  to use Places
+
+2007-08-24 13:13  dougkearns
+
+	* chrome/content/vimperator/: ui.js: remove unnecessary temp
+	  variable
+
+2007-08-24 13:10  dougkearns
+
+	* chrome/content/vimperator/: default.css, vimperator.xul: make
+	  sure the active listcell in the second column of the preview
+	  window uses HighlightText as the CSS color value and move the
+	  #vimperator-multiline-output styles to default.css
+
+2007-08-24 06:57  stubenschrott
+
+	* Donators, install.rdf, chrome/content/vimperator/bookmarks.js,
+	  chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/vimperator.js: ATTENTION: FIRST FIREFOX
+	  3 alpha7+ ONLY RELEASE! Ported bookmarks/keywords to Places
+	  Disabled global history for now, will come soon.
+
+2007-08-23 17:11  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: allow ~/_vimperatorrc as
+	  the RC file and ~/vimperator/plugin as the plugin directory on
+	  Windows
+
+2007-08-23 16:07  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: allow ~/_vimperatorrc as
+	  the RC file and ~/vimperator/plugin as the plugin directory on
+	  Windows
+
+2007-08-23 15:38  dougkearns
+
+	* Makefile: use 0.5 for the version strings
+
+2007-08-22 12:02  stubenschrott
+
+	* Donators: updated donators file
+
+2007-08-22 11:20  dougkearns
+
+	* chrome/content/vimperator/options.js: fix typo in 'pvh' help
+
+2007-08-22 01:15  stubenschrott
+
+	* Makefile, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/help.js,
+	  chrome/content/vimperator/logo_white.png: first attempt for an
+	  logo probably at the wrong chrome location, it just didn't accept
+	  files in chrome/skin/ in my first attempts, but i don't really
+	  care as a logo is also "content" :)
+
+2007-08-21 23:54  dougkearns
+
+	* Makefile, NEWS, TODO, chrome/content/vimperator/bookmarks.js,
+	  chrome/content/vimperator/buffers.js,
+	  chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/completion.js,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/file.js,
+	  chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/help.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/tabs.js,
+	  chrome/content/vimperator/ui.js,
+	  chrome/content/vimperator/vimperator.js: merge HEAD
+
+2007-08-21 20:50  dougkearns
+
+	* NEWS: mention the new :set all and :set all& commands in NEWS
+
+2007-08-21 19:12  dougkearns
+
+	* chrome/content/vimperator/options.js: fix typos in short_help of
+	  'go' and 'fs' options
+
+2007-08-21 17:00  dougkearns
+
+	* chrome/content/vimperator/: commands.js, mappings.js: fix some
+	  trivial help typos
+
+2007-08-21 16:12  dougkearns
+
+	* chrome/content/vimperator/help.js: perform the & -> &amp; HTML
+	  entity replacement before replacing other characters
+
+2007-08-21 15:52  dougkearns
+
+	* chrome/content/vimperator/: commands.js, help.js: escape literal
+	  & with the HTML entity in :set help string
+
+2007-08-21 13:29  dougkearns
+
+	* chrome/content/vimperator/options.js: make sure the usage
+	  property of an Option is always set
+
+2007-08-21 11:53  dougkearns
+
+	* chrome/content/vimperator/: commands.js, options.js: add support
+	  for :set all and :set all& to list and reset all options
+
+2007-08-20 13:06  dougkearns
+
+	* chrome/content/vimperator/commands.js: mention numerical options
+	  in :set option+={value} documentation
+
+2007-08-20 12:43  dougkearns
+
+	* NEWS, TODO: remove :set {option}! support from the TODO - now
+	  implemented
+
+2007-08-20 12:39  dougkearns
+
+	* chrome/content/vimperator/commands.js: add support for :set
+	  {option}! to toggle a boolean option's value
+
+2007-08-19 19:56  dougkearns
+
+	* chrome/content/vimperator/mappings.js: fix typo in "T" mappings
+	  help
+
+2007-08-19 19:21  dougkearns
+
+	* chrome/content/vimperator/bookmarks.js: use TH to markup the
+	  table headers in :marks/:qmarks output...again
+
+2007-08-19 16:15  dougkearns
+
+	* chrome/content/vimperator/commands.js: minor improvements to
+	  search string heuristic regexps in toURLArray
+
+2007-08-19 12:54  dougkearns
+
+	* chrome/content/vimperator/mappings.js: remove FIXME comment -
+	  allowing the "zz" mapping to use its count as the zoom value
+	  rather than an arg is the same as "gg", "G" and others in Vim
+
+2007-08-18 17:26  dougkearns
+
+	* chrome/content/vimperator/commands.js: improve toURLArray so that
+	  it can handle trailing /'s in its args - "gu" and :open should
+	  now behave as specified
+
+2007-08-18 16:22  dougkearns
+
+	* chrome/content/vimperator/: buffers.js, commands.js, events.js,
+	  mappings.js, ui.js: rename the 'location' property of
+	  vimperator.buffer to 'URL'
+
+2007-08-17 18:40  dougkearns
+
+	* chrome/content/vimperator/: completion.js, file.js, find.js,
+	  vimperator.js: fix whitespace formatting - remove leading tab
+	  characters with :retab
+
+2007-08-17 18:20  dougkearns
+
+	* chrome/content/vimperator/tabs.js: fix broken :tabmove wrapping
+
+2007-08-17 18:04  dougkearns
+
+	* chrome/content/vimperator/default.css: revert mozdev style
+	  override
+
+2007-08-17 17:28  dougkearns
+
+	* chrome/content/vimperator/default.css: explictitly set
+	  list-style-* properties to override the default mozdev styles
+	  when viewing the help page at vimperator.mozdev.org
+
+2007-08-17 16:59  dougkearns
+
+	* Makefile: find the correct FIREFOX_DEFAULT extensions directory
+	  path when run on Cygwin
+
+2007-08-17 13:57  stubenschrott
+
+	* TODO: updated TODO for 0.6
+
+2007-08-17 11:41  stubenschrott
+
+	* Makefile, NEWS, chrome/content/vimperator/vimperator.js: Changed
+	  version number to 0.6 CVS
+
+2007-08-16 23:50  stubenschrott
+
+	* Makefile, TODO, chrome/content/vimperator/help.js: only add NEWS
+	  instead of ChangeLog in .xpi, to dramatically reduce size for
+	  future releases
+
+2007-08-16 18:54  stubenschrott
+
+	* chrome/content/vimperator/: commands.js, ui.js: fixed :map x
+	  :<cr> problem
+
+2007-08-16 18:18  stubenschrott
+
+	* ChangeLog, NEWS: last commit before 0.5 is tagged
+
+2007-08-16 18:01  dougkearns
+
+	* chrome/content/vimperator/events.js: reset
+	  vimperator.input.buffer before executing mappings that may add
+	  more key events to the event buffer
+
+2007-08-16 17:56  dougkearns
+
+	* chrome/content/vimperator/commands.js: revert changes to :map arg
+	  parsing regexp in 1.190
+
+2007-08-16 17:51  dougkearns
+
+	* chrome/content/vimperator/help.js: fix help typo
+
+2007-08-16 17:49  dougkearns
+
+	* chrome/content/vimperator/commands.js: make sure URLs processed
+	  as a result of "gu" don't have //../ (the double forward slash)
+	  at the end
+
 2007-08-16 16:19  stubenschrott
 
 	* chrome/content/vimperator/: commands.js, help.js, vimperator.js:
