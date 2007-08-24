@@ -144,9 +144,9 @@ fieldset.paypal {
 }
 
 /* the selected item in listboxes is hardly readable without this */
-#vimperator-completion > listitem[selected="true"],
-#vimperator-bufferwindow > listitem[selected="true"],
-#vimperator-previewwindow > listitem[selected="true"]
+#vimperator-completion    > listitem[selected="true"] > listcell,
+#vimperator-bufferwindow  > listitem[selected="true"] > listcell,
+#vimperator-previewwindow > listitem[selected="true"] > listcell
 {
    background-color: Highlight !important;
    color: HighlightText !important;
@@ -167,6 +167,10 @@ fieldset.paypal {
     /* FIXME: black on white or default skin colours? */
     background-color: white;
     color: black;
+}
+
+#vimperator-multiline-output {
+    overflow: hidden;
 }
 
 .status_insecure, .status_insecure * {

@@ -101,8 +101,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                         onblur="vimperator.commandline.onEvent(event);"/>
                 </hbox>
 
-                <iframe  id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                        style="overflow: hidden"
+                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
                         onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>
 
                 <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="10" hidden="false" collapsed="true" multiline="true"
