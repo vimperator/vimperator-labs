@@ -72,6 +72,15 @@ function Events() //{{{
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, null);
 
+    // Code for keeping track if a popup is currently active
+    // XXX: does currently not handle submenus
+    this.openPopupCount = 0;
+    this.menuBarActive = 100;
+    window.addEventListener("popupshown",   function() { vimperator.log(++vimperator.events.openPopupCount); vimperator.addMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("popuphidden",    function() { vimperator.log(--vimperator.events.openPopupCount); vimperator.removeMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("DOMMenuBarActive",   function() { vimperator.log(++vimperator.events.menuBarActive);vimperator.addMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("DOMMenuBarInactive", function() { vimperator.log(--vimperator.events.menuBarActive); vimperator.removeMode(null, vimperator.modes.MENU); }, true);
+
     window.document.addEventListener("DOMTitleChanged", function(event)
     {
         //alert("titlechanged");
@@ -209,6 +218,11 @@ function Events() //{{{
         window.dump("TODO: remove all eventlisteners");
 
         getBrowser().removeProgressListener(this.progressListener);
+
+        window.removeEventListener("popupshowing");
+        window.removeEventListener("popuphidden");
+        window.removeEventListener("DOMMenuBarActive");
+        window.removeEventListener("DOMMenuBarInactive");
     }
 
     // This method pushes keys into the event queue from vimperator
@@ -356,11 +370,14 @@ function Events() //{{{
         //    if (event.target.id == "main-window")
         //        alert("focusContent();");
 
+        if (vimperator.hasMode(vimperator.modes.MENU))
+            return false;
 
         // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
         // also fixes key navigation in menus, etc.
         if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
             return false;
+
 
         // XXX: for now only, later: input mappings if form element focused
         if (isFormElemFocused())

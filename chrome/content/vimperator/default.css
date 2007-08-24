@@ -141,7 +141,9 @@ fieldset.paypal {
 
 #vimperator-bufferwindow, #vimperator-completion, #vimperator-previewwindow {
     -moz-user-focus: ignore;
-    overflow: -moz-scrollbars-none;
+    overflow: -moz-scrollbars-none !important; /* does not seem to work fully */
+    border-width: 0px !important;
+    -moz-appearance: none !important; /* prevent an ugly 3D border */
 }
 
 /* the selected item in listboxes is hardly readable without this */

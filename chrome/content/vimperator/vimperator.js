@@ -49,7 +49,8 @@ const vimperator = (function() //{{{
         ESCAPE_ALL_KEYS:  1 << 15,
         QUICK_HINT:       1 << 16,
         EXTENDED_HINT:    1 << 17,
-        ALWAYS_HINT:      1 << 18
+        ALWAYS_HINT:      1 << 18,
+        MENU:             1 << 19 // a popupmenu is active
     }
 
     var mode_messages = {};
