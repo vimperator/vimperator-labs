@@ -53,14 +53,22 @@ function Bookmarks() //{{{
 
         var bmarks = [];   // here getAllChildren will store the bookmarks
         BookmarksUtils.getAllChildren(root, bmarks);
-        for (var bm in bmarks)
+
+        // getAllChildren(root) ignores the BTF
+        // NOTE: there's probably a better way to do this...
+        var btf_bmarks = [];
+        BookmarksUtils.getAllChildren(BMSVC.getBookmarksToolbarFolder(), btf_bmarks);
+
+        bmarks = bmarks.concat(btf_bmarks);
+
+        for (var i = 0; i < bmarks.length; i++)
         {
-            if (bmarks[bm][0] && bmarks[bm][1])
-                bookmarks.push([bmarks[bm][1].Value, bmarks[bm][0].Value ]);
+            if (bmarks[i][0] && bmarks[i][1])
+                bookmarks.push([bmarks[i][1].Value, bmarks[i][0].Value ]);
 
             // keyword
-            if (bmarks[bm][1] && bmarks[bm][2])
-                keywords.push([bmarks[bm][2].Value, bmarks[bm][0].Value, bmarks[bm][1].Value]);
+            if (bmarks[i][1] && bmarks[i][2])
+                keywords.push([bmarks[i][2].Value, bmarks[i][0].Value, bmarks[i][1].Value]);
         }
     }
 
