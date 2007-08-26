@@ -243,46 +243,58 @@ vimperator.completion = (function() // {{{
             return filter_url_array(bookmarks, filter);
         }, //}}}
 
+        // TODO: support file:// and \ or / path separators on both platforms
         get_file_completions: function(filter) //{{{
         {
             //var completions = [];
-            /* This is now also used as part of the url completion, so the substrings shouldn't be cleared for that case */
+
+            // this is now also used as part of the url completion, so the
+            // substrings shouldn't be cleared for that case
             if (!arguments[1])
                 g_substrings = [];
 
-            var match = filter.match(/^(.*[\/\\])(.*?)$/);
+            var matches = filter.match(/^(.*[\/\\])(.*?)$/);
             var dir;
 
-            if (!match || !(dir = match[1]))
+            if (!matches || !(dir = matches[1]))
                 return [];
 
-            var compl = match[2] || '';
+            var compl = matches[2] || "";
+
             try
             {
-                var fd = vimperator.fopen(dir, "<");
+                var fd = vimperator.fopen(dir);
             }
-            catch(e)
+            catch (e)
             {
                 // thrown if file does not exist
-                return [ ];
+                return [];
             }
 
             if (!fd)
                 return [];
 
-            var entries = fd.read();
-            var delim = fd.path.length == 1 ? '' : (fd.path.search(/\\/) != -1) ? "\\" : "/";
-            var new_filter = fd.path + delim + compl;
-            if (!filter) return entries.map(function($_) {
-                var path = $_.path;
-                if ($_.isDirectory()) path += '/';
-                return [path, ''];
-            });
-            var mapped = entries.map(function($_) {
-                var path = $_.path;
-                if ($_.isDirectory()) path += '/';
-                return [[path], ''];
-            });
+            try
+            {
+                var entries = fd.read();
+                var separator = fd.path.length == 1 ? "" : /\\/.test(fd.path) ? "\\" : "/";
+                var new_filter = fd.path + separator + compl;
+                if (!filter) return entries.map(function($_) {
+                    var path = $_.path;
+                    if ($_.isDirectory()) path += separator;
+                    return [path, ""];
+                });
+                var mapped = entries.map(function($_) {
+                    var path = $_.path;
+                    if ($_.isDirectory()) path += separator;
+                    return [[path], ""];
+                });
+            }
+            catch (e)
+            {
+                //vimperator.log(e);
+                return [];
+            }
 
             return build_longest_starting_substring(mapped, new_filter);
         }, //}}}
