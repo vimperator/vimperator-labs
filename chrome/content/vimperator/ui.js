@@ -355,24 +355,32 @@ function CommandLine() //{{{
             /* user pressed UP or DOWN arrow to cycle history completion */
             else if (key == "<Up>" || key == "<Down>")
             {
-                //always reset the tab completion if we use up/down keys
+                event.preventDefault();
+                event.stopPropagation();
+
+                // always reset the tab completion if we use up/down keys
                 completion_index = UNINITIALIZED;
 
-                /* save 'start' position for iterating through the history */
+                // save 'start' position for iterating through the history
                 if (history_index == UNINITIALIZED)
                 {
                     history_index = history.length;
                     history_start = command;
                 }
 
+                // search the history for the first item matching the current
+                // commandline string
                 while (history_index >= -1 && history_index <= history.length)
                 {
                     key == "<Up>" ? history_index-- : history_index++;
-                    if (history_index == history.length) // user pressed DOWN when there is no newer history item
+
+                    // user pressed DOWN when there is no newer history item
+                    if (history_index == history.length)
                     {
                         setCommand(history_start);
                         return;
                     }
+
                     // cannot go past history start/end
                     if (history_index <= -1)
                     {
@@ -393,7 +401,6 @@ function CommandLine() //{{{
                         return;
                     }
                 }
-                vimperator.beep();
             }
 
             /* user pressed TAB to get completions of a command */
