@@ -351,19 +351,17 @@ vimperator.completion = (function() // {{{
         {
             g_substrings = [];
             var options_completions = [];
-            var no_mode = false;
-            if (filter.indexOf("no") == 0) // boolean option
-            {
-                no_mode = true;
-                filter = filter.substr(2);
-            }
+            var prefix = filter.match(/^no|inv/) || "";
+
+            if (prefix)
+                filter = filter.replace(prefix, "");
 
             if (unfiltered)
             {
                 var options = [];
                 for (var option in vimperator.options)
                 {
-                    if (no_mode && option.type != "boolean")
+                    if (prefix && option.type != "boolean")
                         continue;
                     options.push([option.names, option.short_help])
                 }
@@ -375,18 +373,16 @@ vimperator.completion = (function() // {{{
                 var options = [];
                 for (var option in vimperator.options)
                 {
-                    if (no_mode && option.type != "boolean")
+                    if (prefix && option.type != "boolean")
                         continue;
-                    var prefix = no_mode ? 'no' : '';
                     options.push([prefix + option.name, option.short_help])
                 }
                 return options;
             }
-
             // check if filter ends with =, then complete current value
-            else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length -1)
+            else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
             {
-                filter = filter.substr(0, filter.length-1);
+                filter = filter.substr(0, filter.length - 1);
                 for (var option in vimperator.options)
                 {
                     if (option.hasName(filter))
@@ -402,9 +398,8 @@ vimperator.completion = (function() // {{{
             var filter_length = filter.length;
             for (var option in vimperator.options)
             {
-                if (no_mode && option.type != "boolean")
+                if (prefix && option.type != "boolean")
                     continue;
-                var prefix = no_mode ? 'no' : '';
                 for (var j = 0; j < option.names.length; j++)
                 {
                     if (option.names[j].indexOf(filter) != 0)
