@@ -780,10 +780,10 @@ function Commands() //{{{
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
                   "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
                   "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
-                  "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
-                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
+                  "&lt;Alias&gt;myalias&lt;/Alias&gt;</li>" +
+                  "<li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a Google search for linux torvalds).</li>" +
-                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
+                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
                   "open OSNews in the current, and Slashdot in a new background tab).</li>" +
                   "</ol>" +
                   "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
@@ -1222,7 +1222,13 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
-        function(args) { vimperator.open(args, vimperator.NEW_WINDOW); },
+        function(args)
+        {
+            if (args)
+                vimperator.open(args, vimperator.NEW_WINDOW);
+            else
+                vimperator.open("about:blank", vimperator.NEW_WINDOW);
+        },
         {
             usage: ["wino[pen] [url] [, url]"],
             short_help: "Open one or more URLs in a new window",
