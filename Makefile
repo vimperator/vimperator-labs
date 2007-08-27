@@ -41,11 +41,13 @@ SED = sed
 
 ifeq (${OS},Darwin)
 FIREFOX_DEFAULT = $(wildcard ${HOME}/Library/Application\ Support/Firefox/Profiles/*default)
-else ifeq ($(findstring CYGWIN,${OS}),CYGWIN)
+else
+ifeq ($(findstring CYGWIN,${OS}),CYGWIN)
 HOME = $(shell cygpath -sm "${USERPROFILE}")
 FIREFOX_DEFAULT = $(wildcard ${HOME}/Application\ Data/Mozilla/Firefox/Profiles/*default)
 else
 FIREFOX_DEFAULT = $(wildcard ${HOME}/.mozilla/firefox/*.default)
+endif
 endif
 
 VIMPERATOR_CHROME_EMAIL = ${FIREFOX_DEFAULT}/extensions/vimperator@mozdev.org/chrome/
