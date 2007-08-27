@@ -623,7 +623,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["mapc[lear]"],
         function(args)
         {
-            if (args.length > 0)
+            if (args)
             {
                 vimperator.echoerr("E474: Invalid argument");
                 return;
@@ -667,7 +667,7 @@ function Commands() //{{{
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
-            if (args.length > 0 && !/[a-zA-Z]/.test(args))
+            if (args && !/[a-zA-Z]/.test(args))
             {
                 vimperator.echoerr("E283: No marks matching \"" + args + "\"");
                 return;
@@ -756,8 +756,10 @@ function Commands() //{{{
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
         function(args, special)
         {
-            if (args.length > 0)
+            if (args)
+            {
                 vimperator.open(args);
+            }
             else
             {
                 if (special)
@@ -838,7 +840,7 @@ function Commands() //{{{
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
-            if (args.length > 0 && !/[a-zA-Z0-9]/.test(args))
+            if (args && !/[a-zA-Z0-9]/.test(args))
             {
                 vimperator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
                 return;
@@ -1143,7 +1145,7 @@ function Commands() //{{{
             if (/\btabopen\b/.test(vimperator.options["activate"]))
                 where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
 
-            if (args.length > 0)
+            if (args)
                 vimperator.open(args, where);
             else
                 vimperator.open("about:blank", where);
