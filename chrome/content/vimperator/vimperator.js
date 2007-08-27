@@ -49,7 +49,8 @@ const vimperator = (function() //{{{
         ESCAPE_ALL_KEYS:  1 << 15,
         QUICK_HINT:       1 << 16,
         EXTENDED_HINT:    1 << 17,
-        ALWAYS_HINT:      1 << 18
+        ALWAYS_HINT:      1 << 18,
+        MENU:             1 << 19 // a popupmenu is active
     }
 
     var mode_messages = {};
@@ -63,6 +64,7 @@ const vimperator = (function() //{{{
     mode_messages[modes.QUICK_HINT]      = "quick";
     mode_messages[modes.EXTENDED_HINT]   = "extended";
     mode_messages[modes.ALWAYS_HINT]     = "always";
+    mode_messages[modes.MENU]            = "menu"; // TODO: desirable?
 
     var mode = modes.NORMAL;
     var extended_mode = modes.NONE;
