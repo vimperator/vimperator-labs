@@ -251,7 +251,7 @@ function Events() //{{{
 
         getBrowser().removeProgressListener(this.progressListener);
 
-        window.removeEventListener("popupshowing", enterPopupMode(), true);
+        window.removeEventListener("popupshown", enterPopupMode(), true);
         window.removeEventListener("popuphidden", exitPopupMode(), true);
         window.removeEventListener("DOMMenuBarActive", enterMenuMode(), true);
         window.removeEventListener("DOMMenuBarInactive", exitMenuMode(), true);
