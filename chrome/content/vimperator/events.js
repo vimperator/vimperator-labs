@@ -72,40 +72,14 @@ function Events() //{{{
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, null);
 
-    // track if a popup is open or the menubar is active
+    // Code for keeping track if a popup is currently active
+    // XXX: does currently not handle submenus
     this.openPopupCount = 0;
-    this.menuBarActive = false;
-
-    function enterPopupMode()
-    {
-        vimperator.events.openPopupCount++;
-        //vimperator.log("Open popup window count: " + vimperator.events.openPopupCount, 9);
-        vimperator.addMode(null, vimperator.modes.MENU);
-    }
-    function exitPopupMode()
-    {
-        vimperator.events.openPopupCount--;
-        //vimperator.log("Open popup window count: " + vimperator.events.openPopupCount, 9);
-        if (vimperator.events.openPopupCount == 0)
-            vimperator.removeMode(null, vimperator.modes.MENU);
-    }
-    function enterMenuMode()
-    {
-        this.menuBarActive = true;
-        //vimperator.log("Menubar is active", 9);
-        vimperator.addMode(null, vimperator.modes.MENU)
-    }
-    function exitMenuMode()
-    {
-        this.menuBarActive = false;
-        //vimperator.log("Menubar is inactive", 9);
-        vimperator.removeMode(null, vimperator.modes.MENU);
-    }
-
-    window.addEventListener("popupshown", enterPopupMode, true);
-    window.addEventListener("popuphidden", exitPopupMode, true);
-    window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
-    window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
+    this.menuBarActive = 100;
+    window.addEventListener("popupshown",   function() { vimperator.log(++vimperator.events.openPopupCount); vimperator.addMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("popuphidden",    function() { vimperator.log(--vimperator.events.openPopupCount); vimperator.removeMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("DOMMenuBarActive",   function() { vimperator.log(++vimperator.events.menuBarActive);vimperator.addMode(null, vimperator.modes.MENU); }, true);
+    window.addEventListener("DOMMenuBarInactive", function() { vimperator.log(--vimperator.events.menuBarActive); vimperator.removeMode(null, vimperator.modes.MENU); }, true);
 
     window.document.addEventListener("DOMTitleChanged", function(event)
     {
@@ -245,10 +219,10 @@ function Events() //{{{
 
         getBrowser().removeProgressListener(this.progressListener);
 
-        window.removeEventListener("popupshowing", enterPopupMode(), true);
-        window.removeEventListener("popuphidden", exitPopupMode(), true);
-        window.removeEventListener("DOMMenuBarActive", enterMenuMode(), true);
-        window.removeEventListener("DOMMenuBarInactive", exitMenuMode(), true);
+        window.removeEventListener("popupshowing");
+        window.removeEventListener("popuphidden");
+        window.removeEventListener("DOMMenuBarActive");
+        window.removeEventListener("DOMMenuBarInactive");
     }
 
     // This method pushes keys into the event queue from vimperator

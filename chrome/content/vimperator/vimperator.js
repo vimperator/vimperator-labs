@@ -64,7 +64,6 @@ const vimperator = (function() //{{{
     mode_messages[modes.QUICK_HINT]      = "quick";
     mode_messages[modes.EXTENDED_HINT]   = "extended";
     mode_messages[modes.ALWAYS_HINT]     = "always";
-    mode_messages[modes.MENU]            = "menu";
 
     var mode = modes.NORMAL;
     var extended_mode = modes.NONE;
