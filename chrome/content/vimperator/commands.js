@@ -1222,7 +1222,13 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
-        function(args) { vimperator.open(args, vimperator.NEW_WINDOW); },
+        function(args)
+        {
+            if (args)
+                vimperator.open(args, vimperator.NEW_WINDOW);
+            else
+                vimperator.open("about:blank", vimperator.NEW_WINDOW);
+        },
         {
             usage: ["wino[pen] [url] [, url]"],
             short_help: "Open one or more URLs in a new window",
