@@ -623,7 +623,7 @@ function Commands() //{{{
     addDefaultCommand(new Command(["mapc[lear]"],
         function(args)
         {
-            if (args.length > 0)
+            if (args)
             {
                 vimperator.echoerr("E474: Invalid argument");
                 return;
@@ -667,7 +667,7 @@ function Commands() //{{{
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
-            if (args.length > 0 && !/[a-zA-Z]/.test(args))
+            if (args && !/[a-zA-Z]/.test(args))
             {
                 vimperator.echoerr("E283: No marks matching \"" + args + "\"");
                 return;
@@ -756,8 +756,10 @@ function Commands() //{{{
     addDefaultCommand(new Command(["o[pen]", "e[dit]"],
         function(args, special)
         {
-            if (args.length > 0)
+            if (args)
+            {
                 vimperator.open(args);
+            }
             else
             {
                 if (special)
@@ -780,10 +782,10 @@ function Commands() //{{{
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
                   "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
                   "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
-                  "&lt;Alias&gt;myalias&lt;/Alias&gt; </li>" +
-                  "    <li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
+                  "&lt;Alias&gt;myalias&lt;/Alias&gt;</li>" +
+                  "<li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a Google search for linux torvalds).</li>" +
-                  "    <li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
+                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
                   "open OSNews in the current, and Slashdot in a new background tab).</li>" +
                   "</ol>" +
                   "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
@@ -838,7 +840,7 @@ function Commands() //{{{
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
-            if (args.length > 0 && !/[a-zA-Z0-9]/.test(args))
+            if (args && !/[a-zA-Z0-9]/.test(args))
             {
                 vimperator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
                 return;
@@ -1143,7 +1145,7 @@ function Commands() //{{{
             if (/\btabopen\b/.test(vimperator.options["activate"]))
                 where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
 
-            if (args.length > 0)
+            if (args)
                 vimperator.open(args, where);
             else
                 vimperator.open("about:blank", where);
