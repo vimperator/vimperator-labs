@@ -688,6 +688,9 @@ function Hints() //{{{
     }
 
     window.document.addEventListener("DOMContentLoaded", initDoc, null);
+    //window.document.addEventListener("DOMContentLoaded", function() { vimperator.log("contentloaded"); }, null);
+    //window.addEventListener("load", function() { vimperator.log("load"); }, null);
+    //window.document.addEventListener("pageshow", function() { vimperator.log("pageshow"); }, null);
     // FIXME: add resize support
     //window.addEventListener("resize", onResize, null);
 } //}}}

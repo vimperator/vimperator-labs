@@ -76,35 +76,29 @@ function Events() //{{{
     // track if a popup is open or the menubar is active
     //
 
-    var popup_count = 0;
     var active_menubar = false;
 
     function enterPopupMode()
     {
-        popup_count++;
-        vimperator.log("Open popup window count: " + popup_count, 9);
         vimperator.addMode(null, vimperator.modes.MENU);
     }
 
     function exitPopupMode()
     {
-        popup_count--;
-        vimperator.log("Open popup window count: " + popup_count, 9);
-        if (popup_count == 0)
+        // gContextMenu is set to NULL by firefox, when a context menu is closed
+        if (!gContextMenu && !active_menubar)
             vimperator.removeMode(null, vimperator.modes.MENU);
     }
 
     function enterMenuMode()
     {
         active_menubar = true;
-        vimperator.log("Menubar is active", 9);
         vimperator.addMode(null, vimperator.modes.MENU)
     }
 
     function exitMenuMode()
     {
         active_menubar = false;
-        vimperator.log("Menubar is inactive", 9);
         vimperator.removeMode(null, vimperator.modes.MENU);
     }
 
