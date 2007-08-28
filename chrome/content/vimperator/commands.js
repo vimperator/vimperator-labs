@@ -520,8 +520,8 @@ function Commands() //{{{
         {
             usage: ["h[elp] {subject}"],
             short_help: "Open the help window",
-            help: "You can jump to the specified {subject} with <code class=\"command\">:help {subject}</code>.<br/>" +
-                  "Make sure you use the full vim notation when jumping to {subject}. This means:<br/>" +
+            help: "You can jump to the specified <code class=\"argument\">{subject}</code> with <code class=\"command\">:help {subject}</code>.<br/>" +
+                  "Make sure you use the full vim notation when jumping to <code class=\"argument\">{subject}</code>. This means:<br/>" +
                   "<ul>" +
                   "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>" +
                   "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
@@ -1280,8 +1280,8 @@ function Commands() //{{{
         {
             usage: ["zo[om] [value]", "zo[om] +{value} | -{value}"],
             short_help: "Set zoom value of the web page",
-            help: "{value} can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
-                  "If {value} is omitted, zoom is reset to 100%."
+            help: "If <code class=\"argument\">{value}</code> can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
+                  "If <code class=\"argument\">{value}</code> is omitted, zoom is reset to 100%."
         }
     ));
     //}}}
