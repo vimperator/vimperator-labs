@@ -92,38 +92,37 @@ function Hints() //{{{
     function genElemCoords(elem)
     {
         // NOTE: experiment for making the function faster, report problems
-        // only works for FF3.0:
-        //var rect = elem.getClientRects()[0];
-        //if (rect)
+        var rect = elem.getClientRects()[0];
+        if (rect)
+        {
+            elem.absoLeft = rect.left;
+            elem.absoTop = rect.top;
+        }
+        return;
+
+        //if (typeof(elem.validCoord) != "undefined")
         //{
-        //    elem.absoLeft = rect.left;
-        //    elem.absoTop = rect.top;
+        //    if (elem.validCoord == elem.ownerDocument.validCoords)
+        //        return;
         //}
-        //return;
 
-        if (typeof(elem.validCoord) != "undefined")
-        {
-            if (elem.validCoord == elem.ownerDocument.validCoords)
-                return;
-        }
-
-        if (elem.offsetParent)
-        {
-            genElemCoords(elem.offsetParent);
-            elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
-            elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
-        }
-        else if (elem.offsetLeft && elem.offsetTop) // TODO: ugly and broken temporary fix until FF3
-        {
-            elem.absoLeft = elem.offsetLeft;
-            elem.absoTop = elem.offsetTop;
-        }
-        else
-        {
-            elem.absoLeft = 0;
-            elem.absoTop = 0;
-        }
-        elem.validCoord = elem.ownerDocument.validCoords;
+        //if (elem.offsetParent)
+        //{
+        //    genElemCoords(elem.offsetParent);
+        //    elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
+        //    elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
+        //}
+        //else if (elem.offsetLeft && elem.offsetTop) // TODO: ugly and broken temporary fix until FF3
+        //{
+        //    elem.absoLeft = elem.offsetLeft;
+        //    elem.absoTop = elem.offsetTop;
+        //}
+        //else
+        //{
+        //    elem.absoLeft = 0;
+        //    elem.absoTop = 0;
+        //}
+        //elem.validCoord = elem.ownerDocument.validCoords;
     }
 
     function createHints(win)
