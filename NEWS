@@ -1,12 +1,14 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* the URL in the status line can be selected with the mouse again
 	* commandline history now works properly on Windows
 	* filename completion now works on Windows
-	* Fixed search for :open (previously needed to do :o <tab> ONCE to initialize them)
+	* fixed search for :open (previously needed to do :o <tab> ONCE to initialize them)
 	* added :set {option}! support to toggle a boolean option's value
 	* added :set all and :set all& support to show the current value of all
-	options and to reset all options to their default value
+	  options and to reset all options to their default value
+	* :tabmove! wrapping works again
 
 2007-08-16:
 	* version 0.5
