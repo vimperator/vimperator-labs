@@ -78,8 +78,11 @@ function Events() //{{{
 
     var active_menubar = false;
 
-    function enterPopupMode()
+    function enterPopupMode(event)
     {
+        if (event.originalTarget.localName == "tooltip")
+            return;
+
         vimperator.addMode(null, vimperator.modes.MENU);
     }
 
