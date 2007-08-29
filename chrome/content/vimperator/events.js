@@ -79,8 +79,11 @@ function Events() //{{{
     var popup_count = 0;
     var active_menubar = false;
 
-    function enterPopupMode()
+    function enterPopupMode(event)
     {
+        if (event.originalTarget.localName == "tooltip")
+            return;
+
         popup_count++;
         vimperator.log("Open popup window count: " + popup_count, 9);
         vimperator.addMode(null, vimperator.modes.MENU);
