@@ -110,10 +110,10 @@ function Events() //{{{
     window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
 
-    window.document.addEventListener("DOMTitleChanged", function(event)
-    {
-        //alert("titlechanged");
-    }, null);
+    //window.document.addEventListener("DOMTitleChanged", function(event)
+    //{
+    //    //alert("titlechanged");
+    //}, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
