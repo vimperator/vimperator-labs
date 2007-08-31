@@ -64,7 +64,7 @@ const vimperator = (function() //{{{
     mode_messages[modes.QUICK_HINT]      = "quick";
     mode_messages[modes.EXTENDED_HINT]   = "extended";
     mode_messages[modes.ALWAYS_HINT]     = "always";
-    mode_messages[modes.MENU]            = "menu"; // TODO: desirable?
+    //mode_messages[modes.MENU]            = "menu"; // not a user visible mode
 
     var mode = modes.NORMAL;
     var extended_mode = modes.NONE;
@@ -607,7 +607,6 @@ const vimperator = (function() //{{{
                 }, 1000);
             }
 
-            //gURLBar.blur(); // TODO: needed anymore?
             vimperator.focusContent();
 
             // finally, read a ~/.vimperatorrc
