@@ -1,3 +1,5 @@
+" TODO: add some useful examples
+
 " I don't like beeps
 set nobeep
 echo vimperatorrc found
@@ -9,68 +11,6 @@ hello = function(name)
 {
 	alert("Hello world: " + name);
 }
-
-//Checks if a mapping is already defined and returnes the index in g_mappings,
-//where it is defined, or -1
-find_map = function(tofind)
-{
-        for (var i in g_mappings)
-        {
-                // each internal mapping can have multiple keys
-                for (var j in g_mappings[i][0])
-                {
-                        var mapping = g_mappings[i][0][j];
-                        if(mapping == tofind) {
-                                //alert("Mapping '"+tofind+"' found");
-                                return i;
-                        }
-                }
-        }
-//      alert("Mapping '"+tofind+"' not found");
-        return -1;
-}
-
-//(re)define a mapping map, with usage, helptext by function func
-//see examples below
-//Current problem: Doesn't remove helptext, when a mapping is unassigned
-define_map = function(map, usage, helptext, func) {
-        //check if mapping exists:
-        var i=find_map(map);
-        var newmap = [[map],[usage],helptext,func];
-        if(i>=0)
-        {
-                //unassign map
-                var changed_maps=new Array();
-                for(j in g_mappings[i][0]) {
-                        if(g_mappings[i][0][j]!=map)
-                                changed_maps.push(g_mappings[i][0][j]);
-                }
-                g_mappings[i][0]=changed_maps;
-        }
-        //add new map
-        g_mappings.push(newmap);
-        alert("Mapping '"+map+"' added.");
-}
-print_maps = function (toPrint) {
-var doc = gBrowser.contentDocument;
-doc.open();
-var text="";
-for( i in g_mappings) {
-        var curmaps = "";
-        for (j in g_mappings[i][0])
-                curmaps += g_mappings[i][0][j].replace("<","&le;").replace(">","&ge")+", ";
-        text +="<br><br>["+curmaps+"]";
-}
-doc.write(text);
-
-doc.close();
-}
-
 EOF
 
-
-" use functions to define maps for h and l
-javascript define_map("h","h","previous tab",function(){tab_go(-1);});
-javascript define_map("l","l","next tab",function(){tab_go(0);});
-
-" vim: set syntax=vimperator:
+" vim: ft=vimperator:
