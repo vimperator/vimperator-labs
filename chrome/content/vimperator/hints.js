@@ -95,6 +95,8 @@ function Hints() //{{{
         var rect = elem.getClientRects()[0];
         if (rect)
         {
+            if (!rect.left || !rect.top)
+                vimperator.log("HUI: no rect.left or top");
             elem.absoLeft = rect.left;
             elem.absoTop = rect.top;
         }
@@ -171,9 +173,9 @@ function Hints() //{{{
 
             // for extended hint mode, show all - even currently hidden - hints
             //if (vimperator.hasMode(vimperator.modes.QUICK_HINT) && (elem.absoTop < area[1] || elem.absoTop > area[3] ||
-            if ((elem.absoTop < area[1] || elem.absoTop > area[3] ||
-                    elem.absoLeft > area[2] || elem.absoLeft < area[0]))
-                continue;
+//            if ((elem.absoTop < area[1] || elem.absoTop > area[3] ||
+//                    elem.absoLeft > area[2] || elem.absoLeft < area[0]))
+//                continue;
 
             // if (elem.offsetWidth == 0 && elem.offsetHeight == 0)
             //     continue;
@@ -688,9 +690,9 @@ function Hints() //{{{
     }
 
     window.document.addEventListener("DOMContentLoaded", initDoc, null);
-    //window.document.addEventListener("DOMContentLoaded", function() { vimperator.log("contentloaded"); }, null);
-    //window.addEventListener("load", function() { vimperator.log("load"); }, null);
-    //window.document.addEventListener("pageshow", function() { vimperator.log("pageshow"); }, null);
+    window.document.addEventListener("DOMContentLoaded", function() { vimperator.log("contentloaded"); }, null);
+    window.addEventListener("load", function() { vimperator.log("load"); }, null);
+    window.document.addEventListener("pageshow", function() { vimperator.log("pageshow"); }, null);
     // FIXME: add resize support
     //window.addEventListener("resize", onResize, null);
 } //}}}

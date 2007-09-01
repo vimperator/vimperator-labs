@@ -938,27 +938,32 @@ function Mappings() //{{{
     ));
 
     // search management
-    addDefaultMap(new Map(vimperator.modes.NORMAL, ["g/"],
-        function() { vimperator.search.openSearchDialog(); },
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["/"],
+        function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); },
         {
             short_help: "Search forward for a pattern",
-            help: "Buggy on many sites, use / if you want a reliable search!"
+            help: "TODO"
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["?"],
+        function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); },
+        {
+            short_help: "Search backwards for a pattern",
+            help: "TODO"
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["n"],
-        function() { vimperator.search.findNext(); },
+        function() { vimperator.search.findAgain(false); },
         {
             short_help: "Find next",
-            help: "Repeat the last \"g/\" 1 time (until count is supported). <br/>" +
-                  "NOTE: As \"g/\" is a little broken right now, use &lt;F3&gt; to go to the next search item of the \"/\" search for now."
+            help: "Repeat the last search 1 time (until count is supported)."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["N"],
-        function() { vimperator.search.findPrevious(); },
+        function() { vimperator.search.findAgain(true); },
         {
             short_help: "Find previous",
-            help: "Repeat the last \"g/\" 1 time (until count is supported) in the opposite direction.<br/>" +
-                  "NOTE: As \"g/\" is a little broken right now, use &lt;S-F3&gt; to go to the previous search item of the \"/\" search for now."
+            help: "Repeat the last search 1 time (until count is supported) in the opposite direction."
         }
     ));
 
