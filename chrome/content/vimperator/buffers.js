@@ -115,7 +115,9 @@ function Buffer() //{{{
 
     this.__defineGetter__("URL", function()
     {
-        return window.content.document.URL;
+        // TODO: .URL is not defined for XUL documents
+        //return window.content.document.URL;
+        return window.content.document.location.href;
     });
 
     this.__defineGetter__("pageHeight", function()
