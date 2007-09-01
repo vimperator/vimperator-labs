@@ -166,23 +166,41 @@ vimperator.help = function(section, easter) //{{{
 
         '<p>Of course as a believer in free open source software, only make a donation if you really like Vimperator and the money doesn\'t hurt - otherwise just use it, recommend it and like it :)</p>\n'
 
+    var initialization = '<span style="float: right"><code class="tag">initialization</code></span><h2 id="initialization">Initialization</h2>\n' +
+        '<p>At startup Vimperator sources a user RC file, containing Ex commands, and any JavaScript files found in the plugin directory.</p>' +
+        '<p>The RC file may be named .vimperatorrc or _vimperatorrc. The search order is:</p>' +
+        '<ul>' +
+        '<li>Unix and Mac - ~/.vimperatorrc then ~/_vimperatorrc</li>' +
+        '<li>Windows - ~/_vimperatorrc then ~/.vimperatorrc</li>' +
+        '</ul>' +
+        '<p>The plugin directory is named:</p>' +
+        '<ul>' +
+        '<li>Unix and Mac - ~/.vimperator/plugin</li>' +
+        '<li>Windows - ~/vimperator/plugin</li>' +
+        '</ul>' +
+        '<p>The user\'s $HOME(~) directory is determined as follows:</p>' +
+        '<ul>' +
+        '<li>Unix and Mac - $HOME is used.</li>' +
+        '<li>Windows - if $HOME is set then this is used, otherwise $USERPROFILE or finally $HOMEDRIVE$HOMEPATH.</li>' +
+        '</ul>\n';
+
     var mappings = '<span style="float: right"><code class="tag">mappings</code></span><h2 id="mappings">Mappings</h2>\n' +
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
         '<table class="vimperator mappings">'
     mappings += makeHelpString(vimperator.mappings, "", "", null);
     mappings += '</table>';
     if (section && section == 'holy-grail')
-        mappings += '<span id="holy-grail">You found it, Arthur!</span>\n';
+        mappings += '<div><p id="holy-grail">You found it, Arthur!</p></div>\n';
 
     var commands = '<span style="float: right"><code class="tag">commands</code></span><h2 id="commands">Commands</h2>\n' +
         '<table class="vimperator commands">\n';
     commands += makeHelpString(vimperator.commands, ":", "", null);
     commands += '</table>';
     if (section && section == '42')
-        commands += '<p id="42">What is the meaning of life, the universe and everything?<br/>' +
+        commands += '<div><p id="42">What is the meaning of life, the universe and everything?<br/>' +
                     'Douglas Adams, the only person who knew what this question really was about is<br/>' +
                     'now dead, unfortunately.  So now you might wonder what the meaning of death<br/>' +
-                    'is...</p>\n';
+                    'is...</p></div>\n';
 
     var options = '<span style="float: right"><code class="tag">options</code></span><h2 id="options">Options</h2>\n' +
         '<table class="vimperator options">\n';
@@ -198,6 +216,7 @@ vimperator.help = function(section, easter) //{{{
         '<span class="version">version ' + vimperator.version + '</span>\n' +
         header +
         introduction +
+        initialization +
         mappings +
         commands +
         options +

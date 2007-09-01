@@ -302,6 +302,7 @@ vimperator.completion = (function() // {{{
         get_help_completions: function(filter) //{{{
         {
             var help_array = [[["introduction"], "Introductory text"],
+                              [["initialization"], "Initialization and startup"],
                               [["mappings"], "Normal mode commands"],
                               [["commands"], "Ex commands"],
                               [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
