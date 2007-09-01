@@ -64,8 +64,9 @@ function Search() //{{{
         const FIND_TYPEAHEAD = 1;
         const FIND_LINKS = 2;
 
-        var res = getBrowser().fastFind.find(str, FIND_TYPEAHEAD);
-        res == Components.interfaces.nsITypeAheadFind.FIND_FOUND ? found = true : found = false;
+        getBrowser().fastFind.find(str, false);
+
+        return Components.interfaces.nsITypeAheadFind.FIND_FOUND ? true : false;
     }
 
     // Called when the current search needs to be repeated
@@ -78,7 +79,7 @@ function Search() //{{{
 
         var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
         var up = reverse ? !backward : backward;
-        var result = getBrowser().fastFind.findAgain(up, null);
+        var result = getBrowser().fastFind.findAgain(up, false);
 
         if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
             vimperator.echoerr("E486: Pattern not found: " + lastsearch);
