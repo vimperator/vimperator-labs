@@ -32,8 +32,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 function Search() //{{{
 {
     var self = this; // needed for callbacks since "this" is the "vimperator" object in a callback
-    var lastsearch = ""; // keep track of the last searched string
     var found = false;   // true if the last search was successful
+    var backwards = false;
+    var lastsearch = ""; // keep track of the last searched string
+    var lastsearch_backwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
 
     // Event handlers for search - closure is needed
     vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchKeyPressed(command); });
@@ -49,9 +51,15 @@ function Search() //{{{
     this.openSearchDialog = function(mode)
     {
         if (mode == vimperator.modes.SEARCH_BACKWARD)
+        {
             vimperator.commandline.open('?', '', vimperator.modes.SEARCH_BACKWARD);
+            backwards = true;
+        }
         else
+        {
             vimperator.commandline.open('/', '', vimperator.modes.SEARCH_FORWARD);
+            backwards = false;
+        }
 
         // TODO: focus the top of the currently visible screen
     }
@@ -64,9 +72,9 @@ function Search() //{{{
         const FIND_TYPEAHEAD = 1;
         const FIND_LINKS = 2;
 
-        getBrowser().fastFind.find(str, false);
+        found = getBrowser().fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
-        return Components.interfaces.nsITypeAheadFind.FIND_FOUND ? true : false;
+        return found;
     }
 
     // Called when the current search needs to be repeated
@@ -75,10 +83,13 @@ function Search() //{{{
         // this hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search
         if (getBrowser().fastFind.searchString != lastsearch)
+        {
+            this.clear();
             this.find(lastsearch, false);
+            gFindBar._highlightDoc("yellow", "black", lastsearch);
+        }
 
-        var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
-        var up = reverse ? !backward : backward;
+        var up = reverse ? !lastsearch_backwards : lastsearch_backwards;
         var result = getBrowser().fastFind.findAgain(up, false);
 
         if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
@@ -94,6 +105,8 @@ function Search() //{{{
                     vimperator.echoerr("search hit BOTTOM, continuing at TOP");
             }, 10);
         }
+        else // just clear the command line if something has been found
+            vimperator.echo("");
     }
 
     // Called when the user types a key in the search dialog. Triggers a find attempt
@@ -107,24 +120,19 @@ function Search() //{{{
     // Called when the enter key is pressed to trigger a search
     this.searchSubmitted = function(command)
     {
+        this.clear();
         gFindBar._highlightDoc("yellow", "black", command);
 
         // need to find again to draw the highlight of the current search
         // result over the "highlight all" search results
-        if (found)
-        {
-            // XXX: still not really working everywhere, inspite of this
-            setTimeout(function() {
-                var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
-                this.find(command, backward);
-            }, 100);
-        }
+        // very hacky, but seem to work
+        setTimeout(function() { self.findAgain(false); }, 10);
 
-        //removeMode(MODE_SEARCH);
+        lastsearch_backwards = backwards;
+        lastsearch = command;
+
         vimperator.setMode(vimperator.modes.NORMAL);
         vimperator.focusContent();
-
-        lastsearch = command;
     }
 
     // Called when the search is cancelled - for example if someone presses
@@ -133,7 +141,6 @@ function Search() //{{{
     {
         //removeMode(MODE_SEARCH);
         vimperator.setMode(vimperator.modes.NORMAL);
-        //gFindBar._highlightDoc();
         this.clear();
         vimperator.focusContent();
     }

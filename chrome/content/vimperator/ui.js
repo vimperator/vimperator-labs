@@ -528,8 +528,10 @@ function CommandLine() //{{{
                 // and blur the command line if there is no text left
                 if (command.length == 0)
                 {
-                    this.clear();
+                    vimperator.triggerCallback("cancel", cur_extended_mode);
+                    vimperator.setMode(old_mode, old_extended_mode);
                     vimperator.focusContent();
+                    this.clear();
                 }
             }
             else // any other key
