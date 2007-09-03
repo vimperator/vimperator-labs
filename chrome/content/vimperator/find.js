@@ -28,13 +28,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 
 // make sure you only create this object when the "vimperator" object is ready
-// vimperator.search = new function()
 function Search() //{{{
 {
-    var self = this; // needed for callbacks since "this" is the "vimperator" object in a callback
-    var found = false;   // true if the last search was successful
+    var self = this;                  // needed for callbacks since "this" is the "vimperator" object in a callback
+    var found = false;                // true if the last search was successful
     var backwards = false;
-    var lastsearch = ""; // keep track of the last searched string
+    var lastsearch = "";              // keep track of the last searched string
     var lastsearch_backwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
 
     // Event handlers for search - closure is needed
@@ -143,6 +142,12 @@ function Search() //{{{
         vimperator.setMode(vimperator.modes.NORMAL);
         this.clear();
         vimperator.focusContent();
+    }
+
+    this.highlight = function()
+    {
+        if (lastsearch)
+            gFindBar._highlightDoc("yellow", "black", lastsearch);
     }
 
     this.clear = function()

@@ -425,6 +425,13 @@ function Options() //{{{
             default_value: DEFAULT_HINTTAGS
         }
     ));
+    addOption(new Option(["hlsearch", "hls"], "boolean",
+        {
+            short_help: "Highlight previous search pattern matches",
+            setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
+            default_value: false
+        }
+    ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",
