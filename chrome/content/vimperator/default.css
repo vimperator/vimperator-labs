@@ -17,7 +17,6 @@ h1 {
 p.tagline {
     text-align: center;
     font-weight: bold;
-    margin-top: -35px; /* don't leave so much space between "Vimperator" and "First there was..." */
 }
 
 /* the text in the tables is too large without that */
