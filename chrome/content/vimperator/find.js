@@ -111,7 +111,10 @@ function Search() //{{{
     // Called when the user types a key in the search dialog. Triggers a find attempt
     this.searchKeyPressed = function(command)
     {
-        // TODO: check for 'incsearch'
+        if (!vimperator.options['incsearch'])
+            return;
+
+        // FIXME: isn't the global already set here? -- djk
         var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
         this.find(command, backward);
     }

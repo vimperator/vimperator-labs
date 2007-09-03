@@ -432,6 +432,12 @@ function Options() //{{{
             default_value: false
         }
     ));
+    addOption(new Option(["incsearch", "is"], "boolean",
+        {
+            short_help: "Show where the search pattern matches as it is typed",
+            default_value: false
+        }
+    ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",
