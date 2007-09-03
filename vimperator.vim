@@ -18,11 +18,11 @@ syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
 
 syn keyword vimperatorCommand addo[ns] ba[ck] bd[elete] bw[ipeout] bun[load] tabc[lose] beep bma[dd] bmd[el] bookm[arks] bm
 	\ b[uffer] buffers files ls delm[arks] downl[oads] dl ec[ho] echoe[rr] exe[cute] exu[sage] fo[rward] fw ha[rdcopy] h[elp]
-	\ hist[ory] hs javas[cript] js mapc[lear] ma[rk] map marks no[remap] o[pen] e[dit] pc[lose] pref[erences] prefs q[uit]
-	\ quita[ll] qa[ll] re[load] reloada[ll] res[tart] sav[eas] se[t] so[urce] st[op] tab tabl[ast] tabm[ove] tabn[ext] tn[ext]
-	\ tabo[nly] tabopen t[open] tabnew tabe[dit] tabp[revious] tp[revious] tabN[ext] tN[ext] tabr[ewind] tabfir[st] u[ndo]
-	\ qmarka[dd] qma[dd] qmarkd[el] qmd[el] qmarks qms unm[ap] ve[rsion] viu[sage] win[open] w[open] wine[dit] wqa[ll] wq
-	\ xa[ll] zo[om] noh[ilight]
+	\ hist[ory] hs javas[cript] js mapc[lear] ma[rk] map marks noh[lsearch] no[remap] o[pen] e[dit] pc[lose] pref[erences]
+	\ prefs q[uit] quita[ll] qa[ll] re[load] reloada[ll] res[tart] sav[eas] se[t] so[urce] st[op] tab tabl[ast] tabm[ove]
+	\ tabn[ext] tn[ext] tabo[nly] tabopen t[open] tabnew tabe[dit] tabp[revious] tp[revious] tabN[ext] tN[ext] tabr[ewind]
+	\ tabfir[st] u[ndo] qmarka[dd] qma[dd] qmarkd[el] qmd[el] qmarks qms unm[ap] ve[rsion] viu[sage] win[open] w[open]
+	\ wine[dit] wqa[ll] wq xa[ll] zo[om]
 	\ contained
 
 " FIXME

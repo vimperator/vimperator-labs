@@ -682,6 +682,16 @@ function Commands() //{{{
             help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those marks mentioned."
         }
     ));
+    addDefaultCommand(new Command(["noh[lsearch]"],
+        function(args)
+        {
+            vimperator.search.clear();
+        },
+        {
+            short_help: "Clear the current selection",
+            help: "TODO"
+        }
+    ));
     addDefaultCommand(new Command(["norm[al]"],
         function(args)
         {

@@ -1,7 +1,10 @@
 <pre>
 2007-xx-xx:
 	* version 0.5.1
+	* native / and ? search and n and N working again
 	* the URL in the status line can be selected with the mouse again
+	* the Windows default RC file is now ~/_vimperatorrc and the plugin
+	  directory is ~/vimperator/plugin
 	* commandline history now works properly on Windows
 	* filename completion now works on Windows
 	* the Bookmarks Toolbar Folder is now read when bookmarks are first

@@ -415,7 +415,7 @@ function Options() //{{{
     addOption(new Option(["hintstyle", "hs"], "string",
         {
             short_help: "CSS specification of unfocused hints appearance",
-            default_value: "z-index:5000; font-family:monospace; font-size:12px; color:black; background-color:yellow; " +
+            default_value: "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; " +
                            "border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;"
         }
     ));
