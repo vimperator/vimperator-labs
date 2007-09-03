@@ -942,14 +942,16 @@ function Mappings() //{{{
         function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); },
         {
             short_help: "Search forward for a pattern",
-            help: "TODO"
+            usage: ["/{pattern}<CR>"],
+            help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["?"],
         function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); },
         {
             short_help: "Search backwards for a pattern",
-            help: "TODO"
+            usage: ["?{pattern}<CR>"],
+            help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["n"],
