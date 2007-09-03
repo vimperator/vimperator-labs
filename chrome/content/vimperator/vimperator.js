@@ -197,7 +197,7 @@ const vimperator = (function() //{{{
         //},
 
         // ###VERSION### and ###DATE### are replaced by the Makefile
-        version: "###VERSION### CVS (created: ###DATE###)",
+        version: "###VERSION### (created: ###DATE###)",
 
         input: {
             buffer: "",                // partial command storage
