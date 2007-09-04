@@ -67,11 +67,10 @@ function Search() //{{{
     // TODO: backwards seems impossible i fear :(
     this.find = function(str, backwards)
     {
-        const FIND_NORMAL = 0;
-        const FIND_TYPEAHEAD = 1;
-        const FIND_LINKS = 2;
+        var fastFind = getBrowser().fastFind;
 
-        found = getBrowser().fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
+        fastFind.caseSensitive = !vimperator.options["ignorecase"];
+        found = fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
         return found;
     }
@@ -81,23 +80,26 @@ function Search() //{{{
     {
         // this hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search
+        // TODO: this should also clear the current item highlighting
         if (getBrowser().fastFind.searchString != lastsearch)
         {
             this.clear();
             this.find(lastsearch, false);
-            gFindBar._highlightDoc("yellow", "black", lastsearch);
+            this.highlight(lastsearch);
         }
 
         var up = reverse ? !lastsearch_backwards : lastsearch_backwards;
         var result = getBrowser().fastFind.findAgain(up, false);
 
         if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+        {
             vimperator.echoerr("E486: Pattern not found: " + lastsearch);
+        }
         else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
         {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
-            setTimeout( function() {
+            setTimeout(function() {
                 if (up)
                     vimperator.echoerr("search hit TOP, continuing at BOTTOM");
                 else
@@ -105,7 +107,9 @@ function Search() //{{{
             }, 10);
         }
         else // just clear the command line if something has been found
+        {
             vimperator.echo("");
+        }
     }
 
     // Called when the user types a key in the search dialog. Triggers a find attempt
@@ -114,16 +118,15 @@ function Search() //{{{
         if (!vimperator.options['incsearch'])
             return;
 
-        // FIXME: isn't the global already set here? -- djk
-        var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
-        this.find(command, backward);
+        this.find(command, backwards);
     }
 
     // Called when the enter key is pressed to trigger a search
     this.searchSubmitted = function(command)
     {
         this.clear();
-        gFindBar._highlightDoc("yellow", "black", command);
+        this.find(command, backwards);
+        this.highlight(command);
 
         // need to find again to draw the highlight of the current search
         // result over the "highlight all" search results
@@ -147,10 +150,13 @@ function Search() //{{{
         vimperator.focusContent();
     }
 
-    this.highlight = function()
+    this.highlight = function(word)
     {
-        if (lastsearch)
-            gFindBar._highlightDoc("yellow", "black", lastsearch);
+        if (!word)
+            word = lastsearch;
+
+        gFindBar._setCaseSensitivity(!vimperator.options["ignorecase"])
+        gFindBar._highlightDoc("yellow", "black", word);
     }
 
     this.clear = function()

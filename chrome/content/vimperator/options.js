@@ -432,6 +432,12 @@ function Options() //{{{
             default_value: false
         }
     ));
+    addOption(new Option(["ignorecase", "ic"], "boolean",
+        {
+            short_help: "Ignore case in search patterns",
+            default_value: false
+        }
+    ));
     addOption(new Option(["incsearch", "is"], "boolean",
         {
             short_help: "Show where the search pattern matches as it is typed",

@@ -1,7 +1,7 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
-	* add 'hlsearch' and 'incsearch' options
+	* add 'hlsearch','incsearch' and 'ignorecase' options
 
 2007-09-03:
 	* version 0.5.1
