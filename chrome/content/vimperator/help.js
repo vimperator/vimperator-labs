@@ -137,7 +137,7 @@ vimperator.help = function(section, easter) //{{{
         return ret;
     }
 
-    var header = '<h1>Vimperator</h1>' +
+    var header = '<h1><img src="chrome://vimperator/content/logo_white.png" alt="Vimperator"></h1>' + 
         '<p class="tagline">First there was a Navigator, then there was an Explorer.\n' +
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</p>';
 
