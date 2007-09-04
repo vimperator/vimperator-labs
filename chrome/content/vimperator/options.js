@@ -429,19 +429,19 @@ function Options() //{{{
         {
             short_help: "Highlight previous search pattern matches",
             setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
-            default_value: false
+            default_value: true
         }
     ));
     addOption(new Option(["ignorecase", "ic"], "boolean",
         {
             short_help: "Ignore case in search patterns",
-            default_value: false
+            default_value: true
         }
     ));
     addOption(new Option(["incsearch", "is"], "boolean",
         {
             short_help: "Show where the search pattern matches as it is typed",
-            default_value: false
+            default_value: true
         }
     ));
     addOption(new Option(["maxhints", "mh"], "number",
