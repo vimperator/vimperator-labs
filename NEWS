@@ -1,6 +1,7 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* added vimperator logo (can be seen in the addons manager)
 	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
 
 2007-09-03:
