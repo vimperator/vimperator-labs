@@ -19,10 +19,6 @@ p.tagline {
     font-weight: bold;
 }
 
-/* the text in the tables is too large without that */
-table {
-    font-size: 1.0em;
-}
 table.vimperator {
     border-width: 1px;
     border-style: dotted;
@@ -30,29 +26,23 @@ table.vimperator {
     margin-bottom: 2em; /* FIXME: just a quick hack until we have proper pages */
 }
 table.vimperator td {
-    border-width: 0px;
+    border: none;
     padding: 3px;
-    border-style: none;
 }
 tr.separator {
-/*    border-width: 3px 0px 0px 0px;
-    border-style: solid none none none;*/
-    border-color: gray;
-    height: 10px !important;
+    height: 10px;
 }
-hr { /* horizontal lines */
-    width: 100%;
+hr {
     height: 1px;
-    border-style: solid;
-    /*border-color: #6A97D4;*/
-    border-color: white;
+    background-color: white;
+    border-style: none;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 td.taglist {
     text-align: right;
     vertical-align: top;
     border-spacing: 13px 10px;
-    border-width: 0px 10px;
-    border-color: blue !important;
 }
 td.taglist td {
     width: 100px;
