@@ -167,8 +167,7 @@ fieldset.paypal {
 
 #vimperator-visualbell {
     border: none;
-    background-color: blue;
-    opacity: 0.5;
+    background-color: black;
 }
 
 .status_insecure, .status_insecure * {

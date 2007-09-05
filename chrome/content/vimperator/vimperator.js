@@ -295,7 +295,7 @@ const vimperator = (function() //{{{
             popup.width = box.width;
             popup.showPopup(win, box.screenX, box.screenY, "popup");
 
-            setTimeout(function() { popup.hidePopup(); }, 375);
+            setTimeout(function() { popup.hidePopup(); }, 50);
         },
 
         copyToClipboard: function(str)
