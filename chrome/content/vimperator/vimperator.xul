@@ -116,6 +116,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
            <!-- other keys are handled inside vimperator.js event loop -->
         </keyset>
+
+        <popupset id="vimperator-popupset">
+            <popup id="vimperator-visualbell"/>
+        </popupset>
+
     </window>
 </overlay>
 

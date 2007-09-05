@@ -280,8 +280,22 @@ const vimperator = (function() //{{{
 
         beep: function()
         {
-            if (vimperator.options["beep"])
+            if (!vimperator.options["visualbell"])
+            {
                 sound_service.beep();
+                return;
+            }
+
+            // flash the visual bell
+            var popup = document.getElementById("vimperator-visualbell");
+            var win = document.getElementById("main-window");
+            var box = document.getBoxObjectFor(win);
+
+            popup.height = box.height;
+            popup.width = box.width;
+            popup.showPopup(win, box.screenX, box.screenY, "popup");
+
+            setTimeout(function() { popup.hidePopup(); }, 375);
         },
 
         copyToClipboard: function(str)

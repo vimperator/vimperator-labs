@@ -80,7 +80,7 @@ function Events() //{{{
 
     function enterPopupMode(event)
     {
-        if (event.originalTarget.localName == "tooltip")
+        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
             return;
 
         vimperator.addMode(null, vimperator.modes.MENU);

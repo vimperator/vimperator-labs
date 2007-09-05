@@ -165,6 +165,11 @@ fieldset.paypal {
     overflow: hidden;
 }
 
+#vimperator-visualbell {
+    background-color: blue;
+    opacity: 0.5;
+}
+
 .status_insecure, .status_insecure * {
     background-color: transparent;
 }
