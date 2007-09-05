@@ -288,7 +288,7 @@ const vimperator = (function() //{{{
 
             // flash the visual bell
             var popup = document.getElementById("vimperator-visualbell");
-            var win = document.getElementById("main-window");
+            var win = getBrowser().mPanelContainer;
             var box = document.getBoxObjectFor(win);
 
             popup.height = box.height;
