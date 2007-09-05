@@ -88,7 +88,7 @@
 	* added 'f' to the 'complete' option to allow listing of filenames in :open prompt
 	* changed regexp search to normal text search for completion -> massive speedup, but limited functionality
 	* support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
-	  'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory 
+	  'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory
 	* Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
 	* changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
 	* :back! goes to beginning of history now
