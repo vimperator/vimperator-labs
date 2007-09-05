@@ -26,24 +26,64 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-
+// TODO: <ESC> should cancel search highlighting in 'incsearch' mode
 // make sure you only create this object when the "vimperator" object is ready
 function Search() //{{{
 {
     var self = this;                  // needed for callbacks since "this" is the "vimperator" object in a callback
     var found = false;                // true if the last search was successful
-    var backwards = false;
+    var backwards = false;            // currently searching backwards
     var lastsearch = "";              // keep track of the last searched string
     var lastsearch_backwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
+    var case_sensitive = true;
 
     // Event handlers for search - closure is needed
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function(){ self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command) { self.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function(command) { self.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function() { self.searchCanceled(); });
     // TODO: allow advanced modes in register/triggerCallback
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function(command){ self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function(command){ self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function(){ self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function(command) { self.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function(command) { self.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function() { self.searchCanceled(); });
+
+    // clean the pattern search string of modifiers and set the
+    // case-sensitivity flag
+    function processPattern(pattern)
+    {
+        // strip off pattern terminator and trailing /junk
+        if (backwards)
+            pattern = pattern.replace(/\?.*/, "");
+        else
+            pattern = pattern.replace(/\/.*/, "");
+
+        if (!pattern)
+            pattern = lastsearch;
+
+        if (/\\C/.test(pattern))
+        {
+            case_sensitive = true;
+            pattern = pattern.replace(/\\C/, "");
+        }
+        else if (/\\c/.test(pattern))
+        {
+            case_sensitive = false;
+            pattern = pattern.replace(/\\c/, "");
+        }
+        else if (vimperator.options["ignorecase"] && vimperator.options["smartcase"] && /[A-Z]/.test(pattern))
+        {
+            case_sensitive = true;
+        }
+        else if (vimperator.options["ignorecase"])
+        {
+            case_sensitive = false;
+        }
+        else
+        {
+            case_sensitive = true;
+        }
+
+        return pattern;
+    }
 
     // Called when the search dialog is asked for
     // If you omit "mode", it will default to forward searching
@@ -51,12 +91,12 @@ function Search() //{{{
     {
         if (mode == vimperator.modes.SEARCH_BACKWARD)
         {
-            vimperator.commandline.open('?', '', vimperator.modes.SEARCH_BACKWARD);
+            vimperator.commandline.open("?", "", vimperator.modes.SEARCH_BACKWARD);
             backwards = true;
         }
         else
         {
-            vimperator.commandline.open('/', '', vimperator.modes.SEARCH_FORWARD);
+            vimperator.commandline.open("/", "", vimperator.modes.SEARCH_FORWARD);
             backwards = false;
         }
 
@@ -69,7 +109,7 @@ function Search() //{{{
     {
         var fastFind = getBrowser().fastFind;
 
-        fastFind.caseSensitive = !vimperator.options["ignorecase"];
+        fastFind.caseSensitive = case_sensitive;
         found = fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
         return found;
@@ -115,9 +155,10 @@ function Search() //{{{
     // Called when the user types a key in the search dialog. Triggers a find attempt
     this.searchKeyPressed = function(command)
     {
-        if (!vimperator.options['incsearch'])
+        if (!vimperator.options["incsearch"])
             return;
 
+        command = processPattern(command);
         this.find(command, backwards);
     }
 
@@ -125,12 +166,13 @@ function Search() //{{{
     this.searchSubmitted = function(command)
     {
         this.clear();
+        command = processPattern(command);
         this.find(command, backwards);
         this.highlight(command);
 
         // need to find again to draw the highlight of the current search
         // result over the "highlight all" search results
-        // very hacky, but seem to work
+        // very hacky, but seems to work
         setTimeout(function() { self.findAgain(false); }, 10);
 
         lastsearch_backwards = backwards;
@@ -155,7 +197,7 @@ function Search() //{{{
         if (!word)
             word = lastsearch;
 
-        gFindBar._setCaseSensitivity(!vimperator.options["ignorecase"])
+        gFindBar._setCaseSensitivity(case_sensitive)
         gFindBar._highlightDoc("yellow", "black", word);
     }
 

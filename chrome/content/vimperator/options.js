@@ -511,6 +511,13 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
+    addOption(new Option(["smartcase", "scs"], "boolean",
+        {
+            short_help: "Override the 'ignorecase' option if the pattern contains uppercase characters",
+            help: "This is only used if the <code class=\"option\">'ignorecase'</code> option is set.",
+            default_value: false
+        }
+    ));
     addOption(new Option(["titlestring"], "string",
         {
             short_help: "Change the title of the browser window",
