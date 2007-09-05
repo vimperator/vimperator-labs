@@ -3,7 +3,6 @@ Priority list:
 1-9 as in vim (9=required for next release, 5=would be nice, 1=probably not)
 
 BUGS:
-- autoupdate does not work
 - multiple windows do not work at all, so :q will close the whole browser session, even when there are other windows which has tabs
 - http://en.wikipedia.org/wiki/Portal:Current_events - 'f' shows more hints than 'F' (on left side of nav bar)
 - dpb| 09:09:56  dpb :: when I save a page with vimperator, it adds <hints
@@ -14,14 +13,13 @@ BUGS:
 - can't reverse tab through the vimperator toolbar
 - gu and gU don't work on local files properly
 - :noremap does not work fully
-- n and N are broken with /
 - pvh option not working
+- searching backwards incrementally does not work i.e. with 'incsearch' set
 
 FEATURES:
 9 :command for new commands
 9 :sidebar {addons/bookmarks/history/downloads/...} command with tab completion
   (and automatically getting possible sidebar elements from View->sidebar
-9 Use our own find-as-you-type mechanism (like conkeror does)
 9 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 it would be nice to have :(undo|back|forward) <url> w/ tab completion support

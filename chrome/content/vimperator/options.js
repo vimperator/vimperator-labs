@@ -441,6 +441,7 @@ function Options() //{{{
     addOption(new Option(["incsearch", "is"], "boolean",
         {
             short_help: "Show where the search pattern matches as it is typed",
+            help: "NOTE: Incremental searching currently only works in the forward direction.",
             default_value: true
         }
     ));

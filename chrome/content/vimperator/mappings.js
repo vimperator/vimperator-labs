@@ -955,7 +955,8 @@ function Mappings() //{{{
             usage: ["?{pattern}[?]<CR>"],
             help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "When '\\c' appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
-                  "'\\C' forces case-sensitive matching for the whole pattern."
+                  "'\\C' forces case-sensitive matching for the whole pattern.<br/>" +
+                  "NOTE: incremental searching currenly only works in the forward direction."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["n"],
