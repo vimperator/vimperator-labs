@@ -29,10 +29,11 @@ syn keyword vimperatorCommand addo[ns] ba[ck] bd[elete] bw[ipeout] bun[load] tab
 syn match vimperatorCommandWrapper "\<\h\w*\>" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate beep nobeep beep complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs
-	\ fullscreen fs nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags maxhints mh preload nopreload
-	\ previewheight pvh showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal titlestring usermode um nousermode
-	\ noum verbose vbs wildmode wim wildoptions wop
+syn keyword vimperatorOption activate act complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs fullscreen fs
+	\ nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags incsearch is noincsearch nois ignorecase ic
+	\ noignorecase noic maxhints mh preload nopreload previewheight pvh showmode smd noshowmode nosmd showstatuslinks ssli
+	\ showtabline stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb
+	\ wildmode wim wildoptions wop
 	\ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline

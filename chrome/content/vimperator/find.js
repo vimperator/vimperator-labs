@@ -26,25 +26,64 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-
+// TODO: <ESC> should cancel search highlighting in 'incsearch' mode
 // make sure you only create this object when the "vimperator" object is ready
-// vimperator.search = new function()
 function Search() //{{{
 {
-    var self = this; // needed for callbacks since "this" is the "vimperator" object in a callback
-    var found = false;   // true if the last search was successful
-    var backwards = false;
-    var lastsearch = ""; // keep track of the last searched string
+    var self = this;                  // needed for callbacks since "this" is the "vimperator" object in a callback
+    var found = false;                // true if the last search was successful
+    var backwards = false;            // currently searching backwards
+    var lastsearch = "";              // keep track of the last searched string
     var lastsearch_backwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
+    var case_sensitive = true;
 
     // Event handlers for search - closure is needed
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function(command){ self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function(){ self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function(command) { self.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function(command) { self.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function() { self.searchCanceled(); });
     // TODO: allow advanced modes in register/triggerCallback
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function(command){ self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function(command){ self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function(){ self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function(command) { self.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function(command) { self.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function() { self.searchCanceled(); });
+
+    // clean the pattern search string of modifiers and set the
+    // case-sensitivity flag
+    function processPattern(pattern)
+    {
+        // strip off pattern terminator and trailing /junk
+        if (backwards)
+            pattern = pattern.replace(/\?.*/, "");
+        else
+            pattern = pattern.replace(/\/.*/, "");
+
+        if (!pattern)
+            pattern = lastsearch;
+
+        if (/\\C/.test(pattern))
+        {
+            case_sensitive = true;
+            pattern = pattern.replace(/\\C/, "");
+        }
+        else if (/\\c/.test(pattern))
+        {
+            case_sensitive = false;
+            pattern = pattern.replace(/\\c/, "");
+        }
+        else if (vimperator.options["ignorecase"] && vimperator.options["smartcase"] && /[A-Z]/.test(pattern))
+        {
+            case_sensitive = true;
+        }
+        else if (vimperator.options["ignorecase"])
+        {
+            case_sensitive = false;
+        }
+        else
+        {
+            case_sensitive = true;
+        }
+
+        return pattern;
+    }
 
     // Called when the search dialog is asked for
     // If you omit "mode", it will default to forward searching
@@ -52,12 +91,12 @@ function Search() //{{{
     {
         if (mode == vimperator.modes.SEARCH_BACKWARD)
         {
-            vimperator.commandline.open('?', '', vimperator.modes.SEARCH_BACKWARD);
+            vimperator.commandline.open("?", "", vimperator.modes.SEARCH_BACKWARD);
             backwards = true;
         }
         else
         {
-            vimperator.commandline.open('/', '', vimperator.modes.SEARCH_FORWARD);
+            vimperator.commandline.open("/", "", vimperator.modes.SEARCH_FORWARD);
             backwards = false;
         }
 
@@ -68,11 +107,10 @@ function Search() //{{{
     // TODO: backwards seems impossible i fear :(
     this.find = function(str, backwards)
     {
-        const FIND_NORMAL = 0;
-        const FIND_TYPEAHEAD = 1;
-        const FIND_LINKS = 2;
+        var fastFind = getBrowser().fastFind;
 
-        found = getBrowser().fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
+        fastFind.caseSensitive = case_sensitive;
+        found = fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
         return found;
     }
@@ -82,11 +120,12 @@ function Search() //{{{
     {
         // this hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search
+        // TODO: this should also clear the current item highlighting
         if (getBrowser().fastFind.searchString != lastsearch)
         {
             this.clear();
             this.find(lastsearch, false);
-            gFindBar.highlightDoc("yellow", "black", lastsearch);
+            this.highlight(lastsearch);
         }
 
         var up = reverse ? !lastsearch_backwards : lastsearch_backwards;
@@ -98,12 +137,14 @@ function Search() //{{{
             result = getBrowser().fastFind.findNext();
 
         if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+        {
             vimperator.echoerr("E486: Pattern not found: " + lastsearch);
+        }
         else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
         {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
-            setTimeout( function() {
+            setTimeout(function() {
                 if (up)
                     vimperator.echoerr("search hit TOP, continuing at BOTTOM");
                 else
@@ -111,26 +152,32 @@ function Search() //{{{
             }, 10);
         }
         else // just clear the command line if something has been found
+        {
             vimperator.echo("");
+        }
     }
 
     // Called when the user types a key in the search dialog. Triggers a find attempt
     this.searchKeyPressed = function(command)
     {
-        // TODO: check for 'incsearch'
-        var backward = vimperator.hasMode(vimperator.modes.SEARCH_BACKWARD);
-        this.find(command, backward);
+        if (!vimperator.options["incsearch"])
+            return;
+
+        command = processPattern(command);
+        this.find(command, backwards);
     }
 
     // Called when the enter key is pressed to trigger a search
     this.searchSubmitted = function(command)
     {
         this.clear();
-        gFindBar.highlightDoc("yellow", "black", command);
+        command = processPattern(command);
+        this.find(command, backwards);
+        this.highlight(command);
 
         // need to find again to draw the highlight of the current search
         // result over the "highlight all" search results
-        // very hacky, but seem to work
+        // very hacky, but seems to work
         setTimeout(function() { self.findAgain(false); }, 10);
 
         lastsearch_backwards = backwards;
@@ -148,6 +195,15 @@ function Search() //{{{
         vimperator.setMode(vimperator.modes.NORMAL);
         this.clear();
         vimperator.focusContent();
+    }
+
+    this.highlight = function(word)
+    {
+        if (!word)
+            word = lastsearch;
+
+        gFindBar.setCaseSensitivity(case_sensitive)
+        gFindBar.highlightDoc("yellow", "black", word);
     }
 
     this.clear = function()

@@ -942,16 +942,21 @@ function Mappings() //{{{
         function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); },
         {
             short_help: "Search forward for a pattern",
-            usage: ["/{pattern}<CR>"],
-            help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>."
+            usage: ["/{pattern}[/]<CR>"],
+            help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
+                  "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
+                  "\"\\C\" forces case-sensitive matching for the whole pattern."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["?"],
         function() { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); },
         {
             short_help: "Search backwards for a pattern",
-            usage: ["?{pattern}<CR>"],
-            help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>."
+            usage: ["?{pattern}[?]<CR>"],
+            help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
+                  "When '\\c' appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
+                  "'\\C' forces case-sensitive matching for the whole pattern.<br/>" +
+                  "NOTE: incremental searching currenly only works in the forward direction."
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["n"],

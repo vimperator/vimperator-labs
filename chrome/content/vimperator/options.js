@@ -425,6 +425,26 @@ function Options() //{{{
             default_value: DEFAULT_HINTTAGS
         }
     ));
+    addOption(new Option(["hlsearch", "hls"], "boolean",
+        {
+            short_help: "Highlight previous search pattern matches",
+            setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
+            default_value: true
+        }
+    ));
+    addOption(new Option(["ignorecase", "ic"], "boolean",
+        {
+            short_help: "Ignore case in search patterns",
+            default_value: true
+        }
+    ));
+    addOption(new Option(["incsearch", "is"], "boolean",
+        {
+            short_help: "Show where the search pattern matches as it is typed",
+            help: "NOTE: Incremental searching currently only works in the forward direction.",
+            default_value: true
+        }
+    ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",
@@ -490,6 +510,13 @@ function Options() //{{{
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+        }
+    ));
+    addOption(new Option(["smartcase", "scs"], "boolean",
+        {
+            short_help: "Override the 'ignorecase' option if the pattern contains uppercase characters",
+            help: "This is only used if the <code class=\"option\">'ignorecase'</code> option is set.",
+            default_value: false
         }
     ));
     addOption(new Option(["titlestring"], "string",
