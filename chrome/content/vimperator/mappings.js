@@ -1208,7 +1208,7 @@ function Mappings() //{{{
             always_active: true
         }
     ));
-    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Esc>"],
+    addDefaultMap(new Map(vimperator.modes.HINTS, ["<Esc>", "<C-[>", "<C-c>"],
         function() { ; },
         {
             cancel_mode: true,
@@ -1217,6 +1217,166 @@ function Mappings() //{{{
     ));
     //}}}
     //}}}
+    
+
+    // Caret mode
+    function getSelectionController()
+    {
+      return getBrowser().docShell
+        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+        .getInterface(Components.interfaces.nsISelectionDisplay)
+        .QueryInterface(Components.interfaces.nsISelectionController);
+    
+    }
+    // prevent beeping on esc, should unify 
+    addDefaultMap(new Map(vimperator.modes.CARET, ["<Esc>", "<C-[>", "<C-c>"],
+        function()
+        {
+            if (!vimperator.hasMode(vimperator.modes.VISUAL))
+                vimperator.onEscape();
+            else
+            {
+                vimperator.removeMode(null, vimperator.modes.VISUAL);
+                // clear any selection made
+                // FIXME: need to make more general to allow caret/visual mode also for text fields
+                var selection = window.content.getSelection();
+                selection.collapseToStart();
+            }
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["v"],
+        function(count)
+        {
+            vimperator.addMode(null, vimperator.modes.VISUAL);
+        },
+        {
+            short_help: "Start visual mode",
+            help: "Must be in caret mode for now, later also for text fields"
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["j", "<Down>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().lineMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["k", "<Up>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().lineMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["h", "<Left>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().characterMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["l", "<Right>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().characterMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["b", "B"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().wordMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["w", "W"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().wordMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["<C-f>", "<PageDown>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().pageMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["<C-b>", "<PageUp>"],
+        function(count)
+        {
+            if (count < 1) count = 1;
+            while(count--)
+                getSelectionController().pageMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+
+        },
+        {
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["gg", "<C-Home>"],
+        function(count)
+        {
+            getSelectionController().completeMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["G", "<C-End>"],
+        function(count)
+        {
+            // no count support for now
+            getSelectionController().completeMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["0", "^"],
+        function(count)
+        {
+            getSelectionController().intraLineMove(false, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["$"],
+        function(count)
+        {
+            getSelectionController().intraLineMove(true, vimperator.hasMode(vimperator.modes.VISUAL));
+        },
+        { }
+    ));
+
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

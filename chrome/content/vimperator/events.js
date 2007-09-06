@@ -386,6 +386,10 @@ function Events() //{{{
             if (vimperator.hasMode(vimperator.modes.CARET))
                 Options.setFirefoxPref("accessibility.browsewithcaret", false);
 
+            // clear any selection made
+            var selection = window.content.getSelection();
+            selection.collapseToStart();
+
             vimperator.setMode(vimperator.modes.NORMAL);
             vimperator.commandline.clear();
             vimperator.hints.disableHahMode();
@@ -431,8 +435,8 @@ function Events() //{{{
                     elt.value = tempStr1 + tempStr2  + tempStr3;
                     elt.selectionStart = rangeStart + tempStr2.length;
                     elt.selectionEnd = elt.selectionStart;
+                    // prevent additional firefox-clipboard pasting
                     event.preventDefault();
-                    // prevents additional firefox-clipboard pasting
                 }
             }
             return false;
@@ -553,63 +557,63 @@ function Events() //{{{
             return true;
         }
 
-        if (vimperator.hasMode(vimperator.modes.NORMAL))
+
+        var [mode, extended_mode] = vimperator.getMode();
+        var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
+        var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
+        var map;
+
+        // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+        if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
-            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-            var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
-            var map;
+            vimperator.input.buffer += key;
+            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+            return true;
+        }
 
-            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
+        if (vimperator.input.pendingMap)
+        {
+            vimperator.input.buffer = "";
+
+            if (key != "<Esc>" && key != "<C-[>")
+                vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+
+            vimperator.input.pendingMap = null;
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        else if (map = vimperator.mappings.get(mode, candidate_command))
+        {
+            vimperator.input.count = parseInt(count_str, 10);
+            if (isNaN(vimperator.input.count))
+                vimperator.input.count = -1;
+            if (map.flags & Mappings.flags.ARGUMENT)
             {
+                vimperator.input.pendingMap = map;
                 vimperator.input.buffer += key;
-                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                return true;
-            }
-
-            if (vimperator.input.pendingMap)
-            {
-                vimperator.input.buffer = "";
-
-                if (key != "<Esc>" && key != "<C-[>")
-                    vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
-
-                vimperator.input.pendingMap = null;
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
-            {
-                vimperator.input.count = parseInt(count_str, 10);
-                if (isNaN(vimperator.input.count))
-                    vimperator.input.count = -1;
-                if (map.flags & Mappings.flags.ARGUMENT)
-                {
-                    vimperator.input.pendingMap = map;
-                    vimperator.input.buffer += key;
-                }
-                else
-                {
-                    vimperator.input.buffer = "";
-                    map.execute(null, vimperator.input.count);
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
-            {
-                vimperator.input.buffer += key;
-                event.preventDefault();
-                event.stopPropagation();
             }
             else
             {
                 vimperator.input.buffer = "";
-                vimperator.input.pendingMap = null;
-                vimperator.beep();
+                map.execute(null, vimperator.input.count);
             }
+
+            event.preventDefault();
+            event.stopPropagation();
         }
+        else if (vimperator.mappings.getCandidates(mode, candidate_command).length > 0)
+        {
+            vimperator.input.buffer += key;
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        else
+        {
+            vimperator.input.buffer = "";
+            vimperator.input.pendingMap = null;
+            vimperator.beep();
+        }
+
         vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
         return false;
     }
