@@ -230,9 +230,9 @@ function Events() //{{{
             // code which is only relevant if the page load is the current tab goes here:
             if (doc == getBrowser().selectedBrowser.contentDocument)
             {
-                /* none yet */
-                //vimperator.statusline.updateUrl();
-                //logMessage("onpageLoad");
+                // we want to stay in command mode after a page has loaded
+                // TODO: remember the last focused input widget, so we can go there with 'gi'
+                setTimeout(vimperator.focusContent, 10);
             }
         }
     }
