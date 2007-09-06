@@ -108,10 +108,10 @@ function Search() //{{{
     this.find = function(str, backwards)
     {
         var fastFind = getBrowser().fastFind;
+        str = processPattern(str);
 
         fastFind.caseSensitive = case_sensitive;
         found = fastFind.find(str, false) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
-
         return found;
     }
 
@@ -158,15 +158,17 @@ function Search() //{{{
         if (!vimperator.options["incsearch"])
             return;
 
-        command = processPattern(command);
         this.find(command, backwards);
     }
 
     // Called when the enter key is pressed to trigger a search
-    this.searchSubmitted = function(command)
+    // use forced_direction if you call this function directly
+    this.searchSubmitted = function(command, forced_backward)
     {
+        if (typeof forced_backward === "boolean")
+            backwards = forced_backward;
+
         this.clear();
-        command = processPattern(command);
         this.find(command, backwards);
         this.highlight(command);
 

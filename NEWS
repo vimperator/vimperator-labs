@@ -1,8 +1,9 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
-	* <Esc> finally clears any selection made in the document
-	* initial start of caret mode. Start with 'i', stop with <Esc>
+	* support for * and # mappings to search for the text selection or the text under the cursor
+	* Escape finally clears any selection made in the document
+	* initial start of caret mode. Start with 'i', stop with Escape;
 	* vimperator trys to stay in command mode after loading pages instead of having a text field focused
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added vimperator logo (can be seen in the addons manager)

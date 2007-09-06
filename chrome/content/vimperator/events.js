@@ -440,6 +440,7 @@ function Events() //{{{
                 }
             }
             return false;
+            //vimperator.setMode(vimperator.modes.CARET); // FOR TESTING ONLY
         }
 
         // handle Escape-one-key mode (Ctrl-v)

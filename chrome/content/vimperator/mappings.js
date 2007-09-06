@@ -1377,6 +1377,41 @@ function Mappings() //{{{
         { }
     ));
 
+
+    // BIG FIXME: unify event handling to allow keys to be valid in more than one mode!!
+    addDefaultMap(new Map(vimperator.modes.CARET, ["*"],
+        function(count)
+        {
+            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), false);
+            vimperator.search.findAgain();
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["*"],
+        function(count)
+        {
+            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), false);
+            vimperator.search.findAgain();
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.CARET, ["#"],
+        function(count)
+        {
+            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), true);
+            vimperator.search.findAgain();
+        },
+        { }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["#"],
+        function(count)
+        {
+            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), true);
+            vimperator.search.findAgain();
+        },
+        { }
+    ));
+
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
