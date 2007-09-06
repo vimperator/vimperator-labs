@@ -310,7 +310,8 @@ function CommandLine() //{{{
         {
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
             setTimeout(function() {
-                if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+                    !vimperator.hasMode(vimperator.modes.READ_MULTILINE))
                         command_widget.inputField.focus();
             }, 0);
         }
