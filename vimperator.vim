@@ -31,7 +31,7 @@ syn match vimperatorCommandWrapper "\<\h\w*\>" contains=vimperatorCommand
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs fullscreen fs
 	\ nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags incsearch is noincsearch nois ignorecase ic
-	\ noignorecase noic maxhints mh preload nopreload previewheight pvh showmode smd noshowmode nosmd showstatuslinks ssli
+	\ noignorecase noic maxhints mh popups pps preload nopreload previewheight pvh showmode smd noshowmode nosmd showstatuslinks ssli
 	\ showtabline stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb
 	\ wildmode wim wildoptions wop
 	\ contained

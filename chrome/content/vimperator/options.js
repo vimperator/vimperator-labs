@@ -224,7 +224,20 @@ function Options() //{{{
     function setTitleString(value)
     {
         document.getElementById("main-window").setAttribute("titlemodifier", value);
-        document.title = window.content.document.title + " - " + value; // not perfect fix, but good enough
+        if (window.content.document.title.length > 0)
+            document.title = window.content.document.title + " - " + value;
+        else
+            document.title = value;
+    }
+
+    function setPopups(value)
+    {
+        var values = [ [0, 1], // always in current tab
+                       [0, 3], // in a new tab
+                       [2, 3], // in a new window if it has specified sizes
+                       [1, 2]];// always in new window
+        storePreference("browser.link.open_newwindow.restriction", values[value][0]);
+        storePreference("browser.link.open_newwindow", values[value][1]);
     }
 
     //
@@ -447,6 +460,21 @@ function Options() //{{{
             validator: function (value) { if (value >= 1 && value <= 1000) return true; else return false; }
         }
     ));
+    addOption(new Option(["popups", "pps"], "number",
+        {
+            short_help: "Where to show requested popup windows",
+            help: "Define where to show requested popup windows. Does not apply to windows which are opened by middle clicking a link, they always open in a new tab. " +
+                  "Possible values:<br/><ul>" +
+                  "<li><b>0</b>: Force to open in the current tab (NOTE: this can make some web sites stop from working correctly!)</li>" +
+                  "<li><b>1</b>: Always open in a new tab</li>" +
+                  "<li><b>2</b>: Open in a new window if it has a specific requested size (default in Firefox)</li>"+
+                  "<li><b>3</b>: Always open in a new window</li></ul>" +
+                  "NOTE: This option does not change the popup blocker of Firefox in any way.",
+            default_value: 1,
+            setter: function(value) { Options.setPref("popups", value); setPopups(value); },
+            validator: function (value) { if (value >= 0 && value <= 3) return true; else return false; }
+        }
+    ));
     addOption(new Option(["preload"], "boolean",
         {
             short_help: "Speed up first time history/bookmark completion",
@@ -591,6 +619,7 @@ function Options() //{{{
     setShowTabline(this.showtabline);
     setGuiOptions(this.guioptions);
     setTitleString(this.titlestring);
+    setPopups(this.popups);
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
