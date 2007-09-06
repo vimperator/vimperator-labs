@@ -309,6 +309,18 @@ function Mappings() //{{{
             help: "In command line mode, you can perform extended commands, which may require arguments."
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["i"],
+        function()
+        {
+            Options.setFirefoxPref("accessibility.browsewithcaret", true);
+            vimperator.setMode(vimperator.modes.CARET, null);
+        },
+        {
+            short_help: "Start caret mode",
+            help: "This mode resembles the vim normal mode where you see a text cursor and can move around. " +
+            "NOTE: Movement keys are not really working for the moment."
+        }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["I"],
         function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS); },
         {

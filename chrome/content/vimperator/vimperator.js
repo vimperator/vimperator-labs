@@ -40,6 +40,7 @@ const vimperator = (function() //{{{
         VISUAL:           1 << 2,
         HINTS:            1 << 3,
         COMMAND_LINE:     1 << 4,
+        CARET:            1 << 5, // text cursor is visible
         // extended modes
         EX:               1 << 10,
         READ_MULTILINE:   1 << 11,
@@ -58,6 +59,7 @@ const vimperator = (function() //{{{
     mode_messages[modes.INSERT]          = "INSERT";
     mode_messages[modes.VISUAL]          = "VISUAL";
     mode_messages[modes.HINTS]           = "HINTS";
+    mode_messages[modes.CARET]           = "CARET"; // XXX: not a perfect name
     mode_messages[modes.ESCAPE_ONE_KEY]  = "escape one key";
     mode_messages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
     mode_messages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
@@ -92,13 +94,10 @@ const vimperator = (function() //{{{
             return;
         }
 
-        if (str_mode && str_extended)
+        if (str_extended)
             str_extended = " (" + str_extended + ")";
         else
-        {
-            str_extended = "(" + str_extended + ")";
-            str_mode = "";
-        }
+            str_extended = "";
 
         vimperator.echo("-- " + str_mode + str_extended + " --");
     }
@@ -293,7 +292,10 @@ const vimperator = (function() //{{{
 
             popup.height = box.height;
             popup.width = box.width;
-            popup.showPopup(win, box.screenX, box.screenY, "popup");
+            ////popup.showPopup(win, box.screenX, box.screenY, "popup");
+            //popup.showPopup(win, -1, -1, "popup", "topleft", "topleft");
+
+            popup.openPopup(win, "overlap", 0, 0, false, false)
 
             setTimeout(function() { popup.hidePopup(); }, 50);
         },

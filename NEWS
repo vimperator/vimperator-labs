@@ -1,6 +1,7 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* initial start of caret mode. Start with 'i', stop with <Esc>
 	* vimperator trys to stay in command mode after loading pages instead of having a text field focused
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added vimperator logo (can be seen in the addons manager)

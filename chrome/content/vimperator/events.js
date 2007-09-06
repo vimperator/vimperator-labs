@@ -382,6 +382,10 @@ function Events() //{{{
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
+            // setting this option will trigger an observer which will care about all other details
+            if (vimperator.hasMode(vimperator.modes.CARET))
+                Options.setFirefoxPref("accessibility.browsewithcaret", false);
+
             vimperator.setMode(vimperator.modes.NORMAL);
             vimperator.commandline.clear();
             vimperator.hints.disableHahMode();
@@ -711,6 +715,41 @@ function Events() //{{{
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
     getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+
+
+    this.prefObserver =
+    {
+        register: function()
+        {
+            var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                  .getService(Components.interfaces.nsIPrefService);
+              this._branch = prefService.getBranch(""); // better way to monitor all changes?
+              this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
+              this._branch.addObserver("", this, false);
+        },
+
+        unregister: function()
+        {
+            if(!this._branch) return;
+            this._branch.removeObserver("", this);
+        },
+
+        observe: function(aSubject, aTopic, aData)
+        {
+            if(aTopic != "nsPref:changed") return;
+            // aSubject is the nsIPrefBranch we're observing (after appropriate QI)
+            // aData is the name of the pref that's been changed (relative to aSubject)
+            switch (aData)
+            {
+                case "accessibility.browsewithcaret":
+                    var value = Options.getFirefoxPref("accessibility.browsewithcaret", false);
+                    vimperator.setMode(value ? vimperator.modes.CARET : vimperator.modes.NORMAL, null);
+                    break;
+            }
+         }
+    }
+    this.prefObserver.register();
+
     //}}}
 } //}}}
 
