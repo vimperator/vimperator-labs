@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 July 22
+" Latest Revision:  2007 September 09
 
 if exists("b:current_syntax")
   finish
@@ -21,8 +21,8 @@ syn keyword vimperatorCommand addo[ns] ba[ck] bd[elete] bw[ipeout] bun[load] tab
 	\ hist[ory] hs javas[cript] js mapc[lear] ma[rk] map marks noh[lsearch] no[remap] o[pen] e[dit] pc[lose] pref[erences]
 	\ prefs q[uit] quita[ll] qa[ll] re[load] reloada[ll] res[tart] sav[eas] se[t] so[urce] st[op] tab tabl[ast] tabm[ove]
 	\ tabn[ext] tn[ext] tabo[nly] tabopen t[open] tabnew tabe[dit] tabp[revious] tp[revious] tabN[ext] tN[ext] tabr[ewind]
-	\ tabfir[st] u[ndo] qmarka[dd] qma[dd] qmarkd[el] qmd[el] qmarks qms unm[ap] ve[rsion] viu[sage] win[open] w[open]
-	\ wine[dit] wqa[ll] wq xa[ll] zo[om]
+	\ tabfir[st] u[ndo] qmarka[dd] qma[dd] qmarkd[el] qmd[el] qmarks qms unm[ap] ve[rsion] viu[sage] win[open] wo[pen]
+	\ wine[dit] w[rite] wqa[ll] wq xa[ll] zo[om]
 	\ contained
 
 " FIXME
