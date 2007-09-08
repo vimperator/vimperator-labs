@@ -19,6 +19,11 @@
 
 function Editor() //{{{
 {
+    function editor()
+    {
+        return window.document.commandDispatcher.focusedElement;
+    }
+
     function getController()
     {
         var el = window.document.commandDispatcher.focusedElement;
@@ -81,6 +86,9 @@ function Editor() //{{{
             {
                 controller.doCommand(cmd);
                 did_command = true;
+
+                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                    this.moveCaret();
             }
             catch(e)
             {
@@ -91,6 +99,15 @@ function Editor() //{{{
         }
 
         return true;
+    }
+
+    // very rudimentary testing code
+    this.moveCaret = function(pos)
+    {
+        if (!pos)
+            pos = editor().selectionStart - 1;
+
+        editor().setSelectionRange(pos, pos+1);        
     }
     
     // cmd = y, d, c
