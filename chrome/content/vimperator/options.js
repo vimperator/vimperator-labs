@@ -343,12 +343,6 @@ function Options() //{{{
             default_value: "homepage,quickmark,tabopen,paste"
         }
     ));
-    addOption(new Option(["beep"], "boolean",
-        {
-            short_help: "Emit a pc speaker beep on certain errors",
-            default_value: true
-        }
-    ));
     addOption(new Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",
@@ -545,6 +539,12 @@ function Options() //{{{
                   "The highest value is 9, being the most verbose mode.",
             default_value: 0,
             validator: function (value) { if (value >= 0 && value <= 9) return true; else return false; }
+        }
+    ));
+    addOption(new Option(["visualbell", "vb"], "boolean",
+        {
+            short_help: "Use visual bell instead of beeping on errors",
+            default_value: false
         }
     ));
     addOption(new Option(["wildmode", "wim"], "stringlist",
