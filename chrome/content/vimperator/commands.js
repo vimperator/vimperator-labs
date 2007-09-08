@@ -902,7 +902,7 @@ function Commands() //{{{
             help: "Useful when installing extensions."
         }
     ));
-    addDefaultCommand(new Command(["sav[eas]"],
+    addDefaultCommand(new Command(["sav[eas]", "w[rite]"],
         function() { saveDocument(window.content.document); },
         {
             short_help: "Save current web page to disk",
@@ -1233,7 +1233,7 @@ function Commands() //{{{
             short_help: "Show help for normal mode commands"
         }
     ));
-    addDefaultCommand(new Command(["wino[pen]", "w[open]", "wine[dit]"],
+    addDefaultCommand(new Command(["wino[pen]", "wo[pen]", "wine[dit]"],
         function(args)
         {
             if (args)
