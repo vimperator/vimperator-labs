@@ -140,6 +140,8 @@ function Buffer() //{{{
         return window.content.document.title;
     });
 
+    this.lastInputField = null; // used to keep track of the right field for "gi"
+
     // returns an XPathResult object
     this.evaluateXPath = function(expression, doc, ordered)
     {

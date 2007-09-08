@@ -41,6 +41,7 @@ const vimperator = (function() //{{{
         HINTS:            1 << 3,
         COMMAND_LINE:     1 << 4,
         CARET:            1 << 5, // text cursor is visible
+        TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
         // extended modes
         EX:               1 << 10,
         READ_MULTILINE:   1 << 11,
@@ -60,6 +61,7 @@ const vimperator = (function() //{{{
     mode_messages[modes.VISUAL]          = "VISUAL";
     mode_messages[modes.HINTS]           = "HINTS";
     mode_messages[modes.CARET]           = "CARET"; // XXX: not a perfect name
+    mode_messages[modes.TEXTAREA]        = "TEXTAREA"; // XXX: not a perfect name
     mode_messages[modes.ESCAPE_ONE_KEY]  = "escape one key";
     mode_messages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
     mode_messages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
@@ -90,7 +92,7 @@ const vimperator = (function() //{{{
         var str_extended = mode_messages[extended_mode];
         if (!str_mode && !str_extended)
         {
-            vimperator.echo("");
+            vimperator.commandline.echo("");
             return;
         }
 
@@ -99,7 +101,7 @@ const vimperator = (function() //{{{
         else
             str_extended = "";
 
-        vimperator.echo("-- " + str_mode + str_extended + " --");
+        vimperator.commandline.echo("-- " + str_mode.toUpperCase() + str_extended.toLowerCase() + " --");
     }
 
     function expandPath(path)
@@ -218,6 +220,7 @@ const vimperator = (function() //{{{
 
         triggerCallback: function(type, mode, data)
         {
+            // dump("type: " + type + " mode: " + mode + "data: " + data  + "\n");
             for (var i in callbacks)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
@@ -292,6 +295,7 @@ const vimperator = (function() //{{{
 
             popup.height = box.height;
             popup.width = box.width;
+            //popup.style.backgroundColor = "black";
             ////popup.showPopup(win, box.screenX, box.screenY, "popup");
             //popup.showPopup(win, -1, -1, "popup", "topleft", "topleft");
 
@@ -383,7 +387,7 @@ const vimperator = (function() //{{{
                 console_service.logStringMessage('vimperator: ' + msg);
         },
 
-        // logs an object to the javascript error console also prints all
+        // log an object to the javascript error console and print all
         // properties of the object
         logObject: function(object, level)
         {
@@ -619,6 +623,8 @@ const vimperator = (function() //{{{
             vimperator.statusline    = new StatusLine();
             vimperator.log("Loading module buffer...", 3);
             vimperator.buffer        = new Buffer();
+            vimperator.log("Loading module editor...", 3);
+            vimperator.editor        = new Editor();
             vimperator.log("Loading module tabs...", 3);
             vimperator.tabs          = new Tabs();
             vimperator.log("Loading module marks...", 3);

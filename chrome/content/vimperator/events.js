@@ -64,6 +64,9 @@ function Events() //{{{
     // this adds an event which is is called on each page load, even if the
     // page is loaded in a background tab
     getBrowser().addEventListener("load", onPageLoad, true);
+    // to keep track if we are in a text field
+    //getBrowser().addEventListener("focus", onFocus, true);
+    //getBrowser().addEventListener("focus", onFocus, true);
 
     // called when the active document is scrolled
     getBrowser().addEventListener("scroll", function (event)
@@ -378,70 +381,95 @@ function Events() //{{{
         return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
     }
 
+    // event is delibarately not used, as i don't seem to have access to the really focus target
+    this.onFocusChange = function(event)
+    {
+        if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+            return;
+
+        var elem = window.document.commandDispatcher.focusedElement;
+        if (elem && elem instanceof HTMLInputElement &&
+                (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
+        {
+            vimperator.setMode(vimperator.modes.INSERT);
+            vimperator.buffer.lastInputField = elem;
+        }
+        else if (elem && elem instanceof HTMLTextAreaElement)
+        {
+            if (elem.selectionEnd - elem.selectionStart > 0)
+                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+            else
+                vimperator.setMode(vimperator.modes.TEXTAREA);
+            vimperator.buffer.lastInputField = elem;
+        }
+        else
+        {
+            if (vimperator.hasMode(vimperator.modes.INSERT) ||
+                vimperator.hasMode(vimperator.modes.TEXTAREA))
+                    vimperator.setMode(vimperator.modes.NORMAL); // FIXME: remember previous mode
+        }
+    }
+
+    // global escape handler, is called in ALL modes
+    // XXX: split up and move to mappings.js as closures?
     this.onEscape = function()
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
-            // setting this option will trigger an observer which will care about all other details
-            if (vimperator.hasMode(vimperator.modes.CARET))
-                Options.setFirefoxPref("accessibility.browsewithcaret", false);
-
             // clear any selection made
+            // FIXME: need to make more general to allow caret/visual mode also for text fields
             var selection = window.content.getSelection();
             selection.collapseToStart();
 
-            vimperator.setMode(vimperator.modes.NORMAL);
-            vimperator.commandline.clear();
-            vimperator.hints.disableHahMode();
-            vimperator.statusline.updateUrl();
-            vimperator.focusContent();
+            if (vimperator.hasMode(vimperator.modes.VISUAL))
+            {
+                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                    vimperator.editor.unselectText();
+                vimperator.setMode(vimperator.getMode()[1], vimperator.modes.NONE);
+            }
+            else if (vimperator.hasMode(vimperator.modes.CARET))
+            {
+                // setting this option will trigger an observer which will care about all other details
+                // like setting the NORMAL mode
+                Options.setFirefoxPref("accessibility.browsewithcaret", false);
+            }
+            else if (vimperator.hasMode(vimperator.modes.INSERT))
+            {
+                if(vimperator.hasMode(vimperator.modes.TEXTAREA))
+                    vimperator.setMode(vimperator.modes.TEXTAREA);
+                else
+                {
+                    vimperator.editor.unselectText();
+                    vimperator.setMode(vimperator.modes.NORMAL);
+                    vimperator.focusContent();
+                }
+            }
+            else
+            {
+                vimperator.setMode(vimperator.modes.NORMAL);
+                vimperator.commandline.clear();
+                vimperator.hints.disableHahMode();
+                vimperator.statusline.updateUrl();
+                vimperator.focusContent();
+            }
+
+
         }
     }
 
+    // this keypress handler gets always called first, even if e.g.
+    // the commandline has focus
     this.onKeyPress = function(event)
     {
         var key = vimperator.events.toString(event);
         if (!key)
              return false;
-        // sometimes the non-content area has focus, making our keys not work
-        //    if (event.target.id == "main-window")
-        //        alert("focusContent();");
 
+        var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
+
+        // menus have their own command handlers
         if (vimperator.hasMode(vimperator.modes.MENU))
             return false;
-
-        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
-        // also fixes key navigation in menus, etc.
-        if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
-            return false;
-
-
-        // XXX: for now only, later: input mappings if form element focused
-        if (isFormElemFocused())
-        {
-            if (key == "<S-Insert>")
-            {
-                var elt = window.document.commandDispatcher.focusedElement;
-
-                if (elt.setSelectionRange && readFromClipboard())
-                    // readFromClipboard would return 'undefined' if not checked
-                    // dunno about .setSelectionRange
-                {
-                    var rangeStart = elt.selectionStart; // caret position
-                    var rangeEnd = elt.selectionEnd;
-                    var tempStr1 = elt.value.substring(0,rangeStart);
-                    var tempStr2 = readFromClipboard();
-                    var tempStr3 = elt.value.substring(rangeEnd);
-                    elt.value = tempStr1 + tempStr2  + tempStr3;
-                    elt.selectionStart = rangeStart + tempStr2.length;
-                    elt.selectionEnd = elt.selectionStart;
-                    // prevent additional firefox-clipboard pasting
-                    event.preventDefault();
-                }
-            }
-            return false;
-            //vimperator.setMode(vimperator.modes.CARET); // FOR TESTING ONLY
-        }
 
         // handle Escape-one-key mode (Ctrl-v)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
@@ -455,10 +483,22 @@ function Events() //{{{
             if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
                 vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
-                ; // let flow continue to handle these keys
+                ; // let flow continue to handle these keys to cancel escape-all-keys mode
             else
                 return false;
         }
+
+        // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
+        if (!vimperator.hasMode(vimperator.modes.TEXTAREA) &&
+            !vimperator.hasMode(vimperator.modes.INSERT) &&
+            isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
+                return false;
+
+        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+        // also fixes key navigation in combo boxes, etc.
+        if (key == "<Tab>" || key == "<S-Tab>")// || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+            return false;
+
 
     //  // FIXME: handle middle click in content area {{{
     //  //     alert(event.target.id);
@@ -486,8 +526,8 @@ function Events() //{{{
         if (vimperator.hasMode(vimperator.modes.HINTS))
         {
             // never propagate this key to firefox, when hints are visible
-            event.preventDefault();
-            event.stopPropagation();
+            //event.preventDefault();
+            //event.stopPropagation();
 
             var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
             if (map)
@@ -568,11 +608,8 @@ function Events() //{{{
         if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
             vimperator.input.buffer += key;
-            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-            return true;
         }
-
-        if (vimperator.input.pendingMap)
+        else if (vimperator.input.pendingMap)
         {
             vimperator.input.buffer = "";
 
@@ -580,8 +617,6 @@ function Events() //{{{
                 vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
 
             vimperator.input.pendingMap = null;
-            event.preventDefault();
-            event.stopPropagation();
         }
         else if (map = vimperator.mappings.get(mode, candidate_command))
         {
@@ -596,23 +631,30 @@ function Events() //{{{
             else
             {
                 vimperator.input.buffer = "";
+                // vimperator.log("executed: " + candidate_command + " in mode: " + mode, 8);
                 map.execute(null, vimperator.input.count);
             }
-
-            event.preventDefault();
-            event.stopPropagation();
         }
         else if (vimperator.mappings.getCandidates(mode, candidate_command).length > 0)
         {
             vimperator.input.buffer += key;
-            event.preventDefault();
-            event.stopPropagation();
         }
         else
         {
             vimperator.input.buffer = "";
             vimperator.input.pendingMap = null;
-            vimperator.beep();
+
+            if (vimperator.hasMode(vimperator.modes.INSERT) ||
+                vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                    stop = false; // command was not a vimperator command, maybe it is a firefox command
+            else
+                vimperator.beep();
+        }
+
+        if (stop)
+        {
+            event.preventDefault();
+            event.stopPropagation();
         }
 
         vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
