@@ -244,14 +244,14 @@ function Events() //{{{
     this.destroy = function()
     {
         // BIG TODO: removeEventListeners() to avoid mem leaks
-        window.dump("TODO: remove all eventlisteners");
+        window.dump("TODO: remove all eventlisteners\n");
 
         getBrowser().removeProgressListener(this.progressListener);
 
-        window.removeEventListener("popupshown", enterPopupMode(), true);
-        window.removeEventListener("popuphidden", exitPopupMode(), true);
-        window.removeEventListener("DOMMenuBarActive", enterMenuMode(), true);
-        window.removeEventListener("DOMMenuBarInactive", exitMenuMode(), true);
+        window.removeEventListener("popupshown", enterPopupMode, true);
+        window.removeEventListener("popuphidden", exitPopupMode, true);
+        window.removeEventListener("DOMMenuBarActive", enterMenuMode, true);
+        window.removeEventListener("DOMMenuBarInactive", exitMenuMode, true);
     }
 
     // This method pushes keys into the event queue from vimperator

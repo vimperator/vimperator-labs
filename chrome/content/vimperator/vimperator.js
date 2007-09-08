@@ -676,9 +676,11 @@ const vimperator = (function() //{{{
 
             // save our preferences
             vimperator.commandline.destroy();
-            vimperator.events.destroy();
-            vimperator.options.destroy();
             vimperator.quickmarks.destroy();
+            vimperator.options.destroy();
+            vimperator.events.destroy();
+
+            window.dump("All vimperator modules destroyed\n");
         }
     } //}}}
 })(); //}}}
