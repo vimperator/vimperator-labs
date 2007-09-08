@@ -224,7 +224,10 @@ function Options() //{{{
     function setTitleString(value)
     {
         document.getElementById("main-window").setAttribute("titlemodifier", value);
-        document.title = window.content.document.title + " - " + value; // not perfect fix, but good enough
+        if (window.content.document.title.length > 0)
+            document.title = window.content.document.title + " - " + value;
+        else
+            document.title = value;
     }
 
     //
