@@ -1611,14 +1611,14 @@ function Mappings() //{{{
     // {{{
 
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["i"],
-        function(count) { vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA); },
+        function(count) { vimperator.editor.startInsert(); },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["a"],
         function(count)
         {
             vimperator.editor.executeCommand("cmd_charNext", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));
@@ -1626,7 +1626,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_beginLine", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));
@@ -1634,7 +1634,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_endLine", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));
@@ -1642,7 +1642,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_deleteCharForward", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));
@@ -1651,7 +1651,7 @@ function Mappings() //{{{
         {
             vimperator.editor.executeCommand("cmd_deleteToEndOfLine", 1);
             vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));
@@ -1659,7 +1659,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_deleteToEndOfLine", 1);
-            vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            vimperator.editor.startInsert();
         },
         { }
     ));

@@ -101,13 +101,39 @@ function Editor() //{{{
         return true;
     }
 
+    this.startNormal = function()
+    {
+        vimperator.setMode(vimperator.modes.TEXTAREA);
+        this.moveCaret();
+    }
+
+    this.startVisual = function()
+    {
+        vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+    }
+
+    this.startInsert = function()
+    {
+        vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+        this.moveCaret();
+    }
+
+    this.stopInsert = function()
+    {
+        vimperator.setMode(vimperator.modes.TEXTAREA);
+        this.moveCaret();
+    }
+
     // very rudimentary testing code
     this.moveCaret = function(pos)
     {
         if (!pos)
             pos = editor().selectionStart - 1;
 
-        editor().setSelectionRange(pos, pos+1);        
+        if (!vimperator.hasMode(vimperator.modes.INSERT))
+            editor().setSelectionRange(pos, pos+1);        
+        else if (!vimperator.hasMode(vimperator.modes.VISUAL))
+            editor().setSelectionRange(pos, pos);        
     }
     
     // cmd = y, d, c

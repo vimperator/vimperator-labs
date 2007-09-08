@@ -397,9 +397,9 @@ function Events() //{{{
         else if (elem && elem instanceof HTMLTextAreaElement)
         {
             if (elem.selectionEnd - elem.selectionStart > 0)
-                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+                vimperator.editor.startVisual();
             else
-                vimperator.setMode(vimperator.modes.TEXTAREA);
+                vimperator.editor.startNormal();
             vimperator.buffer.lastInputField = elem;
         }
         else
@@ -436,7 +436,7 @@ function Events() //{{{
             else if (vimperator.hasMode(vimperator.modes.INSERT))
             {
                 if(vimperator.hasMode(vimperator.modes.TEXTAREA))
-                    vimperator.setMode(vimperator.modes.TEXTAREA);
+                    vimperator.editor.stopInsert();
                 else
                 {
                     vimperator.editor.unselectText();
