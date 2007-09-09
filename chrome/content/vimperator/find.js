@@ -205,7 +205,10 @@ function Search() //{{{
         if (!word)
             word = lastsearch;
 
-        gFindBar.setCaseSensitivity(case_sensitive)
+        // NOTE: setCaseSensitivity() in FF2 does NOT set the
+        // accessibility.typeaheadfind.casesensitive pref as needed by
+        // highlightDoc()
+        gFindBar.mTypeAheadCaseSensitive = case_sensitive ? 1 : 0;
         gFindBar.highlightDoc("yellow", "black", word);
     }
 
