@@ -350,7 +350,7 @@ function Options() //{{{
         {
             short_help: "Items which are completed at the :[tab]open prompt",
             help: "Available items:<br/><ul>" +
-                  "<li><b>s</b>: Search machines and keyword URLs</li>" +
+                  "<li><b>s</b>: Search engines and keyword URLs</li>" +
                   "<li><b>f</b>: Local files</li>" +
                   "<li><b>b</b>: Bookmarks</li>" +
                   "<li><b>h</b>: History</li></ul>" +
