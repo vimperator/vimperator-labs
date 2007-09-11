@@ -212,10 +212,11 @@ function Mappings() //{{{
         for (var i = 0; i < map.names.length; i++)
         {
             for (var j = 0; j < map.modes.length; j++)
-                removeMap(map.modes[0], map.names[i]);
+                removeMap(map.modes[j], map.names[i]);
         }
 
-        user[map.mode].push(map);
+        for (var k = 0; k < map.modes.length; k++)
+            user[map.modes[k]].push(map);
     }
 
     this.remove = function(mode, cmd)
