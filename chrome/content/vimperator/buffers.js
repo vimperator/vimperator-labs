@@ -164,6 +164,29 @@ function Buffer() //{{{
         return result;
     }
 
+    // in contrast to vim, returns the selection if one is made, 
+    // otherwise tries to guess the current word unter the text cursor
+    // NOTE: might change the selection 
+    this.getCurrentWord = function()
+    {
+        var selection = window.content.getSelection().toString();
+
+        if (!selection)
+        {
+            var selection_controller = getBrowser().docShell
+                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                .getInterface(Components.interfaces.nsISelectionDisplay)
+                .QueryInterface(Components.interfaces.nsISelectionController);
+
+            selection_controller.setCaretEnabled(true);
+            selection_controller.wordMove(false, false);
+            selection_controller.wordMove(true, true);
+            selection = window.content.getSelection().toString();
+        }
+
+        return selection;
+    }
+
     // TODO: move to v.buffers.list()
     this.list = function(fullmode)
     {

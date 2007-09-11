@@ -1381,7 +1381,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["*"],
         function(count)
         {
-            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), false);
+            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), false);
             vimperator.search.findAgain();
         },
         { }
@@ -1389,7 +1389,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["#"],
         function(count)
         {
-            vimperator.search.searchSubmitted(vimperator.getCurrentWord(), true);
+            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), true);
             vimperator.search.findAgain();
         },
         { }
