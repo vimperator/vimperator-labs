@@ -1832,7 +1832,13 @@ function Mappings() //{{{
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-u>"],
-        function() { vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1); },
+        function()
+        {
+            // broken in FF3, deletes the wohle line:
+            // vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
+            vimperator.editor.executeCommand("cmd_selectBeginLine", 1);
+            vimperator.editor.executeCommand("cmd_delete", 1);
+        },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-k>"],

@@ -452,6 +452,14 @@ function Options() //{{{
             default_value: true
         }
     ));
+    addOption(new Option(["insertmode", "im"], "boolean",
+        {
+            short_help: "Use Insert mode as the default for text areas",
+            help: "Makes Vimperator work in a way that Insert mode is the default mode for text areas. " +
+                  "Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.",
+            default_value: true
+        }
+    ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",

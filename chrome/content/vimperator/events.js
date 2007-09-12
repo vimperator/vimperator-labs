@@ -388,7 +388,9 @@ function Events() //{{{
         }
         else if (elem && elem instanceof HTMLTextAreaElement)
         {
-            if (elem.selectionEnd - elem.selectionStart > 0)
+            if (vimperator.options["insertmode"])
+                vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+            else if (elem.selectionEnd - elem.selectionStart > 0)
                 vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
             else
                 vimperator.editor.startNormal();
@@ -408,24 +410,17 @@ function Events() //{{{
         if (controller && controller.isCommandEnabled("cmd_copy"))
             could_copy = true;
 
-        var extended = vimperator.modes.NONE;
-        if (vimperator.hasMode(vimperator.modes.TEXTAREA))
-            extended = vimperator.modes.TEXTAREA;
-        else if (vimperator.hasMode(vimperator.modes.CARET))
-            extended = vimperator.modes.CARET;
-
-        if (could_copy && !vimperator.hasMode(vimperator.modes.VISUAL) &&
-                          (vimperator.hasMode(vimperator.modes.NORMAL) ||
-                           vimperator.hasMode(vimperator.modes.TEXTAREA) ||
-                           vimperator.hasMode(vimperator.modes.CARET)))
+        if (could_copy && !vimperator.hasMode(vimperator.modes.VISUAL))
         {
-            vimperator.setMode(vimperator.modes.VISUAL, extended);
+            if (vimperator.hasMode(vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
+                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+            else if (vimperator.hasMode(vimperator.modes.CARET))
+                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.CARET);
         }
         else if (vimperator.hasMode(vimperator.modes.VISUAL))
         {
-            if (!could_copy && !vimperator.hasMode(vimperator.modes.CARET) &&
-                               !vimperator.hasMode(vimperator.modes.TEXTAREA))
-                vimperator.setMode(extended || vimperator.modes.NORMAL);
+            if (!could_copy && vimperator.hasMode(vimperator.modes.CARET))
+                vimperator.setMode(vimperator.modes.CARET);
         }
     }
 
@@ -461,7 +456,7 @@ function Events() //{{{
             }
             else if (vimperator.hasMode(vimperator.modes.INSERT))
             {
-                if(vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if(vimperator.hasMode(vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
                     vimperator.setMode(vimperator.modes.TEXTAREA);
                 else
                 {
