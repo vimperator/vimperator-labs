@@ -703,6 +703,20 @@ function Events() //{{{
     }
     window.addEventListener("keypress", this.onKeyPress, true);
 
+    // this is need for sites like msn.com which focus the input field on keydown
+    this.onKeyDown = function(event)
+    {
+        if ((vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS)) ||
+            (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) && !vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY)) ||
+            isFormElemFocused())
+                return true;
+
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    }
+    window.addEventListener("keydown", this.onKeyDown, true);
+
     this.progressListener =
     {
         QueryInterface: function(aIID)

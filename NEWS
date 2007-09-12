@@ -1,6 +1,7 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
 	* new gi browser command to focus last used input box
 	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
 	* support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
