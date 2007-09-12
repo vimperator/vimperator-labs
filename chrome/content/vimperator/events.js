@@ -64,9 +64,6 @@ function Events() //{{{
     // this adds an event which is is called on each page load, even if the
     // page is loaded in a background tab
     getBrowser().addEventListener("load", onPageLoad, true);
-    // to keep track if we are in a text field
-    //getBrowser().addEventListener("focus", onFocus, true);
-    //getBrowser().addEventListener("focus", onFocus, true);
 
     // called when the active document is scrolled
     getBrowser().addEventListener("scroll", function (event)
@@ -75,12 +72,10 @@ function Events() //{{{
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, null);
 
-    //
+
+    /////////////////////////////////////////////////////////
     // track if a popup is open or the menubar is active
-    //
-
     var active_menubar = false;
-
     function enterPopupMode(event)
     {
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
@@ -88,35 +83,31 @@ function Events() //{{{
 
         vimperator.addMode(null, vimperator.modes.MENU);
     }
-
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
         if (!gContextMenu && !active_menubar)
             vimperator.removeMode(null, vimperator.modes.MENU);
     }
-
     function enterMenuMode()
     {
         active_menubar = true;
         vimperator.addMode(null, vimperator.modes.MENU)
     }
-
     function exitMenuMode()
     {
         active_menubar = false;
         vimperator.removeMode(null, vimperator.modes.MENU);
     }
-
     window.addEventListener("popupshown", enterPopupMode, true);
     window.addEventListener("popuphidden", exitPopupMode, true);
     window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
 
-    window.document.addEventListener("DOMTitleChanged", function(event)
-    {
-        //alert("titlechanged");
-    }, null);
+    // window.document.addEventListener("DOMTitleChanged", function(event)
+    // {
+    //     vimperator.log("titlechanged");
+    // }, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
@@ -381,7 +372,8 @@ function Events() //{{{
         return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
     }
 
-    // event is delibarately not used, as i don't seem to have access to the really focus target
+    // argument "event" is delibarately not used, as i don't seem to have
+    // access to the real focus target
     this.onFocusChange = function(event)
     {
         if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
@@ -397,16 +389,43 @@ function Events() //{{{
         else if (elem && elem instanceof HTMLTextAreaElement)
         {
             if (elem.selectionEnd - elem.selectionStart > 0)
-                vimperator.editor.startVisual();
+                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
             else
                 vimperator.editor.startNormal();
             vimperator.buffer.lastInputField = elem;
         }
-        else
-        {
-            if (vimperator.hasMode(vimperator.modes.INSERT) ||
+        else if //(vimperator.hasMode(vimperator.modes.VISUAL) ||
+                (vimperator.hasMode(vimperator.modes.INSERT) ||
                 vimperator.hasMode(vimperator.modes.TEXTAREA))
-                    vimperator.setMode(vimperator.modes.NORMAL); // FIXME: remember previous mode
+            vimperator.setMode(vimperator.modes.NORMAL);
+    }
+
+    this.onSelectionChange = function(event)
+    {
+        vimperator.log("onselection");
+        var could_copy = false;
+        var controller = document.commandDispatcher.getControllerForCommand("cmd_copy");
+        if (controller && controller.isCommandEnabled("cmd_copy"))
+            could_copy = true;
+
+        var extended = vimperator.modes.NONE;
+        if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            extended = vimperator.modes.TEXTAREA;
+        else if (vimperator.hasMode(vimperator.modes.CARET))
+            extended = vimperator.modes.CARET;
+
+        if (could_copy && !vimperator.hasMode(vimperator.modes.VISUAL) &&
+                          (vimperator.hasMode(vimperator.modes.NORMAL) ||
+                           vimperator.hasMode(vimperator.modes.TEXTAREA) ||
+                           vimperator.hasMode(vimperator.modes.CARET)))
+        {
+            vimperator.setMode(vimperator.modes.VISUAL, extended);
+        }
+        else if (vimperator.hasMode(vimperator.modes.VISUAL))
+        {
+            if (!could_copy && !vimperator.hasMode(vimperator.modes.CARET) &&
+                               !vimperator.hasMode(vimperator.modes.TEXTAREA))
+                vimperator.setMode(extended || vimperator.modes.NORMAL);
         }
     }
 
@@ -416,16 +435,23 @@ function Events() //{{{
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
-            // clear any selection made
-            // FIXME: need to make more general to allow caret/visual mode also for text fields
-            var selection = window.content.getSelection();
-            selection.collapseToStart();
-
             if (vimperator.hasMode(vimperator.modes.VISUAL))
             {
                 if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                {
                     vimperator.editor.unselectText();
-                vimperator.setMode(vimperator.getMode()[1], vimperator.modes.NONE);
+                    vimperator.setMode(vimperator.modes.TEXTAREA, vimperator.modes.NONE);
+                }
+                else
+                {
+                    // clear any selection made
+                    var selection = window.content.getSelection();
+                    selection.collapseToStart();
+                    if (vimperator.hasMode(vimperator.modes.CARET)) // set as an extended mode
+                        vimperator.setMode(vimperator.modes.CARET);
+                    else
+                        vimperator.setMode(vimperator.modes.NORMAL);
+                }
             }
             else if (vimperator.hasMode(vimperator.modes.CARET))
             {
@@ -436,7 +462,7 @@ function Events() //{{{
             else if (vimperator.hasMode(vimperator.modes.INSERT))
             {
                 if(vimperator.hasMode(vimperator.modes.TEXTAREA))
-                    vimperator.editor.stopInsert();
+                    vimperator.setMode(vimperator.modes.TEXTAREA);
                 else
                 {
                     vimperator.editor.unselectText();
@@ -452,8 +478,6 @@ function Events() //{{{
                 vimperator.statusline.updateUrl();
                 vimperator.focusContent();
             }
-
-
         }
     }
 
@@ -491,7 +515,8 @@ function Events() //{{{
         // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
         if (!vimperator.hasMode(vimperator.modes.TEXTAREA) &&
             !vimperator.hasMode(vimperator.modes.INSERT) &&
-            isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
+            !vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+                    isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
                 return false;
 
         // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
@@ -607,16 +632,20 @@ function Events() //{{{
         // counts must be at the start of a complete mapping (10j -> go 10 lines down)
         if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
-            vimperator.input.buffer += key;
+            // no count for insert mode mappings
+            if (vimperator.hasMode(vimperator.modes.INSERT))
+                stop = false;
+            else
+                vimperator.input.buffer += key;
         }
-        else if (vimperator.input.pendingMap)
+        else if (vimperator.input.pendingArgMap)
         {
             vimperator.input.buffer = "";
 
             if (key != "<Esc>" && key != "<C-[>")
-                vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
+                vimperator.input.pendingArgMap.execute(null, vimperator.input.count, key);
 
-            vimperator.input.pendingMap = null;
+            vimperator.input.pendingArgMap = null;
         }
         else if (map = vimperator.mappings.get(mode, candidate_command))
         {
@@ -625,8 +654,23 @@ function Events() //{{{
                 vimperator.input.count = -1;
             if (map.flags & Mappings.flags.ARGUMENT)
             {
-                vimperator.input.pendingMap = map;
+                vimperator.input.pendingArgMap = map;
                 vimperator.input.buffer += key;
+            }
+            else if (vimperator.input.pendingMotionMap)
+            {
+                if (key != "<Esc>" && key != "<C-[>")
+                {
+                    vimperator.input.pendingMotionMap.execute(candidate_command, vimperator.input.count, null);
+                }
+                vimperator.input.pendingMotionMap = null;
+                vimperator.input.buffer = "";
+            }
+            // no count support for these commands yet
+            else if (map.flags & Mappings.flags.MOTION)
+            {
+                vimperator.input.pendingMotionMap = map;
+                vimperator.input.buffer = "";
             }
             else
             {
@@ -642,7 +686,8 @@ function Events() //{{{
         else
         {
             vimperator.input.buffer = "";
-            vimperator.input.pendingMap = null;
+            vimperator.input.pendingArgMap = null;
+            vimperator.input.pendingMotionMap = null;
 
             if (vimperator.hasMode(vimperator.modes.INSERT) ||
                 vimperator.hasMode(vimperator.modes.COMMAND_LINE))
@@ -657,7 +702,8 @@ function Events() //{{{
             event.stopPropagation();
         }
 
-        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+        var motion_map = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
+        vimperator.statusline.updateInputBuffer(motion_map + vimperator.input.buffer);
         return false;
     }
     window.addEventListener("keypress", this.onKeyPress, true);

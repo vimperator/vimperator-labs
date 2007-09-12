@@ -52,7 +52,8 @@ const vimperator = (function() //{{{
         QUICK_HINT:       1 << 16,
         EXTENDED_HINT:    1 << 17,
         ALWAYS_HINT:      1 << 18,
-        MENU:             1 << 19 // a popupmenu is active
+        MENU:             1 << 19, // a popupmenu is active
+        LINE:             1 << 20  // linewise visual mode
     }
 
     var mode_messages = {};
@@ -60,8 +61,9 @@ const vimperator = (function() //{{{
     mode_messages[modes.INSERT]          = "INSERT";
     mode_messages[modes.VISUAL]          = "VISUAL";
     mode_messages[modes.HINTS]           = "HINTS";
-    mode_messages[modes.CARET]           = "CARET"; // XXX: not a perfect name
-    mode_messages[modes.TEXTAREA]        = "TEXTAREA"; // XXX: not a perfect name
+    mode_messages[modes.CARET]           = "CARET";
+    mode_messages[modes.TEXTAREA]        = "TEXTAREA";
+    mode_messages[modes.TEXTAREA | modes.LINE]            = "line"; // used in visual mode
     mode_messages[modes.ESCAPE_ONE_KEY]  = "escape one key";
     mode_messages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
     mode_messages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
@@ -202,7 +204,8 @@ const vimperator = (function() //{{{
 
         input: {
             buffer: "",                // partial command storage
-            pendingMap: null,          // pending map storage
+            pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
+            pendingArgMap: null,       // pending map storage for commands like m{a-z}
             count: -1                  // parsed count from the input buffer
         },
 
@@ -244,6 +247,14 @@ const vimperator = (function() //{{{
             {
                 mode = main;
                 extended_mode = vimperator.modes.NONE;
+
+                // TODO: also fix the other modes!!
+                switch (main)
+                {
+                    case vimperator.modes.TEXTAREA:
+                        vimperator.editor.unselectText();
+                        break;
+                }
             }
             if (typeof extended === "number")
                 extended_mode = extended;

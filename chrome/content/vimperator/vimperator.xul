@@ -127,10 +127,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
         <!--this notifies us also of focus events in the XUL
             from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
-        <commandset id="updateVimperatorFocus"
+        <commandset id="onVimperatorFocus"
             commandupdater="true"
             events="focus"
             oncommandupdate="vimperator.events.onFocusChange(event);"/>
+        <commandset id="onVimperatorSelect"
+            commandupdater="true"
+            events="select"
+            oncommandupdate="vimperator.events.onSelectionChange(event);"/>
 
     </window>
 </overlay>

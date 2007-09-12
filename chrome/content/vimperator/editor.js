@@ -19,6 +19,10 @@
 
 function Editor() //{{{
 {
+    // store our last search with f,F,t or T
+    var last_findChar = null;
+    var last_findChar_func = null;
+
     function editor()
     {
         return window.document.commandDispatcher.focusedElement;
@@ -33,11 +37,40 @@ function Editor() //{{{
         return el.controllers.getControllerAt(0);
     }
 
+    this.line = function()
+    {
+        var line = 1;
+        var text = editor().value;
+        for (var i = 0; i < editor().selectionStart; i++)
+            if (text[i] == "\n")
+                line++;
+        return line;
+    }
+
+    this.col = function()
+    {
+        var col = 1;
+        var text = editor().value;
+        for (var i = 0; i < editor().selectionStart; i++)
+        {
+            col++;
+            if (text[i] == "\n")
+                col = 1;
+        }
+        return col;
+    }
+
     this.unselectText = function()
     {
         var elt = window.document.commandDispatcher.focusedElement;
         elt.selectionEnd = elt.selectionStart;
         return true;
+    }
+
+    this.selectedText = function()
+    {
+        var text = editor().value;
+        return text.substring(editor().selectionStart, editor().selectionEnd);
     }
 
     this.pasteClipboard = function()
@@ -86,9 +119,6 @@ function Editor() //{{{
             {
                 controller.doCommand(cmd);
                 did_command = true;
-
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
-                    this.moveCaret();
             }
             catch(e)
             {
@@ -101,47 +131,195 @@ function Editor() //{{{
         return true;
     }
 
+    // cmd = y, d, c
+    // motion = b, 0, gg, G, etc.
+    this.executeCommandWithMotion = function(cmd, motion, count)
+    {
+        if (!typeof count == "number" || count < 1)
+            count = 1;
+
+        if (cmd == motion)
+        {
+            motion = "j";
+            count--;
+        }
+
+        switch (motion)
+        {
+            case "j":
+                this.executeCommand("cmd_beginLine", 1);
+                this.executeCommand("cmd_selectLineNext", count+1);
+                break;
+            case "k":
+                this.executeCommand("cmd_beginLine", 1);
+                this.executeCommand("cmd_lineNext", 1);
+                this.executeCommand("cmd_selectLinePrevious", count+1);
+                break;
+            case "h":
+                this.executeCommand("cmd_selectCharPrevious", count);
+                break;
+            case "l":
+                this.executeCommand("cmd_selectCharNext", count);
+                break;
+            case "e":
+            case "w":
+                this.executeCommand("cmd_selectWordNext", count);
+                break;
+            case "b":
+                this.executeCommand("cmd_selectWordPrevious", count);
+                break;
+            case "0":
+            case "^":
+                this.executeCommand("cmd_selectBeginLine", 1);
+                break;
+            case "$":
+                this.executeCommand("cmd_selectEndLine", 1);
+                break;
+            case "gg":
+                this.executeCommand("cmd_endLine", 1);
+                this.executeCommand("cmd_selectTop", 1);
+                this.executeCommand("cmd_selectBeginLine", 1);
+                break;
+            case "G":
+                this.executeCommand("cmd_beginLine", 1);
+                this.executeCommand("cmd_selectBottom", 1);
+                this.executeCommand("cmd_selectEndLine", 1);
+                break;
+
+            default:
+                vimperator.beep();
+                return false;
+        }
+        
+        switch (cmd)
+        {
+            case "d":
+                this.executeCommand("cmd_delete", 1);
+                // need to reset the mode as the visual selection changes it
+                vimperator.setMode(vimperator.modes.TEXTAREA);
+                break;
+            case "c":
+                this.executeCommand("cmd_delete", 1);
+                this.startInsert();
+                break;
+            case "y":
+                this.executeCommand("cmd_copy", 1);
+                this.unselectText();
+                break;
+
+            default:
+                vimperator.beep();
+                return false;
+        }
+        return true;
+    }
     this.startNormal = function()
     {
         vimperator.setMode(vimperator.modes.TEXTAREA);
-        this.moveCaret();
-    }
 
-    this.startVisual = function()
-    {
-        vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+        //var self = this;
+        //editor().addEventListener("mouseclick", function() {
+        //        setTimeout(function() {
+        //            pos =  editor().selectionStart;
+        //            self.moveCaret(pos);
+        //        }, 10);
+        //}, false);
     }
 
     this.startInsert = function()
     {
         vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
-        this.moveCaret();
     }
 
-    this.stopInsert = function()
+    // This function will move/select up to given "pos"
+    // Simple setSelectionRange() would be better, but we want to maintain the correct
+    // order of selectionStart/End (a firefox bug always makes selectionStart <= selectionEnd)
+    // Use only for small movements!
+    this.moveToPosition = function(pos, forward, select)
     {
-        vimperator.setMode(vimperator.modes.TEXTAREA);
-        this.moveCaret();
+        if (!select)
+        {
+            editor().setSelectionRange(pos, pos);
+            return;
+        }
+
+        if (forward)
+        {
+            if (pos <= editor().selectionEnd || pos > editor().value.length)
+                return false;
+
+            do // TODO: test code for endless loops
+            {
+                this.executeCommand("cmd_selectCharNext", 1);
+            }
+            while ( editor().selectionEnd != pos );
+        }
+        else
+        {
+            if (pos >= editor().selectionStart || pos < 0)
+                return false;
+
+            do // TODO: test code for endless loops
+            {
+                this.executeCommand("cmd_selectCharPrevious", 1);
+            }
+            while ( editor().selectionStart != pos );
+        }
     }
 
-    // very rudimentary testing code
-    this.moveCaret = function(pos)
+    // returns the position of char
+    this.findCharForward = function(char, count)
     {
-        if (!pos)
-            pos = editor().selectionStart - 1;
+        if (!editor())
+            return -1;
 
-        if (!vimperator.hasMode(vimperator.modes.INSERT))
-            editor().setSelectionRange(pos, pos+1);        
-        else if (!vimperator.hasMode(vimperator.modes.VISUAL))
-            editor().setSelectionRange(pos, pos);        
+        last_findChar = char;
+        last_findChar_func = this.findCharForward;
+
+        var text = editor().value;
+        if (!typeof count == "number" || count < 1)
+            count = 1;
+
+        for (var i = editor().selectionEnd + 1; i < text.length; i++)
+        {
+            if (text[i] == "\n")
+                break;
+            if (text[i] == char)
+                count--;
+            if (count == 0)
+                return i + 1; // always position the cursor after the char
+        }
+        
+        vimperator.beep();
+        return -1;
+    }
+    // returns the position of char
+    this.findCharBackward = function(char, count)
+    {
+        if (!editor())
+            return -1;
+
+        last_findChar = char;
+        last_findChar_func = this.findCharBackward;
+
+        var text = editor().value;
+        if (!typeof count == "number" || count < 1)
+            count = 1;
+
+        for (var i = editor().selectionStart - 1; i >= 0; i--)
+        {
+            if (text[i] == "\n")
+                break;
+            if (text[i] == char)
+                count--;
+            if (count == 0)
+                return i;
+        }
+        
+        vimperator.beep();
+        return -1;
     }
     
-    // cmd = y, d, c
-    // motion = b, 0, gg, G, etc.
-    this.executeCommandWithMotion = function(cmd, motion)
-    {
-
-    }
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
