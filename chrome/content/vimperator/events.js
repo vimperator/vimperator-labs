@@ -628,8 +628,9 @@ function Events() //{{{
         if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
             // no count for insert mode mappings
-            if (vimperator.hasMode(vimperator.modes.INSERT))
-                stop = false;
+            if (vimperator.hasMode(vimperator.modes.INSERT) ||
+                vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                    stop = false;
             else
                 vimperator.input.buffer += key;
         }
