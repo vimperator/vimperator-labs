@@ -387,7 +387,7 @@ function Options() //{{{
     ));
     addOption(new Option(["focusedhintstyle", "fhs"], "string",
         {
-            short_help: "CSS specification of focused hints appearance",
+            short_help: "CSS specification of focused hints",
             default_value: "z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; " +
                            "border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;"
         }
@@ -421,12 +421,12 @@ function Options() //{{{
     ));
     addOption(new Option(["hintstyle", "hs"], "string",
         {
-            short_help: "CSS specification of unfocused hints appearance",
+            short_help: "CSS specification of unfocused hints",
             default_value: "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; " +
                            "border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;"
         }
     ));
-    addOption(new Option(["hinttags"], "string",
+    addOption(new Option(["hinttags", "ht"], "string",
         {
             short_help: "XPath string of hintable elements activated by <code class=\"mapping\">'f'</code> and <code class=\"mapping\">'F'</code>",
             default_value: DEFAULT_HINTTAGS
@@ -437,6 +437,12 @@ function Options() //{{{
             short_help: "Highlight previous search pattern matches",
             setter: function(value) { Options.setPref("hlsearch", value); if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
             default_value: false
+        }
+    ));
+    addOption(new Option(["hlsearchstyle", "hlss"], "string",
+        {
+            short_help: "CSS specification of highlighted search items",
+            default_value: "color: black; background-color: yellow; padding: 0; display: inline;"
         }
     ));
     addOption(new Option(["ignorecase", "ic"], "boolean",
@@ -458,6 +464,13 @@ function Options() //{{{
             help: "Makes Vimperator work in a way that Insert mode is the default mode for text areas. " +
                   "Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.",
             default_value: true
+        }
+    ));
+    addOption(new Option(["linksearch", "ls"], "boolean",
+        {
+            short_help: "Limit the search to hyperlink text",
+            help: "This includes (X)HTML elements with an \"href\" atrribute and XLink \"simple\" links.",
+            default_value: false
         }
     ));
     addOption(new Option(["maxhints", "mh"], "number",
@@ -580,6 +593,7 @@ function Options() //{{{
     addOption(new Option(["visualbell", "vb"], "boolean",
         {
             short_help: "Use visual bell instead of beeping on errors",
+            setter: function(value) { Options.setPref("visualbell", value); Options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
             default_value: false
         }
     ));

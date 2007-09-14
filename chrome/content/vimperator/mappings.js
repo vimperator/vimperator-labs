@@ -994,7 +994,9 @@ function Mappings() //{{{
             usage: ["/{pattern}[/]<CR>"],
             help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
-                  "\"\\C\" forces case-sensitive matching for the whole pattern."
+                  "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
+                  "If \"\\u\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
+                  "\"\\U\" forces the entire page to be searched for a match."
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["?"],
@@ -1003,9 +1005,11 @@ function Mappings() //{{{
             short_help: "Search backwards for a pattern",
             usage: ["?{pattern}[?]<CR>"],
             help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
-                  "When '\\c' appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
-                  "'\\C' forces case-sensitive matching for the whole pattern.<br/>" +
-                  "NOTE: incremental searching currenly only works in the forward direction."
+                  "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
+                  "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
+                  "If \"\\u\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
+                  "\"\\U\" forces the entire page to be searched for a match.<br/>" +
+                  "NOTE: incremental searching currently only works in the forward direction."
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["n"],
