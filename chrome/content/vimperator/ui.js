@@ -646,10 +646,16 @@ function CommandLine() //{{{
                     pass(event);
                 break;
             case "g":
-                multiline_output_widget.contentWindow.scrollTo(0, 0);
+                if (canScroll() >= 1)
+                    multiline_output_widget.contentWindow.scrollTo(0, 0);
+                else
+                    pass(event);
                 break;
             case "G":
-                multiline_output_widget.contentWindow.scrollTo(0, multiline_output_widget.contentWindow.scrollMaxY);
+                if (canScroll() >= 1)
+                    multiline_output_widget.contentWindow.scrollTo(0, multiline_output_widget.contentWindow.scrollMaxY);
+                else
+                    pass(event);
                 break;
 
             default:
