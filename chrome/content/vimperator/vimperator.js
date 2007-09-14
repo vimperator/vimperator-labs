@@ -409,23 +409,27 @@ const vimperator = (function() //{{{
 
                 // handle pure javascript files specially
                 if (filename.search("\.js$") != -1)
+                {
                     eval(s);
+                }
                 else
                 {
                     var heredoc = "";
-                    var heredocEnd = null; // the string which ends the heredoc
+                    var heredoc_end = null; // the string which ends the heredoc
                     s.split("\n").forEach(function(line)
                     {
-                        if (heredocEnd) // we already are in a heredoc
+                        if (heredoc_end) // we already are in a heredoc
                         {
-                            if (line.search(heredocEnd) != -1)
+                            if (heredoc_end.test(line))
                             {
                                 eval(heredoc);
                                 heredoc = "";
-                                heredocEnd = null;
+                                heredoc_end = null;
                             }
                             else
+                            {
                                 heredoc += line + "\n";
+                            }
                         }
                         else
                         {
@@ -435,11 +439,15 @@ const vimperator = (function() //{{{
                             if (command && command.name == "javascript")
                             {
                                 var matches = args.match(/(.*)<<\s*([^\s]+)$/);
-                                if (matches && matches[2])
+                                if (matches)
                                 {
-                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
+                                    heredoc_end = new RegExp("^" + matches[2] + "$", "m");
                                     if (matches[1])
                                         heredoc = matches[1] + "\n";
+                                }
+                                else
+                                {
+                                    command.execute(args, special, count);
                                 }
                             }
                             else
