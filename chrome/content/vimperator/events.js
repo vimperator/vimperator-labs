@@ -417,11 +417,11 @@ function Events() //{{{
                     vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.CARET);
             }
         }
-        else
-        {
-            if (!could_copy && vimperator.modes.extended & vimperator.modes.CARET)
-                vimperator.mode = vimperator.modes.CARET;
-        }
+        //else
+        //{
+        //    if (!could_copy && vimperator.modes.extended & vimperator.modes.CARET)
+        //        vimperator.mode = vimperator.modes.CARET;
+        //}
     }
 
     // global escape handler, is called in ALL modes
