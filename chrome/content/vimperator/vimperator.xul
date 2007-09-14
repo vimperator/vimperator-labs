@@ -51,6 +51,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.7" src="help.js"/>
     <script type="application/x-javascript;version=1.7" src="hints.js"/>
     <script type="application/x-javascript;version=1.7" src="mappings.js"/>
+    <script type="application/x-javascript;version=1.7" src="modes.js"/>
     <script type="application/x-javascript;version=1.7" src="options.js"/>
     <script type="application/x-javascript;version=1.7" src="tabs.js"/>
     <script type="application/x-javascript;version=1.7" src="ui.js"/>
@@ -102,8 +103,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
                         onblur="vimperator.commandline.onEvent(event);"/>
                 </hbox>
 
-                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                        onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>
+                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"/>
+                        <!--onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/-->
 
                 <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="10" hidden="false" collapsed="true" multiline="true"
                         onkeypress="vimperator.commandline.onMultilineInputEvent(event);"

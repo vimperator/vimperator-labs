@@ -32,51 +32,6 @@ const vimperator = (function() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = {
-        // main modes
-        NONE:             0,
-        NORMAL:           1 << 0,
-        INSERT:           1 << 1,
-        VISUAL:           1 << 2,
-        HINTS:            1 << 3,
-        COMMAND_LINE:     1 << 4,
-        CARET:            1 << 5, // text cursor is visible
-        TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
-        // extended modes
-        EX:               1 << 10,
-        READ_MULTILINE:   1 << 11,
-        SEARCH_FORWARD:   1 << 12,
-        SEARCH_BACKWARD:  1 << 13,
-        ESCAPE_ONE_KEY:   1 << 14,
-        ESCAPE_ALL_KEYS:  1 << 15,
-        QUICK_HINT:       1 << 16,
-        EXTENDED_HINT:    1 << 17,
-        ALWAYS_HINT:      1 << 18,
-        MENU:             1 << 19, // a popupmenu is active
-        LINE:             1 << 20  // linewise visual mode
-    }
-
-    var mode_messages = {};
-    mode_messages[modes.NORMAL]          = "";
-    mode_messages[modes.INSERT]          = "INSERT";
-    mode_messages[modes.VISUAL]          = "VISUAL";
-    mode_messages[modes.HINTS]           = "HINTS";
-    mode_messages[modes.CARET]           = "CARET";
-    mode_messages[modes.TEXTAREA]        = "TEXTAREA";
-    mode_messages[modes.TEXTAREA | modes.LINE]            = "line"; // used in visual mode
-    mode_messages[modes.ESCAPE_ONE_KEY]  = "escape one key";
-    mode_messages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
-    mode_messages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
-    mode_messages[modes.QUICK_HINT]      = "quick";
-    mode_messages[modes.EXTENDED_HINT]   = "extended";
-    mode_messages[modes.ALWAYS_HINT]     = "always";
-    mode_messages[modes.MENU]            = "menu"; // TODO: desirable? -> now that it seems to work reliable -> NO (--mst)
-
-    var mode = modes.NORMAL;
-    var extended_mode = modes.NONE;
-
-    var callbacks = [];
-
     // our services
     var sound_service = Components.classes['@mozilla.org/sound;1']
         .getService(Components.interfaces.nsISound);
@@ -85,26 +40,8 @@ const vimperator = (function() //{{{
     var environment_service = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
 
-    function showMode()
-    {
-        if (!vimperator.options["showmode"])
-            return;
+    var callbacks = [];
 
-        var str_mode = mode_messages[mode];
-        var str_extended = mode_messages[extended_mode];
-        if (!str_mode && !str_extended)
-        {
-            vimperator.commandline.echo("");
-            return;
-        }
-
-        if (str_extended)
-            str_extended = " (" + str_extended + ")";
-        else
-            str_extended = "";
-
-        vimperator.commandline.echo("-- " + str_mode.toUpperCase() + str_extended.toLowerCase() + " --");
-    }
 
     function expandPath(path)
     {
@@ -189,15 +126,14 @@ const vimperator = (function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+        get mode() { return vimperator.modes.main; },
+        set mode(value) { vimperator.modes.main = value; },
 
-        modes: modes,
-
-        //openflags: { // XXX: maybe move these consts in a subnamespace?
+        // Global contants
         CURRENT_TAB: 1,
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,
         NEW_WINDOW: 4,
-        //},
 
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
@@ -231,64 +167,6 @@ const vimperator = (function() //{{{
                     return thisfunc.call(this, data);
             }
             return false;
-        },
-
-        getMode: function()
-        {
-            return [mode, extended_mode];
-        },
-
-        // set current mode
-        // use "null" if you only want to set one of those modes
-        setMode: function(main, extended, silent)
-        {
-            // if a main mode is set, the extended is always cleared
-            if (main)
-            {
-                mode = main;
-                extended_mode = vimperator.modes.NONE;
-
-                // TODO: also fix the other modes!!
-                switch (main)
-                {
-                    case vimperator.modes.TEXTAREA:
-                        vimperator.editor.unselectText();
-                        break;
-                }
-            }
-            if (typeof extended === "number")
-                extended_mode = extended;
-
-            if (!silent)
-                showMode();
-        },
-
-        // returns true if "whichmode" is found in either the main or
-        // extended mode
-        hasMode: function(whichmode)
-        {
-            return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
-        },
-
-        addMode: function(main, extended)
-        {
-            if (main)
-                mode |= main;
-            if (extended)
-                extended_mode |= extended;
-
-            showMode();
-        },
-
-        // always show the new mode in the statusline
-        removeMode: function(main, extended)
-        {
-            if (main)
-                mode = (mode | main) ^ main;
-            if (extended)
-                extended_mode = (extended_mode | extended) ^ extended;
-
-            showMode();
         },
 
         beep: function()
@@ -640,8 +518,12 @@ const vimperator = (function() //{{{
                 }, 1000);
             }
 
-            //gURLBar.blur(); // TODO: needed anymore?
-            vimperator.focusContent();
+            // disable caret browsing initially
+            //Options.setFirefoxPref("accessibility.browsewithcaret", false);
+            //vimperator.focusContent();
+
+            // always start in normal mode
+            vimperator.modes.reset();
 
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work

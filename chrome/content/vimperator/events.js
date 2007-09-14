@@ -46,17 +46,14 @@ function Events() //{{{
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
         setTimeout(vimperator.focusContent, 10); // just make sure, that no widget has focus
     }, false);
@@ -69,7 +66,7 @@ function Events() //{{{
     getBrowser().addEventListener("scroll", function (event)
     {
         vimperator.statusline.updateBufferPosition();
-        vimperator.setMode(); // trick to reshow the mode in the command line
+        vimperator.modes.show();
     }, null);
 
 
@@ -81,23 +78,23 @@ function Events() //{{{
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
             return;
 
-        vimperator.addMode(null, vimperator.modes.MENU);
+        vimperator.modes.add(vimperator.modes.MENU);
     }
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
         if (!gContextMenu && !active_menubar)
-            vimperator.removeMode(null, vimperator.modes.MENU);
+            vimperator.modes.remove(vimperator.modes.MENU);
     }
     function enterMenuMode()
     {
         active_menubar = true;
-        vimperator.addMode(null, vimperator.modes.MENU)
+        vimperator.modes.add(vimperator.modes.MENU);
     }
     function exitMenuMode()
     {
         active_menubar = false;
-        vimperator.removeMode(null, vimperator.modes.MENU);
+        vimperator.modes.remove(vimperator.modes.MENU);
     }
     window.addEventListener("popupshown", enterPopupMode, true);
     window.addEventListener("popuphidden", exitPopupMode, true);
@@ -376,102 +373,98 @@ function Events() //{{{
     // access to the real focus target
     this.onFocusChange = function(event)
     {
-        if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+        if (vimperator.mode == vimperator.modes.COMMAND_LINE)
             return;
 
         var elem = window.document.commandDispatcher.focusedElement;
         if (elem && elem instanceof HTMLInputElement &&
                 (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
         {
-            vimperator.setMode(vimperator.modes.INSERT);
+            vimperator.mode = vimperator.modes.INSERT;
             vimperator.buffer.lastInputField = elem;
         }
         else if (elem && elem instanceof HTMLTextAreaElement)
         {
             if (vimperator.options["insertmode"])
-                vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
             else if (elem.selectionEnd - elem.selectionStart > 0)
-                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+                vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
             else
-                vimperator.editor.startNormal();
+                vimperator.modes.main = vimperator.modes.TEXTAREA;
             vimperator.buffer.lastInputField = elem;
         }
-        else if //(vimperator.hasMode(vimperator.modes.VISUAL) ||
-                (vimperator.hasMode(vimperator.modes.INSERT) ||
-                vimperator.hasMode(vimperator.modes.TEXTAREA))
-            vimperator.setMode(vimperator.modes.NORMAL);
+        else if (vimperator.mode == vimperator.modes.INSERT ||
+                 vimperator.mode == vimperator.modes.TEXTAREA ||
+                 vimperator.mode == vimperator.modes.VISUAL)
+            vimperator.modes.reset();
     }
 
     this.onSelectionChange = function(event)
     {
-        vimperator.log("onselection");
         var could_copy = false;
         var controller = document.commandDispatcher.getControllerForCommand("cmd_copy");
         if (controller && controller.isCommandEnabled("cmd_copy"))
             could_copy = true;
 
-        if (could_copy && !vimperator.hasMode(vimperator.modes.VISUAL))
+        if (vimperator.mode != vimperator.modes.VISUAL)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
-                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
-            else if (vimperator.hasMode(vimperator.modes.CARET))
-                vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.CARET);
+            if (could_copy)
+            {
+                if ((vimperator.mode == vimperator.modes.TEXTAREA || (vimperator.modes.extended & vimperator.modes.TEXTAREA))
+                        && !vimperator.options["insertmode"])
+                    vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+                else if (vimperator.mode == vimperator.modes.CARET)
+                    vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.CARET);
+            }
         }
-        else if (vimperator.hasMode(vimperator.modes.VISUAL))
+        else
         {
-            if (!could_copy && vimperator.hasMode(vimperator.modes.CARET))
-                vimperator.setMode(vimperator.modes.CARET);
+            if (!could_copy && vimperator.modes.extended & vimperator.modes.CARET)
+                vimperator.mode = vimperator.modes.CARET;
         }
     }
 
     // global escape handler, is called in ALL modes
-    // XXX: split up and move to mappings.js as closures?
     this.onEscape = function()
     {
-        if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+        if (!vimperator.modes.passNextKey)
         {
-            if (vimperator.hasMode(vimperator.modes.VISUAL))
+            if(vimperator.modes.passAllKeys)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
-                {
-                    vimperator.editor.unselectText();
-                    vimperator.setMode(vimperator.modes.TEXTAREA, vimperator.modes.NONE);
-                }
-                else
-                {
+                vimperator.modes.passAllKeys = false;
+                return;
+            }
+
+            switch(vimperator.mode)
+            {
+                case vimperator.modes.VISUAL:
+                    if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
+                        vimperator.mode = vimperator.modes.TEXTAREA;
+                    else if (vimperator.modes.extended & vimperator.modes.CARET)
+                        vimperator.mode = vimperator.modes.CARET;
+                    break;
+
+                case vimperator.modes.CARET:
+                    // setting this option will trigger an observer which will care about all other details
+                    // like setting the NORMAL mode
+                    Options.setFirefoxPref("accessibility.browsewithcaret", false);
+                    break;
+
+                case vimperator.modes.INSERT:
+                    if((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
+                        vimperator.mode = vimperator.modes.TEXTAREA;
+                    else
+                        vimperator.modes.reset();
+                    break;
+                
+                default:
                     // clear any selection made
                     var selection = window.content.getSelection();
-                    selection.collapseToStart();
-                    if (vimperator.hasMode(vimperator.modes.CARET)) // set as an extended mode
-                        vimperator.setMode(vimperator.modes.CARET);
-                    else
-                        vimperator.setMode(vimperator.modes.NORMAL);
-                }
-            }
-            else if (vimperator.hasMode(vimperator.modes.CARET))
-            {
-                // setting this option will trigger an observer which will care about all other details
-                // like setting the NORMAL mode
-                Options.setFirefoxPref("accessibility.browsewithcaret", false);
-            }
-            else if (vimperator.hasMode(vimperator.modes.INSERT))
-            {
-                if(vimperator.hasMode(vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
-                    vimperator.setMode(vimperator.modes.TEXTAREA);
-                else
-                {
-                    vimperator.editor.unselectText();
-                    vimperator.setMode(vimperator.modes.NORMAL);
-                    vimperator.focusContent();
-                }
-            }
-            else
-            {
-                vimperator.setMode(vimperator.modes.NORMAL);
-                vimperator.commandline.clear();
-                vimperator.hints.disableHahMode();
-                vimperator.statusline.updateUrl();
-                vimperator.focusContent();
+                    if (selection)
+                        selection.collapseToStart();
+                    vimperator.commandline.clear();
+
+                    vimperator.modes.reset();
             }
         }
     }
@@ -482,37 +475,45 @@ function Events() //{{{
     {
         var key = vimperator.events.toString(event);
         if (!key)
-             return false;
+             return true;
 
         var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
+
         // menus have their own command handlers
-        if (vimperator.hasMode(vimperator.modes.MENU))
-            return false;
+        if (vimperator.modes.extended & vimperator.modes.MENU)
+            return true;
 
         // handle Escape-one-key mode (Ctrl-v)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+        if (vimperator.modes.passNextKey && !vimperator.modes.passAllKeys)
         {
-            vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
-            return false;
+            vimperator.modes.passNextKey = false;
+            return true;
         }
-        // handle Escape-all-keys mode (I)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+        // handle Escape-all-keys mode (Ctrl-q)
+        if (vimperator.modes.passAllKeys)
         {
-            if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
-                vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
+            if (vimperator.modes.passNextKey)
+                vimperator.modes.passNextKey = false; // and then let flow continue
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                 ; // let flow continue to handle these keys to cancel escape-all-keys mode
             else
-                return false;
+                return true;
         }
 
         // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
-        if (!vimperator.hasMode(vimperator.modes.TEXTAREA) &&
-            !vimperator.hasMode(vimperator.modes.INSERT) &&
-            !vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+        if (!vimperator.mode == vimperator.modes.TEXTAREA &&
+            !vimperator.mode == vimperator.modes.INSERT &&
+            !vimperator.mode == vimperator.modes.COMMAND_LINE &&
                     isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
-                return false;
+                return true;
+
+        if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
+            (vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+        {
+            vimperator.commandline.onMultilineOutputEvent(event);
+            return false;
+        }
 
         // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
         // also fixes key navigation in combo boxes, etc.
@@ -543,7 +544,7 @@ function Events() //{{{
 
         // if Hit-a-hint mode is on, special handling of keys is required
         // FIXME: total mess
-        if (vimperator.hasMode(vimperator.modes.HINTS))
+        if (vimperator.mode == vimperator.modes.HINTS)
         {
             // never propagate this key to firefox, when hints are visible
             //event.preventDefault();
@@ -588,13 +589,13 @@ function Events() //{{{
             if (res < 0) // error occured processing this key
             {
                 vimperator.beep();
-                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
                     vimperator.hints.resetHintedElements();
                 vimperator.input.buffer = "";
             }
-            else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
+            else if (res == 0 || vimperator.modes.extended & vimperator.modes.EXTENDED_HINT) // key processed, part of a larger hint
                 vimperator.input.buffer += key;
             else // this key completed a quick hint
             {
@@ -605,8 +606,7 @@ function Events() //{{{
                 else // open in current window
                     vimperator.hints.openHints(false, false);
 
-                //if (vimperator.hints.currentMode() == HINT_MODE_QUICK)
-                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
                     vimperator.hints.resetHintedElements();
@@ -619,7 +619,6 @@ function Events() //{{{
         }
 
 
-        var [mode, extended_mode] = vimperator.getMode();
         var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
         var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
         var map;
@@ -628,9 +627,8 @@ function Events() //{{{
         if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
             // no count for insert mode mappings
-            if (vimperator.hasMode(vimperator.modes.INSERT) ||
-                vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                    stop = false;
+            if (vimperator.mode == vimperator.modes.INSERT || vimperator.mode == vimperator.modes.COMMAND_LINE)
+                stop = false;
             else
                 vimperator.input.buffer += key;
         }
@@ -643,7 +641,7 @@ function Events() //{{{
 
             vimperator.input.pendingArgMap = null;
         }
-        else if (map = vimperator.mappings.get(mode, candidate_command))
+        else if (map = vimperator.mappings.get(vimperator.mode, candidate_command))
         {
             vimperator.input.count = parseInt(count_str, 10);
             if (isNaN(vimperator.input.count))
@@ -675,7 +673,7 @@ function Events() //{{{
                 map.execute(null, vimperator.input.count);
             }
         }
-        else if (vimperator.mappings.getCandidates(mode, candidate_command).length > 0)
+        else if (vimperator.mappings.getCandidates(vimperator.mode, candidate_command).length > 0)
         {
             vimperator.input.buffer += key;
         }
@@ -685,9 +683,8 @@ function Events() //{{{
             vimperator.input.pendingArgMap = null;
             vimperator.input.pendingMotionMap = null;
 
-            if (vimperator.hasMode(vimperator.modes.INSERT) ||
-                vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                    stop = false; // command was not a vimperator command, maybe it is a firefox command
+            if (vimperator.mode == vimperator.modes.INSERT || vimperator.mode == vimperator.modes.COMMAND_LINE)
+                stop = false; // command was not a vimperator command, maybe it is a firefox command
             else
                 vimperator.beep();
         }
@@ -707,10 +704,8 @@ function Events() //{{{
     // this is need for sites like msn.com which focus the input field on keydown
     this.onKeyDown = function(event)
     {
-        if ((vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS)) ||
-            (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) && !vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY)) ||
-            isFormElemFocused())
-                return true;
+        if (vimperator.modes.passNextKey ^ vimperator.modes.passAllKeys || isFormElemFocused())
+            return true;
 
         event.preventDefault();
         event.stopPropagation();
@@ -769,13 +764,10 @@ function Events() //{{{
         // happens when the users switches tabs
         onLocationChange: function()
         {
-            // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-            //     vimperator.hints.disableHahMode();
-
             vimperator.statusline.updateUrl();
             vimperator.statusline.updateProgress();
 
-            // if this is not delayed we get the wrong position of the old buffer
+            // if this is not delayed we get the position of the old buffer
             setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100);
         },
         // called at the very end of a page load
@@ -799,7 +791,7 @@ function Events() //{{{
                 if (ssli == 1)
                     vimperator.statusline.updateUrl();
                 else if (ssli == 2)
-                    vimperator.setMode(); // trick to reshow the mode in the command line
+                    vimperator.modes.show();
             }
         },
 
@@ -846,7 +838,7 @@ function Events() //{{{
             {
                 case "accessibility.browsewithcaret":
                     var value = Options.getFirefoxPref("accessibility.browsewithcaret", false);
-                    vimperator.setMode(value ? vimperator.modes.CARET : vimperator.modes.NORMAL, null);
+                    vimperator.mode = value ? vimperator.modes.CARET : vimperator.modes.NORMAL;
                     break;
             }
          }

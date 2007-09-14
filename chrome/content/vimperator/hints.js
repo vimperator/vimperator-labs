@@ -217,12 +217,12 @@ function Hints() //{{{
         if (!win)
             win = window.content;
 
-        if (linkCount == 0 && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+        if (linkCount == 0 && !(vimperator.modes.extended & vimperator.modes.ALWAYS_HINT))
         {
             vimperator.beep();
+            vimperator.modes.reset();
 
-            // FIXME: this.disableHahMode(win);
-            vimperator.setMode(vimperator.modes.NORMAL);
+            // XXX: move to mode handling
             isHahModeEnabled = false;
             linkNumString = '';
             hintedElems = [];
@@ -400,10 +400,10 @@ function Hints() //{{{
      * @param event that caused the mode to change
      * @return -1 if already enabled
      */
-    //function enableHahMode(event, mode)
+    // XXX: move to mode handling
     this.enableHahMode = function(mode)
     {
-        vimperator.setMode(vimperator.modes.HINTS, mode);
+        vimperator.modes.set(vimperator.modes.HINTS, mode);
         state = 0;
         linkCount = 0;
         linkNumString = '';
@@ -424,13 +424,14 @@ function Hints() //{{{
      *                 false if cancel
      * @return -1 if already disabled
      */
-    //function disableHahMode(event)
+    // XXX: move to mode handling
     this.disableHahMode = function(win)
     {
         if (!isHahModeEnabled)
             return;
 
-        vimperator.setMode(vimperator.modes.NORMAL);
+        vimperator.modes.reset();
+
         isHahModeEnabled = false;
         linkNumString = '';
         hintedElems = [];
@@ -675,7 +676,7 @@ function Hints() //{{{
 
         startCoordLoader(doc);
 
-        if (vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
+        if (vimperator.modes.extended & vimperator.modes.ALWAYS_HINT)
         {
             state = 0;
             linkCount = 0;

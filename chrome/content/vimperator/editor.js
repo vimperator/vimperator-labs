@@ -63,8 +63,8 @@ function Editor() //{{{
     this.unselectText = function()
     {
         var elt = window.document.commandDispatcher.focusedElement;
-        elt.selectionEnd = elt.selectionStart;
-        return true;
+        if (elt && elt.selectionEnd)
+            elt.selectionEnd = elt.selectionStart;
     }
 
     this.selectedText = function()
@@ -196,11 +196,11 @@ function Editor() //{{{
             case "d":
                 this.executeCommand("cmd_delete", 1);
                 // need to reset the mode as the visual selection changes it
-                vimperator.setMode(vimperator.modes.TEXTAREA);
+                vimperator.modes.main = vimperator.modes.TEXTAREA;
                 break;
             case "c":
                 this.executeCommand("cmd_delete", 1);
-                this.startInsert();
+                vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
                 break;
             case "y":
                 this.executeCommand("cmd_copy", 1);
@@ -212,23 +212,6 @@ function Editor() //{{{
                 return false;
         }
         return true;
-    }
-    this.startNormal = function()
-    {
-        vimperator.setMode(vimperator.modes.TEXTAREA);
-
-        //var self = this;
-        //editor().addEventListener("mouseclick", function() {
-        //        setTimeout(function() {
-        //            pos =  editor().selectionStart;
-        //            self.moveCaret(pos);
-        //        }, 10);
-        //}, false);
-    }
-
-    this.startInsert = function()
-    {
-        vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
     }
 
     // This function will move/select up to given "pos"

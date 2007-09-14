@@ -143,16 +143,15 @@ function Options() //{{{
 
     function loadPreference(name, forced_default, vimperator_branch)
     {
-        var pref = null;
-        var default_value = "";
+        var default_value = null;
+        if (forced_default != null)  // this argument sets defaults for non-user settable options (like comp_history)
+            default_value = forced_default;
 
         if (vimperator_branch)
         {
             branch = vimperator_prefs;
 
-            if (forced_default)  // this argument sets defaults for non-user settable options (like comp_history)
-                default_value = forced_default;
-            else
+            if (!forced_default)  // this argument sets defaults for non-user settable options (like comp_history)
             {
                 for (var i = 0; i < options.length; i++)
                 {
@@ -171,21 +170,22 @@ function Options() //{{{
 
         try
         {
-            if (typeof default_value == "string")
-                pref = branch.getCharPref(name);
-            else if (typeof default_value == "number")
-                pref = branch.getIntPref(name);
-            else if (typeof default_value == "boolean")
-                pref = branch.getBoolPref(name);
-            else
-                pref = default_value;
+            switch (typeof default_value)
+            {
+                case "string":
+                    return branch.getCharPref(name);
+                case "number":
+                    return branch.getIntPref(name);
+                case "boolean":
+                    return branch.getBoolPref(name);
+                default:
+                    return default_value;
+            }
         }
         catch (e)
         {
-            //alert("error: " + e);
-            pref = default_value;
+            return default_value;
         }
-        return pref;
     }
 
     function setGuiOptions(value)

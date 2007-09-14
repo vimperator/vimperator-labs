@@ -259,7 +259,11 @@ function Mappings() //{{{
             for (var j = 0; j < map.names.length; j++)
             {
                 if (map.names[j].indexOf(cmd) == 0)
-                    matches.push(map)
+                {
+                    // for < only return a candidate if it doesn't seem like a <c-x> mapping
+                    if (cmd != "<" || !/^<.+>/.test(map.names[j]))
+                        matches.push(map)
+                }
             }
         }
 
@@ -337,20 +341,21 @@ function Mappings() //{{{
             help: "In command line mode, you can perform extended commands, which may require arguments."
         }
     ));
-    addDefaultMap(new Map([vimperator.modes.NORMAL], ["i"],
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["i", "<Insert>"],
         function()
         {
+            // setting this option triggers an observer
+            // which takes care of the mode setting
             Options.setFirefoxPref("accessibility.browsewithcaret", true);
-            vimperator.setMode(vimperator.modes.CARET, null);
         },
         {
             short_help: "Start caret mode",
             help: "This mode resembles the vim normal mode where you see a text cursor and can move around. " +
-            "NOTE: Movement keys are not really working for the moment."
+            "If you want to select text in this mode, press <code class=\"mapping\">v</code> to start its Visual mode."
         }
     ));
-    addDefaultMap(new Map([vimperator.modes.NORMAL, vimperator.modes.HINTS], ["I"], // XXX: I is bad, needs to change
-        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ALL_KEYS); },
+    addDefaultMap(new Map(anymode, ["<C-q>"],
+        function() { vimperator.modes.passAllKeys = true; },
         {
             short_help: "Disable Vimperator keys",
             help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
@@ -360,7 +365,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(anymode, ["<C-v>"],
-        function() { vimperator.addMode(null, vimperator.modes.ESCAPE_ONE_KEY); },
+        function() { vimperator.modes.passNextKey = true; },
         {
             short_help: "Escape next key",
             help: "If you need to pass a certain key to a JavaScript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
@@ -1261,26 +1266,8 @@ function Mappings() //{{{
             .QueryInterface(Components.interfaces.nsISelectionController);
     
     }
-    // prevent beeping on esc, should unify 
-    /*addDefaultMap(new Map([vimperator.modes.CARET], ["<Esc>", "<C-[>", "<C-c>"],
-        function()
-        {
-            if (!vimperator.hasMode(vimperator.modes.VISUAL))
-                vimperator.onEscape();
-            else
-            {
-                vimperator.removeMode(null, vimperator.modes.VISUAL);
-                // clear any selection made
-                // FIXME: need to make more general to allow caret/visual mode also for text fields
-                var selection = window.content.getSelection();
-                selection.collapseToStart();
-            }
-        },
-        { }
-    ));*/
-
     addDefaultMap(new Map([vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["v"],
-        function(count) { vimperator.setMode(vimperator.modes.VISUAL, vimperator.getMode()[0]); },
+        function(count) { vimperator.modes.set(vimperator.modes.VISUAL, vimperator.mode); },
         {
             short_help: "Start visual mode",
             help: "Works for caret mode and textarea mode."
@@ -1406,10 +1393,10 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 {
                     vimperator.editor.executeCommand("cmd_selectLineNext");
-                    if (vimperator.hasMode(vimperator.modes.LINE) && !vimperator.editor.selectedText())
+                    if ((vimperator.modes.extended & vimperator.modes.LINE) && !vimperator.editor.selectedText())
                         vimperator.editor.executeCommand("cmd_selectLineNext");
                 }
                 else
@@ -1424,10 +1411,10 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 {
                     vimperator.editor.executeCommand("cmd_selectLinePrevious");
-                    if (vimperator.hasMode(vimperator.modes.LINE) && !vimperator.editor.selectedText())
+                    if ((vimperator.modes.extended & vimperator.modes.LINE) && !vimperator.editor.selectedText())
                         vimperator.editor.executeCommand("cmd_selectLinePrevious");
                 }
                 else
@@ -1442,7 +1429,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     vimperator.editor.executeCommand("cmd_selectCharPrevious");
                 else
                     getSelectionController().characterMove(false, true);
@@ -1456,7 +1443,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     vimperator.editor.executeCommand("cmd_selectCharNext");
                 else
                     getSelectionController().characterMove(true, true);
@@ -1470,7 +1457,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     vimperator.editor.executeCommand("cmd_selectWordPrevious");
                 else
                     getSelectionController().wordMove(false, true);
@@ -1484,7 +1471,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     vimperator.editor.executeCommand("cmd_selectWordNext");
                 else
                     getSelectionController().wordMove(true, true);
@@ -1498,7 +1485,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     ;//vimperator.editor.executeCommand("cmd_selectPageNext");
                 else
                     getSelectionController().pageMove(true, true);
@@ -1512,7 +1499,7 @@ function Mappings() //{{{
             if (count < 1) count = 1;
             while(count--)
             {
-                if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+                if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                     ;//vimperator.editor.executeCommand("cmd_selectWordNext");
                 else
                     getSelectionController().pageMove(false, true);
@@ -1523,7 +1510,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["gg", "<C-Home>"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 vimperator.editor.executeCommand("cmd_selectTop");
             else
                 getSelectionController().completeMove(false, true);
@@ -1533,7 +1520,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["G", "<C-End>"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 vimperator.editor.executeCommand("cmd_selectBottom");
             else
                 getSelectionController().completeMove(true, true);
@@ -1543,7 +1530,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["0", "^", "<Home>"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 vimperator.editor.executeCommand("cmd_selectBeginLine");
             else
                 getSelectionController().intraLineMove(false, true);
@@ -1553,7 +1540,7 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["$", "<End>"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                 vimperator.editor.executeCommand("cmd_selectEndLine");
             else
                 getSelectionController().intraLineMove(true, true);
@@ -1563,10 +1550,10 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["c", "s"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
             {
                 vimperator.editor.executeCommand("cmd_cut");
-                vimperator.setMode(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
             }
             else
                 vimperator.beep();
@@ -1576,10 +1563,10 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["d"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
             {
                 vimperator.editor.executeCommand("cmd_cut");
-                vimperator.setMode(vimperator.modes.TEXTAREA);
+                vimperator.modes.set(vimperator.modes.TEXTAREA);
             }
             else
                 vimperator.beep();
@@ -1589,11 +1576,11 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL], ["y"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
             {
                 vimperator.editor.executeCommand("cmd_copy");
                 // vimperator.editor.unselectText();
-                vimperator.setMode(vimperator.modes.TEXTAREA);
+                vimperator.modes.set(vimperator.modes.TEXTAREA);
             }
             else
                 vimperator.beep(); // TODO: yanking is possible for caret mode
@@ -1603,12 +1590,12 @@ function Mappings() //{{{
     addDefaultMap(new Map([vimperator.modes.VISUAL, vimperator.modes.TEXTAREA], ["p"],
         function(count)
         {
-            if (vimperator.hasMode(vimperator.modes.TEXTAREA))
+            if (!(vimperator.modes.extended & vimperator.modes.CARET))
             {
                 if (!count) count = 1;
                 while (count--)
                     vimperator.editor.executeCommand("cmd_paste");
-                vimperator.setMode(vimperator.modes.TEXTAREA);
+                vimperator.mode = vimperator.modes.TEXTAREA;
             }
             else
                 vimperator.beep();
@@ -1621,15 +1608,15 @@ function Mappings() //{{{
     // Textarea mode
     // {{{
 
-    addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["i"],
-        function(count) { vimperator.editor.startInsert(); },
+    addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["i", "<Insert>"],
+        function(count) { vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA); },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["a"],
         function(count)
         {
             vimperator.editor.executeCommand("cmd_charNext", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
@@ -1637,7 +1624,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_beginLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
@@ -1645,7 +1632,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_endLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
@@ -1653,7 +1640,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_deleteCharForward", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
@@ -1662,7 +1649,7 @@ function Mappings() //{{{
         {
             vimperator.editor.executeCommand("cmd_deleteToEndOfLine", 1);
             vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
@@ -1670,29 +1657,29 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_deleteToEndOfLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
         },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["v"],
-        function(count) { vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA); },
+        function(count) { vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA); },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["V"],
         function(count)
         {
+            vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA | vimperator.modes.LINE);
             vimperator.editor.executeCommand("cmd_beginLine", 1);
             vimperator.editor.executeCommand("cmd_selectLineNext", 1);
-            vimperator.setMode(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA | vimperator.modes.LINE);
         },
         { }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["u"],
-        function(count) { vimperator.editor.executeCommand("cmd_undo", count); vimperator.setMode(vimperator.modes.TEXTAREA); },
+        function(count) { vimperator.editor.executeCommand("cmd_undo", count); vimperator.mode = vimperator.modes.TEXTAREA; },
         { flags: Mappings.flags.COUNT }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["<C-r>"],
-        function(count) { vimperator.editor.executeCommand("cmd_redo", count); vimperator.setMode(vimperator.modes.TEXTAREA); },
+        function(count) { vimperator.editor.executeCommand("cmd_redo", count); vimperator.mode = vimperator.modes.TEXTAREA; },
         { flags: Mappings.flags.COUNT }
     ));
     addDefaultMap(new Map([vimperator.modes.TEXTAREA], ["j", "<Down>", "<Return>"],
@@ -1747,7 +1734,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_endLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
             vimperator.events.feedkeys("<Return>");
         },
         {  }
@@ -1756,7 +1743,7 @@ function Mappings() //{{{
         function(count)
         {
             vimperator.editor.executeCommand("cmd_beginLine", 1);
-            vimperator.editor.startInsert();
+            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
             vimperator.events.feedkeys("<Return>");
             vimperator.editor.executeCommand("cmd_linePrevious", 1);
         },
@@ -1769,7 +1756,7 @@ function Mappings() //{{{
         {
             var pos = vimperator.editor.findCharForward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos, true, vimperator.hasMode(vimperator.modes.VISUAL));
+                vimperator.editor.moveToPosition(pos, true, vimperator.mode == vimperator.modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT}
     ));
@@ -1778,7 +1765,7 @@ function Mappings() //{{{
         {
             var pos = vimperator.editor.findCharBackward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos, false, vimperator.hasMode(vimperator.modes.VISUAL));
+                vimperator.editor.moveToPosition(pos, false, vimperator.mode == vimperator.modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT}
     ));
@@ -1787,7 +1774,7 @@ function Mappings() //{{{
         {
             var pos = vimperator.editor.findCharForward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos - 1, true, vimperator.hasMode(vimperator.modes.VISUAL));
+                vimperator.editor.moveToPosition(pos - 1, true, vimperator.mode = vimperator.modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT}
     ));
@@ -1796,7 +1783,7 @@ function Mappings() //{{{
         {
             var pos = vimperator.editor.findCharBackward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos + 1, false, vimperator.hasMode(vimperator.modes.VISUAL));
+                vimperator.editor.moveToPosition(pos + 1, false, vimperator.mode = vimperator.modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT}
     ));
@@ -1805,7 +1792,7 @@ function Mappings() //{{{
     //     {
     //         var pos = vimperator.editor.findCharBackward(null, count);
     //         if (pos >= 0)
-    //             vimperator.editor.moveToPosition(pos + 1, false, vimperator.hasMode(vimperator.modes.VISUAL));
+    //             vimperator.editor.moveToPosition(pos + 1, false, vimperator.mode = vimperator.modes.VISUAL);
     //     },
     //     { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT}
     // ));
@@ -1853,7 +1840,7 @@ function Mappings() //{{{
         function() { vimperator.editor.executeCommand("cmd_endLine", 1); },
         { }
     ));
-    addDefaultMap(new Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-h>", "<BS>"],
+    addDefaultMap(new Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-h>"], // let firefox handle <BS>
         function() { vimperator.editor.executeCommand("cmd_deleteCharBackward", 1); },
         { }
     ));

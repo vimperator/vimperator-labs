@@ -1,6 +1,9 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
+	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* improvements for scrollable -- more -- prompt
+	* changed 'I' key to Ctrl-Q to also work in textboxes
 	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
 	* new gi browser command to focus last used input box
 	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
@@ -12,6 +15,7 @@
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added vimperator logo (can be seen in the addons manager)
 	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
+	* many small bug fixes and enhancments
 
 2007-09-03:
 	* version 0.5.1

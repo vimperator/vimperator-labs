@@ -128,6 +128,9 @@ function Search() //{{{
             this.highlight(lastsearch);
         }
 
+        var leader = lastsearch_backwards ? "?" : "/";
+        vimperator.commandline.echo(leader + lastsearch);
+
         var up = reverse ? !lastsearch_backwards : lastsearch_backwards;
         var result = getBrowser().fastFind.findAgain(up, false);
 
@@ -180,18 +183,15 @@ function Search() //{{{
         lastsearch_backwards = backwards;
         lastsearch = command;
 
-        vimperator.setMode(vimperator.modes.NORMAL);
-        vimperator.focusContent();
+        vimperator.modes.set(vimperator.modes.NORMAL, null, true);
     }
 
     // Called when the search is cancelled - for example if someone presses
     // escape while typing a search
     this.searchCanceled = function()
     {
-        //removeMode(MODE_SEARCH);
-        vimperator.setMode(vimperator.modes.NORMAL);
+        vimperator.modes.reset();
         this.clear();
-        vimperator.focusContent();
     }
 
     this.highlight = function(word)

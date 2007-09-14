@@ -154,9 +154,11 @@ function CommandLine() //{{{
         //multiline_output_widget.style.height = height + "px";
         multiline_output_widget.height = height + "px";
         multiline_output_widget.collapsed = false;
-        //vimperator.log(content_height);
-        multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+        //multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+        multiline_output_widget.contentWindow.scrollTo(0, 0); // scroll to the end when 'nomore' is set
         multiline_output_widget.contentWindow.focus();
+
+        vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.OUTPUT_MULTILINE);
     }
 
     function autosizeMultilineInputWidget()
@@ -214,8 +216,9 @@ function CommandLine() //{{{
         completion_index = UNINITIALIZED;
 
         // save the mode, because we need to restore it
-        [old_mode, old_extended_mode] = vimperator.getMode();
-        vimperator.setMode(vimperator.modes.COMMAND_LINE, cur_extended_mode, true);
+        old_mode = vimperator.mode;
+        old_extended_mode = vimperator.mode.extended;
+        vimperator.modes.set(vimperator.modes.COMMAND_LINE, cur_extended_mode);
         setPrompt(cur_prompt);
         setCommand(cur_command);
 
@@ -275,9 +278,10 @@ function CommandLine() //{{{
     // @param until_regexp
     this.inputMultiline = function(until_regexp, callback_func)
     {
-        // save the mode, because we need to restore it on blur()
-        [old_mode, old_extended_mode] = vimperator.getMode();
-        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.READ_MULTILINE, true);
+        // save the mode, because we need to restore it
+        old_mode = vimperator.mode;
+        old_extended_mode = vimperator.mode.extended;
+        vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.INPUT_MULTILINE);
 
         // save the arguments, they are needed in the event handler onEvent
         multiline_regexp = until_regexp;
@@ -311,14 +315,15 @@ function CommandLine() //{{{
         {
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
             setTimeout(function() {
-                if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
-                    !vimperator.hasMode(vimperator.modes.READ_MULTILINE))
-                        command_widget.inputField.focus();
+                if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
+                    !(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE) &&
+                    !(vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+                            command_widget.inputField.focus();
             }, 0);
         }
         else if (event.type == "focus")
         {
-            if (!cur_extended_mode)
+            if (!cur_extended_mode && event.target == command_widget.inputField)
                 event.target.blur();
         }
         else if (event.type == "input")
@@ -337,8 +342,9 @@ function CommandLine() //{{{
             {
                 var mode = cur_extended_mode; // save it here, as setMode() resets it
                 addToHistory(command);
-                vimperator.setMode(old_mode, old_extended_mode);
-                vimperator.focusContent();
+                vimperator.modes.reset(); //FIXME: use mode stack
+                //vimperator.modes.set(old_mode, old_extended_mode, true);
+                //vimperator.focusContent();
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 return vimperator.triggerCallback("submit", mode, command);
@@ -349,8 +355,8 @@ function CommandLine() //{{{
             {
                 var res = vimperator.triggerCallback("cancel", cur_extended_mode);
                 addToHistory(command);
-                vimperator.setMode(old_mode, old_extended_mode);
-                vimperator.focusContent();
+                vimperator.modes.set(old_mode, old_extended_mode);
+                //vimperator.focusContent();
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 this.clear();
@@ -534,9 +540,7 @@ function CommandLine() //{{{
                 if (command.length == 0)
                 {
                     vimperator.triggerCallback("cancel", cur_extended_mode);
-                    vimperator.setMode(old_mode, old_extended_mode);
-                    vimperator.focusContent();
-                    this.clear();
+                    vimperator.modes.reset(); // FIXME: use mode stack
                 }
             }
             else // any other key
@@ -558,20 +562,20 @@ function CommandLine() //{{{
                 if (text.match(multiline_regexp))
                 {
                     text = text.replace(multiline_regexp, "");
-                    vimperator.setMode(old_mode, old_extended_mode);
+                    vimperator.modes.set(old_mode, old_extended_mode);
                     multiline_input_widget.collapsed = true;
                     multiline_callback.call(this, text);
                 }
             }
             else if (vimperator.events.isCancelKey(key))
             {
-                vimperator.setMode(old_mode, old_extended_mode);
+                vimperator.modes.set(old_mode, old_extended_mode);
                 multiline_input_widget.collapsed = true;
             }
         }
         else if (event.type == "blur")
         {
-            if (vimperator.hasMode(vimperator.modes.READ_MULTILINE))
+            if (vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE)
                 setTimeout(function() { multiline_input_widget.inputField.focus(); }, 0);
         }
         else if (event.type == "input")
@@ -580,13 +584,80 @@ function CommandLine() //{{{
         }
     }
 
+    // TODO: differentiate between scrollable and not scrollable
     this.onMultilineOutputEvent = function(event)
     {
-        var key = vimperator.events.toString(event);
-        if (vimperator.events.isAcceptKey(key) || vimperator.events.isCancelKey(key))
+        // return 0 if window can never scroll
+        //        1 if window can scroll, but is at the end
+        //        2 if window can scroll
+        function canScroll()
+        {
+            var win = multiline_output_widget.contentWindow;
+            var percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
+            if (percent < 0)
+                return 0;
+            else if (percent >= 1)
+                return 1;
+            else
+                return 2;
+        }
+
+        function hide()
         {
             multiline_output_widget.collapsed = true;
-            vimperator.focusContent();
+            // FIXME: use mode stack
+            vimperator.modes.reset();
+        }
+
+        var key = vimperator.events.toString(event);
+        switch (key)
+        {
+            case ":":
+                vimperator.commandline.open(":", "", vimperator.modes.EX);
+                break;
+
+            case "j":
+            case "<Down>":
+            case "<Return>":
+                if (canScroll() == 2)
+                    multiline_output_widget.contentWindow.scrollByLines(1);
+                else
+                    hide();
+                break;
+            case "k":
+            case "<Up>":
+            case "<BS>":
+                if (canScroll() >= 1)
+                    multiline_output_widget.contentWindow.scrollByLines(-1);
+                else
+                    hide();
+                break;
+            case "f":
+                if (canScroll() == 2)
+                    multiline_output_widget.contentWindow.scrollByPages(1);
+                else
+                    hide();
+                break;
+            case "b":
+                if (canScroll() >= 1)
+                    multiline_output_widget.contentWindow.scrollByPages(-1);
+                else
+                    hide();
+                break;
+            case "g":
+                multiline_output_widget.contentWindow.scrollTo(0, 0);
+                break;
+            case "G":
+                multiline_output_widget.contentWindow.scrollTo(0, multiline_output_widget.contentWindow.scrollMaxY);
+                break;
+
+            default:
+                if (canScroll() == 0 || vimperator.events.isCancelKey(key))
+                    hide();
+                else if (canScroll() == 1 && vimperator.events.isAcceptKey(key))
+                    hide();
+                else
+                    ; // show a more help inline like in vim
         }
     }
 

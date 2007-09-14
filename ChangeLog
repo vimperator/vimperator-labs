@@ -1,3 +1,544 @@
+2007-09-13 01:49  stubenschrott
+
+	* Donators, chrome/content/vimperator/events.js: allow number input
+	  in command line
+
+2007-09-12 17:45  stubenschrott
+
+	* NEWS, chrome/content/vimperator/events.js: fixed msn.com
+
+2007-09-12 17:42  dougkearns
+
+	* vimperator.vim: update Vim syntax highlighting for changed
+	  command names
+
+2007-09-12 15:41  stubenschrott
+
+	* NEWS, vimperator.vim, chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js: - new 'insertmode' option -
+	  fixed c-u behavior
+
+2007-09-12 07:43  stubenschrott
+
+	* chrome/content/vimperator/: editor.js, events.js, mappings.js,
+	  vimperator.js, vimperator.xul: removed block cursor, it is just
+	  too unreliable :( Many improvments in textarea mode with support
+	  for motion commands like c or d; initial f,F,t and T support
+	  (only textarea + visual mode, no motion yet);
+
+2007-09-11 16:01  dougkearns
+
+	* chrome/content/vimperator/options.js: merge new 'popups' option
+
+2007-09-11 06:14  dougkearns
+
+	* chrome/content/vimperator/: options.js: fix 'cpt' help typo
+
+2007-09-11 06:09  dougkearns
+
+	* chrome/content/vimperator/: commands.js, mappings.js: fix :map
+	  and :noremap to work with new multi-mode mappings
+
+2007-09-11 04:03  dougkearns
+
+	* chrome/content/vimperator/: buffers.js, mappings.js,
+	  vimperator.js: move vimperator.getCurrentWord to
+	  vimperator.buffer
+
+2007-09-10 15:40  dougkearns
+
+	* TODO: add document relationship navigation to pending feature
+	  list
+
+2007-09-09 12:22  dougkearns
+
+	* chrome/content/vimperator/find.js: fix case sensitivity of search
+	  highlighting - gFindBar.setCaseSensitivity() in FF2 does not set
+	  the preference as _setCaseSensitivity() does in FF3
+
+2007-09-08 17:21  stubenschrott
+
+	* chrome/content/vimperator/: editor.js, events.js, mappings.js: a
+	  little better block cursor, broke i and a however a little
+
+2007-09-08 16:20  stubenschrott
+
+	* chrome/content/vimperator/editor.js: quick'n dirty block cursor,
+	  VERY BUGGY, stay in insert mode of textareas for now
+
+2007-09-08 14:15  stubenschrott
+
+	* chrome/content/vimperator/editor.js: added forgotten editor.js
+
+2007-09-08 12:10  dougkearns
+
+	* chrome/content/vimperator/ui.js: fixed multiline input widget
+
+2007-09-08 12:08  dougkearns
+
+	* chrome/content/vimperator/commands.js: added :w -> :saveas alias,
+	  and changed :w[open] to :wo[pen]
+
+2007-09-08 12:05  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: fixed
+	  saving qmarks
+
+2007-09-08 12:02  dougkearns
+
+	* chrome/content/vimperator/options.js: merge improved
+	  setTitleString() from MAIN
+
+2007-09-08 11:58  dougkearns
+
+	* chrome/content/vimperator/options.js: use true as the default
+	  value of 'hlsearch' and 'ignorecase' and store 'hlsearch' as a
+	  preference
+
+2007-09-08 11:50  dougkearns
+
+	* NEWS, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/vimperator.js,
+	  chrome/content/vimperator/vimperator.xul: added a visual bell and
+	  replaced the 'beep' option with 'visualbell'
+
+2007-09-08 11:45  dougkearns
+
+	* chrome/content/vimperator/find.js: merge minor Search#find
+	  refactoring from MAIN
+
+2007-09-08 11:41  dougkearns
+
+	* Makefile: use preX.X for development version numbers
+
+2007-09-08 06:17  stubenschrott
+
+	* NEWS, chrome/content/vimperator/buffers.js,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/ui.js,
+	  chrome/content/vimperator/vimperator.js,
+	  chrome/content/vimperator/vimperator.xul: - TEXTAREA support! Not
+	  working perfectly, but for a one-day-work i am impressed myself,
+	  now just needing to add commands with MOTION like cw or d0.
+	  Visual mode works already quite well.  - gi support - BUG:
+	  special keys like home/end in the location bar stoped working by
+	  this dramatic changes
+
+2007-09-07 14:08  stubenschrott
+
+	* vimperator.vim: updated vimperator.vim
+
+2007-09-07 10:06  dougkearns
+
+	* chrome/content/vimperator/options.js: minor improvement to
+	  'popups' help wording
+
+2007-09-07 02:53  stubenschrott
+
+	* chrome/content/vimperator/commands.js: added :w -> :saveas alias,
+	  and changed :w[open] to :wo[pen]
+
+2007-09-06 23:36  stubenschrott
+
+	* chrome/content/vimperator/: events.js, vimperator.js: fixed
+	  saving qmarks
+
+2007-09-06 20:46  stubenschrott
+
+	* vimperator.vim, chrome/content/vimperator/options.js: new
+	  'popups' option, please test thorougly!
+
+2007-09-06 19:48  stubenschrott
+
+	* chrome/content/vimperator/options.js: changed some default
+	  options, fixed "hlsearch"
+
+2007-09-06 19:39  stubenschrott
+
+	* Donators, NEWS, chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/vimperator.js: * and # support
+
+2007-09-06 18:10  stubenschrott
+
+	* NEWS, chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/mappings.js: First commit of caret
+	  mode, many things work, some bugs of course, not sure if we can
+	  fix them since we heavily rely on the firefox interface for it.
+
+2007-09-06 16:24  stubenschrott
+
+	* NEWS, chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/vimperator.js,
+	  chrome/content/vimperator/vimperator.xul: start of a caret mode
+
+2007-09-06 14:32  stubenschrott
+
+	* NEWS, chrome/content/vimperator/events.js: experimental attempt
+	  to keep you in command mode after loading pages
+
+2007-09-06 03:19  stubenschrott
+
+	* chrome/content/vimperator/ui.js: fixed multiline input widget
+
+2007-09-06 02:04  dougkearns
+
+	* NEWS, vimperator.vim, chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js: merge new 'incsearch',
+	  'ignorecase', 'smartcase', 'hlsearch' options from MAIN
+
+2007-09-05 22:46  dougkearns
+
+	* chrome/content/vimperator/: default.css, vimperator.js: make the
+	  visual bell solid black and shorten the timeout interval
+
+2007-09-05 22:39  dougkearns
+
+	* chrome/content/vimperator/help.js: allow the hidden help sections
+	  to be found
+
+2007-09-05 21:33  stubenschrott
+
+	* Donators: updated Donators once again, thanks so much all the
+	  recent donators!
+
+2007-09-05 21:33  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: limit the visual bell to
+	  the web page content area
+
+2007-09-05 21:10  dougkearns
+
+	* chrome/content/vimperator/default.css: remove the border from the
+	  visual bell popup
+
+2007-09-05 20:49  dougkearns
+
+	* NEWS, vimperator.vim, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/vimperator.js,
+	  chrome/content/vimperator/vimperator.xul: add a visual bell and
+	  replace 'beep' with 'visualbell'
+
+2007-09-05 15:44  stubenschrott
+
+	* Makefile, NEWS, install.rdf, chrome/content/vimperator/icon.png:
+	  fixed makefile
+
+2007-09-05 14:51  stubenschrott
+
+	* Donators: updated Donators
+
+2007-09-05 14:19  dougkearns
+
+	* TODO, chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js: document that incremental
+	  searching doesn't search backwards when using ?
+
+2007-09-05 13:45  dougkearns
+
+	* Makefile: use preX.X for development version numbers
+
+2007-09-05 13:44  dougkearns
+
+	* NEWS: update NEWS
+
+2007-09-05 13:32  dougkearns
+
+	* NEWS, vimperator.vim, chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js: add the 'smartcase' option
+	  and support for \c and \C in search patterns
+
+2007-09-05 10:25  dougkearns
+
+	* chrome/content/vimperator/: default.css: remove some redundant
+	  help page CSS properties
+
+2007-09-04 13:30  stubenschrott
+
+	* chrome/content/vimperator/options.js: Made all new search options
+	  true by default, sorry Doug.
+
+2007-09-04 10:08  dougkearns
+
+	* Makefile, chrome/content/vimperator/help.js,
+	  chrome/content/vimperator/logo_white.png: add logo to help page
+
+2007-09-04 08:21  dougkearns
+
+	* NEWS, chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/options.js: add 'ignorecase' option
+
+2007-09-04 04:50  dougkearns
+
+	* Makefile, chrome/content/vimperator/vimperator.js: update version
+	  to 0.6dev
+
+2007-09-04 04:50  dougkearns
+
+	* Makefile, NEWS: update version to 0.5.2dev
+
+2007-09-04 04:12  dougkearns
+
+	* chrome/content/vimperator/options.js: fix typo in 'scroll'
+	  validator - incorrectly restricting value to 0-2
+
+2007-09-04 03:32  stubenschrott
+
+	* chrome/content/vimperator/logo_white.png: made holes in the logo
+	  transparent as well
+
+2007-09-04 02:13  stubenschrott
+
+	* Donators: updated donators
+
+2007-09-03 21:45  dougkearns
+
+	* NEWS: update NEWS for 'hlsearch' and 'incsearch'
+
+2007-09-03 21:43  dougkearns
+
+	* chrome/content/vimperator/: find.js, options.js: add 'incsearch'
+	  option
+
+2007-09-03 21:10  dougkearns
+
+	* chrome/content/vimperator/: find.js, options.js: add 'hlsearch'
+	  option
+
+2007-09-03 17:14  dougkearns
+
+	* ChangeLog, NEWS: update NEWS and ChangeLog for release
+
+2007-09-03 16:48  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: remove CVS from version
+	  string for release
+
+2007-09-03 16:21  dougkearns
+
+	* vimperator.vim: add highlighting for :nohlsearch
+
+2007-09-03 16:20  dougkearns
+
+	* chrome/content/vimperator/default.css: remove the help page
+	  tagline's negative top margin
+
+2007-09-03 16:18  dougkearns
+
+	* chrome/content/vimperator/help.js: remove blank line after logo
+	  in help page
+
+2007-09-03 14:46  dougkearns
+
+	* chrome/content/vimperator/: mappings.js: add usage and long help
+	  for / and ? mappings
+
+2007-09-03 12:18  dougkearns
+
+	* chrome/content/vimperator/: help.js: remove extra blank lines
+	  from help page
+
+2007-09-03 07:26  dougkearns
+
+	* chrome/content/vimperator/options.js: whitespace formatting
+	  improvements
+
+2007-09-03 07:12  dougkearns
+
+	* NEWS, vimperator.vim, chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/ui.js: merge native / and ? search
+
+2007-09-02 16:12  stubenschrott
+
+	* chrome/content/vimperator/help.js: added the vimperator logo to
+	  the help file
+
+2007-09-02 04:27  stubenschrott
+
+	* chrome/content/vimperator/: find.js, ui.js: - Made ? work much
+	  better now - backspacing over the prompt works again
+
+2007-09-01 20:50  dougkearns
+
+	* chrome/content/vimperator/find.js: search entire page page text -
+	  not just links
+
+2007-09-01 20:14  stubenschrott
+
+	* NEWS, chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/find.js,
+	  chrome/content/vimperator/hints.js,
+	  chrome/content/vimperator/mappings.js,
+	  chrome/content/vimperator/options.js: first commit of native /
+	  and ? search, especially ? is buggy right now
+
+2007-09-01 17:57  dougkearns
+
+	* chrome/content/vimperator/: buffers.js: use
+	  document.location.href for buffer.URL rather than document.URL
+	  since the latter is undefined for XUL documents
+
+2007-09-01 13:49  dougkearns
+
+	* vimperatorrc.example: remove outdated :js examples
+
+2007-09-01 13:39  dougkearns
+
+	* chrome/content/vimperator/: completion.js, help.js: add
+	  initialization section to help
+
+2007-08-31 08:54  dougkearns
+
+	* chrome/content/vimperator/events.js: comment out currently unused
+	  DOMTitleChanged event handler
+
+2007-08-31 08:53  dougkearns
+
+	* chrome/content/vimperator/vimperator.js: don't indicate menu mode
+	  when 'smd' is set
+
+2007-08-29 17:55  dougkearns
+
+	* chrome/content/vimperator/events.js: use gContextMenu and the
+	  menubar events for controlling menu mode
+
+2007-08-29 15:20  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: don't enter
+	  menu mode when tooltip popups are shown
+
+2007-08-29 00:41  stubenschrott
+
+	* chrome/content/vimperator/: events.js, hints.js, vimperator.js:
+	  Fixed menu mode to be reliable in Linux and made it more sane in
+	  general
+
+2007-08-28 15:28  stubenschrott
+
+	* chrome/content/vimperator/hints.js: first checkin of the new
+	  FF3-based genElemCoords
+
+2007-08-28 14:16  dougkearns
+
+	* NEWS: update NEWS
+
+2007-08-28 14:14  dougkearns
+
+	* chrome/content/vimperator/: commands.js: minor help highlighting
+	  improvments
+
+2007-08-28 11:55  dougkearns
+
+	* chrome/content/vimperator/vimperator.xul: allow text in the
+	  status line URL field to be selected
+
+2007-08-28 02:41  stubenschrott
+
+	* chrome/content/vimperator/vimperator.xul: text in the statusline
+	  URL can be selected again, sorry Doug :(
+
+2007-08-27 19:35  dougkearns
+
+	* chrome/content/vimperator/: events.js: fix typo in
+	  removeEventListener call
+
+2007-08-27 16:26  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: add menu
+	  mode
+
+2007-08-27 16:19  dougkearns
+
+	* Makefile: update Makefile version to 0.5.1
+
+2007-08-27 16:03  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: improve
+	  menu mode - track open popup count and menubar activation
+
+2007-08-27 14:21  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: revert
+	  changes to accidentally included files in last commit
+
+2007-08-27 14:08  dougkearns
+
+	* Makefile, chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/vimperator.js: GNU make 3.80 can't
+	  parse "else ifeq"
+
+2007-08-27 13:44  dougkearns
+
+	* chrome/content/vimperator/: commands.js: use the coerced boolean
+	  value of args rather than testing for 0 string length when
+	  determining if an arg was passed to an ex command
+
+2007-08-27 09:07  dougkearns
+
+	* chrome/content/vimperator/: commands.js: if no argument is given
+	  to :winopen open about:blank in the new window
+
+2007-08-26 17:12  dougkearns
+
+	* chrome/content/vimperator/: completion.js: complete ':set inv'
+	  with boolean options
+
+2007-08-26 16:27  dougkearns
+
+	* NEWS, chrome/content/vimperator/ui.js: fix commandline history on
+	  Windows - prevent the default cmd_charPrevious action from being
+	  invoked for <Up
+
+2007-08-26 16:26  dougkearns
+
+	* NEWS, chrome/content/vimperator/ui.js: fix commandline history on
+	  Windows - prevent the default cmd_charPrevious action from being
+	  invoked for <Up>
+
+2007-08-26 14:05  dougkearns
+
+	* NEWS: update NEWS
+
+2007-08-26 13:57  dougkearns
+
+	* chrome/content/vimperator/completion.js: add filename completion
+	  for Windows
+
+2007-08-26 12:43  dougkearns
+
+	* chrome/content/vimperator/completion.js: add filename completion
+	  for Windows
+
+2007-08-25 17:48  dougkearns
+
+	* chrome/content/vimperator/bookmarks.js: read the Bookmarks
+	  Toolbar Folder when loading bookmarks - it has previously been
+	  skipped since BookmarksUtils.getAllChildren(root) doesn't read it
+
+2007-08-24 18:37  dougkearns
+
+	* chrome/content/vimperator/bookmarks.js: make sure search engine
+	  aliases are properly initialized
+
+2007-08-24 15:55  stubenschrott
+
+	* ChangeLog, NEWS, chrome/content/vimperator/bookmarks.js: fixed :o
+	  foo bla search
+
 2007-08-24 15:08  stubenschrott
 
 	* chrome/content/vimperator/bookmarks.js: updated history service
