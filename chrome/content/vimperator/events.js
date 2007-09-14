@@ -377,6 +377,9 @@ function Events() //{{{
             return;
 
         var elem = window.document.commandDispatcher.focusedElement;
+        if (elem && elem.readOnly)
+            return;
+
         if (elem && elem instanceof HTMLInputElement &&
                 (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
         {
