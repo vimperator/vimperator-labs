@@ -357,8 +357,8 @@ function Mappings() //{{{
     addDefaultMap(new Map(anymode, ["<C-q>"],
         function() { vimperator.modes.passAllKeys = true; },
         {
-            short_help: "Disable Vimperator keys",
-            help: "Starts an 'ignorekeys' mode, where all keys except <code class=\"mapping\">&lt;Esc&gt;</code> are passed to the next event handler.<br/>" +
+            short_help: "Temporarily quit Vimperator mode",
+            help: "Disable all Vimperator keys except <code class=\"mapping\">&lt;Esc&gt;</code> and pass them to the next event handler.<br/>" +
                   "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
                   "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
                   "in this mode to the web page, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
@@ -367,10 +367,10 @@ function Mappings() //{{{
     addDefaultMap(new Map(anymode, ["<C-v>"],
         function() { vimperator.modes.passNextKey = true; },
         {
-            short_help: "Escape next key",
+            short_help: "Pass through next key",
             help: "If you need to pass a certain key to a JavaScript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
                   "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
-                  "When in 'ignorekeys' mode (activated by <code class=\"mapping\">&lt;C-q&gt;</code>), <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
+                  "When Vimperator mode is temporarily disabled with <code class=\"mapping\">&lt;C-q&gt;</code>, <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["<C-c>"],
@@ -465,8 +465,7 @@ function Mappings() //{{{
                 vimperator.beep();
         },
         {
-            short_help: "Focus last used input field",
-            help: "TODO"
+            short_help: "Focus last used input field"
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["go"],
