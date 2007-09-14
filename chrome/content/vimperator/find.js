@@ -129,7 +129,9 @@ function Search() //{{{
         }
 
         var leader = lastsearch_backwards ? "?" : "/";
-        vimperator.commandline.echo(leader + lastsearch);
+        setTimeout(function() {
+            vimperator.commandline.echo(leader + lastsearch);
+        }, 10);
 
         var up = reverse ? !lastsearch_backwards : lastsearch_backwards;
         var result = getBrowser().fastFind.findAgain(up, false);

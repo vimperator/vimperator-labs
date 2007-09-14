@@ -222,6 +222,8 @@ function Buffer() //{{{
 
                 [number, title] = items[i][0].split(/:\s+/, 2);
                 url = items[i][1];
+                url = url.replace(/>/, "&gt;").replace(/</, "&lt;");
+                title = title.replace(/>/, "&gt;").replace(/</, "&lt;");
 
                 list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
             }

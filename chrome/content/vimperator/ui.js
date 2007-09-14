@@ -342,8 +342,7 @@ function CommandLine() //{{{
             {
                 var mode = cur_extended_mode; // save it here, as setMode() resets it
                 addToHistory(command);
-                vimperator.modes.reset(); //FIXME: use mode stack
-                //vimperator.modes.set(old_mode, old_extended_mode, true);
+                vimperator.modes.reset(true); //FIXME: use mode stack
                 //vimperator.focusContent();
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
@@ -602,11 +601,13 @@ function CommandLine() //{{{
                 return 2;
         }
 
-        function hide()
+        function pass(event)
         {
             multiline_output_widget.collapsed = true;
             // FIXME: use mode stack
             vimperator.modes.reset();
+
+            vimperator.events.onKeyPress(event);
         }
 
         var key = vimperator.events.toString(event);
@@ -622,7 +623,7 @@ function CommandLine() //{{{
                 if (canScroll() == 2)
                     multiline_output_widget.contentWindow.scrollByLines(1);
                 else
-                    hide();
+                    pass(event);
                 break;
             case "k":
             case "<Up>":
@@ -630,19 +631,19 @@ function CommandLine() //{{{
                 if (canScroll() >= 1)
                     multiline_output_widget.contentWindow.scrollByLines(-1);
                 else
-                    hide();
+                    pass(event);
                 break;
             case "f":
                 if (canScroll() == 2)
                     multiline_output_widget.contentWindow.scrollByPages(1);
                 else
-                    hide();
+                    pass(event);
                 break;
             case "b":
                 if (canScroll() >= 1)
                     multiline_output_widget.contentWindow.scrollByPages(-1);
                 else
-                    hide();
+                    pass(event);
                 break;
             case "g":
                 multiline_output_widget.contentWindow.scrollTo(0, 0);
@@ -653,9 +654,9 @@ function CommandLine() //{{{
 
             default:
                 if (canScroll() == 0 || vimperator.events.isCancelKey(key))
-                    hide();
+                    pass(event);
                 else if (canScroll() == 1 && vimperator.events.isAcceptKey(key))
-                    hide();
+                    pass(event);
                 else
                     ; // show a more help inline like in vim
         }

@@ -133,9 +133,9 @@ vimperator.modes = (function()
 		MENU:             1 << 18, // a popupmenu is active
 		LINE:             1 << 19, // linewise visual mode
 
-		reset: function()
+		reset: function(silent)
 		{
-			this.set(vimperator.modes.NORMAL, vimperator.modes.NONE);
+			this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
 		},
 
 		show: function()
