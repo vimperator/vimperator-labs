@@ -1,6 +1,10 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* added 'hlsearchstyle' option to allow for user CSS styling of the
+	  highlighted text strings when 'hlsearch' is set
+	* added 'linksearch' option to restrict page searches to link text - \U
+	  and \u can be used in the search pattern to override 'linksearch'
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
 
