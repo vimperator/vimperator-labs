@@ -144,6 +144,8 @@ function Editor() //{{{
             count--;
         }
 
+        vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+
         switch (motion)
         {
             case "j":
@@ -190,7 +192,7 @@ function Editor() //{{{
                 vimperator.beep();
                 return false;
         }
-        
+
         switch (cmd)
         {
             case "d":
