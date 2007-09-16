@@ -679,6 +679,13 @@ function CommandLine() //{{{
                     ; // fall through
 
             // page down
+            case "f":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByPages(1);
+                else
+                    pass(event);
+                break;
+
             case "<Space>":
             case "<PageDown>":
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
