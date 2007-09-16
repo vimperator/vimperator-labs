@@ -473,6 +473,12 @@ function Options() //{{{
             default_value: false
         }
     ));
+    addOption(new Option(["more"], "boolean",
+        {
+            short_help: "Pause the message list window when more than one screen of listings is displayed",
+            default_value: true
+        }
+    ));
     addOption(new Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",
