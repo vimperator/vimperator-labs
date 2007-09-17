@@ -43,14 +43,15 @@ const vimperator = (function() //{{{
         // extended modes
         EX:               1 << 10,
         READ_MULTILINE:   1 << 11,
-        SEARCH_FORWARD:   1 << 12,
-        SEARCH_BACKWARD:  1 << 13,
-        ESCAPE_ONE_KEY:   1 << 14,
-        ESCAPE_ALL_KEYS:  1 << 15,
-        QUICK_HINT:       1 << 16,
-        EXTENDED_HINT:    1 << 17,
-        ALWAYS_HINT:      1 << 18,
-        MENU:             1 << 19 // a popupmenu is active
+        WRITE_MULTILINE:  1 << 12,
+        SEARCH_FORWARD:   1 << 13,
+        SEARCH_BACKWARD:  1 << 14,
+        ESCAPE_ONE_KEY:   1 << 15,
+        ESCAPE_ALL_KEYS:  1 << 16,
+        QUICK_HINT:       1 << 17,
+        EXTENDED_HINT:    1 << 18,
+        ALWAYS_HINT:      1 << 19,
+        MENU:             1 << 20 // a popupmenu is active
     }
 
     var mode_messages = {};

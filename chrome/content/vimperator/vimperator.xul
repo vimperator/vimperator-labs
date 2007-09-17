@@ -92,6 +92,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
                     </listcols>
                 </listbox>
 
+                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                    onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
+                    <!--onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>-->
+
                 <hbox id="vimperator-commandline" flex="1" hidden="false">
                     <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                     <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
@@ -100,9 +104,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
                         onfocus="vimperator.commandline.onEvent(event);"
                         onblur="vimperator.commandline.onEvent(event);"/>
                 </hbox>
-
-                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                    onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>
 
                 <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="10" hidden="false" collapsed="true" multiline="true"
                         onkeypress="vimperator.commandline.onMultilineInputEvent(event);"

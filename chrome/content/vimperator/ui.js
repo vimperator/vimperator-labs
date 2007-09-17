@@ -133,7 +133,11 @@ function CommandLine() //{{{
         command_widget.value = cmd;
     }
 
-    function setMultiline(cmd)
+    // TODO: the invoking command should be pasted at the top of the MOW and
+    //       the MOW messages should actually be displayed in the commandline
+    //     : extract CSS
+    //     : resize upon a window resize
+    function setMultiline(str)
     {
         // TODO: we should retain any previous command output like Vim
         if (!multiline_output_widget.collapsed)
@@ -141,22 +145,42 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = true;
 
-        // vimperator.log(content_height);
-        cmd = cmd.replace(/\n|\\n/g, "<br/>") + "<br/><span style=\"color: green;\">Press ENTER or type command to continue</span>";
-        multiline_output_widget.contentDocument.body.innerHTML = cmd;
+        var output = str.replace(/\n|\\n/g, "<br/>");
+        //output =  ":" + command_widget.value + "<br/>" + output;
+        output += "<br/>"
+        output += '<span id="end-prompt" style="color: green; background-color: white;">Press ENTER or type command to continue</span>';
+        output += '<span id="more-prompt" style="display: none; position: fixed; top: auto; bottom: 0; left: 0; right: 0; color: green; background-color: white;">';
+        output += "-- More --";
+        output += '</span>';
+        output += '<span id="more-help-prompt" style="display: none; position: fixed; top: auto; bottom: 0; left: 0; right: 0; color: green; background-color: white;">';
+        output += "-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit";
+        output += '</span>';
 
-        // TODO: resize upon a window resize
+        multiline_output_widget.contentDocument.body.innerHTML = output;
+
         var available_height = getBrowser().mPanelContainer.boxObject.height;
         var content_height = multiline_output_widget.contentDocument.height;
-        // vimperator.log(content_height);
         var height = content_height < available_height ? content_height : available_height;
 
         //multiline_output_widget.style.height = height + "px";
         multiline_output_widget.height = height + "px";
         multiline_output_widget.collapsed = false;
-        //vimperator.log(content_height);
-        multiline_output_widget.contentWindow.scrollTo(0, content_height); // scroll to the end when 'nomore' is set
+
+        if (vimperator.options["more"] && multiline_output_widget.contentWindow.scrollMaxY > 0)
+        {
+            multiline_output_widget.contentWindow.document.getElementById("more-prompt").style.display = "inline";
+            multiline_output_widget.contentWindow.scrollTo(0, 0);
+        }
+        else
+        {
+            multiline_output_widget.contentWindow.scrollTo(0, content_height);
+        }
+
         multiline_output_widget.contentWindow.focus();
+
+        // save the mode, because we need to restore it on blur()
+        [old_mode, old_extended_mode] = vimperator.getMode();
+        vimperator.setMode(vimperator.modes.COMMAND_LINE, vimperator.modes.WRITE_MULTILINE, true);
     }
 
     function autosizeMultilineInputWidget()
@@ -311,7 +335,8 @@ function CommandLine() //{{{
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
             setTimeout(function() {
                 if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
-                    !vimperator.hasMode(vimperator.modes.READ_MULTILINE))
+                    !vimperator.hasMode(vimperator.modes.READ_MULTILINE) &&
+                    !vimperator.hasMode(vimperator.modes.WRITE_MULTILINE))
                         command_widget.inputField.focus();
             }, 0);
         }
@@ -577,13 +602,182 @@ function CommandLine() //{{{
         }
     }
 
+    // FIXME: if 'more' is set and the MOW is not scrollable we should still
+    // allow a down motion after an up rather than closing
     this.onMultilineOutputEvent = function(event)
     {
-        var key = vimperator.events.toString(event);
-        if (vimperator.events.isAcceptKey(key) || vimperator.events.isCancelKey(key))
+        var win = multiline_output_widget.contentWindow;
+
+        var show_more_help_prompt = false;
+        var show_more_prompt = false;
+
+        function isScrollable() { return !win.scrollMaxY == 0; }
+
+        function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
+
+        function close()
         {
             multiline_output_widget.collapsed = true;
+            vimperator.setMode(vimperator.modes.NORMAL);
             vimperator.focusContent();
+        }
+
+        function pass(event)
+        {
+            close();
+            vimperator.events.onKeyPress(event);
+        }
+
+        var key = vimperator.events.toString(event);
+
+        switch (key)
+        {
+            case ":":
+                vimperator.commandline.open(":", "", vimperator.modes.EX);
+                break;
+
+            // down a line
+            case "j":
+            case "<Down>":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByLines(1);
+                else
+                    pass(event);
+                break;
+
+            case "<C-j>":
+            case "<C-m>":
+            case "<Return>":
+                if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    win.scrollByLines(1);
+                else
+                    close(); // don't propagate the event for accept keys
+                break;
+
+            // up a line
+            case "k":
+            case "<Up>":
+            case "<BS>":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByLines(-1);
+                else if (vimperator.options["more"] && !isScrollable())
+                    show_more_prompt = true;
+                else
+                    pass(event);
+                break;
+
+            // half page down
+            case "d":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollBy(0, win.innerHeight / 2);
+                else
+                    pass(event);
+                break;
+
+            case "<LeftMouse>":
+            case "<A-LeftMouse>":
+            case "<C-LeftMouse>":
+            case "<S-LeftMouse>":
+                if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
+                    ; // fall through
+                else
+                    break;
+
+            // page down
+            case "f":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByPages(1);
+                else
+                    pass(event);
+                break;
+
+            case "<Space>":
+            case "<PageDown>":
+                if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    win.scrollByPages(1);
+                else
+                    pass(event);
+                break;
+
+            // half page up
+            case "u":
+                // if (more and scrollable)
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollBy(0, -(win.innerHeight / 2));
+                else
+                    pass(event);
+                break;
+
+            // page up
+            case "b":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByPages(-1);
+                else if (vimperator.options["more"] && !isScrollable())
+                    show_more_prompt = true;
+                else
+                    pass(event);
+                break;
+
+            case "<PageUp>":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollByPages(-1);
+                else
+                    pass(event);
+                break;
+
+            // top of page
+            case "g":
+                if (vimperator.options["more"] && isScrollable())
+                    win.scrollTo(0, 0);
+                else if (vimperator.options["more"] && !isScrollable())
+                    show_more_prompt = true;
+                else
+                    pass(event);
+                break;
+
+            // bottom of page
+            case "G":
+                if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    win.scrollTo(0, win.scrollMaxY);
+                else
+                    pass(event);
+                break;
+
+            // copy text to clipboard
+            case "<C-y>":
+                vimperator.copyToClipboard(win.getSelection());
+                break;
+
+            // close the window
+            case "q":
+                close();
+                break;
+
+            // unmapped key
+            default:
+                if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
+                    pass(event);
+                else
+                    show_more_help_prompt = true;
+        }
+
+        // set appropriate prompt string
+        var more_prompt = win.document.getElementById("more-prompt");
+        var more_help_prompt = win.document.getElementById("more-help-prompt");
+
+        if (show_more_help_prompt)
+        {
+            more_prompt.style.display = "none";
+            more_help_prompt.style.display = "inline";
+        }
+        else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
+        {
+            more_help_prompt.style.display = "none";
+            more_prompt.style.display = "inline";
+        }
+        else
+        {
+            more_prompt.style.display = more_help_prompt.style.display = "none";
         }
     }
 

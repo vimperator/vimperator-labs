@@ -1,6 +1,8 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* added 'more' and standard more-prompt key mappings to control
+	  behaviour of the message list pager 
 	* added 'hlsearchstyle' option to allow for user CSS styling of the
 	  highlighted text strings when 'hlsearch' is set
 	* added 'linksearch' option to restrict page searches to link text - \U

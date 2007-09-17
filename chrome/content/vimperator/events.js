@@ -326,6 +326,7 @@ function Events() //{{{
 
         var key = null;
         var modifier = "";
+
         if (event.ctrlKey)
             modifier += "C-";
         if (event.altKey)
@@ -333,33 +334,61 @@ function Events() //{{{
         if (event.metaKey)
             modifier += "M-";
 
-        if (event.charCode == 0)
+        if (event.type == "keypress")
         {
-            if (event.shiftKey)
-                modifier += "S-";
-
-            for (var i in keyTable)
+            if (event.charCode == 0)
             {
-                if (keyTable[i][0] == event.keyCode)
+                if (event.shiftKey)
+                    modifier += "S-";
+
+                for (var i in keyTable)
                 {
-                    key = keyTable[i][1][0];
-                    break;
+                    if (keyTable[i][0] == event.keyCode)
+                    {
+                        key = keyTable[i][1][0];
+                        break;
+                    }
                 }
             }
+            // special handling of the Space key
+            else if (event.charCode == 32)
+            {
+                if (event.shiftKey)
+                    modifier += "S-";
+                key = "Space";
+            }
+            // a normal key like a, b, c, 0, etc.
+            else if (event.charCode > 0)
+            {
+                key = String.fromCharCode(event.charCode);
+                if (modifier.length == 0)
+                    return key;
+            }
+
+            if (key == null)
+                return null;
+
         }
-        // special handling of the Space key
-        else if (event.charCode == 32)
+        else if (event.type == "click" || event.type == "dblclick")
         {
             if (event.shiftKey)
                 modifier += "S-";
-            key = "Space";
-        }
-        // a normal key like a, b, c, 0, etc.
-        else if (event.charCode > 0)
-        {
-            key = String.fromCharCode(event.charCode);
-            if (modifier.length == 0)
-                return key;
+            if (event.type == "dblclick")
+                modifier += "2-";
+            // TODO: triple and quadruple click
+
+            switch (event.button)
+            {
+                case 0:
+                    key = "LeftMouse"
+                    break;
+                case 1:
+                    key = "MiddleMouse"
+                    break;
+                case 2:
+                    key = "RightMouse"
+                    break;
+            }
         }
 
         if (key == null)
@@ -367,6 +396,7 @@ function Events() //{{{
 
         // a key like F1 is always enclosed in < and >
         return "<" + modifier + key + ">";
+
     } //}}}
 
     this.isAcceptKey = function(key)
@@ -449,6 +479,14 @@ function Events() //{{{
                 ; // let flow continue to handle these keys
             else
                 return false;
+
+        }
+
+        if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+            vimperator.hasMode(vimperator.modes.WRITE_MULTILINE))
+        {
+            vimperator.commandline.onMultilineOutputEvent(event);
+            return false;
         }
 
     //  // FIXME: handle middle click in content area {{{
