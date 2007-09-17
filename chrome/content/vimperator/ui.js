@@ -616,11 +616,16 @@ function CommandLine() //{{{
 
         function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
 
-        function pass(event)
+        function close()
         {
             multiline_output_widget.collapsed = true;
             // FIXME: use mode stack
             vimperator.modes.reset();
+        }
+
+        function pass(event)
+        {
+            close();
             vimperator.events.onKeyPress(event);
         }
 
@@ -645,11 +650,13 @@ function CommandLine() //{{{
                     pass(event);
                 break;
 
+            case "<C-j>":
+            case "<C-m>":
             case "<Return>":
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
                     win.scrollByLines(1);
                 else
-                    pass(event);
+                    close(); // don't propagate the event for accept keys
                 break;
 
             // up a line
@@ -673,10 +680,10 @@ function CommandLine() //{{{
                 break;
 
             case "<LeftMouse>":
-                if (!/^(end|more(-help)?)-prompt$/.test(event.target.id))
-                    break;
-                else
+                if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
                     ; // fall through
+                else
+                    break;
 
             // page down
             case "f":
@@ -745,14 +752,12 @@ function CommandLine() //{{{
 
             // close the window
             case "q":
-                this.clear();
+                close();
                 break;
 
-            // invalid key
+            // unmapped key
             default:
                 if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
-                    pass(event);
-                else if (atEnd() && vimperator.events.isAcceptKey(key))
                     pass(event);
                 else
                     show_more_help_prompt = true;
