@@ -614,7 +614,7 @@ function Events() //{{{
     // this is need for sites like msn.com which focus the input field on keydown
     this.onKeyDown = function(event)
     {
-        if (vimperator.modes.passNextKey ^ vimperator.modes.passAllKeys || isFormElemFocused())
+        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) || vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) || isFormElemFocused())
             return true;
 
         event.preventDefault();
