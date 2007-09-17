@@ -461,6 +461,17 @@ vimperator.completion = (function() // {{{
             return build_longest_common_substring(items, filter);
         }, //}}}
 
+        get_sidebar_completions: function(filter) //{{{
+        {
+            var menu = document.getElementById("viewSidebarMenu")
+            var nodes = [];
+
+            for (var i = 0; i < menu.childNodes.length; i++)
+                nodes.push([[menu.childNodes[i].label], ""]);
+            
+            return build_longest_starting_substring(nodes, filter);
+        }, //}}}
+
         exTabCompletion: function(str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
