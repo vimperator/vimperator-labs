@@ -1076,6 +1076,32 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
+    addDefaultCommand(new Command(["sideb[ar]"],
+        function(args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+
+            var menu = document.getElementById("viewSidebarMenu")
+
+            for (var i = 0; i < menu.childNodes.length; i++)
+            {
+                if (menu.childNodes[i].label == args)
+                {
+                    eval(menu.childNodes[i].getAttribute('oncommand'))
+                    break;
+                }
+            }
+        },
+        {
+            short_help: "Open the sidebar",
+            help: "TODO",
+            completer: function(filter) { return vimperator.completion.get_sidebar_completions(filter); }
+        }
+    ));
     addDefaultCommand(new Command(["so[urce]"],
         function(args)
         {
