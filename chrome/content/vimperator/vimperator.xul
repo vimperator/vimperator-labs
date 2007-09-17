@@ -94,8 +94,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
                     </listcols>
                 </listbox>
 
-                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true" onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
-                        <!--onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/-->
+                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                    onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
 
                 <hbox id="vimperator-commandline" flex="1" hidden="false">
                     <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>

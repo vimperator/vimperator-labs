@@ -631,10 +631,6 @@ function CommandLine() //{{{
 
         var key = vimperator.events.toString(event);
 
-        // TODO: move to events.toString()
-        if (event.type == "click" && event.button == 0)
-            key = "<LeftMouse>"
-
         switch (key)
         {
             case ":":
@@ -680,6 +676,9 @@ function CommandLine() //{{{
                 break;
 
             case "<LeftMouse>":
+            case "<A-LeftMouse>":
+            case "<C-LeftMouse>":
+            case "<S-LeftMouse>":
                 if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
                     ; // fall through
                 else

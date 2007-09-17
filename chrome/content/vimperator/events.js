@@ -317,6 +317,7 @@ function Events() //{{{
 
         var key = null;
         var modifier = "";
+
         if (event.ctrlKey)
             modifier += "C-";
         if (event.altKey)
@@ -324,33 +325,61 @@ function Events() //{{{
         if (event.metaKey)
             modifier += "M-";
 
-        if (event.charCode == 0)
+        if (event.type == "keypress")
         {
-            if (event.shiftKey)
-                modifier += "S-";
-
-            for (var i in keyTable)
+            if (event.charCode == 0)
             {
-                if (keyTable[i][0] == event.keyCode)
+                if (event.shiftKey)
+                    modifier += "S-";
+
+                for (var i in keyTable)
                 {
-                    key = keyTable[i][1][0];
-                    break;
+                    if (keyTable[i][0] == event.keyCode)
+                    {
+                        key = keyTable[i][1][0];
+                        break;
+                    }
                 }
             }
+            // special handling of the Space key
+            else if (event.charCode == 32)
+            {
+                if (event.shiftKey)
+                    modifier += "S-";
+                key = "Space";
+            }
+            // a normal key like a, b, c, 0, etc.
+            else if (event.charCode > 0)
+            {
+                key = String.fromCharCode(event.charCode);
+                if (modifier.length == 0)
+                    return key;
+            }
+
+            if (key == null)
+                return null;
+
         }
-        // special handling of the Space key
-        else if (event.charCode == 32)
+        else if (event.type == "click" || event.type == "dblclick")
         {
             if (event.shiftKey)
                 modifier += "S-";
-            key = "Space";
-        }
-        // a normal key like a, b, c, 0, etc.
-        else if (event.charCode > 0)
-        {
-            key = String.fromCharCode(event.charCode);
-            if (modifier.length == 0)
-                return key;
+            if (event.type == "dblclick")
+                modifier += "2-";
+            // TODO: triple and quadruple click
+
+            switch (event.button)
+            {
+                case 0:
+                    key = "LeftMouse"
+                    break;
+                case 1:
+                    key = "MiddleMouse"
+                    break;
+                case 2:
+                    key = "RightMouse"
+                    break;
+            }
         }
 
         if (key == null)
@@ -358,6 +387,7 @@ function Events() //{{{
 
         // a key like F1 is always enclosed in < and >
         return "<" + modifier + key + ">";
+
     } //}}}
 
     this.isAcceptKey = function(key)
@@ -432,13 +462,13 @@ function Events() //{{{
     {
         if (!vimperator.modes.passNextKey)
         {
-            if(vimperator.modes.passAllKeys)
+            if (vimperator.modes.passAllKeys)
             {
                 vimperator.modes.passAllKeys = false;
                 return;
             }
 
-            switch(vimperator.mode)
+            switch (vimperator.mode)
             {
                 case vimperator.modes.VISUAL:
                     if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
@@ -454,7 +484,7 @@ function Events() //{{{
                     break;
 
                 case vimperator.modes.INSERT:
-                    if((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
+                    if ((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
                         vimperator.mode = vimperator.modes.TEXTAREA;
                     else
                         vimperator.modes.reset();
@@ -828,13 +858,13 @@ function Events() //{{{
 
         unregister: function()
         {
-            if(!this._branch) return;
+            if (!this._branch) return;
             this._branch.removeObserver("", this);
         },
 
         observe: function(aSubject, aTopic, aData)
         {
-            if(aTopic != "nsPref:changed") return;
+            if (aTopic != "nsPref:changed") return;
             // aSubject is the nsIPrefBranch we're observing (after appropriate QI)
             // aData is the name of the pref that's been changed (relative to aSubject)
             switch (aData)
