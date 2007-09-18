@@ -1076,7 +1076,27 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["sideb[ar]"],
+    // TODO: sclose instead?
+    addDefaultCommand(new Command(["sbcl[ose]"],
+        function(args)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            document.getElementById("sidebar-box").hidden = true;;
+            document.getElementById("sidebar-splitter").hidden = true;;
+        },
+        {
+            short_help: "Close the sidebar",
+            help: "TODO"
+        }
+    ));
+    // TODO: sopen instead? Separate :sidebar from :sbopen and make them behave
+    // more like :cw, :cope etc
+    addDefaultCommand(new Command(["sideb[ar]", "sb[ar]", "sbope[n]"],
         function(args)
         {
             if (!args)
