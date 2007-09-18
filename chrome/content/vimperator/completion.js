@@ -467,9 +467,16 @@ vimperator.completion = (function() // {{{
             var nodes = [];
 
             for (var i = 0; i < menu.childNodes.length; i++)
-                nodes.push([[menu.childNodes[i].label], ""]);
+                nodes.push([menu.childNodes[i].label, ""]);
+
+            if (!filter)
+                return nodes;
+
+            var mapped = nodes.map(function($_) {
+                return [[$_[0]], $_[1]];
+            });
             
-            return build_longest_starting_substring(nodes, filter);
+            return build_longest_common_substring(mapped, filter);
         }, //}}}
 
         exTabCompletion: function(str) //{{{
