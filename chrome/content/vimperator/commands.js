@@ -586,6 +586,75 @@ function Commands() //{{{
                   "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox."
         }
     ));
+    addDefaultCommand(new Command(["let"],
+        function(args)
+        {
+            if (!args)
+            {
+                return;
+                // List all defined variables
+            }
+
+            var match;
+            // 1 - type, 2 - name, 3 - +-., 4 - expr
+            if (match = args.match(/([$@&])?([\w:]+)\s*([+-.])?=\s*(.+)/))
+            {
+                if (!match[1])
+                {
+                    var reference = vimperator.variableReference(match[2]);
+                    if (!reference[0] && match[3])
+                        return vimperator.echoerr("E121: Undefined variable: " + match[2]);
+
+                    var expr = vimperator.eval(match[4]);
+                    if (typeof expr === undefined)
+                        return vimperator.echoerr("E15: Invalid expression: " + match[4]);
+                    else
+                    {
+                        if (!reference[0] && reference[2] == 'g')
+                            reference[0] = vimperator.globalVariables;
+                        else
+                            return; // for now
+
+                        if (match[3])
+                        {
+                            if (match[3] == '+')
+                                reference[0][reference[1]] += expr;
+                            else if (match[3] == '-')
+                                reference[0][reference[1]] -= expr;
+                            else if (match[3] == '.')
+                                reference[0][reference[1]] += expr.toString();
+                        }
+                        else
+                            reference[0][reference[1]] = expr;
+                    }
+                }
+            }
+            // 1 - name
+            else if (match = args.match(/^\s*([\w:]+)\s*$/))
+            {
+                var reference = vimperator.variableReference(match[1]);
+                if (!reference[0])
+                    return vimperator.echoerr("E121: Undefined variable: " + match[1]);
+
+                var value = reference[0][reference[1]];
+                if (typeof value == 'number')
+                    var prefix = '#';
+                else if (typeof value == 'function')
+                    var prefix = '*';
+                else
+                    var prefix = '';
+                vimperator.echo(reference[1] + '\t\t' + prefix + value);
+            }
+        },
+        {
+            usage: ["let {var-name} [+-.]= {expr1}", "let {var-name}", "let"],
+            short_help: "Sets or lists a variable",
+            help: "Sets the variable <code class=\"argument\">{var-name}</code> " +
+                  "to the value of the expression <code class=\"argument\">{expr1}</code>." +
+                  "If no expression is given, the value of the variable is displayed." +
+                  "Without arguments, displays a list of all variables."
+        }
+    ));
     addDefaultCommand(new Command(["map"],
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
@@ -1235,6 +1304,35 @@ function Commands() //{{{
             usage: ["[count]u[ndo]"],
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab."
+        }
+    ));
+    addDefaultCommand(new Command(["unl[et]"],
+        function(args, special)
+        {
+            if (!args)
+                return vimperator.echoerr("E471: Argument required");
+
+            var names = args.split(/ /);
+            if (typeof names == 'string') names = [names];
+            var length = names.length;
+            for (var i = 0, name = names[i]; i < length; name = names[++i])
+            {
+                var reference = vimperator.variableReference(name);
+                if (!reference[0])
+                {
+                    if (!special)
+                        vimperator.echoerr("E108: No such variable: " + name);
+                    return;
+                }
+
+                delete reference[0][reference[1]];
+            }
+        },
+        {
+            usage: ["unl[et][!] {name} ..."],
+            short_help: "Deletes a variable.",
+            help: "Deletes the variable <code class=\"argument\">{name}</code>." +
+                  "Several variable names can be given."
         }
     ));
     addDefaultCommand(new Command(["unm[ap]"],

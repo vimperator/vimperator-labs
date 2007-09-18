@@ -247,6 +247,75 @@ const vimperator = (function() //{{{
             return new LocalFile(path, mode, perms, tmp);
         },
 
+        // partial sixth level expression evaluation
+        eval: function(string)
+        {
+            string = string.toString().replace(/^\s*/, '').replace(/\s*$/, '');
+            var match = string.match(/^&(\w+)/);
+            if (match)
+            {
+                var opt = this.options.get(match[1]);
+                if (!opt)
+                {
+                    this.echoerr('E113: Unknown option: ' + match[1]);
+                    return;
+                }
+                var type = opt.type;
+                var value = opt.getter();
+                if (type != 'boolean' && type != 'number')
+                    value = value.toString();
+                return value;
+            }
+
+            // String
+            if (match = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
+            {
+                if (match)
+                    return match[2].toString();
+                else
+                {
+                    this.echoerr('E115: Missing quote: ' + string);
+                    return;
+                }
+            }
+
+            // Number
+            if (match = string.match(/^(\d+)$/))
+            {
+                return parseInt(match[1]);
+            }
+
+            var reference = this.variableReference(string);
+            if (!reference[0])
+                this.echoerr('E121: Undefined variable: ' + string);
+            else
+                return reference[0][reference[1]];
+
+            return;
+        },
+        variableReference: function(string)
+        {
+            if (!string) return [null, null, null];
+            if (match = string.match(/^([bwtglsv]):(\w+)/))      // Variable
+            {
+                // Other variables should be implemented
+                if (match[1] == 'g')
+                {
+                    if (match[2] in this.globalVariables)
+                        return [this.globalVariables, match[2], match[1]];
+                    else
+                        return [null, match[2], match[1]];
+                }
+            }
+            else            // Global variable
+            {
+                if (string in this.globalVariables)
+                    return [this.globalVariables, string, 'g'];
+                else
+                    return [null, string, 'g'];
+            }
+        },
+
         // logs a message to the javascript error console
         log: function(msg, level)
         {
@@ -512,6 +581,8 @@ const vimperator = (function() //{{{
 
             vimperator.echo    = vimperator.commandline.echo;
             vimperator.echoerr = vimperator.commandline.echoErr;
+
+            vimperator.globalVariables = {};
 
             // TODO: move elsewhere
             vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
