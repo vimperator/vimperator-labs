@@ -1086,8 +1086,8 @@ function Commands() //{{{
                 return;
             }
 
-            document.getElementById("sidebar-box").hidden = true;;
-            document.getElementById("sidebar-splitter").hidden = true;;
+            if (document.getElementById("sidebar-box").hidden == false)
+                toggleSidebar();
         },
         {
             short_help: "Close the sidebar",
