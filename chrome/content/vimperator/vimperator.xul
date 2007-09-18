@@ -57,6 +57,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.7" src="ui.js"/>
 
     <window id="main-window">
+
         <toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
             <vbox id="vimperator-container" flex="1" hidden="false">
                 <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
@@ -113,18 +114,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
             </vbox>
         </toolbar>
 
-        <keyset id="mainKeyset">
-           <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
-           <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
-           <!-- other keys are handled inside vimperator.js event loop -->
-        </keyset>
-
-        <!--
-        <popupset id="vimperator-popupset">
-            <popup id="vimperator-visualbell"/>
-        </popupset>
-        -->
         <panel id="vimperator-visualbell"/>
+
+        <keyset id="mainKeyset">
+            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
+            <!-- other keys are handled inside vimperator.js event loop -->
+        </keyset>
 
         <!--this notifies us also of focus events in the XUL
             from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
@@ -138,6 +134,37 @@ the terms of any one of the MPL, the GPL or the LGPL.
             oncommandupdate="vimperator.events.onSelectionChange(event);"/>
 
     </window>
+
+    <menupopup id="viewSidebarMenu">
+        <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
+        <menuitem observes="vimperator-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
+        <menuitem observes="vimperator-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
+    </menupopup>
+
+    <broadcasterset id="mainBroadcasterSet">
+        <broadcaster id="vimperator-viewAddonsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
+            sidebartitle="Add-ons"
+            oncommand="toggleSidebar('vimperator-viewAddonsSidebar');"/>
+        <broadcaster id="vimperator-viewPreferencesSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="about:config"
+            sidebartitle="Preferences"
+            oncommand="toggleSidebar('vimperator-viewPreferencesSidebar');"/>
+        <broadcaster id="vimperator-viewDownloadsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
+            sidebartitle="Downloads"
+            oncommand="toggleSidebar('vimperator-viewDownloadsSidebar');"/>
+    </broadcasterset>
+
 </overlay>
 
 <!-- vim: set fdm=marker sw=4 ts=4 et: -->
