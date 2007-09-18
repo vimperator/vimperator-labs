@@ -19,8 +19,6 @@ BUGS:
 
 FEATURES:
 9 :command for new commands
-9 :sidebar {addons/bookmarks/history/downloads/...} command with tab completion
-  (and automatically getting possible sidebar elements from View->sidebar
 9 Use our own find-as-you-type mechanism (like conkeror does)
 9 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer

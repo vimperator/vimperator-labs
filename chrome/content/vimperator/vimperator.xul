@@ -55,6 +55,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.7" src="ui.js"/>
 
     <window id="main-window">
+
         <toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
             <vbox id="vimperator-container" flex="1" hidden="false">
                 <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
@@ -94,7 +95,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
                 <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
                     onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
-                    <!--onkeypress="vimperator.commandline.onMultilineOutputEvent(event)"/>-->
 
                 <hbox id="vimperator-commandline" flex="1" hidden="false">
                     <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
@@ -122,6 +122,37 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <box id="vimperator-visualbell" hidden="true"/>
 
     </window>
+
+    <menupopup id="viewSidebarMenu">
+        <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
+        <menuitem observes="vimperator-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
+        <menuitem observes="vimperator-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
+    </menupopup>
+
+    <broadcasterset id="mainBroadcasterSet">
+        <broadcaster id="vimperator-viewAddonsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
+            sidebartitle="Add-ons"
+            oncommand="toggleSidebar('vimperator-viewAddonsSidebar');"/>
+        <broadcaster id="vimperator-viewPreferencesSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="about:config"
+            sidebartitle="Preferences"
+            oncommand="toggleSidebar('vimperator-viewPreferencesSidebar');"/>
+        <broadcaster id="vimperator-viewDownloadsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
+            sidebartitle="Downloads"
+            oncommand="toggleSidebar('vimperator-viewDownloadsSidebar');"/>
+    </broadcasterset>
+
 </overlay>
 
 <!-- vim: set fdm=marker sw=4 ts=4 et: -->
