@@ -469,7 +469,7 @@ vimperator.completion = (function() // {{{
             for (var i = 0; i < menu.childNodes.length; i++)
                 nodes.push([[menu.childNodes[i].label], ""]);
             
-            return build_longest_common_substring(nodes, filter);
+            return build_longest_starting_substring(nodes, filter);
         }, //}}}
 
         exTabCompletion: function(str) //{{{
