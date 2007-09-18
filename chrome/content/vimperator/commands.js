@@ -1318,16 +1318,19 @@ function Commands() //{{{
                         while (i--)
                             eval(args);
 
+                    if (special)
+                        return;
+
                     var after_time = Date.now();
                 
                     if ((after_time - before_time) / count >= 100)
                         var each = "  Each time:  <span style=\"color: green\">" +
                             ((after_time - before_time) / 1000.0 / count) +
-                            "</span> sec</br>";
+                            "</span> sec<br/>";
                     else
                         var each = "  Each time:  <span style=\"color: green\">" +
                             ((after_time - before_time) / count) +
-                            "</span> msec</br>";
+                            "</span> msec<br/>";
 
                     if (after_time - before_time >= 100)
                         var total = "  Total time: <span style=\"color: red\">" +
@@ -1348,6 +1351,10 @@ function Commands() //{{{
                         vimperator.execute(args);
                     else
                         eval(args);
+
+                    if (special)
+                        return;
+
                     var after_time = Date.now();
                     
                     if (after_time - before_time >= 100)
@@ -1362,11 +1369,12 @@ function Commands() //{{{
             }
         },
         {
-            usage: ["{count}time {code|:command}"],
+            usage: ["{count}time[!] {code|:command}"],
             short_help: "Profile a piece of code or a command",
-            help: "Runs {code} {count} times (default 1) and returns the elapsed time. " +
-                  "{code} is always passed to JavaScript's eval(), which might be slow, so take the results with a grain of salt. " +
-                  "If {code} starts with a :, it is executed as a vimperator command"
+            help: "Runs <code class=\"argument\">{code} {count}</code> times (default 1) and returns the elapsed time. " +
+                  "<code class=\"argument\">{code}</code> is always passed to JavaScript's eval(), which might be slow, so take the results with a grain of salt.<br/>" +
+                  "If <code class=\"argument\">{code}</code> starts with a :, it is executed as a vimperator command.<br/>" +
+                  "Use the special version with [!] if you just want to run any command multiple times without showing profiling statistics."
         }
     ));
     addDefaultCommand(new Command(["u[ndo]"],
