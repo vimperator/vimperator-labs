@@ -509,8 +509,9 @@ function Events() //{{{
                 default:
                     // clear any selection made
                     var selection = window.content.getSelection();
-                    if (selection)
+                    try { // a simple if (selection) does not work
                         selection.collapseToStart();
+                    } catch (e) { }
                     vimperator.commandline.clear();
 
                     vimperator.modes.reset();
