@@ -25,16 +25,19 @@ function Editor() //{{{
 
     function editor()
     {
-        return window.document.commandDispatcher.focusedElement;
+        var editor = window.document.commandDispatcher.focusedElement;
+        if (editor && editor.mInputField)
+            editor = editor.mInputField;
+        return editor;
     }
 
     function getController()
     {
-        var el = window.document.commandDispatcher.focusedElement;
-        if (!el || !el.controllers)
+        var editor = editor();
+        if (!editor || !editor.controllers)
             return null;
 
-        return el.controllers.getControllerAt(0);
+        return editor.controllers.getControllerAt(0);
     }
 
     this.line = function()

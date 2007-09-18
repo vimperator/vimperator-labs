@@ -13,4 +13,5 @@ Patches:
   * Bart Trojanowski (Makefile)
   * Hannes Rist (:set titlestring support)
   * Marco Candrian (shift-insert patch)
+  * Nikolai Weibull ($VIMPERATOR_HOME)
 </pre>

@@ -51,10 +51,13 @@ const vimperator = (function() //{{{
         if (WINDOWS)
             path = path.replace('/', '\\', 'g');
 
-        // expand "~" to HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+        // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
         if (/^~/.test(path))
         {
-            var home = environment_service.get("HOME");
+            var home = environment_service.get("VIMPERATOR_HOME");
+
+            if (!home)
+                home = environment_service.get("HOME");
 
             if (WINDOWS && !home)
                 home = environment_service.get("USERPROFILE") ||
@@ -250,56 +253,59 @@ const vimperator = (function() //{{{
         // partial sixth level expression evaluation
         eval: function(string)
         {
-            string = string.toString().replace(/^\s*/, '').replace(/\s*$/, '');
+            string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
             var match = string.match(/^&(\w+)/);
             if (match)
             {
                 var opt = this.options.get(match[1]);
                 if (!opt)
                 {
-                    this.echoerr('E113: Unknown option: ' + match[1]);
+                    this.echoerr("E113: Unknown option: " + match[1]);
                     return;
                 }
                 var type = opt.type;
                 var value = opt.getter();
-                if (type != 'boolean' && type != 'number')
+                if (type != "boolean" && type != "number")
                     value = value.toString();
                 return value;
             }
 
             // String
-            if (match = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
+            else if (match = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
             {
                 if (match)
                     return match[2].toString();
                 else
                 {
-                    this.echoerr('E115: Missing quote: ' + string);
+                    this.echoerr("E115: Missing quote: " + string);
                     return;
                 }
             }
 
             // Number
-            if (match = string.match(/^(\d+)$/))
+            else if (match = string.match(/^(\d+)$/))
             {
                 return parseInt(match[1]);
             }
 
             var reference = this.variableReference(string);
             if (!reference[0])
-                this.echoerr('E121: Undefined variable: ' + string);
+                this.echoerr("E121: Undefined variable: " + string);
             else
                 return reference[0][reference[1]];
 
             return;
         },
+
         variableReference: function(string)
         {
-            if (!string) return [null, null, null];
-            if (match = string.match(/^([bwtglsv]):(\w+)/))      // Variable
+            if (!string)
+                return [null, null, null];
+
+            if (match = string.match(/^([bwtglsv]):(\w+)/)) // Variable
             {
                 // Other variables should be implemented
-                if (match[1] == 'g')
+                if (match[1] == "g")
                 {
                     if (match[2] in this.globalVariables)
                         return [this.globalVariables, match[2], match[1]];
@@ -307,12 +313,12 @@ const vimperator = (function() //{{{
                         return [null, match[2], match[1]];
                 }
             }
-            else            // Global variable
+            else // Global variable
             {
                 if (string in this.globalVariables)
-                    return [this.globalVariables, string, 'g'];
+                    return [this.globalVariables, string, "g"];
                 else
-                    return [null, string, 'g'];
+                    return [null, string, "g"];
             }
         },
 
@@ -340,12 +346,13 @@ const vimperator = (function() //{{{
                 }
                 catch (e)
                 {
-                    value = '';
+                    value = "";
                 }
 
-                string += i + ': ' + value + '\n';
+                string += i + ": " + value + "\n";
             }
             vimperator.log(string, level);
+            return string;
         },
 
         // open one or more URLs

@@ -231,10 +231,11 @@ function Events() //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    this.wantsModeReset = true; // used in onFocusChange since Firefox is so buggy here
 
     this.destroy = function()
     {
-        // BIG TODO: removeEventListeners() to avoid mem leaks
+        // removeEventListeners() to avoid mem leaks
         window.dump("TODO: remove all eventlisteners\n");
 
         getBrowser().removeProgressListener(this.progressListener);
@@ -243,6 +244,9 @@ function Events() //{{{
         window.removeEventListener("popuphidden", exitPopupMode, true);
         window.removeEventListener("DOMMenuBarActive", enterMenuMode, true);
         window.removeEventListener("DOMMenuBarInactive", exitMenuMode, true);
+
+        window.removeEventListener("keypress", this.onKeyPress, true);
+        window.removeEventListener("keydown", this.onKeyDown, true);
     }
 
     // This method pushes keys into the event queue from vimperator
@@ -253,7 +257,7 @@ function Events() //{{{
     //              if you want < to be taken literally, prepend it with a \\
     this.feedkeys = function(keys)
     {
-        var doc = window.content.document;
+        var doc = window.document;
         var view = window.document.defaultView;
         var escapeKey = false; // \ to escape some special keys
 
@@ -295,13 +299,13 @@ function Events() //{{{
                     i += matches[0].length + 1;
                 }
             }
-            var evt = doc.createEvent('KeyEvents');
-            evt.initKeyEvent('keypress', true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
 
             var elem = window.document.commandDispatcher.focusedElement;
             if (!elem)
-                elem = window;
+                elem = window.content;
 
+            var evt = doc.createEvent("KeyEvents");
+            evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
             elem.dispatchEvent(evt);
         }
     }
@@ -401,8 +405,12 @@ function Events() //{{{
 
     // argument "event" is delibarately not used, as i don't seem to have
     // access to the real focus target
+    //
+    // the ugly wantsModeReset is needed, because firefox generates a massive
+    // amount of focus changes for things like <C-v><C-k> (focusing the search field)
     this.onFocusChange = function(event)
     {
+        // command line has it's own focus change handler
         if (vimperator.mode == vimperator.modes.COMMAND_LINE)
             return;
 
@@ -413,11 +421,13 @@ function Events() //{{{
         if (elem && elem instanceof HTMLInputElement &&
                 (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
         {
+            this.wantsModeReset = false;
             vimperator.mode = vimperator.modes.INSERT;
             vimperator.buffer.lastInputField = elem;
         }
         else if (elem && elem instanceof HTMLTextAreaElement)
         {
+            this.wantsModeReset = false;
             if (vimperator.options["insertmode"])
                 vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
             else if (elem.selectionEnd - elem.selectionStart > 0)
@@ -429,7 +439,13 @@ function Events() //{{{
         else if (vimperator.mode == vimperator.modes.INSERT ||
                  vimperator.mode == vimperator.modes.TEXTAREA ||
                  vimperator.mode == vimperator.modes.VISUAL)
-            vimperator.modes.reset();
+        {
+            this.wantsModeReset = true;
+            setTimeout(function() {
+                    if (vimperator.events.wantsModeReset)
+                        vimperator.modes.reset();
+            }, 10);
+        }
     }
 
     this.onSelectionChange = function(event)
@@ -511,7 +527,6 @@ function Events() //{{{
              return true;
 
         var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
-
 
         // menus have their own command handlers
         if (vimperator.modes.extended & vimperator.modes.MENU)
@@ -740,7 +755,6 @@ function Events() //{{{
         if (vimperator.modes.passNextKey ^ vimperator.modes.passAllKeys || isFormElemFocused())
             return true;
 
-        event.preventDefault();
         event.stopPropagation();
         return false;
     }
