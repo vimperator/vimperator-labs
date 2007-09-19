@@ -25,19 +25,16 @@ function Editor() //{{{
 
     function editor()
     {
-        var editor = window.document.commandDispatcher.focusedElement;
-        if (editor && editor.mInputField)
-            editor = editor.mInputField;
-        return editor;
+        return window.document.commandDispatcher.focusedElement;
     }
 
     function getController()
     {
-        var editor = editor();
-        if (!editor || !editor.controllers)
+        var ed = editor();
+        if (!ed || !ed.controllers)
             return null;
 
-        return editor.controllers.getControllerAt(0);
+        return ed.controllers.getControllerForCommand("cmd_beginLine");
     }
 
     this.line = function()
@@ -99,11 +96,7 @@ function Editor() //{{{
     this.executeCommand = function(cmd, count)
     {
         var controller = getController();
-        var el = window.document.commandDispatcher.focusedElement;
-        if (!controller || !el)
-            return false;
-        
-        if (!controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
+        if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
         {
             vimperator.beep();
             return false;
