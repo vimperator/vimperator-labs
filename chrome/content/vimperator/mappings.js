@@ -689,42 +689,88 @@ function Mappings() //{{{
             help: "The currently selected text is copied to the system clipboard."
         }
     ));
+
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["zi", "+"],
-        function(count) { vimperator.buffer.zoomIn(count > 1 ? count : 1); },
+        function(count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, false); },
         {
-            short_help: "Zoom in current web page by 25%",
+            short_help: "Enlarge text zoom of current web page",
+            help: "Mnemonic: zoom in",
             flags: Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zI"],
-        function(count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 4); },
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zm"],
+        function(count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
         {
-            short_help: "Zoom in current web page by 100%",
+            short_help: "Enlarge text zoom of current web page by a larger amount",
+            help: "Mnemonic: zoom more",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["zo", "-"],
-        function(count) { vimperator.buffer.zoomOut(count > 1 ? count : 1); },
+        function(count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, false); },
         {
-            short_help: "Zoom out current web page by 25%",
+            short_help: "Reduce text zoom of current web page",
+            help: "Mnemonic: zoom out",
             flags: Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zO"],
-        function(count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 4); },
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zr"],
+        function(count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
         {
-            short_help: "Zoom out current web page by 100%",
+            short_help: "Reduce text zoom of current web page by a larger amount",
+            help: "Mnemonic: zoom reduce",
             flags: Mappings.flags.COUNT
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["zz"],
         function(count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
         {
-            short_help: "Set zoom value of the web page",
-            help: "Zoom value can be between 1 and 2000%. If it is omitted, zoom is reset to 100%.",
+            short_help: "Set text zoom value of current web page",
+            help: "Zoom value can be between 1 and 2000%. If it is omitted, text zoom is reset to 100%.",
             flags: Mappings.flags.COUNT
         }
     ));
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zI"],
+        function(count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, true); },
+        {
+            short_help: "Enlarge full zoom of current web page",
+            help: "Mnemonic: zoom in",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zM"],
+        function(count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
+        {
+            short_help: "Enlarge full zoom of current web page by a larger amount",
+            help: "Mnemonic: zoom more",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zO"],
+        function(count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, true); },
+        {
+            short_help: "Reduce full zoom of current web page",
+            help: "Mnemonic: zoom out",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zR"],
+        function(count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
+        {
+            short_help: "Reduce full zoom of current web page by a larger amount",
+            help: "Mnemonic: zoom reduce",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map([vimperator.modes.NORMAL], ["zZ"],
+        function(count) { vimperator.buffer.fullZoom = count > 1 ? count : 100; },
+        {
+            short_help: "Set full zoom value of current web page",
+            help: "Zoom value can be between 1 and 2000%. If it is omitted, full zoom is reset to 100%.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["ZQ"],
         function() { vimperator.quit(false); },
         {

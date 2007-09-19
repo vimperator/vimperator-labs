@@ -32,55 +32,67 @@ function Buffer() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var zoom_manager = ZoomManager.prototype.getInstance();
-    const ZOOM_INTERVAL = 25;
+    var zoom_levels = [ 1, 10, 25, 50, 75, 90, 100,
+                        120, 150, 200, 300, 500, 1000, 2000 ];
 
-    // initialize the zoom levels
-    zoom_manager.zoomFactors = [zoom_manager.MIN];
-    for (var i = ZOOM_INTERVAL; i <= zoom_manager.MAX; i += ZOOM_INTERVAL)
-        zoom_manager.zoomFactors.push(i);
-
-    function setZoom(value)
+    function setZoom(value, full_zoom)
     {
-        try
+        if (value < 1 || value > 2000)
         {
-            zoom_manager.textZoom = value;
-            vimperator.echo("Text zoom: " + zoom_manager.textZoom + "%");
-            // TODO: shouldn't this just recalculate hint coords, rather than
-            // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
-            // on the recalculation side effect? -- djk
-            // NOTE: we could really do with a zoom event...
-            vimperator.hints.reshowHints();
+            vimperator.echoerr("Zoom value out of range (1-2000%)");
+            return false;
         }
-        catch (e) // Components.results.NS_ERROR_INVALID_ARG
-        {
-            vimperator.echoerr("Zoom value out of range (" + zoom_manager.MIN + "-" + zoom_manager.MAX + ")");
-        }
+
+        if (full_zoom)
+            getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom = value / 100.0;
+        else
+            getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom = value / 100.0;
+
+        vimperator.echo((full_zoom ? "Full zoom: " : "Text zoom: ") + value + "%");
+
+        // TODO: shouldn't this just recalculate hint coords, rather than
+        // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
+        // on the recalculation side effect? -- djk
+        // NOTE: we could really do with a zoom event...
+        vimperator.hints.reshowHints();
     }
 
-    // NOTE: this is only needed as there's currently no way to specify a
-    // multiplier when calling ZM.reduce()/ZM.enlarge().  TODO: see if we can
-    // get this added to ZoomManager
-    function bumpZoomLevel(steps)
+    function bumpZoomLevel(steps, full_zoom)
     {
-        var adjusted_zoom = zoom_manager.snap(zoom_manager.textZoom);
-        var current = zoom_manager.indexOf(adjusted_zoom);
-        var next = current + steps;
+        if (full_zoom)
+            var value = getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom * 100.0;
+        else
+            var value = getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom * 100.0;
 
-        var start = 0, end = zoom_manager.zoomFactors.length - 1;
-
-        if ((current == start && steps < 0) || (current == end && steps > 0))
+        var index = -1;
+        if (steps <= 0)
+        {
+            for (var i = zoom_levels.length - 1; i >= 0; i--)
+            {
+                if ((zoom_levels[i] + 0.01) < value) // 0.01 for float comparison
+                {
+                    index = i + 1 + steps;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (var i = 0; i < zoom_levels.length; i++)
+            {
+                if ((zoom_levels[i] - 0.01) > value) // 0.01 for float comparison
+                {
+                    index = i - 1 + steps;
+                    break;
+                }
+            }
+        }
+        if (index < 0 || index >= zoom_levels.length)
         {
             vimperator.beep();
             return;
         }
-
-        if (next < start)
-            next = start;
-        else if (next > end)
-            next = end;
-
-        setZoom(zoom_manager.zoomFactors[next]);
+        setZoom(zoom_levels[index], full_zoom);
     }
 
     function checkScrollYBounds(win, direction)
@@ -127,12 +139,20 @@ function Buffer() //{{{
 
     this.__defineGetter__("textZoom", function()
     {
-        return zoom_manager.textZoom;
+        return getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom * 100;
     });
-
     this.__defineSetter__("textZoom", function(value)
     {
-        setZoom(value);
+        setZoom(value, false);
+    });
+
+    this.__defineGetter__("fullZoom", function()
+    {
+        return getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom * 100;
+    });
+    this.__defineSetter__("fullZoom", function(value)
+    {
+        setZoom(value, true);
     });
 
     this.__defineGetter__("title", function()
@@ -396,14 +416,14 @@ function Buffer() //{{{
         vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
     }
 
-    this.zoomIn = function(steps)
+    this.zoomIn = function(steps, full_zoom)
     {
-        bumpZoomLevel(steps);
+        bumpZoomLevel(steps, full_zoom);
     }
 
-    this.zoomOut = function(steps)
+    this.zoomOut = function(steps, full_zoom)
     {
-        bumpZoomLevel(-steps);
+        bumpZoomLevel(-steps, full_zoom);
     }
     //}}}
 } //}}}

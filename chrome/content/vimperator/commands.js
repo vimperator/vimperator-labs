@@ -1498,7 +1498,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["zo[om]"],
-        function(args)
+        function(args, special)
         {
             var level;
 
@@ -1512,7 +1512,10 @@ function Commands() //{{{
             }
             else if (/^[+-]\d+$/.test(args))
             {
-                level = vimperator.buffer.textZoom + parseInt(args);
+                if (special)
+                    level = vimperator.buffer.fullZoom + parseInt(args);
+                else
+                    level = vimperator.buffer.textZoom + parseInt(args);
 
                 // relative args shouldn't take us out of range
                 if (level < 1)
@@ -1526,13 +1529,17 @@ function Commands() //{{{
                 return;
             }
 
-            vimperator.buffer.textZoom = level;
+            if (special)
+                vimperator.buffer.fullZoom = level;
+            else
+                vimperator.buffer.textZoom = level;
         },
         {
-            usage: ["zo[om] [value]", "zo[om] +{value} | -{value}"],
-            short_help: "Set zoom value of the web page",
+            usage: ["zo[om][!] [value]", "zo[om][!] +{value} | -{value}"],
+            short_help: "Set zoom value of current web page",
             help: "If <code class=\"argument\">{value}</code> can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
-                  "If <code class=\"argument\">{value}</code> is omitted, zoom is reset to 100%."
+                  "If <code class=\"argument\">{value}</code> is omitted, zoom is reset to 100%.<br/>" +
+                  "Normally this command operates on the text zoom, if used with <code class=\"argument\">[!]</code> it operates on full zoom."
         }
     ));
     //}}}
