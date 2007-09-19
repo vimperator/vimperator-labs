@@ -202,7 +202,8 @@ const vimperator = (function() //{{{
 
         input: {
             buffer: "",                // partial command storage
-            pendingMap: null,          // pending map storage
+            pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
+            pendingArgMap: null,       // pending map storage for commands like m{a-z}
             count: -1                  // parsed count from the input buffer
         },
 

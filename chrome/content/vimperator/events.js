@@ -46,17 +46,14 @@ function Events() //{{{
     tabcontainer.addEventListener("TabOpen",   function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
         vimperator.statusline.updateTabCount()
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
-        //vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.tabs.updateSelectionHistory();
         setTimeout(vimperator.focusContent, 10); // just make sure, that no widget has focus
     }, false);
@@ -72,12 +69,10 @@ function Events() //{{{
         vimperator.setMode(); // trick to reshow the mode in the command line
     }, null);
 
-    //
+
+    /////////////////////////////////////////////////////////
     // track if a popup is open or the menubar is active
-    //
-
     var active_menubar = false;
-
     function enterPopupMode(event)
     {
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
@@ -85,35 +80,31 @@ function Events() //{{{
 
         vimperator.addMode(null, vimperator.modes.MENU);
     }
-
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
         if (!gContextMenu && !active_menubar)
             vimperator.removeMode(null, vimperator.modes.MENU);
     }
-
     function enterMenuMode()
     {
         active_menubar = true;
         vimperator.addMode(null, vimperator.modes.MENU)
     }
-
     function exitMenuMode()
     {
         active_menubar = false;
         vimperator.removeMode(null, vimperator.modes.MENU);
     }
-
     window.addEventListener("popupshown", enterPopupMode, true);
     window.addEventListener("popuphidden", exitPopupMode, true);
     window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
 
-    //window.document.addEventListener("DOMTitleChanged", function(event)
-    //{
-    //    //alert("titlechanged");
-    //}, null);
+    // window.document.addEventListener("DOMTitleChanged", function(event)
+    // {
+    //     vimperator.log("titlechanged");
+    // }, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
@@ -230,9 +221,8 @@ function Events() //{{{
             // code which is only relevant if the page load is the current tab goes here:
             if (doc == getBrowser().selectedBrowser.contentDocument)
             {
-                /* none yet */
-                //vimperator.statusline.updateUrl();
-                //logMessage("onpageLoad");
+                // we want to stay in command mode after a page has loaded
+                setTimeout(vimperator.focusContent, 10);
             }
         }
     }
@@ -243,7 +233,7 @@ function Events() //{{{
 
     this.destroy = function()
     {
-        // BIG TODO: removeEventListeners() to avoid mem leaks
+        // removeEventListeners() to avoid mem leaks
         window.dump("TODO: remove all eventlisteners\n");
 
         getBrowser().removeProgressListener(this.progressListener);
@@ -252,6 +242,9 @@ function Events() //{{{
         window.removeEventListener("popuphidden", exitPopupMode, true);
         window.removeEventListener("DOMMenuBarActive", enterMenuMode, true);
         window.removeEventListener("DOMMenuBarInactive", exitMenuMode, true);
+
+        window.removeEventListener("keypress", this.onKeyPress, true);
+        window.removeEventListener("keydown", this.onKeyDown, true);
     }
 
     // This method pushes keys into the event queue from vimperator
@@ -262,7 +255,7 @@ function Events() //{{{
     //              if you want < to be taken literally, prepend it with a \\
     this.feedkeys = function(keys)
     {
-        var doc = window.content.document;
+        var doc = window.document;
         var view = window.document.defaultView;
         var escapeKey = false; // \ to escape some special keys
 
@@ -304,13 +297,13 @@ function Events() //{{{
                     i += matches[0].length + 1;
                 }
             }
-            var evt = doc.createEvent('KeyEvents');
-            evt.initKeyEvent('keypress', true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
 
             var elem = window.document.commandDispatcher.focusedElement;
             if (!elem)
-                elem = window;
+                elem = window.content;
 
+            var evt = doc.createEvent("KeyEvents");
+            evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
             elem.dispatchEvent(evt);
         }
     }
@@ -364,10 +357,6 @@ function Events() //{{{
                 if (modifier.length == 0)
                     return key;
             }
-
-            if (key == null)
-                return null;
-
         }
         else if (event.type == "click" || event.type == "dblclick")
         {
@@ -408,10 +397,17 @@ function Events() //{{{
         return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
     }
 
+    // global escape handler, is called in ALL modes
     this.onEscape = function()
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
+            if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+            {
+                vimperator.removeMode(null, vimperator.modes.ESCAPE_ALL_KEYS);
+                return;
+            }
+
             vimperator.setMode(vimperator.modes.NORMAL);
             vimperator.commandline.clear();
             vimperator.hints.disableHahMode();
@@ -420,23 +416,18 @@ function Events() //{{{
         }
     }
 
+    // this keypress handler gets always called first, even if e.g.
+    // the commandline has focus
     this.onKeyPress = function(event)
     {
         var key = vimperator.events.toString(event);
         if (!key)
-             return false;
-        // sometimes the non-content area has focus, making our keys not work
-        //    if (event.target.id == "main-window")
-        //        alert("focusContent();");
+             return true;
+
+        var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
         if (vimperator.hasMode(vimperator.modes.MENU))
             return false;
-
-        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
-        // also fixes key navigation in menus, etc.
-        if (key == "<Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
-            return false;
-
 
         // XXX: for now only, later: input mappings if form element focused
         if (isFormElemFocused())
@@ -468,7 +459,7 @@ function Events() //{{{
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
         {
             vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
-            return false;
+            return true;
         }
         // handle Escape-all-keys mode (I)
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
@@ -478,9 +469,13 @@ function Events() //{{{
             else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                 ; // let flow continue to handle these keys
             else
-                return false;
-
+                return true;
         }
+
+        // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
+        if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+                    isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
+                return true;
 
         if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
             vimperator.hasMode(vimperator.modes.WRITE_MULTILINE))
@@ -488,6 +483,15 @@ function Events() //{{{
             vimperator.commandline.onMultilineOutputEvent(event);
             return false;
         }
+
+        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+        // also fixes key navigation in combo boxes, etc.
+        if (vimperator.hasMode(vimperator.modes.NORMAL))
+        {
+            if (key == "<Tab>" || key == "<S-Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+                return false;
+        }
+
 
     //  // FIXME: handle middle click in content area {{{
     //  //     alert(event.target.id);
@@ -515,8 +519,8 @@ function Events() //{{{
         if (vimperator.hasMode(vimperator.modes.HINTS))
         {
             // never propagate this key to firefox, when hints are visible
-            event.preventDefault();
-            event.stopPropagation();
+            //event.preventDefault();
+            //event.stopPropagation();
 
             var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
             if (map)
@@ -574,7 +578,6 @@ function Events() //{{{
                 else // open in current window
                     vimperator.hints.openHints(false, false);
 
-                //if (vimperator.hints.currentMode() == HINT_MODE_QUICK)
                 if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
                     vimperator.hints.disableHahMode();
                 else // ALWAYS mode
@@ -587,64 +590,85 @@ function Events() //{{{
             return true;
         }
 
-        if (vimperator.hasMode(vimperator.modes.NORMAL))
+
+        var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
+        var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
+        var map;
+
+        // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+        if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
         {
-            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-            var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
-            var map;
-
-            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
-            {
+            // no count for insert mode mappings
+            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                stop = false;
+            else
                 vimperator.input.buffer += key;
-                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                return true;
-            }
+        }
+        else if (vimperator.input.pendingArgMap)
+        {
+            vimperator.input.buffer = "";
 
-            if (vimperator.input.pendingMap)
+            if (key != "<Esc>" && key != "<C-[>")
+                vimperator.input.pendingArgMap.execute(null, vimperator.input.count, key);
+
+            vimperator.input.pendingArgMap = null;
+        }
+        else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
+        {
+            vimperator.input.count = parseInt(count_str, 10);
+            if (isNaN(vimperator.input.count))
+                vimperator.input.count = -1;
+            if (map.flags & Mappings.flags.ARGUMENT)
             {
-                vimperator.input.buffer = "";
-
+                vimperator.input.pendingArgMap = map;
+                vimperator.input.buffer += key;
+            }
+            else if (vimperator.input.pendingMotionMap)
+            {
                 if (key != "<Esc>" && key != "<C-[>")
-                    vimperator.input.pendingMap.execute(null, vimperator.input.count, key);
-
-                vimperator.input.pendingMap = null;
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
-            {
-                vimperator.input.count = parseInt(count_str, 10);
-                if (isNaN(vimperator.input.count))
-                    vimperator.input.count = -1;
-                if (map.flags & Mappings.flags.ARGUMENT)
                 {
-                    vimperator.input.pendingMap = map;
-                    vimperator.input.buffer += key;
+                    vimperator.input.pendingMotionMap.execute(candidate_command, vimperator.input.count, null);
                 }
-                else
-                {
-                    vimperator.input.buffer = "";
-                    map.execute(null, vimperator.input.count);
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
+                vimperator.input.pendingMotionMap = null;
+                vimperator.input.buffer = "";
             }
-            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
+            // no count support for these commands yet
+            else if (map.flags & Mappings.flags.MOTION)
             {
-                vimperator.input.buffer += key;
-                event.preventDefault();
-                event.stopPropagation();
+                vimperator.input.pendingMotionMap = map;
+                vimperator.input.buffer = "";
             }
             else
             {
                 vimperator.input.buffer = "";
-                vimperator.input.pendingMap = null;
-                vimperator.beep();
+                // vimperator.log("executed: " + candidate_command + " in mode: " + mode, 8);
+                map.execute(null, vimperator.input.count);
             }
         }
-        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+        else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
+        {
+            vimperator.input.buffer += key;
+        }
+        else
+        {
+            vimperator.input.buffer = "";
+            vimperator.input.pendingArgMap = null;
+            vimperator.input.pendingMotionMap = null;
+
+            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                stop = false; // command was not a vimperator command, maybe it is a firefox command
+            else
+                vimperator.beep();
+        }
+
+        if (stop)
+        {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        var motion_map = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
+        vimperator.statusline.updateInputBuffer(motion_map + vimperator.input.buffer);
         return false;
     }
     window.addEventListener("keypress", this.onKeyPress, true);
@@ -655,7 +679,6 @@ function Events() //{{{
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) || vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) || isFormElemFocused())
             return true;
 
-        event.preventDefault();
         event.stopPropagation();
         return false;
     }
@@ -712,13 +735,10 @@ function Events() //{{{
         // happens when the users switches tabs
         onLocationChange: function()
         {
-            // if (vimperator.hasMode(vimperator.modes.HINTS) && !vimperator.hasMode(vimperator.modes.ALWAYS_HINT))
-            //     vimperator.hints.disableHahMode();
-
             vimperator.statusline.updateUrl();
             vimperator.statusline.updateProgress();
 
-            // if this is not delayed we get the wrong position of the old buffer
+            // if this is not delayed we get the position of the old buffer
             setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100);
         },
         // called at the very end of a page load
