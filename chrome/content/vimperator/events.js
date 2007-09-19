@@ -566,8 +566,11 @@ function Events() //{{{
 
         // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
         // also fixes key navigation in combo boxes, etc.
-        if (key == "<Tab>" || key == "<S-Tab>")// || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
-            return false;
+        if (vimperator.mode == vimperator.modes.NORMAL)
+        {
+            if (key == "<Tab>" || key == "<S-Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+                return false;
+        }
 
 
     //  // FIXME: handle middle click in content area {{{

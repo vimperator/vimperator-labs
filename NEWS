@@ -2,6 +2,7 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* :buffer partial_string works now as in vim, and with ! even better
 	* new :time command for profiling
 	* added new :sidebar and :sbclose commands
 	* added 'more' and standard more-prompt key mappings to control

@@ -318,22 +318,40 @@ function Commands() //{{{
     ));
     addDefaultCommand(new Command(["b[uffer]"],
         // TODO: move to v.tabs/buffers
-        function(args)
+        function(args, special)
         {
             var match;
             if (match = args.match(/^(\d+):?/))
                 return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
+
+            var matches = [];
+            var lower_args = args.toLowerCase();
+            var first = vimperator.tabs.index() + 1;
             for (var i = 0; i < getBrowser().browsers.length; i++)
             {
-                var url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
+                var index = (i + first) % getBrowser().browsers.length;
+                var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+                var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
                 if (url == args)
-                    return vimperator.tabs.select(i, false);
+                    return vimperator.tabs.select(index, false);
+
+                if (url.indexOf(args) >= 0 || title.indexOf(lower_args) >= 0)
+                    matches.push(index);
             }
+            if (matches.length == 0)
+                vimperator.echoerr("E94: No matching buffer for " + args);
+            else if (matches.length > 1 && !special)
+                vimperator.echoerr("E93: More than one match for " + args);
+            else
+                vimperator.tabs.select(matches[0], false);
         },
         {
-            usage: ["b[uffer] {url|index}"],
+            usage: ["b[uffer][!] {url|index}"],
             short_help: "Go to buffer from buffer list",
             help: "Argument can be either the buffer index or the full URL.<br/>" +
+                  "If argument is neither a full URL nor an index but uniquely identifies a buffer, " +
+                  "it is selected. With <code class=\"argument\">[!]</code> the next buffer matching the argument " +
+                  "is selected, even if it cannot be identified uniquely.<br/>" +
                   "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
             completer: function(filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
@@ -1324,25 +1342,25 @@ function Commands() //{{{
                     var after_time = Date.now();
                 
                     if ((after_time - before_time) / count >= 100)
-                        var each = "  Each time:  <span style=\"color: green\">" +
+                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
                             ((after_time - before_time) / 1000.0 / count) +
                             "</span> sec<br/>";
                     else
-                        var each = "  Each time:  <span style=\"color: green\">" +
+                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
                             ((after_time - before_time) / count) +
                             "</span> msec<br/>";
 
                     if (after_time - before_time >= 100)
-                        var total = "  Total time: <span style=\"color: red\">" +
+                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
                             ((after_time - before_time) / 1000.0) +
-                            "</span> sec</pre>";
+                            "</span> sec";
                     else
-                        var total = "  Total time: <span style=\"color: red\">" +
-                            (after_time - before_time) + "</span> msec</pre>";
+                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
+                            (after_time - before_time) + "</span> msec";
 
 
-                    vimperator.echo("<pre><span style=\"color: magenta; font-weight: bold\">Code execution summary</span>:<br/>" +
-                        "  Executed:   <span style=\"color: green\">" + count + "</span> times<br/>" + each + total);
+                    vimperator.echo("<span style=\"color: magenta; font-weight: bold\">Code execution summary</span>:<br/>" +
+                        "&nbsp;&nbsp;Executed:&nbsp;&nbsp;&nbsp;<span style=\"color: green\">" + count + "</span> times<br/>" + each + total);
                 }
                 else
                 {
