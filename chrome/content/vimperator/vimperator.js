@@ -467,6 +467,48 @@ const vimperator = (function() //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+        run: function(program, args, blocking)
+        {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                                  createInstance(Components.interfaces.nsILocalFile);
+            try {
+                file.initWithPath(program);
+            }
+            catch (e)
+            {
+                //environment_service
+                // FIXME: doesn't work on windows
+                var dirs = environment_service.get("PATH").split(":");
+                for (var i = 0; i < dirs.length; i++)
+                {
+                    var path = dirs[i] + "/" + program;
+                    try
+                    {
+                        file.initWithPath(path);
+                        if (file.exists())
+                            break;
+                    } catch (e) { }
+                }
+            }
+            if (!file.exists())
+            {
+                vimperator.echoerr("command not found: " + program);
+                return -1;
+            }
+
+            var process = Components.classes["@mozilla.org/process/util;1"].
+                                     createInstance(Components.interfaces.nsIProcess);
+            process.init(file);
+             
+            var ec = process.run(blocking, args, args.length);
+            return ec;
+        },
+        // should return the stdout of the program instead of the error code when
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
+        system: function (str)
+        {
+            return this.run("sh", ["-c", str], true);
+        },
 
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
