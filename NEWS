@@ -1,6 +1,7 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+  	* :buffer partial_string works now as in vim, and with ! even better
 	* merge the existing status bar with the standard FF status bar so that
 	  security information and extension buttons are included
 	* added new :sidebar and :sbclose commands

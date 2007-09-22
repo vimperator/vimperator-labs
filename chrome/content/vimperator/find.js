@@ -70,6 +70,19 @@ function Search() //{{{
 
         search_pattern = pattern;
 
+        // links only search - \u wins if both modifiers specified
+        if (/\\u/.test(pattern))
+            links_only = false;
+        else if (/\U/.test(pattern))
+            links_only = true;
+        else if (vimperator.options["linksearch"])
+            links_only = true;
+        else
+            links_only = false;
+
+        // strip links-only modifiers
+        pattern = pattern.replace(/(\\)?\\[uU]/g, function($0, $1) { return $1 ? $0 : "" });
+
         // case sensitivity - \c wins if both modifiers specified
         if (/\c/.test(pattern))
             case_sensitive = false;
@@ -82,20 +95,10 @@ function Search() //{{{
         else
             case_sensitive = true;
 
-        // links only search - \u wins if both modifiers specified
-        if (/\\u/.test(pattern))
-            links_only = false;
-        else if (/\U/.test(pattern))
-            links_only = true;
-        else if (vimperator.options["linksearch"])
-            links_only = true;
-        else
-            links_only = false;
+        // strip case-sensitive modifiers
+        pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : "" });
 
-        // strip modifiers
-        pattern = pattern.replace(/(\\)?\\[cCuU]/g, function($0, $1) { return $1 ? $0 : "" });
-
-        // remove the modifer escape \
+        // remove any modifer escape \
         pattern = pattern.replace(/\\(\\[cCuU])/g, '$1')
 
         search_string = pattern;
