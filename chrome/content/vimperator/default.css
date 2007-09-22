@@ -172,10 +172,6 @@ statusbarpanel {
     overflow: hidden;
 }
 
-#vimperator-visualbell {
-    background-color: black;
-}
-
 /*
 .status_insecure, .status_insecure * {
 }

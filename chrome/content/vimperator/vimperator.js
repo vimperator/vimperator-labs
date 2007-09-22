@@ -288,6 +288,7 @@ const vimperator = (function() //{{{
                 var vbell = document.getElementById("vimperator-visualbell");
                 var box = getBrowser().mPanelContainer.boxObject;
 
+                vbell.style.cssText = vimperator.options["visualbellstyle"];
                 vbell.style.position = "fixed";
                 vbell.style.height = box.height + "px";
                 vbell.style.width = box.width + "px";
