@@ -2,6 +2,8 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* merge the existing status bar with the standard FF status bar so that
+	  security information and extension buttons are included
 	* added full zoom, and changed keybindings slightly for text zoom
 	* :buffer partial_string works now as in vim, and with ! even better
 	* new :time command for profiling

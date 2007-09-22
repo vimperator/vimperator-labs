@@ -407,9 +407,9 @@ function Options() //{{{
                   "<li><b>m</b>: menubar</li>" +
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
-                  "<li><b>s</b>: original Firefox statusbar</li></ul>",
+                  "<li><b>s</b>: statusbar</li></ul>",
             setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
-            default_value: "",
+            default_value: "s",
             validator: function (value) { if (/[^mTbs]/.test(value)) return false; else return true; }
         }
     ));

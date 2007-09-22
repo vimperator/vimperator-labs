@@ -124,7 +124,7 @@ fieldset.paypal {
  * TODO: move to the standard location: chrome/skin/vimperator.css...if I can
  * ever convince MS ;-) -- djk
  */
-#vimperator-toolbar  {
+#vimperator-container  {
     font-family: monospace;
 }
 
@@ -144,21 +144,30 @@ fieldset.paypal {
    color: HighlightText !important;
 }
 
+statusbarpanel {
+    -moz-appearance: none !important;
+    border: none !important;
+}
+#vimperator-statusline {
+    font-family: monospace;
+    margin: 0
+}
 #vimperator-statusline > label {
     padding: 0px 0px 0px 8px;
 }
 #vimperator-statusline > label:first-child {
     padding: 0px;
 }
-
-#vimperator-commandline {
-    background-color: white;
+#vimperator-statusline-field-url {
+    background-color: transparent;
     color: black;
 }
-#vimperator-commandline-prompt {
+
+#vimperator-commandline {
     /* FIXME: black on white or default skin colors? */
     background-color: white;
     color: black;
+    padding: 1px;
 }
 
 #vimperator-multiline-output {
@@ -170,9 +179,10 @@ fieldset.paypal {
     background-color: black;
 }
 
+/*
 .status_insecure, .status_insecure * {
-    background-color: transparent;
 }
+*/
 .status_secure, .status_secure * {
     background-color: #B0FF00; /* light green */
     color: black;
