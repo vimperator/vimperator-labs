@@ -56,62 +56,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
     <window id="main-window">
 
-        <toolbar id="vimperator-toolbar" hidden="false" align="center" fullscreentoolbar="true">
-            <vbox id="vimperator-container" flex="1" hidden="false">
-                <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
-                        onclick=   "vimperator.bufferwindow.onEvent(event);"
-                        ondblclick="vimperator.bufferwindow.onEvent(event);"
-                        onkeydown= "vimperator.bufferwindow.onEvent(event);">
-                    <listcols>
-                        <listcol flex="1" width="50%"/>
-                        <listcol flex="1" width="50%"/>
-                    </listcols>
-                </listbox>
-
-                <listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
-                        onclick=   "vimperator.previewwindow.onEvent(event);"
-                        ondblclick="vimperator.previewwindow.onEvent(event);"
-                        onkeydown= "vimperator.previewwindow.onEvent(event);">
-                    <listcols>
-                        <listcol flex="1" width="50%"/>
-                        <listcol flex="1" width="50%"/>
-                    </listcols>
-                </listbox>
-
-                <hbox id="vimperator-statusline" flex="1" height="10" hidden="false">
-                    <textbox class="plain" id="vimperator-statusline-field-url" readonly="true" flex="1" crop="end"/>
-                    <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
-                    <label class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
-                    <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
-                    <label class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
-                </hbox>
-
-                <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
-                    <listcols>
-                        <listcol flex="1" width="50%"/>
-                        <listcol flex="1" width="50%"/>
-                    </listcols>
-                </listbox>
-
-                <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                    onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
-
-                <hbox id="vimperator-commandline" flex="1" hidden="false">
-                    <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-                    <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
-                        onkeypress="vimperator.commandline.onEvent(event);"
-                        oninput="vimperator.commandline.onEvent(event);"
-                        onfocus="vimperator.commandline.onEvent(event);"
-                        onblur="vimperator.commandline.onEvent(event);"/>
-                </hbox>
-
-                <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="10" hidden="false" collapsed="true" multiline="true"
-                        onkeypress="vimperator.commandline.onMultilineInputEvent(event);"
-                        oninput="vimperator.commandline.onMultilineInputEvent(event);"
-                        onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
-            </vbox>
-        </toolbar>
-
         <keyset id="mainKeyset">
            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
@@ -120,6 +64,65 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
         <!-- TODO: move to browser-stack? -->
         <box id="vimperator-visualbell" hidden="true"/>
+
+        <statusbar id="status-bar">
+            <hbox insertbefore="statusbar-display" id="vimperator-statusline" flex="1" height="10" hidden="false" align="center">
+                <textbox class="plain" id="vimperator-statusline-field-url" readonly="false" flex="1" crop="end"/>
+                <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
+            </hbox>
+            <!-- just hide them so other elements since other elements expect them -->
+            <statusbarpanel id="statusbar-display" hidden="true"/>
+            <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
+        </statusbar>
+
+        <vbox id="vimperator-container" hidden="false">
+            <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "vimperator.bufferwindow.onEvent(event);"
+                ondblclick="vimperator.bufferwindow.onEvent(event);"
+                onkeydown= "vimperator.bufferwindow.onEvent(event);">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "vimperator.previewwindow.onEvent(event);"
+                ondblclick="vimperator.previewwindow.onEvent(event);"
+                onkeydown= "vimperator.previewwindow.onEvent(event);">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
+
+            <hbox id="vimperator-commandline" hidden="false">
+                <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
+                    onkeypress="vimperator.commandline.onEvent(event);"
+                    oninput="vimperator.commandline.onEvent(event);"
+                    onfocus="vimperator.commandline.onEvent(event);"
+                    onblur="vimperator.commandline.onEvent(event);"/>
+            </hbox>
+
+            <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
+                onkeypress="vimperator.commandline.onMultilineInputEvent(event);"
+                oninput="vimperator.commandline.onMultilineInputEvent(event);"
+                onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
+        </vbox>
 
     </window>
 

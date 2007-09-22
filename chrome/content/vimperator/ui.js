@@ -1004,6 +1004,8 @@ function StatusLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    var status_bar = document.getElementById("status-bar");
+
     // our status bar fields
     var statusline_widget     = document.getElementById("vimperator-statusline");
     var url_widget            = document.getElementById("vimperator-statusline-field-url");
@@ -1016,16 +1018,9 @@ function StatusLine() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // use names for the color or "transparent" to remove color information
-    this.setColor = function(color)
-    {
-        if (!color)
-            color = "transparent";
-        statusline_widget.setAttribute("style", "background-color: " + color);
-    };
     this.setClass = function(type)
     {
-        statusline_widget.setAttribute("class", "status_" + type);
+        status_bar.setAttribute("class", "chromeclass-status status_" + type);
     };
 
     this.updateUrl = function(url)

@@ -1,6 +1,8 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* merge the existing status bar with the standard FF status bar so that
+	  security information and extension buttons are included
 	* added new :sidebar and :sbclose commands
 	* added 'more' and standard more-prompt key mappings to control
 	  behaviour of the message list pager 
