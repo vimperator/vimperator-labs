@@ -1123,6 +1123,10 @@ function Commands() //{{{
                 return;
             }
 
+            // do nothing if the requested sidebar is already open
+            if (document.getElementById("sidebar-title").value == args)
+                return;
+            
             var menu = document.getElementById("viewSidebarMenu")
 
             for (var i = 0; i < menu.childNodes.length; i++)
