@@ -503,11 +503,26 @@ const vimperator = (function() //{{{
             var ec = process.run(blocking, args, args.length);
             return ec;
         },
-        // should return the stdout of the program instead of the error code when
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
+        // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
+        // is fixed, should use that instead of a tmpfile
+        // TODO: make it usable on windows
+        // TODO: check for errors/insecurities
         system: function (str)
         {
-            return this.run("sh", ["-c", str], true);
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                       createInstance(Components.interfaces.nsILocalFile);
+            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
+            file.initWithPath(dir + "vimperator.tmp");
+            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
+            this.run("sh", ["-c", str + " > " + file.path], true);
+            var fd = vimperator.fopen(file, "<");
+            if (!fd)
+                return null;
+
+            var s = fd.read();
+            fd.close();
+            file.remove(false);
+            return s;
         },
 
         // files which end in .js are sourced as pure javascript files,
