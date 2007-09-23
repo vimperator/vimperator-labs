@@ -1251,6 +1251,85 @@ function Commands() //{{{
             short_help: "Switch to the first tab"
         }
     ));
+    addDefaultCommand(new Command(["time"],
+        function(args, special, count)
+        {
+            if (!count || count < 1)
+                count = 1;
+
+            try
+            {
+                if (count > 1)
+                {
+                    var i = count;
+                    var before_time = Date.now();
+
+                    if (args && args[0] == ":")
+                        while (i--)
+                            vimperator.execute(args);
+                    else
+                        while (i--)
+                            eval(args);
+
+                    if (special)
+                        return;
+
+                    var after_time = Date.now();
+                
+                    if ((after_time - before_time) / count >= 100)
+                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
+                            ((after_time - before_time) / 1000.0 / count) +
+                            "</span> sec<br/>";
+                    else
+                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
+                            ((after_time - before_time) / count) +
+                            "</span> msec<br/>";
+
+                    if (after_time - before_time >= 100)
+                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
+                            ((after_time - before_time) / 1000.0) +
+                            "</span> sec";
+                    else
+                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
+                            (after_time - before_time) + "</span> msec";
+
+
+                    vimperator.echo("<span style=\"color: magenta; font-weight: bold\">Code execution summary</span>:<br/>" +
+                        "&nbsp;&nbsp;Executed:&nbsp;&nbsp;&nbsp;<span style=\"color: green\">" + count + "</span> times<br/>" + each + total);
+                }
+                else
+                {
+                    var before_time = Date.now();
+                    if (args && args[0] == ":")
+                        vimperator.execute(args);
+                    else
+                        eval(args);
+
+                    if (special)
+                        return;
+
+                    var after_time = Date.now();
+                    
+                    if (after_time - before_time >= 100)
+                        vimperator.echo("Total time: " + ((after_time - before_time) / 1000.0) + " sec");
+                    else
+                        vimperator.echo("Total time: " + (after_time - before_time) + " msec");
+                }
+            }
+            catch (e)
+            {
+                vimperator.echoerr(e);
+            }
+        },
+        {
+            usage: ["{count}time[!] {code|:command}"],
+            short_help: "Profile a piece of code or a command",
+            help: "Runs <code class=\"argument\">{code} {count}</code> times (default 1) and returns the elapsed time. " +
+                  "<code class=\"argument\">{code}</code> is always passed to JavaScript's eval(), which might be slow, so take the results with a grain of salt.<br/>" +
+                  "If <code class=\"argument\">{code}</code> starts with a :, it is executed as a vimperator command.<br/>" +
+                  "Use the special version with [!] if you just want to run any command multiple times without showing profiling statistics."
+        }
+    ));
     addDefaultCommand(new Command(["u[ndo]"],
         function(args, special, count) { if (count < 1) count = 1; undoCloseTab(count-1); },
         {
