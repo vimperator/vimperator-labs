@@ -735,9 +735,10 @@ function Events() //{{{
             vimperator.input.pendingArgMap = null;
             vimperator.input.pendingMotionMap = null;
 
-            if (vimperator.mode == vimperator.modes.INSERT || vimperator.mode == vimperator.modes.COMMAND_LINE)
-                stop = false; // command was not a vimperator command, maybe it is a firefox command
-            else
+            stop = false; // command was not a vimperator command, maybe it is a firefox command
+
+            // TODO: see if this check is needed or are all motion commands already mapped in these modes?
+            if (vimperator.mode != vimperator.modes.INSERT && vimperator.mode != vimperator.modes.COMMAND_LINE)
                 vimperator.beep();
         }
 
