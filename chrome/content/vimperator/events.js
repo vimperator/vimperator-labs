@@ -655,9 +655,9 @@ function Events() //{{{
             vimperator.input.pendingArgMap = null;
             vimperator.input.pendingMotionMap = null;
 
-            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                stop = false; // command was not a vimperator command, maybe it is a firefox command
-            else
+            stop = false; // command was not a vimperator command, maybe it is a firefox command
+
+            if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE))
                 vimperator.beep();
         }
 
