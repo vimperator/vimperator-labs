@@ -628,10 +628,12 @@ function Commands() //{{{
                         return vimperator.echoerr("E15: Invalid expression: " + match[4]);
                     else
                     {
-                        if (!reference[0] && reference[2] == 'g')
-                            reference[0] = vimperator.globalVariables;
-                        else
-                            return; // for now
+                        if (!reference[0]) {
+                            if (reference[2] == 'g')
+                                reference[0] = vimperator.globalVariables;
+                            else
+                                return; // for now
+                        }
 
                         if (match[3])
                         {
@@ -687,6 +689,15 @@ function Commands() //{{{
 
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
+            var leader_reg = new RegExp('<Leader>', 'i');
+
+            if (leader_reg.test(lhs))
+            {
+                var leader_ref = vimperator.variableReference('mapleader');
+                var leader = leader_ref[0] ? leader_ref[0][leader_ref[1]] : '\\';
+
+                lhs = lhs.replace(leader_reg, leader);
+            }
 
             if (rhs)
             {
