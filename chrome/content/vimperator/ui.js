@@ -39,12 +39,55 @@ function CommandLine() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
-    const HISTORY_SIZE = 500;
 
     var completionlist = new InformationList("vimperator-completion", { min_items: 2, max_items: 10 });
     var completions = [];
 
-    var history = [];
+    // TODO: clean this up when it's not 3am...
+    var history = {
+        SIZE: 500,
+
+        get _mode() { return (vimperator.modes.extended == vimperator.modes.EX) ? "cmd" : "search"; },
+
+        cmd: null,    // ex command history
+        search: null, // text search history
+
+        get: function() { return this[this._mode]; },
+        set: function(lines) { this[this._mode] = lines; },
+
+        load: function()
+        {
+            this.cmd = Options.getPref("commandline_cmd_history", "").split("\n");
+            this.search = Options.getPref("commandline_search_history", "").split("\n");
+        },
+
+        save: function()
+        {
+            Options.setPref("commandline_cmd_history", this.cmd.join("\n"));
+            Options.setPref("commandline_search_history", this.search.join("\n"));
+        },
+
+        add: function(str)
+        {
+            if (!str)
+                return;
+
+            var lines = this.get();
+
+            // remove all old history lines which have this string
+            lines = lines.filter(function(line) {
+                    return line != str;
+            });
+
+            // add string to the command line history
+            if (lines.push(str) > this.SIZE) // remove the first 10% of the history
+                lines = lines.slice(this.SIZE / 10);
+
+            this.set(lines);
+        }
+    };
+    history.load();
+
     var history_index = UNINITIALIZED;
     var history_start = "";
 
@@ -87,9 +130,6 @@ function CommandLine() //{{{
     // save the arguments for the inputMultiline method which are needed in the event handler
     var multiline_regexp = null;
     var multiline_callback = null;
-
-    // load the commandline history
-    history = Options.getPref("commandline_history", "").split("\n");
 
     // TODO: these styles should be moved to the .css file
     function setNormalStyle()
@@ -197,20 +237,6 @@ function CommandLine() //{{{
         multiline_input_widget.setAttribute("rows", lines.toString());
     }
 
-    function addToHistory(str)
-    {
-        if (str.length < 1)
-            return;
-
-        // first remove all old history elements which have this string
-        history = history.filter(function(elem) {
-                return elem != str;
-        });
-        // add string to the command line history
-        if (history.push(str) > HISTORY_SIZE) //remove the first 10% of the history
-            history = history.slice(HISTORY_SIZE / 10);
-    }
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -220,9 +246,6 @@ function CommandLine() //{{{
         return command_widget.value;
     };
 
-    /**
-     * All arguments can be ommited and will be defaulted to "" or null
-     */
     this.open = function(prompt, cmd, ext_mode)
     {
         // save the current prompts, we need it later if the command widget
@@ -357,11 +380,11 @@ function CommandLine() //{{{
 
             var key = vimperator.events.toString(event);
 
-            /* user pressed ENTER to carry out a command */
+            // user pressed ENTER to carry out a command
             if (vimperator.events.isAcceptKey(key))
             {
                 var mode = cur_extended_mode; // save it here, as setMode() resets it
-                addToHistory(command);
+                history.add(command);
                 vimperator.modes.reset(true); //FIXME: use mode stack
                 //vimperator.focusContent();
                 completionlist.hide();
@@ -369,11 +392,11 @@ function CommandLine() //{{{
                 return vimperator.triggerCallback("submit", mode, command);
             }
 
-            /* user pressed ESCAPE to cancel this prompt */
+            // user pressed ESCAPE to cancel this prompt
             else if (vimperator.events.isCancelKey(key))
             {
                 var res = vimperator.triggerCallback("cancel", cur_extended_mode);
-                addToHistory(command);
+                history.add(command);
                 vimperator.modes.set(old_mode, old_extended_mode);
                 //vimperator.focusContent();
                 completionlist.hide();
@@ -382,9 +405,11 @@ function CommandLine() //{{{
                 return res;
             }
 
-            /* user pressed UP or DOWN arrow to cycle history completion */
+            // user pressed UP or DOWN arrow to cycle history completion
             else if (key == "<Up>" || key == "<Down>")
             {
+                var lines = history.get();
+
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -394,18 +419,18 @@ function CommandLine() //{{{
                 // save 'start' position for iterating through the history
                 if (history_index == UNINITIALIZED)
                 {
-                    history_index = history.length;
+                    history_index = lines.length;
                     history_start = command;
                 }
 
                 // search the history for the first item matching the current
                 // commandline string
-                while (history_index >= -1 && history_index <= history.length)
+                while (history_index >= -1 && history_index <= lines.length)
                 {
                     key == "<Up>" ? history_index-- : history_index++;
 
                     // user pressed DOWN when there is no newer history item
-                    if (history_index == history.length)
+                    if (history_index == lines.length)
                     {
                         setCommand(history_start);
                         return;
@@ -418,22 +443,22 @@ function CommandLine() //{{{
                         vimperator.beep();
                         break;
                     }
-                    if (history_index >= history.length + 1)
+                    if (history_index >= lines.length + 1)
                     {
-                        history_index = history.length;
+                        history_index = lines.length;
                         vimperator.beep();
                         break;
                     }
 
-                    if (history[history_index].indexOf(history_start) == 0)
+                    if (lines[history_index].indexOf(history_start) == 0)
                     {
-                        setCommand(history[history_index]);
+                        setCommand(lines[history_index]);
                         return;
                     }
                 }
             }
 
-            /* user pressed TAB to get completions of a command */
+            // user pressed TAB to get completions of a command
             else if (key == "<Tab>" || key == "<S-Tab>")
             {
                 //always reset our completion history so up/down keys will start with new values
@@ -785,7 +810,7 @@ function CommandLine() //{{{
     // it would be better if we had a destructor in javascript ...
     this.destroy = function()
     {
-        Options.setPref("commandline_history", history.join("\n"));
+        history.save();
     }
     //}}}
 } //}}}
