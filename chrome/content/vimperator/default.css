@@ -144,8 +144,10 @@ fieldset.paypal {
    color: HighlightText !important;
 }
 
-statusbarpanel {
+/* fixes the min-height: 22px from firefox */
+#status-bar, statusbarpanel {
     -moz-appearance: none !important;
+	min-height: 18px !important;
     border: none !important;
 }
 #vimperator-statusline {

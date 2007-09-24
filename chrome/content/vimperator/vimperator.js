@@ -124,6 +124,30 @@ const vimperator = (function() //{{{
             return null;
     }
 
+    // TODO: make secure
+    // TODO: test if it actually works on windows
+    function getTempFile()
+    {
+        var file = Components.classes["@mozilla.org/file/local;1"].
+                              createInstance(Components.interfaces.nsILocalFile);
+        if (navigator.platform == "Win32")
+        {
+            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "C:\\";
+            file.initWithPath(dir + "\\vimperator.tmp");
+        }
+        else
+        {
+            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
+            file.initWithPath(dir + "/vimperator.tmp");
+        }
+        file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
+
+        if (file.exists())
+            return file;
+        else
+            return null;
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -506,22 +530,36 @@ const vimperator = (function() //{{{
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
         // TODO: make it usable on windows
-        // TODO: check for errors/insecurities
-        system: function (str)
+        // TODO: pass "input" as stdin
+        // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
+        system: function (str, input)
         {
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                       createInstance(Components.interfaces.nsILocalFile);
-            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
-            file.initWithPath(dir + "vimperator.tmp");
-            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
-            this.run("sh", ["-c", str + " > " + file.path], true);
-            var fd = vimperator.fopen(file, "<");
+            var fileout = getTempFile();
+            if (!fileout)
+                return "";
+
+            var filein = null;
+            var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
+            if (input)
+            {
+                filein = getTempFile();
+                var fdin = vimperator.fopen(filein, ">");
+                fdin.write(input);
+                fdin.close();
+                command += " < \"" + filein.path.replace('"', '\\"') + "\"";
+            }
+
+            this.run("sh", ["-c", command], true);
+            var fd = vimperator.fopen(fileout, "<");
             if (!fd)
                 return null;
 
             var s = fd.read();
             fd.close();
-            file.remove(false);
+            fileout.remove(false);
+            if (filein)
+                filein.remove(false);
+
             return s;
         },
 

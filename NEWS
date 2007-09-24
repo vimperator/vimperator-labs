@@ -2,6 +2,8 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* :b2 now allowed, no space required before the 2 anymore
+	* :! to run commands through system() (UNIX only)
 	* separated search and Ex command history
 	* merge the existing status bar with the standard FF status bar so that
 	  security information and extension buttons are included
