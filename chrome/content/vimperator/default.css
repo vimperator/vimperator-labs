@@ -178,7 +178,7 @@ fieldset.paypal {
 
 /* colors for the statusbar */
 /* #status-bar is included so it also gets the right color before the first setClass("insecure") */
-#status-bar, #status-bar.status_insecure*/ {
+#status-bar, #status-bar.status_insecure * {
     background-color: black;
     color: white;
 }
