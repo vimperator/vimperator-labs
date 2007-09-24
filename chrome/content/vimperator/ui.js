@@ -268,6 +268,16 @@ function CommandLine() //{{{
         command_widget.focus();
     };
 
+    /* normally used when pressing esc, does not execute a command */
+    this.close = function()
+    {
+        var res = vimperator.triggerCallback("cancel", cur_extended_mode);
+        history.add(this.getCommand());
+        //vimperator.modes.set(old_mode, old_extended_mode);
+        vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+        this.clear();
+    }
+
     // FIXME: flags not yet really functional --mst
     this.echo = function(str, flags)
     {
@@ -381,6 +391,7 @@ function CommandLine() //{{{
             var key = vimperator.events.toString(event);
 
             // user pressed ENTER to carry out a command
+            // user pressing ESCAPE is handled in the global onEscape
             if (vimperator.events.isAcceptKey(key))
             {
                 var mode = cur_extended_mode; // save it here, as setMode() resets it
@@ -391,17 +402,6 @@ function CommandLine() //{{{
                 return vimperator.triggerCallback("submit", mode, command);
             }
 
-            // user pressed ESCAPE to cancel this prompt
-            else if (vimperator.events.isCancelKey(key))
-            {
-                var res = vimperator.triggerCallback("cancel", cur_extended_mode);
-                history.add(command);
-                vimperator.modes.set(old_mode, old_extended_mode);
-                completionlist.hide();
-                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
-                this.clear();
-                return res;
-            }
 
             // user pressed UP or DOWN arrow to cycle history completion
             else if (key == "<Up>" || key == "<Down>")

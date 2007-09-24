@@ -506,6 +506,11 @@ function Events() //{{{
                         vimperator.modes.reset();
                     break;
                 
+                case vimperator.modes.COMMAND_LINE:
+                        vimperator.commandline.close();
+                        vimperator.modes.reset();
+                    break;
+                
                 default:
                     // clear any selection made
                     var selection = window.content.getSelection();

@@ -2,6 +2,9 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* statusline is now white on black with bold font by default (like in (g)vim)
+	  (change with userChrome.css if you don't like it until we have :colorscheme)
+	* :let leader=","  and <Leader> in :map support
 	* :b2 now allowed, no space required before the 2 anymore
 	* :! to run commands through system() (UNIX only)
 	* separated search and Ex command history

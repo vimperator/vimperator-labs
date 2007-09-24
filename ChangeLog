@@ -1,3 +1,157 @@
+2007-09-24 14:41  stubenschrott
+
+	* chrome/content/vimperator/: events.js, mappings.js, ui.js: -
+	  g<esc> doesn't beep anymore - /<up><down> searches for the
+	  changed string
+
+2007-09-24 13:48  stubenschrott
+
+	* NEWS, chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/vimperator.js: :! command, fixed
+	  statusbar height properly, system() now returns the stdout string
+
+2007-09-23 21:25  vkojouharov
+
+	* chrome/content/vimperator/commands.js: mapleader support
+
+2007-09-23 18:56  stubenschrott
+
+	* chrome/content/vimperator/vimperator.js: system() returns the
+	  stdout string now, still not working on windows is createUnique
+	  secure? I doubt it, biesi from #extdev thinks so
+
+2007-09-23 16:17  dougkearns
+
+	* chrome/content/vimperator/find.js: prevent the failed find error
+	  message from being cleared
+
+2007-09-23 16:14  dougkearns
+
+	* NEWS, chrome/content/vimperator/ui.js: separate Ex command and
+	  search commandline history
+
+2007-09-23 15:30  dougkearns
+
+	* chrome/content/vimperator/events.js: allow all unknown key
+	  mappings to be passed through to FF
+
+2007-09-23 15:15  dougkearns
+
+	* chrome/content/vimperator/events.js: allow all unknown key
+	  mappings to be passed through to FF
+
+2007-09-23 12:21  dougkearns
+
+	* NEWS, chrome/content/vimperator/commands.js: merge new :time
+	  command
+
+2007-09-23 10:52  dougkearns
+
+	* chrome/content/vimperator/ui.js, NEWS: separate Ex command and
+	  search commandline history
+
+2007-09-22 17:44  dougkearns
+
+	* NEWS, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/vimperator.js: add a new
+	  'visualbellstyle' option
+
+2007-09-22 16:51  dougkearns
+
+	* chrome/content/vimperator/commands.js: don't close the sidebar if
+	  it is already open with the requested type
+
+2007-09-22 16:50  dougkearns
+
+	* NEWS, chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/find.js: process link text only find
+	  modifiers \[uU] before looking for capitalized letters when
+	  'smartcase' is set
+
+2007-09-22 16:29  dougkearns
+
+	* NEWS, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/ui.js,
+	  chrome/content/vimperator/vimperator.xul: merge the existing
+	  status bar with the standard FF status bar
+
+2007-09-22 16:07  dougkearns
+
+	* NEWS, chrome/content/vimperator/default.css,
+	  chrome/content/vimperator/options.js,
+	  chrome/content/vimperator/ui.js,
+	  chrome/content/vimperator/vimperator.xul: merge the existing
+	  status bar with the standard FF status bar
+
+2007-09-21 13:17  dougkearns
+
+	* chrome/content/vimperator/commands.js: don't close the sidebar if
+	  it is already open with the requested type
+
+2007-09-21 06:58  stubenschrott
+
+	* chrome/content/vimperator/vimperator.js: new
+	  vimperator.{run/system}() methods, not sure if i'll keep both.
+	  Only work on UNIX for now.
+
+2007-09-20 15:17  dougkearns
+
+	* vimperator.vim: add 'hlsearchstyle' to Vim syntax file
+
+2007-09-20 15:08  dougkearns
+
+	* chrome/content/vimperator/find.js: process link text only find
+	  modifiers \[uU] before looking for capitalized letters when
+	  'smartcase' is set
+
+2007-09-19 14:25  dougkearns
+
+	* chrome/content/vimperator/: events.js, vimperator.js: merge
+	  refactored key event handlers
+
+2007-09-19 05:20  stubenschrott
+
+	* NEWS, TODO, chrome/content/vimperator/buffers.js,
+	  chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/mappings.js: added full zoom, and
+	  changed some zoom shortcuts
+
+2007-09-19 03:15  stubenschrott
+
+	* NEWS, chrome/content/vimperator/commands.js,
+	  chrome/content/vimperator/events.js: added intelligent :buffer
+	  selection
+
+2007-09-19 02:32  stubenschrott
+
+	* chrome/content/vimperator/editor.js: fixed textarea/location bar
+	  keys properly (location bar still not working, when completion
+	  popup is open)
+
+2007-09-19 01:57  stubenschrott
+
+	* NEWS, chrome/content/vimperator/commands.js: added ! version to
+	  :time
+
+2007-09-19 01:46  stubenschrott
+
+	* chrome/content/vimperator/: commands.js, events.js, modes.js:
+	  added :time command, please use when writing new functions and
+	  you think they are slow
+
+2007-09-19 00:27  stubenschrott
+
+	* AUTHORS, ChangeLog, chrome/content/vimperator/editor.js,
+	  chrome/content/vimperator/events.js,
+	  chrome/content/vimperator/vimperator.js: - fixed generating
+	  artificial firefox commands with feedkeys()/:norm/:map -
+	  home/end/etc. keys work again in the location bar - <c-v><c-k>,
+	  etc. work again to focus special form fields - small formatting
+	  improvements
+
 2007-09-18 22:23  vkojouharov
 
 	* chrome/content/vimperator/: commands.js, vimperator.js: basic

@@ -149,6 +149,7 @@ fieldset.paypal {
     -moz-appearance: none !important;
 	min-height: 18px !important;
     border: none !important;
+    font-weight: bold;
 }
 #vimperator-statusline {
     font-family: monospace;
@@ -181,10 +182,12 @@ fieldset.paypal {
     background-color: black;
 }
 
-/*
-.status_insecure, .status_insecure * {
+/* colors for the statusbar */
+/* #status-bar is included so it also get's the right color before the first setClass("insecure") */
+#status-bar, .status_insecure, .status_insecure * {
+    background-color: black; /* light green */
+    color: white;
 }
-*/
 .status_secure, .status_secure * {
     background-color: #B0FF00; /* light green */
     color: black;
