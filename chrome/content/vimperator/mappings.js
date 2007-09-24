@@ -306,7 +306,7 @@ function Mappings() //{{{
                    vimperator.modes.INSERT,
                    vimperator.modes.VISUAL,
                    vimperator.modes.HINTS,
-                   //vimperator.modes.COMMAND_LINE,
+                   vimperator.modes.COMMAND_LINE,
                    vimperator.modes.CARET,
                    vimperator.modes.TEXTAREA];
     var any_non_insertmode = [vimperator.modes.NORMAL,
@@ -1295,13 +1295,6 @@ function Mappings() //{{{
             always_active: true
         }
     ));
-    /*addDefaultMap(new Map([vimperator.modes.HINTS], ["<Esc>", "<C-[>", "<C-c>"],
-        function() { ; },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));*/
     
     // }}}
     // Caret mode

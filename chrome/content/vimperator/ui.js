@@ -386,7 +386,6 @@ function CommandLine() //{{{
                 var mode = cur_extended_mode; // save it here, as setMode() resets it
                 history.add(command);
                 vimperator.modes.reset(true); //FIXME: use mode stack
-                //vimperator.focusContent();
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 return vimperator.triggerCallback("submit", mode, command);
@@ -398,7 +397,6 @@ function CommandLine() //{{{
                 var res = vimperator.triggerCallback("cancel", cur_extended_mode);
                 history.add(command);
                 vimperator.modes.set(old_mode, old_extended_mode);
-                //vimperator.focusContent();
                 completionlist.hide();
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 this.clear();
@@ -433,6 +431,7 @@ function CommandLine() //{{{
                     if (history_index == lines.length)
                     {
                         setCommand(history_start);
+                        vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
                         return;
                     }
 
@@ -453,6 +452,7 @@ function CommandLine() //{{{
                     if (lines[history_index].indexOf(history_start) == 0)
                     {
                         setCommand(lines[history_index]);
+                        vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
                         return;
                     }
                 }
