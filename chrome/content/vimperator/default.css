@@ -165,21 +165,16 @@ fieldset.paypal {
     background-color: transparent;
     color: black;
 }
+/* no longer at the window's bottom right corner */
+.statusbar-resizerpanel {
+    display: none;
+}
 
 #vimperator-commandline {
     /* FIXME: black on white or default skin colors? */
     background-color: white;
     color: black;
     padding: 1px;
-}
-
-#vimperator-multiline-output {
-    overflow: hidden;
-}
-
-#vimperator-visualbell {
-    border: none;
-    background-color: black;
 }
 
 /* colors for the statusbar */
@@ -195,6 +190,15 @@ fieldset.paypal {
 .status_broken, .status_broken * {
     background-color: #FF6060; /* light red */
     color: black;
+}
+
+#vimperator-multiline-output {
+    overflow: hidden;
+}
+
+#vimperator-visualbell {
+    border: none;
+    background-color: black;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
