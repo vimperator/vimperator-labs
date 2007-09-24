@@ -1,5 +1,5 @@
 /*
- * Help file
+ * Help file {{{
  */
 
 div.main {
@@ -118,11 +118,10 @@ fieldset.paypal {
     color: red;
 }
 
-/*
- * XUL
- *
+/* }}}
+ * XUL {{{
  * TODO: move to the standard location: chrome/skin/vimperator.css...if I can
- * ever convince MS ;-) -- djk
+ * ever convince MS :( -- djk
  */
 #vimperator-container  {
     font-family: monospace;
@@ -171,23 +170,23 @@ fieldset.paypal {
 }
 
 #vimperator-commandline {
-    /* FIXME: black on white or default skin colors? */
+    /* FIXME: black on white or default skin colors? -moz-Field/-moz-FieldText */
     background-color: white;
     color: black;
     padding: 1px;
 }
 
 /* colors for the statusbar */
-/* #status-bar is included so it also get's the right color before the first setClass("insecure") */
-#status-bar, .status_insecure, .status_insecure * {
-    background-color: black; /* light green */
+/* #status-bar is included so it also gets the right color before the first setClass("insecure") */
+#status-bar, #status-bar.status_insecure*/ {
+    background-color: black;
     color: white;
 }
-.status_secure, .status_secure * {
+#status-bar.status_secure {
     background-color: #B0FF00; /* light green */
     color: black;
 }
-.status_broken, .status_broken * {
+#status-bar.status_broken {
     background-color: #FF6060; /* light red */
     color: black;
 }
@@ -200,5 +199,9 @@ fieldset.paypal {
     border: none;
     background-color: black;
 }
+
+/*
+ * }}}
+ */
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
