@@ -833,7 +833,7 @@ function QuickMarks() //{{{
 
         if (marks.length == 0)
         {
-            vimperator.echoerr("No marks set");
+            vimperator.echoerr("No QuickMarks set");
             return;
         }
 
