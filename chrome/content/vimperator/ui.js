@@ -273,7 +273,7 @@ function CommandLine() //{{{
     this.echo = function(str, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (/*!echo_allowed && focused && */focused == command_widget.inputField)
+        if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
             return false;
 
         if (typeof str != "string")
@@ -296,7 +296,7 @@ function CommandLine() //{{{
     this.echoErr = function(str)
     {
         var focused = document.commandDispatcher.focusedElement;
-        if (/*!echo_allowed && focused && */focused == command_widget.inputField)
+        if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
             return false;
 
         setErrorStyle();
@@ -343,6 +343,7 @@ function CommandLine() //{{{
     {
         multiline_input_widget.collapsed = true;
         multiline_output_widget.collapsed = true;
+        completionlist.hide();
 
         setPrompt(" "); // looks faster than an empty string as most prompts are 1 char long
         setCommand("");
@@ -374,6 +375,9 @@ function CommandLine() //{{{
         }
         else if (event.type == "keypress")
         {
+            if (!cur_extended_mode)
+                return;
+
             var key = vimperator.events.toString(event);
 
             // user pressed ENTER to carry out a command
@@ -600,7 +604,6 @@ function CommandLine() //{{{
             var key = vimperator.events.toString(event);
             if (vimperator.events.isAcceptKey(key))
             {
-                //var lines = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart).split(/\n/);
                 var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
                 if (text.match(multiline_regexp))
                 {
