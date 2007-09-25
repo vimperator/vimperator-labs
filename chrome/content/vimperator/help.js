@@ -150,9 +150,6 @@ vimperator.help = function(section, easter) //{{{
         'If you don\'t like Vimperator at all, you can uninstall it by typing <code class="command">:addons</code> and remove/disable it.\n' +
         'If you like it, but can\'t remember the shortcuts, press <code class="mapping">F1</code> or <code class="command">:help</code> to get this help window back.</p>' +
 
-        '<p>Since Vimperator\'s GUI is embedded into a toolbar, it may look too 3D-like with the default theme. ' +
-        'For the best experience, I therefore recommend the <a href="https://addons.mozilla.org/firefox/364/">Whitehart</a> theme or any other flat theme.</p>' +
-
         '<p>Vimperator was written by <a href="mailto:stubenschrott@gmx.net">Martin Stubenschrott</a>. ' +
         'If you appreciate my work on Vimperator and want to encourage me working on it more, you can either send me greetings, patches or make a donation: </p>' +
 
