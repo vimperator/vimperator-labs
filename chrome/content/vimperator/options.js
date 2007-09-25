@@ -365,7 +365,7 @@ function Options() //{{{
                   "<li><b>b</b>: Bookmarks</li>" +
                   "<li><b>h</b>: History</li></ul>" +
                   "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
-                  "Add 'sort' to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
+                  "Add <code class=\"option\">'sort'</code> to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
             default_value: "sfbh",
             validator: function (value) { if (/[^sfbh]/.test(value)) return false; else return true; }
         }
