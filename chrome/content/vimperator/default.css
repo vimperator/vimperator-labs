@@ -165,6 +165,9 @@ fieldset.paypal {
 .statusbar-resizerpanel {
     display: none;
 }
+#statusbar-display, #statusbar-progresspanel {
+    display: none;
+}
 
 /* colors for the statusbar */
 /* #status-bar is included so it also gets the right color before the first setClass("insecure") */
