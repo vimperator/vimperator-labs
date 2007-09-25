@@ -760,7 +760,19 @@ const vimperator = (function() //{{{
             vimperator.events.destroy();
 
             window.dump("All vimperator modules destroyed\n");
-        }
+        },
+
+        sleep: function(ms)
+        {
+            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager); 
+            var mainThread = threadManager.mainThread; 
+
+            var then = new Date().getTime(), now = then; 
+            for (; now - then < ms; now = new Date().getTime()) { 
+                mainThread.processNextEvent(true); 
+            } 
+        } 
+
     } //}}}
 })(); //}}}
 

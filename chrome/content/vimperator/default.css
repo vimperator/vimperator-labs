@@ -149,6 +149,7 @@ fieldset.paypal {
 	min-height: 18px !important;
     border: none !important;
     font-weight: bold;
+    font-family: monospace;
 }
 #vimperator-statusline {
     font-family: monospace;

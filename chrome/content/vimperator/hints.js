@@ -200,6 +200,13 @@ function Hints() //{{{
 
             hintContainer.valid_hint_count++; // one more visible hint in this frame
             linkCount++;                      // and one more total hint
+
+            // process firefox event to keep the UI snappy
+            if (linkCount % 10 == 0)
+            {
+                Components.classes['@mozilla.org/thread-manager;1'].
+                    getService().mainThread.processNextEvent(false);
+            }
         }
 
         doc.coordsInvalidated = false;
@@ -455,6 +462,9 @@ function Hints() //{{{
         }
     };
 
+    this.showHintsBackground = function()
+    {
+    }
 
     this.reshowHints = function()
     {
