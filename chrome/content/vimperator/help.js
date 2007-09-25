@@ -262,7 +262,7 @@ vimperator.help = function(section, easter) //{{{
     {
         function findSectionElement(section)
         {
-            return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"]')
+            return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"] | id("' + section + '")')
                 .snapshotItem(0);
         }
 
