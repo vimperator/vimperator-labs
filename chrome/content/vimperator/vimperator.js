@@ -112,10 +112,13 @@ const vimperator = (function() //{{{
         if (WINDOWS)
             path = path.replace('/', '\\', 'g');
 
-        // expand "~" to HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+        // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
         if (/^~/.test(path))
         {
-            var home = environment_service.get("HOME");
+            var home = environment_service.get("VIMPERATOR_HOME");
+
+            if (!home)
+                home = environment_service.get("HOME");
 
             if (WINDOWS && !home)
                 home = environment_service.get("USERPROFILE") ||
