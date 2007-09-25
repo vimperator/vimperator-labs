@@ -1,6 +1,10 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* statusline is now white on black with bold font by default (like in (g)vim)
+	  (change with userChrome.css if you don't like it until we have :colorscheme)
+	* :let mapleader=","  and <Leader> in :map support
+	* added new :let and :unlet commands
 	* separated search and Ex command history
 	* added 'visualbellstyle' for styling/hiding the visual bell
 	* merge the existing status bar with the standard FF status bar so that
