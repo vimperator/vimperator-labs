@@ -161,6 +161,11 @@ fieldset.paypal {
 #vimperator-statusline > label:first-child {
     padding: 0px;
 }
+/* FIXME: prevent this from flashing the default background-color on restarts */
+#vimperator-statusline-field-url {
+    background-color: transparent;
+}
+
 /* no longer at the window's bottom right corner */
 .statusbar-resizerpanel {
     display: none;
