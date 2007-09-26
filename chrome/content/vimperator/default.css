@@ -161,9 +161,9 @@ fieldset.paypal {
 #vimperator-statusline > label:first-child {
     padding: 0px;
 }
-/* FIXME: prevent this from flashing the default background-color on restarts */
 #vimperator-statusline-field-url {
-    background-color: transparent;
+    background-color: inherit;
+    color: inherit;
 }
 
 /* no longer at the window's bottom right corner */
@@ -177,18 +177,15 @@ fieldset.paypal {
 /* colors for the statusbar */
 /* #status-bar is included so it also gets the right color before the first setClass("insecure") */
 #status-bar,
-#status-bar.status_insecure,
-#status-bar.status_insecure #vimperator-statusline-field-url {
+#status-bar.status_insecure {
     background-color: black;
     color: white;
 }
-#status-bar.status_secure,
-#status-bar.status_secure #vimperator-statusline-field-url {
+#status-bar.status_secure {
     background-color: #B0FF00; /* light green */
     color: black;
 }
-#status-bar.status_broken,
-#status-bar.status_broken #vimperator-statusline-field-url {
+#status-bar.status_broken {
     background-color: #FF6060; /* light red */
     color: black;
 }
