@@ -199,7 +199,7 @@ function Options() //{{{
         // and bookmarks toolbar
         document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
         document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
-        // and original status bar (default), but show it, e.g. when needed for extensions
+        // and status bar (default on)
         document.getElementById("status-bar").collapsed = value.indexOf("s") > -1 ? false : true;
         document.getElementById("status-bar").hidden = value.indexOf("s") > -1 ? false : true;
     }
@@ -595,10 +595,10 @@ function Options() //{{{
             default_value: false
         }
     ));
-    addOption(new Option(["visualbellstyle"], "string",
+    addOption(new Option(["visualbellstyle", "t_vb"], "string",
         {
             short_help: "CSS specification of the visual bell",
-            help: "To hide the visual bell use a value of \"display: none;\".",
+            help: "To hide the visual bell use a value of \"display: none;\" or unset it with <code class=\"command\">:set t_vb=</code>",
             setter: function(value) { if (!value) value = "display: none;"; Options.setPref("visualbellstyle", value); },
             default_value: "background-color: black; color: black;"
         }
