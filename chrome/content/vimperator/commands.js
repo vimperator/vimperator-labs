@@ -786,8 +786,9 @@ function Commands() //{{{
             vimperator.search.clear();
         },
         {
-            short_help: "Clear the current selection",
-            help: "TODO"
+            short_help: "Remove the search highlighting",
+            help: "The document highlighting is turned back on when another search command is used or the " +
+                  "<code class=\"option\">'hlsearch'</code> option is set."
         }
     ));
     addDefaultCommand(new Command(["norm[al]"],
@@ -1188,8 +1189,7 @@ function Commands() //{{{
                 toggleSidebar();
         },
         {
-            short_help: "Close the sidebar",
-            help: "TODO"
+            short_help: "Close the sidebar window"
         }
     ));
     // TODO: sopen instead? Separate :sidebar from :sbopen and make them behave
@@ -1219,8 +1219,10 @@ function Commands() //{{{
             }
         },
         {
-            short_help: "Open the sidebar",
-            help: "TODO",
+            usage: ["sidebar {name}"],
+            short_help: "Open the sidebar window",
+            help: "<code class=\"argument\">{name}</code> is any of the menu items listed under the standard Firefox View->Sidebar " +
+                  "menu. Add-ons, Preferences and Downloads are also available in the sidebar.",
             completer: function(filter) { return vimperator.completion.get_sidebar_completions(filter); }
         }
     ));
