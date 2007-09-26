@@ -427,7 +427,7 @@ function Events() //{{{
         var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
         if (vimperator.hasMode(vimperator.modes.MENU))
-            return false;
+            return true;
 
         // XXX: for now only, later: input mappings if form element focused
         if (isFormElemFocused())
