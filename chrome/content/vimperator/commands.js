@@ -486,6 +486,9 @@ function Commands() //{{{
 
     function argToString(arg, color)
     {
+        if (!arg)
+            return "";
+
         try
         {
             // TODO: move to vimperator.eval()?
