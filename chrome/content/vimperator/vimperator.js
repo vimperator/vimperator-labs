@@ -346,37 +346,87 @@ const vimperator = (function() //{{{
             }
         },
 
-        // logs a message to the javascript error console
-        log: function(msg, level)
+        // if color = true it uses HTML markup to color certain items
+        objectToString: function(object, color)
         {
-            // if (Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
-                console_service.logStringMessage('vimperator: ' + msg);
-        },
-
-        // log an object to the javascript error console and print all
-        // properties of the object
-        logObject: function(object, level)
-        {
-            if (typeof object != 'object')
+            if (object === null)
+                return "null";
+            if (typeof object != "object")
                 return false;
 
-            var string = object + '::\n';
+            var string = "";
+            var obj = "";
+            try { // for window.JSON
+                obj = object.toString();
+            } catch (e) {
+                obj = "&lt;Object&gt;";
+            }
+
+            if (color)
+                string += "<span style=\"color: magenta; font-weight: bold;\">" + obj + "</span>::\n";
+            else
+                string += obj + "::\n";
+
             for (var i in object)
             {
                 var value;
                 try
                 {
-                    var value = object[i];
+                    if (i == "JSON") // without this ugly hack, ":echo window" does not work
+                        value = "[object JSON]";
+                    else
+                        value = object[i];
                 }
                 catch (e)
                 {
                     value = "";
                 }
 
-                string += i + ": " + value + "\n";
+                if (color)
+                {
+                    // syntax highlighting for special items
+                    if (typeof value === "number")
+                        value = "<span style=\"color: red;\">" + value + "</span>";
+                    else if (typeof value === "string")
+                    {
+                        value = value.replace(/\n/, "\\n").replace(/</, "&lt;");
+                        value = "<span style=\"color: green;\">\"" + value + "\"</span>";
+                    }
+                    else if (typeof value === "boolean")
+                        value = "<span style=\"color: blue;\">" + value + "</span>";
+                    else if (value == null || value == "undefined")
+                        value = "<span style=\"color: blue;\">" + value + "</span>";
+                    else if (typeof value === "object" || typeof value === "function")
+                    {
+                        // for java packages value.toString() would crash so badly 
+                        // that we cannot even try/catch it
+                        if (/^\[JavaPackage.*\]$/.test(value)) 
+                            value = "[JavaPackage]";
+                        else
+                        {
+                            var str = value.toString();
+                            if (typeof str == "string")  // can be "undefined"
+                                value = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        }
+                    }
+                    
+                    string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
+                }
+                else
+                    string += i + ": " + value + "\n";
             }
-            vimperator.log(string, level);
             return string;
+        },
+
+        // logs a message to the javascript error console
+        // if msg is an object, it is beautified
+        log: function(msg, level)
+        {
+            //if (Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
+            if (typeof msg == "object")
+                msg = this.objectToString(msg, false);
+
+            console_service.logStringMessage('vimperator: ' + msg);
         },
 
         // open one or more URLs

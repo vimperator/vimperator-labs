@@ -483,15 +483,53 @@ function Commands() //{{{
                   "Here, downloads can be paused, canceled and resumed."
         }
     ));
-    addDefaultCommand(new Command(["ec[ho]"],
-        function(args) { vimperator.echo(args); } ,
+
+    function argToString(arg, color)
+    {
+        try
         {
+            // TODO: move to vimperator.eval()?
+            arg = eval(arg);
+        }
+        catch (e)
+        {
+            vimperator.echoerr(e.toString());
+            return null;
+        }
+
+        if (typeof arg === "object")
+            arg = vimperator.objectToString(arg, color);
+        else if (typeof arg === "function")
+            arg = arg.toString().replace(/</g, "&lt;").replace(/>/, "&gt;");
+        else if (typeof arg === "number" || typeof arg === "boolean")
+            arg = "" + arg;
+        else if (typeof arg === "undefined")
+            arg = "undefined";
+
+        return arg;
+    }
+    addDefaultCommand(new Command(["ec[ho]"],
+        function(args)
+        {
+            var res = argToString(args, true);
+            if (res != null)
+                vimperator.echo(res);
+        },
+        {
+            usage: ["ec[ho] {arg}"],
             short_help: "Display a string at the bottom of the window",
-            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines can be separated by \\n."
+            help: "Useful for showing informational messages.Multiple lines can be separated by \\n.<br/>" +
+                  "<code class=\"argument\"}{arg}</code> can either be a quoted string, or any expression which can be fed to eval() like 4+5. " +
+                  "You can also view the source code of objects and functions if the return value of <code class=\"argument\">{arg}</code> is an object or function."
         }
     ));
     addDefaultCommand(new Command(["echoe[rr]"],
-        function(args) { vimperator.echoerr(args); } ,
+        function(args)
+        {
+            var res = argToString(args, false);
+            if (res != null)
+                vimperator.echoerr(res);
+        },
         {
             short_help: "Display an error string at the bottom of the window",
             help: "Echo all arguments of this command highlighted in red. Useful for showing important messages."
@@ -1565,7 +1603,7 @@ function Commands() //{{{
             // TODO: if special, run the last command
             var output = vimperator.system(args)
             if (typeof output === "string")
-                vimperator.echo("<pre>" + output + "</pre>");
+                vimperator.echo(output);
             else
                 vimperator.echoerr("Invalid system command: " + args);
         },

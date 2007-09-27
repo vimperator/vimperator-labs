@@ -185,9 +185,7 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = true;
 
-        var output = str.replace(/\n|\\n/g, "<br/>");
-        //output =  ":" + command_widget.value + "<br/>" + output;
-        output += "<br/>"
+        var output = "<pre>" + str + "</pre>";
         output += '<span id="end-prompt" style="color: green; background-color: white;">Press ENTER or type command to continue</span>';
         output += '<span id="more-prompt" style="display: none; position: fixed; top: auto; bottom: 0; left: 0; right: 0; color: green; background-color: white;">';
         output += "-- More --";
@@ -289,7 +287,7 @@ function CommandLine() //{{{
             str = "";
 
         setNormalStyle();
-        if (flags || str.indexOf("\n") > -1 || str.indexOf("\\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
+        if (flags || str.indexOf("\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
         {
             setMultiline(str);
         }
