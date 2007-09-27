@@ -711,7 +711,7 @@ function Hints() //{{{
         if (!takenHints)
             takenHints = {};
 
-        var rel = 0, abs = 0, inl = 0;
+        var rel = 0, abs = 0, inl = 0, disc = 0;
         var nextHintFirstChar = 0, nextHintSecondChar = 0;
 
         var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
@@ -724,18 +724,17 @@ function Hints() //{{{
         baseNodeInline.style.color = "black";
         baseNodeInline.style.display = "inline";
         baseNodeInline.style.fontSize = "inherit";
-        baseNodeInline.style.padding = "0";
+        baseNodeInline.style.padding = "0px";
         baseNodeInline.className = "vimperator-hint-inline";
         var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
         //baseNodeAbsolute.style.backgroundColor = "#BCEE68";
         baseNodeAbsolute.style.backgroundColor = "cyan";
         baseNodeAbsolute.style.color = "black";
         baseNodeAbsolute.style.position = "absolute";
-        baseNodeAbsolute.style.fontSize = "9px";
+        baseNodeAbsolute.style.fontSize = "10px";
         baseNodeAbsolute.style.fontWeight = "bold";
-        //baseNodeAbsolute.style.fontFamily = "monospace";
-        baseNodeAbsolute.style.lineHeight = "9px";
-        baseNodeAbsolute.style.padding = "0px 1px 0px 1px";
+        baseNodeAbsolute.style.lineHeight = "10px";
+        baseNodeAbsolute.style.padding = "0px 1px 0px 0px";
         baseNodeAbsolute.style.zIndex = "5000";
         baseNodeAbsolute.className = "vimperator-hint-absolute";
 
@@ -745,8 +744,8 @@ function Hints() //{{{
 
         var retRange = null;
         var searchRange = doc.createRange();
-        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc);
-        var word, elem, count, href, text, lowertext;
+        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc, null, true);
+        var word, elem, tagname, count, href, text, lowertext;
         vimperator.log("Hinting " + res.snapshotLength + " items on " + doc.title);
 outer:
         for (var i = 0; i < res.snapshotLength; i++)
@@ -756,7 +755,7 @@ outer:
             if (i % 200 == 0)
             {
                 Components.classes['@mozilla.org/thread-manager;1'].
-                    getService().mainThread.processNextEvent(true);
+                    getService().mainThread.processNextEvent(false);
 
                 // update saved positions, as the user could have scrolled
                 scrollX = doc.defaultView.scrollX;
@@ -765,12 +764,24 @@ outer:
             }
 
             elem = res.snapshotItem(i);
+            tagname = elem.tagName.toLowerCase();
+
+
+            //if (vimperator.buffer.evaluateXPath(".//*[@class='vimperator-hint-inline']", doc, elem).snapshotLength > 0 )
+            //    continue outer;
+            if (elem.getElementsByClassName("vimperator-hint-inline").length > 0)
+                continue outer;
+
             count = elem.childNodes.length;
             searchRange.setStart(elem, 0);
             searchRange.setEnd(elem, count);
             
             // try to get a unique substring of the element
-            text = elem.textContent; // faster than searchRange.toString()
+            if (tagname == "input" || tagname == "textarea" || tagname == "select")
+                text = "";
+            else
+                text = elem.textContent; // faster than searchRange.toString()
+
             href = elem.getAttribute("href");
             for (var j = 0; j < text.length - 1; j++)
             {
@@ -782,9 +793,11 @@ outer:
                 if (/[^a-z0-9]/.test(lowertext)) // 2x as fast as lowertext[0] > "a" etc. testing
                     continue;
 
-                if (typeof(takenHints[lowertext]) === "undefined" ||
-                        (href && takenHints[lowertext] == href))
-                { // hint not yet taken or taken and href the same
+                //dump(elem.tagname + " - " + text + ": " + word + "\n");
+                
+                // hint not yet taken or taken and href the same
+                if (typeof(takenHints[lowertext]) === "undefined" || (href && takenHints[lowertext] == href))
+                { 
                     takenHints[lowertext] = href;
                     inl++;
 
@@ -805,14 +818,27 @@ outer:
             }
 
             // if we came here, there was no suitable inline hint, need 
-            // to create an absolutely positioned div
-            var lower = elem.tagName.toLowerCase();
-            if (lower != "input" && lower != "textarea" && lower != "select")
+            // to create an span relatively positioned to the element
+            if (tagname != "input" && tagname != "textarea" && tagname != "select")
             {
+                // heuristics to avoid duplicate relative hints for the same things:
+                // 1. a link with the same href in one of the next two elements
+                //    this often is true for images which have a textlink right to it
+                //    or a menu made up of a <td>
+                if (i < res.snapshotLength-2)
+                {
+                    if (href && href == res.snapshotItem(i+1).getAttribute("href") ||
+                                href == res.snapshotItem(i+2).getAttribute("href"))
+                    {
+                        disc++;
+                        continue;
+                    }
+                }
+
                 elem.style.position = "relative";
                 rel++;
                 var span = doc.createElement("span");
-                span.setAttribute("style", "z-index: 5000; color:black; font-weight: bold; font-size: 9px; background-color:yellow; line-height: 9px; border: 0px; padding: 0px 1px 0px 1px; position: absolute; left: 0px; top: 0px");
+                span.setAttribute("style", "z-index: 5000; color:black; font-weight: bold; font-size: 10px; background-color:yellow; line-height: 10px; border: 0px; padding: 0px 1px 0px 0px; position: absolute; left: 0px; top: 0px");
                 var hint = getNextHintText(href);
                 if (!hint)
                     return false;
@@ -821,7 +847,7 @@ outer:
                 elem.appendChild(span);
                 continue;
             }
-            else
+            else // absolute positioning
             {
                 var rect = elem.getClientRects()[0];
                 if (rect)
@@ -838,8 +864,7 @@ outer:
                 }
             }
         }
-        vimperator.log("Done hinting " + res.snapshotLength + " items on " + doc.title);
-        vimperator.log("REL: " + rel + " - ABS: " + abs + " - INL: " + inl);
+        vimperator.log("Hinted " + res.snapshotLength + " items on " + doc.title + " - inl: " + inl+ " rel: " + rel + " abs: " + abs  + " discard: " + disc, 7);
         return true;
     }
     

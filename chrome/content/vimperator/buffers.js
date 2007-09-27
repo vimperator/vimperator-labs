@@ -163,12 +163,14 @@ function Buffer() //{{{
     this.lastInputField = null; // used to keep track of the right field for "gi"
 
     // returns an XPathResult object
-    this.evaluateXPath = function(expression, doc, ordered)
+    this.evaluateXPath = function(expression, doc, elem, ordered)
     {
         if (!doc)
             doc = window.content.document;
+        if (!elem)
+            elem = doc;
 
-        var result = doc.evaluate(expression, doc,
+        var result = doc.evaluate(expression, elem,
             function lookupNamespaceURI(prefix) {
               switch (prefix) {
                 case 'xhtml':
