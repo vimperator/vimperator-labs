@@ -356,6 +356,12 @@ function Options() //{{{
             default_value: "homepage,quickmark,tabopen,paste"
         }
     ));
+    addOption(new Option(["autohints", "ah"], "boolean",
+        {
+            short_help: "Automatically show hints on every web page",
+            default_value: false
+        }
+    ));
     addOption(new Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",

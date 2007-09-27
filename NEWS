@@ -2,6 +2,8 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
+	  but you can do things like :echo 3+2 or :echo window.document now
 	* statusline is now white on black with bold font by default (like in (g)vim)
 	  (change with userChrome.css if you don't like it until we have :colorscheme)
 	* :let mapleader=","  and <Leader> in :map support

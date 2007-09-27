@@ -101,30 +101,6 @@ function Hints() //{{{
             elem.absoTop = rect.top;
         }
         return;
-
-        //if (typeof(elem.validCoord) != "undefined")
-        //{
-        //    if (elem.validCoord == elem.ownerDocument.validCoords)
-        //        return;
-        //}
-
-        //if (elem.offsetParent)
-        //{
-        //    genElemCoords(elem.offsetParent);
-        //    elem.absoLeft = elem.offsetParent.absoLeft + elem.offsetLeft;
-        //    elem.absoTop = elem.offsetParent.absoTop + elem.offsetTop;
-        //}
-        //else if (elem.offsetLeft && elem.offsetTop) // TODO: ugly and broken temporary fix until FF3
-        //{
-        //    elem.absoLeft = elem.offsetLeft;
-        //    elem.absoTop = elem.offsetTop;
-        //}
-        //else
-        //{
-        //    elem.absoLeft = 0;
-        //    elem.absoTop = 0;
-        //}
-        //elem.validCoord = elem.ownerDocument.validCoords;
     }
 
     function createHints(win)
@@ -162,6 +138,7 @@ function Hints() //{{{
 
         var hints = hintContainer.childNodes;
         var maxhints = vimperator.options["maxhints"];
+        //vimperator.log("snapshot length: " + res.snapshotLength);
         for (i = 0; i < res.snapshotLength; i++)
         {
             // this saves from script timeouts on pages with some thousand links
@@ -202,10 +179,11 @@ function Hints() //{{{
             linkCount++;                      // and one more total hint
 
             // process firefox event to keep the UI snappy
-            // if (linkCount % 10 == 0)
+            // if (linkCount % 50 == 0)
             // {
             //     Components.classes['@mozilla.org/thread-manager;1'].
             //         getService().mainThread.processNextEvent(false);
+            //     //showHints(null, 0);
             // }
         }
 
@@ -214,7 +192,6 @@ function Hints() //{{{
         // recursively create hints
         for (i = 0; i < win.frames.length; i++)
             createHints(win.frames[i]);
-
     }
 
     function showHints(win, off)
@@ -696,12 +673,179 @@ function Hints() //{{{
         }
     }
 
-    window.document.addEventListener("DOMContentLoaded", initDoc, null);
-    window.document.addEventListener("DOMContentLoaded", function() { vimperator.log("contentloaded"); }, null);
-    window.addEventListener("load", function() { vimperator.log("load"); }, null);
-    window.document.addEventListener("pageshow", function() { vimperator.log("pageshow"); }, null);
+//    window.document.addEventListener("pageshow", function() { vimperator.log("pageshow"); }, null);
     // FIXME: add resize support
     //window.addEventListener("resize", onResize, null);
+
+    getBrowser().addEventListener("DOMContentLoaded", function(event) {
+            if (vimperator.options["autohints"])
+                vimperator.hints.show(event.target);
+    }, false);
+    
+    this.show = function(doc, takenHints)
+    {
+        function getNextHintText(href)
+        {
+            var hintCharacters = "abcdefghijklmnopqrstuvwxyz123456789"; // no 0, as it looks too much like O
+            var len = hintCharacters.length;
+            var text = "aa";
+            for (; nextHintFirstChar < len; nextHintFirstChar++)
+            {
+                for (; nextHintSecondChar < len; nextHintSecondChar++)
+                {
+                    text = hintCharacters[nextHintFirstChar] + hintCharacters[nextHintSecondChar];
+                    if (typeof takenHints[text] === "undefined")
+                    {
+                        takenHints[text] = href;
+                        return text.toUpperCase();
+                    }
+                }
+                nextHintSecondChar = 0;
+            }
+            vimperator.log("Too many hints on page");
+            return null;
+        }
+
+        if (!doc)
+            doc = window.content.document;
+        if (!takenHints)
+            takenHints = {};
+
+        var rel = 0, abs = 0, inl = 0;
+        var nextHintFirstChar = 0, nextHintSecondChar = 0;
+
+        var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
+                               .createInstance()
+                               .QueryInterface(Components.interfaces.nsIFind);
+        finder.caseSensitive = false;
+
+        var baseNodeInline = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        baseNodeInline.style.backgroundColor = "#BCEE68";
+        baseNodeInline.style.color = "black";
+        baseNodeInline.style.display = "inline";
+        baseNodeInline.style.fontSize = "inherit";
+        baseNodeInline.style.padding = "0";
+        baseNodeInline.className = "vimperator-hint-inline";
+        var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
+        //baseNodeAbsolute.style.backgroundColor = "#BCEE68";
+        baseNodeAbsolute.style.backgroundColor = "cyan";
+        baseNodeAbsolute.style.color = "black";
+        baseNodeAbsolute.style.position = "absolute";
+        baseNodeAbsolute.style.fontSize = "9px";
+        baseNodeAbsolute.style.fontWeight = "bold";
+        //baseNodeAbsolute.style.fontFamily = "monospace";
+        baseNodeAbsolute.style.lineHeight = "9px";
+        baseNodeAbsolute.style.padding = "0px 1px 0px 1px";
+        baseNodeAbsolute.style.zIndex = "5000";
+        baseNodeAbsolute.className = "vimperator-hint-absolute";
+
+        var scrollX = doc.defaultView.scrollX;
+        var scrollY = doc.defaultView.scrollY;
+        //var view = doc.defaultView;
+
+        var retRange = null;
+        var searchRange = doc.createRange();
+        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc);
+        var word, elem, count, href, text, lowertext;
+        vimperator.log("Hinting " + res.snapshotLength + " items on " + doc.title);
+outer:
+        for (var i = 0; i < res.snapshotLength; i++)
+        {
+            // the more often we check for firefox events, the slower it is
+            // best is checking between every 50-500 elements
+            if (i % 200 == 0)
+            {
+                Components.classes['@mozilla.org/thread-manager;1'].
+                    getService().mainThread.processNextEvent(true);
+
+                // update saved positions, as the user could have scrolled
+                scrollX = doc.defaultView.scrollX;
+                scrollY = doc.defaultView.scrollY;
+                vimperator.log(scrollY);
+            }
+
+            elem = res.snapshotItem(i);
+            count = elem.childNodes.length;
+            searchRange.setStart(elem, 0);
+            searchRange.setEnd(elem, count);
+            
+            // try to get a unique substring of the element
+            text = elem.textContent; // faster than searchRange.toString()
+            href = elem.getAttribute("href");
+            for (var j = 0; j < text.length - 1; j++)
+            {
+                if (text.length < 2)
+                    continue;
+
+                word = text.substr(j, 2);
+                lowertext = word.toLowerCase();
+                if (/[^a-z0-9]/.test(lowertext)) // 2x as fast as lowertext[0] > "a" etc. testing
+                    continue;
+
+                if (typeof(takenHints[lowertext]) === "undefined" ||
+                        (href && takenHints[lowertext] == href))
+                { // hint not yet taken or taken and href the same
+                    takenHints[lowertext] = href;
+                    inl++;
+
+                    retRange = finder.Find(word, searchRange, searchRange, searchRange);
+                    if (!retRange)
+                    {
+                        dump("no retRange for: " + word + "\n");
+                        continue;
+                    }
+
+                    var nodeSurround = baseNodeInline.cloneNode(true);
+                    var startContainer = retRange.startContainer;
+                    var startOffset = retRange.startOffset;
+                    var docfrag = retRange.extractContents();
+                    var before = startContainer.splitText(startOffset);
+                    var parent = before.parentNode;
+                    nodeSurround.appendChild(docfrag);
+                    parent.insertBefore(nodeSurround, before);
+                    continue outer;
+                }
+            }
+
+            // if we came here, there was no suitable inline hint, need 
+            // to create an absolutely positioned div
+            var lower = elem.tagName.toLowerCase();
+            if (lower != "input" && lower != "textarea")
+            {
+                elem.style.position = "relative";
+                rel++;
+                var span = doc.createElement("span");
+                span.setAttribute("style", "z-index: 5000; color:black; font-weight: bold; font-size: 9px; background-color:yellow; line-height: 9px; border: 0px; padding: 0px 1px 0px 1px; position: absolute; left: 0px; top: 0px");
+                var hint = getNextHintText(href);
+                if (!hint)
+                    return false;
+                span.innerHTML = hint;
+                //setTimeout(function() { elem.appendChild(span); }, 10); // 10ms delay to let firefox handle position=relative
+                elem.appendChild(span);
+                continue;
+            }
+            else
+            {
+                var rect = elem.getClientRects()[0];
+                if (rect)
+                {
+                    var span = baseNodeAbsolute.cloneNode(true);
+                    var hint = getNextHintText(href);
+                    if (!hint)
+                        return false;
+                    span.innerHTML = hint;
+                    span.style.left = rect.left + scrollX + "px";
+                    span.style.top = rect.top + scrollY + "px";
+                    doc.body.appendChild(span);
+                    abs++;
+                }
+            }
+        }
+        vimperator.log("Done hinting " + res.snapshotLength + " items on " + doc.title);
+        vimperator.log("REL: " + rel + " - ABS: " + abs + " - INL: " + inl);
+        return true;
+    }
+    
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
