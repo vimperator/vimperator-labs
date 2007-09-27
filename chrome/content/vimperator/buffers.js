@@ -230,7 +230,7 @@ function Buffer() //{{{
             var items = vimperator.completion.get_buffer_completions("");
             var number, indicator, title, url;
 
-            var list = "<table>"
+            var list = "<table style=\"white-space: pre;\">"
             for (var i = 0; i < items.length; i++)
             {
                 if (i == vimperator.tabs.index())
@@ -245,7 +245,9 @@ function Buffer() //{{{
                 url = url.replace(/>/, "&gt;").replace(/</, "&lt;");
                 title = title.replace(/>/, "&gt;").replace(/</, "&lt;");
 
-                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
+                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator +
+                        "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                        "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
             }
             list += "</table>";
 

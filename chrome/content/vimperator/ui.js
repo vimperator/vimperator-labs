@@ -200,7 +200,6 @@ function CommandLine() //{{{
         var content_height = multiline_output_widget.contentDocument.height;
         var height = content_height < available_height ? content_height : available_height;
 
-        //multiline_output_widget.style.height = height + "px";
         multiline_output_widget.height = height + "px";
         multiline_output_widget.collapsed = false;
 

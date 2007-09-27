@@ -258,10 +258,18 @@ function Bookmarks() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
+                var list = "<table style=\"white-space: nowrap;\"><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    list += "<tr><td>" + items[i][1] + "</td><td style=\"color: green\">" + items[i][0] + "</td></tr>";
+                    var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    if (title.length > 50)
+                        title = title.substr(0, 47) + "...";
+                    var keyword = "".substr(0,12); // maximum 12 chars
+                    var url = items[i][0].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    var tags = "tag1, tag2";
+                    list += "<tr><td>" + title + "</td><td style=\"color: blue\" align=\"center\">" + keyword +
+                            "</td><td style=\"color: green; width: 100%\">" + url +
+                            "</td><td style=\"color: red;\" align=\"right\">" + tags + "</td></tr>";
                     // TODO: change that list to something like this when we have keywords
                     //list += "<tr><td width=\"30%\"><span style=\"font-weight: bold\">" + items[i][1].substr(0,20) + "</span></td><td width=\"70%\"><span style=\"color: green\">" + items[i][0] + "</span><br/>" + "Keyword: <span style=\"color: blue\">foo</span> Tags: <span style=\"color: red\">computer, news</span>" + "</td></tr>";
 
@@ -480,10 +488,14 @@ function History() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
+                var list = "<table style=\"white-space: nowrap;\"><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    list += "<tr><td>" + items[i][1] + "</td><td>" + items[i][0] + "</td></tr>";
+                    var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    if (title.length > 50)
+                        title = title.substr(0, 47) + "...";
+                    var url = items[i][0].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    list += "<tr><td>" + title + "</td><td style=\"color: green;\">" + url + "</td></tr>";
                 }
                 list += "</table>";
 
@@ -735,10 +747,10 @@ function Marks() //{{{
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
-                  + "<td>&nbsp;"           + marks[i][0]                              +  "</td>"
-                  + "<td align=\"right\">" + Math.round(marks[i][1].position.y * 100) + "%</td>"
-                  + "<td align=\"right\">" + Math.round(marks[i][1].position.x * 100) + "%</td>"
-                  + "<td>"                 + marks[i][1].location                     +  "</td>"
+                  + "<td>&nbsp;"                   + marks[i][0]                              +  "</td>"
+                  + "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>"
+                  + "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>"
+                  + "<td style=\"color: green;\">" + marks[i][1].location.replace(/</, "&lt;").replace(/>/, "&gt;") +  "</td>"
                   + "</tr>";
         }
         list += "</table>";
@@ -829,7 +841,8 @@ function QuickMarks() //{{{
         var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
-            list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] + "</td><td>" + marks[i][1] + "</td></tr>";
+            list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] +
+                    "</td><td style=\"color: green;\">" + marks[i][1].replace(/</, "&lt;").replace(/>/, "&gt;") + "</td></tr>";
         }
         list += "</table>";
 
