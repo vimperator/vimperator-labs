@@ -516,11 +516,11 @@ function Commands() //{{{
                 vimperator.echo(res);
         },
         {
-            usage: ["ec[ho] {arg}"],
+            usage: ["ec[ho] {expr}"],
             short_help: "Display a string at the bottom of the window",
-            help: "Useful for showing informational messages.Multiple lines can be separated by \\n.<br/>" +
-                  "<code class=\"argument\"}{arg}</code> can either be a quoted string, or any expression which can be fed to eval() like 4+5. " +
-                  "You can also view the source code of objects and functions if the return value of <code class=\"argument\">{arg}</code> is an object or function."
+            help: "Useful for showing informational messages. Multiple lines can be separated by \\n.<br/>" +
+                  "<code class=\"argument\">{expr}</code> can either be a quoted string, or any expression which can be fed to eval() like 4+5. " +
+                  "You can also view the source code of objects and functions if the return value of <code class=\"argument\">{expr}</code> is an object or function."
         }
     ));
     addDefaultCommand(new Command(["echoe[rr]"],
@@ -531,8 +531,9 @@ function Commands() //{{{
                 vimperator.echoerr(res);
         },
         {
+            usage: ["echoe[rr] {expr}"],
             short_help: "Display an error string at the bottom of the window",
-            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages."
+            help: "Just like <code class=\"command\">:ec[ho]</code>, but echoes the result highlighted in red. Useful for showing important messages."
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
