@@ -97,8 +97,8 @@ function Hints() //{{{
         {
             if (!rect.left || !rect.top)
                 vimperator.log("HUI: no rect.left or top");
-            elem.absoLeft = rect.left;
-            elem.absoTop = rect.top;
+            elem.absoLeft = rect.left + window.content.scrollX;
+            elem.absoTop = rect.top + window.content.scrollY;
         }
         return;
     }
@@ -790,10 +790,7 @@ outer:
 
                     retRange = finder.Find(word, searchRange, searchRange, searchRange);
                     if (!retRange)
-                    {
-                        dump("no retRange for: " + word + "\n");
                         continue;
-                    }
 
                     var nodeSurround = baseNodeInline.cloneNode(true);
                     var startContainer = retRange.startContainer;
@@ -810,7 +807,7 @@ outer:
             // if we came here, there was no suitable inline hint, need 
             // to create an absolutely positioned div
             var lower = elem.tagName.toLowerCase();
-            if (lower != "input" && lower != "textarea")
+            if (lower != "input" && lower != "textarea" && lower != "select")
             {
                 elem.style.position = "relative";
                 rel++;
