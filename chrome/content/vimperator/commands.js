@@ -647,8 +647,24 @@ function Commands() //{{{
         {
             if (!args)
             {
+                var str = "";
+                for (var i in vimperator.globalVariables)
+                {
+                    var value = vimperator.globalVariables[i];
+                    if (typeof value == "number")
+                        var prefix = "#";
+                    else if (typeof value == "function")
+                        var prefix = "*";
+                    else
+                        var prefix = "";
+
+                    str += "<tr><td style=\"width: 200px;\">" + i + "</td><td>" + prefix + value + "</td>\n";
+                }
+                if (str)
+                    vimperator.echo("<table>" + str + "</table>", true);
+                else
+                    vimperator.echo("No variables found");
                 return;
-                // List all defined variables
             }
 
             var match;
