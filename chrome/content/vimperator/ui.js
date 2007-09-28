@@ -99,12 +99,14 @@ function CommandLine() //{{{
     var wild_index = 0;  // keep track how often we press <Tab> in a row
     var completion_index = UNINITIALIZED;
 
-    // The prompt for the current command, for example : or /. Can be blank
+    // the containing box for the prompt_widget and command_widget
+    var commandline_widget = document.getElementById('vimperator-commandline');
+    // the prompt for the current command, for example : or /. Can be blank
     var prompt_widget = document.getElementById('vimperator-commandline-prompt');
-    // The command bar which contains the current command
+    // the command bar which contains the current command
     var command_widget = document.getElementById('vimperator-commandline-command');
 
-    // The widget used for multiline output
+    // the widget used for multiline output
     var multiline_output_widget = document.getElementById("vimperator-multiline-output");
     multiline_output_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multiline_output_widget.contentDocument.body.innerHTML = "";
@@ -115,7 +117,7 @@ function CommandLine() //{{{
         multiline_output_widget.collapsed = true;
     }, 100);
 
-    // The widget used for multiline intput
+    // the widget used for multiline intput
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
 
     // we need to save the mode which were in before opening the command line
@@ -131,19 +133,17 @@ function CommandLine() //{{{
     var multiline_regexp = null;
     var multiline_callback = null;
 
-    // TODO: these styles should be moved to the .css file
     function setNormalStyle()
     {
-        command_widget.inputField.setAttribute("style","font-family: monospace;");
+        commandline_widget.setAttribute("class", "normal");
     }
     function setMessageStyle()
     {
-        prompt_widget.setAttribute("style", "font-family: monospace; color:magenta; font-weight: bold");
-        command_widget.inputField.setAttribute("style", "font-family: monospace;");
+        commandline_widget.setAttribute("class", "message");
     }
     function setErrorStyle()
     {
-        command_widget.inputField.setAttribute("style", "font-family: monospace; color:white; background-color:red; font-weight: bold");
+        commandline_widget.setAttribute("class", "error");
     }
 
     // Sets the prompt - for example, : or /

@@ -153,7 +153,7 @@ fieldset.paypal {
 }
 #vimperator-statusline {
     font-family: monospace;
-    margin: 0
+    margin: 0px;
 }
 #vimperator-statusline > label {
     padding: 0px 0px 0px 8px;
@@ -195,6 +195,20 @@ fieldset.paypal {
     background-color: white;
     color: black;
     padding: 1px;
+}
+#vimperator-commandline-prompt, #vimperator-commandline-command {
+    background-color: inherit;
+    color: inherit;
+}
+#vimperator-commandline.error {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+#vimperator-commandline.message > #vimperator-commandline-prompt {
+    background-color: white;
+    color: magenta;
+    font-weight: bold;
 }
 
 #vimperator-multiline-output {
