@@ -1027,7 +1027,7 @@ function Commands() //{{{
             else
             {
                 //                               1        2       3    4  5      6
-                var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?(([+-])?=(.*))?/);
+                var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?(([+-])?=(.*))?/);
                 if (!matches)
                 {
                     vimperator.echoerr("E518: Unknown option: " + args);
