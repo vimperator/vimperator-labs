@@ -232,10 +232,15 @@ function Search() //{{{
         gFindBar._setCaseSensitivity(case_sensitive)
         gFindBar._highlightDoc("white", "black", text);
 
-        // TODO: seems fast enough for now
-        var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search")
-        for (var i = 0; i < spans.length; i++)
-            spans[i].setAttribute("style", vimperator.options["hlsearchstyle"]);
+        // TODO: seems fast enough for now...just
+        (function(win)
+        {
+            for (var i = 0; i < win.frames.length; i++)
+                arguments.callee(win.frames[i])
+            var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search")
+            for (var i = 0; i < spans.length; i++)
+                spans[i].setAttribute("style", vimperator.options["hlsearchstyle"]);
+        })(window.content);
 
         // recreate selection since _highlightDoc collapses the selection backwards
         getBrowser().fastFind.findAgain(false, links_only);
