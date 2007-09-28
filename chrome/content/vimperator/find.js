@@ -235,17 +235,22 @@ function Search() //{{{
         if (!text)
             text = last_search_string;
 
-        // NOTE: setCaseSensitivity() in FF2 does NOT set the
+        // NOTE: gFindBar.setCaseSensitivity() in FF2 does NOT set the
         // accessibility.typeaheadfind.casesensitive pref as needed by
         // highlightDoc()
         gFindBar.mTypeAheadCaseSensitive = case_sensitive ? 1 : 0;
         gFindBar.highlightDoc("white", "black", text);
 
-        // TODO: seems fast enough for now
-        // NOTE: FF2 highlighting spans all have this id rather than a class attribute
-        var spans = vimperator.buffer.evaluateXPath('//span[@id="__firefox-findbar-search-id"]')
-        for (var i = 0; i < spans.snapshotLength; i++)
-            spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
+        // TODO: seems fast enough for now...just
+        // NOTE: FF2 highlighting spans all have the same id rather than a class attribute
+        (function(win)
+        {
+            for (var i = 0; i < win.frames.length; i++)
+                arguments.callee(win.frames[i])
+            var spans = vimperator.buffer.evaluateXPath('//span[@id="__firefox-findbar-search-id"]', win.document)
+            for (var i = 0; i < spans.snapshotLength; i++)
+                spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
+        })(window.content);
 
         // recreate selection since _highlightDoc collapses the selection backwards
         getBrowser().fastFind.findNext();
