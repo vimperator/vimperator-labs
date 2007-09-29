@@ -208,7 +208,7 @@ vimperator.help = function(section, easter) //{{{
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n' +
         '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">\n<head>\n<title>Vimperator help</title>\n' +
         // XXX: stylesheet broken here? Have to add it in the vimperator.xul file
-        '<link rel="stylesheet" href="chrome://vimperator/content/default.css" type="text/css"/>\n' +
+        '<link rel="stylesheet" href="chrome://vimperator/content/help.css" type="text/css"/>\n' +
         '</head>\n<body>\n<div class="main">\n' +
         '<span class="version">version ' + vimperator.version + '</span>\n' +
         header +

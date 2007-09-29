@@ -1,128 +1,31 @@
-/*
- * Help file {{{
- */
+/***** BEGIN LICENSE BLOCK ***** {{{
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
-div.main {
-    font-family: -moz-fixed;
-    white-space: -moz-pre-wrap;
-    width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
 
-h1 {
-    text-align: center;
-}
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
 
-p.tagline {
-    text-align: center;
-    font-weight: bold;
-}
+(c) 2006-2007: Martin Stubenschrott <stubenschrott@gmx.net>
 
-table.vimperator {
-    border-width: 1px;
-    border-style: dotted;
-    border-color: gray;
-    /*margin-bottom: 2em; /* FIXME: just a quick hack until we have proper pages */
-}
-table.vimperator td {
-    border: none;
-    padding: 3px;
-}
-tr.separator {
-    height: 10px;
-}
-hr {
-    height: 1px;
-    background-color: white;
-    border-style: none;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-td.taglist {
-    text-align: right;
-    vertical-align: top;
-    border-spacing: 13px 10px;
-}
-td.taglist td {
-    width: 100px;
-    padding: 3px 0px;
-}
-tr.taglist code, td.usage code {
-    margin: 0px 2px;
-}
-td.usage code {
-    white-space: nowrap;
-}
-td.taglist code {
-    margin-left: 2em;
-}
-code.tag {
-    font-weight: bold;
-    color: rgb(255, 0, 255); /* magenta */
-}
-tr.description {
-    margin-bottom: 4px;
-}
-table.commands {
-    background-color: rgb(250, 240, 230);
-}
-table.mappings {
-    background-color: rgb(230, 240, 250);
-}
-table.options {
-    background-color: rgb(240, 250, 230);
-}
+Alternatively, the contents of this file may be used under the terms of
+either the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the GPL or the LGPL are applicable instead
+of those above. If you wish to allow use of your version of this file only
+under the terms of either the GPL or the LGPL, and not to allow others to
+use your version of this file under the terms of the MPL, indicate your
+decision by deleting the provisions above and replace them with the notice
+and other provisions required by the GPL or the LGPL. If you do not delete
+the provisions above, a recipient may use your version of this file under
+the terms of any one of the MPL, the GPL or the LGPL.
+}}} ***** END LICENSE BLOCK *****/
 
-fieldset.paypal {
-    border: none;
-}
-
-.argument {
-    color: #6A97D4;
-}
-
-.command {
-    font-weight: bold;
-    color: #632610;
-}
-
-.mapping {
-    font-weight: bold;
-    color: #102663;
-}
-
-.option {
-    font-weight: bold;
-    color: #106326;
-}
-
-.code {
-    color: #108826;
-}
-
-.shorthelp {
-    font-weight: bold;
-}
-
-.version {
-    position: absolute;
-    top: 10px;
-    right: 2%;
-    color: #C0C0C0;
-    text-align: right;
-}
-
-.warning {
-    font-weight: bold;
-    color: red;
-}
-
-/* }}}
- * XUL {{{
- * TODO: move to the standard location: chrome/skin/vimperator.css...if I can
- * ever convince MS :( -- djk
- */
 #vimperator-container  {
     font-family: monospace;
 }
@@ -219,9 +122,5 @@ fieldset.paypal {
     border: none;
     background-color: black;
 }
-
-/*
- * }}}
- */
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
