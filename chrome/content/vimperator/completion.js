@@ -479,6 +479,74 @@ vimperator.completion = (function() // {{{
             return build_longest_common_substring(mapped, filter);
         }, //}}}
 
+        javascript: function(str)
+        {
+            g_substrings = [];
+            var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
+            var object = "window";
+            var filter = matches[3] || "";
+            var start = matches[1].length-1;
+            if (matches[2])
+            {
+                var brackets = 0, parentheses = 0;
+                outer:
+                for (; start >= 0; start--)
+                {
+                    dump(matches[1].substr(start) + ": " + start + "\n");
+                    switch (matches[1][start])
+                    {
+                        case ";":
+                        case "{":
+                            break outer;
+
+                        case "]":
+                            brackets--;
+                            break;
+                        case "[":
+                            brackets++;
+                            break;
+                        case ")":
+                            parentheses--;
+                            break;
+                        case "(":
+                            parentheses++;
+                            break;
+                    }
+                    if (brackets > 0 || parentheses > 0)
+                        break outer;
+                }
+            }
+            object = matches[1].substr(start+1) || "window";
+
+            var completions = []; 
+            try
+            {
+                completions = eval(
+                    "var comp = [];" +
+                    "var type = '';" +
+                    "var value = '';" +
+                    "var obj = eval(" + object + ");" +
+                    "for (var i in obj) {" +
+                    "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
+                    "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
+                    "          value = obj[i];" +
+                    "          comp.push([[i], type + ': ' + value]); }" +
+                    // The problem with that is that you complete vimperator.
+                    // but can't press <Tab> to complete sub items
+                    // so it's better to complete vimperator and the user can do
+                    // .<tab> to get the sub items
+                    //"     else if (type == 'function') {" +
+                    //"          comp.push([[i+'('], type]); }" +
+                    //"     else if (type == 'object') {" +
+                    //"          comp.push([[i+'.'], type]); }" +
+                    "     else {" +
+                    "          comp.push([[i], type]); }" +
+                    "} comp;");
+            } catch (e) { completions = []; };
+
+            return build_longest_starting_substring(completions, filter);
+        },
+
         exTabCompletion: function(str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
@@ -498,14 +566,27 @@ vimperator.completion = (function() // {{{
                 var command = vimperator.commands.get(cmd);
                 if (command && command.completer)
                 {
+                    matches = str.match(/^:*\d*\w+\s+/);
+                    start = matches ? matches[0].length : 0;
+
+                    // TODO: maybe we should move these checks to the complete functions
+                    if (command.hasName("open") || command.hasName("tabopen") || command.hasName("winopen"))
+                    {
+                        var skip = args.match(/^(.*,\s+)(.*)/); // start after the last ", "
+                        if (skip)
+                        {
+                            start += skip[1].length;
+                            args = skip[2];
+                        }
+                    }
+                    else if (command.hasName("echo") || command.hasName("echoerr") || command.hasName("javascript"))
+                    {
+                        var skip = args.match(/^(.*?)(\w*)$/); // start after the last ", "
+                        if (skip)
+                            start += skip[1].length;
+                    }
+
                     completions = command.completer.call(this, args);
-        //          if (command[0][0] == "open" ||
-        //                  command[0][0] == "tabopen" ||
-        //                  command[0][0] == "winopen")
-        //              start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
-        //          else
-                    matches = str.match(/^:*\d*\w+\s+/); // up to the first spaces only
-                    start = matches[0].length;
                 }
             }
             return [start, completions];
