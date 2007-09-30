@@ -218,7 +218,7 @@ vimperator.completion = (function() // {{{
             if (!filter) return engines.map(function(engine) {
                 return [engine[0], engine[1]];
             });
-            var mapped = engines.map(function($_) {
+            var mapped = engines.map(function(engine) {
                 return [[engine[0]], engine[1]];
             });
             return build_longest_common_substring(mapped, filter);
@@ -239,8 +239,6 @@ vimperator.completion = (function() // {{{
         // TODO: support file:// and \ or / path separators on both platforms
         get_file_completions: function(filter) //{{{
         {
-            //var completions = [];
-
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
             if (!arguments[1])
