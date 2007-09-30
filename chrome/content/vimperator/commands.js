@@ -1269,7 +1269,10 @@ function Commands() //{{{
 
             // do nothing if the requested sidebar is already open
             if (document.getElementById("sidebar-title").value == args)
+            {
+                document.getElementById("sidebar-box").contentWindow.focus();
                 return;
+            }
             
             var menu = document.getElementById("viewSidebarMenu")
 
