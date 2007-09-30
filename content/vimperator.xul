@@ -31,7 +31,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 <?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
 
 <!-- The stylesheet which is used for the :help command -->
-<?xml-stylesheet href="chrome://vimperator/content/vimperator.css" type="text/css"?>
+<?xml-stylesheet href="chrome://vimperator/skin/vimperator.css" type="text/css"?>
 
 <overlay id="vimperator"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
