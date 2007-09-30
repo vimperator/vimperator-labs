@@ -199,9 +199,24 @@ function Options() //{{{
         // and bookmarks toolbar
         document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
         document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
-        // and original status bar (default), but show it, e.g. when needed for extensions
-        document.getElementById("status-bar").collapsed = value.indexOf("s") > -1 ? false : true;
-        document.getElementById("status-bar").hidden = value.indexOf("s") > -1 ? false : true;
+    }
+
+    function setStatusLine(value)
+    {
+        if (value == 0)
+        {
+            document.getElementById("status-bar").collapsed = true;
+            document.getElementById("status-bar").hidden = true;
+        }
+        else if (value == 1)
+        {
+            vimperator.echo("show status line only with > 1 window not implemented yet");
+        }
+        else
+        {
+            document.getElementById("status-bar").collapsed = false;
+            document.getElementById("status-bar").hidden = false;
+        }
     }
 
     function setShowTabline(value)
@@ -213,7 +228,9 @@ function Options() //{{{
             getBrowser().mStrip.hidden = true;
         }
         else if (value == 1)
-            vimperator.echo("show tabline only with > 1 page open not impl. yet");
+        {
+            vimperator.echo("show tabline only with > 1 page open not implemented yet");
+        }
         else
         {
             getBrowser().mStrip.collapsed = false;
@@ -472,6 +489,20 @@ function Options() //{{{
             default_value: true
         }
     ));
+    addOption(new Option(["laststatus", "ls"], "number",
+        {
+            short_help: "Show the status line",
+            help: "Determines when the last window will have a status line. " +
+                  "Possible values:<br/><ul>" +
+                  "<li><b>0</b>: never</li>" +
+                  "<li><b>1</b>: only if there are multiple windows</li>" +
+                  "<li><b>2</b>: always</li></ul>" +
+                  "NOTE: laststatus=1 not implemented yet.",
+            default_value: 2,
+            setter: function(value) { Options.setPref("laststatus", value); setStatusLine(value); },
+            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+        }
+    ));
     addOption(new Option(["linksearch", "ls"], "boolean",
         {
             short_help: "Limit the search to hyperlink text",
@@ -561,7 +592,7 @@ function Options() //{{{
                   "<li><b>0</b>: Never show tab bar</li>" +
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li></ul>" +
-                  "NOTE: Not fully implemented yet and buggy with stal=0",
+                  "NOTE: showtabline=1 not implemented yet and buggy with showtabline=0",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
@@ -652,6 +683,7 @@ function Options() //{{{
 
     setShowTabline(this.showtabline);
     setGuiOptions(this.guioptions);
+    setStatusLine(this.laststatus);
     setTitleString(this.titlestring);
     setPopups(this.popups);
 } //}}}
