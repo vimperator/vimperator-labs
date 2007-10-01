@@ -646,7 +646,7 @@ function Commands() //{{{
                   "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
                   "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
                   "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox.<br/>" +
-                  "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}<Tab></code> (but not yet for the " +
+                  "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}&lt;Tab&gt;</code> (but not yet for the " +
                   "<code class=\"command\">:js &lt;&lt;EOF</code> multiline widget). Be aware that Vimperator needs to run {cmd} through eval() " +
                   "to get the completions, which could have unwanted side effects.",
             completer: function(filter) { return vimperator.completion.javascript(filter); }
