@@ -503,7 +503,7 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
-    addOption(new Option(["linksearch", "ls"], "boolean",
+    addOption(new Option(["linksearch", "lks"], "boolean",
         {
             short_help: "Limit the search to hyperlink text",
             help: "This includes (X)HTML elements with an \"href\" atrribute and XLink \"simple\" links.",
