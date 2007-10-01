@@ -36,8 +36,6 @@ vimperator.completion = (function() // {{{
     function build_longest_common_substring(list, filter) //{{{
     {
         var filtered = [];
-        //var filter_length = filter.length;
-        //filter = filter.toLowerCase();
         var ignorecase = false;
         if (filter == filter.toLowerCase())
             ignorecase = true;
@@ -55,7 +53,6 @@ vimperator.completion = (function() // {{{
 
                 if (g_substrings.length == 0)
                 {
-                    //alert('if: ' + item);
                     var last_index = item.lastIndexOf(filter);
                     var length = item.length;
                     for (var k = item.indexOf(filter); k != -1 && k <= last_index; k = item.indexOf(filter, k + 1))
@@ -66,7 +63,6 @@ vimperator.completion = (function() // {{{
                 }
                 else
                 {
-                    //alert('else: ' + item);
                     g_substrings = g_substrings.filter(function($_) {
                         return list[i][0][j].indexOf($_) >= 0;
                     });
@@ -78,17 +74,17 @@ vimperator.completion = (function() // {{{
         return filtered;
     } //}}}
 
-    /* this function is case sensitive */
+    /* this function is case sensitive and should be documented about input and output ;) */
     function build_longest_starting_substring(list, filter) //{{{
     {
         var filtered = [];
-        //var filter_length = filter.length;
         for (var i = 0; i < list.length; i++)
         {
             for (var j = 0; j < list[i][0].length; j++)
             {
                 if (list[i][0][j].indexOf(filter) != 0)
                     continue;
+
                 if (g_substrings.length == 0)
                 {
                     var length = list[i][0][j].length;
@@ -120,7 +116,6 @@ vimperator.completion = (function() // {{{
             return [$_[0], $_[1]]
         });
 
-        //var filter_length = filter.length;
         var ignorecase = false;
         if (filter == filter.toLowerCase())
             ignorecase = true;
@@ -169,23 +164,21 @@ vimperator.completion = (function() // {{{
     } //}}}
 
     return {
-
         /*
          * returns the longest common substring
          * used for the 'longest' setting for wildmode
-         *
          */
         get_longest_substring: function() //{{{
         {
             if (g_substrings.length == 0)
                 return '';
+
             var longest = g_substrings[0];
             for (var i = 1; i < g_substrings.length; i++)
             {
                 if (g_substrings[i].length > longest.length)
                     longest = g_substrings[i];
             }
-            //alert(longest);
             return longest;
         }, //}}}
 
@@ -222,11 +215,11 @@ vimperator.completion = (function() // {{{
         {
             var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
-            if (!filter) return engines.map(function($_) {
-                return [$_[0], $_[1]];
+            if (!filter) return engines.map(function(engine) {
+                return [engine[0], engine[1]];
             });
-            var mapped = engines.map(function($_) {
-                return [[$_[0]], $_[1]];
+            var mapped = engines.map(function(engine) {
+                return [[engine[0]], engine[1]];
             });
             return build_longest_common_substring(mapped, filter);
         }, //}}}
@@ -246,8 +239,6 @@ vimperator.completion = (function() // {{{
         // TODO: support file:// and \ or / path separators on both platforms
         get_file_completions: function(filter) //{{{
         {
-            //var completions = [];
-
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
             if (!arguments[1])
@@ -279,20 +270,21 @@ vimperator.completion = (function() // {{{
                 var entries = fd.read();
                 var separator = fd.path.length == 1 ? "" : /\\/.test(fd.path) ? "\\" : "/";
                 var new_filter = fd.path + separator + compl;
-                if (!filter) return entries.map(function($_) {
-                    var path = $_.path;
-                    if ($_.isDirectory()) path += separator;
+                if (!filter) return entries.map(function(file) {
+                    var path = file.path;
+                    if (file.isDirectory())
+                        path += separator;
                     return [path, ""];
                 });
-                var mapped = entries.map(function($_) {
-                    var path = $_.path;
-                    if ($_.isDirectory()) path += separator;
+                var mapped = entries.map(function(file) {
+                    var path = file.path;
+                    if (file.isDirectory())
+                        path += separator;
                     return [[path], ""];
                 });
             }
             catch (e)
             {
-                //vimperator.log(e);
                 return [];
             }
 
@@ -333,7 +325,6 @@ vimperator.completion = (function() // {{{
 
         get_command_completions: function(filter) //{{{
         {
-            //g_completions = [];
             g_substrings = [];
             var completions = []
             if (!filter)
@@ -401,10 +392,12 @@ vimperator.completion = (function() // {{{
             {
                 if (prefix && option.type != "boolean")
                     continue;
+
                 for (var j = 0; j < option.names.length; j++)
                 {
                     if (option.names[j].indexOf(filter) != 0)
                         continue;
+
                     if (g_substrings.length == 0)
                     {
                         var length = option.names[j].length;
@@ -463,6 +456,7 @@ vimperator.completion = (function() // {{{
 
         get_sidebar_completions: function(filter) //{{{
         {
+            g_substrings = [];
             var menu = document.getElementById("viewSidebarMenu")
             var nodes = [];
 
@@ -472,8 +466,8 @@ vimperator.completion = (function() // {{{
             if (!filter)
                 return nodes;
 
-            var mapped = nodes.map(function($_) {
-                return [[$_[0]], $_[1]];
+            var mapped = nodes.map(function(node) {
+                return [[node[0]], node[1]];
             });
             
             return build_longest_common_substring(mapped, filter);
@@ -482,7 +476,7 @@ vimperator.completion = (function() // {{{
         exTabCompletion: function(str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
-            var completions = new Array;
+            var completions = [];
             var start = 0;
 
             // if there is no space between the command name and the cursor
@@ -498,14 +492,27 @@ vimperator.completion = (function() // {{{
                 var command = vimperator.commands.get(cmd);
                 if (command && command.completer)
                 {
+                    matches = str.match(/^:*\d*\w+\s+/);
+                    start = matches ? matches[0].length : 0;
+
+                    // TODO: maybe we should move these checks to the complete functions
+                    if (command.hasName("open") || command.hasName("tabopen") || command.hasName("winopen"))
+                    {
+                        var skip = args.match(/^(.*,\s+)(.*)/); // start after the last ", "
+                        if (skip)
+                        {
+                            start += skip[1].length;
+                            args = skip[2];
+                        }
+                    }
+                    else if (command.hasName("echo") || command.hasName("echoerr") || command.hasName("javascript"))
+                    {
+                        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
+                        if (skip)
+                            start += skip[1].length;
+                    }
+
                     completions = command.completer.call(this, args);
-        //          if (command[0][0] == "open" ||
-        //                  command[0][0] == "tabopen" ||
-        //                  command[0][0] == "winopen")
-        //              start = str.search(/^:*\d*\w+(\s+|.*\|)/); // up to the last | or the first space
-        //          else
-                    matches = str.match(/^:*\d*\w+\s+/); // up to the first spaces only
-                    start = matches[0].length;
                 }
             }
             return [start, completions];
