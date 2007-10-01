@@ -6,17 +6,22 @@ VERSION       = 0.6pre
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 
-JAR_FILES     = ${shell find content skin	\
+JAR_TXT_FILES = ${shell find content skin	\
 			-type f			\
 			-a ! -path '*CVS*'	\
 			-a \(			\
 				-path '*.js'	\
 			     -o -path '*.css'	\
 			     -o -path '*.xul'	\
-			     -o -path '*.png'	\
 			   \)			\
 		}
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
+JAR_BIN_FILES = ${shell find content skin	\
+			-type f			\
+			-a ! -path '*CVS*'	\
+			-a -path '*.png'	\
+		}
+JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES}
 JAR           = chrome/vimperator.jar
 
 XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS
@@ -150,8 +155,11 @@ ${BUILD_JAR_SUBDIRS}:
 
 ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	@echo "Building JAR..."
-	${Q}mkdir -p $(dir ${JAR}) #FIXME
-	${Q}for f in ${JAR_FILES} ; do \
+	${Q}mkdir -p $(dir ${JAR})
+	${Q}for f in ${JAR_BIN_FILES} ; do \
+		cp $$f ${BUILD_JAR_DIR}/$$f ; \
+	    done
+	${Q}for f in ${JAR_TXT_FILES} ; do \
 		${SED} -e "s,###VERSION###,${VERSION},g" \
 		       -e "s,###DATE###,${BUILD_DATE},g" \
 		       < $$f > ${BUILD_JAR_DIR}/$$f ; \
