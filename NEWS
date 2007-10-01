@@ -1,6 +1,7 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* added new 'laststatus' option and removed "s" value from 'guioptions'
 	* statusline is now white on black with bold font by default (like in (g)vim)
 	  (change with userChrome.css if you don't like it until we have :colorscheme)
 	* :let mapleader=","  and <Leader> in :map support

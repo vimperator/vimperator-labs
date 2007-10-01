@@ -199,9 +199,24 @@ function Options() //{{{
         // and bookmarks toolbar
         document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
         document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
-        // and status bar (default on)
-        document.getElementById("status-bar").collapsed = value.indexOf("s") > -1 ? false : true;
-        document.getElementById("status-bar").hidden = value.indexOf("s") > -1 ? false : true;
+    }
+
+    function setStatusLine(value)
+    {
+        if (value == 0)
+        {
+            document.getElementById("status-bar").collapsed = true;
+            document.getElementById("status-bar").hidden = true;
+        }
+        else if (value == 1)
+        {
+            vimperator.echo("show status line only with > 1 window not implemented yet");
+        }
+        else
+        {
+            document.getElementById("status-bar").collapsed = false;
+            document.getElementById("status-bar").hidden = false;
+        }
     }
 
     function setShowTabline(value)
@@ -213,7 +228,9 @@ function Options() //{{{
             getBrowser().mStrip.hidden = true;
         }
         else if (value == 1)
-            vimperator.echo("show tabline only with > 1 page open not impl. yet");
+        {
+            vimperator.echo("show tabline only with > 1 page open not implemented yet");
+        }
         else
         {
             getBrowser().mStrip.collapsed = false;
@@ -359,11 +376,13 @@ function Options() //{{{
     addOption(new Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",
-            help: "Available items:<br/><ul>" +
+            help: "Available items:<br/>" +
+                  "<ul>" +
                   "<li><b>s</b>: Search engines and keyword URLs</li>" +
                   "<li><b>f</b>: Local files</li>" +
                   "<li><b>b</b>: Bookmarks</li>" +
-                  "<li><b>h</b>: History</li></ul>" +
+                  "<li><b>h</b>: History</li>" +
+                  "</ul>" +
                   "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
                   "Add <code class=\"option\">'sort'</code> to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
             default_value: "sfbh",
@@ -403,14 +422,15 @@ function Options() //{{{
     addOption(new Option(["guioptions", "go"], "charlist",
         {
             short_help: "Show or hide the menu, toolbar and scrollbars",
-            help: "Supported characters:<br/><ul>" +
+            help: "Supported characters:<br/>" +
+                  "<ul>" +
                   "<li><b>m</b>: menubar</li>" +
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
-                  "<li><b>s</b>: statusbar</li></ul>",
+                  "</ul>",
             setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
-            default_value: "s",
-            validator: function (value) { if (/[^mTbs]/.test(value)) return false; else return true; }
+            default_value: "",
+            validator: function (value) { if (/[^mTb]/.test(value)) return false; else return true; }
         }
     ));
     addOption(new Option(["hintchars", "hc"], "charlist",
@@ -458,7 +478,23 @@ function Options() //{{{
             default_value: true
         }
     ));
-    addOption(new Option(["linksearch", "ls"], "boolean",
+    addOption(new Option(["laststatus", "ls"], "number",
+        {
+            short_help: "Show the status line",
+            help: "Determines when the last window will have a status line. " +
+                  "Possible values:<br/>" +
+                  "<ul>" +
+                  "<li><b>0</b>: never</li>" +
+                  "<li><b>1</b>: only if there are multiple windows</li>" +
+                  "<li><b>2</b>: always</li>" +
+                  "</ul>" +
+                  "NOTE: laststatus=1 not implemented yet.",
+            default_value: 2,
+            setter: function(value) { Options.setPref("laststatus", value); setStatusLine(value); },
+            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+        }
+    ));
+    addOption(new Option(["linksearch", "lks"], "boolean",
         {
             short_help: "Limit the search to hyperlink text",
             help: "This includes (X)HTML elements with an \"href\" atrribute and XLink \"simple\" links.",
@@ -483,11 +519,13 @@ function Options() //{{{
         {
             short_help: "Where to show requested popup windows",
             help: "Define where to show requested popup windows. Does not apply to windows which are opened by middle clicking a link, they always open in a new tab. " +
-                  "Possible values:<br/><ul>" +
+                  "Possible values:<br/>" +
+                  "<ul>" +
                   "<li><b>0</b>: Force to open in the current tab (NOTE: this can stop some web sites from working correctly!)</li>" +
                   "<li><b>1</b>: Always open in a new tab</li>" +
                   "<li><b>2</b>: Open in a new window if it has a specific requested size (default in Firefox)</li>"+
-                  "<li><b>3</b>: Always open in a new window</li></ul>" +
+                  "<li><b>3</b>: Always open in a new window</li>" +
+                  "</ul>" +
                   "NOTE: This option does not change the popup blocker of Firefox in any way.",
             default_value: 1,
             setter: function(value) { Options.setPref("popups", value); setPopups(value); },
@@ -532,10 +570,12 @@ function Options() //{{{
         {
             short_help: "Show the destination of the link under the cursor in the status bar",
             help: "Also links which are focused by keyboard commands like <code class=\"mapping\">&lt;Tab&gt;</code> are shown. " +
-                  "Possible values:<br/><ul>" +
+                  "Possible values:<br/>" +
+                  "<ul>" +
                   "<li><b>0</b>: Don't show link destination</li>" +
                   "<li><b>1</b>: Show the link in the status line</li>" +
-                  "<li><b>2</b>: Show the link in the command line</li></ul>",
+                  "<li><b>2</b>: Show the link in the command line</li>" +
+                  "</ul>",
             default_value: 1,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
@@ -543,11 +583,13 @@ function Options() //{{{
     addOption(new Option(["showtabline", "stal"], "number",
         {
             short_help: "Control when to show the tab bar of opened web pages",
-            help: "Possible values:<br/><ul>" +
+            help: "Possible values:<br/>" +
+                  "<ul>" +
                   "<li><b>0</b>: Never show tab bar</li>" +
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
-                  "<li><b>2</b>: Always show tab bar</li></ul>" +
-                  "NOTE: Not fully implemented yet and buggy with stal=0",
+                  "<li><b>2</b>: Always show tab bar</li>" +
+                  "</ul>" +
+                  "NOTE: showtabline=1 not implemented yet and buggy with showtabline=0",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
@@ -646,6 +688,7 @@ function Options() //{{{
 
     setShowTabline(this.showtabline);
     setGuiOptions(this.guioptions);
+    setStatusLine(this.laststatus);
     setTitleString(this.titlestring);
     setPopups(this.popups);
 } //}}}
