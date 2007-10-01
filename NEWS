@@ -2,7 +2,7 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
-	* added new 'laststatus' option
+	* added new 'laststatus' option and removed "s" value from 'guioptions'
 	* Tab-completion improvements for :javascript and :open
 	* IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
 	  but you can do things like :echo 3+2 or :echo window.document now
