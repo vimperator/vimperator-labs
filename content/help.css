@@ -1,0 +1,117 @@
+div.main {
+    font-family: -moz-fixed;
+    white-space: -moz-pre-wrap;
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+p.tagline {
+    text-align: center;
+    font-weight: bold;
+}
+
+table.vimperator {
+    border-width: 1px;
+    border-style: dotted;
+    border-color: gray;
+    margin-bottom: 2em; /* FIXME: just a quick hack until we have proper pages */
+}
+table.vimperator td {
+    border: none;
+    padding: 3px;
+}
+tr.separator {
+    height: 10px;
+}
+hr {
+    height: 1px;
+    background-color: white;
+    border-style: none;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+td.taglist {
+    text-align: right;
+    vertical-align: top;
+    border-spacing: 13px 10px;
+}
+td.taglist td {
+    width: 100px;
+    padding: 3px 0px;
+}
+tr.taglist code, td.usage code {
+    margin: 0px 2px;
+}
+td.usage code {
+    white-space: nowrap;
+}
+td.taglist code {
+    margin-left: 2em;
+}
+code.tag {
+    font-weight: bold;
+    color: rgb(255, 0, 255); /* magenta */
+}
+tr.description {
+    margin-bottom: 4px;
+}
+table.commands {
+    background-color: rgb(250, 240, 230);
+}
+table.mappings {
+    background-color: rgb(230, 240, 250);
+}
+table.options {
+    background-color: rgb(240, 250, 230);
+}
+
+fieldset.paypal {
+    border: none;
+}
+
+.argument {
+    color: #6A97D4;
+}
+
+.command {
+    font-weight: bold;
+    color: #632610;
+}
+
+.mapping {
+    font-weight: bold;
+    color: #102663;
+}
+
+.option {
+    font-weight: bold;
+    color: #106326;
+}
+
+.code {
+    color: #108826;
+}
+
+.shorthelp {
+    font-weight: bold;
+}
+
+.version {
+    position: absolute;
+    top: 10px;
+    right: 2%;
+    color: #C0C0C0;
+    text-align: right;
+}
+
+.warning {
+    font-weight: bold;
+    color: red;
+}
+
+/* vim: set fdm=marker sw=4 ts=4 et: */
