@@ -483,18 +483,62 @@ function Commands() //{{{
                   "Here, downloads can be paused, canceled and resumed."
         }
     ));
-    addDefaultCommand(new Command(["ec[ho]"],
-        function(args) { vimperator.echo(args); } ,
+
+    function argToString(arg, color)
+    {
+        if (!arg)
+            return "";
+
+        try
         {
+            // TODO: move to vimperator.eval()?
+            arg = eval(arg);
+        }
+        catch (e)
+        {
+            vimperator.echoerr(e.toString());
+            return null;
+        }
+
+        if (typeof arg === "object")
+            arg = vimperator.objectToString(arg, color);
+        else if (typeof arg === "function")
+            arg = arg.toString().replace(/</g, "&lt;").replace(/>/, "&gt;");
+        else if (typeof arg === "number" || typeof arg === "boolean")
+            arg = "" + arg;
+        else if (typeof arg === "undefined")
+            arg = "undefined";
+
+        return arg;
+    }
+    addDefaultCommand(new Command(["ec[ho]"],
+        function(args)
+        {
+            var res = argToString(args, true);
+            if (res != null)
+                vimperator.echo(res);
+        },
+        {
+            usage: ["ec[ho] {expr}"],
             short_help: "Display a string at the bottom of the window",
-            help: "Echo all arguments of this command. Useful for showing informational messages.<br/>Multiple lines can be separated by \\n."
+            help: "Useful for showing informational messages. Multiple lines can be separated by \\n.<br/>" +
+                  "<code class=\"argument\">{expr}</code> can either be a quoted string, or any expression which can be fed to eval() like 4+5. " +
+                  "You can also view the source code of objects and functions if the return value of <code class=\"argument\">{expr}</code> is an object or function.",
+            completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new Command(["echoe[rr]"],
-        function(args) { vimperator.echoerr(args); } ,
+        function(args)
         {
+            var res = argToString(args, false);
+            if (res != null)
+                vimperator.echoerr(res);
+        },
+        {
+            usage: ["echoe[rr] {expr}"],
             short_help: "Display an error string at the bottom of the window",
-            help: "Echo all arguments of this command highlighted in red. Useful for showing important messages."
+            help: "Just like <code class=\"command\">:ec[ho]</code>, but echoes the result highlighted in red. Useful for showing important messages.",
+            completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
@@ -601,7 +645,11 @@ function Commands() //{{{
             help: "Acts as a JavaScript interpreter by passing the argument to <code>eval()</code>.<br/>" +
                   "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
                   "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-                  "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox."
+                  "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox.<br/>" +
+                  "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}&lt;Tab&gt;</code> (but not yet for the " +
+                  "<code class=\"command\">:js &lt;&lt;EOF</code> multiline widget). Be aware that Vimperator needs to run {cmd} through eval() " +
+                  "to get the completions, which could have unwanted side effects.",
+            completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new Command(["let"],
@@ -915,7 +963,7 @@ function Commands() //{{{
                   "</ol>" +
                   "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
                   "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>" +
-                  "The items which are completed on <code>&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
+                  "The items which are completed on <code class=\"mapping\">&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
             completer: function(filter) { return vimperator.completion.get_url_completions(filter); }

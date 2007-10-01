@@ -473,6 +473,73 @@ vimperator.completion = (function() // {{{
             return build_longest_common_substring(mapped, filter);
         }, //}}}
 
+        javascript: function(str)
+        {
+            g_substrings = [];
+            var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
+            var object = "window";
+            var filter = matches[3] || "";
+            var start = matches[1].length-1;
+            if (matches[2])
+            {
+                var brackets = 0, parentheses = 0;
+                outer:
+                for (; start >= 0; start--)
+                {
+                    switch (matches[1][start])
+                    {
+                        case ";":
+                        case "{":
+                            break outer;
+
+                        case "]":
+                            brackets--;
+                            break;
+                        case "[":
+                            brackets++;
+                            break;
+                        case ")":
+                            parentheses--;
+                            break;
+                        case "(":
+                            parentheses++;
+                            break;
+                    }
+                    if (brackets > 0 || parentheses > 0)
+                        break outer;
+                }
+            }
+            object = matches[1].substr(start+1) || "window";
+
+            var completions = []; 
+            try
+            {
+                completions = eval(
+                    "var comp = [];" +
+                    "var type = '';" +
+                    "var value = '';" +
+                    "var obj = eval(" + object + ");" +
+                    "for (var i in obj) {" +
+                    "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
+                    "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
+                    "          value = obj[i];" +
+                    "          comp.push([[i], type + ': ' + value]); }" +
+                    // The problem with that is that you complete vimperator.
+                    // but can't press <Tab> to complete sub items
+                    // so it's better to complete vimperator and the user can do
+                    // .<tab> to get the sub items
+                    //"     else if (type == 'function') {" +
+                    //"          comp.push([[i+'('], type]); }" +
+                    //"     else if (type == 'object') {" +
+                    //"          comp.push([[i+'.'], type]); }" +
+                    "     else {" +
+                    "          comp.push([[i], type]); }" +
+                    "} comp;");
+            } catch (e) { completions = []; };
+
+            return build_longest_starting_substring(completions, filter);
+        },
+
         exTabCompletion: function(str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
