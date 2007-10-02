@@ -304,8 +304,8 @@ function Options() //{{{
     this.list = function()
     {
         // TODO: columns like Vim?
-        var list = "<table style=\"white-space: nowrap;\">" +
-                   "<tr align=\"left\" style=\"color: magenta\"><th>--- Options ---</th></tr>";
+        var list = "<table>" +
+                   "<tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
         var name, value;
 
         for (var i = 0; i < options.length; i++)
@@ -315,12 +315,12 @@ function Options() //{{{
 
             if (options[i].type == "boolean")
             {
-                name = value ? "&nbsp;&nbsp;" + name : "no" + name;
+                name = value ? "  " + name : "no" + name;
                 list += "<tr><td>" + name + "</td></tr>";
             }
             else
             {
-                list += "<tr><td>" + "&nbsp;&nbsp;" + name + "=" + value + "</td></tr>";
+                list += "<tr><td>" + "  " + name + "=" + value + "</td></tr>";
             }
         }
 

@@ -258,7 +258,7 @@ function Bookmarks() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table style=\"white-space: nowrap;\"><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
+                var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
                     var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
@@ -488,7 +488,7 @@ function History() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table style=\"white-space: nowrap;\"><tr align=\"left\" style=\"color: magenta\"><th>title</th><th>URL</th></tr>";
+                var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
                     var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
@@ -743,11 +743,11 @@ function Marks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+        var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
-                  + "<td>&nbsp;"                   + marks[i][0]                              +  "</td>"
+                  + "<td> "                        + marks[i][0]                              +  "</td>"
                   + "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>"
                   + "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>"
                   + "<td style=\"color: green;\">" + marks[i][1].location.replace(/</, "&lt;").replace(/>/, "&gt;") +  "</td>"
@@ -838,10 +838,10 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" style=\"color: magenta\"><th>QuickMark</th><th>URL</th></tr>";
+        var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
-            list += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + marks[i][0] +
+            list += "<tr><td>    " + marks[i][0] +
                     "</td><td style=\"color: green;\">" + marks[i][1].replace(/</, "&lt;").replace(/>/, "&gt;") + "</td></tr>";
         }
         list += "</table>";

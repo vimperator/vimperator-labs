@@ -363,7 +363,7 @@ const vimperator = (function() //{{{
             }
 
             if (color)
-                string += "<span style=\"color: magenta; font-weight: bold;\">" + obj + "</span>::\n";
+                string += "<span class=\"hl-Title\">" + obj + "</span>::\n";
             else
                 string += obj + "::\n";
 

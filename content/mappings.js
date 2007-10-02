@@ -288,9 +288,9 @@ function Mappings() //{{{
             for (var j = 0; j < maps[i].names.length; j++)
             {
                 list += "<tr>";
-                list += "<td>&nbsp;" + maps[i].names[j].replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                list += "<td> " + maps[i].names[j].replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
                 if (maps[i].rhs)
-                    list += "<td>&nbsp;" + maps[i].rhs.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                    list += "<td> " + maps[i].rhs.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
                 list += "</tr>";
             }
         }

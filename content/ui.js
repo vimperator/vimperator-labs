@@ -138,7 +138,7 @@ function CommandLine() //{{{
         commandline_widget.setAttribute("class", group);
     }
 
-    // Sets the prompt - for example, : or /
+    // sets the prompt - for example, : or /
     function setPrompt(prompt)
     {
         if (typeof prompt != "string")
@@ -147,7 +147,7 @@ function CommandLine() //{{{
         prompt_widget.value = prompt;
         if (prompt)
         {
-            // Initially (in the xul) the prompt is 'collapsed', this makes
+            // initially (in the xul) the prompt is 'collapsed', this makes
             // sure it's visible, then we toggle the display which works better
             prompt_widget.style.visibility = 'visible';
             prompt_widget.style.display = 'inline';
@@ -159,16 +159,15 @@ function CommandLine() //{{{
         }
     }
 
-    // Sets the command - e.g. 'tabopen', 'open http://example.com/'
+    // sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
         command_widget.value = cmd;
     }
 
-    // TODO: the invoking command should be pasted at the top of the MOW and
-    //       the MOW messages should actually be displayed in the commandline
-    //     : extract CSS
+    // TODO: extract CSS
     //     : resize upon a window resize
+    //     : echoed lines longer than v-c-c.width should wrap and use MOW
     function setMultiline(str)
     {
         // TODO: we should retain any previous command output like Vim
@@ -177,16 +176,18 @@ function CommandLine() //{{{
 
         multiline_input_widget.collapsed = true;
 
-        var output = "<pre>" + str + "</pre>";
-        output += '<span id="end-prompt" style="color: green; background-color: white;">Press ENTER or type command to continue</span>';
-        output += '<span id="more-prompt" style="display: none; position: fixed; top: auto; bottom: 0; left: 0; right: 0; color: green; background-color: white;">';
-        output += "-- More --";
-        output += '</span>';
-        output += '<span id="more-help-prompt" style="display: none; position: fixed; top: auto; bottom: 0; left: 0; right: 0; color: green; background-color: white;">';
-        output += "-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit";
-        output += '</span>';
+        var output = ":" + command_widget.value + "<br/>" + str;
+
+        var font_size = document.defaultView.getComputedStyle(document.getElementById("main-window"), null).getPropertyValue("font-size");
+        multiline_output_widget.contentDocument.body.setAttribute("style", "font-size: " + font_size);
 
         multiline_output_widget.contentDocument.body.innerHTML = output;
+        multiline_output_widget.contentDocument.body.id = "vimperator-multiline-output-content";
+
+        var stylesheet = multiline_output_widget.contentDocument.createElement("link");
+        stylesheet.setAttribute("rel", "Stylesheet");
+        stylesheet.setAttribute("href", "chrome://vimperator/skin/vimperator.css");
+        multiline_output_widget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
         var available_height = getBrowser().mPanelContainer.boxObject.height;
         var content_height = multiline_output_widget.contentDocument.height;
@@ -197,12 +198,17 @@ function CommandLine() //{{{
 
         if (vimperator.options["more"] && multiline_output_widget.contentWindow.scrollMaxY > 0)
         {
-            multiline_output_widget.contentWindow.document.getElementById("more-prompt").style.display = "inline";
+            setHighlightGroup("hl-MoreMsg");
+            setPrompt("");
+            setCommand("-- More --");
             multiline_output_widget.contentWindow.scrollTo(0, 0);
         }
         else
         {
             multiline_output_widget.contentWindow.scrollTo(0, content_height);
+            setHighlightGroup("hl-Question");
+            setPrompt("");
+            setCommand('Press ENTER or type command to continue');
         }
 
         multiline_output_widget.contentWindow.focus();
@@ -264,7 +270,7 @@ function CommandLine() //{{{
         command_widget.focus();
     };
 
-    /* normally used when pressing esc, does not execute a command */
+    // normally used when pressing esc, does not execute a command
     this.close = function()
     {
         var res = vimperator.triggerCallback("cancel", cur_extended_mode);
@@ -476,7 +482,7 @@ function CommandLine() //{{{
                     if (res)
                         [completion_start_index, completions] = res;
 
-                    // Sort the completion list
+                    // sort the completion list
                     if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
                     {
                         completions.sort(function(a, b) {
@@ -634,6 +640,7 @@ function CommandLine() //{{{
 
         var show_more_help_prompt = false;
         var show_more_prompt = false;
+        var clear_prompt = false;
 
         function isScrollable() { return !win.scrollMaxY == 0; }
 
@@ -641,9 +648,9 @@ function CommandLine() //{{{
 
         function close()
         {
-            multiline_output_widget.collapsed = true;
             // FIXME: use mode stack
             vimperator.modes.reset();
+            clear_prompt = true;
         }
 
         function pass(event)
@@ -657,7 +664,7 @@ function CommandLine() //{{{
         switch (key)
         {
             case ":":
-                vimperator.commandline.open(":", "", vimperator.modes.EX);
+                pass(event);
                 break;
 
             // down a line
@@ -786,22 +793,27 @@ function CommandLine() //{{{
         }
 
         // set appropriate prompt string
-        var more_prompt = win.document.getElementById("more-prompt");
-        var more_help_prompt = win.document.getElementById("more-help-prompt");
-
-        if (show_more_help_prompt)
+        if (clear_prompt)
         {
-            more_prompt.style.display = "none";
-            more_help_prompt.style.display = "inline";
+            this.clear();
+        }
+        else if (show_more_help_prompt)
+        {
+            setHighlightGroup(this.HL_MOREMSG);
+            setPrompt("");
+            setCommand("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit");
         }
         else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
         {
-            more_help_prompt.style.display = "none";
-            more_prompt.style.display = "inline";
+            setHighlightGroup(this.HL_MOREMSG);
+            setPrompt("");
+            setCommand("-- More --");
         }
         else
         {
-            more_prompt.style.display = more_help_prompt.style.display = "none";
+            setHighlightGroup(this.HL_QUESTION);
+            setPrompt("");
+            setCommand('Press ENTER or type command to continue');
         }
     }
 

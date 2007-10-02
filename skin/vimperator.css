@@ -114,6 +114,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
     background-color: black;
 }
 
+/* highlight groups */
+
 .hl-Normal {
     background-color: white;
     color: black;
@@ -143,6 +145,46 @@ the terms of any one of the MPL, the GPL or the LGPL.
 .hl-Warning {
     background-color: white;
     color: red;
+}
+
+.hl-Normal {
+    background-color: white;
+    color: black;
+}
+.hl-ErrorMsg {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+.hl-MoreMsg {
+    color: green;
+    background-color: white;
+}
+.hl-Title {
+    color: magenta;
+    background-color: white;
+    font-weight: bold;
+}
+
+/* MOW */
+
+#vimperator-multiline-output-content {
+    white-space: pre; /* -moz-pre-wrap FIXME: Should lines wrap like Vim? */
+    font-family: -moz-fixed;
+    margin: 0px;
+}
+
+#vimperator-multiline-output-content * {
+    font: inherit;
+}
+
+#vimperator-multiline-output-content table {
+    white-space: inherit;
+    border-spacing: 0px;
+}
+
+#vimperator-multiline-output-content td {
+    padding: 0px;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
