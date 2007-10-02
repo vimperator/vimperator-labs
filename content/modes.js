@@ -150,7 +150,7 @@ vimperator.modes = (function()
 
             var msg = getModeMessage();
             if (msg)
-                vimperator.commandline.echo("-- " + getModeMessage() + " --");
+                vimperator.commandline.echo("-- " + getModeMessage() + " --", vimperator.commandline.HL_MODEMSG);
             else
                 vimperator.commandline.echo("");
         },
