@@ -94,24 +94,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 
 #vimperator-commandline {
-    /* FIXME: black on white or default skin colors? -moz-Field/-moz-FieldText */
+    padding: 1px;
+    /*
     background-color: white;
     color: black;
-    padding: 1px;
+    */
 }
 #vimperator-commandline-prompt, #vimperator-commandline-command {
     background-color: inherit;
     color: inherit;
-}
-#vimperator-commandline.error {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-}
-#vimperator-commandline.message > #vimperator-commandline-prompt {
-    background-color: white;
-    color: magenta;
-    font-weight: bold;
 }
 
 #vimperator-multiline-output {
@@ -121,6 +112,37 @@ the terms of any one of the MPL, the GPL or the LGPL.
 #vimperator-visualbell {
     border: none;
     background-color: black;
+}
+
+.hl-Normal {
+    background-color: white;
+    color: black;
+}
+.hl-ErrorMsg {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+.hl-ModeMsg {
+    background-color: white;
+    color: black;
+}
+.hl-MoreMsg {
+    background-color: white;
+    color: green;
+}
+.hl-Question {
+    background-color: white;
+    color: green;
+}
+.hl-Title {
+    background-color: white;
+    color: magenta;
+    font-weight: bold;
+}
+.hl-Warning {
+    background-color: white;
+    color: red;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

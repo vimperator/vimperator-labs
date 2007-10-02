@@ -731,8 +731,8 @@ const vimperator = (function() //{{{
             vimperator.hints         = new Hints();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = vimperator.commandline.echo;
-            vimperator.echoerr = vimperator.commandline.echoErr;
+            vimperator.echo    = function(str) { vimperator.commandline.echo(str); }
+            vimperator.echoerr = function(str) { vimperator.commandline.echoErr(str); }
 
             vimperator.globalVariables = {};
 

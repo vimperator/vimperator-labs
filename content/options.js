@@ -326,7 +326,7 @@ function Options() //{{{
 
         list += "</table>";
 
-        vimperator.commandline.echo(list, true);
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
     }
 
     // TODO: separate Preferences from Options? Would these utility functions

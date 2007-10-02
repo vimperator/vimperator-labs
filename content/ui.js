@@ -133,17 +133,9 @@ function CommandLine() //{{{
     var multiline_regexp = null;
     var multiline_callback = null;
 
-    function setNormalStyle()
+    function setHighlightGroup(group)
     {
-        commandline_widget.setAttribute("class", "normal");
-    }
-    function setMessageStyle()
-    {
-        commandline_widget.setAttribute("class", "message");
-    }
-    function setErrorStyle()
-    {
-        commandline_widget.setAttribute("class", "error");
+        commandline_widget.setAttribute("class", group);
     }
 
     // Sets the prompt - for example, : or /
@@ -238,6 +230,13 @@ function CommandLine() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    this.HL_NORMAL   = "hl-Normal";
+    this.HL_ERRORMSG = "hl-ErrorMsg";
+    this.HL_MODEMSG  = "hl-ModeMsg";
+    this.HL_MOREMSG  = "hl-MoreMsg";
+    this.HL_QUESTION = "hl-Question";
+    this.HL_WARNING  = "hl-Warning";
+
     this.getCommand = function()
     {
         return command_widget.value;
@@ -251,7 +250,7 @@ function CommandLine() //{{{
         cur_command = cmd || "";
         cur_extended_mode = ext_mode || null;
 
-        setNormalStyle();
+        setHighlightGroup(this.HL_NORMAL);
         history_index = UNINITIALIZED;
         completion_index = UNINITIALIZED;
 
@@ -276,7 +275,7 @@ function CommandLine() //{{{
     }
 
     // FIXME: flags not yet really functional --mst
-    this.echo = function(str, flags)
+    this.echo = function(str, highlight_group, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
         if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
@@ -285,7 +284,8 @@ function CommandLine() //{{{
         if (typeof str != "string")
             str = "";
 
-        setNormalStyle();
+        highlight_group = highlight_group || this.HL_NORMAL;
+        setHighlightGroup(highlight_group);
         if (flags || str.indexOf("\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
         {
             setMultiline(str);
@@ -299,13 +299,14 @@ function CommandLine() //{{{
         return true;
     };
 
+    // FIXME: why is this duplicated? -- djk
     this.echoErr = function(str)
     {
         var focused = document.commandDispatcher.focusedElement;
         if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
             return false;
 
-        setErrorStyle();
+        setHighlightGroup(this.HL_ERRORMSG);
         setPrompt("");
         setCommand(str);
         cur_extended_mode = null;
@@ -318,7 +319,7 @@ function CommandLine() //{{{
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
         // to make this code synchronous or at least use a callback
-        setMessageStyle();
+        setHighlightGroup(this.HL_QUESTION);
         setPrompt(str);
         setCommand("");
         return "not implemented";
@@ -352,9 +353,9 @@ function CommandLine() //{{{
         multiline_output_widget.collapsed = true;
         completionlist.hide();
 
+        setHighlightGroup(this.HL_NORMAL);
         setPrompt(" "); // looks faster than an empty string as most prompts are 1 char long
         setCommand("");
-        setNormalStyle();
     };
 
     this.onEvent = function(event)

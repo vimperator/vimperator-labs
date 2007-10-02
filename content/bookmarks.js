@@ -276,7 +276,7 @@ function Bookmarks() //{{{
                 }
                 list += "</table>";
 
-                vimperator.commandline.echo(list, true);
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
             }
         }
     }
@@ -499,7 +499,7 @@ function History() //{{{
                 }
                 list += "</table>";
 
-                vimperator.commandline.echo(list, true);
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
             }
         }
     }
@@ -755,7 +755,7 @@ function Marks() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
     }
     //}}}
 } //}}}
@@ -846,7 +846,7 @@ function QuickMarks() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
     }
 
     this.destroy = function()

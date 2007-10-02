@@ -161,9 +161,9 @@ function Search() //{{{
             // our command line
             setTimeout(function() {
                 if (up)
-                    vimperator.echoerr("search hit TOP, continuing at BOTTOM");
+                    vimperator.commandline.echo("search hit TOP, continuing at BOTTOM", vimperator.commandline.HL_WARNING);
                 else
-                    vimperator.echoerr("search hit BOTTOM, continuing at TOP");
+                    vimperator.commandline.echo("search hit BOTTOM, continuing at TOP", vimperator.commandline.HL_WARNING);
             }, 0);
         }
         else
