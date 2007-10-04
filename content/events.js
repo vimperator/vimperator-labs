@@ -221,9 +221,10 @@ function Events() //{{{
             // code which is only relevant if the page load is the current tab goes here:
             if (doc == getBrowser().selectedBrowser.contentDocument)
             {
-                // we want to stay in command mode after a page has loaded
                 // TODO: remember the last focused input widget, so we can go there with 'gi'
-                setTimeout(vimperator.focusContent, 10);
+                // FIXME: this currently causes window map events which is _very_ annoying
+                // we want to stay in command mode after a page has loaded
+                //setTimeout(vimperator.focusContent, 10);
             }
         }
     }
