@@ -473,7 +473,7 @@ vimperator.completion = (function() // {{{
             return build_longest_common_substring(mapped, filter);
         }, //}}}
 
-        javascript: function(str)
+        javascript: function(str) // {{{
         {
             g_substrings = [];
             var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
@@ -538,7 +538,7 @@ vimperator.completion = (function() // {{{
             } catch (e) { completions = []; };
 
             return build_longest_starting_substring(completions, filter);
-        },
+        }, // }}}
 
         exTabCompletion: function(str) //{{{
         {
