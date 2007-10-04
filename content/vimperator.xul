@@ -97,15 +97,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 </listcols>
             </listbox>
 
+            <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
+
             <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
                 <listcols>
                     <listcol flex="1" width="50%"/>
                     <listcol flex="1" width="50%"/>
                 </listcols>
             </listbox>
-
-            <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
 
             <hbox id="vimperator-commandline" hidden="false">
                 <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
