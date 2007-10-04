@@ -19,22 +19,25 @@ syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
 syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load] bw[ipeout] delbm[arks]
 	\ delm[arks] delqm[arks] dl downl[oads] e[dit] ec[ho] echoe[rr] exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy]
 	\ hist[ory] hs javas[cript] js ls ma[rk] map mapc[lear] marks no[remap] noh[lsearch] norm[al] o[pen] pc[lose]
-	\ pref[erences] prefs q[uit] qa[ll] qma[rk] qmarks quita[ll] re[load] reloada[ll] res[tart] sav[eas] se[t] so[urce] st[op]
-	\ tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen
-	\ tabp[revious] tabr[ewind] tabs tn[ext] tp[revious] u[ndo] unm[ap] ve[rsion] viu[sage] w[rite] win[open] wine[dit]
-	\ wo[pen] wq wqa[ll] xa[ll] zo[om]
+	\ let pref[erences] prefs q[uit] qa[ll] qma[rk] qmarks quita[ll] re[load] reloada[ll] res[tart] sav[eas] sideb[ar] sb[ar]
+	\ sbcl[ose] sb[open] se[t] so[urce] st[op] time tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast]
+	\ tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tn[ext] tp[revious] u[ndo] unl[et] unm[ap]
+	\ ve[rsion] viu[sage] w[rite] win[open] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om] run
 	\ contained
 
+syn match vimperatorCommand "!" contained
+
 " FIXME
-syn match vimperatorCommandWrapper "\<\h\w*\>" contains=vimperatorCommand
+syn match vimperatorCommandWrapper "\%(!\|\<\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs fullscreen fs
-	\ nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags hlsearch hls nohlsearch nohls hlsearchstyle hlss
-	\ nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim
-	\ laststatus ls linksearch lks nolinksearch nolks maxhints mh more nomore popups pps preload nopreload previewheight pvh
-	\ scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs
-	\ titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim wildoptions wop
+syn keyword vimperatorOption activate act autohints ah noautohints noah complete cpt defsearch ds extendedhinttags eht
+	\ focusedhintstyle fhs fullscreen fs nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags hlsearch hls
+	\ nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic
+	\ insertmode im noinsertmode noim laststatus ls linksearch lks nolinksearch nolks maxhints mh more nomore popups pps
+	\ preload nopreload previewheight pvh scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal
+	\ smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
+	\ wildmode wim wildoptions wop
 	\ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
