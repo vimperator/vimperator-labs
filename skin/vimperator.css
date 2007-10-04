@@ -183,8 +183,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
     border-spacing: 0px;
 }
 
-#vimperator-multiline-output-content td {
-    padding: 0px;
+#vimperator-multiline-output-content td,
+#vimperator-multiline-output-content th {
+    padding: 0px 2px;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

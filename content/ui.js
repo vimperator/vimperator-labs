@@ -110,12 +110,6 @@ function CommandLine() //{{{
     var multiline_output_widget = document.getElementById("vimperator-multiline-output");
     multiline_output_widget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multiline_output_widget.contentDocument.body.innerHTML = "";
-    // we need this hack, or otherwise the first use of setMultiline() will have a wrong height
-    setTimeout(function() {
-        multiline_output_widget.collapsed = false;
-        var content_height = multiline_output_widget.contentDocument.height;
-        multiline_output_widget.collapsed = true;
-    }, 100);
 
     // the widget used for multiline intput
     var multiline_input_widget = document.getElementById("vimperator-multiline-input");
@@ -170,13 +164,18 @@ function CommandLine() //{{{
     //     : echoed lines longer than v-c-c.width should wrap and use MOW
     function setMultiline(str)
     {
-        // TODO: we should retain any previous command output like Vim
-        if (!multiline_output_widget.collapsed)
-            multiline_output_widget.collapsed = true;
-
         multiline_input_widget.collapsed = true;
 
-        var output = ":" + command_widget.value + "<br/>" + str;
+        // TODO: only some commands list the ex command above their output so
+        // this should be moved to the generating functions eg. v.buffers.list
+        var output = "<div class=\"ex-command-output\">" + ":" + command_widget.value + "<br/>" + str + "</div>";
+        if (!multiline_output_widget.collapsed)
+        {
+            // FIXME: need to make sure an open MOW is closed when commands
+            //        that don't generate output are executed
+            output = multiline_output_widget.contentDocument.body.innerHTML + output;
+            multiline_output_widget.collapsed = true;
+        }
 
         var font_size = document.defaultView.getComputedStyle(document.getElementById("main-window"), null).getPropertyValue("font-size");
         multiline_output_widget.contentDocument.body.setAttribute("style", "font-size: " + font_size);
@@ -198,10 +197,21 @@ function CommandLine() //{{{
 
         if (vimperator.options["more"] && multiline_output_widget.contentWindow.scrollMaxY > 0)
         {
-            setHighlightGroup("hl-MoreMsg");
+            // start the last executed command's output at the top of the screen
+            var elements = multiline_output_widget.contentDocument.getElementsByClassName("ex-command-output");
+            elements[elements.length - 1].scrollIntoView(true);
+
             setPrompt("");
-            setCommand("-- More --");
-            multiline_output_widget.contentWindow.scrollTo(0, 0);
+            if (multiline_output_widget.contentWindow.scrollY >= multiline_output_widget.contentWindow.scrollMaxY)
+            {
+                setHighlightGroup("hl-Question");
+                setCommand('Press ENTER or type command to continue');
+            }
+            else
+            {
+                setHighlightGroup("hl-MoreMsg");
+                setCommand("-- More --");
+            }
         }
         else
         {
@@ -292,7 +302,7 @@ function CommandLine() //{{{
 
         highlight_group = highlight_group || this.HL_NORMAL;
         setHighlightGroup(highlight_group);
-        if (flags || str.indexOf("\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
+        if (flags || !multiline_output_widget.collapsed || str.indexOf("\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
         {
             setMultiline(str);
         }
@@ -640,32 +650,20 @@ function CommandLine() //{{{
 
         var show_more_help_prompt = false;
         var show_more_prompt = false;
-        var clear_prompt = false;
+        var close_window = false;
+        var pass_event = false;
 
         function isScrollable() { return !win.scrollMaxY == 0; }
 
         function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
-
-        function close()
-        {
-            // FIXME: use mode stack
-            vimperator.modes.reset();
-            clear_prompt = true;
-        }
-
-        function pass(event)
-        {
-            close();
-            vimperator.events.onKeyPress(event);
-        }
 
         var key = vimperator.events.toString(event);
 
         switch (key)
         {
             case ":":
-                pass(event);
-                break;
+                vimperator.commandline.open(":", "", vimperator.modes.EX);
+                return;
 
             // down a line
             case "j":
@@ -673,7 +671,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable())
                     win.scrollByLines(1);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             case "<C-j>":
@@ -682,7 +680,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
                     win.scrollByLines(1);
                 else
-                    close(); // don't propagate the event for accept keys
+                    close_window = true;; // don't propagate the event for accept keys
                 break;
 
             // up a line
@@ -694,7 +692,7 @@ function CommandLine() //{{{
                 else if (vimperator.options["more"] && !isScrollable())
                     show_more_prompt = true;
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // half page down
@@ -702,7 +700,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable())
                     win.scrollBy(0, win.innerHeight / 2);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             case "<LeftMouse>":
@@ -719,7 +717,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable())
                     win.scrollByPages(1);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             case "<Space>":
@@ -727,7 +725,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
                     win.scrollByPages(1);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // half page up
@@ -736,7 +734,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable())
                     win.scrollBy(0, -(win.innerHeight / 2));
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // page up
@@ -746,14 +744,14 @@ function CommandLine() //{{{
                 else if (vimperator.options["more"] && !isScrollable())
                     show_more_prompt = true;
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             case "<PageUp>":
                 if (vimperator.options["more"] && isScrollable())
                     win.scrollByPages(-1);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // top of page
@@ -763,7 +761,7 @@ function CommandLine() //{{{
                 else if (vimperator.options["more"] && !isScrollable())
                     show_more_prompt = true;
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // bottom of page
@@ -771,7 +769,7 @@ function CommandLine() //{{{
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
                     win.scrollTo(0, win.scrollMaxY);
                 else
-                    pass(event);
+                    pass_event = true;
                 break;
 
             // copy text to clipboard
@@ -781,39 +779,46 @@ function CommandLine() //{{{
 
             // close the window
             case "q":
-                close();
+                close_window = true;;
                 break;
 
             // unmapped key
             default:
                 if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
-                    pass(event);
+                    pass_event = true;
                 else
                     show_more_help_prompt = true;
         }
 
-        // set appropriate prompt string
-        if (clear_prompt)
+        if (pass_event || close_window)
         {
+            // FIXME: use mode stack
+            vimperator.modes.reset();
             this.clear();
+
+            if (pass_event)
+                vimperator.events.onKeyPress(event);
         }
-        else if (show_more_help_prompt)
+        else // set update the prompt string
         {
-            setHighlightGroup(this.HL_MOREMSG);
-            setPrompt("");
-            setCommand("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit");
-        }
-        else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
-        {
-            setHighlightGroup(this.HL_MOREMSG);
-            setPrompt("");
-            setCommand("-- More --");
-        }
-        else
-        {
-            setHighlightGroup(this.HL_QUESTION);
-            setPrompt("");
-            setCommand('Press ENTER or type command to continue');
+            if (show_more_help_prompt)
+            {
+                setHighlightGroup(this.HL_MOREMSG);
+                setPrompt("");
+                setCommand("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit");
+            }
+            else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
+            {
+                setHighlightGroup(this.HL_MOREMSG);
+                setPrompt("");
+                setCommand("-- More --");
+            }
+            else
+            {
+                setHighlightGroup(this.HL_QUESTION);
+                setPrompt("");
+                setCommand('Press ENTER or type command to continue');
+            }
         }
     }
 
