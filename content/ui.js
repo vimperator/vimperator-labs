@@ -156,6 +156,7 @@ function CommandLine() //{{{
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
+        command_widget.hidden = false;
         command_widget.value = cmd;
     }
 
@@ -168,7 +169,7 @@ function CommandLine() //{{{
 
         // TODO: only some commands list the ex command above their output so
         // this should be moved to the generating functions eg. v.buffers.list
-        var output = "<div class=\"ex-command-output\">" + ":" + command_widget.value + "<br/>" + str + "</div>";
+        var output = "<div class=\"ex-command-output\">" + ":" + command_widget.value.replace(/</, "&lt;").replace(/>/, "&gt;") + "<br/>" + str + "</div>";
         if (!multiline_output_widget.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
@@ -201,24 +202,15 @@ function CommandLine() //{{{
             var elements = multiline_output_widget.contentDocument.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
 
-            setPrompt("");
             if (multiline_output_widget.contentWindow.scrollY >= multiline_output_widget.contentWindow.scrollMaxY)
-            {
-                setHighlightGroup("hl-Question");
-                setCommand('Press ENTER or type command to continue');
-            }
+                vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
             else
-            {
-                setHighlightGroup("hl-MoreMsg");
-                setCommand("-- More --");
-            }
+                vimperator.commandline.echo("-- More --", vimperator.commandline.HL_MOREMSG);
         }
         else
         {
             multiline_output_widget.contentWindow.scrollTo(0, content_height);
-            setHighlightGroup("hl-Question");
-            setPrompt("");
-            setCommand('Press ENTER or type command to continue');
+            vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
         }
 
         multiline_output_widget.contentWindow.focus();
@@ -252,6 +244,11 @@ function CommandLine() //{{{
     this.HL_MOREMSG  = "hl-MoreMsg";
     this.HL_QUESTION = "hl-Question";
     this.HL_WARNING  = "hl-Warning";
+
+    // not yet used
+    this.FORCE_MULTILINE  =  1 << 0;
+    this.FORCE_SINGLELINE  = 1 << 1;
+    this.FORCE_ECHO  =       1 << 2; // also echoes if the commandline has focus
 
     this.getCommand = function()
     {
@@ -291,6 +288,7 @@ function CommandLine() //{{{
     }
 
     // FIXME: flags not yet really functional --mst
+    // multiline string don't obey highlight_group
     this.echo = function(str, highlight_group, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
@@ -302,29 +300,24 @@ function CommandLine() //{{{
 
         highlight_group = highlight_group || this.HL_NORMAL;
         setHighlightGroup(highlight_group);
-        if (flags || !multiline_output_widget.collapsed || str.indexOf("\n") > -1 || str.indexOf("<br>") > -1 || str.indexOf("<br/>") > -1)
+        if (flags /*|| !multiline_output_widget.collapsed*/ || /\n|<br\/?>/.test(str))
         {
             setMultiline(str);
         }
         else
         {
-            setPrompt("");
-            setCommand(str);
+            if (!str)
+                str = "";
+
+            setPrompt(str);
+            command_widget.hidden = true;
+
+            // initially (in the xul) the prompt is 'collapsed', this makes
+            // sure it's visible, then we toggle the display which works better
+            prompt_widget.style.visibility = 'visible';
+            prompt_widget.style.display = 'inline';
+            prompt_widget.size = str.length;
         }
-        cur_extended_mode = null;
-        return true;
-    };
-
-    // FIXME: why is this duplicated? -- djk
-    this.echoErr = function(str)
-    {
-        var focused = document.commandDispatcher.focusedElement;
-        if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
-            return false;
-
-        setHighlightGroup(this.HL_ERRORMSG);
-        setPrompt("");
-        setCommand(str);
         cur_extended_mode = null;
         return true;
     };
@@ -338,6 +331,7 @@ function CommandLine() //{{{
         setHighlightGroup(this.HL_QUESTION);
         setPrompt(str);
         setCommand("");
+        command_widget.focus();
         return "not implemented";
     };
 
@@ -369,9 +363,7 @@ function CommandLine() //{{{
         multiline_output_widget.collapsed = true;
         completionlist.hide();
 
-        setHighlightGroup(this.HL_NORMAL);
-        setPrompt(" "); // looks faster than an empty string as most prompts are 1 char long
-        setCommand("");
+        this.echo("");
     };
 
     this.onEvent = function(event)
@@ -802,23 +794,11 @@ function CommandLine() //{{{
         else // set update the prompt string
         {
             if (show_more_help_prompt)
-            {
-                setHighlightGroup(this.HL_MOREMSG);
-                setPrompt("");
-                setCommand("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit");
-            }
+                this.echo("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
             else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
-            {
-                setHighlightGroup(this.HL_MOREMSG);
-                setPrompt("");
-                setCommand("-- More --");
-            }
+                this.echo("-- More --", this.HL_MOREMSG);
             else
-            {
-                setHighlightGroup(this.HL_QUESTION);
-                setPrompt("");
-                setCommand('Press ENTER or type command to continue');
-            }
+                this.echo("Press ENTER or type command to continue", this.HL_QUESTION);
         }
     }
 
