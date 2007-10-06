@@ -357,7 +357,16 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
-        function(args, special) { vimperator.buffer.list(special); },
+        function(args, special)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            vimperator.buffer.list(special);
+        },
         {
             usage: ["buffers[!]"],
             short_help: "Show a list of all buffers (=tabs)",
