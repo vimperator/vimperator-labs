@@ -258,7 +258,7 @@ function Bookmarks() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
@@ -489,7 +489,7 @@ function History() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
@@ -745,7 +745,7 @@ function Marks() //{{{
             }
         }
 
-        var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+        var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                    "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
@@ -841,7 +841,7 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+        var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                    "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {

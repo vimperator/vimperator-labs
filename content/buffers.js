@@ -232,7 +232,7 @@ function Buffer() //{{{
             var items = vimperator.completion.get_buffer_completions("");
             var number, indicator, title, url;
 
-            var list = ":" + vimperator.commandline.getCommand() + "<br/>" + "<table>";
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
             for (var i = 0; i < items.length; i++)
             {
                 if (i == vimperator.tabs.index())
