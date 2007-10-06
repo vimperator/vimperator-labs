@@ -185,24 +185,28 @@ function Buffer() //{{{
             var items = vimperator.completion.get_buffer_completions("");
             var number, indicator, title, url;
 
-            var list = "<table>"
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
             for (var i = 0; i < items.length; i++)
             {
                 if (i == vimperator.tabs.index())
-                   indicator = "&nbsp;<span style=\"color: blue\">%</span>&nbsp;";
+                   indicator = " <span style=\"color: blue\">%</span> ";
                 else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
-                   indicator = "&nbsp;<span style=\"color: blue\">#</span>&nbsp;";
+                   indicator = " <span style=\"color: blue\">#</span> ";
                 else
-                   indicator = "&nbsp;&nbsp;&nbsp;";
+                   indicator = "   ";
 
                 [number, title] = items[i][0].split(/:\s+/, 2);
                 url = items[i][1];
+                url = vimperator.util.escapeHTML(url);
+                title = vimperator.util.escapeHTML(title);
 
-                list += "<tr><td align=\"right\">&nbsp;&nbsp;" + number + "</td><td>" + indicator + "</td><td>" + title + "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
+                list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
+                        "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                        "</td><td><span style=\"color: green\">" + url + "</span></td></tr>";
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, true);
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
         }
     }
 

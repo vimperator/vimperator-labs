@@ -503,7 +503,7 @@ function Commands() //{{{
         if (typeof arg === "object")
             arg = vimperator.objectToString(arg, color);
         else if (typeof arg === "function")
-            arg = arg.toString().replace(/</g, "&lt;").replace(/>/, "&gt;");
+            arg = vimperator.util.escapeHTML(arg.toString());
         else if (typeof arg === "number" || typeof arg === "boolean")
             arg = "" + arg;
         else if (typeof arg === "undefined")
@@ -1423,25 +1423,31 @@ function Commands() //{{{
                     var after_time = Date.now();
                 
                     if ((after_time - before_time) / count >= 100)
-                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
+                        var each = "<td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" +
                             ((after_time - before_time) / 1000.0 / count) +
-                            "</span> sec<br/>";
+                            "</span></td><td>sec</td>";
                     else
-                        var each = "&nbsp;&nbsp;Each time:&nbsp;&nbsp;<span style=\"color: green\">" +
+                        var each = "<td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" +
                             ((after_time - before_time) / count) +
-                            "</span> msec<br/>";
+                            "</span></td><td>msec</td>";
 
                     if (after_time - before_time >= 100)
-                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
+                        var total = "<td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" +
                             ((after_time - before_time) / 1000.0) +
-                            "</span> sec";
+                            "</span></td><td>sec</td>";
                     else
-                        var total = "&nbsp;&nbsp;Total time: <span style=\"color: red\">" +
-                            (after_time - before_time) + "</span> msec";
+                        var total = "<td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" +
+                            (after_time - before_time) + "</span></td><td>msec</td>";
 
+                    var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                              "<table>" +
+                              "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
+                              "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
+                              "<tr>" + each + "</tr>" +
+                              "<tr>" + total + "</tr>"
+                              "</table>";
 
-                    vimperator.echo("<span style=\"color: magenta; font-weight: bold\">Code execution summary</span>:<br/>" +
-                        "&nbsp;&nbsp;Executed:&nbsp;&nbsp;&nbsp;<span style=\"color: green\">" + count + "</span> times<br/>" + each + total);
+                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, true);
                 }
                 else
                 {

@@ -66,28 +66,93 @@
 }
 
 #vimperator-commandline {
-    /* FIXME: black on white or default skin colors? -moz-Field/-moz-FieldText */
+    padding: 1px;
+    /*
     background-color: white;
     color: black;
-    padding: 1px;
+    */
 }
 #vimperator-commandline-prompt, #vimperator-commandline-command {
     background-color: inherit;
     color: inherit;
 }
-#vimperator-commandline.error {
+
+#vimperator-multiline-output {
+    overflow: hidden;
+}
+
+/* highlight groups */
+
+.hl-Normal {
+    background-color: white;
+    color: black;
+}
+.hl-ErrorMsg {
     background-color: red;
     color: white;
     font-weight: bold;
 }
-#vimperator-commandline.message > #vimperator-commandline-prompt {
+.hl-ModeMsg {
+    background-color: white;
+    color: black;
+}
+.hl-MoreMsg {
+    background-color: white;
+    color: green;
+}
+.hl-Question {
+    background-color: white;
+    color: green;
+}
+.hl-Title {
     background-color: white;
     color: magenta;
     font-weight: bold;
 }
+.hl-Warning {
+    background-color: white;
+    color: red;
+}
 
-#vimperator-multiline-output {
-    overflow: hidden;
+.hl-Normal {
+    background-color: white;
+    color: black;
+}
+.hl-ErrorMsg {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+.hl-MoreMsg {
+    color: green;
+    background-color: white;
+}
+.hl-Title {
+    color: magenta;
+    background-color: white;
+    font-weight: bold;
+}
+
+/* MOW */
+
+#vimperator-multiline-output-content {
+    white-space: pre; /* -moz-pre-wrap FIXME: Should lines wrap like Vim? */
+    font-family: -moz-fixed;
+    margin: 0px;
+}
+
+#vimperator-multiline-output-content * {
+    font: inherit;
+}
+
+#vimperator-multiline-output-content table {
+    white-space: inherit;
+    border-spacing: 0px;
+}
+
+#vimperator-multiline-output-content td,
+#vimperator-multiline-output-content th {
+    padding: 0px 2px;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

@@ -270,21 +270,20 @@ function Mappings() //{{{
         }
 
         var list = "<table>";
-
         for (var i = 0; i < maps.length; i++)
         {
             for (var j = 0; j < maps[i].names.length; j++)
             {
                 list += "<tr>";
-                list += "<td>&nbsp;" + maps[i].names[j].replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>"
                 if (maps[i].rhs)
-                    list += "<td>&nbsp;" + maps[i].rhs.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>"
+                    list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>"
                 list += "</tr>";
             }
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

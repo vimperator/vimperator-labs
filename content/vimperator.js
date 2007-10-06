@@ -451,7 +451,7 @@ const vimperator = (function() //{{{
             }
 
             if (color)
-                string += "<span style=\"color: magenta; font-weight: bold;\">" + obj + "</span>::\n";
+                string += "<span class=\"hl-Title\">" + obj + "</span>::\n";
             else
                 string += obj + "::\n";
 
@@ -494,7 +494,7 @@ const vimperator = (function() //{{{
                         {
                             var str = value.toString();
                             if (typeof str == "string")  // can be "undefined"
-                                value = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                value = vimperator.util.escapeHTML(str);
                         }
                     }
                     
@@ -746,8 +746,8 @@ const vimperator = (function() //{{{
             vimperator.hints         = new Hints();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = vimperator.commandline.echo;
-            vimperator.echoerr = vimperator.commandline.echoErr;
+            vimperator.echo    = function(str) { vimperator.commandline.echo(str); }
+            vimperator.echoerr = function(str) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG); }
 
             vimperator.globalVariables = {};
 
