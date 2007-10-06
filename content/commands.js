@@ -42,7 +42,7 @@ function Command(specs, action, extra_info) //{{{
         for (var i = 0; i < specs.length; i++)
         {
             var match;
-            if (match = specs[i].match(/(\w+)\[(\w+)\]/))
+            if (match = specs[i].match(/(\w+|!)\[(\w+)\]/))
             {
                 short_names.push(match[1]);
                 long_names.push(match[1] + match[2]);
@@ -114,7 +114,7 @@ Command.prototype.hasName = function(name)
     {
         if (this.specs[i] == name)                    // literal command name
             return true;
-        else if (this.specs[i].match(/^\w+\[\w+\]$/)) // abbreviation spec
+        else if (this.specs[i].match(/^(\w+|!)\[\w+\]$/)) // abbreviation spec
             if (matchAbbreviation(name, this.specs[i]))
                 return true;
     }
@@ -194,7 +194,7 @@ function Commands() //{{{
         }
 
         // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-        var matches = string.match(/^:*(\d+)?([a-zA-Z]+)(!)?(?:\s+(.*?)\s*)?$/);
+        var matches = string.match(/^:*(\d+)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
         if (!matches)
             return [null, null, null, null, null];
         matches.shift();
@@ -1629,6 +1629,31 @@ function Commands() //{{{
             short_help: "Set zoom value of the web page",
             help: "If <code class=\"argument\">{value}</code> can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
                   "If <code class=\"argument\">{value}</code> is omitted, zoom is reset to 100%."
+        },
+        {
+            usage: ["zo[om][!] [value]", "zo[om][!] +{value} | -{value}"],
+            short_help: "Set zoom value of current web page",
+            help: "If <code class=\"argument\">{value}</code> can be an absolute value between 1 and 2000% or a relative value if prefixed with - or +. " +
+                  "If <code class=\"argument\">{value}</code> is omitted, zoom is reset to 100%.<br/>" +
+                  "Normally this command operates on the text zoom, if used with <code class=\"argument\">[!]</code> it operates on full zoom."
+        }
+    ));
+    addDefaultCommand(new Command(["!", "run"],
+        function(args, special)
+        {
+            // TODO: if special, run the last command
+            var output = vimperator.system(args)
+            if (typeof output === "string")
+                vimperator.echo(vimperator.util.escapeHTML(output));
+            else
+                // FIXME: why are we accepting only a string return value from v.system()? -- djk
+                vimperator.echoerr("Invalid system command: " + args);
+        },
+        {
+            usage: ["!{command}"],
+            short_help: "Run a command",
+            help: "Runs {command} through system() and displays its output. " +
+                  "Input redirection (< foo) not done, do not run commands which require stdin or it will hang Firefox!"
         }
     ));
     //}}}

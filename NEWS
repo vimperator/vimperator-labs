@@ -9,6 +9,8 @@
 	  (change with userChrome.css if you don't like it until we have :colorscheme)
 	* :let mapleader=","  and <Leader> in :map support
 	* added new :let and :unlet commands
+	* :b2 now allowed, no space required before the 2 anymore
+	* :! to run commands through system()
 	* separated search and Ex command history
 	* added 'visualbellstyle' for styling/hiding the visual bell
 	* merge the existing status bar with the standard FF status bar so that

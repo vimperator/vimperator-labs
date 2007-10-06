@@ -629,6 +629,89 @@ const vimperator = (function() //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+        run: function(program, args, blocking)
+        {
+            const WINDOWS = navigator.platform == "Win32";
+
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                                  createInstance(Components.interfaces.nsILocalFile);
+            try
+            {
+                file.initWithPath(program);
+            }
+            catch (e)
+            {
+                var dirs = environment_service.get("PATH").split(WINDOWS ? ";" : ":");
+                for (var i = 0; i < dirs.length; i++)
+                {
+                    var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
+                    try
+                    {
+                        file.initWithPath(path);
+                        if (file.exists())
+                            break;
+                    }
+                    catch (e) { }
+                }
+            }
+            if (!file.exists())
+            {
+                vimperator.echoerr("command not found: " + program);
+                return -1;
+            }
+
+            var process = Components.classes["@mozilla.org/process/util;1"].
+                                     createInstance(Components.interfaces.nsIProcess);
+            process.init(file);
+             
+            var ec = process.run(blocking, args, args.length);
+            return ec;
+        },
+
+        // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
+        // is fixed, should use that instead of a tmpfile
+        // TODO: pass "input" as stdin
+        // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
+        system: function (str, input)
+        {
+            const WINDOWS = navigator.platform == "Win32"; // FIXME: duplicated everywhere
+
+            var fileout = getTempFile();
+            if (!fileout)
+                return "";
+
+            if (WINDOWS)
+                var command = str + " > " + fileout.path;
+            else
+                var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
+
+            var filein = null;
+            if (input)
+            {
+                filein = getTempFile();
+                var fdin = vimperator.fopen(filein, ">");
+                fdin.write(input);
+                fdin.close();
+                command += " < \"" + filein.path.replace('"', '\\"') + "\"";
+            }
+
+            if (WINDOWS)
+                this.run("cmd.exe", ["/C", command], true);
+            else
+                this.run("sh", ["-c", command], true);
+
+            var fd = vimperator.fopen(fileout, "<");
+            if (!fd)
+                return null;
+
+            var s = fd.read();
+            fd.close();
+            fileout.remove(false);
+            if (filein)
+                filein.remove(false);
+
+            return s;
+        },
 
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
@@ -820,7 +903,19 @@ const vimperator = (function() //{{{
             vimperator.events.destroy();
 
             window.dump("All vimperator modules destroyed\n");
-        }
+        },
+
+        sleep: function(ms)
+        {
+            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager); 
+            var mainThread = threadManager.mainThread; 
+
+            var then = new Date().getTime(), now = then; 
+            for (; now - then < ms; now = new Date().getTime()) { 
+                mainThread.processNextEvent(true); 
+            } 
+        } 
+
     } //}}}
 })(); //}}}
 
