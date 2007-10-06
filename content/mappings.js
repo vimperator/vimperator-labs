@@ -282,7 +282,6 @@ function Mappings() //{{{
         }
 
         var list = "<table>";
-
         for (var i = 0; i < maps.length; i++)
         {
             for (var j = 0; j < maps[i].names.length; j++)

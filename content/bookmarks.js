@@ -258,7 +258,8 @@ function Bookmarks() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
+                var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
                     var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
@@ -488,7 +489,8 @@ function History() //{{{
 
             for (var i = 0; i < items.length; i++)
             {
-                var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+                var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
                     var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
@@ -743,7 +745,8 @@ function Marks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+        var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                   "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr>"
@@ -838,7 +841,8 @@ function QuickMarks() //{{{
             }
         }
 
-        var list = "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
+        var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                   "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr><td>    " + marks[i][0] +

@@ -304,8 +304,8 @@ function Options() //{{{
     this.list = function()
     {
         // TODO: columns like Vim?
-        var list = "<table>" +
-                   "<tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
+        var list = ":" + vimperator.commandline.getCommand() + "<br/>" +
+                   "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
         var name, value;
 
         for (var i = 0; i < options.length; i++)

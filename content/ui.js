@@ -167,9 +167,7 @@ function CommandLine() //{{{
     {
         multiline_input_widget.collapsed = true;
 
-        // TODO: only some commands list the ex command above their output so
-        // this should be moved to the generating functions eg. v.buffers.list
-        var output = "<div class=\"ex-command-output\">" + ":" + command_widget.value.replace(/</, "&lt;").replace(/>/, "&gt;") + "<br/>" + str + "</div>";
+        var output = "<div class=\"ex-command-output\">" + str + "</div>";
         if (!multiline_output_widget.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
