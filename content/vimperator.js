@@ -582,17 +582,22 @@ const vimperator = (function() //{{{
 
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
-        // TODO: make it usable on windows
         // TODO: pass "input" as stdin
         // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
         system: function (str, input)
         {
+            const WINDOWS = navigator.platform == "Win32"; // FIXME: duplicated everywhere
+
             var fileout = getTempFile();
             if (!fileout)
                 return "";
 
+            if (WINDOWS)
+                var command = str + " > " + fileout.path;
+            else
+                var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
+
             var filein = null;
-            var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
             if (input)
             {
                 filein = getTempFile();
@@ -602,7 +607,11 @@ const vimperator = (function() //{{{
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
             }
 
-            this.run("sh", ["-c", command], true);
+            if (WINDOWS)
+                this.run("cmd.exe", ["/C", command], true);
+            else
+                this.run("sh", ["-c", command], true);
+
             var fd = vimperator.fopen(fileout, "<");
             if (!fd)
                 return null;

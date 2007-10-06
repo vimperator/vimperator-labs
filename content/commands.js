@@ -1647,14 +1647,15 @@ function Commands() //{{{
             // TODO: if special, run the last command
             var output = vimperator.system(args)
             if (typeof output === "string")
-                vimperator.echo(output);
+                vimperator.echo(vimperator.util.escapeHTML(output));
             else
+                // FIXME: why are we accepting only a string return value from v.system()? -- djk
                 vimperator.echoerr("Invalid system command: " + args);
         },
         {
-            usage: "!{command}",
+            usage: ["!{command}"],
             short_help: "Run a command",
-            help: "Runs {command} through system() and displays its output." +
+            help: "Runs {command} through system() and displays its output. " +
                   "Input redirection (< foo) not done, do not run commands which require stdin or it will hang Firefox!"
         }
     ));

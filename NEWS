@@ -11,7 +11,7 @@
 	* :let mapleader=","  and <Leader> in :map support
 	* added new :let and :unlet commands
 	* :b2 now allowed, no space required before the 2 anymore
-	* :! to run commands through system() (UNIX only)
+	* :! to run commands through system()
 	* separated search and Ex command history
 	* merge the existing status bar with the standard FF status bar so that
 	  security information and extension buttons are included
