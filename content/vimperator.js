@@ -543,25 +543,27 @@ const vimperator = (function() //{{{
 
         run: function(program, args, blocking)
         {
+            const WINDOWS = navigator.platform == "Win32";
+
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
-            try {
+            try
+            {
                 file.initWithPath(program);
             }
             catch (e)
             {
-                //environment_service
-                // FIXME: doesn't work on windows
-                var dirs = environment_service.get("PATH").split(":");
+                var dirs = environment_service.get("PATH").split(WINDOWS ? ";" : ":");
                 for (var i = 0; i < dirs.length; i++)
                 {
-                    var path = dirs[i] + "/" + program;
+                    var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
                     try
                     {
                         file.initWithPath(path);
                         if (file.exists())
                             break;
-                    } catch (e) { }
+                    }
+                    catch (e) { }
                 }
             }
             if (!file.exists())
@@ -577,6 +579,7 @@ const vimperator = (function() //{{{
             var ec = process.run(blocking, args, args.length);
             return ec;
         },
+
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
         // TODO: make it usable on windows
