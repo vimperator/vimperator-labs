@@ -1,7 +1,7 @@
 " TODO: add some useful examples
 
 " I don't like beeps
-set nobeep
+set visualbell
 echo vimperatorrc found
 
 " embedded javascript is possible
