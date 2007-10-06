@@ -244,8 +244,8 @@ function Buffer() //{{{
 
                 [number, title] = items[i][0].split(/:\s+/, 2);
                 url = items[i][1];
-                url = url.replace(/>/, "&gt;").replace(/</, "&lt;");
-                title = title.replace(/>/, "&gt;").replace(/</, "&lt;");
+                url = vimperator.util.escapeHTML(url);
+                title = vimperator.util.escapeHTML(title);
 
                 list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
                         "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +

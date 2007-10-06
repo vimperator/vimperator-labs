@@ -59,9 +59,7 @@ vimperator.help = function(section, easter) //{{{
                 // keep <br/>
                 //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
                 //usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
-                usage = usage.replace(/&/g, "&amp;");
-                usage = usage.replace(/</g, "&lt;");
-                usage = usage.replace(/>/g, "&gt;");
+                usage = vimperator.util.escapeHTML(usage);
                 usage = usage.replace(/\\n/g, "<br/>");
                 // color [count], [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                    // required args
@@ -98,11 +96,7 @@ vimperator.help = function(section, easter) //{{{
             for (var j=0; j < names.length; j++)
             {
                 var cmd_name = names[j];
-                cmd_name = cmd_name.replace(/</g, "&lt;");
-                cmd_name = cmd_name.replace(/>/g, "&gt;");
-                // cmd_name = cmd_name.replace(/"/g, "&quot;");
-                // cmd_name = cmd_name.replace(/'/g, "&apos;");
-                // cmd_name = cmd_name.replace(/&/g, "&amp;");
+                cmd_name = vimperator.util.escapeHTML(cmd_name);
                 ret += '<code class="tag">' + beg + cmd_name + end + '</code><br/>';
             }
             ret += '</td></tr>';

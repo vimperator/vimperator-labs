@@ -406,7 +406,7 @@ const vimperator = (function() //{{{
                         {
                             var str = value.toString();
                             if (typeof str == "string")  // can be "undefined"
-                                value = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                value = vimperator.util.escapeHTML(str);
                         }
                     }
                     

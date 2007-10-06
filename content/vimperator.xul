@@ -53,6 +53,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.7" src="options.js"/>
     <script type="application/x-javascript;version=1.7" src="tabs.js"/>
     <script type="application/x-javascript;version=1.7" src="ui.js"/>
+    <script type="application/x-javascript;version=1.7" src="util.js"/>
 
     <window id="main-window">
 

@@ -503,7 +503,7 @@ function Commands() //{{{
         if (typeof arg === "object")
             arg = vimperator.objectToString(arg, color);
         else if (typeof arg === "function")
-            arg = arg.toString().replace(/</g, "&lt;").replace(/>/, "&gt;");
+            arg = vimperator.util.escapeHTML(arg.toString());
         else if (typeof arg === "number" || typeof arg === "boolean")
             arg = "" + arg;
         else if (typeof arg === "undefined")

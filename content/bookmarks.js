@@ -262,11 +262,11 @@ function Bookmarks() //{{{
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    var title = vimperator.util.escapeHTML(items[i][1]);
                     if (title.length > 50)
                         title = title.substr(0, 47) + "...";
                     var keyword = "".substr(0,12); // maximum 12 chars
-                    var url = items[i][0].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    var url = vimperator.util.escapeHTML(items[i][0]);
                     var tags = "tag1, tag2";
                     list += "<tr><td>" + title + "</td><td style=\"color: blue\" align=\"center\">" + keyword +
                             "</td><td style=\"color: green; width: 100%\">" + url +
@@ -493,10 +493,10 @@ function History() //{{{
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    var title = items[i][1].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    var title = vimperator.util.escapeHTML(items[i][1]);
                     if (title.length > 50)
                         title = title.substr(0, 47) + "...";
-                    var url = items[i][0].replace(/</, "&lt;").replace(/>/, "&gt;");
+                    var url = vimperator.util.escapeHTML(items[i][0]);
                     list += "<tr><td>" + title + "</td><td style=\"color: green;\">" + url + "</td></tr>";
                 }
                 list += "</table>";
@@ -753,7 +753,7 @@ function Marks() //{{{
                   + "<td> "                        + marks[i][0]                              +  "</td>"
                   + "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>"
                   + "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>"
-                  + "<td style=\"color: green;\">" + marks[i][1].location.replace(/</, "&lt;").replace(/>/, "&gt;") +  "</td>"
+                  + "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) +  "</td>"
                   + "</tr>";
         }
         list += "</table>";
@@ -846,7 +846,7 @@ function QuickMarks() //{{{
         for (var i = 0; i < marks.length; i++)
         {
             list += "<tr><td>    " + marks[i][0] +
-                    "</td><td style=\"color: green;\">" + marks[i][1].replace(/</, "&lt;").replace(/>/, "&gt;") + "</td></tr>";
+                    "</td><td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1]) + "</td></tr>";
         }
         list += "</table>";
 
