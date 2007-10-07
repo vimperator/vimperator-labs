@@ -1453,7 +1453,7 @@ function Commands() //{{{
                               "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
                               "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
                               "<tr>" + each + "</tr>" +
-                              "<tr>" + total + "</tr>"
+                              "<tr>" + total + "</tr>" +
                               "</table>";
 
                     vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, true);
