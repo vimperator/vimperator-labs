@@ -52,6 +52,7 @@ function Events() //{{{
         vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
+        vimperator.commandline.clear();
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
         vimperator.tabs.updateSelectionHistory();
