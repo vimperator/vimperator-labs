@@ -251,9 +251,12 @@ function CommandLine() //{{{
     this.HL_WARNING  = "hl-Warning";
 
     // not yet used
-    this.FORCE_MULTILINE  =  1 << 0;
-    this.FORCE_SINGLELINE  = 1 << 1;
-    this.FORCE_ECHO  =       1 << 2; // also echoes if the commandline has focus
+    this.FORCE_MULTILINE     = 1 << 0;
+    this.FORCE_SINGLELINE    = 1 << 1;
+    this.DISALLOW_MULTILINE  = 1 << 2; // if an echo() should try to use the single line,
+                                       // but output nothing when the MOW is open; when also
+                                       // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
+    this.APPEND_TO_MESSAGES  = 1 << 3; // will show the string in :messages
 
     this.getCommand = function()
     {
@@ -292,8 +295,8 @@ function CommandLine() //{{{
         this.clear();
     }
 
-    // FIXME: flags not yet really functional --mst
-    // multiline string don't obey highlight_group
+    // TODO: add :messages entry
+    // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
     this.echo = function(str, highlight_group, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
@@ -302,10 +305,23 @@ function CommandLine() //{{{
 
         highlight_group = highlight_group || this.HL_NORMAL;
 
-        if (flags || !multiline_output_widget.collapsed || /\n|<br\/?>/.test(str))
-            setMultiline(str, highlight_group);
-        else
-            setLine(str, highlight_group);
+        var where = setLine;
+        if (flags & this.FORCE_MULTILINE)
+            where = setMultiline;
+        else if (flags & this.FORCE_SINGLELINE)
+            where = setLine;
+        else if (!multiline_output_widget.collapsed)
+        {
+            if (flags & this.DISALLOW_MULTILINE)
+                where = null;
+            else
+                where = setMultiline;
+        }
+        else if (/\n|<br\/?>/.test(str))
+            where = setMultiline;
+
+        if (where)
+            where(str, highlight_group);
 
         cur_extended_mode = null;
 

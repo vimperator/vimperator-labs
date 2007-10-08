@@ -150,9 +150,9 @@ vimperator.modes = (function()
 
             var msg = getModeMessage();
             if (msg)
-                vimperator.commandline.echo("-- " + getModeMessage() + " --", vimperator.commandline.HL_MODEMSG);
+                vimperator.commandline.echo("-- " + getModeMessage() + " --", vimperator.commandline.HL_MODEMSG, vimperator.commandline.DISALLOW_MULTILINE);
             else
-                vimperator.commandline.echo("");
+                vimperator.commandline.echo("", null, vimperator.commandline.DISALLOW_MULTILINE);
         },
 
         // helper function to set both modes in one go

@@ -284,11 +284,10 @@ function Commands() //{{{
                     result.title = result.url;
 
                 vimperator.bookmarks.add(result.title, result.url);
-                vimperator.echo("Bookmark `" + result.title + "' added with url `" + result.url + "'");
+                vimperator.echo("Bookmark `" + result.title + "' added with url `" + result.url + "'", vimperator.commandline.FORCE_SINGLELINE);
             }
             else
             {
-                //vimperator.echo("Usage: :bmark [-t \"My Title\"] [-T tag1,tag2] <url>");
                 vimperator.echoerr("E474: Invalid argument");
             }
         },
@@ -385,7 +384,7 @@ function Commands() //{{{
                     result.url = vimperator.buffer.URL;
 
                 var deleted_count = vimperator.bookmarks.remove(result.url);
-                vimperator.echo(deleted_count + " bookmark(s) with url `" + result.url + "' deleted");
+                vimperator.echo(deleted_count + " bookmark(s) with url `" + result.url + "' deleted", vimperator.commandline.FORCE_SINGLELINE);
             }
             else
             {
@@ -680,7 +679,7 @@ function Commands() //{{{
                     str += "<tr><td style=\"width: 200px;\">" + i + "</td><td>" + prefix + value + "</td>\n";
                 }
                 if (str)
-                    vimperator.echo("<table>" + str + "</table>", true);
+                    vimperator.echo("<table>" + str + "</table>", vimperator.commandline.FORCE_MULTILINE);
                 else
                     vimperator.echo("No variables found");
                 return;
@@ -1471,7 +1470,7 @@ function Commands() //{{{
                               "<tr>" + total + "</tr>" +
                               "</table>";
 
-                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, true);
+                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
                 }
                 else
                 {

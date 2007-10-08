@@ -168,7 +168,7 @@ function Search() //{{{
         }
         else
         {
-            vimperator.echo((up ? "?" : "/") + last_search_pattern);
+            vimperator.echo((up ? "?" : "/") + last_search_pattern, null, vimperator.commandline.FORCE_SINGLELINE);
 
             if (vimperator.options["hlsearch"])
                 this.highlight(last_search_string);

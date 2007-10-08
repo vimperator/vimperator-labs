@@ -520,7 +520,7 @@ function Hints() //{{{
         this.disableHahMode(null, true);
 
         vimperator.copyToClipboard(loc);
-        vimperator.echo("Yanked " + loc);
+        vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
     };
 
     this.yankTextHints = function()
@@ -543,7 +543,7 @@ function Hints() //{{{
         this.disableHahMode(null, true);
 
         vimperator.copyToClipboard(loc);
-        vimperator.echo("Yanked " + loc);
+        vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
     };
 
     function setMouseOverElement(elem)

@@ -295,7 +295,7 @@ function Mappings() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -678,7 +678,7 @@ function Mappings() //{{{
         {
             var url = vimperator.buffer.URL;
             vimperator.copyToClipboard(url);
-            vimperator.echo("Yanked " + url);
+            vimperator.echo("Yanked " + url, vimperator.commandline.FORCE_SINGLELINE);
         },
         {
             short_help: "Yank current location to the clipboard",

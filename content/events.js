@@ -845,7 +845,7 @@ function Events() //{{{
                 if (ssli == 1)
                     vimperator.statusline.updateUrl("Link: " + link);
                 else if (ssli == 2)
-                    vimperator.echo("Link: " + link);
+                    vimperator.echo("Link: " + link, vimperator.commandline.DISALLOW_MULTILINE);
             }
 
             if (link == "")
