@@ -135,10 +135,8 @@ function CommandLine() //{{{
     // sets the prompt - for example, : or /
     function setPrompt(prompt)
     {
-        if (typeof prompt != "string")
-            prompt = "";
-
         prompt_widget.value = prompt;
+
         if (prompt)
         {
             // initially (in the xul) the prompt is 'collapsed', this makes
@@ -149,7 +147,7 @@ function CommandLine() //{{{
         }
         else
         {
-            prompt_widget.style.display = 'none';
+            prompt_widget.collapsed = true;
         }
     }
 
@@ -160,14 +158,23 @@ function CommandLine() //{{{
         command_widget.value = cmd;
     }
 
+    // NOTE: we use the prompt label now rather than the command textbox since
+    // updating a label is noticeably faster
+    function setLine(str, highlight_group)
+    {
+        command_widget.hidden = true;
+        setHighlightGroup(highlight_group);
+        setPrompt(str);
+    }
+
     // TODO: extract CSS
     //     : resize upon a window resize
     //     : echoed lines longer than v-c-c.width should wrap and use MOW
-    function setMultiline(str)
+    function setMultiline(str, highlight_group)
     {
         multiline_input_widget.collapsed = true;
 
-        var output = "<div class=\"ex-command-output\">" + str + "</div>";
+        var output = "<div class=\"ex-command-output " + highlight_group + "\">" + str + "</div>";
         if (!multiline_output_widget.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
@@ -201,14 +208,14 @@ function CommandLine() //{{{
             elements[elements.length - 1].scrollIntoView(true);
 
             if (multiline_output_widget.contentWindow.scrollY >= multiline_output_widget.contentWindow.scrollMaxY)
-                vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
             else
-                vimperator.commandline.echo("-- More --", vimperator.commandline.HL_MOREMSG);
+                setLine("-- More --", vimperator.commandline.HL_QUESTION);
         }
         else
         {
             multiline_output_widget.contentWindow.scrollTo(0, content_height);
-            vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+            setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
         }
 
         multiline_output_widget.contentWindow.focus();
@@ -261,7 +268,6 @@ function CommandLine() //{{{
         cur_command = cmd || "";
         cur_extended_mode = ext_mode || null;
 
-        setHighlightGroup(this.HL_NORMAL);
         history_index = UNINITIALIZED;
         completion_index = UNINITIALIZED;
 
@@ -269,6 +275,7 @@ function CommandLine() //{{{
         old_mode = vimperator.mode;
         old_extended_mode = vimperator.mode.extended;
         vimperator.modes.set(vimperator.modes.COMMAND_LINE, cur_extended_mode);
+        setHighlightGroup(this.HL_NORMAL);
         setPrompt(cur_prompt);
         setCommand(cur_command);
 
@@ -293,30 +300,15 @@ function CommandLine() //{{{
         if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
             return false;
 
-        if (typeof str != "string")
-            str = "";
-
         highlight_group = highlight_group || this.HL_NORMAL;
-        setHighlightGroup(highlight_group);
-        if (flags /*|| !multiline_output_widget.collapsed*/ || /\n|<br\/?>/.test(str))
-        {
-            setMultiline(str);
-        }
+
+        if (flags || !multiline_output_widget.collapsed || /\n|<br\/?>/.test(str))
+            setMultiline(str, highlight_group);
         else
-        {
-            if (!str)
-                str = "";
+            setLine(str, highlight_group);
 
-            setPrompt(str);
-            command_widget.hidden = true;
-
-            // initially (in the xul) the prompt is 'collapsed', this makes
-            // sure it's visible, then we toggle the display which works better
-            prompt_widget.style.visibility = 'visible';
-            prompt_widget.style.display = 'inline';
-            prompt_widget.size = str.length;
-        }
         cur_extended_mode = null;
+
         return true;
     };
 
@@ -326,9 +318,7 @@ function CommandLine() //{{{
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
         // to make this code synchronous or at least use a callback
-        setHighlightGroup(this.HL_QUESTION);
-        setPrompt(str);
-        setCommand("");
+        setLine(str, this.HL_QUESTION);
         command_widget.focus();
         return "not implemented";
     };
@@ -361,7 +351,7 @@ function CommandLine() //{{{
         multiline_output_widget.collapsed = true;
         completionlist.hide();
 
-        this.echo("");
+        setLine("", this.HL_NORMAL);
     };
 
     this.onEvent = function(event)
@@ -792,11 +782,11 @@ function CommandLine() //{{{
         else // set update the prompt string
         {
             if (show_more_help_prompt)
-                this.echo("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
+                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
             else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
-                this.echo("-- More --", this.HL_MOREMSG);
+                setLine("-- More --", this.HL_MOREMSG);
             else
-                this.echo("Press ENTER or type command to continue", this.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", this.HL_QUESTION);
         }
     }
 
