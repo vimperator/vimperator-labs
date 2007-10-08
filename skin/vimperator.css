@@ -12,8 +12,7 @@
 /* the selected item in listboxes is hardly readable without this */
 #vimperator-completion    > listitem[selected="true"] > listcell,
 #vimperator-bufferwindow  > listitem[selected="true"] > listcell,
-#vimperator-previewwindow > listitem[selected="true"] > listcell
-{
+#vimperator-previewwindow > listitem[selected="true"] > listcell {
    background-color: Highlight !important;
    color: HighlightText !important;
 }
@@ -49,22 +48,6 @@
     display: none;
 }
 
-/* colors for the statusbar */
-/* #status-bar is included so it also gets the right color before the first setClass("insecure") */
-#status-bar,
-#status-bar.status_insecure {
-    background-color: black;
-    color: white;
-}
-#status-bar.status_secure {
-    background-color: #B0FF00; /* light green */
-    color: black;
-}
-#status-bar.status_broken {
-    background-color: #FF6060; /* light red */
-    color: black;
-}
-
 #vimperator-commandline {
     padding: 1px;
     /*
@@ -75,10 +58,6 @@
 #vimperator-commandline-prompt, #vimperator-commandline-command {
     background-color: inherit;
     color: inherit;
-}
-
-#vimperator-multiline-output {
-    overflow: hidden;
 }
 
 /* highlight groups */
@@ -113,27 +92,24 @@
     background-color: white;
     color: red;
 }
-
-.hl-Normal {
-    background-color: white;
+.hl-StatusLine {
+    background-color: black;
+    color: white;
+}
+.hl-StatusLineSecure {
+    background-color: #B0FF00; / * light green * /
     color: black;
 }
-.hl-ErrorMsg {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-}
-.hl-MoreMsg {
-    color: green;
-    background-color: white;
-}
-.hl-Title {
-    color: magenta;
-    background-color: white;
-    font-weight: bold;
+.hl-StatusLineBroken {
+    background-color: #FF6060; / * light red * /
+    color: black;
 }
 
 /* MOW */
+
+#vimperator-multiline-output {
+    overflow: hidden;
+}
 
 #vimperator-multiline-output-content {
     white-space: pre; /* -moz-pre-wrap FIXME: Should lines wrap like Vim? */

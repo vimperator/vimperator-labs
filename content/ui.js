@@ -1058,7 +1058,22 @@ function StatusLine() //{{{
 
     this.setClass = function(type)
     {
-        status_bar.setAttribute("class", "chromeclass-status status_" + type);
+        var highlight_group;
+
+        switch (type)
+        {
+            case "secure":
+                highlight_group = "hl-StatusLineSecure";
+                break;
+            case "broken":
+                highlight_group = "hl-StatusLineBroken";
+                break;
+            case "insecure":
+                highlight_group = "hl-StatusLine";
+                break;
+        }
+
+        status_bar.setAttribute("class", "chromeclass-status " + highlight_group);
     };
 
     this.updateUrl = function(url)
