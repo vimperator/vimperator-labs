@@ -76,7 +76,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
             events="select"
             oncommandupdate="vimperator.events.onSelectionChange(event);"/>
 
-        <statusbar id="status-bar">
+        <statusbar id="status-bar" class="hl-StatusLine">
             <hbox insertbefore="statusbar-display" id="vimperator-statusline" flex="1" height="10" hidden="false" align="center">
                 <textbox class="plain" id="vimperator-statusline-field-url" readonly="false" flex="1" crop="end"/>
                 <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
@@ -120,7 +120,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 </listcols>
             </listbox>
 
-            <hbox id="vimperator-commandline" hidden="false">
+            <hbox id="vimperator-commandline" hidden="false" class="hl-Normal">
                 <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                 <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
                     onkeypress="vimperator.commandline.onEvent(event);"
