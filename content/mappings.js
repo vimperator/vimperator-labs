@@ -1050,8 +1050,8 @@ function Mappings() //{{{
             help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
-                  "If \"\\u\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
-                  "\"\\U\" forces the entire page to be searched for a match."
+                  "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
+                  "\"\\L\" forces the entire page to be searched for a match."
         }
     ));
     addDefaultMap(new Map([vimperator.modes.NORMAL], ["?"],
@@ -1062,8 +1062,8 @@ function Mappings() //{{{
             help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
-                  "If \"\\u\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
-                  "\"\\U\" forces the entire page to be searched for a match.<br/>" +
+                  "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
+                  "\"\\L\" forces the entire page to be searched for a match.<br/>" +
                   "NOTE: incremental searching currently only works in the forward direction."
         }
     ));
