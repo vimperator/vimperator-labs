@@ -240,13 +240,41 @@ function Commands() //{{{
             if (special)
                 vimperator.history.goToStart();
             else
+            {
+                if (args)
+                {
+                    var sh = getWebNavigation().sessionHistory;
+                    for (var i = sh.index - 1; i >= 0; i--)
+                    {
+                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        {
+                            getWebNavigation().gotoIndex(i);
+                            return;
+                        }
+                    }
+                }
                 vimperator.history.stepTo(count > 0 ? -1 * count : -1);
+            }
         },
         {
-            usage: ["[count]ba[ck][!]"],
+            usage: ["[count]ba[ck][!] [url]"],
             short_help: "Go back in the browser history",
             help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>" +
-                  "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history."
+                  "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history.",
+            completer: function(filter)
+            {
+                var sh = getWebNavigation().sessionHistory;
+                var completions = [];
+                for (var i = sh.index - 1; i >= 0; i--)
+                {
+                    var entry = sh.getEntryAtIndex(i, false);
+                    var url = entry.URI.spec;
+                    var title = entry.title;
+                    if (vimperator.completion.match(filter, [url, title], false))
+                        completions.push([url, title]);
+                }
+                return completions;
+            }
         }
     ));
     addDefaultCommand(new Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
@@ -570,13 +598,41 @@ function Commands() //{{{
             if (special)
                 vimperator.history.goToEnd();
             else
+            {
+                if (args)
+                {
+                    var sh = getWebNavigation().sessionHistory;
+                    for (var i = sh.index + 1; i < sh.count; i++)
+                    {
+                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        {
+                            getWebNavigation().gotoIndex(i);
+                            return;
+                        }
+                    }
+                }
                 vimperator.history.stepTo(count > 0 ? count : 1);
+            }
         },
         {
-            usage: ["[count]fo[rward][!]"],
+            usage: ["[count]fo[rward][!] [url]"],
             short_help: "Go forward in the browser history",
             help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>" +
-                  "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history."
+                  "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history.",
+            completer: function(filter)
+            {
+                var sh = getWebNavigation().sessionHistory;
+                var completions = [];
+                for (var i = sh.index + 1; i < sh.count; i++)
+                {
+                    var entry = sh.getEntryAtIndex(i, false);
+                    var url = entry.URI.spec;
+                    var title = entry.title;
+                    if (vimperator.completion.match(filter, [url, title], false))
+                        completions.push([url, title]);
+                }
+                return completions;
+            }
         }
     ));
     addDefaultCommand(new Command(["ha[rdcopy]"],
@@ -1538,7 +1594,10 @@ function Commands() //{{{
                 for (var i = 0; i < undoItems.length; i++)
                 {
                     // undoItems[i].image is also available if need for favicons
-                    completions.push([undoItems[i].state.entries[0].url, undoItems[i].title]);
+                    var url = undoItems[i].state.entries[0].url;
+                    var title = undoItems[i].title;
+                    if (vimperator.completion.match(filter, [url, title], false))
+                        completions.push([url, title]);
                 }
                 return completions;
             }
