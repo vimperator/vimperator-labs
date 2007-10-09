@@ -133,17 +133,14 @@ function CommandLine() //{{{
     }
 
     // sets the prompt - for example, : or /
-    function setPrompt(prompt)
+    function setPrompt(pmt)
     {
-        prompt_widget.value = prompt;
+        prompt_widget.value = pmt;
 
-        if (prompt)
+        if (pmt)
         {
-            // initially (in the xul) the prompt is 'collapsed', this makes
-            // sure it's visible, then we toggle the display which works better
-            prompt_widget.style.visibility = 'visible';
-            prompt_widget.style.display = 'inline';
-            prompt_widget.size = prompt.length;
+            prompt_widget.size = pmt.length;
+            prompt_widget.collapsed = false;
         }
         else
         {
@@ -154,17 +151,14 @@ function CommandLine() //{{{
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
-        command_widget.hidden = false;
         command_widget.value = cmd;
     }
 
-    // NOTE: we use the prompt label now rather than the command textbox since
-    // updating a label is noticeably faster
     function setLine(str, highlight_group)
     {
-        command_widget.hidden = true;
         setHighlightGroup(highlight_group);
-        setPrompt(str);
+        setPrompt("");
+        setCommand(str);
     }
 
     // TODO: extract CSS
