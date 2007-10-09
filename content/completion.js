@@ -429,7 +429,7 @@ vimperator.completion = (function() // {{{
             {
                 try
                 {
-                    title = getBrowser().getBrowserAtIndex(i).contentDocument.getElementsByTagName('title')[0].text;
+                    title = getBrowser().getBrowserAtIndex(i).contentDocument.title;
                 }
                 catch (e)
                 {
