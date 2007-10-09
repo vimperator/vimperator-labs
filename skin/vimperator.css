@@ -60,6 +60,11 @@
     color: inherit;
 }
 
+#sidebar {
+    max-width: 90% !important;
+    min-width: 10% !important;
+}
+
 /* highlight groups */
 
 .hl-Normal {
