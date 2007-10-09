@@ -133,41 +133,42 @@ function CommandLine() //{{{
     }
 
     // sets the prompt - for example, : or /
-    function setPrompt(prompt)
+    function setPrompt(pmt)
     {
-        if (typeof prompt != "string")
-            prompt = "";
+        prompt_widget.value = pmt;
 
-        prompt_widget.value = prompt;
-        if (prompt)
+        if (pmt)
         {
-            // initially (in the xul) the prompt is 'collapsed', this makes
-            // sure it's visible, then we toggle the display which works better
-            prompt_widget.style.visibility = 'visible';
-            prompt_widget.style.display = 'inline';
-            prompt_widget.size = prompt.length;
+            prompt_widget.size = pmt.length;
+            prompt_widget.collapsed = false;
         }
         else
         {
-            prompt_widget.style.display = 'none';
+            prompt_widget.collapsed = true;
         }
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
-        command_widget.hidden = false;
         command_widget.value = cmd;
+    }
+
+    function setLine(str, highlight_group)
+    {
+        setHighlightGroup(highlight_group);
+        setPrompt("");
+        setCommand(str);
     }
 
     // TODO: extract CSS
     //     : resize upon a window resize
     //     : echoed lines longer than v-c-c.width should wrap and use MOW
-    function setMultiline(str)
+    function setMultiline(str, highlight_group)
     {
         multiline_input_widget.collapsed = true;
 
-        var output = "<div class=\"ex-command-output\">" + str + "</div>";
+        var output = "<div class=\"ex-command-output " + highlight_group + "\">" + str + "</div>";
         if (!multiline_output_widget.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
@@ -197,23 +198,18 @@ function CommandLine() //{{{
         if (vimperator.options["more"] && multiline_output_widget.contentWindow.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
-            var elements = multiline_output_widget.contentDocument.getElementsByTagName("div");
-            for (var i = 0; i < elements.length; i++)
-            {
-                if (elements[i].className != "ex-command-output")
-                    elements.splice(i, 1);
-            }
-            elements[elements.length - 1].scrollIntoView(true);
+            var elements = vimperator.buffer.evaluateXPath("//div[contains(@class, 'ex-command-output')]", multiline_output_widget.contentDocument);
+            elements.snapshotItem(elements.snapshotLength - 1).scrollIntoView(true);
 
             if (multiline_output_widget.contentWindow.scrollY >= multiline_output_widget.contentWindow.scrollMaxY)
-                vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
             else
-                vimperator.commandline.echo("-- More --", vimperator.commandline.HL_MOREMSG);
+                setLine("-- More --", vimperator.commandline.HL_QUESTION);
         }
         else
         {
             multiline_output_widget.contentWindow.scrollTo(0, content_height);
-            vimperator.commandline.echo("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+            setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
         }
 
         multiline_output_widget.contentWindow.focus();
@@ -251,9 +247,12 @@ function CommandLine() //{{{
     this.HL_WARNING  = "hl-Warning";
 
     // not yet used
-    this.FORCE_MULTILINE  =  1 << 0;
-    this.FORCE_SINGLELINE  = 1 << 1;
-    this.FORCE_ECHO  =       1 << 2; // also echoes if the commandline has focus
+    this.FORCE_MULTILINE     = 1 << 0;
+    this.FORCE_SINGLELINE    = 1 << 1;
+    this.DISALLOW_MULTILINE  = 1 << 2; // if an echo() should try to use the single line,
+                                       // but output nothing when the MOW is open; when also
+                                       // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
+    this.APPEND_TO_MESSAGES  = 1 << 3; // will show the string in :messages
 
     this.getCommand = function()
     {
@@ -268,13 +267,13 @@ function CommandLine() //{{{
         cur_command = cmd || "";
         cur_extended_mode = ext_mode || null;
 
-        setHighlightGroup(this.HL_NORMAL);
         history_index = UNINITIALIZED;
         completion_index = UNINITIALIZED;
 
         // save the mode, because we need to restore it
         [old_mode, old_extended_mode] = vimperator.getMode();
         vimperator.setMode(vimperator.modes.COMMAND_LINE, cur_extended_mode, true);
+        setHighlightGroup(this.HL_NORMAL);
         setPrompt(cur_prompt);
         setCommand(cur_command);
 
@@ -291,40 +290,36 @@ function CommandLine() //{{{
         this.clear();
     }
 
-    // FIXME: flags not yet really functional --mst
-    // multiline string don't obey highlight_group
+    // TODO: add :messages entry
+    // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
     this.echo = function(str, highlight_group, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
         if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
             return false;
 
-        if (typeof str != "string")
-            str = "";
-
         highlight_group = highlight_group || this.HL_NORMAL;
-        setHighlightGroup(highlight_group);
-        if (flags /*|| !multiline_output_widget.collapsed*/ || /\n|<br\/?>/.test(str))
-        {
-            setMultiline(str);
-        }
-        else
-        {
-            if (!str)
-                str = "";
 
-            setCommand("");
-            setPrompt(str);
-            // FIXME: this causes the commandline to lose focus in FF2
-            //command_widget.hidden = true;
-
-            // initially (in the xul) the prompt is 'collapsed', this makes
-            // sure it's visible, then we toggle the display which works better
-            prompt_widget.style.visibility = 'visible';
-            prompt_widget.style.display = 'inline';
-            prompt_widget.size = str.length;
+        var where = setLine;
+        if (flags & this.FORCE_MULTILINE)
+            where = setMultiline;
+        else if (flags & this.FORCE_SINGLELINE)
+            where = setLine;
+        else if (!multiline_output_widget.collapsed)
+        {
+            if (flags & this.DISALLOW_MULTILINE)
+                where = null;
+            else
+                where = setMultiline;
         }
+        else if (/\n|<br\/?>/.test(str))
+            where = setMultiline;
+
+        if (where)
+            where(str, highlight_group);
+
         cur_extended_mode = null;
+
         return true;
     };
 
@@ -334,9 +329,7 @@ function CommandLine() //{{{
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
         // to make this code synchronous or at least use a callback
-        setHighlightGroup(this.HL_QUESTION);
-        setPrompt(str);
-        setCommand("");
+        setLine(str, this.HL_QUESTION);
         command_widget.focus();
         return "not implemented";
     };
@@ -368,7 +361,7 @@ function CommandLine() //{{{
         multiline_output_widget.collapsed = true;
         completionlist.hide();
 
-        this.echo("");
+        setLine("", this.HL_NORMAL);
     };
 
     this.onEvent = function(event)
@@ -811,11 +804,11 @@ function CommandLine() //{{{
         else // set update the prompt string
         {
             if (show_more_help_prompt)
-                this.echo("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
+                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
             else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
-                this.echo("-- More --", this.HL_MOREMSG);
+                setLine("-- More --", this.HL_MOREMSG);
             else
-                this.echo("Press ENTER or type command to continue", this.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", this.HL_QUESTION);
         }
     }
 

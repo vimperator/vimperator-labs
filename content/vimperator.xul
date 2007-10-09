@@ -56,9 +56,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <window id="main-window">
 
         <keyset id="mainKeyset">
-           <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
-           <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
-           <!-- other keys are handled inside vimperator.js event loop -->
+            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
+            <!-- other keys are handled inside vimperator.js event loop -->
         </keyset>
 
         <!-- TODO: move to browser-stack? -->
@@ -110,7 +110,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
             <hbox id="vimperator-commandline" hidden="false" class="hl-Normal">
                 <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-                <textbox class="plain" id="vimperator-commandline-command" flex="1" hidden="false" type="timed" timeout="100"
+                <textbox class="plain" id="vimperator-commandline-command" flex="1" type="timed" timeout="100"
                     onkeypress="vimperator.commandline.onEvent(event);"
                     oninput="vimperator.commandline.onEvent(event);"
                     onfocus="vimperator.commandline.onEvent(event);"
