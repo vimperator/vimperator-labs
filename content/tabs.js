@@ -151,15 +151,44 @@ function Tabs() //{{{
      */
     this.remove = function(tab, count, focus_left_tab, quit_on_last_tab)
     {
-        if (count < 1) count = 1;
+        function removeOrBlankTab (tab)
+        {
+            if (getBrowser().mTabs.length > 1)
+                getBrowser().removeTab(tab);
+            else
+            {
+                vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
+                getBrowser().removeTab(tab);
+            }
+        }
+
+        if (count < 1)
+            count = 1;
 
         if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
             vimperator.quit(quit_on_last_tab == 2);
 
-        if (focus_left_tab && tab.previousSibling)
-            this.select("-1", false);
 
-        getBrowser().removeTab(tab);
+        var index = this.index(tab);
+        if (focus_left_tab)
+        {
+            var last_removed_tab = 0;
+            for (var i = index; i > index - count && i >= 0; i--)
+            {
+                removeOrBlankTab(this.getTab(i));
+                last_removed_tab = i > 0 ? i : 1;
+            }
+            getBrowser().mTabContainer.selectedIndex = last_removed_tab - 1;
+        }
+        else
+        {
+            var i = index + count - 1;
+            if (i >= this.count())
+                i = this.count() - 1;
+
+            for (; i >= index; i--)
+                removeOrBlankTab(this.getTab(i));
+        }
     }
 
     this.keepOnly = function(tab)

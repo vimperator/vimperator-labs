@@ -24,7 +24,6 @@ FEATURES:
 7 use ctrl-n/p in insert mode for word completion
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
-7 3d should delete 3 tabs
 6 downloading of links to filesystem (:save <filename>)
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
 6 pipe selected text/link/website to an external command

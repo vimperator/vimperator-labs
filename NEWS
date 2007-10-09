@@ -2,6 +2,7 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* "d", "D" and :bdelete support count now
 	* :back/:forward can use tabcompletion
 	* :undoall support, and tabcompletion for :undo <tab>
 	* new :redraw and Ctrl-L commands for forced redrawing of the screen
