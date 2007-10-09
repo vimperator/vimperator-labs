@@ -1033,7 +1033,8 @@ function Mappings() //{{{
                   "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
                   "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query (not implemented yet)</li>" +
                   "<li><code class=\"mapping\">T</code> to open its location in an <code class=\"command\">:tabopen</code> query (not implemented yet)</li>" +
-                  "<li><code class=\"mapping\">s</code> to save its destination (not implemented yet)</li>" +
+                  "<li><code class=\"mapping\">s</code> to save its destination</li>" +
+                  "<li><code class=\"mapping\">a</code> to save its destination (prompting for save location)</li>" +
                   "<li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
                   "</ul>" +
                   "Multiple hints can be separated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
@@ -1110,7 +1111,14 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map([vimperator.modes.HINTS], ["s"],
-        function() { vimperator.echoerr('Saving of links not yet implemented'); },
+        function() { vimperator.hints.saveHints(true); },
+        {
+            cancel_mode: true,
+            always_active: false
+        }
+    ));
+    addDefaultMap(new Map([vimperator.modes.HINTS], ["a"],
+        function() { vimperator.hints.saveHints(false); },
         {
             cancel_mode: true,
             always_active: false
