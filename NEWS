@@ -1,6 +1,7 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* new :redraw and Ctrl-L commands for forced redrawing of the screen
 	* added new 'laststatus' option and removed "s" value from 'guioptions'
 	* Tab-completion improvements for :javascript and :open
 	* IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
@@ -22,8 +23,8 @@
 	  behaviour of the message list pager 
 	* added 'hlsearchstyle' option to allow for user CSS styling of the
 	  highlighted text strings when 'hlsearch' is set
-	* added 'linksearch' option to restrict page searches to link text - \U
-	  and \u can be used in the search pattern to override 'linksearch'
+	* added 'linksearch' option to restrict page searches to link text - \L
+	  and \l can be used in the search pattern to override 'linksearch'
 	* vimperator trys to stay in command mode after loading pages instead
 	  of having a text field focused
 	* added a visual bell and replaced 'beep' with 'visualbell'

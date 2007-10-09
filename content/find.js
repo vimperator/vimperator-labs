@@ -70,10 +70,10 @@ function Search() //{{{
 
         search_pattern = pattern;
 
-        // links only search - \u wins if both modifiers specified
-        if (/\\u/.test(pattern))
+        // links only search - \l wins if both modifiers specified
+        if (/\\l/.test(pattern))
             links_only = false;
-        else if (/\U/.test(pattern))
+        else if (/\L/.test(pattern))
             links_only = true;
         else if (vimperator.options["linksearch"])
             links_only = true;
