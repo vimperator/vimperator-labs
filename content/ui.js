@@ -1062,8 +1062,16 @@ function StatusLine() //{{{
         if (!url || typeof url != "string")
             url = vimperator.buffer.URL;
 
+        // make it even more vim-like
         if (url == "about:blank")
-            url = "[No Name]"; // make it even more vim-like
+        {
+            var title = vimperator.buffer.title;
+
+            if (title == "Vimperator Help")
+                url = "[Help]";
+            else if (!title)
+                url = "[No Name]";
+        }
 
         url_widget.value = url;
     };
