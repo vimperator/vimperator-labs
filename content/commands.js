@@ -1504,13 +1504,62 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["u[ndo]"],
-        function(args, special, count) { if (count < 1) count = 1; undoCloseTab(count-1); },
+        function(args, special, count)
         {
-            usage: ["[count]u[ndo]"],
+            if (count < 1)
+                count = 1;
+
+            if (args)
+            {
+                var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+                var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                for (var i = 0; i < undoItems.length; i++)
+                {
+                    if (undoItems[i].state.entries[0].url == args)
+                    {
+                        count = i+1;
+                        break;
+                    }
+                }
+            }
+            undoCloseTab(count-1);
+        },
+        {
+            usage: ["[count]u[ndo][!] [url]"],
             short_help: "Undo closing of a tab",
-            help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab."
+            help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab. " +
+                  "With <code class=\"argument\">[url]</code> restores the tab matching the url.",
+            completer: function(filter)
+            {
+                // get closed-tabs from nsSessionStore
+                var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+                var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                var completions = [];
+                for (var i = 0; i < undoItems.length; i++)
+                {
+                    // undoItems[i].image is also available if need for favicons
+                    completions.push([undoItems[i].state.entries[0].url, undoItems[i].title]);
+                }
+                return completions;
+            }
         }
     ));
+    addDefaultCommand(new Command(["undoa[ll]"],
+        function(args, special, count)
+        {
+            if (count || special)
+                return vimperator.echoerr("E488: Trailing characters");
+
+            var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+            var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+            for (var i = 0; i < undoItems.length; i++)
+                undoCloseTab(); // doesn't work with i as the index to undoCloseTab
+        },
+        {
+            short_help: "Undo closing of all closed tabs",
+            help: "Firefox stores up to 10 closed tabs, even after a browser restart."
+        }
+    )),
     addDefaultCommand(new Command(["unl[et]"],
         function(args, special)
         {
