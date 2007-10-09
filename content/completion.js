@@ -540,6 +540,33 @@ vimperator.completion = (function() // {{{
             return build_longest_starting_substring(completions, filter);
         }, // }}}
 
+        // helper function which checks if the given arguments pass "filter"
+        // items must be an array of strings
+        // if case_sensitive == true, be sure to pass filter already in lowercased version
+        match: function(filter, items, case_sensitive)
+        {
+            if (typeof(filter) != "string" || !items)
+                return false;
+
+            if (case_sensitive)
+            {
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i].toLowerCase().indexOf(filter) > -1)
+                        return true;
+                }
+            }
+            else
+            {
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i].indexOf(filter) > -1)
+                        return true;
+                }
+            }
+            return false;
+        },
+
         exTabCompletion: function(str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);

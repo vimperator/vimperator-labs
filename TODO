@@ -21,7 +21,6 @@ FEATURES:
 9 make hints smarter, not only with characters from from hintchars, but use "NE" or "NP" for 'new posts' e.g. (might be too slow)
 8 add an interface for navigating document relationships
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
-8 it would be nice to have :(undo|back|forward) <url> w/ tab completion support
 7 use ctrl-n/p in insert mode for word completion
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
