@@ -93,6 +93,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
     background-color: black;
 }
 
+#sidebar {
+    max-width: 90% !important;
+    min-width: 10% !important;
+}
+
 /* highlight groups */
 
 .hl-Normal {
