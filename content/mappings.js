@@ -423,7 +423,7 @@ function Mappings() //{{{
         function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
         {
             short_help: "Delete current buffer (=tab)",
-            help: "Count is supported, <code class=\"mapping\">2d</code> removes the current and next tab and the one the right is selected. " +
+            help: "Count is supported, <code class=\"mapping\">2d</code> removes the current and next tab and the one to the right is selected. " +
                   "Does not wrap if <code class=\"argument\">[count]</code> is larger than available tabs to the right.",
             flags: Mappings.flags.COUNT
         }
@@ -432,7 +432,7 @@ function Mappings() //{{{
         function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
         {
             short_help: "Delete current buffer (=tab)",
-            help: "Count is supported, <code class=\"mapping\">2D</code> removes the current and previous tab and the one the left is selected. " +
+            help: "Count is supported, <code class=\"mapping\">2D</code> removes the current and previous tab and the one to the left is selected. " +
                   "Does not wrap if <code class=\"argument\">[count]</code> is larger than available tabs to the left.",
             flags: Mappings.flags.COUNT
         }
