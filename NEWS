@@ -1,6 +1,8 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.2
+	* added "s" and "a" mappings to extended hints mode for saving hint
+	  targets
 	* new :redraw and Ctrl-L commands for forced redrawing of the screen
 	* added new 'laststatus' option and removed "s" value from 'guioptions'
 	* Tab-completion improvements for :javascript and :open

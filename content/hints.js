@@ -467,6 +467,8 @@ function Hints() //{{{
     };
 
 
+    // TODO: move these functions somewhere more general
+
     // this function 'click' an element, which also works
     // for javascript links
     this.openHints = function(new_tab, new_window)
@@ -560,6 +562,28 @@ function Hints() //{{{
         vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc);
     };
+
+    this.saveHints = function(skip_prompt)
+    {
+        var elems = this.hintedElements();
+
+        for (var i = 0; i < elems.length; i++)
+        {
+            var doc  = elems[i].ownerDocument;
+            var url = makeURLAbsolute(elems[i].refElem.baseURI, elems[i].refElem.href);
+            var text = elems[i].refElem.textContent;
+
+            try
+            {
+                urlSecurityCheck(url, doc.location.href);
+                saveURL(url, text, null, true, skip_prompt, makeURI(url, doc.characterSet));
+            }
+            catch (e)
+            {
+                vimperator.echoerr(e);
+            }
+        }
+    }
 
     function setMouseOverElement(elem)
     {
