@@ -434,11 +434,13 @@ const vimperator = (function() //{{{
             }
         },
 
+        // TODO: move to vimp.util.? --mst
         // if color = true it uses HTML markup to color certain items
         objectToString: function(object, color)
         {
             if (object === null)
                 return "null";
+
             if (typeof object != "object")
                 return false;
 
@@ -472,32 +474,7 @@ const vimperator = (function() //{{{
 
                 if (color)
                 {
-                    // syntax highlighting for special items
-                    if (typeof value === "number")
-                        value = "<span style=\"color: red;\">" + value + "</span>";
-                    else if (typeof value === "string")
-                    {
-                        value = value.replace(/\n/, "\\n").replace(/</, "&lt;");
-                        value = "<span style=\"color: green;\">\"" + value + "\"</span>";
-                    }
-                    else if (typeof value === "boolean")
-                        value = "<span style=\"color: blue;\">" + value + "</span>";
-                    else if (value == null || value == "undefined")
-                        value = "<span style=\"color: blue;\">" + value + "</span>";
-                    else if (typeof value === "object" || typeof value === "function")
-                    {
-                        // for java packages value.toString() would crash so badly 
-                        // that we cannot even try/catch it
-                        if (/^\[JavaPackage.*\]$/.test(value)) 
-                            value = "[JavaPackage]";
-                        else
-                        {
-                            var str = value.toString();
-                            if (typeof str == "string")  // can be "undefined"
-                                value = vimperator.util.escapeHTML(str);
-                        }
-                    }
-                    
+                    value = vimperator.util.colorize(value, true);
                     string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
                 }
                 else

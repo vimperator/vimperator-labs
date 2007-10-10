@@ -1042,11 +1042,35 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["pref[erences]", "prefs"],
-        openPreferences,
+        function(args, special, count, modifiers)
         {
+            if (!args)
+            {
+                // TODO: copy these snippets to more function which should work with :tab xxx
+                if (modifiers && modifiers.inTab)
+                {
+                    vimperator.open(special ? "about:config" :
+                        "chrome://browser/content/preferences/preferences.xul", vimperator.NEW_TAB);
+                }
+                else
+                {
+                    if (special) // open firefox settings gui dialog
+                        vimperator.open("about:config", vimperator.CURRENT_TAB);
+                    else
+                        openPreferences();
+                }
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+            }
+        },
+        {
+            usage: [":pref[erences][!]"],
             short_help: "Show Browser Preferences",
-            help: "You can change the browser preferences from this dialog.<br/>Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
-                  "Works like <code class=\"command\">:set!</code>, but opens the dialog in a new window instead of a new tab. Use this, if you experience problems/crashes when using <code class=\"command\">:set!</code>"
+            help: "You can change the browser preferences from this dialog. " +
+                  "Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
+                  "<code class=\"command\">:prefs!</code> opens about:config in the current tab where you can change advanced Firefox preferences."
         }
     ));
     addDefaultCommand(new Command(["qma[rk]"],
@@ -1154,158 +1178,156 @@ function Commands() //{{{
     addDefaultCommand(new Command(["se[t]"],
         function(args, special, count, modifiers)
         {
+            if (special)
+            {
+                vimperator.echo("This WILL show all non-default about:config options");
+                return;
+            }
+
+            var only_non_default = false; //used for :set to print non-default options
             if (!args)
             {
-                // TODO: copy these snippets to more function which should work with :tab xxx
-                var where = vimperator.CURRENT_TAB;
-                if (arguments[3] && arguments[3].inTab)
-                    where = vimperator.NEW_TAB;
-
-                if (special) // open firefox settings gui dialog
-                    vimperator.open("chrome://browser/content/preferences/preferences.xul", where);
-                else
-                    vimperator.open("about:config", where);
+                args = "all?"
+                only_non_default = true;
             }
+
+            //                               1        2       3    4  5      6
+            var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?(([+-])?=(.*))?/);
+            if (!matches)
+            {
+                vimperator.echoerr("E518: Unknown option: " + args);
+                return;
+            }
+
+            var no = false;
+            if (matches[1] == "no")
+                no = true;
+
+            var opt = matches[2];
+
+            var all = false;
+            if (opt == "all")
+                all = true;
+
+            var option = vimperator.options.get(opt);
+            if (!option && !all)
+            {
+                vimperator.echoerr("E518: Unknown option: " + opt);
+                return;
+            }
+
+            var get = false;
+            if (all || matches[3] == "?" || (option.type != "boolean" && matches[4] === undefined))
+                get = true;
+
+            var reset = false;
+            if (matches[3] == "&")
+                reset = true;
+
+            var invert = false;
+            if (matches[1] == "inv" || matches[3] == "!")
+                invert = true;
+
+            var oper = matches[5];
+
+            var val = matches[6];
+            if (val === undefined)
+                val = "";
+
+            // reset a variable to its default value
+            // TODO: remove the value from about:config instead of setting it to the current default value
+            if (reset)
+            {
+                if (all)
+                {
+                    for (let opt in vimperator.options)
+                        opt.value = opt.default_value;
+                }
+                else
+                {
+                    option.value = option.default_value;
+                }
+            }
+            // read access
+            else if (get)
+            {
+                if (all)
+                {
+                    vimperator.options.list(only_non_default);
+                }
+                else
+                {
+                    if (option.type == "boolean")
+                        vimperator.echo((option.value ? "  " : "no") + option.name);
+                    else
+                        vimperator.echo("  " + option.name + "=" + option.value);
+                }
+            }
+            // write access
             else
             {
-                //                               1        2       3    4  5      6
-                var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?(([+-])?=(.*))?/);
-                if (!matches)
+                var type = option.type;
+                if (type == "boolean")
                 {
-                    vimperator.echoerr("E518: Unknown option: " + args);
-                    return;
-                }
-
-                var no = false;
-                if (matches[1] == "no")
-                    no = true;
-
-                var opt = matches[2];
-
-                var all = false;
-                if (opt == "all")
-                    all = true;
-
-                var option = vimperator.options.get(opt);
-                if (!option && !all)
-                {
-                    vimperator.echoerr("E518: Unknown option: " + opt);
-                    return;
-                }
-
-                var get = false;
-                if (all || matches[3] == "?" || (option.type != "boolean" && matches[4] === undefined))
-                    get = true;
-
-                var reset = false;
-                if (matches[3] == "&")
-                    reset = true;
-
-                var invert = false;
-                if (matches[1] == "inv" || matches[3] == "!")
-                    invert = true;
-
-                var oper = matches[5];
-
-                var val = matches[6];
-                if (val === undefined)
-                    val = "";
-
-                // reset a variable to its default value
-                // TODO: remove the value from about:config instead of setting it to the current default value
-                if (reset)
-                {
-                    if (all)
-                    {
-                        for (let opt in vimperator.options)
-                            opt.value = opt.default_value;
-                    }
+                    if (matches[4])
+                        vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                    else if (invert)
+                        option.value = !option.value;
                     else
-                    {
-                        option.value = option.default_value;
-                    }
+                        option.value = !no;
                 }
-                // read access
-                else if (get)
+                else if (type == "number")
                 {
-                    if (all)
-                    {
-                        vimperator.options.list();
-                    }
+                    var num = parseInt(val, 10);
+                    if (isNaN(num))
+                        vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
                     else
-                    {
-                        if (option.type == "boolean")
-                            vimperator.echo((option.value ? "  " : "no") + option.name);
-                        else
-                            vimperator.echo("  " + option.name + "=" + option.value);
-                    }
-                }
-                // write access
-                else
-                {
-                    var type = option.type;
-                    if (type == "boolean")
-                    {
-                        if (matches[4])
-                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
-                        else if (invert)
-                            option.value = !option.value;
-                        else
-                            option.value = !no;
-                    }
-                    else if (type == "number")
-                    {
-                        var num = parseInt(val, 10);
-                        if (isNaN(num))
-                            vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
-                        else
-                        {
-                            var cur_val = option.value;
-                            if (oper == '+') num = cur_val + num;
-                            if (oper == '-') num = cur_val - num;
-                            // FIXME
-                            if (option.validator != null && option.validator.call(this, num) == false)
-                                vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val); // FIXME: need to be able to specify unique parse error messages
-                            else // all checks passed, execute option handler
-                                option.value = num;
-                        }
-                    }
-                    else if (type == "charlist" || type == "stringlist" || type == "string")
                     {
                         var cur_val = option.value;
-                        if (type == "charlist" || type == "string")
-                        {
-                            if (oper == '+' && !cur_val.match(val))
-                                val = cur_val + val;
-                            if (oper == '-') val = cur_val.replace(val, '');
-                        }
-                        else
-                        {
-                            if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
-                                    val = cur_val + ',' + val;
-                            if (oper == '-')
-                            {
-                                val = cur_val.replace(new RegExp(',?' + val), '');
-                                val = val.replace(/^,?/, '');
-                            }
-                        }
+                        if (oper == '+') num = cur_val + num;
+                        if (oper == '-') num = cur_val - num;
                         // FIXME
-                        if (option.validator != null && option.validator.call(this, val) == false)
-                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                        if (option.validator != null && option.validator.call(this, num) == false)
+                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val); // FIXME: need to be able to specify unique parse error messages
                         else // all checks passed, execute option handler
-                            option.value = val;
+                            option.value = num;
+                    }
+                }
+                else if (type == "charlist" || type == "stringlist" || type == "string")
+                {
+                    var cur_val = option.value;
+                    if (type == "charlist" || type == "string")
+                    {
+                        if (oper == '+' && !cur_val.match(val))
+                            val = cur_val + val;
+                        if (oper == '-') val = cur_val.replace(val, '');
                     }
                     else
-                        vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
+                    {
+                        if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
+                                val = cur_val + ',' + val;
+                        if (oper == '-')
+                        {
+                            val = cur_val.replace(new RegExp(',?' + val), '');
+                            val = val.replace(/^,?/, '');
+                        }
+                    }
+                    // FIXME
+                    if (option.validator != null && option.validator.call(this, val) == false)
+                        vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
+                    else // all checks passed, execute option handler
+                        option.value = val;
                 }
+                else
+                    vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
             }
         },
         {
             usage: ["se[t][!]", "se[t] {option}?", "se[t] [no]{option}", "se[t] {option}[+-]={value}", "se[t] {option}! | inv{option}", "se[t] {option}&"],
             short_help: "Set an option",
-            help: "Permanently change an option. In contrast to Vim options are stored throughout sessions.<br/>" +
-                  "<code class=\"command\">:set</code> without an argument opens <code>about:config</code> in a new tab to change advanced Firefox options.<br/>" +
-                  "<code class=\"command\">:set!</code> opens the GUI preference panel from Firefox in a new tab.<br/>" +
+            help: "Permanently change an option. In contrast to Vim options are currently stored throughout sessions.<br/>" +
+                  "<code class=\"command\">:set</code> without an argument shows all Vimperator options which differ from their default values.<br/>" +
+                  "<code class=\"command\">:set!</code> without an argument shows all about:config preferences which differ from their default values.<br/>" +
                   "There are three types of options: boolean, number and string. " +
                   "Boolean options must be set with <code class=\"command\">:set option</code> and <code class=\"command\">:set nooption</code>. " +
                   "Number and string option types must be set with <code class=\"command\">:set option={value}</code>.<br/>" +
@@ -1407,8 +1429,9 @@ function Commands() //{{{
         {
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
-            help: "Works only for commands that support it.<br/>" +
-                  "Example: <code class=\"command\">:tab help tab</code> opens the help in a new tab.",
+            help: "Works only for commands that support it, currently:" +
+                  "<ul><li>:tab help</li>" +
+                  "<li>:tab prefs[!]</li></ul>",
             completer: function(filter) { return vimperator.completion.get_command_completions(filter); }
         }
     ));
