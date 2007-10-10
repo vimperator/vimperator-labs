@@ -129,6 +129,7 @@ function Commands() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var ex_commands = [];
+    var last_run_command = ""; // updated whenever the users runs a command with :!
 
     function addDefaultCommand(command)
     {
@@ -176,7 +177,6 @@ function Commands() //{{{
 
         return null;
     }
-
 
     // FIXME: doesn't really belong here...
     // return [null, null, null, null, heredoc_tag || false];
@@ -1762,19 +1762,25 @@ function Commands() //{{{
     addDefaultCommand(new Command(["!", "run"],
         function(args, special)
         {
-            // TODO: if special, run the last command
+            // :!! needs to be treated specially as the command parser sets the special flag but removes the ! from args
+            if (special)
+                args = "!" + (args || "");
+
+            // TODO: better escaping of ! to also substitute \\! correctly
+            args = args.replace(/(^|[^\\])!/g, "$1" + last_run_command);
+            last_run_command = args;
+
             var output = vimperator.system(args)
-            if (typeof output === "string")
+            if (output)
                 vimperator.echo(vimperator.util.escapeHTML(output));
-            else
-                // FIXME: why are we accepting only a string return value from v.system()? -- djk
-                vimperator.echoerr("Invalid system command: " + args);
         },
         {
-            usage: ["!{command}"],
+            usage: ["!{cmd}"],
             short_help: "Run a command",
-            help: "Runs {command} through system() and displays its output. " +
-                  "Input redirection (< foo) not done, do not run commands which require stdin or it will hang Firefox!"
+            help: "Runs <code class=\"argument\">{cmd}</code> through system() and displays its output. " +
+                  "Any '!' in <code class=\"argument\">{cmd}</code> is replaced with the previous external command. " +
+                  "But not when there is a backslash before the '!', then that backslash is removed.<br/>" +
+                  "Input redirection (< foo) not done, also do not run commands which require stdin or it will hang Firefox!"
         }
     ));
     //}}}

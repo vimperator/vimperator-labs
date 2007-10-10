@@ -631,10 +631,15 @@ const vimperator = (function() //{{{
 
         run: function(program, args, blocking)
         {
+            var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
             const WINDOWS = navigator.platform == "Win32";
 
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                                  createInstance(Components.interfaces.nsILocalFile);
+            if (!args)
+                args = [];
+
+            if (typeof(blocking) != "boolean")
+                blocking = false;
+
             try
             {
                 file.initWithPath(program);
@@ -654,14 +659,14 @@ const vimperator = (function() //{{{
                     catch (e) { }
                 }
             }
+
             if (!file.exists())
             {
                 vimperator.echoerr("command not found: " + program);
                 return -1;
             }
 
-            var process = Components.classes["@mozilla.org/process/util;1"].
-                                     createInstance(Components.interfaces.nsIProcess);
+            var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
             process.init(file);
              
             var ec = process.run(blocking, args, args.length);
@@ -670,7 +675,6 @@ const vimperator = (function() //{{{
 
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
-        // TODO: pass "input" as stdin
         // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
         system: function (str, input)
         {
@@ -695,20 +699,25 @@ const vimperator = (function() //{{{
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
             }
 
+            var res;
             if (WINDOWS)
-                this.run("cmd.exe", ["/C", command], true);
+                res = this.run("cmd.exe", ["/C", command], true);
             else
-                this.run("sh", ["-c", command], true);
+                res = this.run("sh", ["-c", command], true);
 
             var fd = vimperator.fopen(fileout, "<");
             if (!fd)
-                return null;
+                return "";
 
             var s = fd.read();
             fd.close();
             fileout.remove(false);
             if (filein)
                 filein.remove(false);
+
+            // if there is only one \n at the end, chop it off
+            if (s && s.indexOf("\n") == s.length-1)
+                s = s.substr(0, s.length-1);
 
             return s;
         },
