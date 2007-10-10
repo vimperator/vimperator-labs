@@ -32,6 +32,49 @@ vimperator.util = {
         var e = window.content.document.createElement("div");
         e.appendChild(window.content.document.createTextNode(str));
         return e.innerHTML;
+    },
+
+    // TODO: use :highlight color groups
+    // if "process_strings" is true, any passed strings will be surrounded by " and
+    // any line breaks are displayed as \n
+    colorize: function(arg, process_strings)
+    {
+        var type = typeof(arg);
+
+        if (type == "number")
+        {
+            return "<span style=\"color: red;\">" + arg + "</span>";
+        }
+        else if (type == "string")
+        {
+            if (process_strings)
+                arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
+
+            return "<span style=\"color: green;\">" + arg + "</span>";
+        }           
+        else if (type == "boolean")
+        {
+            return "<span style=\"color: blue;\">" + arg + "</span>";
+        }
+        else if (arg == null || arg == "undefined")
+        {
+            return "<span style=\"color: blue;\">" + arg + "</span>";
+        }
+        else if (type == "object" || type == "function")
+        {
+            // for java packages value.toString() would crash so badly 
+            // that we cannot even try/catch it
+            if (/^\[JavaPackage.*\]$/.test(arg)) 
+                return "[JavaPackage]";
+
+            var str = arg.toString();
+            if (typeof str == "string")  // can be "undefined"
+                return vimperator.util.escapeHTML(str);
+            else
+                return "undefined";
+        }
+
+        return arg;
     }
 }
 

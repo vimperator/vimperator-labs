@@ -301,25 +301,39 @@ function Options() //{{{
             storePreference('dom.popup_allowed_events', popup_allowed_events);
     }
 
-    this.list = function()
+    this.list = function(only_non_default)
     {
         // TODO: columns like Vim?
         var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                    "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
-        var name, value;
+        var name, value, def;
 
         for (var i = 0; i < options.length; i++)
         {
             name  = options[i].name;
             value = options[i].value;
+            def   = options[i].default_value;
+
+            if (only_non_default && value == def)
+                continue;
 
             if (options[i].type == "boolean")
             {
                 name = value ? "  " + name : "no" + name;
+                if (value != def)
+                    name = "<span style=\"font-weight: bold\">" + name + "</span><span style=\"color: gray\">  (default: " + (def ? "" : "no") + options[i].name + ")</span>";
                 list += "<tr><td>" + name + "</td></tr>";
             }
             else
             {
+                if (value != def)
+                {
+                    name  = "<span style=\"font-weight: bold\">" + name + "</span>";
+                    value = vimperator.util.colorize(value, false) + "<span style=\"color: gray\">  (default: " + def + ")</span>";
+                }
+                else
+                    value = vimperator.util.colorize(value, false);
+
                 list += "<tr><td>" + "  " + name + "=" + value + "</td></tr>";
             }
         }

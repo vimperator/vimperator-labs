@@ -2,8 +2,9 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
-	* added "s" and "a" mappings to extended hints mode for saving hint
-	  targets
+	* changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
+	  options, use :prefs! to get the about:config window
+	* added "s" and "a" mappings to extended hints mode for saving hint targets
 	* "d", "D" and :bdelete support count now
 	* :back/:forward can use tabcompletion
 	* :undoall support, and tabcompletion for :undo <tab>
