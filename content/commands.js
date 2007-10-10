@@ -1353,7 +1353,7 @@ function Commands() //{{{
                 toggleSidebar();
         },
         {
-            short_help: "Close the sidebar"
+            short_help: "Close the sidebar window"
         }
     ));
     // TODO: sopen instead? Separate :sidebar from :sbopen and make them behave
