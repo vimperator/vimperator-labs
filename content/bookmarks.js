@@ -36,6 +36,8 @@ function Bookmarks() //{{{
                              .getService(Components.interfaces.nsINavHistoryService);
     const bookmarks_service = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
                              .getService(Components.interfaces.nsINavBookmarksService);
+    const tagging_service   = Components.classes["@mozilla.org/browser/tagging-service;1"]
+                              .getService(Components.interfaces.nsITaggingService);
     const search_service    = Components.classes["@mozilla.org/browser/search-service;1"].
                               getService(Components.interfaces.nsIBrowserSearchService);
     const io_service        = Components.classes['@mozilla.org/network/io-service;1']
@@ -78,10 +80,12 @@ function Bookmarks() //{{{
                     folders.push(node.itemId);
                 else if (node.type == node.RESULT_TYPE_URI) // bookmark
                 {
-                    bookmarks.push([node.uri, node.title]);
                     var kw = bookmarks_service.getKeywordForBookmark(node.itemId);
                     if (kw)
                         keywords.push([kw, node.title, node.uri]);
+
+                    var tags = tagging_service.getTagsForURI(io_service.newURI(node.uri, null, null));
+                    bookmarks.push([node.uri, node.title, kw, tags]);
                 }
             }
 
@@ -95,11 +99,14 @@ function Bookmarks() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: add filtering here rather than having to calling
-    // get_bookmark_completions()
-    this.get = function()
+    // FIXME: add filtering here rather than having to calling get_bookmark_completions()
+    //
+    // if "bypass_cache" is true, it will force a reload of the bookmarks database
+    // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
+    // takes about 1 sec
+    this.get = function(filter, bypass_cache)
     {
-        if (!bookmarks)
+        if (!bookmarks || bypass_cache)
             load();
 
         return bookmarks;
@@ -119,7 +126,7 @@ function Bookmarks() //{{{
         }
 
         //also update bookmark cache
-        bookmarks.unshift([url, title]);
+        bookmarks.unshift([url, title, null, []]);
         return true;
     }
 
@@ -244,7 +251,8 @@ function Bookmarks() //{{{
         }
         else
         {
-            var items = vimperator.completion.get_bookmark_completions(filter);
+            //var items = vimperator.completion.get_bookmark_completions(filter);
+            var items = this.get(filter, false);
 
             if (items.length == 0)
             {
@@ -256,24 +264,36 @@ function Bookmarks() //{{{
                 return;
             }
 
+            var title, url, tags, keyword, extra;
             for (var i = 0; i < items.length; i++)
             {
                 var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>keyword</th><th>URL</th><th align=\"right\">tags</th></tr>";
+                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    var title = vimperator.util.escapeHTML(items[i][1]);
+                    title = vimperator.util.escapeHTML(items[i][1]);
                     if (title.length > 50)
                         title = title.substr(0, 47) + "...";
-                    var keyword = "".substr(0,12); // maximum 12 chars
-                    var url = vimperator.util.escapeHTML(items[i][0]);
-                    var tags = "tag1, tag2";
-                    list += "<tr><td>" + title + "</td><td style=\"color: blue\" align=\"center\">" + keyword +
-                            "</td><td style=\"color: green; width: 100%\">" + url +
-                            "</td><td style=\"color: red;\" align=\"right\">" + tags + "</td></tr>";
-                    // TODO: change that list to something like this when we have keywords
-                    //list += "<tr><td width=\"30%\"><span style=\"font-weight: bold\">" + items[i][1].substr(0,20) + "</span></td><td width=\"70%\"><span style=\"color: green\">" + items[i][0] + "</span><br/>" + "Keyword: <span style=\"color: blue\">foo</span> Tags: <span style=\"color: red\">computer, news</span>" + "</td></tr>";
+                    url = vimperator.util.escapeHTML(items[i][0]);
+                    keyword = items[i][2];
+                    tags = items[i][3].join(", ");
 
+                    extra = "";
+                    if (keyword)
+                    {
+                        extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
+                        if (tags)
+                            extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
+                        else
+                            extra += ")</span>";
+                    }
+                    else if (tags)
+                    {
+                        extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
+                    }
+
+
+                    list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\">" + url + extra + "</td></tr>";
                 }
                 list += "</table>";
 
