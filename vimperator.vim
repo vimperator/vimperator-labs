@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 July 22
+" Latest Revision:  2007 October 11
 
 if exists("b:current_syntax")
   finish
@@ -25,8 +25,10 @@ syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bm
 	\ ve[rsion] viu[sage] w[rite] win[open] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om] run
 	\ contained
 
+syn match vimperatorCommand "!" contained
+
 " FIXME
-syn match vimperatorCommandWrapper "\<\h\w*\>" contains=vimperatorCommand
+syn match vimperatorCommandWrapper "\%(!\|\<\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs fullscreen fs

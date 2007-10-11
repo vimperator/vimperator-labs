@@ -1,4 +1,7 @@
 <pre>
+2007-XX-XX:
+	* version 0.5.3
+
 2007-10-11:
 	* version 0.5.2
 	* changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
