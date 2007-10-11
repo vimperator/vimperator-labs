@@ -536,6 +536,10 @@ function Events() //{{{
 
         var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
+        var win =  document.commandDispatcher.focusedWindow;
+        if (win && win.document.designMode == "on")
+            return true;
+
         // menus have their own command handlers
         if (vimperator.modes.extended & vimperator.modes.MENU)
             return true;
