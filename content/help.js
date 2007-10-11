@@ -59,9 +59,7 @@ vimperator.help = function(section, easter) //{{{
                 // keep <br/>
                 //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
                 //usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
-                usage = usage.replace(/&/g, "&amp;");
-                usage = usage.replace(/</g, "&lt;");
-                usage = usage.replace(/>/g, "&gt;");
+                usage = vimperator.util.escapeHTML(usage);
                 usage = usage.replace(/\\n/g, "<br/>");
                 // color [count], [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
                 usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                    // required args
@@ -98,11 +96,7 @@ vimperator.help = function(section, easter) //{{{
             for (var j=0; j < names.length; j++)
             {
                 var cmd_name = names[j];
-                cmd_name = cmd_name.replace(/</g, "&lt;");
-                cmd_name = cmd_name.replace(/>/g, "&gt;");
-                // cmd_name = cmd_name.replace(/"/g, "&quot;");
-                // cmd_name = cmd_name.replace(/'/g, "&apos;");
-                // cmd_name = cmd_name.replace(/&/g, "&amp;");
+                cmd_name = vimperator.util.escapeHTML(cmd_name);
                 ret += '<code class="tag">' + beg + cmd_name + end + '</code><br/>';
             }
             ret += '</td></tr>';
@@ -228,6 +222,7 @@ vimperator.help = function(section, easter) //{{{
     }
     catch(e)
     {
+        // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
         // when the url is "about:" or any other xhtml page the doc is not open
         // then retry again in 250ms but just once
         if (arguments[3] && arguments[3].recursive)
@@ -259,35 +254,38 @@ vimperator.help = function(section, easter) //{{{
         return [valueL, valueT];
     }
 
-    if (section)
-    {
-        function findSectionElement(section)
+    // FIXME
+    setTimeout(function() {
+        if (section)
         {
-            return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"] | id("' + section + '")')
-                .snapshotItem(0);
-        }
-
-        var element = findSectionElement(section);
-        if (!element)
-        {
-            var firstChar = section.charAt(0);
-            if (firstChar != ':' && firstChar != "'")
+            function findSectionElement(section)
             {
-                element = findSectionElement(':' + section);
-                if (!element)
-                    element = findSectionElement("'" + section + "'");
+                return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"] | id("' + section + '")')
+                    .snapshotItem(0);
             }
+
+            var element = findSectionElement(section);
+            if (!element)
+            {
+                var firstChar = section.charAt(0);
+                if (firstChar != ':' && firstChar != "'")
+                {
+                    element = findSectionElement(':' + section);
+                    if (!element)
+                        element = findSectionElement("'" + section + "'");
+                }
+            }
+            if (!element)
+            {
+                vimperator.echoerr("E149: Sorry, no help for " + section);
+                return;
+            }
+            // FIXME: H2 elements are currently wrapped in DIVs so this works
+            var pos = cumulativeOffset(element.parentNode);
+            // horizontal offset is annoying, set it to 0 (use pos[0] if you want horizontal offset)
+            window.content.scrollTo(0, pos[1]);
         }
-        if (!element)
-        {
-            vimperator.echoerr("E149: Sorry, no help for " + section);
-            return;
-        }
-        // FIXME: H2 elements are currently wrapped in DIVs so this works
-        var pos = cumulativeOffset(element.parentNode);
-        // horizontal offset is annoying, set it to 0 (use pos[0] if you want horizontal offset)
-        window.content.scrollTo(0, pos[1]);
-    }
+    }, 0);
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
