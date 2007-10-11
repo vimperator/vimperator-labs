@@ -2,6 +2,21 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* added full zoom, and changed keybindings slightly for text zoom
+	* :buffer partial_string works now as in vim, and with ! even better
+	* improvements for scrollable -- more -- prompt
+	* changed 'I' key to Ctrl-Q to also work in textboxes
+	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
+	* new gi browser command to focus last used input box
+	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
+	* support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
+	* support for * and # mappings to search for the text selection or the text under the cursor
+	* Escape finally clears any selection made in the document
+	* initial start of caret mode. Start with 'i', stop with Escape;
+	* many small bug fixes and enhancments
+
+2007-10-11:
+	* version 0.5.2
 	* changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
 	  options, use :prefs! to get the about:config window
 	* added "s" and "a" mappings to extended hints mode for saving hint targets
@@ -20,10 +35,10 @@
 	* :b2 now allowed, no space required before the 2 anymore
 	* :! to run commands through system()
 	* separated search and Ex command history
+	* added 'visualbellstyle' for styling/hiding the visual bell
 	* merge the existing status bar with the standard FF status bar so that
 	  security information and extension buttons are included
-	* added full zoom, and changed keybindings slightly for text zoom
-	* :buffer partial_string works now as in vim, and with ! even better
+  	* :buffer partial_string works now as in vim, and with ! even better
 	* new :time command for profiling
 	* added new :sidebar and :sbclose commands
 	* added 'more' and standard more-prompt key mappings to control
@@ -32,16 +47,8 @@
 	  highlighted text strings when 'hlsearch' is set
 	* added 'linksearch' option to restrict page searches to link text - \L
 	  and \l can be used in the search pattern to override 'linksearch'
-	* improvements for scrollable -- more -- prompt
-	* changed 'I' key to Ctrl-Q to also work in textboxes
-	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
-	* new gi browser command to focus last used input box
-	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
-	* support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
-	* support for * and # mappings to search for the text selection or the text under the cursor
-	* Escape finally clears any selection made in the document
-	* initial start of caret mode. Start with 'i', stop with Escape;
-	* vimperator trys to stay in command mode after loading pages instead of having a text field focused
+	* vimperator trys to stay in command mode after loading pages instead
+	  of having a text field focused
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added vimperator logo (can be seen in the addons manager)
 	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
