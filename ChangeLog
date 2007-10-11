@@ -1,9 +1,32 @@
+2007-10-11  dougkearns  <dougkearns>
+
+	* src/content/help.js:
+	put the help section locating block in a timeout to sure the first
+	call to :help {arg} works
+	[cd30327a351c] [tip]
+
+	* src/content/commands.js:
+	fix typo in :preferences usage
+	[08e0e10caeea]
+
 2007-10-10  dougkearns  <dougkearns>
+
+	* src/ChangeLog:
+	update ChangeLog
+	[4b187f1ad250]
+
+	* src/content/help.js:
+	mention $VIMPERATOR_HOME in the help
+	[29c45e9edaba]
+
+	* src/ChangeLog, src/content/commands.js:
+	minor improvement to :sbclose help
+	[5f66f17c4a5c]
 
 	* src/content/commands.js, src/content/options.js,
 	src/content/util.js, src/content/vimperator.js:
 	new :set and :prefs commands, tweaked :set output to use colors
-	[0794539f1ab5] [tip]
+	[0794539f1ab5]
 
 	* src/NEWS, src/TODO:
 	update NEWS and TODO

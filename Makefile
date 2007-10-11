@@ -2,7 +2,7 @@
 
 TOP           = $(shell pwd)
 
-VERSION       = 0.5.2pre
+VERSION       = 0.5.2
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 

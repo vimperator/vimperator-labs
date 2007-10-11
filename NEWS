@@ -1,5 +1,5 @@
 <pre>
-2007-XX-XX:
+2007-10-11:
 	* version 0.5.2
 	* changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
 	  options, use :prefs! to get the about:config window
@@ -134,7 +134,7 @@
 	* :help section supported, :help :set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
-	* :javascript &lt;&lt;EOF support to execute multiline javascript code
+	* :javascript <<EOF support to execute multiline javascript code
 	  also changed :exec to behave more vim like
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
