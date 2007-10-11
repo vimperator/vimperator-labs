@@ -222,6 +222,7 @@ vimperator.help = function(section, easter) //{{{
     }
     catch(e)
     {
+        // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
         // when the url is "about:" or any other xhtml page the doc is not open
         // then retry again in 250ms but just once
         if (arguments[3] && arguments[3].recursive)
@@ -253,35 +254,38 @@ vimperator.help = function(section, easter) //{{{
         return [valueL, valueT];
     }
 
-    if (section)
-    {
-        function findSectionElement(section)
+    // FIXME
+    setTimeout(function() {
+        if (section)
         {
-            return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"] | id("' + section + '")')
-                .snapshotItem(0);
-        }
-
-        var element = findSectionElement(section);
-        if (!element)
-        {
-            var firstChar = section.charAt(0);
-            if (firstChar != ':' && firstChar != "'")
+            function findSectionElement(section)
             {
-                element = findSectionElement(':' + section);
-                if (!element)
-                    element = findSectionElement("'" + section + "'");
+                return vimperator.buffer.evaluateXPath('//code[@class="tag" and text()="' + section + '"] | id("' + section + '")')
+                    .snapshotItem(0);
             }
+
+            var element = findSectionElement(section);
+            if (!element)
+            {
+                var firstChar = section.charAt(0);
+                if (firstChar != ':' && firstChar != "'")
+                {
+                    element = findSectionElement(':' + section);
+                    if (!element)
+                        element = findSectionElement("'" + section + "'");
+                }
+            }
+            if (!element)
+            {
+                vimperator.echoerr("E149: Sorry, no help for " + section);
+                return;
+            }
+            // FIXME: H2 elements are currently wrapped in DIVs so this works
+            var pos = cumulativeOffset(element.parentNode);
+            // horizontal offset is annoying, set it to 0 (use pos[0] if you want horizontal offset)
+            window.content.scrollTo(0, pos[1]);
         }
-        if (!element)
-        {
-            vimperator.echoerr("E149: Sorry, no help for " + section);
-            return;
-        }
-        // FIXME: H2 elements are currently wrapped in DIVs so this works
-        var pos = cumulativeOffset(element.parentNode);
-        // horizontal offset is annoying, set it to 0 (use pos[0] if you want horizontal offset)
-        window.content.scrollTo(0, pos[1]);
-    }
+    }, 0);
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
