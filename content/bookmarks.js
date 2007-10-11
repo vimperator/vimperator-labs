@@ -66,8 +66,8 @@ function Bookmarks() //{{{
             //options.setGroupingMode(options.GROUP_BY_FOLDER);
             query.setFolders(folders, 1);
             var result = history_service.executeQuery(query, options);
-            result.sortingMode = options.SORT_BY_DATE_DESCENDING;
-            //result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING;
+            //result.sortingMode = options.SORT_BY_DATE_DESCENDING;
+            result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING;
             var rootNode = result.root;
             rootNode.containerOpen = true;
 
