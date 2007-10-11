@@ -1065,7 +1065,7 @@ function Commands() //{{{
             }
         },
         {
-            usage: [":pref[erences][!]"],
+            usage: ["pref[erences][!]"],
             short_help: "Show Browser Preferences",
             help: "You can change the browser preferences from this dialog. " +
                   "Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
