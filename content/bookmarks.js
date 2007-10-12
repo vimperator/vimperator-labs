@@ -265,40 +265,37 @@ function Bookmarks() //{{{
             }
 
             var title, url, tags, keyword, extra;
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-                for (var i = 0; i < items.length; i++)
+                title = vimperator.util.escapeHTML(items[i][1]);
+                if (title.length > 50)
+                    title = title.substr(0, 47) + "...";
+                url = vimperator.util.escapeHTML(items[i][0]);
+                keyword = items[i][2];
+                tags = items[i][3].join(", ");
+
+                extra = "";
+                if (keyword)
                 {
-                    title = vimperator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
-                    url = vimperator.util.escapeHTML(items[i][0]);
-                    keyword = items[i][2];
-                    tags = items[i][3].join(", ");
-
-                    extra = "";
-                    if (keyword)
-                    {
-                        extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
-                        if (tags)
-                            extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
-                        else
-                            extra += ")</span>";
-                    }
-                    else if (tags)
-                    {
-                        extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
-                    }
-
-
-                    list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\">" + url + extra + "</td></tr>";
+                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
+                    if (tags)
+                        extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
+                    else
+                        extra += ")</span>";
                 }
-                list += "</table>";
+                else if (tags)
+                {
+                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
+                }
 
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+
+                list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\">" + url + extra + "</td></tr>";
             }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
     }
 
