@@ -131,16 +131,19 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: red;
 }
 .hl-StatusLine {
-    background-color: black;
-    color: white;
+    background: none !important;
+    background-color: black !important;
+    color: white !important;
 }
 .hl-StatusLineSecure {
-    background-color: #B0FF00; / * light green * /
-    color: black;
+    background: none !important;
+    background-color: #B0FF00 !important; /* light green */
+    color: black !important;
 }
 .hl-StatusLineBroken {
-    background-color: #FF6060; / * light red * /
-    color: black;
+    background: none !important;
+    background-color: #FF6060 !important; /* light red */
+    color: black !important;
 }
 
 /* MOW */
