@@ -2,6 +2,7 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* :set showtabline now finally works as expected for all values
 	* added full zoom, and changed keybindings slightly for text zoom
 	* :buffer partial_string works now as in vim, and with ! even better
 	* improvements for scrollable -- more -- prompt
