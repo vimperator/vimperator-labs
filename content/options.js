@@ -221,20 +221,23 @@ function Options() //{{{
 
     function setShowTabline(value)
     {
-        // hide tabbar
+        var tabs = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+        if (!tabs)
+            return;
+
         if (value == 0)
         {
-            getBrowser().mStrip.collapsed = true;
-            getBrowser().mStrip.hidden = true;
+            tabs.collapsed = true;
         }
         else if (value == 1)
         {
-            vimperator.echo("show tabline only with > 1 page open not implemented yet");
+            storePreference("browser.tabs.autoHide", true);
+            tabs.collapsed = false;
         }
         else
         {
-            getBrowser().mStrip.collapsed = false;
-            getBrowser().mStrip.hidden = false;
+            storePreference("browser.tabs.autoHide", false);
+            tabs.collapsed = false;
         }
     }
 
@@ -602,8 +605,7 @@ function Options() //{{{
                   "<li><b>0</b>: Never show tab bar</li>" +
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li>" +
-                  "</ul>" +
-                  "NOTE: showtabline=1 not implemented yet and buggy with showtabline=0",
+                  "</ul>",
             setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
