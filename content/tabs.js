@@ -157,8 +157,14 @@ function Tabs() //{{{
                 getBrowser().removeTab(tab);
             else
             {
-                vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
-                getBrowser().removeTab(tab);
+                if (vimperator.buffer.URL != "about:blank" ||
+                    getWebNavigation().sessionHistory.count > 0)
+                {
+                    vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
+                    getBrowser().removeTab(tab);
+                }
+                else
+                    vimperator.beep();
             }
         }
 

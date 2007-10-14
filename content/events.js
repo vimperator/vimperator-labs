@@ -661,8 +661,10 @@ function Events() //{{{
             vimperator.input.pendingArgMap = null;
             vimperator.input.pendingMotionMap = null;
 
-            stop = false; // command was not a vimperator command, maybe it is a firefox command
+            // allow key to be passed to firefox if we can't handle it
+            stop = false;
 
+            // TODO: see if this check is needed or are all motion commands already mapped in these modes?
             if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE))
                 vimperator.beep();
         }
