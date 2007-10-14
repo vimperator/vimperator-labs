@@ -1069,10 +1069,16 @@ function StatusLine() //{{{
         status_bar.setAttribute("class", "chromeclass-status " + highlight_group);
     };
 
+    // if "url" is ommited, build a usable string for the URL
     this.updateUrl = function(url)
     {
-        if (!url || typeof url != "string")
-            url = vimperator.buffer.URL;
+        if (typeof url == "string")
+        {
+            url_widget.value = url;
+            return;
+        }
+
+        url = vimperator.buffer.URL;
 
         // make it even more vim-like
         if (url == "about:blank")
@@ -1084,6 +1090,16 @@ function StatusLine() //{{{
             else if (!title)
                 url = "[No Name]";
         }
+
+        var sh = getWebNavigation().sessionHistory;
+        var modified = "";
+        if (sh.index > 0)
+            modified += "+";
+        if (sh.index < sh.count -1)
+            modified += "-";
+
+        if (modified)
+            url += " [" + modified + "]"
 
         url_widget.value = url;
     };
