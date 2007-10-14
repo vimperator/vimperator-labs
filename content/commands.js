@@ -1019,7 +1019,7 @@ function Commands() //{{{
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
                   "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
-                  "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
+                  "If you want to set a custom name, open the <var>$FIREFOX_PROFILE</var>/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt;</li>" +
                   "<li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
                   "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a Google search for linux torvalds).</li>" +
@@ -1414,7 +1414,7 @@ function Commands() //{{{
                   "NOTE: In both cases you must add functions to the global window object like shown above, functions written as:<br/>" +
                   "<code class=\"code\">function hello2() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/></code>are only available within the scope of the script. <br/><br/>" +
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
-                  "~ is supported as a shortcut for the $HOME directory.<br/>" +
+                  "~ is supported as a shortcut for the <var>$HOME</var> directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
             completer: function(filter) { return vimperator.completion.get_file_completions(filter); }
         }

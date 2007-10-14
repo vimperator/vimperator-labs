@@ -169,12 +169,12 @@ vimperator.help = function(section, easter) //{{{
         '<li>Unix and Mac - ~/.vimperator/plugin</li>' +
         '<li>Windows - ~/vimperator/plugin</li>' +
         '</ul>' +
-        '<p>The user\'s $HOME(~) directory is determined as follows:</p>' +
+        '<p>The user\'s <var>$HOME</var>(~) directory is determined as follows:</p>' +
         '<ul>' +
-        '<li>Unix and Mac - $HOME is used.</li>' +
-        '<li>Windows - if $HOME is set then this is used, otherwise $USERPROFILE or finally $HOMEDRIVE$HOMEPATH.</li>' +
+        '<li>Unix and Mac - <var>$HOME</var> is used.</li>' +
+        '<li>Windows - if <var>$HOME</var> is set then this is used, otherwise <var>$USERPROFILE</var> or finally <var>$HOMEDRIVE</var><var>$HOMEPATH</var>.</li>' +
         '</ul>' +
-        '$VIMPERATOR_HOME can be used to override the calculated $HOME directory.';
+        '<var>$VIMPERATOR_HOME</var> can be used to override the calculated <var>$HOME</var> directory.';
 
     var mappings = '<span style="float: right"><code class="tag">mappings</code></span><h2 id="mappings">Mappings</h2>' +
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
