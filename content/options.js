@@ -221,7 +221,7 @@ function Options() //{{{
 
     function setShowTabline(value)
     {
-        var tabs = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+        var tabs = document.getAnonymousElementByAttribute(getBrowser(), "class", "tabbrowser-tabs");
         if (!tabs)
             return;
 
