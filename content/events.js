@@ -53,6 +53,7 @@ function Events() //{{{
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.commandline.clear();
+        vimperator.modes.show();
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
         vimperator.tabs.updateSelectionHistory();

@@ -430,6 +430,16 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
         }
     ));
+    addDefaultCommand(new Command(["com[mand]"],
+        function(args)
+        {
+            vimperator.echo(vimperator.util.colorize(window.argParser(args)));
+        },
+        {
+            short_help: "Temporarily used for testing args parser",
+            help: ""
+        }
+    ));
     addDefaultCommand(new Command(["delm[arks]"],
         function(args, special)
         {
