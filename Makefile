@@ -145,6 +145,9 @@ ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 		( echo "modified: $$f" ; \
 		  diff -u $$f ${BUILD_XPI_DIR}/$$f | grep '^[-+][^-+]' ) ; \
 	    done
+	# FIXME: VERSION and DATE tokens not replaced
+	${Q}${SED} -e 's,\(skin\|content\)/$$,jar:chrome/vimperator.jar!/\1/,' \
+	           < chrome.manifest > ${BUILD_XPI_DIR}/chrome.manifest
 	${Q}( cd ${BUILD_XPI_DIR} && ${ZIP} -r ${TOP}/${XPI} ${XPI_FILES} )
 	@echo "SUCCESS: $@"
 
