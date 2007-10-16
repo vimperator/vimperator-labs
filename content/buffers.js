@@ -209,7 +209,6 @@ function Buffer() //{{{
         return selection;
     }
 
-    // TODO: move to v.buffers.list()
     this.list = function(fullmode)
     {
         if (fullmode)
@@ -247,9 +246,9 @@ function Buffer() //{{{
                 url = vimperator.util.escapeHTML(url);
                 title = vimperator.util.escapeHTML(title);
 
-                list += "<tr class=\"buffer-list\"><td align=\"right\">  " + number + "</td><td>" + indicator +
+                list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
                         "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                        "</td><td class=\"hl-URL\">" + url + "</td></tr>";
+                        "</td><td class=\"hl-URL buffer-list\">" + url + "</td></tr>";
             }
             list += "</table>";
 
