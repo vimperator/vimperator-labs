@@ -360,29 +360,31 @@ const vimperator = (function() //{{{
             else
                 string += obj + "::\n";
 
-            for (var i in object)
+            try // window.content often does not want to be queried with "var i in object"
             {
-                var value;
-                try
+                for (var i in object)
                 {
-                    if (i == "JSON") // without this ugly hack, ":echo window" does not work
-                        value = "[object JSON]";
-                    else
+                    var value;
+                    try
+                    {
                         value = object[i];
-                }
-                catch (e)
-                {
-                    value = "";
-                }
+                    }
+                    catch (e)
+                    {
+                        value = "&lt;no value&gt;";
+                    }
 
-                if (color)
-                {
-                    value = vimperator.util.colorize(value, true);
-                    string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
+                    if (color)
+                    {
+                        value = vimperator.util.colorize(value, true);
+                        string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
+                    }
+                    else
+                        string += i + ": " + value + "\n";
                 }
-                else
-                    string += i + ": " + value + "\n";
             }
+            catch (e) { };
+
             return string;
         },
 
