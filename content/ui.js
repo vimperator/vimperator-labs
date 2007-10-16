@@ -694,7 +694,13 @@ function CommandLine() //{{{
                 break;
 
             case "<LeftMouse>":
-                if (event.originalTarget.localName.toLowerCase() == "a")
+                if (event.originalTarget.parentNode.className == "buffer-list")
+                {
+                    vimperator.tabs.select(parseInt(event.originalTarget.parentNode.firstChild.textContent) - 1);
+                    close_window = true;
+                    break;
+                }
+                else if (event.originalTarget.localName.toLowerCase() == "a")
                 {
                     vimperator.open(event.originalTarget.textContent);
                     break;

@@ -145,11 +145,18 @@ the terms of any one of the MPL, the GPL or the LGPL.
     background-color: #FF6060 !important; /* light red */
     color: black !important;
 }
+.hl-URL {
+    background-color: white;
+    color: green;
+    text-decoration: none;
+}
 
 /* MOW */
 
 #vimperator-multiline-output {
     overflow: hidden;
+    background-color: white;
+    color: black;
 }
 
 #vimperator-multiline-output-content {
@@ -172,8 +179,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
     padding: 0px 2px;
 }
 
-#vimperator-multiline-output-content a {
-    text-decoration: none;
+#vimperator-multiline-output-content a,
+#vimperator-multiline-output-content .buffer-list {
     cursor: pointer;
 }
 
