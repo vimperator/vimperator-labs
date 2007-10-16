@@ -53,6 +53,7 @@ function Events() //{{{
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
         vimperator.commandline.clear();
+        vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
         vimperator.tabs.updateSelectionHistory();
