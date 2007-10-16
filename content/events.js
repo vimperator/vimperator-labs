@@ -733,7 +733,6 @@ function Events() //{{{
             else
             {
                 vimperator.input.buffer = "";
-                // vimperator.log("executed: " + candidate_command + " in mode: " + mode, 8);
                 map.execute(null, vimperator.input.count);
             }
         }

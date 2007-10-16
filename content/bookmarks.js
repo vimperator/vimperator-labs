@@ -38,8 +38,8 @@ function Bookmarks() //{{{
                              .getService(Components.interfaces.nsINavBookmarksService);
     const tagging_service   = Components.classes["@mozilla.org/browser/tagging-service;1"]
                               .getService(Components.interfaces.nsITaggingService);
-    const search_service    = Components.classes["@mozilla.org/browser/search-service;1"].
-                              getService(Components.interfaces.nsIBrowserSearchService);
+    const search_service    = Components.classes["@mozilla.org/browser/search-service;1"]
+                              .getService(Components.interfaces.nsIBrowserSearchService);
     const io_service        = Components.classes['@mozilla.org/network/io-service;1']
                               .getService(Components.interfaces.nsIIOService);
 
@@ -112,21 +112,39 @@ function Bookmarks() //{{{
         return bookmarks;
     }
 
-    this.add = function (title, url, keyword)
+    this.add = function (title, url, keyword, tags)
     {
         if (!bookmarks)
             load();
 
-        var uri = io_service.newURI(url, null, null);
-        var id = bookmarks_service.insertBookmark(bookmarks_service.bookmarksRoot, uri, -1, title);
-        if (id && keyword)
+        // if no protocol specified, default to http://, isn't there a better way?
+        if (/^\w+:/.test(url) == false)
+            url = "http://" + url;
+
+        try
         {
-            bookmarks_service.setKeywordForBookmark(id, keyword);
-            keywords.unshift([keyword, title, url]);
+            var uri = io_service.newURI(url, null, null);
+            var id = bookmarks_service.insertBookmark(bookmarks_service.bookmarksRoot, uri, -1, title);
+            if (!id)
+                return false;
+
+            if (keyword)
+            {
+                bookmarks_service.setKeywordForBookmark(id, keyword);
+                keywords.unshift([keyword, title, url]);
+            }
+
+            if (tags)
+                tagging_service.tagURI(uri, tags);
+        }
+        catch (e)
+        {
+            vimperator.log(e);
+            return false;
         }
 
         //also update bookmark cache
-        bookmarks.unshift([url, title, null, []]);
+        bookmarks.unshift([url, title, keyword, tags || []]);
         return true;
     }
 
@@ -136,12 +154,22 @@ function Bookmarks() //{{{
         if (!url)
             return 0;
 
-        var uri = io_service.newURI(url, null, null);
-        var count = {};
-        var bmarks = bookmarks_service.getBookmarkIdsForURI(uri, count);
+        var i = 0;
+        try
+        {
+            var uri = io_service.newURI(url, null, null);
+            var count = {};
+            var bmarks = bookmarks_service.getBookmarkIdsForURI(uri, count);
 
-        for (var i = 0; i < bmarks.length; i++)
-            bookmarks_service.removeItem(bmarks[i]);
+            for (; i < bmarks.length; i++)
+                bookmarks_service.removeItem(bmarks[i]);
+        }
+        catch (e)
+        {
+            vimperator.log(e);
+            return i;
+        }
+
 
         // also update bookmark cache, if we removed at least one bookmark
         if (count.value > 0)
@@ -297,75 +325,6 @@ function Bookmarks() //{{{
 
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
-    }
-
-    //  res = parseBookmarkString("-t tag1,tag2 -T title http://www.orf.at");
-    //  res.tags is an array of tags
-    //  res.title is the title or "" if no one was given
-    //  res.url is the url as a string
-    //  returns null, if parsing failed
-    Bookmarks.parseBookmarkString = function(str)
-    {
-        var res = {};
-        res.tags = [];
-        res.title = null;
-        res.url = null;
-
-        var re_title = /^\s*((-t|--title)\s+(\w+|\".*\"))(.*)/;
-        var re_tags = /^\s*((-T|--tags)\s+((\w+)(,\w+)*))(.*)/;
-        var re_url = /^\s*(\".+\"|\S+)(.*)/;
-
-        var match_tags = null;
-        var match_title = null;
-        var match_url = null;
-
-        while (!str.match(/^\s*$/))
-        {
-            // first check for --tags
-            match_tags = str.match(re_tags);
-            if (match_tags != null)
-            {
-                str = match_tags[match_tags.length - 1]; // the last captured parenthesis is the rest of the string
-                tags = match_tags[3].split(",");
-                res.tags = res.tags.concat(tags);
-            }
-            else // then for --titles
-            {
-
-                match_title = str.match(re_title);
-                if (match_title != null)
-                {
-                    // only one title allowed
-                    if (res.title != null)
-                        return null;
-
-                    str = match_title[match_title.length - 1]; // the last captured parenthesis is the rest of the string
-                    var title = match_title[3];
-                    if (title.charAt(0) == '"')
-                        title = title.substring(1, title.length - 1);
-                    res.title = title;
-                }
-                else // at last check for a URL
-                {
-                    match_url = str.match(re_url);
-                    if (match_url != null)
-                    {
-                        // only one url allowed
-                        if (res.url != null)
-                            return null;
-
-                        str = match_url[match_url.length - 1]; // the last captured parenthesis is the rest of the string
-                        url = match_url[1];
-                        if (url.charAt(0) == '"')
-                            url = url.substring(1, url.length - 1);
-                        res.url = url;
-                    }
-                    else
-                        return null; // no url, tag or title found but still text left, abort
-                }
-            }
-        }
-        return res;
     }
     //}}}
 } //}}}

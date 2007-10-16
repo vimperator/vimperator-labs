@@ -82,9 +82,10 @@ function Command(specs, action, extra_info) //{{{
         if (extra_info.usage)
             this.usage = extra_info.usage;
 
-        this.help = extra_info.help || null;
+        this.help       = extra_info.help || null;
         this.short_help = extra_info.short_help || null;
-        this.completer = extra_info.completer || null;
+        this.completer  = extra_info.completer || null;
+        this.args       = extra_info.args || [];
     }
 
 }
@@ -127,6 +128,14 @@ function Commands() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    const OPTION_ANY    = 0; // can be given no argument or an argument of any type, user is responsible
+                             // for parsing the return value
+    const OPTION_NOARG  = 1;
+    const OPTION_BOOL   = 2;
+    const OPTION_STRING = 3;
+    const OPTION_INT    = 4;
+    const OPTION_FLOAT  = 5;
+    const OPTION_LIST   = 6;
 
     var ex_commands = [];
     var last_run_command = ""; // updated whenever the users runs a command with :!
@@ -138,6 +147,243 @@ function Commands() //{{{
         {
             command.execute(args, special, count, modifiers);
         }
+    }
+
+    // in '-quoted strings, only ' and \ itself are escaped
+    // in "-quoted strings, also ", \n and \t are translated
+    //
+    // "options" is an array [name, type, validator, completions] and could look like:
+    //  options = [[["-force"], OPTION_NOARG],
+    //             [["-fullscreen"], OPTION_BOOL],
+    //             [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
+    //             [["-speed"], OPTION_INT],
+    //             [["-acceleration"], OPTION_FLOAT],
+    //             [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
+    //             [["-other"], OPTION_ANY]];
+    // TODO: should it handle comments?
+    // TODO: should it return an error, if it contains arguments which look like options (beginning with -)?
+    function parseArgs(str, options)
+    {
+        // returns [count, parsed_argument]
+        function getNextArg(str)
+        {
+            var in_single_string = false;
+            var in_double_string = false;
+            var in_escape_key = false;
+
+            var arg = "";
+
+            outer:
+            for (var i = 0; i < str.length; i++)
+            {
+                switch(str[i])
+                {
+                case "\"":
+                    if (in_escape_key)
+                    {
+                        in_escape_key = false;
+                        break;
+                    }
+                    if (!in_single_string)
+                    {
+                        in_double_string = !in_double_string;
+                        continue outer;
+                    }
+                    break;
+
+                case "'":
+                    if (in_escape_key)
+                    {
+                        in_escape_key = false;
+                        break;
+                    }
+                    if (!in_double_string)
+                    {
+                        in_single_string = !in_single_string;
+                        continue outer;
+                    }
+                    break;
+
+                // \ is an escape key for non quoted or "-quoted strings
+                // for '-quoted strings it is taken literally, apart from \' and \\
+                case "\\":
+                    if (in_escape_key)
+                    {
+                        in_escape_key = false;
+                        break;
+                    }
+                    else
+                    {
+                        in_escape_key = true;
+                        if (in_single_string && str[i+1] != "\\" && str[i+1] != "'")
+                            break;
+                        else
+                            continue outer;
+                    }
+                    break;
+
+                default:
+                    if (in_single_string)
+                    {
+                        in_escape_key = false;
+                        break;
+                    }
+                    else if (in_escape_key)
+                    {
+                        in_escape_key = false;
+                        switch (str[i])
+                        {
+                            case "n": arg += "\n"; continue outer;
+                            case "t": arg += "\t"; continue outer;
+                            default:
+                                break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                        }
+                    }
+                    else if (!in_double_string && /\s/.test(str[i]))
+                    {
+                        return [i, arg];
+                    }
+                    else // a normal charcter
+                        break;
+                }
+                arg += str[i];
+            }
+
+            // TODO: add parsing of a " comment here:
+            if (in_double_string || in_single_string)
+                return [-1, "unterminated string literal"];
+            if (in_escape_key)
+                return [-1, "trailing \\"];
+            else
+                return [str.length, arg];
+        }
+
+
+        var args = []; // parsed arguments
+        var opts = []; // parsed options
+        if (!options)
+            options = [];
+
+        var arg = null;
+        var count = 0;
+        var i = 0;
+        outer:
+        while(i < str.length)
+        {
+            // skip whitespace
+            if (/\s/.test(str[i]))
+            {
+                i++;
+                continue;
+            }
+
+            var sub = str.substr(i);
+            var optname = "";
+            for (var opt = 0; opt < options.length; opt++)
+            {
+                for (var name = 0; name < options[opt][0].length; name++)
+                {
+                    optname = options[opt][0][name];
+                    if (sub.indexOf(optname) == 0)
+                    {
+                        var invalid = false;
+                        // no value to the option
+                        if (optname.length >= sub.length || /\s/.test(sub[optname.length]))
+                        {
+                            arg = null;
+                            count = 0;
+                        }
+                        else if (sub[optname.length] == "=")
+                        {
+                            [count, arg] = getNextArg(sub.substr(optname.length + 1));
+                            if (count == -1)
+                                return { error: "Invalid argument for option " + optname, opts: [], args: [] }
+
+                            count++; // to compensate the "=" character
+                        }
+                        else
+                        {
+                            // this isn't really an option as it has trailing characters, parse it as an argument
+                            invalid = true;
+                        }
+
+                        if (!invalid)
+                        {
+                            switch (options[opt][1]) // type
+                            {
+                            case OPTION_NOARG:
+                                if (arg != null)
+                                    return { error: "No argument allowed for option: " + optname, opts: [], args: [] }
+                                break;
+                            case OPTION_BOOL:
+                                if (arg == "true" || arg == "1" || arg == "on")
+                                    arg = true;
+                                else if (arg == "false" || arg == "0" || arg == "off")
+                                    arg = false;
+                                else
+                                    return { error: "Invalid argument for boolean option: " + optname, opts: [], args: [] }
+                                break;
+                            case OPTION_STRING:
+                                if (arg == null)
+                                    return { error: "Argument required for string option: " + optname, opts: [], args: [] }
+                                break;
+                            case OPTION_INT:
+                                arg = parseInt(arg);
+                                if (isNaN(arg))
+                                    return { error: "Numeric argument required for integer option: " + optname, opts: [], args: [] }
+                                break;
+                            case OPTION_FLOAT:
+                                arg = parseFloat(arg);
+                                if (isNaN(arg))
+                                    return { error: "Numeric argument required for float option: " + optname, opts: [], args: [] }
+                                break;
+                            case OPTION_LIST:
+                                if (arg == null)
+                                    return { error: "Argument required for list option: " + optname, opts: [], args: [] }
+                                arg = arg.split(/\s*,\s*/);
+                                break;
+                            }
+
+                            // we have a validator function
+                            if (typeof options[opt][2] == "function")
+                            {
+                                if (options[opt][2].call(this, arg) == false)
+                                    return { error: "Invalid argument for option: " + optname, opts: [], args: [] }
+                            }
+
+                            opts.push([options[opt][0][0], arg]); // always use the first name of the option
+                            i += optname.length + count;
+                            continue outer;
+                        }
+                        // if it is invalid, just fall through and try the next argument
+                    }
+                }
+            }
+
+            // if not an option, treat this token as an argument
+            var [count, arg] = getNextArg(sub);
+            if (count == -1)
+            return { error: "Error parsing arguments: " + arg, opts: [], args: [] }
+
+            if (arg != null)
+                args.push(arg);
+
+            i += count; // hopefully count is always >0, otherwise we get an endless loop
+        }
+
+        return { error: null, opts: opts, args: args }
+    }
+
+    function getOption(opts, option, def)
+    {
+        for (var i = 0; i < opts.length; i++)
+        {
+            if (opts[i][0] == option)
+                return opts[i][1];
+        }
+
+        // no match found, return default
+        return def;
     }
 
     function commandsIterator()
@@ -293,43 +539,39 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bma[rk]"],
-        // takes: -t "foo" myurl
-        // converts that string to a useful url and title, and calls addBookmark
         function(args)
         {
-            var result = Bookmarks.parseBookmarkString(args);
-
-            if (result)
+            var res = parseArgs(args, this.args);
+            if (res.error)
             {
-                if (result.url == null)
-                {
-                    result.url = vimperator.buffer.URL;
-                    // also guess title if the current url is :bmarked
-                    if (result.title == null)
-                        result.title = vimperator.buffer.title;
-                }
-
-                if (result.title == null) // title could still be null
-                    result.title = result.url;
-
-                vimperator.bookmarks.add(result.title, result.url);
-                vimperator.echo("Bookmark `" + result.title + "' added with url `" + result.url + "'", vimperator.commandline.FORCE_SINGLELINE);
+                vimperator.echoerr(res.error);
+                return false;
             }
+
+            var url = res.args.length == 0 ? vimperator.buffer.URL : res.args[0];
+            var title = getOption(res.opts, "-title", res.args.length == 0 ? vimperator.buffer.title : null);
+            if (!title)
+                title = url;
+            var keyword = getOption(res.opts, "-keyword", null);
+            var tags = getOption(res.opts, "-tags", []);
+
+            if (vimperator.bookmarks.add(title, url, keyword, tags))
+                vimperator.echo("Bookmark `" + title + "' added with url `" + url + "'", vimperator.commandline.FORCE_SINGLELINE);
             else
-            {
-                vimperator.echoerr("E474: Invalid argument");
-            }
+                vimperator.echoerr("Exxx: Could not add bookmark `" + title + "'", vimperator.commandline.FORCE_SINGLELINE);
         },
         {
-            usage: ["bma[rk] [-t {title}] [url]"],
+            usage: ["bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]"],
             short_help: "Add a bookmark",
             help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
                   "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmark</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
-                  " -t \"custom title\"<br/>" +
-                  "The following options will be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list<br/>" +
-                  " -k keyword<br/>" +
-                  "Tags WILL be some mechanism to classify bookmarks. Assume, you tag a URL with the tags \"linux\" and \"computer\" you'll be able to search for bookmarks containing these tags."
+                  "The following options are interpreted:<br/>" +
+                  " -title=\"custom title\"<br/>" +
+                  " -tags=comma,separated,tag,list<br/>" +
+                  " -keyword=keyword<br/>",
+            args: [[["-title", "-t"],    OPTION_STRING],
+                   [["-tags", "-T"],     OPTION_LIST],
+                   [["-keyword", "-k"],  OPTION_STRING, function(arg) { return /\w/.test(arg); } ]]
         }
     ));
     addDefaultCommand(new Command(["bmarks"],
@@ -405,25 +647,20 @@ function Commands() //{{{
     addDefaultCommand(new Command(["delbm[arks]"],
         function(args, special)
         {
-            var result = Bookmarks.parseBookmarkString(args);
+            var url = args;
 
-            if (result)
-            {
-                if (result.url == null)
-                    result.url = vimperator.buffer.URL;
+            if (!url)
+                url = vimperator.buffer.URL;
 
-                var deleted_count = vimperator.bookmarks.remove(result.url);
-                vimperator.echo(deleted_count + " bookmark(s) with url `" + result.url + "' deleted", vimperator.commandline.FORCE_SINGLELINE);
-            }
-            else
-            {
-                vimperator.echoerr("E488: Trailing characters");
-            }
+            var deleted_count = vimperator.bookmarks.remove(url);
+            vimperator.echo(deleted_count + " bookmark(s) with url `" + url + "' deleted", vimperator.commandline.FORCE_SINGLELINE);
         },
         {
-            usage: ["delbm[arks] {url}"],
+            usage: ["delbm[arks] [url]"],
             short_help: "Delete a bookmark",
-            help: "Deletes <b>all</b> bookmarks which match the <code class=\"argument\">{url}</code>. Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
+            help: "Deletes <b>all</b> bookmarks which match the <code class=\"argument\">[url]</code>. " +
+                  "If ommited, <code class=\"argument\">[url]</code> defaults to the URL of the current buffer. " +
+                  "Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " [!] a special version to delete ALL bookmarks <br/>" +
                   " -T comma,separated,tag,list <br/>",
@@ -433,11 +670,21 @@ function Commands() //{{{
     addDefaultCommand(new Command(["com[mand]"],
         function(args)
         {
-            vimperator.echo(vimperator.util.colorize(window.argParser(args)));
+            var res = parseArgs(args, this.args);
+            if (res.error)
+                vimperator.echoerr(res.error);
+            else
+            {
+                vimperator.echo(vimperator.util.colorize(res));
+            }
         },
         {
+            usage: ["com[mand][!] [{attr}...] {cmd} {rep}"],
             short_help: "Temporarily used for testing args parser",
-            help: ""
+            help: "",
+            args: [[["-nargs"],    OPTION_STRING, function(arg) { return /^(0|1|\*|\?|\+)$/.test(arg); } ],
+                   [["-bang"],     OPTION_NOARG],
+                   [["-bar"],      OPTION_NOARG]]
         }
     ));
     addDefaultCommand(new Command(["delm[arks]"],
