@@ -587,34 +587,7 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["b[uffer]"],
-        // TODO: move to v.tabs/buffers
-        function(args, special)
-        {
-            var match;
-            if (match = args.match(/^(\d+):?/))
-                return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
-
-            var matches = [];
-            var lower_args = args.toLowerCase();
-            var first = vimperator.tabs.index() + 1;
-            for (var i = 0; i < getBrowser().browsers.length; i++)
-            {
-                var index = (i + first) % getBrowser().browsers.length;
-                var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
-                var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
-                if (url == args)
-                    return vimperator.tabs.select(index, false);
-
-                if (url.indexOf(args) >= 0 || title.indexOf(lower_args) >= 0)
-                    matches.push(index);
-            }
-            if (matches.length == 0)
-                vimperator.echoerr("E94: No matching buffer for " + args);
-            else if (matches.length > 1 && !special)
-                vimperator.echoerr("E93: More than one match for " + args);
-            else
-                vimperator.tabs.select(matches[0], false);
-        },
+        function(args, special) { vimperator.buffer.switchTo(args, special); },
         {
             usage: ["b[uffer][!] {url|index}"],
             short_help: "Go to buffer from buffer list",
