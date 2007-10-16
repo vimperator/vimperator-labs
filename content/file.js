@@ -27,22 +27,27 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+vimperator.io = {};
 
-const PERM_IWOTH = 00002;  /* write permission, others */
-const PERM_IWGRP = 00020;  /* write permission, group */
-
-const MODE_RDONLY   = 0x01;
-const MODE_WRONLY   = 0x02;
-const MODE_RDWR     = 0x04;
-const MODE_CREATE   = 0x08;
-const MODE_APPEND   = 0x10;
-const MODE_TRUNCATE = 0x20;
-const MODE_SYNC     = 0x40;
-const MODE_EXCL     = 0x80;
-
-
-function LocalFile(file, mode, perms, tmp) // {{{
+vimperator.io.fopen = function(path, mode, perms, tmp)
 {
+    return new vimperator.io.LocalFile(path, mode, perms, tmp);
+}
+
+vimperator.io.LocalFile = function(file, mode, perms, tmp) // {{{
+{
+    const PERM_IWOTH = 00002;  /* write permission, others */
+    const PERM_IWGRP = 00020;  /* write permission, group */
+
+    const MODE_RDONLY   = 0x01;
+    const MODE_WRONLY   = 0x02;
+    const MODE_RDWR     = 0x04;
+    const MODE_CREATE   = 0x08;
+    const MODE_APPEND   = 0x10;
+    const MODE_TRUNCATE = 0x20;
+    const MODE_SYNC     = 0x40;
+    const MODE_EXCL     = 0x80;
+
     const classes = Components.classes;
     const interfaces = Components.interfaces;
 
@@ -116,7 +121,7 @@ function LocalFile(file, mode, perms, tmp) // {{{
 }
 
 
-LocalFile.prototype.write =
+vimperator.io.LocalFile.prototype.write =
 function fo_write(buf)
 {
     if (!("outputStream" in this))
@@ -125,7 +130,7 @@ function fo_write(buf)
     return this.outputStream.write(buf, buf.length);
 }
 
-LocalFile.prototype.read =
+vimperator.io.LocalFile.prototype.read =
 function fo_read(max)
 {
     if (this.localFile.isDirectory())
@@ -155,7 +160,7 @@ function fo_read(max)
     return rv;
 }
 
-LocalFile.prototype.close =
+vimperator.io.LocalFile.prototype.close =
 function fo_close()
 {
     if ("outputStream" in this)
@@ -164,7 +169,7 @@ function fo_close()
         this.inputStream.close();
 }
 
-LocalFile.prototype.flush =
+vimperator.io.LocalFile.prototype.flush =
 function fo_close()
 {
     return this.outputStream.flush();
