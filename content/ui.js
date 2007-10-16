@@ -694,8 +694,18 @@ function CommandLine() //{{{
                 break;
 
             case "<LeftMouse>":
+                if (event.originalTarget.localName.toLowerCase() == "a")
+                {
+                    vimperator.open(event.originalTarget.textContent);
+                    break;
+                }
             case "<A-LeftMouse>":
             case "<C-LeftMouse>":
+                if (event.originalTarget.localName.toLowerCase() == "a")
+                {
+                    vimperator.open(event.originalTarget.textContent, vimperator.NEW_BACKGROUND_TAB);
+                    break;
+                }
             case "<S-LeftMouse>":
                 if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
                     ; // fall through

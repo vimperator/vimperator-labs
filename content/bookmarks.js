@@ -319,7 +319,7 @@ function Bookmarks() //{{{
                 }
 
 
-                list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\">" + url + extra + "</td></tr>";
+                list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\"><a href=\"#\">" + url + "</a>" + extra + "</td></tr>";
             }
             list += "</table>";
 
@@ -473,7 +473,7 @@ function History() //{{{
                     if (title.length > 50)
                         title = title.substr(0, 47) + "...";
                     var url = vimperator.util.escapeHTML(items[i][0]);
-                    list += "<tr><td>" + title + "</td><td style=\"color: green;\">" + url + "</td></tr>";
+                    list += "<tr><td>" + title + "</td><td style=\"color: green;\"><a href=\"#\">" + url + "</a></td></tr>";
                 }
                 list += "</table>";
 
