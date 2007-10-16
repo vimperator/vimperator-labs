@@ -1,6 +1,7 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.3
+	* b calls :buffer! now instead of :buffer
 	* [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
 	* :set showtabline now finally works as expected for all values
 

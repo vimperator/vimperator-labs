@@ -368,7 +368,7 @@ function Mappings() //{{{
         }
     ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["b"],
-        function() { vimperator.commandline.open(":", "buffer ", vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); },
         {
             short_help: "Open a prompt to switch buffers",
             help: "Typing the corresponding number switches to this buffer."
