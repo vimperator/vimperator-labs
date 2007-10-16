@@ -198,26 +198,22 @@ const vimperator = (function() //{{{
 
         beep: function()
         {
-            if (!vimperator.options["visualbell"])
+            if (vimperator.options["visualbell"])
+            {
+                // flash the visual bell
+                var popup = document.getElementById("vimperator-visualbell");
+                var win = getBrowser().mPanelContainer;
+                var box = document.getBoxObjectFor(win);
+
+                popup.height = box.height;
+                popup.width = box.width;
+                popup.openPopup(win, "overlap", 0, 0, false, false)
+                setTimeout(function() { popup.hidePopup(); }, 50);
+            }
+            else
             {
                 sound_service.beep();
-                return;
             }
-
-            // flash the visual bell
-            var popup = document.getElementById("vimperator-visualbell");
-            var win = getBrowser().mPanelContainer;
-            var box = document.getBoxObjectFor(win);
-
-            popup.height = box.height;
-            popup.width = box.width;
-            //popup.style.backgroundColor = "black";
-            ////popup.showPopup(win, box.screenX, box.screenY, "popup");
-            //popup.showPopup(win, -1, -1, "popup", "topleft", "topleft");
-
-            popup.openPopup(win, "overlap", 0, 0, false, false)
-
-            setTimeout(function() { popup.hidePopup(); }, 50);
         },
 
         copyToClipboard: function(str)
