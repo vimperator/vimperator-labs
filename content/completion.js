@@ -254,7 +254,7 @@ vimperator.completion = (function() // {{{
 
             try
             {
-                var fd = vimperator.fopen(dir);
+                var fd = vimperator.io.fopen(dir);
             }
             catch (e)
             {

@@ -357,11 +357,6 @@ const vimperator = (function() //{{{
             content.focus(); // FIXME: shouldn't be window.document.content?
         },
 
-        fopen: function(path, mode, perms, tmp)
-        {
-            return new LocalFile(path, mode, perms, tmp);
-        },
-
         // partial sixth level expression evaluation
         eval: function(string)
         {
@@ -670,7 +665,7 @@ const vimperator = (function() //{{{
             if (input)
             {
                 filein = getTempFile();
-                var fdin = vimperator.fopen(filein, ">");
+                var fdin = vimperator.io.fopen(filein, ">");
                 fdin.write(input);
                 fdin.close();
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
@@ -682,7 +677,7 @@ const vimperator = (function() //{{{
             else
                 res = this.run("sh", ["-c", command], true);
 
-            var fd = vimperator.fopen(fileout, "<");
+            var fd = vimperator.io.fopen(fileout, "<");
             if (!fd)
                 return "";
 
@@ -707,7 +702,7 @@ const vimperator = (function() //{{{
 
             try
             {
-                var fd = vimperator.fopen(filename, "<");
+                var fd = vimperator.io.fopen(filename, "<");
                 if (!fd)
                     return;
 
@@ -854,7 +849,7 @@ const vimperator = (function() //{{{
 
                     if (plugin_dir)
                     {
-                        var fd = vimperator.fopen(plugin_dir);
+                        var fd = vimperator.io.fopen(plugin_dir);
                         var entries = fd.read();
                         fd.close();
                         vimperator.log("Sourcing plugin directory...", 3);

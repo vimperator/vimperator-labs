@@ -856,7 +856,7 @@ function Mappings() //{{{
         if (url.match(/^file:\/\//) || url.match(/^\//))
         {
             var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-            var file = vimperator.fopen(stripedFilename, '<');
+            var file = vimperator.io.fopen(stripedFilename, '<');
             if (!file)
                 return false;
 
