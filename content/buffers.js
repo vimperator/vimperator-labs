@@ -248,7 +248,7 @@ function Buffer() //{{{
 
                 list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
                         "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                        "</td><td class=\"hl-URL buffer-list\">" + url + "</td></tr>";
+                        "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
             }
             list += "</table>";
 

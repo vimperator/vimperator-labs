@@ -179,8 +179,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     padding: 0px 2px;
 }
 
-#vimperator-multiline-output-content a,
-#vimperator-multiline-output-content .buffer-list {
+#vimperator-multiline-output-content a {
     cursor: pointer;
 }
 

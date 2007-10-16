@@ -708,7 +708,11 @@ function CommandLine() //{{{
             case "<A-LeftMouse>": // for those not owning a 3-button mouse
             case "<MiddleMouse>":
                 if (event.originalTarget.localName.toLowerCase() == "a")
-                    vimperator.open(event.originalTarget.textContent, vimperator.NEW_BACKGROUND_TAB);
+                {
+                    var where = /\btabopen\b/.test(vimperator.options["activate"]) ?
+                                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
+                    vimperator.open(event.originalTarget.textContent, where);
+                }
                 break;
 
             // let firefox handle those to select table cells or show a context menu
