@@ -42,7 +42,6 @@ const vimperator = (function() //{{{
 
     var callbacks = [];
 
-
     function expandPath(path)
     {
         const WINDOWS = navigator.platform == "Win32";
@@ -787,6 +786,7 @@ const vimperator = (function() //{{{
                 }
             }, 50);
 
+            vimperator.statusline.update();
             vimperator.log("Vimperator fully initialized", 1);
         },
 

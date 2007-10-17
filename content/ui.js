@@ -1083,6 +1083,16 @@ function StatusLine() //{{{
         status_bar.setAttribute("class", "chromeclass-status " + highlight_group);
     };
 
+    // update all fields of the statusline
+    this.update = function()
+    {
+        this.updateUrl();
+        this.updateInputBuffer();
+        this.updateProgress();
+        this.updateTabCount();
+        this.updateBufferPosition();
+    }
+
     // if "url" is ommited, build a usable string for the URL
     this.updateUrl = function(url)
     {

@@ -177,6 +177,8 @@ function Tabs() //{{{
                 window.close();
             else
                 vimperator.quit(quit_on_last_tab == 2);
+
+            return;
         }
 
         var index = this.index(tab);
