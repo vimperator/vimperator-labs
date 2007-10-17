@@ -28,7 +28,7 @@ syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bm
 syn match vimperatorCommand "!" contained
 
 " FIXME
-syn match vimperatorCommandWrapper "\%(!\|\<\h\w*\>\)" contains=vimperatorCommand
+syn match vimperatorCommandWrapper "\%(^\|:\|\s\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act autohints ah noautohints noah complete cpt defsearch ds extendedhinttags eht
