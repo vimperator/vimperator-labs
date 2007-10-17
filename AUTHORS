@@ -14,4 +14,5 @@ Patches:
   * Hannes Rist (:set titlestring support)
   * Marco Candrian (shift-insert patch)
   * Nikolai Weibull ($VIMPERATOR_HOME)
+  * Joseph Xu (supporting multiple top level windows better)
 </pre>

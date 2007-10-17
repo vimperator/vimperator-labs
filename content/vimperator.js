@@ -812,8 +812,17 @@ const vimperator = (function() //{{{
             for (; now - then < ms; now = new Date().getTime()) { 
                 mainThread.processNextEvent(true); 
             } 
-        } 
+        },
 
+        get windows() 
+        {
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+            var wa = [];
+            var enumerator = wm.getEnumerator("navigator:browser");
+            while (enumerator.hasMoreElements())
+                wa.push(enumerator.getNext());
+            return wa;
+        }
     } //}}}
 })(); //}}}
 
