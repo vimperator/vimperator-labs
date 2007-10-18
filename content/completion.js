@@ -531,7 +531,11 @@ vimperator.completion = (function() // {{{
 
                 if (url.indexOf(filter) == -1)
                 {
-                    if (title.indexOf(filter) >= 0)
+                    // no direct match of filter in the url, but still accept this item
+                    // if _all_ tokens of filter match either the url or the title
+                    if (filter.split(/\s+/).every(function(token) {
+                        return (url.indexOf(token) > -1 || title.indexOf(token) > -1);
+                    }))
                         additional_completions.push(urls[i]);
 
                     continue;
@@ -571,23 +575,16 @@ vimperator.completion = (function() // {{{
             if (typeof(filter) != "string" || !items)
                 return false;
 
-            if (case_sensitive)
-            {
-                for (var i = 0; i < items.length; i++)
-                {
-                    if (items[i].indexOf(filter) > -1)
-                        return true;
-                }
-            }
-            else
+            var items_str = items.join(" ");
+            if (!case_sensitive)
             {
                 filter = filter.toLowerCase();
-                for (var i = 0; i < items.length; i++)
-                {
-                    if (items[i].toLowerCase().indexOf(filter) > -1)
-                        return true;
-                }
+                items_str = items_str.toLowerCase();
             }
+
+            if (filter.split(/\s+/).every(function(str) { return items_str.indexOf(str) > -1; }))
+                return true;
+
             return false;
         },
 

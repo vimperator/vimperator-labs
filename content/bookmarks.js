@@ -283,7 +283,7 @@ function Bookmarks() //{{{
 
             if (items.length == 0)
             {
-                if (filter.length > 0)
+                if (filter.length > 0 || tags.length > 0)
                     vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
                 else
                     vimperator.echoerr("No bookmarks set");

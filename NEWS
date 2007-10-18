@@ -2,6 +2,9 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* :open,:bmarks,etc. filter on space seperated tokens now, so you can
+	  search with :open linux windows &lt;tab&gt; all your bookmarks/history
+	  which contain linux AND windows in the url or title
 	* :ls, :history and :bmarks output is now hyperlinked
 	* tags and keyword support for :bmark
 	* added full zoom, and changed keybindings slightly for text zoom
