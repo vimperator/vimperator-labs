@@ -1065,7 +1065,7 @@ function Mappings() //{{{
             short_help: "Search forward for a pattern",
             usage: ["/{pattern}[/]<CR>"],
             help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
-                  "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
+                  "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
                   "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
                   "\"\\L\" forces the entire page to be searched for a match."
@@ -1077,7 +1077,7 @@ function Mappings() //{{{
             short_help: "Search backwards for a pattern",
             usage: ["?{pattern}[?]<CR>"],
             help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
-                  "When \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
+                  "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
                   "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
                   "\"\\L\" forces the entire page to be searched for a match.<br/>" +

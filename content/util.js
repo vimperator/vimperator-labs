@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.util = {
     escapeHTML: function(str)
     {   
-        // XXX: the following code is _much- slower then a simple .replace()
+        // XXX: the following code is _much_ slower than a simple .replace()
         // :history display went down from 2 to 1 second after changing
         //
         // var e = window.content.document.createElement("div");

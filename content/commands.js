@@ -258,13 +258,12 @@ function Commands() //{{{
 
             // TODO: add parsing of a " comment here:
             if (in_double_string || in_single_string)
-                return [-1, "unterminated string literal"];
+                return [-1, "E114: Missing quote"];
             if (in_escape_key)
                 return [-1, "trailing \\"];
             else
                 return [str.length, arg];
         }
-
 
         var args = []; // parsed arguments
         var opts = []; // parsed options
@@ -305,7 +304,10 @@ function Commands() //{{{
                         {
                             [count, arg] = getNextArg(sub.substr(optname.length + 1));
                             if (count == -1)
-                                return { error: "Invalid argument for option " + optname, opts: [], args: [] }
+                            {
+                                vimperator.echoerr("Invalid argument for option " + optname);
+                                return null;
+                            }
 
                             count++; // to compensate the "=" character
                         }
@@ -313,7 +315,10 @@ function Commands() //{{{
                         {
                             [count, arg] = getNextArg(sub.substr(optname.length + 1));
                             if (count == -1)
-                                return { error: "Invalid argument for option " + optname, opts: [], args: [] }
+                            {
+                                vimperator.echoerr("Invalid argument for option " + optname);
+                                return null;
+                            }
 
                             // if we add the argument to an option after a space, it MUST not be empty
                             if (arg.length == 0)
@@ -333,7 +338,10 @@ function Commands() //{{{
                             {
                             case OPTION_NOARG:
                                 if (arg != null)
-                                    return { error: "No argument allowed for option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("No argument allowed for option: " + optname);
+                                    return null;
+                                }
                                 break;
                             case OPTION_BOOL:
                                 if (arg == "true" || arg == "1" || arg == "on")
@@ -341,25 +349,40 @@ function Commands() //{{{
                                 else if (arg == "false" || arg == "0" || arg == "off")
                                     arg = false;
                                 else
-                                    return { error: "Invalid argument for boolean option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Invalid argument for boolean option: " + optname);
+                                    return null;
+                                }
                                 break;
                             case OPTION_STRING:
                                 if (arg == null)
-                                    return { error: "Argument required for string option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Argument required for string option: " + optname);
+                                    return null;
+                                }
                                 break;
                             case OPTION_INT:
                                 arg = parseInt(arg);
                                 if (isNaN(arg))
-                                    return { error: "Numeric argument required for integer option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Numeric argument required for integer option: " + optname);
+                                    return null;
+                                }
                                 break;
                             case OPTION_FLOAT:
                                 arg = parseFloat(arg);
                                 if (isNaN(arg))
-                                    return { error: "Numeric argument required for float option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Numeric argument required for float option: " + optname);
+                                    return null;
+                                }
                                 break;
                             case OPTION_LIST:
                                 if (arg == null)
-                                    return { error: "Argument required for list option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Argument required for list option: " + optname);
+                                    return null;
+                                }
                                 arg = arg.split(/\s*,\s*/);
                                 break;
                             }
@@ -368,7 +391,10 @@ function Commands() //{{{
                             if (typeof options[opt][2] == "function")
                             {
                                 if (options[opt][2].call(this, arg) == false)
-                                    return { error: "Invalid argument for option: " + optname, opts: [], args: [] }
+                                {
+                                    vimperator.echoerr("Invalid argument for option: " + optname);
+                                    return null;
+                                }
                             }
 
                             opts.push([options[opt][0][0], arg]); // always use the first name of the option
@@ -383,7 +409,10 @@ function Commands() //{{{
             // if not an option, treat this token as an argument
             var [count, arg] = getNextArg(sub);
             if (count == -1)
-            return { error: "Error parsing arguments: " + arg, opts: [], args: [] }
+            {
+                vimperator.echoerr("Error parsing arguments: " + arg);
+                return null;
+            }
 
             if (arg != null)
                 args.push(arg);
@@ -391,7 +420,7 @@ function Commands() //{{{
             i += count; // hopefully count is always >0, otherwise we get an endless loop
         }
 
-        return { error: null, opts: opts, args: args }
+        return { opts: opts, args: args }
     }
 
     function getOption(opts, option, def)
@@ -562,11 +591,8 @@ function Commands() //{{{
         function(args)
         {
             var res = parseArgs(args, this.args);
-            if (res.error)
-            {
-                vimperator.echoerr(res.error);
-                return false;
-            }
+            if (!res)
+                return;
 
             var url = res.args.length == 0 ? vimperator.buffer.URL : res.args[0];
             var title = getOption(res.opts, "-title", res.args.length == 0 ? vimperator.buffer.title : null);
@@ -583,7 +609,7 @@ function Commands() //{{{
         {
             usage: ["bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]"],
             short_help: "Add a bookmark",
-            help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
+            help: "If you don't add a custom title, either the title of the web page or the URL is taken as the title.<br/>" +
                   "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmark</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   "The following options are interpreted:<br/>" +
                   " -title=\"custom title\"<br/>" +
@@ -598,12 +624,9 @@ function Commands() //{{{
         function(args, special)
         {
             var res = parseArgs(args, this.args);
-            if (res.error)
-            {
-                vimperator.echoerr(res.error);
-                return false;
-            }
-            
+            if (!res)
+                return;
+
             var tags = getOption(res.opts, "-tags", []);
             vimperator.bookmarks.list(res.args.join(" "), tags, special);
         },
@@ -611,7 +634,7 @@ function Commands() //{{{
             usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
             help: "Open the message window at the bottom of the screen with all bookmarks which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.<br/>" +
+                  "The special version <code class=\"command\">:bmarks!</code> opens the default Firefox bookmarks window.<br/>" +
                   "Filter can also contain the following options:<br/>" +
                   "-tags=comma,separated,tag,list<br/>",
             completer: function(filter) { return vimperator.bookmarks.get(filter); },
@@ -653,7 +676,6 @@ function Commands() //{{{
         function(args, special)
         {
             var url = args;
-
             if (!url)
                 url = vimperator.buffer.URL;
 
@@ -667,8 +689,7 @@ function Commands() //{{{
                   "If ommited, <code class=\"argument\">[url]</code> defaults to the URL of the current buffer. " +
                   "Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
-                  " [!] a special version to delete ALL bookmarks <br/>" +
-                  " -T comma,separated,tag,list <br/>",
+                  " [!] a special version to delete ALL bookmarks <br/>",
             completer: function(filter) { return vimperator.bookmarks.get(filter); }
         }
     ));
@@ -676,12 +697,10 @@ function Commands() //{{{
         function(args)
         {
             var res = parseArgs(args, this.args);
-            if (res.error)
-                vimperator.echoerr(res.error);
-            else
-            {
-                vimperator.echo(vimperator.util.colorize(res.args));
-            }
+            if (!res)
+                return;
+
+            vimperator.echo(vimperator.util.colorize(res.args));
         },
         {
             usage: ["com[mand][!] [{attr}...] {cmd} {rep}"],
@@ -739,9 +758,9 @@ function Commands() //{{{
             usage: ["delm[arks] {marks}", "delm[arks]!"],
             short_help: "Delete the specified marks",
             help: "Marks are presented as a list. Example:<br/>" +
-                "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
-                "<code class=\"command\">:delmarks b-p</code> will delete all marks in the range b to p<br/>" +
-                "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer"
+                "<code class=\"command\">:delmarks Aa b p</code> deletes marks A, a, b and p<br/>" +
+                "<code class=\"command\">:delmarks b-p</code> deletes all marks in the range b to p<br/>" +
+                "<code class=\"command\">:delmarks!</code> deletes all marks for the current buffer"
         }
 
     ));
@@ -769,9 +788,9 @@ function Commands() //{{{
             usage: ["delqm[arks] {marks}", "delqm[arks]!"],
             short_help: "Delete the specified QuickMarks",
             help: "QuickMarks are presented as a list. Example:<br/>" +
-                "<code class=\"command\">:delqmarks Aa b p</code> will delete QuickMarks A, a, b and p<br/>" +
-                "<code class=\"command\">:delqmarks b-p</code> will delete all QuickMarks in the range b to p<br/>" +
-                "<code class=\"command\">:delqmarks!</code> will delete all QuickMarks"
+                "<code class=\"command\">:delqmarks Aa b p</code> deletes QuickMarks A, a, b and p<br/>" +
+                "<code class=\"command\">:delqmarks b-p</code> deletes all QuickMarks in the range b to p<br/>" +
+                "<code class=\"command\">:delqmarks!</code> deletes all QuickMarks"
         }
     ));
     addDefaultCommand(new Command(["downl[oads]", "dl"],
@@ -841,11 +860,21 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["exe[cute]"],
-        function(args) { vimperator.execute(args) },
+        function(args)
+        {
+            // TODO: :exec has some difficult semantics -> later
+            // var res = parseArgs(args, this.args);
+            // if (!res)
+            //     return;
+            //
+            // vimperator.execute(res.args);
+
+            vimperator.execute(args);
+        },
         {
             usage: ["exe[cute] {expr1} [ ... ]"],
             short_help: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-            help: "<code class=\"command\">:execute echo test</code> would show a message with the text &#34;test&#34;.<br/>"
+            help: "Example: <code class=\"command\">:execute echo test</code> shows a message with the text &#34;test&#34;.<br/>"
         }
     ));
     addDefaultCommand(new Command(["exu[sage]"],
@@ -916,7 +945,7 @@ function Commands() //{{{
                   "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
-                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
+                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
             completer: function(filter) { return vimperator.completion.get_help_completions(filter); }
         }
     ));
@@ -926,7 +955,7 @@ function Commands() //{{{
             usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:history!</code> will open the default Firefox history window.",
+                  "The special version <code class=\"command\">:history!</code> opens the default Firefox history window.",
             completer: function(filter) { return vimperator.history.get(filter); }
         }
     ));
@@ -970,9 +999,9 @@ function Commands() //{{{
             usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}", "javascript[!]"], // \\n is changed to <br/> in the help.js code
             short_help: "Run any JavaScript command through eval()",
             help: "Acts as a JavaScript interpreter by passing the argument to <code>eval()</code>.<br/>" +
-                  "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
-                  "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-                  "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox.<br/>" +
+                  "<code class=\"command\">:javascript alert('Hello world')</code> shows a dialog box with the text \"Hello world\".<br/>" +
+                  "<code class=\"command\">:javascript &lt;&lt;EOF</code> reads all the lines until a line starting with 'EOF' is found, and interpret them with the JavaScript <code>eval()</code> function.<br/>" +
+                  "The special version <code class=\"command\">:javascript!</code> opens the JavaScript console of Firefox.<br/>" +
                   "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}&lt;Tab&gt;</code> (but not yet for the " +
                   "<code class=\"command\">:js &lt;&lt;EOF</code> multiline widget). Be aware that Vimperator needs to run {cmd} through eval() " +
                   "to get the completions, which could have unwanted side effects.",
@@ -1196,7 +1225,7 @@ function Commands() //{{{
         {
             usage: ["norm[al][!] {commands}"],
             short_help: "Execute Normal mode commands",
-            help: "<code class=\"command\">:normal 20j</code> would scroll 20 lines down."
+            help: "Example: <code class=\"command\">:normal 20j</code> scrolls 20 lines down."
         }
     ));
     // TODO: remove duplication in :map
@@ -1276,20 +1305,20 @@ function Commands() //{{{
                   "<ol>" +
                   "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>" +
                   "... is special and moves up the directory hierarchy as far as possible." +
-                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>" +
-                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
+                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com\"</code></li>" +
+                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
-                  "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
+                  "opens the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
                   "If you want to set a custom name, open the <var>$FIREFOX_PROFILE</var>/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt;</li>" +
                   "<li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
-                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a Google search for linux torvalds).</li>" +
-                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
-                  "open OSNews in the current, and Slashdot in a new background tab).</li>" +
+                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> opens a Google search for linux torvalds).</li>" +
+                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> " +
+                  "opens OSNews in the current, and Slashdot in a new background tab).</li>" +
                   "</ol>" +
-                  "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
-                  "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>" +
+                  "You can use <code class=\"command\">:open -tags linux torvalds&lt;Tab&gt;</code> to complete bookmarks " +
+                  "with tag \"linux\" and which contain \"torvalds\". Note that -tags support is only available for tab completion, not for the actual command.<br/>" +
                   "The items which are completed on <code class=\"mapping\">&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
@@ -1596,8 +1625,8 @@ function Commands() //{{{
                   "<code class=\"command\">:set option!</code> and <code class=\"command\">:set invoption</code> invert the value of a boolean option.<br/>" +
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code>(for string and list options) shows the current value of an option.<br/>" +
                   "<code class=\"command\">:set option&amp;</code> resets an option to its default value.<br/>" +
-                  "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> will add/subtract {value} to a number option and append/remove {value} to a string option.<br/>" +
-                  "<code class=\"command\">:set all</code> will show the current value of all options and <code class=\"command\">:set all&amp;</code> will reset all options to their default values.<br/>",
+                  "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> adds/subtracts {value} to a number option and append/remove {value} to a string option.<br/>" +
+                  "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
