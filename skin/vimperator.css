@@ -151,7 +151,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     text-decoration: none;
 }
 a.hl-URL:hover {
-    background-color: gray;
+    text-decoration: underline;
 }
 
 /* MOW */

@@ -516,7 +516,7 @@ function Commands() //{{{
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
                     var title = entry.title;
-                    if (vimperator.completion.match(filter, [url, title], false))
+                    if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return completions;
@@ -575,15 +575,27 @@ function Commands() //{{{
         }
     ));
     addDefaultCommand(new Command(["bmarks"],
-        function(args, special) { vimperator.bookmarks.list(args, special); },
+        function(args, special)
+        {
+            var res = parseArgs(args, this.args);
+            if (res.error)
+            {
+                vimperator.echoerr(res.error);
+                return false;
+            }
+            
+            var tags = getOption(res.opts, "-tags", []);
+            vimperator.bookmarks.list(res.args.join(" "), tags, special);
+        },
         {
             usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
             help: "Open the message window at the bottom of the screen with all bookmarks which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
                   "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.<br/>" +
-                  "The following options WILL be interpreted in the future:<br/>" +
-                  " -T comma,separated,tag,list<br/>",
-            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
+                  "Filter can also contain the following options:<br/>" +
+                  "-tags=comma,separated,tag,list<br/>",
+            completer: function(filter) { return vimperator.bookmarks.get(filter); },
+            args: [[["-tags", "-T"],     OPTION_LIST]]
         }
     ));
     addDefaultCommand(new Command(["b[uffer]"],
@@ -637,7 +649,7 @@ function Commands() //{{{
                   "The following options WILL be interpreted in the future:<br/>" +
                   " [!] a special version to delete ALL bookmarks <br/>" +
                   " -T comma,separated,tag,list <br/>",
-            completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
+            completer: function(filter) { return vimperator.bookmarks.get(filter); }
         }
     ));
     addDefaultCommand(new Command(["com[mand]"],
@@ -858,7 +870,7 @@ function Commands() //{{{
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
                     var title = entry.title;
-                    if (vimperator.completion.match(filter, [url, title], false))
+                    if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return completions;
@@ -895,7 +907,7 @@ function Commands() //{{{
             short_help: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
                   "The special version <code class=\"command\">:history!</code> will open the default Firefox history window.",
-            completer: function(filter) { return vimperator.completion.get_history_completions(filter); }
+            completer: function(filter) { return vimperator.history.get(filter); }
         }
     ));
     addDefaultCommand(new Command(["javas[cript]", "js"],
@@ -1853,7 +1865,7 @@ function Commands() //{{{
                     // undoItems[i].image is also available if need for favicons
                     var url = undoItems[i].state.entries[0].url;
                     var title = undoItems[i].title;
-                    if (vimperator.completion.match(filter, [url, title], false))
+                    if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return completions;

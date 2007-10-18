@@ -29,9 +29,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.util = {
     escapeHTML: function(str)
     {   
-        var e = window.content.document.createElement("div");
-        e.appendChild(window.content.document.createTextNode(str));
-        return e.innerHTML;
+        // XXX: the following code is _much- slower then a simple .replace()
+        // :history display went down from 2 to 1 second after changing
+        //
+        // var e = window.content.document.createElement("div");
+        // e.appendChild(window.content.document.createTextNode(str));
+        // return e.innerHTML;
+        return str.replace(/</, "&lt;").replace(/>/, "&gt;");
     },
 
     // TODO: use :highlight color groups

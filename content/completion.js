@@ -104,65 +104,6 @@ vimperator.completion = (function() // {{{
         return filtered;
     } //}}}
 
-    /* discard all entries in the 'urls' array, which don't match 'filter */
-    function filter_url_array(urls, filter) //{{{
-    {
-        var filtered = [];
-        // completions which don't match the url but just the description
-        // list them add the end of the array
-        var additional_completions = [];
-
-        if (!filter) return urls.map(function($_) {
-            return [$_[0], $_[1]]
-        });
-
-        var ignorecase = false;
-        if (filter == filter.toLowerCase())
-            ignorecase = true;
-
-        /*
-         * Longest Common Subsequence
-         * This shouldn't use build_longest_common_substring
-         * for performance reasons, so as not to cycle through the urls twice
-         */
-        for (var i = 0; i < urls.length; i++)
-        {
-            var url = urls[i][0] || "";
-            var title = urls[i][1] || "";
-            if (ignorecase)
-            {
-                url = url.toLowerCase();
-                title = title.toLowerCase();
-            }
-
-            if (url.indexOf(filter) == -1)
-            {
-                if (title.indexOf(filter) != -1)
-                    additional_completions.push([ urls[i][0], urls[i][1] ]);
-                continue;
-            }
-            if (g_substrings.length == 0)   // Build the substrings
-            {
-                var last_index = url.lastIndexOf(filter);
-                var url_length = url.length;
-                for (var k = url.indexOf(filter); k != -1 && k <= last_index; k = url.indexOf(filter, k + 1))
-                {
-                    for (var l = k + filter.length; l <= url_length; l++)
-                        g_substrings.push(url.substring(k, l));
-                }
-            }
-            else
-            {
-                g_substrings = g_substrings.filter(function($_) {
-                    return url.indexOf($_) >= 0;
-                });
-            }
-            filtered.push([urls[i][0], urls[i][1]]);
-        }
-
-        return filtered.concat(additional_completions);
-    } //}}}
-
     return {
         /*
          * returns the longest common substring
@@ -201,9 +142,9 @@ vimperator.completion = (function() // {{{
                 if (cpt[i] == 's')
                     completions = completions.concat(this.get_search_completions(filter));
                 else if (cpt[i] == 'b')
-                    completions = completions.concat(this.get_bookmark_completions(filter));
+                    completions = completions.concat(vimperator.bookmarks.get(filter));
                 else if (cpt[i] == 'h')
-                    completions = completions.concat(this.get_history_completions(filter));
+                    completions = completions.concat(vimperator.history.get(filter));
                 else if (cpt[i] == 'f')
                     completions = completions.concat(this.get_file_completions(filter, true));
             }
@@ -222,18 +163,6 @@ vimperator.completion = (function() // {{{
                 return [[engine[0]], engine[1]];
             });
             return build_longest_common_substring(mapped, filter);
-        }, //}}}
-
-        get_history_completions: function(filter) //{{{
-        {
-            var items = vimperator.history.get();
-            return filter_url_array(items, filter);
-        }, //}}}
-
-        get_bookmark_completions: function(filter) //{{{
-        {
-            var bookmarks = vimperator.bookmarks.get();
-            return filter_url_array(bookmarks, filter);
         }, //}}}
 
         // TODO: support file:// and \ or / path separators on both platforms
@@ -540,10 +469,104 @@ vimperator.completion = (function() // {{{
             return build_longest_starting_substring(completions, filter);
         }, // }}}
 
-        // helper function which checks if the given arguments pass "filter"
+        // discard all entries in the 'urls' array, which don't match 'filter
+        // urls must be of type [["url", "title"], [...]] or optionally
+        //                      [["url", "title", keyword, [tags]], [...]]
+        filterURLArray: function(urls, filter, tags) //{{{
+        {
+            var filtered = [];
+            // completions which don't match the url but just the description
+            // list them add the end of the array
+            var additional_completions = [];
+
+            if (urls.length == 0)
+                return [];
+
+            var hasTags = urls[0].length >= 4;
+            // TODO: create a copy of urls?
+            if (!filter && (!hasTags || !tags))
+                return urls;
+
+            tags = tags || [];
+
+            // TODO: use ignorecase and smartcase settings
+            var ignorecase = true;
+            if (filter != filter.toLowerCase() || tags.join(",") != tags.join(",").toLowerCase())
+                ignorecase = false;
+
+            if (ignorecase)
+            {
+                filter = filter.toLowerCase();
+                tags = tags.map(function(t) { return t.toLowerCase(); });
+            }
+
+            /*
+             * Longest Common Subsequence
+             * This shouldn't use build_longest_common_substring
+             * for performance reasons, so as not to cycle through the urls twice
+             */
+            outer:
+            for (var i = 0; i < urls.length; i++)
+            {
+                var url   = urls[i][0] || "";
+                var title = urls[i][1] || "";
+                var tag   = urls[i][3] || [];
+
+                if (ignorecase)
+                {
+                    url = url.toLowerCase();
+                    title = title.toLowerCase();
+                    tag = tag.map(function(t) { return t.toLowerCase(); });
+                }
+
+                // filter on tags
+                for (var j = 0; j < tags.length; j++)
+                {
+                    if (!tags[j])
+                        continue;
+
+                    if (tag.indexOf(tags[j]) == -1)
+                        continue outer;
+                }
+
+                if (url.indexOf(filter) == -1)
+                {
+                    if (title.indexOf(filter) >= 0)
+                        additional_completions.push(urls[i]);
+
+                    continue;
+                }
+
+                // TODO: refactor out? And just build if wildmode contains longest?
+                if (g_substrings.length == 0)   // Build the substrings
+                {
+                    var last_index = url.lastIndexOf(filter);
+                    var url_length = url.length;
+                    if (last_index >= 0 && last_index < url_length) // do not build substrings, if we don't match filter
+                    {
+                        for (var k = url.indexOf(filter); k != -1 && k <= last_index; k = url.indexOf(filter, k + 1))
+                        {
+                            for (var l = k + filter.length; l <= url_length; l++)
+                                g_substrings.push(url.substring(k, l));
+                        }
+                    }
+                }
+                else
+                {
+                    g_substrings = g_substrings.filter(function($_) {
+                        return url.indexOf($_) >= 0;
+                    });
+                }
+
+                filtered.push(urls[i]);
+            }
+
+            return filtered.concat(additional_completions);
+        }, //}}}
+
+        // generic helper function which checks if the given "items" array pass "filter"
         // items must be an array of strings
-        // if case_sensitive == true, be sure to pass filter already in lowercased version
-        match: function(filter, items, case_sensitive)
+        match: function(items, filter, case_sensitive)
         {
             if (typeof(filter) != "string" || !items)
                 return false;
@@ -552,15 +575,16 @@ vimperator.completion = (function() // {{{
             {
                 for (var i = 0; i < items.length; i++)
                 {
-                    if (items[i].toLowerCase().indexOf(filter) > -1)
+                    if (items[i].indexOf(filter) > -1)
                         return true;
                 }
             }
             else
             {
+                filter = filter.toLowerCase();
                 for (var i = 0; i < items.length; i++)
                 {
-                    if (items[i].indexOf(filter) > -1)
+                    if (items[i].toLowerCase().indexOf(filter) > -1)
                         return true;
                 }
             }

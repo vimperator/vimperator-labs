@@ -99,17 +99,15 @@ function Bookmarks() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: add filtering here rather than having to calling get_bookmark_completions()
-    //
     // if "bypass_cache" is true, it will force a reload of the bookmarks database
     // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
     // takes about 1 sec
-    this.get = function(filter, bypass_cache)
+    this.get = function(filter, tags, bypass_cache)
     {
         if (!bookmarks || bypass_cache)
             load();
 
-        return bookmarks;
+        return vimperator.completion.filterURLArray(bookmarks, filter, tags);
     }
 
     this.add = function (title, url, keyword, tags)
@@ -178,6 +176,7 @@ function Bookmarks() //{{{
         return count.value;
     }
 
+    // TODO: add filtering
     // also ensures that each search engine has a Vimperator-friendly alias
     this.getSearchEngines = function()
     {
@@ -210,6 +209,7 @@ function Bookmarks() //{{{
         return search_engines;
     }
 
+    // TODO: add filtering
     // format of returned array:
     // [keyword, helptext, url]
     this.getKeywords = function()
@@ -271,7 +271,7 @@ function Bookmarks() //{{{
             return url; // can be null
     }
 
-    this.list = function(filter, fullmode)
+    this.list = function(filter, tags, fullmode)
     {
         if (fullmode)
         {
@@ -279,8 +279,7 @@ function Bookmarks() //{{{
         }
         else
         {
-            //var items = vimperator.completion.get_bookmark_completions(filter);
-            var items = this.get(filter, false);
+            var items = this.get(filter, tags, false);
 
             if (items.length == 0)
             {
@@ -375,14 +374,12 @@ function History() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: add filtering here rather than having to call
-    // get_bookmark_completions()
-    this.get = function()
+    this.get = function(filter)
     {
         if (!history)
             load();
 
-        return history;
+            return vimperator.completion.filterURLArray(history, filter);
     }
 
     // the history is automatically added to the Places global history
@@ -451,7 +448,7 @@ function History() //{{{
         }
         else
         {
-            var items = vimperator.completion.get_history_completions(filter);
+            var items = this.get(filter);
 
             if (items.length == 0)
             {
@@ -463,22 +460,18 @@ function History() //{{{
                 return;
             }
 
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-                for (var i = 0; i < items.length; i++)
-                {
-                    var title = vimperator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
-                    var url = vimperator.util.escapeHTML(items[i][0]);
-                    list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
-                }
-                list += "</table>";
-
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                var title = vimperator.util.escapeHTML(items[i][1]);
+                if (title.length > 50)
+                    title = title.substr(0, 47) + "...";
+                var url = vimperator.util.escapeHTML(items[i][0]);
+                list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
             }
+            list += "</table>";
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
     }
     //}}}
