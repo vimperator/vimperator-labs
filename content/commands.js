@@ -151,6 +151,7 @@ function Commands() //{{{
 
     // in '-quoted strings, only ' and \ itself are escaped
     // in "-quoted strings, also ", \n and \t are translated
+    // in non-quoted strings everything is taken literally apart from "\ " and "\\"
     //
     // "options" is an array [name, type, validator, completions] and could look like:
     //  options = [[["-force"], OPTION_NOARG],
@@ -214,11 +215,17 @@ function Commands() //{{{
                     }
                     else
                     {
-                        in_escape_key = true;
-                        if (in_single_string && str[i+1] != "\\" && str[i+1] != "'")
+                        // only escape "\\" and "\ " in non quoted strings
+                        if (!in_single_string && !in_double_string && str[i+1] != "\\" && str[i+1] != " ")
+                            continue outer;
+                        // only escape "\\" and "\'" in single quoted strings
+                        else if (in_single_string && str[i+1] != "\\" && str[i+1] != "'")
                             break;
                         else
+                        {
+                            in_escape_key = true;
                             continue outer;
+                        }
                     }
                     break;
 
@@ -660,7 +667,7 @@ function Commands() //{{{
                 vimperator.echoerr(res.error);
             else
             {
-                vimperator.echo(vimperator.util.colorize(res));
+                vimperator.echo(vimperator.util.colorize(res.args));
             }
         },
         {
