@@ -271,8 +271,9 @@ function Commands() //{{{
         if (!options)
             options = [];
 
+        var invalid = false;
         var arg = null;
-        var count = 0;
+        var count = 0; // the length of the argument
         var i = 0;
         outer:
         while(i < str.length)
@@ -293,11 +294,11 @@ function Commands() //{{{
                     optname = options[opt][0][name];
                     if (sub.indexOf(optname) == 0)
                     {
-                        var invalid = false;
+                        invalid = false;
+                        arg = null;
                         // no value to the option
-                        if (optname.length >= sub.length || /\s/.test(sub[optname.length]))
+                        if (optname.length >= sub.length)
                         {
-                            arg = null;
                             count = 0;
                         }
                         else if (sub[optname.length] == "=")
@@ -307,6 +308,18 @@ function Commands() //{{{
                                 return { error: "Invalid argument for option " + optname, opts: [], args: [] }
 
                             count++; // to compensate the "=" character
+                        }
+                        else if (options[opt][1] != OPTION_NOARG && /\s/.test(sub[optname.length]))
+                        {
+                            [count, arg] = getNextArg(sub.substr(optname.length + 1));
+                            if (count == -1)
+                                return { error: "Invalid argument for option " + optname, opts: [], args: [] }
+
+                            // if we add the argument to an option after a space, it MUST not be empty
+                            if (arg.length == 0)
+                                arg = null;
+
+                            count++; // to compensate the " " character
                         }
                         else
                         {
