@@ -150,7 +150,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: green;
     text-decoration: none;
 }
-.hl-URL:hover {
+a.hl-URL:hover {
     background-color: gray;
 }
 
