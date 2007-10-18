@@ -1714,6 +1714,16 @@ function Commands() //{{{
             short_help: "Show help for normal mode commands"
         }
     ));
+    addDefaultCommand(new Command(["winc[lose]", "wc[lose]"],
+        function(args)
+        {
+            window.close();
+        },
+        {
+            usage: ["winc[ose] [url] [, url]"],
+            short_help: "Close window",
+        }
+    ));
     addDefaultCommand(new Command(["wino[pen]", "wo[pen]", "wine[dit]"],
         function(args)
         {
@@ -1725,7 +1735,7 @@ function Commands() //{{{
         {
             usage: ["wino[pen] [url] [, url]"],
             short_help: "Open one or more URLs in a new window",
-            help: "NOTE: Multiple windows are not really supported by Vimperator, use at your own risk!"
+            help: "Like <code class=\"command\">:open</code> but open URLs in a new window.<br/>"
         }
     ));
     addDefaultCommand(new Command(["wqa[ll]", "wq", "xa[ll]"],
