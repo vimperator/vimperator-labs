@@ -382,6 +382,22 @@ function Mappings() //{{{
                   "WARNING: This mapping may be removed/changed in future."
         }
     ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["gb"],
+        function(count) { vimperator.buffer.switchTo(null, null, count, false); },
+        {
+            short_help: "Repeat last :buffer[!] command",
+            help: "This is useful to quickly jump between buffers which have a similar URL or title.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new Map(vimperator.modes.NORMAL, ["gB"],
+        function(count) { vimperator.buffer.switchTo(null, null, count, true); },
+        {
+            short_help: "Repeat last :buffer[!] command in reverse direction",
+            help: "Just like <code class=\"mapping\">gb</code> but in the other direction.",
+            flags: Mappings.flags.COUNT
+        }
+    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["d"],
         function(count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
         {

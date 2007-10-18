@@ -31,6 +31,9 @@ function Buffer() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    // used for the "B" mapping to remember the last :buffer[!] command
+    var lastBufferSwitchArgs = ""; 
+    var lastBufferSwitchSpecial = true;
 
     var zoom_manager = ZoomManager.prototype.getInstance();
     const ZOOM_INTERVAL = 25;
@@ -162,7 +165,6 @@ function Buffer() //{{{
         return result;
     }
 
-    // TODO: move to v.buffers.list()
     this.list = function(fullmode)
     {
         if (fullmode)
@@ -372,6 +374,66 @@ function Buffer() //{{{
         vimperator.bufferwindow.show(items);
         vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
     }
+
+    // XXX: should this be in v.buffers. or v.tabs.?
+    // "buffer" is a string which matches the URL or title of a buffer, if it
+    // is null, the last used string is used again
+    this.switchTo = function(buffer, allowNonUnique, count, reverse)
+    {
+        if (buffer != null)
+        {
+            // store this command, so it can be repeated with "B"
+            lastBufferSwitchArgs = buffer;
+            lastBufferSwitchSpecial = allowNonUnique;
+        }
+        else
+        {
+            buffer = lastBufferSwitchArgs;
+            if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
+                allowNonUnique = lastBufferSwitchSpecial;
+        }
+
+        if (!count || count < 1)
+            count = 1;
+        if (typeof reverse != "boolean")
+            reverse = false;
+
+        var match;
+        if (match = buffer.match(/^(\d+):?/))
+            return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
+
+        var matches = [];
+        var lower_buffer = buffer.toLowerCase();
+        var first = vimperator.tabs.index() + (reverse ? 0 : 1);
+        for (var i = 0; i < getBrowser().browsers.length; i++)
+        {
+            var index = (i + first) % getBrowser().browsers.length;
+            var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+            var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
+            if (url == buffer)
+                return vimperator.tabs.select(index, false);
+
+            if (url.indexOf(buffer) >= 0 || title.indexOf(lower_buffer) >= 0)
+                matches.push(index);
+        }
+        if (matches.length == 0)
+            vimperator.echoerr("E94: No matching buffer for " + buffer);
+        else if (matches.length > 1 && !allowNonUnique)
+            vimperator.echoerr("E93: More than one match for " + buffer);
+        else
+        {
+            if (reverse)
+            {
+                index = matches.length - count;
+                while (index < 0)
+                    index += matches.length;
+            }
+            else
+                index = (count-1) % matches.length;
+
+            vimperator.tabs.select(matches[index], false);
+        }
+    };
 
     this.zoomIn = function(steps)
     {
