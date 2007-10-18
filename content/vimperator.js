@@ -870,6 +870,7 @@ const vimperator = (function() //{{{
                 }
             }, 50);
 
+            vimperator.statusline.update();
             vimperator.log("Vimperator fully initialized", 1);
         },
 
