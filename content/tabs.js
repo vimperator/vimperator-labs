@@ -172,8 +172,14 @@ function Tabs() //{{{
             count = 1;
 
         if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
-            vimperator.quit(quit_on_last_tab == 2);
+        {
+            if (vimperator.windows.length > 1)
+                window.close();
+            else
+                vimperator.quit(quit_on_last_tab == 2);
 
+            return;
+        }
 
         var index = this.index(tab);
         if (focus_left_tab)

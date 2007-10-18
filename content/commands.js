@@ -1121,8 +1121,9 @@ function Commands() //{{{
     addDefaultCommand(new Command(["q[uit]"],
         function() { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         {
-            short_help: "Quit current tab or quit Vimperator if this was the last tab",
-            help: "When quitting Vimperator, the session is not stored."
+            short_help: "Quit current tab",
+            help: "If this is the last tab in the window, close the window. If this was the " +
+                  "last window, close Vimperator. When quitting Vimperator, the session is not stored."
         }
     ));
     addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
