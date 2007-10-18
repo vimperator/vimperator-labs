@@ -2,13 +2,9 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
-	* new :winclose command
-	* :q doesn't close the whole browser, if there are more than one windows
-	* new gb and gB mappings to repeat the last :buffer[!] command,
 	* :ls, :history and :bmarks output is now hyperlinked
 	* tags and keyword support for :bmark
 	* added full zoom, and changed keybindings slightly for text zoom
-	* :buffer partial_string works now as in vim, and with ! even better
 	* improvements for scrollable -- more -- prompt
 	* changed 'I' key to Ctrl-Q to also work in textboxes
 	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
@@ -155,7 +151,7 @@
 	* :help section supported, :help :set will show help for the :set command
 	  (patch from Viktor Kojouharov)
 	* :source support, and auto-sourcing ~/.vimperatorrc on startup
-	* :javascript &lt;&lt;EOF support to execute multiline javascript code
+	* :javascript <<EOF support to execute multiline javascript code
 	  also changed :exec to behave more vim like
 	* fixed saving of session
 	* fixed hints display when zooming in/out of a web page
