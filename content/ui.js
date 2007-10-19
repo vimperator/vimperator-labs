@@ -706,8 +706,34 @@ function CommandLine() //{{{
                 break;
 
             case "<LeftMouse>":
-            case "<A-LeftMouse>":
+                if (event.originalTarget.className == "hl-URL buffer-list")
+                {
+                    vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent) - 1);
+                    close_window = true;
+                    break;
+                }
+                else if (event.originalTarget.localName.toLowerCase() == "a")
+                {
+                    vimperator.open(event.originalTarget.textContent);
+                    break;
+                }
+            case "<A-LeftMouse>": // for those not owning a 3-button mouse
+            case "<MiddleMouse>":
+                if (event.originalTarget.localName.toLowerCase() == "a")
+                {
+                    var where = /\btabopen\b/.test(vimperator.options["activate"]) ?
+                                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
+                    vimperator.open(event.originalTarget.textContent, where);
+                }
+                break;
+
+            // let firefox handle those to select table cells or show a context menu
             case "<C-LeftMouse>":
+            case "<RightMouse>":
+            case "<C-S-LeftMouse>":
+                break;
+
+            // XXX: what's that for? --mst
             case "<S-LeftMouse>":
                 if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
                     ; // fall through

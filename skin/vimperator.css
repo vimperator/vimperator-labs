@@ -4,7 +4,7 @@
 
 #vimperator-bufferwindow, #vimperator-completion, #vimperator-previewwindow {
     -moz-user-focus: ignore;
-    overflow: -moz-scrollbars-none;
+    overflow: -moz-scrollbars-none !important; /* does not seem to work fully */
     border-width: 0px !important;
     -moz-appearance: none !important; /* prevent an ugly 3D border */
 }
@@ -112,11 +112,21 @@
     background-color: #FF6060 !important; /* light red */
     color: black !important;
 }
+.hl-URL {
+    background-color: white;
+    color: green;
+    text-decoration: none;
+}
+a.hl-URL:hover {
+    text-decoration: underline;
+}
 
 /* MOW */
 
 #vimperator-multiline-output {
     overflow: hidden;
+    background-color: white;
+    color: black;
 }
 
 #vimperator-multiline-output-content {
@@ -137,6 +147,10 @@
 #vimperator-multiline-output-content td,
 #vimperator-multiline-output-content th {
     padding: 0px 2px;
+}
+
+#vimperator-multiline-output-content a {
+    cursor: pointer;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

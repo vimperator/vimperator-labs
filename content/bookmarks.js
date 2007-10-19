@@ -269,22 +269,19 @@ function Bookmarks() //{{{
                 return;
             }
 
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-                for (var i = 0; i < items.length; i++)
-                {
-                    var title = vimperator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
-                    var url = vimperator.util.escapeHTML(items[i][0]);
-                    list += "<tr><td>" + title + "</td><td style=\"color: green; width: 100%\">" + url + "</td></tr>";
-                }
-                list += "</table>";
-
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
+                var title = vimperator.util.escapeHTML(items[i][1]);
+                if (title.length > 50)
+                    title = title.substr(0, 47) + "...";
+                var url = vimperator.util.escapeHTML(items[i][0]);
+                list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
             }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
         }
     }
 
@@ -505,22 +502,18 @@ function History() //{{{
                 return;
             }
 
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-                for (var i = 0; i < items.length; i++)
-                {
-                    var title = vimperator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
-                    var url = vimperator.util.escapeHTML(items[i][0]);
-                    list += "<tr><td>" + title + "</td><td style=\"color: green;\">" + url + "</td></tr>";
-                }
-                list += "</table>";
-
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
+                var title = vimperator.util.escapeHTML(items[i][1]);
+                if (title.length > 50)
+                    title = title.substr(0, 47) + "...";
+                var url = vimperator.util.escapeHTML(items[i][0]);
+                list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
             }
+            list += "</table>";
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
         }
     }
     //}}}
