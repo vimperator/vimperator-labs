@@ -16,6 +16,8 @@ unlet b:current_syntax
 syn keyword vimperatorTodo    FIXME NOTE TODO XXX contained
 syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
 
+syn region vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
+
 syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load] bw[ipeout] delbm[arks]
 	\ delm[arks] delqm[arks] dl downl[oads] e[dit] ec[ho] echoe[rr] exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy]
 	\ hist[ory] hs javas[cript] js ls ma[rk] map mapc[lear] marks no[remap] noh[lsearch] norm[al] o[pen] pc[lose]
@@ -49,6 +51,7 @@ hi def link vimperatorTodo			Todo
 hi def link vimperatorComment			Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
 hi def link vimperatorOption			PreProc
+hi def link vimperatorString			String 
 
 let b:current_syntax = "vimperator"
 
