@@ -303,18 +303,13 @@ function Editor() //{{{
 
     this.editWithExternalEditor = function()
     {
-        function err(msg)
-        {
-            vimperator.callFunctionInThread(null, vimperator.echoerr, [msg]);
-        }
-
         var textBox = document.commandDispatcher.focusedElement;
         var editor = vimperator.options["editor"];
         var args = [];
         args = editor.split(" ");
         if (args.length < 1)
         {
-            err("no editor specified");
+            vimperator.echoerr("no editor specified");
             return;
         }
 
@@ -324,7 +319,7 @@ function Editor() //{{{
         }
         catch (e)
         {
-            err("Could not create temporary file: " + e.message);
+            vimperator.echoerr("Could not create temporary file: " + e.message);
             return;
         }
         try 
@@ -333,7 +328,7 @@ function Editor() //{{{
         }
         catch (e)
         {
-            err("Could not write to temporary file " + tmpfile.path + ": " + e.message);
+            vimperator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
             return;
         }
 
@@ -359,7 +354,7 @@ function Editor() //{{{
             }
             catch (e)
             {
-                err("Could not read from temporary file " + tmpfile.path + ": " + e.message);
+                vimperator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
             }
         }
         tmpfile.remove(false);
