@@ -324,7 +324,7 @@ function Commands() //{{{
         {
             usage: ["bma[rk] [-t {title}] [url]"],
             short_help: "Add a bookmark",
-            help: "If you don't add a custom title, either the title of the web page or the URL will be taken as the title.<br/>" +
+            help: "If you don't add a custom title, either the title of the web page or the URL is taken as the title.<br/>" +
                   "You can omit the optional <code class=\"argument\">[url]</code> argument, so just do <code class=\"command\">:bmark</code> to bookmark the currently loaded web page with a default title and without any tags.<br/>" +
                   " -t \"custom title\"<br/>" +
                   "The following options will be interpreted in the future:<br/>" +
@@ -339,7 +339,7 @@ function Commands() //{{{
             usage: ["bmarks [filter]", "bmarks!"],
             short_help: "Show bookmarks",
             help: "Open the message window at the bottom of the screen with all bookmarks which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:bmarks!</code> will open the default Firefox bookmarks window.<br/>" +
+                  "The special version <code class=\"command\">:bmarks!</code> opens the default Firefox bookmarks window.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " -T comma,separated,tag,list<br/>",
             completer: function(filter) { return vimperator.completion.get_bookmark_completions(filter); }
@@ -451,9 +451,9 @@ function Commands() //{{{
             usage: ["delm[arks] {marks}", "delm[arks]!"],
             short_help: "Delete the specified marks",
             help: "Marks are presented as a list. Example:<br/>" +
-                "<code class=\"command\">:delmarks Aa b p</code> will delete marks A, a, b and p<br/>" +
-                "<code class=\"command\">:delmarks b-p</code> will delete all marks in the range b to p<br/>" +
-                "<code class=\"command\">:delmarks!</code> will delete all marks for the current buffer"
+                "<code class=\"command\">:delmarks Aa b p</code> deletes marks A, a, b and p<br/>" +
+                "<code class=\"command\">:delmarks b-p</code> deletes all marks in the range b to p<br/>" +
+                "<code class=\"command\">:delmarks!</code> deletes all marks for the current buffer"
         }
 
     ));
@@ -481,9 +481,9 @@ function Commands() //{{{
             usage: ["delqm[arks] {marks}", "delqm[arks]!"],
             short_help: "Delete the specified QuickMarks",
             help: "QuickMarks are presented as a list. Example:<br/>" +
-                "<code class=\"command\">:delqmarks Aa b p</code> will delete QuickMarks A, a, b and p<br/>" +
-                "<code class=\"command\">:delqmarks b-p</code> will delete all QuickMarks in the range b to p<br/>" +
-                "<code class=\"command\">:delqmarks!</code> will delete all QuickMarks"
+                "<code class=\"command\">:delqmarks Aa b p</code> deletes QuickMarks A, a, b and p<br/>" +
+                "<code class=\"command\">:delqmarks b-p</code> deletes all QuickMarks in the range b to p<br/>" +
+                "<code class=\"command\">:delqmarks!</code> deletes all QuickMarks"
         }
     ));
     addDefaultCommand(new Command(["downl[oads]", "dl"],
@@ -557,7 +557,7 @@ function Commands() //{{{
         {
             usage: ["exe[cute] {expr1} [ ... ]"],
             short_help: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-            help: "<code class=\"command\">:execute echo test</code> would show a message with the text &#34;test&#34;.<br/>"
+            help: "Example: <code class=\"command\">:execute echo test</code> shows a message with the text &#34;test&#34;.<br/>"
         }
     ));
     addDefaultCommand(new Command(["exu[sage]"],
@@ -628,7 +628,7 @@ function Commands() //{{{
                   "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
-                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> will complete <code class=\"command\">:help :help</code>.",
+                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
             completer: function(filter) { return vimperator.completion.get_help_completions(filter); }
         }
     ));
@@ -638,7 +638,7 @@ function Commands() //{{{
             usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:history!</code> will open the default Firefox history window.",
+                  "The special version <code class=\"command\">:history!</code> opens the default Firefox history window.",
             completer: function(filter) { return vimperator.completion.get_history_completions(filter); }
         }
     ));
@@ -682,9 +682,9 @@ function Commands() //{{{
             usage: ["javas[cript] {cmd}", "javascript <<{endpattern}\\n{script}\\n{endpattern}", "javascript[!]"], // \\n is changed to <br/> in the help.js code
             short_help: "Run any JavaScript command through eval()",
             help: "Acts as a JavaScript interpreter by passing the argument to <code>eval()</code>.<br/>" +
-                  "<code class=\"command\">:javascript alert('Hello world')</code> would show a dialog box with the text \"Hello world\".<br/>" +
-                  "<code class=\"command\">:javascript &lt;&lt;EOF</code> would read all the lines until a line starting with 'EOF' is found, and will <code>eval()</code> them.<br/>" +
-                  "The special version <code class=\"command\">:javascript!</code> will open the JavaScript console of Firefox.<br/>" +
+                  "<code class=\"command\">:javascript alert('Hello world')</code> shows a dialog box with the text \"Hello world\".<br/>" +
+                  "<code class=\"command\">:javascript &lt;&lt;EOF</code> reads all the lines until a line starting with 'EOF' is found, and interpret them with the JavaScript <code>eval()</code> function.<br/>" +
+                  "The special version <code class=\"command\">:javascript!</code> opens the JavaScript console of Firefox.<br/>" +
                   "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}&lt;Tab&gt;</code> (but not yet for the " +
                   "<code class=\"command\">:js &lt;&lt;EOF</code> multiline widget). Be aware that Vimperator needs to run {cmd} through eval() " +
                   "to get the completions, which could have unwanted side effects.",
@@ -908,7 +908,7 @@ function Commands() //{{{
         {
             usage: ["norm[al][!] {commands}"],
             short_help: "Execute Normal mode commands",
-            help: "<code class=\"command\">:normal 20j</code> would scroll 20 lines down."
+            help: "Example: <code class=\"command\">:normal 20j</code> scrolls 20 lines down."
         }
     ));
     // TODO: remove duplication in :map
@@ -988,20 +988,20 @@ function Commands() //{{{
                   "<ol>" +
                   "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>" +
                   "... is special and moves up the directory hierarchy as far as possible." +
-                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com\"</code></li>" +
-                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> will open <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
+                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com\"</code></li>" +
+                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
-                  "will open the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
-                  "If you want to set a custom name, open the $FIREFOX_PROFILE/searchplugins/*.xml file of the search engine, and add/change " +
+                  "opens the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +
+                  "If you want to set a custom name, open the <var>$FIREFOX_PROFILE</var>/searchplugins/*.xml file of the search engine, and add/change " +
                   "&lt;Alias&gt;myalias&lt;/Alias&gt;</li>" +
                   "<li>Opened with the default search engine or keyword (specified with the <code class=\"option\">'defsearch'</code> option) " +
-                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> will open a Google search for linux torvalds).</li>" +
-                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> will " +
-                  "open OSNews in the current, and Slashdot in a new background tab).</li>" +
+                  "if the first word is no search engine (<code class=\"command\">:open linus torvalds</code> opens a Google search for linux torvalds).</li>" +
+                  "<li>Passed directly to Firefox in all other cases (<code class=\"command\">:open www.osnews.com, www.slashdot.org</code> " +
+                  "opens OSNews in the current, and Slashdot in a new background tab).</li>" +
                   "</ol>" +
-                  "You WILL be able to use <code class=\"command\">:open [-T \"linux\"] torvalds&lt;Tab&gt;</code> to complete bookmarks " +
-                  "with tag \"linux\" and which contain \"torvalds\". Note that -T support is only available for tab completion, not for the actual command.<br/>" +
+                  "You can use <code class=\"command\">:open -tags linux torvalds&lt;Tab&gt;</code> to complete bookmarks " +
+                  "with tag \"linux\" and which contain \"torvalds\". Note that -tags support is only available for tab completion, not for the actual command.<br/>" +
                   "The items which are completed on <code class=\"mapping\">&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
@@ -1308,8 +1308,8 @@ function Commands() //{{{
                   "<code class=\"command\">:set option!</code> and <code class=\"command\">:set invoption</code> invert the value of a boolean option.<br/>" +
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code>(for string and list options) shows the current value of an option.<br/>" +
                   "<code class=\"command\">:set option&amp;</code> resets an option to its default value.<br/>" +
-                  "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> will add/subtract {value} to a number option and append/remove {value} to a string option.<br/>" +
-                  "<code class=\"command\">:set all</code> will show the current value of all options and <code class=\"command\">:set all&amp;</code> will reset all options to their default values.<br/>",
+                  "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> adds/subtracts {value} to a number option and append/remove {value} to a string option.<br/>" +
+                  "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
@@ -1386,7 +1386,7 @@ function Commands() //{{{
                   "NOTE: In both cases you must add functions to the global window object like shown above, functions written as:<br/>" +
                   "<code class=\"code\">function hello2() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/></code>are only available within the scope of the script. <br/><br/>" +
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
-                  "~ is supported as a shortcut for the $HOME directory.<br/>" +
+                  "~ is supported as a shortcut for the <var>$HOME</var> directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
             completer: function(filter) { return vimperator.completion.get_file_completions(filter); }
         }
