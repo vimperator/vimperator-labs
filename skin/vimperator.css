@@ -152,6 +152,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 a.hl-URL:hover {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 /* MOW */
@@ -180,10 +181,6 @@ a.hl-URL:hover {
 #vimperator-multiline-output-content td,
 #vimperator-multiline-output-content th {
     padding: 0px 2px;
-}
-
-#vimperator-multiline-output-content a {
-    cursor: pointer;
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
