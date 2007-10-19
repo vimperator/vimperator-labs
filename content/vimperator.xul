@@ -44,10 +44,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.7" src="completion.js"/>
     <script type="application/x-javascript;version=1.7" src="editor.js"/>
     <script type="application/x-javascript;version=1.7" src="events.js"/>
-    <script type="application/x-javascript;version=1.7" src="file.js"/>
     <script type="application/x-javascript;version=1.7" src="find.js"/>
     <script type="application/x-javascript;version=1.7" src="help.js"/>
     <script type="application/x-javascript;version=1.7" src="hints.js"/>
+    <script type="application/x-javascript;version=1.7" src="io.js"/>
     <script type="application/x-javascript;version=1.7" src="mappings.js"/>
     <script type="application/x-javascript;version=1.7" src="modes.js"/>
     <script type="application/x-javascript;version=1.7" src="options.js"/>
