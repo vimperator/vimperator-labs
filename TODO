@@ -25,6 +25,7 @@ FEATURES:
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 :set! should also set about:config options (with autocomplete)
 7 edit textareas with an external editor (https://addons.mozilla.org/en-US/firefox/addon/4125)
+6 :iabbr support for textfields
 6 use '' to jump between marks like vim
 6 downloading of links to filesystem (:save <filename>)
 6 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PageLoaded, any more?)
