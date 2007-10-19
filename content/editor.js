@@ -300,7 +300,70 @@ function Editor() //{{{
         vimperator.beep();
         return -1;
     }
-    
+
+    this.editWithExternalEditor = function()
+    {
+        function err(msg)
+        {
+            vimperator.callFunctionInThread(null, vimperator.echoerr, [msg]);
+        }
+
+        var textBox = document.commandDispatcher.focusedElement;
+        var editor = vimperator.options["editor"];
+        var args = [];
+        args = editor.split(" ");
+        if (args.length < 1)
+        {
+            err("no editor specified");
+            return;
+        }
+
+        try
+        {
+            var tmpfile = vimperator.io.createTempFile();
+        }
+        catch (e)
+        {
+            err("Could not create temporary file: " + e.message);
+            return;
+        }
+        try 
+        {
+            vimperator.io.writeFile(tmpfile, textBox.value);
+        }
+        catch (e)
+        {
+            err("Could not write to temporary file " + tmpfile.path + ": " + e.message);
+            return;
+        }
+
+        var prog = args.shift();
+        args.push(tmpfile.path)
+
+        textBox.setAttribute("readonly", "true");
+        var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+        // TODO: save return value in v:shell_error
+        vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
+        textBox.removeAttribute("readonly");
+
+//        if (retcode != 0)
+//        {
+//            err("External editor returned with exit code " + retcode);
+//        }
+//        else
+        {
+            try
+            {
+                var val = vimperator.io.readFile(tmpfile);
+                textBox.value = val;
+            }
+            catch (e)
+            {
+                err("Could not read from temporary file " + tmpfile.path + ": " + e.message);
+            }
+        }
+        tmpfile.remove(false);
+    }
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

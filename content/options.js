@@ -421,6 +421,16 @@ function Options() //{{{
             default_value: "google"
         }
     ));
+    addOption(new Option(["editor"], "string",
+        {
+            short_help: "Set the external text editor",
+            help: "Sets the editor to run when <code class=\"mapping\">&lt;C-i&gt;</code> " +
+                  "is pressed in INSERT and TEXTAREA modes. Note that vimperator will " +
+                  "not behave correctly if the editor forks its own process, such as with "+ 
+                  "gvim without the -f argument.", 
+            default_value: "gvim -f"
+        }
+    ));
     addOption(new Option(["extendedhinttags", "eht"], "string",
         {
             short_help: "XPath string of hintable elements activated by ';'",

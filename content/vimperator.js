@@ -697,13 +697,46 @@ const vimperator = (function() //{{{
 
         get windows() 
         {
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator);
             var wa = [];
             var enumerator = wm.getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())
                 wa.push(enumerator.getNext());
             return wa;
+        },
+
+        // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
+        callFunctionInThread: function(thread, func, args)
+        {
+            function CallbackEvent (func, args) 
+            {
+                if (!(args instanceof Array))
+                    args = [];
+
+                return {
+                    QueryInterface: function(iid) 
+                    {
+                        if (iid.equals(Components.interfaces.nsIRunnable) || 
+                            iid.equals(Components.interfaces.nsISupports))
+                            return this;
+                        throw Components.results.NS_ERROR_NO_INTERFACE;
+                    },
+
+                    run: function()
+                    {
+                        func.apply(window, args);
+                    }
+                }
+            }
+
+            if (!thread)
+                thread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+
+            // DISPATCH_SYNC is necessary, otherwise strange things will happen
+			thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
         }
+
     } //}}}
 })(); //}}}
 

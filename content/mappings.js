@@ -1920,6 +1920,10 @@ function Mappings() //{{{
         function() { vimperator.editor.pasteClipboard(); },
         { }
     ));
+    addDefaultMap(new Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<C-i>"], 
+        function() { vimperator.editor.editWithExternalEditor(); }, 
+        { }
+    ));
 
     //}}}
 
