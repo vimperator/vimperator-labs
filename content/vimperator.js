@@ -42,111 +42,6 @@ const vimperator = (function() //{{{
 
     var callbacks = [];
 
-    function expandPath(path)
-    {
-        const WINDOWS = navigator.platform == "Win32";
-
-        // TODO: proper pathname separator translation like Vim
-        if (WINDOWS)
-            path = path.replace('/', '\\', 'g');
-
-        // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
-        if (/^~/.test(path))
-        {
-            var home = environment_service.get("VIMPERATOR_HOME");
-
-            if (!home)
-                home = environment_service.get("HOME");
-
-            if (WINDOWS && !home)
-                home = environment_service.get("USERPROFILE") ||
-                       environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
-
-            path = path.replace("~", home);
-        }
-
-        // expand any $ENV vars
-        var env_vars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
-
-        if (env_vars)
-        {
-            var expansion;
-
-            for (var i = 0; i < env_vars.length; i++)
-            {
-                expansion = environment_service.get(env_vars[i].replace("$", ""));
-                if (expansion)
-                    path = path.replace(env_vars[i], expansion);
-            }
-        }
-
-        return path;
-    }
-
-    // TODO: add this functionality to LocalFile or wait for Scriptable I/O in FUEL
-    function pathExists(path)
-    {
-        var p = Components.classes["@mozilla.org/file/local;1"]
-            .createInstance(Components.interfaces.nsILocalFile);
-        p.initWithPath(expandPath(path));
-
-        return p.exists();
-    }
-
-    function getPluginDir()
-    {
-        var plugin_dir;
-
-        if (navigator.platform == "Win32")
-            plugin_dir = "~/vimperator/plugin";
-        else
-            plugin_dir = "~/.vimperator/plugin";
-
-        plugin_dir = expandPath(plugin_dir);
-
-        return pathExists(plugin_dir) ? plugin_dir : null;
-    }
-
-    function getRCFile()
-    {
-        var rc_file1 = expandPath("~/.vimperatorrc");
-        var rc_file2 = expandPath("~/_vimperatorrc");
-
-        if (navigator.platform == "Win32")
-            [rc_file1, rc_file2] = [rc_file2, rc_file1]
-
-        if (pathExists(rc_file1))
-            return rc_file1;
-        else if (pathExists(rc_file2))
-            return rc_file2;
-        else
-            return null;
-    }
-
-    // TODO: make secure
-    // TODO: test if it actually works on windows
-    function getTempFile()
-    {
-        var file = Components.classes["@mozilla.org/file/local;1"].
-                              createInstance(Components.interfaces.nsILocalFile);
-        if (navigator.platform == "Win32")
-        {
-            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "C:\\";
-            file.initWithPath(dir + "\\vimperator.tmp");
-        }
-        else
-        {
-            var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
-            file.initWithPath(dir + "/vimperator.tmp");
-        }
-        file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
-
-        if (file.exists())
-            return file;
-        else
-            return null;
-    }
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -561,7 +456,7 @@ const vimperator = (function() //{{{
         {
             const WINDOWS = navigator.platform == "Win32"; // FIXME: duplicated everywhere
 
-            var fileout = getTempFile();
+            var fileout = vimperator.io.createTempFile();
             if (!fileout)
                 return "";
 
@@ -573,10 +468,8 @@ const vimperator = (function() //{{{
             var filein = null;
             if (input)
             {
-                filein = getTempFile();
-                var fdin = vimperator.io.fopen(filein, ">");
-                fdin.write(input);
-                fdin.close();
+                filein = vimperator.io.createTempFile();
+                vimperator.io.writeFile(filein, input);
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
             }
 
@@ -586,48 +479,38 @@ const vimperator = (function() //{{{
             else
                 res = this.run("sh", ["-c", command], true);
 
-            var fd = vimperator.io.fopen(fileout, "<");
-            if (!fd)
-                return "";
-
-            var s = fd.read();
-            fd.close();
+            var output = vimperator.io.readFile(fileout);
             fileout.remove(false);
             if (filein)
                 filein.remove(false);
 
             // if there is only one \n at the end, chop it off
-            if (s && s.indexOf("\n") == s.length-1)
-                s = s.substr(0, s.length-1);
+            if (output && output.indexOf("\n") == output.length-1)
+                output = output.substr(0, output.length-1);
 
-            return s;
+            return output;
         },
 
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function(filename, silent)
         {
-            filename = expandPath(filename);
+            filename = vimperator.io.expandPath(filename);
 
             try
             {
-                var fd = vimperator.io.fopen(filename, "<");
-                if (!fd)
-                    return;
-
-                var s = fd.read();
-                fd.close();
+                var str = vimperator.io.readFile(filename);
 
                 // handle pure javascript files specially
                 if (filename.search("\.js$") != -1)
                 {
-                    eval(s);
+                    eval(str);
                 }
                 else
                 {
                     var heredoc = "";
                     var heredoc_end = null; // the string which ends the heredoc
-                    s.split("\n").forEach(function(line)
+                    str.split("\n").forEach(function(line)
                     {
                         if (heredoc_end) // we already are in a heredoc
                         {
@@ -750,7 +633,7 @@ const vimperator = (function() //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function() {
 
-                var rc_file = getRCFile();
+                var rc_file = vimperator.io.getRCFile();
 
                 if (rc_file)
                     vimperator.source(rc_file, true);
@@ -761,15 +644,13 @@ const vimperator = (function() //{{{
                 var entries = [];
                 try
                 {
-                    var plugin_dir = getPluginDir();
+                    var plugin_dir = vimperator.io.getPluginDir();
 
                     if (plugin_dir)
                     {
-                        var fd = vimperator.io.fopen(plugin_dir);
-                        var entries = fd.read();
-                        fd.close();
+                        var files = vimperator.io.readDirectory(plugin_dir);
                         vimperator.log("Sourcing plugin directory...", 3);
-                        entries.forEach(function(file) {
+                        files.forEach(function(file) {
                             if (!file.isDirectory())
                                 vimperator.source(file.path, false);
                         });

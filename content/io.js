@@ -27,153 +27,226 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.io = {};
-
-vimperator.io.fopen = function(path, mode, perms, tmp)
+vimperator.io = (function() 
 {
-    return new vimperator.io.LocalFile(path, mode, perms, tmp);
-}
+    var environment_service = Components.classes["@mozilla.org/process/environment;1"]
+        .getService(Components.interfaces.nsIEnvironment);
 
-vimperator.io.LocalFile = function(file, mode, perms, tmp) // {{{
-{
-    const PERM_IWOTH = 00002;  /* write permission, others */
-    const PERM_IWGRP = 00020;  /* write permission, group */
+    vimperator.log("Loading vimperator.io");
 
-    const MODE_RDONLY   = 0x01;
-    const MODE_WRONLY   = 0x02;
-    const MODE_RDWR     = 0x04;
-    const MODE_CREATE   = 0x08;
-    const MODE_APPEND   = 0x10;
-    const MODE_TRUNCATE = 0x20;
-    const MODE_SYNC     = 0x40;
-    const MODE_EXCL     = 0x80;
+    return {
 
-    const classes = Components.classes;
-    const interfaces = Components.interfaces;
+        MODE_RDONLY: 0x01,
+        MODE_WRONLY: 0x02,
+        MODE_RDWR: 0x04,
+        MODE_CREATE: 0x08,
+        MODE_APPEND: 0x10,
+        MODE_TRUNCATE: 0x20,
+        MODE_SYNC: 0x40,
+        MODE_EXCL: 0x80,
 
-    const LOCALFILE_CTRID = "@mozilla.org/file/local;1";
-    const FILEIN_CTRID = "@mozilla.org/network/file-input-stream;1";
-    const FILEOUT_CTRID = "@mozilla.org/network/file-output-stream;1";
-    const SCRIPTSTREAM_CTRID = "@mozilla.org/scriptableinputstream;1";
-
-    const nsIFile = interfaces.nsIFile;
-    const nsILocalFile = interfaces.nsILocalFile;
-    const nsIFileOutputStream = interfaces.nsIFileOutputStream;
-    const nsIFileInputStream = interfaces.nsIFileInputStream;
-    const nsIScriptableInputStream = interfaces.nsIScriptableInputStream;
-
-    if (typeof perms == "undefined")
-        perms = 0666 & ~(PERM_IWOTH | PERM_IWGRP);
-
-    if (typeof mode == "string")
-    {
-        switch (mode)
+        expandPath: function(path)
         {
-            case ">":
-                mode = MODE_WRONLY | MODE_CREATE | MODE_TRUNCATE;
-                break;
-            case ">>":
-                mode = MODE_WRONLY | MODE_CREATE | MODE_APPEND;
-                break;
-            case "<":
-                mode = MODE_RDONLY;
-                break;
-            default:
-                throw "Invalid mode ``" + mode + "''";
+            const WINDOWS = navigator.platform == "Win32";
+
+            // TODO: proper pathname separator translation like Vim
+            if (WINDOWS)
+                path = path.replace('/', '\\', 'g');
+
+            // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+            if (/^~/.test(path))
+            {
+                var home = environment_service.get("VIMPERATOR_HOME");
+
+                if (!home)
+                    home = environment_service.get("HOME");
+
+                if (WINDOWS && !home)
+                    home = environment_service.get("USERPROFILE") ||
+                           environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
+
+                path = path.replace("~", home);
+            }
+
+            // expand any $ENV vars
+            var env_vars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
+
+            if (env_vars)
+            {
+                var expansion;
+
+                for (var i = 0; i < env_vars.length; i++)
+                {
+                    expansion = environment_service.get(env_vars[i].replace("$", ""));
+                    if (expansion)
+                        path = path.replace(env_vars[i], expansion);
+                }
+            }
+
+            return path;
+        },
+
+        // path can also be a filename, not limited to directories
+        pathExists: function(path)
+        {
+            var p = Components.classes["@mozilla.org/file/local;1"]
+                .createInstance(Components.interfaces.nsILocalFile);
+            p.initWithPath(this.expandPath(path));
+
+            return p.exists();
+        },
+
+        getPluginDir: function()
+        {
+            var plugin_dir;
+
+            if (navigator.platform == "Win32")
+                plugin_dir = "~/vimperator/plugin";
+            else
+                plugin_dir = "~/.vimperator/plugin";
+
+            plugin_dir = this.expandPath(plugin_dir);
+
+            return this.pathExists(plugin_dir) ? plugin_dir : null;
+        },
+
+        getRCFile: function()
+        {
+            var rc_file1 = this.expandPath("~/.vimperatorrc");
+            var rc_file2 = this.expandPath("~/_vimperatorrc");
+
+            if (navigator.platform == "Win32")
+                [rc_file1, rc_file2] = [rc_file2, rc_file1]
+
+            if (this.pathExists(rc_file1))
+                return rc_file1;
+            else if (this.pathExists(rc_file2))
+                return rc_file2;
+            else
+                return null;
+        },
+
+        // return a nsILocalFile for path where you can call isDirectory(), etc. on
+        // caller must check with .exists() if the returned file really exists
+        getFile: function(path)
+        {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                                  createInstance(Components.interfaces.nsILocalFile);
+
+            file.initWithPath(this.expandPath(path));
+            return file;
+        },
+
+        // TODO: make secure
+        // returns a nsILocalFile or null if it could not be created
+        createTempFile: function()
+        {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                                  createInstance(Components.interfaces.nsILocalFile);
+            if (navigator.platform == "Win32")
+            {
+                var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "C:\\";
+                file.initWithPath(dir + "\\vimperator.tmp");
+            }
+            else
+            {
+                var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
+                file.initWithPath(dir + "/vimperator.tmp");
+            }
+
+            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
+            if (!file.exists())
+                return null;
+
+            return file;
+        },
+
+        // file is either a full pathname or an instance of file instanceof nsILocalFile
+        readDirectory: function(file)
+        {
+            if (typeof file == "string")
+                file = this.getFile(file);
+            else if (!(file instanceof Components.interfaces.nsILocalFile))
+                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+
+            if (file.isDirectory())
+            {
+                var entries = file.directoryEntries;
+                var array = [];
+                while (entries.hasMoreElements())
+                {
+                    var entry = entries.getNext();
+                    entry.QueryInterface(Components.interfaces.nsIFile);
+                    array.push(entry);
+                }
+                return array;
+            }
+            else
+                return []; // XXX: or should it throw an error, probably yes?
+        },
+
+        // file is either a full pathname or an instance of file instanceof nsILocalFile
+        // reads a file in "text" mode and returns the string
+        readFile: function(file)
+        {
+            var ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
+                           .createInstance(Components.interfaces.nsIFileInputStream);
+            var icstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
+                           .createInstance(Components.interfaces.nsIConverterInputStream);
+
+            var charset = "UTF-8";
+            if (typeof file == "string")
+                file = this.getFile(file);
+            else if (!(file instanceof Components.interfaces.nsILocalFile))
+                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+
+            ifstream.init(file, -1, 0, 0);
+            const replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
+            icstream.init(ifstream, charset, 4096, replacementChar); // 4096 bytes buffering
+
+            var buffer = "";
+            var str = {};
+            while (icstream.readString(4096, str) != 0)
+                buffer += str.value;
+
+            icstream.close();
+            ifstream.close();
+
+            return buffer;
+        },
+
+        // file is either a full pathname or an instance of file instanceof nsILocalFile
+        // default permission = 0644, only used when creating a new file, does not change permissions if the file exists
+        // mode can be ">" or ">>" in addition to the normal MODE_* flags
+        writeFile: function(file, buf, mode, perms)
+        {
+            var ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+                           .createInstance(Components.interfaces.nsIFileOutputStream);
+            var ocstream = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
+                           .createInstance(Components.interfaces.nsIConverterOutputStream);
+
+            var charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
+            if (typeof file == "string")
+                file = this.getFile(file);
+            else if (!(file instanceof Components.interfaces.nsILocalFile))
+                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+
+            if (mode == ">>")
+                mode = this.MODE_WRONLY | this.MODE_CREATE | this.MODE_APPEND;
+            else if (!mode || mode == ">")
+                mode = this.MODE_WRONLY | this.MODE_CREATE | this.MODE_TRUNCATE;
+
+            if (!perms)
+                perms = 0644;
+
+            ofstream.init(file, mode, perms, 0);
+            ocstream.init(ofstream, charset, 0, 0x0000);
+            ocstream.writeString(buf);
+
+            ocstream.close();
+            ofstream.close();
         }
     }
-
-    if (typeof file == "string")
-    {
-        this.localFile = classes[LOCALFILE_CTRID].createInstance(nsILocalFile);
-        this.localFile.initWithPath(file);
-        if (!this.localFile.exists())
-            throw "No such file or directory";
-    }
-    else if (file instanceof nsILocalFile)
-    {
-        this.localFile = file;
-        if (!this.localFile.exists())
-            throw "No such file or directory";
-    }
-    else
-    {
-        throw "bad type for argument |file|.";
-    }
-
-    this.path = this.localFile.path;
-
-    if (mode & (MODE_WRONLY | MODE_RDWR))
-    {
-        this.outputStream =
-            classes[FILEOUT_CTRID].createInstance(nsIFileOutputStream);
-        this.outputStream.init(this.localFile, mode, perms, 0);
-    }
-
-    if (mode & (MODE_RDONLY | MODE_RDWR))
-    {
-        var is = classes[FILEIN_CTRID].createInstance(nsIFileInputStream);
-        is.init(this.localFile, mode, perms, tmp);
-        this.inputStream =
-            classes[SCRIPTSTREAM_CTRID].createInstance(nsIScriptableInputStream);
-        this.inputStream.init(is);
-    }
-}
-
-
-vimperator.io.LocalFile.prototype.write =
-function fo_write(buf)
-{
-    if (!("outputStream" in this))
-        throw "file not open for writing.";
-
-    return this.outputStream.write(buf, buf.length);
-}
-
-vimperator.io.LocalFile.prototype.read =
-function fo_read(max)
-{
-    if (this.localFile.isDirectory())
-    {
-        var entries = this.localFile.directoryEntries;
-        var array = [];
-        while (entries.hasMoreElements())
-        {
-            var entry = entries.getNext();
-            entry.QueryInterface(Components.interfaces.nsIFile);
-            array.push(entry);
-        }
-        return array;
-    }
-
-    if (!("inputStream" in this))
-        throw "file not open for reading.";
-
-    var av = this.inputStream.available();
-    if (typeof max == "undefined")
-        max = av;
-
-    if (!av)
-        return null;
-
-    var rv = this.inputStream.read(max);
-    return rv;
-}
-
-vimperator.io.LocalFile.prototype.close =
-function fo_close()
-{
-    if ("outputStream" in this)
-        this.outputStream.close();
-    if ("inputStream" in this)
-        this.inputStream.close();
-}
-
-vimperator.io.LocalFile.prototype.flush =
-function fo_close()
-{
-    return this.outputStream.flush();
-}
-//}}}
+})();
 
 // vim: set fdm=marker sw=4 ts=4 et:
