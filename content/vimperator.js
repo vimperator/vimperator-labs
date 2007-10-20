@@ -636,7 +636,7 @@ const vimperator = (function() //{{{
                 var rc_file = vimperator.io.getRCFile();
 
                 if (rc_file)
-                    vimperator.source(rc_file, true);
+                    vimperator.source(rc_file.path, true);
                 else
                     vimperator.log("No user RC file found", 3);
 
@@ -648,7 +648,7 @@ const vimperator = (function() //{{{
 
                     if (plugin_dir)
                     {
-                        var files = vimperator.io.readDirectory(plugin_dir);
+                        var files = vimperator.io.readDirectory(plugin_dir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
                         files.forEach(function(file) {
                             if (!file.isDirectory())

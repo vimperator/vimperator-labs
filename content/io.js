@@ -86,16 +86,6 @@ vimperator.io = (function()
             return path;
         },
 
-        // path can also be a filename, not limited to directories
-        pathExists: function(path)
-        {
-            var p = Components.classes["@mozilla.org/file/local;1"]
-                .createInstance(Components.interfaces.nsILocalFile);
-            p.initWithPath(this.expandPath(path));
-
-            return p.exists();
-        },
-
         getPluginDir: function()
         {
             var plugin_dir;
@@ -105,22 +95,22 @@ vimperator.io = (function()
             else
                 plugin_dir = "~/.vimperator/plugin";
 
-            plugin_dir = this.expandPath(plugin_dir);
+            plugin_dir = this.getFile(this.expandPath(plugin_dir));
 
-            return this.pathExists(plugin_dir) ? plugin_dir : null;
+            return plugin_dir.exists() && plugin_dir.isDirectory() ? plugin_dir : null;
         },
 
         getRCFile: function()
         {
-            var rc_file1 = this.expandPath("~/.vimperatorrc");
-            var rc_file2 = this.expandPath("~/_vimperatorrc");
+            var rc_file1 = this.getFile(this.expandPath("~/.vimperatorrc"));
+            var rc_file2 = this.getFile(this.expandPath("~/_vimperatorrc"));
 
             if (navigator.platform == "Win32")
                 [rc_file1, rc_file2] = [rc_file2, rc_file1]
 
-            if (this.pathExists(rc_file1))
+            if (rc_file1.exists() && rc_file1.isFile())
                 return rc_file1;
-            else if (this.pathExists(rc_file2))
+            else if (rc_file2.exists() && rc_file2.isFile())
                 return rc_file2;
             else
                 return null;

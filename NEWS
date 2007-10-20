@@ -3,7 +3,7 @@
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
-	* :open,:bmarks,etc. filter on space seperated tokens now, so you can
+	* :open, :bmarks, etc. filter on space separated tokens now, so you can
 	  search with :open linux windows &lt;tab&gt; all your bookmarks/history
 	  which contain linux AND windows in the url or title
 	* tags and keyword support for :bmark
