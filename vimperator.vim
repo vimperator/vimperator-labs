@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 October 17
+" Latest Revision:  2007 October 20
 
 if exists("b:current_syntax")
   finish
@@ -13,10 +13,12 @@ set cpo&vim
 syn include @javascriptTop syntax/javascript.vim
 unlet b:current_syntax
 
-syn keyword vimperatorTodo    FIXME NOTE TODO XXX contained
-syn match   vimperatorComment +".*$+ contains=vimperatorTodo,@Spell
+syn region  vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
 
-syn region vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
+" FIXME: or just tell everyone to use single quotes for strings
+syn keyword vimperatorTodo FIXME NOTE TODO XXX contained
+syn match   vimperatorComment     +".*$+     contains=vimperatorTodo,@Spell
+syn match   vimperatorLineComment +^\s*".*$+ contains=vimperatorTodo,@Spell
 
 syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load] bw[ipeout] delbm[arks]
 	\ delm[arks] delqm[arks] dl downl[oads] e[dit] ec[ho] echoe[rr] exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy]
@@ -50,6 +52,7 @@ syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
 hi def link vimperatorCommand			Statement
 hi def link vimperatorTodo			Todo
 hi def link vimperatorComment			Comment
+hi def link vimperatorLineComment		Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
 hi def link vimperatorOption			PreProc
 hi def link vimperatorString			String 
