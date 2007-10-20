@@ -31,13 +31,12 @@ function Option(names, type, extra_info) //{{{
     if (!names || !type)
         return null;
 
+    var value = null;
+
     this.name = names[0];
     this.names = names;
     this.usage = this.names;
     this.type = type;
-
-    this.setter = function(value) { Options.setPref(this.name, value); };
-    this.getter = function() { return Options.getPref(this.name); };
 
     if (extra_info)
     {
@@ -52,6 +51,8 @@ function Option(names, type, extra_info) //{{{
             this.default_value = extra_info.default_value;
         else
             this.default_value = null;
+
+        value = this.default_value;
 
         if (extra_info.setter)
             this.setter = extra_info.setter;
@@ -75,8 +76,22 @@ function Option(names, type, extra_info) //{{{
     }
 
     // NOTE: forced defaults need to use Options.getPref
-    Option.prototype.__defineGetter__("value", function() { return this.getter.call(this); });
-    Option.prototype.__defineSetter__("value", function(value) { this.setter.call(this, value); });
+    this.__defineGetter__("value",
+        function()
+        {
+            if (this.getter)
+                this.getter.call(this);
+            return value;
+        }
+    );
+    this.__defineSetter__("value",
+        function(new_value)
+        {
+            value = new_value;
+            if (this.setter)
+                this.setter.call(this, value);
+        }
+    );
 
     // TODO: add is[Type]() queries for use in set()?
     //     : add isValid() or just throw an exception?
@@ -461,7 +476,7 @@ function Options() //{{{
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
                   "</ul>",
-            setter: function(value) { Options.setPref("guioptions", value); setGuiOptions(value); },
+            setter: function(value) { setGuiOptions(value); },
             default_value: "",
             validator: function (value) { if (/[^mTb]/.test(value)) return false; else return true; }
         }
@@ -488,7 +503,7 @@ function Options() //{{{
     addOption(new Option(["hlsearch", "hls"], "boolean",
         {
             short_help: "Highlight previous search pattern matches",
-            setter: function(value) { Options.setPref("hlsearch", value); if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
+            setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
             default_value: false
         }
     ));
@@ -531,7 +546,7 @@ function Options() //{{{
                   "</ul>" +
                   "NOTE: laststatus=1 not implemented yet.",
             default_value: 2,
-            setter: function(value) { Options.setPref("laststatus", value); setStatusLine(value); },
+            setter: function(value) { setStatusLine(value); },
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
@@ -569,7 +584,7 @@ function Options() //{{{
                   "</ul>" +
                   "NOTE: This option does not change the popup blocker of Firefox in any way.",
             default_value: 1,
-            setter: function(value) { Options.setPref("popups", value); setPopups(value); },
+            setter: function(value) { setPopups(value); },
             validator: function (value) { if (value >= 0 && value <= 3) return true; else return false; }
         }
     ));
@@ -630,7 +645,7 @@ function Options() //{{{
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li>" +
                   "</ul>",
-            setter: function(value) { Options.setPref("showtabline", value); setShowTabline(value); },
+            setter: function(value) { setShowTabline(value); },
             default_value: 2,
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
@@ -648,7 +663,7 @@ function Options() //{{{
             help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
                   "\"Title of web page - Vimperator\".<br/>If you don't like that, you can restore it with: " +
                   "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
-            setter: function(value) { Options.setPref("titlestring", value); setTitleString(value); },
+            setter: function(value) { setTitleString(value); },
             default_value: "Vimperator"
         }
     ));
@@ -673,7 +688,7 @@ function Options() //{{{
     addOption(new Option(["visualbell", "vb"], "boolean",
         {
             short_help: "Use visual bell instead of beeping on errors",
-            setter: function(value) { Options.setPref("visualbell", value); Options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
+            setter: function(value) { Options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
             default_value: false
         }
     ));
