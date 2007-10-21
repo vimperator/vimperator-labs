@@ -57,14 +57,14 @@ function CommandLine() //{{{
 
         load: function()
         {
-            this.cmd = Options.getPref("commandline_cmd_history", "").split("\n");
-            this.search = Options.getPref("commandline_search_history", "").split("\n");
+            this.cmd = vimperator.options.getPref("commandline_cmd_history", "").split("\n");
+            this.search = vimperator.options.getPref("commandline_search_history", "").split("\n");
         },
 
         save: function()
         {
-            Options.setPref("commandline_cmd_history", this.cmd.join("\n"));
-            Options.setPref("commandline_search_history", this.search.join("\n"));
+            vimperator.options.setPref("commandline_cmd_history", this.cmd.join("\n"));
+            vimperator.options.setPref("commandline_search_history", this.search.join("\n"));
         },
 
         add: function(str)

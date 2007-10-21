@@ -352,7 +352,7 @@ function Mappings() //{{{
         {
             // setting this option triggers an observer
             // which takes care of the mode setting
-            Options.setFirefoxPref("accessibility.browsewithcaret", true);
+            vimperator.options.setFirefoxPref("accessibility.browsewithcaret", true);
         },
         {
             short_help: "Start caret mode",

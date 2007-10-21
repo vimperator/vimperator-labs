@@ -499,7 +499,7 @@ function Events() //{{{
                 case vimperator.modes.CARET:
                     // setting this option will trigger an observer which will care about all other details
                     // like setting the NORMAL mode
-                    Options.setFirefoxPref("accessibility.browsewithcaret", false);
+                    vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
                     break;
 
                 case vimperator.modes.INSERT:
@@ -905,7 +905,7 @@ function Events() //{{{
             switch (aData)
             {
                 case "accessibility.browsewithcaret":
-                    var value = Options.getFirefoxPref("accessibility.browsewithcaret", false);
+                    var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
                     vimperator.mode = value ? vimperator.modes.CARET : vimperator.modes.NORMAL;
                     break;
             }

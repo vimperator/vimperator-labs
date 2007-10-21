@@ -103,9 +103,9 @@ vimperator.modes = (function()
 
         if (newmode == vimperator.modes.NORMAL)
         {
-            var value = Options.getFirefoxPref("accessibility.browsewithcaret", false);
+            var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
             if (value)
-                Options.setFirefoxPref("accessibility.browsewithcaret", false);
+                vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
 
             vimperator.statusline.updateUrl();
             vimperator.focusContent();
