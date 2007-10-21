@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.completion = (function() // {{{
+vimperator.Completion = function() // {{{
 {
     // The completion substrings, used for showing the longest common match
     var g_substrings = [];
@@ -612,6 +612,6 @@ vimperator.completion = (function() // {{{
         } //}}}
 
     }
-})(); // }}}
+} // }}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

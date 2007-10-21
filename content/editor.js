@@ -17,7 +17,7 @@
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
-function Editor() //{{{
+vimperator.Editor = function() //{{{
 {
     // store our last search with f,F,t or T
     var last_findChar = null;

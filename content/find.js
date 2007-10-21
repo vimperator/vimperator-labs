@@ -37,7 +37,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : incremental searches shouldn't permanently update search modifiers
 
 // make sure you only create this object when the "vimperator" object is ready
-function Search() //{{{
+vimperator.Search = function() //{{{
 {
     var self = this;                   // needed for callbacks since "this" is the "vimperator" object in a callback
     var found = false;                 // true if the last search was successful

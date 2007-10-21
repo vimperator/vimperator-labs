@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * it consists of a prompt and command field
  * be sure to only create objects of this class when the chrome is ready
  */
-function CommandLine() //{{{
+vimperator.CommandLine = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -40,7 +40,7 @@ function CommandLine() //{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
 
-    var completionlist = new InformationList("vimperator-completion", { min_items: 2, max_items: 10 });
+    var completionlist = new vimperator.InformationList("vimperator-completion", { min_items: 2, max_items: 10 });
     var completions = [];
 
     // TODO: clean this up when it's not 3am...
@@ -840,7 +840,7 @@ function CommandLine() //{{{
  * @param id: the id of the the XUL widget which we want to fill
  * @param options: an optional hash which modifies the behavior of the list
  */
-function InformationList(id, options) //{{{
+vimperator.InformationList = function(id, options) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1043,7 +1043,7 @@ function InformationList(id, options) //{{{
     //}}}
 } //}}}
 
-function StatusLine() //{{{
+vimperator.StatusLine = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////

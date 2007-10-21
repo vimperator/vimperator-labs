@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function Command(specs, action, extra_info) //{{{
+vimperator.Command = function(specs, action, extra_info) //{{{
 {
     if (!specs || !action)
         return null;
@@ -90,14 +90,14 @@ function Command(specs, action, extra_info) //{{{
 
 }
 
-Command.prototype.execute = function(args, special, count, modifiers)
+vimperator.Command.prototype.execute = function(args, special, count, modifiers)
 {
     this.action.call(this, args, special, count, modifiers);
 }
 
 // return true if the candidate name matches one of the command's aliases
 // (including all acceptable abbreviations)
-Command.prototype.hasName = function(name)
+vimperator.Command.prototype.hasName = function(name)
 {
     // match a candidate name against a command name abbreviation spec - returning
     // true if the candidate matches unambiguously
@@ -123,7 +123,7 @@ Command.prototype.hasName = function(name)
 }
 //}}}
 
-function Commands() //{{{
+vimperator.Commands = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -143,7 +143,7 @@ function Commands() //{{{
     function addDefaultCommand(command)
     {
         ex_commands.push(command);
-        Commands.prototype[command.name] = function(args, special, count, modifiers)
+        vimperator.Commands.prototype[command.name] = function(args, special, count, modifiers)
         {
             command.execute(args, special, count, modifiers);
         }
@@ -522,14 +522,14 @@ function Commands() //{{{
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addDefaultCommand(new Command(["addo[ns]"],
+    addDefaultCommand(new vimperator.Command(["addo[ns]"],
         function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show available Browser Extensions and Themes",
             help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI."
         }
     ));
-    addDefaultCommand(new Command(["ba[ck]"],
+    addDefaultCommand(new vimperator.Command(["ba[ck]"],
         function(args, special, count)
         {
             if (special)
@@ -572,7 +572,7 @@ function Commands() //{{{
             }
         }
     ));
-    addDefaultCommand(new Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
+    addDefaultCommand(new vimperator.Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
         {
             usage: ["[count]bd[elete][!]"],
@@ -581,13 +581,13 @@ function Commands() //{{{
                   "Do <code class=\"command\">:bdelete!</code> to select the tab to the left after removing the current tab."
         }
     ));
-    addDefaultCommand(new Command(["beep"],
+    addDefaultCommand(new vimperator.Command(["beep"],
         function() { vimperator.beep(); },
         {
             short_help: "Play a system beep"
         }
     ));
-    addDefaultCommand(new Command(["bma[rk]"],
+    addDefaultCommand(new vimperator.Command(["bma[rk]"],
         function(args)
         {
             var res = parseArgs(args, this.args);
@@ -620,7 +620,7 @@ function Commands() //{{{
                    [["-keyword", "-k"],  OPTION_STRING, function(arg) { return /\w/.test(arg); } ]]
         }
     ));
-    addDefaultCommand(new Command(["bmarks"],
+    addDefaultCommand(new vimperator.Command(["bmarks"],
         function(args, special)
         {
             var res = parseArgs(args, this.args);
@@ -641,7 +641,7 @@ function Commands() //{{{
             args: [[["-tags", "-T"],     OPTION_LIST]]
         }
     ));
-    addDefaultCommand(new Command(["b[uffer]"],
+    addDefaultCommand(new vimperator.Command(["b[uffer]"],
         function(args, special) { vimperator.buffer.switchTo(args, special); },
         {
             usage: ["b[uffer][!] {url|index}"],
@@ -654,7 +654,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["buffers", "files", "ls", "tabs"],
+    addDefaultCommand(new vimperator.Command(["buffers", "files", "ls", "tabs"],
         function(args, special)
         {
             if (args)
@@ -672,7 +672,7 @@ function Commands() //{{{
                   "Call the special version of this command again to close the window."
         }
     ));
-    addDefaultCommand(new Command(["delbm[arks]"],
+    addDefaultCommand(new vimperator.Command(["delbm[arks]"],
         function(args, special)
         {
             var url = args;
@@ -693,7 +693,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.bookmarks.get(filter); }
         }
     ));
-    addDefaultCommand(new Command(["com[mand]"],
+    addDefaultCommand(new vimperator.Command(["com[mand]"],
         function(args)
         {
             var res = parseArgs(args, this.args);
@@ -711,7 +711,7 @@ function Commands() //{{{
                    [["-bar"],      OPTION_NOARG]]
         }
     ));
-    addDefaultCommand(new Command(["delm[arks]"],
+    addDefaultCommand(new vimperator.Command(["delm[arks]"],
         function(args, special)
         {
             if (!special && !args)
@@ -764,7 +764,7 @@ function Commands() //{{{
         }
 
     ));
-    addDefaultCommand(new Command(["delqm[arks]"],
+    addDefaultCommand(new vimperator.Command(["delqm[arks]"],
         function(args, special)
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
@@ -793,7 +793,7 @@ function Commands() //{{{
                 "<code class=\"command\">:delqmarks!</code> deletes all QuickMarks"
         }
     ));
-    addDefaultCommand(new Command(["downl[oads]", "dl"],
+    addDefaultCommand(new vimperator.Command(["downl[oads]", "dl"],
         function() { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show progress of current downloads",
@@ -829,7 +829,7 @@ function Commands() //{{{
 
         return arg;
     }
-    addDefaultCommand(new Command(["ec[ho]"],
+    addDefaultCommand(new vimperator.Command(["ec[ho]"],
         function(args)
         {
             var res = argToString(args, true);
@@ -845,7 +845,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
-    addDefaultCommand(new Command(["echoe[rr]"],
+    addDefaultCommand(new vimperator.Command(["echoe[rr]"],
         function(args)
         {
             var res = argToString(args, false);
@@ -859,7 +859,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
-    addDefaultCommand(new Command(["exe[cute]"],
+    addDefaultCommand(new vimperator.Command(["exe[cute]"],
         function(args)
         {
             // TODO: :exec has some difficult semantics -> later
@@ -877,13 +877,13 @@ function Commands() //{{{
             help: "Example: <code class=\"command\">:execute echo test</code> shows a message with the text &#34;test&#34;.<br/>"
         }
     ));
-    addDefaultCommand(new Command(["exu[sage]"],
+    addDefaultCommand(new vimperator.Command(["exu[sage]"],
         function(args, special, count, modifiers) { vimperator.help("commands", special, null, modifiers); },
         {
             short_help: "Show help for Ex commands"
         }
     ));
-    addDefaultCommand(new Command(["fo[rward]", "fw"],
+    addDefaultCommand(new vimperator.Command(["fo[rward]", "fw"],
         function(args, special, count)
         {
             if (special)
@@ -926,14 +926,14 @@ function Commands() //{{{
             }
         }
     ));
-    addDefaultCommand(new Command(["ha[rdcopy]"],
+    addDefaultCommand(new vimperator.Command(["ha[rdcopy]"],
         function() { getBrowser().contentWindow.print(); },
         {
             short_help: "Print current document",
             help: "Open a GUI dialog where you can select the printer, number of copies, orientation, etc."
         }
     ));
-    addDefaultCommand(new Command(["h[elp]"],
+    addDefaultCommand(new vimperator.Command(["h[elp]"],
         function(args, special, count, modifiers) { vimperator.help(args, special, null, modifiers); },
         {
             usage: ["h[elp] {subject}"],
@@ -949,7 +949,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_help_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["hist[ory]", "hs"],
+    addDefaultCommand(new vimperator.Command(["hist[ory]", "hs"],
         function(args, special) { vimperator.history.list(args, special); },
         {
             usage: ["hist[ory] [filter]", "history!"],
@@ -959,7 +959,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.history.get(filter); }
         }
     ));
-    addDefaultCommand(new Command(["javas[cript]", "js"],
+    addDefaultCommand(new vimperator.Command(["javas[cript]", "js"],
         function(args, special)
         {
             if (special) // open javascript console
@@ -1008,7 +1008,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.javascript(filter); }
         }
     ));
-    addDefaultCommand(new Command(["let"],
+    addDefaultCommand(new vimperator.Command(["let"],
         function(args)
         {
             if (!args)
@@ -1095,7 +1095,7 @@ function Commands() //{{{
                   "Without arguments, displays a list of all variables."
         }
     ));
-    addDefaultCommand(new Command(["map"],
+    addDefaultCommand(new vimperator.Command(["map"],
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
         // 2 args -> map arg1 to arg*
@@ -1138,7 +1138,7 @@ function Commands() //{{{
                   "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
         }
     ));
-    addDefaultCommand(new Command(["mapc[lear]"],
+    addDefaultCommand(new vimperator.Command(["mapc[lear]"],
         function(args)
         {
             if (args)
@@ -1155,7 +1155,7 @@ function Commands() //{{{
                   "<code class=\"command\">:map</code> or <code class=\"command\">:noremap</code> are cleared."
         }
     ));
-    addDefaultCommand(new Command(["ma[rk]"],
+    addDefaultCommand(new vimperator.Command(["ma[rk]"],
         function(args)
         {
             if (!args)
@@ -1181,7 +1181,7 @@ function Commands() //{{{
             short_help: "Mark current location within the web page"
         }
     ));
-    addDefaultCommand(new Command(["marks"],
+    addDefaultCommand(new vimperator.Command(["marks"],
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
@@ -1200,7 +1200,7 @@ function Commands() //{{{
             help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those marks mentioned."
         }
     ));
-    addDefaultCommand(new Command(["mkv[imperatorrc]"],
+    addDefaultCommand(new vimperator.Command(["mkv[imperatorrc]"],
         function(args, special)
         {   
             var filename;
@@ -1251,7 +1251,7 @@ function Commands() //{{{
                   "WARNING: this differs from Vim's behaviour which defaults to writing the file in the current directory."
         }
     ));
-    addDefaultCommand(new Command(["noh[lsearch]"],
+    addDefaultCommand(new vimperator.Command(["noh[lsearch]"],
         function(args)
         {
             vimperator.search.clear();
@@ -1262,7 +1262,7 @@ function Commands() //{{{
                   "<code class=\"option\">'hlsearch'</code> option is set."
         }
     ));
-    addDefaultCommand(new Command(["norm[al]"],
+    addDefaultCommand(new vimperator.Command(["norm[al]"],
         function(args)
         {
             if (!args)
@@ -1280,7 +1280,7 @@ function Commands() //{{{
         }
     ));
     // TODO: remove duplication in :map
-    addDefaultCommand(new Command(["no[remap]"],
+    addDefaultCommand(new vimperator.Command(["no[remap]"],
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
         // 2 args -> map arg1 to arg*
@@ -1333,7 +1333,7 @@ function Commands() //{{{
             help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed.<br/>NOTE: :noremap does not yet work as reliably as :map."
         }
     ));
-    addDefaultCommand(new Command(["o[pen]", "e[dit]"],
+    addDefaultCommand(new vimperator.Command(["o[pen]", "e[dit]"],
         function(args, special)
         {
             if (args)
@@ -1376,13 +1376,13 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["pc[lose]"],
+    addDefaultCommand(new vimperator.Command(["pc[lose]"],
         function() { vimperator.previewwindow.hide(); },
         {
             short_help: "Close preview window on bottom of screen"
         }
     ));
-    addDefaultCommand(new Command(["pref[erences]", "prefs"],
+    addDefaultCommand(new vimperator.Command(["pref[erences]", "prefs"],
         function(args, special, count, modifiers)
         {
             if (!args)
@@ -1414,7 +1414,7 @@ function Commands() //{{{
                   "<code class=\"command\">:prefs!</code> opens about:config in the current tab where you can change advanced Firefox preferences."
         }
     ));
-    addDefaultCommand(new Command(["qma[rk]"],
+    addDefaultCommand(new vimperator.Command(["qma[rk]"],
         function(args)
         {
             if (!args)
@@ -1440,7 +1440,7 @@ function Commands() //{{{
                   "<code class=\"command\">:qmark f http://forum1.com, http://forum2.com, imdb some artist</code>"
         }
     ));
-    addDefaultCommand(new Command(["qmarks"],
+    addDefaultCommand(new vimperator.Command(["qmarks"],
         function(args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
@@ -1459,7 +1459,7 @@ function Commands() //{{{
             help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those QuickMarks mentioned."
         }
     ));
-    addDefaultCommand(new Command(["q[uit]"],
+    addDefaultCommand(new vimperator.Command(["q[uit]"],
         function() { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         {
             short_help: "Quit current tab",
@@ -1467,14 +1467,14 @@ function Commands() //{{{
                   "last window, close Vimperator. When quitting Vimperator, the session is not stored."
         }
     ));
-    addDefaultCommand(new Command(["quita[ll]", "qa[ll]"],
+    addDefaultCommand(new vimperator.Command(["quita[ll]", "qa[ll]"],
         function() { vimperator.quit(false); },
         {
             short_help: "Quit Vimperator",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored."
         }
     ));
-    addDefaultCommand(new Command(["redr[aw]"],
+    addDefaultCommand(new vimperator.Command(["redr[aw]"],
         function()
         {
             var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
@@ -1486,7 +1486,7 @@ function Commands() //{{{
             help: "Useful to update the screen halfway executing a script or function."
         }
     ));
-    addDefaultCommand(new Command(["re[load]"],
+    addDefaultCommand(new vimperator.Command(["re[load]"],
         function(args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); },
         {
             usage: ["re[load][!]"],
@@ -1494,7 +1494,7 @@ function Commands() //{{{
             help: "Forces reloading of the current page. If <code class=\"command\">!</code> is given, skip the cache."
         }
     ));
-    addDefaultCommand(new Command(["reloada[ll]"],
+    addDefaultCommand(new vimperator.Command(["reloada[ll]"],
         function(args, special) { vimperator.tabs.reloadAll(special); },
         {
             usage: ["reloada[ll][!]"],
@@ -1502,14 +1502,14 @@ function Commands() //{{{
             help: "Forces reloading of all pages. If <code class=\"command\">!</code> is given, skip the cache."
         }
     ));
-    addDefaultCommand(new Command(["res[tart]"],
+    addDefaultCommand(new vimperator.Command(["res[tart]"],
         function() { vimperator.restart(); },
         {
             short_help: "Force the browser to restart",
             help: "Useful when installing extensions."
         }
     ));
-    addDefaultCommand(new Command(["sav[eas]", "w[rite]"],
+    addDefaultCommand(new vimperator.Command(["sav[eas]", "w[rite]"],
         function() { saveDocument(window.content.document); },
         {
             short_help: "Save current web page to disk",
@@ -1517,7 +1517,7 @@ function Commands() //{{{
                   "There, you can save the current web page to disk with various options."
         }
     ));
-    addDefaultCommand(new Command(["se[t]"],
+    addDefaultCommand(new vimperator.Command(["se[t]"],
         function(args, special, count, modifiers)
         {
             if (special)
@@ -1682,7 +1682,7 @@ function Commands() //{{{
         }
     ));
     // TODO: sclose instead?
-    addDefaultCommand(new Command(["sbcl[ose]"],
+    addDefaultCommand(new vimperator.Command(["sbcl[ose]"],
         function(args)
         {
             if (args)
@@ -1700,7 +1700,7 @@ function Commands() //{{{
     ));
     // TODO: sopen instead? Separate :sidebar from :sbopen and make them behave
     // more like :cw, :cope etc
-    addDefaultCommand(new Command(["sideb[ar]", "sb[ar]", "sbope[n]"],
+    addDefaultCommand(new vimperator.Command(["sideb[ar]", "sb[ar]", "sbope[n]"],
         function(args)
         {
             if (!args)
@@ -1735,7 +1735,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_sidebar_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["so[urce]"],
+    addDefaultCommand(new vimperator.Command(["so[urce]"],
         function(args)
         {
             // FIXME: implement proper filename quoting
@@ -1762,14 +1762,14 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_file_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["st[op]"],
+    addDefaultCommand(new vimperator.Command(["st[op]"],
         BrowserStop,
         {
             short_help: "Stop loading",
             help: "Stop loading current web page."
         }
     ));
-    addDefaultCommand(new Command(["tab"],
+    addDefaultCommand(new vimperator.Command(["tab"],
         function(args) { vimperator.execute(args, { inTab: true }); },
         {
             usage: ["tab {cmd}"],
@@ -1780,13 +1780,13 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_command_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["tabl[ast]"],
+    addDefaultCommand(new vimperator.Command(["tabl[ast]"],
         function() { vimperator.tabs.select("$", false); },
         {
             short_help: "Switch to the last tab"
         }
     ));
-    addDefaultCommand(new Command(["tabm[ove]"],
+    addDefaultCommand(new vimperator.Command(["tabm[ove]"],
         function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
         {
             usage: ["tabm[ove] [N]", "tabm[ove][!] +N | -N"],
@@ -1795,20 +1795,20 @@ function Commands() //{{{
                   "N can also be prefixed with '+' or '-' to indicate a relative movement. If <code class=\"command\">!</code> is specified the movement wraps around the start or end of the tab list."
         }
     ));
-    addDefaultCommand(new Command(["tabn[ext]", "tn[ext]"],
+    addDefaultCommand(new vimperator.Command(["tabn[ext]", "tn[ext]"],
         function() { vimperator.tabs.select("+1", true); },
         {
             short_help: "Switch to the next tab",
             help: "Cycles to the first tab, when the last is selected."
         }
     ));
-    addDefaultCommand(new Command(["tabo[nly]"],
+    addDefaultCommand(new vimperator.Command(["tabo[nly]"],
         function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
         {
             short_help: "Close all other tabs"
         }
     ));
-    addDefaultCommand(new Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
+    addDefaultCommand(new vimperator.Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
         function(args, special)
         {
             var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
@@ -1828,7 +1828,7 @@ function Commands() //{{{
             completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
-    addDefaultCommand(new Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
+    addDefaultCommand(new vimperator.Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
         function() { vimperator.tabs.select("-1", true); },
         {
             usage: ["tabp[revious]", "tabN[ext]"],
@@ -1836,14 +1836,14 @@ function Commands() //{{{
             help: "Cycles to the last tab, when the first is selected."
         }
     ));
-    addDefaultCommand(new Command(["tabr[ewind]", "tabfir[st]"],
+    addDefaultCommand(new vimperator.Command(["tabr[ewind]", "tabfir[st]"],
         function() { vimperator.tabs.select(0, false); },
         {
             usage: ["tabr[ewind]", "tabfir[st]"],
             short_help: "Switch to the first tab"
         }
     ));
-    addDefaultCommand(new Command(["time"],
+    addDefaultCommand(new vimperator.Command(["time"],
         function(args, special, count)
         {
             if (!count || count < 1)
@@ -1928,7 +1928,7 @@ function Commands() //{{{
                   "Use the special version with [!] if you just want to run any command multiple times without showing profiling statistics."
         }
     ));
-    addDefaultCommand(new Command(["u[ndo]"],
+    addDefaultCommand(new vimperator.Command(["u[ndo]"],
         function(args, special, count)
         {
             if (count < 1)
@@ -1972,7 +1972,7 @@ function Commands() //{{{
             }
         }
     ));
-    addDefaultCommand(new Command(["undoa[ll]"],
+    addDefaultCommand(new vimperator.Command(["undoa[ll]"],
         function(args, special, count)
         {
             if (count || special)
@@ -1988,7 +1988,7 @@ function Commands() //{{{
             help: "Firefox stores up to 10 closed tabs, even after a browser restart."
         }
     )),
-    addDefaultCommand(new Command(["unl[et]"],
+    addDefaultCommand(new vimperator.Command(["unl[et]"],
         function(args, special)
         {
             if (!args)
@@ -2017,7 +2017,7 @@ function Commands() //{{{
                   "Several variable names can be given."
         }
     ));
-    addDefaultCommand(new Command(["unm[ap]"],
+    addDefaultCommand(new vimperator.Command(["unm[ap]"],
         function(args)
         {
             if (!args)
@@ -2039,7 +2039,7 @@ function Commands() //{{{
             help: ""
         }
     ));
-    addDefaultCommand(new Command(["ve[rsion]"],
+    addDefaultCommand(new vimperator.Command(["ve[rsion]"],
         function(args, special)
         {
             if (special)
@@ -2054,13 +2054,13 @@ function Commands() //{{{
             help: "You can show the Firefox version page with <code class=\"command\">:version!</code>."
         }
     ));
-    addDefaultCommand(new Command(["viu[sage]"],
+    addDefaultCommand(new vimperator.Command(["viu[sage]"],
         function(args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
         {
             short_help: "Show help for normal mode commands"
         }
     ));
-    addDefaultCommand(new Command(["winc[lose]", "wc[lose]"],
+    addDefaultCommand(new vimperator.Command(["winc[lose]", "wc[lose]"],
         function(args)
         {
             window.close();
@@ -2070,7 +2070,7 @@ function Commands() //{{{
             short_help: "Close window",
         }
     ));
-    addDefaultCommand(new Command(["wino[pen]", "wo[pen]", "wine[dit]"],
+    addDefaultCommand(new vimperator.Command(["wino[pen]", "wo[pen]", "wine[dit]"],
         function(args)
         {
             if (args)
@@ -2084,7 +2084,7 @@ function Commands() //{{{
             help: "Like <code class=\"command\">:open</code> but open URLs in a new window.<br/>"
         }
     ));
-    addDefaultCommand(new Command(["wqa[ll]", "wq", "xa[ll]"],
+    addDefaultCommand(new vimperator.Command(["wqa[ll]", "wq", "xa[ll]"],
         function() { vimperator.quit(true); },
         {
             usage: ["wqa[ll]", "xa[ll]"],
@@ -2093,7 +2093,7 @@ function Commands() //{{{
                   "<code class=\"command\">:wq</code> is different as in Vim, as it closes the window instead of just one tab by popular demand. Complain on the mailing list, if you want to change that."
         }
     ));
-    addDefaultCommand(new Command(["zo[om]"],
+    addDefaultCommand(new vimperator.Command(["zo[om]"],
         function(args, special)
         {
             var level;
@@ -2138,7 +2138,7 @@ function Commands() //{{{
                   "Normally this command operates on the text zoom, if used with <code class=\"argument\">[!]</code> it operates on full zoom."
         }
     ));
-    addDefaultCommand(new Command(["!", "run"],
+    addDefaultCommand(new vimperator.Command(["!", "run"],
         function(args, special)
         {
             // :!! needs to be treated specially as the command parser sets the special flag but removes the ! from args

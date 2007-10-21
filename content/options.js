@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function Option(names, type, extra_info) //{{{
+vimperator.Option = function(names, type, extra_info) //{{{
 {
     if (!names || !type)
         return null;
@@ -107,7 +107,7 @@ function Option(names, type, extra_info) //{{{
     }
 } //}}}
 
-function Options() //{{{
+vimperator.Options = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -117,13 +117,6 @@ function Options() //{{{
         .getService(Components.interfaces.nsIPrefBranch);
     var vimperator_prefs = firefox_prefs.getBranch("extensions.vimperator.");
     var options = [];
-
-    function addOption(option)
-    {
-        Options.prototype.__defineGetter__(option.name, function() { return option.value; });
-        Options.prototype.__defineSetter__(option.name, function(value) { option.value = value; });
-        options.push(option);
-    }
 
     function optionsIterator()
     {
@@ -311,6 +304,13 @@ function Options() //{{{
         return null;
     }
 
+    this.add = function(option)
+    {
+        this.__defineGetter__(option.name, function() { return option.value; });
+        this.__defineSetter__(option.name, function(value) { option.value = value; });
+        options.push(option);
+    }
+
     this.destroy = function()
     {
         // reset some modified firefox prefs
@@ -392,7 +392,7 @@ function Options() //{{{
                              "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select"
 
-    addOption(new Option(["activate", "act"], "stringlist",
+    this.add(new vimperator.Option(["activate", "act"], "stringlist",
         {
             short_help: "Define when tabs are automatically activated",
             help: "Available items:<br/>" +
@@ -405,13 +405,13 @@ function Options() //{{{
             default_value: "homepage,quickmark,tabopen,paste"
         }
     ));
-    addOption(new Option(["autohints", "ah"], "boolean",
+    this.add(new vimperator.Option(["autohints", "ah"], "boolean",
         {
             short_help: "Automatically show hints on every web page",
             default_value: false
         }
     ));
-    addOption(new Option(["complete", "cpt"], "charlist",
+    this.add(new vimperator.Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",
             help: "Available items:<br/>" +
@@ -427,7 +427,7 @@ function Options() //{{{
             validator: function (value) { if (/[^sfbh]/.test(value)) return false; else return true; }
         }
     ));
-    addOption(new Option(["defsearch", "ds"], "string",
+    this.add(new vimperator.Option(["defsearch", "ds"], "string",
         {
             short_help: "Set the default search engine",
             help: "The default search engine is used in the <code class=\"command\">:[tab]open [arg]</code> command " +
@@ -436,7 +436,7 @@ function Options() //{{{
             default_value: "google"
         }
     ));
-    addOption(new Option(["editor"], "string",
+    this.add(new vimperator.Option(["editor"], "string",
         {
             short_help: "Set the external text editor",
             help: "Sets the editor to run when <code class=\"mapping\">&lt;C-i&gt;</code> " +
@@ -446,20 +446,20 @@ function Options() //{{{
             default_value: "gvim -f"
         }
     ));
-    addOption(new Option(["extendedhinttags", "eht"], "string",
+    this.add(new vimperator.Option(["extendedhinttags", "eht"], "string",
         {
             short_help: "XPath string of hintable elements activated by ';'",
             default_value: DEFAULT_HINTTAGS
         }
     ));
-    addOption(new Option(["focusedhintstyle", "fhs"], "string",
+    this.add(new vimperator.Option(["focusedhintstyle", "fhs"], "string",
         {
             short_help: "CSS specification of focused hints",
             default_value: "z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; " +
                            "border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;"
         }
     ));
-    addOption(new Option(["fullscreen", "fs"], "boolean",
+    this.add(new vimperator.Option(["fullscreen", "fs"], "boolean",
         {
             short_help: "Show the current window fullscreen",
             setter: function(value) { window.fullScreen = value; },
@@ -467,7 +467,7 @@ function Options() //{{{
             default_value: false
         }
     ));
-    addOption(new Option(["guioptions", "go"], "charlist",
+    this.add(new vimperator.Option(["guioptions", "go"], "charlist",
         {
             short_help: "Show or hide the menu, toolbar and scrollbars",
             help: "Supported characters:<br/>" +
@@ -481,52 +481,52 @@ function Options() //{{{
             validator: function (value) { if (/[^mTb]/.test(value)) return false; else return true; }
         }
     ));
-    addOption(new Option(["hintchars", "hc"], "charlist",
+    this.add(new vimperator.Option(["hintchars", "hc"], "charlist",
         {
             short_help: "String of single characters which can be used to follow hints",
             default_value: "hjklasdfgyuiopqwertnmzxcvb"
         }
     ));
-    addOption(new Option(["hintstyle", "hs"], "string",
+    this.add(new vimperator.Option(["hintstyle", "hs"], "string",
         {
             short_help: "CSS specification of unfocused hints",
             default_value: "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; " +
                            "border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;"
         }
     ));
-    addOption(new Option(["hinttags", "ht"], "string",
+    this.add(new vimperator.Option(["hinttags", "ht"], "string",
         {
             short_help: "XPath string of hintable elements activated by <code class=\"mapping\">'f'</code> and <code class=\"mapping\">'F'</code>",
             default_value: DEFAULT_HINTTAGS
         }
     ));
-    addOption(new Option(["hlsearch", "hls"], "boolean",
+    this.add(new vimperator.Option(["hlsearch", "hls"], "boolean",
         {
             short_help: "Highlight previous search pattern matches",
             setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
             default_value: false
         }
     ));
-    addOption(new Option(["hlsearchstyle", "hlss"], "string",
+    this.add(new vimperator.Option(["hlsearchstyle", "hlss"], "string",
         {
             short_help: "CSS specification of highlighted search items",
             default_value: "color: black; background-color: yellow; padding: 0; display: inline;"
         }
     ));
-    addOption(new Option(["ignorecase", "ic"], "boolean",
+    this.add(new vimperator.Option(["ignorecase", "ic"], "boolean",
         {
             short_help: "Ignore case in search patterns",
             default_value: true
         }
     ));
-    addOption(new Option(["incsearch", "is"], "boolean",
+    this.add(new vimperator.Option(["incsearch", "is"], "boolean",
         {
             short_help: "Show where the search pattern matches as it is typed",
             help: "NOTE: Incremental searching currently only works in the forward direction.",
             default_value: true
         }
     ));
-    addOption(new Option(["insertmode", "im"], "boolean",
+    this.add(new vimperator.Option(["insertmode", "im"], "boolean",
         {
             short_help: "Use Insert mode as the default for text areas",
             help: "Makes Vimperator work in a way that Insert mode is the default mode for text areas. " +
@@ -534,7 +534,7 @@ function Options() //{{{
             default_value: true
         }
     ));
-    addOption(new Option(["laststatus", "ls"], "number",
+    this.add(new vimperator.Option(["laststatus", "ls"], "number",
         {
             short_help: "Show the status line",
             help: "Determines when the last window will have a status line. " +
@@ -550,20 +550,20 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
-    addOption(new Option(["linksearch", "lks"], "boolean",
+    this.add(new vimperator.Option(["linksearch", "lks"], "boolean",
         {
             short_help: "Limit the search to hyperlink text",
             help: "This includes (X)HTML elements with an \"href\" atrribute and XLink \"simple\" links.",
             default_value: false
         }
     ));
-    addOption(new Option(["more"], "boolean",
+    this.add(new vimperator.Option(["more"], "boolean",
         {
             short_help: "Pause the message list window when more than one screen of listings is displayed",
             default_value: true
         }
     ));
-    addOption(new Option(["maxhints", "mh"], "number",
+    this.add(new vimperator.Option(["maxhints", "mh"], "number",
         {
             short_help: "Maximum number of simultaneously shown hints",
             help: "If you want to speed up display of hints, choose a smaller value",
@@ -571,7 +571,7 @@ function Options() //{{{
             validator: function (value) { if (value >= 1 && value <= 1000) return true; else return false; }
         }
     ));
-    addOption(new Option(["popups", "pps"], "number",
+    this.add(new vimperator.Option(["popups", "pps"], "number",
         {
             short_help: "Where to show requested popup windows",
             help: "Define where to show requested popup windows. Does not apply to windows which are opened by middle clicking a link, they always open in a new tab. " +
@@ -588,7 +588,7 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 3) return true; else return false; }
         }
     ));
-    addOption(new Option(["preload"], "boolean",
+    this.add(new vimperator.Option(["preload"], "boolean",
         {
             short_help: "Speed up first time history/bookmark completion",
             help: "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br/>" +
@@ -596,7 +596,7 @@ function Options() //{{{
             default_value: true
         }
     ));
-    addOption(new Option(["previewheight", "pvh"], "number",
+    this.add(new vimperator.Option(["previewheight", "pvh"], "number",
         {
             short_help: "Default height for preview window",
             help: "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. " +
@@ -606,7 +606,7 @@ function Options() //{{{
             validator: function (value) { if (value >= 1 && value <= 50) return true; else return false; }
         }
     ));
-    addOption(new Option(["scroll", "scr"], "number",
+    this.add(new vimperator.Option(["scroll", "scr"], "number",
         {
             short_help: "Number of lines to scroll with <code class=\"mapping\">C-u</code> and <code class=\"mapping\">C-d</code> commands",
             help: "The number of lines scrolled defaults to half the window size. " +
@@ -616,13 +616,13 @@ function Options() //{{{
             validator: function (value) { if (value >= 0) return true; else return false; }
         }
     ));
-    addOption(new Option(["showmode", "smd"], "boolean",
+    this.add(new vimperator.Option(["showmode", "smd"], "boolean",
         {
             short_help: "Show the current mode in the command line",
             default_value: true
         }
     ));
-    addOption(new Option(["showstatuslinks", "ssli"], "number",
+    this.add(new vimperator.Option(["showstatuslinks", "ssli"], "number",
         {
             short_help: "Show the destination of the link under the cursor in the status bar",
             help: "Also links which are focused by keyboard commands like <code class=\"mapping\">&lt;Tab&gt;</code> are shown. " +
@@ -636,7 +636,7 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
-    addOption(new Option(["showtabline", "stal"], "number",
+    this.add(new vimperator.Option(["showtabline", "stal"], "number",
         {
             short_help: "Control when to show the tab bar of opened web pages",
             help: "Possible values:<br/>" +
@@ -650,14 +650,14 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
-    addOption(new Option(["smartcase", "scs"], "boolean",
+    this.add(new vimperator.Option(["smartcase", "scs"], "boolean",
         {
             short_help: "Override the 'ignorecase' option if the pattern contains uppercase characters",
             help: "This is only used if the <code class=\"option\">'ignorecase'</code> option is set.",
             default_value: true
         }
     ));
-    addOption(new Option(["titlestring"], "string",
+    this.add(new vimperator.Option(["titlestring"], "string",
         {
             short_help: "Change the title of the browser window",
             help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
@@ -667,7 +667,7 @@ function Options() //{{{
             default_value: "Vimperator"
         }
     ));
-    addOption(new Option(["usermode", "um"], "boolean",
+    this.add(new vimperator.Option(["usermode", "um"], "boolean",
         {
             short_help: "Show current website with a minimal style sheet to make it easily accessible",
             help: "Note that this is a local option for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
@@ -676,7 +676,7 @@ function Options() //{{{
             default_value: false
         }
     ));
-    addOption(new Option(["verbose", "vbs"], "number",
+    this.add(new vimperator.Option(["verbose", "vbs"], "number",
         {
             short_help: "Define which type of messages are logged",
             help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
@@ -685,14 +685,14 @@ function Options() //{{{
             validator: function (value) { if (value >= 0 && value <= 9) return true; else return false; }
         }
     ));
-    addOption(new Option(["visualbell", "vb"], "boolean",
+    this.add(new vimperator.Option(["visualbell", "vb"], "boolean",
         {
             short_help: "Use visual bell instead of beeping on errors",
             setter: function(value) { vimperator.options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
             default_value: false
         }
     ));
-    addOption(new Option(["wildmode", "wim"], "stringlist",
+    this.add(new vimperator.Option(["wildmode", "wim"], "stringlist",
         {
             short_help: "Define how command line completion works",
             help: "It is a comma-separated list of parts, where each part specifies " +
@@ -719,7 +719,7 @@ function Options() //{{{
             }
         }
     ));
-    addOption(new Option(["wildoptions", "wop"], "stringlist",
+    this.add(new vimperator.Option(["wildoptions", "wop"], "stringlist",
         {
             short_help: "Change how command line completion is done",
             help: "A list of words that change how command line completion is done.<br/>" +
