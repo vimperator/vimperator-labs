@@ -35,7 +35,7 @@ syn match vimperatorCommand "!" contained
 syn match vimperatorCommandWrapper "\%(^\|:\|\s\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act autohints ah noautohints noah complete cpt defsearch ds extendedhinttags eht
+syn keyword vimperatorOption activate act autohints ah noautohints noah complete cpt defsearch ds editor extendedhinttags eht
 	\ focusedhintstyle fhs fullscreen fs nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags hlsearch hls
 	\ nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic
 	\ insertmode im noinsertmode noim laststatus ls linksearch lks nolinksearch nolks maxhints mh more nomore popups pps
