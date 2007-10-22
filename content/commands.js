@@ -1109,7 +1109,7 @@ vimperator.Commands = function() //{{{
 
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
-            var leader_reg = new RegExp('<Leader>', 'i');
+            var leader_reg = /<Leader>/i;
 
             if (leader_reg.test(lhs))
             {
