@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * Firefox 3.0, then this class should go away and their tab methods should be used
  * @deprecated
  */
-function Tabs() //{{{
+vimperator.Tabs = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////

@@ -22,7 +22,7 @@
  *
 }}} ***** END LICENSE BLOCK *****/
 
-function Hints() //{{{
+vimperator.Hints = function() //{{{
 {
     const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
 

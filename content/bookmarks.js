@@ -27,7 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // also includes methods for dealing with keywords and search engines
-function Bookmarks() //{{{
+vimperator.Bookmarks = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -290,7 +290,7 @@ function Bookmarks() //{{{
     //  res.title is the title or "" if no one was given
     //  res.url is the url as a string
     //  returns null, if parsing failed
-    Bookmarks.parseBookmarkString = function(str)
+    this.parseBookmarkString = function(str)
     {
         var res = {};
         res.tags = [];
@@ -356,7 +356,7 @@ function Bookmarks() //{{{
     //}}}
 } //}}}
 
-function History() //{{{
+vimperator.History = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -519,7 +519,7 @@ function History() //{{{
     //}}}
 } //}}}
 
-function Marks() //{{{
+vimperator.Marks = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -774,7 +774,7 @@ function Marks() //{{{
     //}}}
 } //}}}
 
-function QuickMarks() //{{{
+vimperator.QuickMarks = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////

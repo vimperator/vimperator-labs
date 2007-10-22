@@ -684,37 +684,41 @@ const vimperator = (function() //{{{
 
             // these objects are created here only after the chrome is ready
             vimperator.log("Loading module options...", 3);
-            vimperator.options       = new Options();
+            vimperator.options       = new vimperator.Options();
             vimperator.log("Loading module events...", 3);
-            vimperator.events        = new Events();
+            vimperator.events        = new vimperator.Events();
             vimperator.log("Loading module commands...", 3);
-            vimperator.commands      = new Commands();
+            vimperator.commands      = new vimperator.Commands();
             vimperator.log("Loading module bookmarks...", 3);
-            vimperator.bookmarks     = new Bookmarks();
+            vimperator.bookmarks     = new vimperator.Bookmarks();
             vimperator.log("Loading module history...", 3);
-            vimperator.history       = new History();
+            vimperator.history       = new vimperator.History();
             vimperator.log("Loading module commandline...", 3);
-            vimperator.commandline   = new CommandLine();
+            vimperator.commandline   = new vimperator.CommandLine();
             vimperator.log("Loading module search...", 3);
-            vimperator.search        = new Search();
+            vimperator.search        = new vimperator.Search();
             vimperator.log("Loading module preview window...", 3);
-            vimperator.previewwindow = new InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.previewwindow = new vimperator.InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
             vimperator.log("Loading module buffer window...", 3);
-            vimperator.bufferwindow  = new InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.bufferwindow  = new vimperator.InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
             vimperator.log("Loading module mappings...", 3);
             vimperator.mappings      = new Mappings();
             vimperator.log("Loading module statusline...", 3);
-            vimperator.statusline    = new StatusLine();
+            vimperator.statusline    = new vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);
-            vimperator.buffer        = new Buffer();
+            vimperator.buffer        = new vimperator.Buffer();
             vimperator.log("Loading module tabs...", 3);
-            vimperator.tabs          = new Tabs();
+            vimperator.tabs          = new vimperator.Tabs();
             vimperator.log("Loading module marks...", 3);
-            vimperator.marks         = new Marks();
+            vimperator.marks         = new vimperator.Marks();
             vimperator.log("Loading module quickmarks...", 3);
-            vimperator.quickmarks    = new QuickMarks();
+            vimperator.quickmarks    = new vimperator.QuickMarks();
             vimperator.log("Loading module hints...", 3);
-            vimperator.hints         = new Hints();
+            vimperator.hints         = new vimperator.Hints();
+            vimperator.log("Loading module io...", 3);
+            vimperator.io            = new vimperator.IO();
+            vimperator.log("Loading module completion...", 3);
+            vimperator.completion    = new vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
             vimperator.echo    = function(str) { vimperator.commandline.echo(str); }
