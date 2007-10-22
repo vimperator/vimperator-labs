@@ -156,9 +156,9 @@ function Mappings() //{{{
         }
     }
 
-    function mappingsIterator(mode)
+    function mappingsIterator(mode, stack)
     {
-        var mappings = main[mode];
+        var mappings = stack[mode];
 
         //// FIXME: do we want to document user commands by default?
         //mappings = user[mode].concat(main[mode]);
@@ -182,12 +182,19 @@ function Mappings() //{{{
     // NOTE: just normal mode for now
     this.__iterator__ = function()
     {
-        return mappingsIterator(vimperator.modes.NORMAL);
+        return mappingsIterator(vimperator.modes.NORMAL, main);
     }
 
+    // FIXME
     this.getIterator = function(mode)
     {
-        return mappingsIterator(mode);
+        return mappingsIterator(mode, main);
+    }
+
+    // FIXME
+    this.getUserIterator = function(mode)
+    {
+        return mappingsIterator(mode, user);
     }
 
     this.hasMap = function(mode, cmd)

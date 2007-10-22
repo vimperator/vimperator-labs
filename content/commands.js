@@ -883,6 +883,57 @@ function Commands() //{{{
             help: "If <code class=\"argument\">[arg]</code> is specified then limit the list to those marks mentioned."
         }
     ));
+    addDefaultCommand(new Command(["mkv[imperatorrc]"],
+        function(args, special)
+        {   
+            var filename;
+            
+            // TODO: "E172: Only one file name allowed"
+            if (args)
+                filename = args;
+            else
+                filename = vimperator.io.expandPath(navigator.platform == "Win32" ? "~/_vimperatorrc" : "~/.vimperatorrc");
+            
+            var file = vimperator.io.getFile(filename);
+            if (file.exists() && !special)
+            {
+                vimperator.echoerr("E189: \".vimperatorrc\" exists (add ! to override)");
+                return
+            }
+
+            var line = "\" " + vimperator.version + "\n";
+
+            // TODO: write user maps for all modes when we have mode dependant map support
+            for (var map in vimperator.mappings.getUserIterator(vimperator.modes.NORMAL))
+            {
+                for (var i = 0; i < map.names.length; i++)
+                    line += "map " + map.names[i] + " " + map.rhs + "\n";
+            }
+
+            for (var option in vimperator.options)
+            {   
+                // TODO: options should be queried for this info
+                if (!/fullscreen|usermode/.test(option.name) && option.value != option.default_value)
+                {
+                    if (option.type == "boolean")
+                        line += "set " + (option.value ? option.name : "no" + option.name) + "\n";
+                    else
+                        line += "set " + option.name + "=" + option.value + "\n";
+                }
+            }
+
+            line += "\" vim: set ft=vimperator:";
+
+            vimperator.io.writeFile(file, line);
+        },
+        {   
+            usage: ["mkv[imperatorrc] [file]"],
+            short_help: "Write current keymappings and changed options to [file]",
+            help: "If no <code class=\"argument\">[file]</code> is specified then ~/.vimperatorrc is written unless this file already exists. " +
+                  "The special version will overwrite <code class=\"argument\">[file]</code> if it exists.<br/>" +
+                  "WARNING: this differs from Vim's behaviour which defaults to writing the file in the current directory."
+        }
+    ));
     addDefaultCommand(new Command(["noh[lsearch]"],
         function(args)
         {
