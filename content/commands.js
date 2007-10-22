@@ -1106,18 +1106,6 @@ function Commands() //{{{
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored."
         }
     ));
-    addDefaultCommand(new Command(["redr[aw]"],
-        function()
-        {
-            var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-                            getInterface(Components.interfaces.nsIDOMWindowUtils);
-            wu.redraw();
-        },
-        {
-            short_help: "Redraw the screen",
-            help: "Useful to update the screen halfway executing a script or function."
-        }
-    ));
     addDefaultCommand(new Command(["re[load]"],
         function(args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); },
         {

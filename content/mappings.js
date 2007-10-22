@@ -597,14 +597,6 @@ function Mappings() //{{{
                   "Whether the new buffer is activated, depends on the <code class=\"option\">'activate'</code> option."
         }
     ));
-    addDefaultMap(new Map([vimperator.modes.NORMAL], ["<C-l>"],
-        function(count) { vimperator.commands.redraw(); },
-        {
-            short_help: "Redraw the screen",
-            help: "Works like <code class=\"command\">:redraw</code>.",
-            flags: Mappings.flags.COUNT
-        }
-    ));
     addDefaultMap(new Map(vimperator.modes.NORMAL, ["r"],
         function() { vimperator.tabs.reload(getBrowser().mCurrentTab, false); },
         {
