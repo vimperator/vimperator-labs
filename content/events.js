@@ -625,7 +625,7 @@ vimperator.Events = function() //{{{
             vimperator.input.count = parseInt(count_str, 10);
             if (isNaN(vimperator.input.count))
                 vimperator.input.count = -1;
-            if (map.flags & Mappings.flags.ARGUMENT)
+            if (map.flags & vimperator.Mappings.flags.ARGUMENT)
             {
                 vimperator.input.pendingArgMap = map;
                 vimperator.input.buffer += key;
@@ -640,7 +640,7 @@ vimperator.Events = function() //{{{
                 vimperator.input.buffer = "";
             }
             // no count support for these commands yet
-            else if (map.flags & Mappings.flags.MOTION)
+            else if (map.flags & vimperator.Mappings.flags.MOTION)
             {
                 vimperator.input.pendingMotionMap = map;
                 vimperator.input.buffer = "";

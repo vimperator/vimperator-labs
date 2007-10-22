@@ -702,7 +702,7 @@ const vimperator = (function() //{{{
             vimperator.log("Loading module buffer window...", 3);
             vimperator.bufferwindow  = new vimperator.InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
             vimperator.log("Loading module mappings...", 3);
-            vimperator.mappings      = new Mappings();
+            vimperator.mappings      = new vimperator.Mappings();
             vimperator.log("Loading module statusline...", 3);
             vimperator.statusline    = new vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);
