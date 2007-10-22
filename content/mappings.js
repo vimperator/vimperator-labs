@@ -864,14 +864,11 @@ function Mappings() //{{{
         if (url.match(/^file:\/\//) || url.match(/^\//))
         {
             var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-            var file = vimperator.io.fopen(stripedFilename, '<');
-            if (!file)
+            var file = vimperator.io.getFile(stripedFilename);
+            if (!file || !file.isDirectory())
                 return false;
-
-            if (file.localFile.isDirectory())
-                return true;
             else
-                return false;
+                return true;
         }
         // for all other locations just check if the URL ends with /
         if (url.match(/\/$/))

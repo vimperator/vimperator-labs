@@ -237,7 +237,7 @@ vimperator.completion = (function() // {{{
         }, //}}}
 
         // TODO: support file:// and \ or / path separators on both platforms
-        get_file_completions: function(filter) //{{{
+        get_file_completions: function(filter)
         {
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
@@ -252,35 +252,12 @@ vimperator.completion = (function() // {{{
 
             var compl = matches[2] || "";
 
+            var files = [], mapped = [];
             try
             {
-                var fd = vimperator.io.fopen(dir);
-            }
-            catch (e)
-            {
-                // thrown if file does not exist
-                return [];
-            }
-
-            if (!fd)
-                return [];
-
-            try
-            {
-                var entries = fd.read();
-                var separator = fd.path.length == 1 ? "" : /\\/.test(fd.path) ? "\\" : "/";
-                var new_filter = fd.path + separator + compl;
-                if (!filter) return entries.map(function(file) {
-                    var path = file.path;
-                    if (file.isDirectory())
-                        path += separator;
-                    return [path, ""];
-                });
-                var mapped = entries.map(function(file) {
-                    var path = file.path;
-                    if (file.isDirectory())
-                        path += separator;
-                    return [[path], ""];
+                files = vimperator.io.readDirectory(dir);
+                mapped = files.map(function(file) {
+                    return [[file.path], file.isDirectory() ? "Directory" : "File"];
                 });
             }
             catch (e)
@@ -288,8 +265,9 @@ vimperator.completion = (function() // {{{
                 return [];
             }
 
-            return build_longest_starting_substring(mapped, new_filter);
-        }, //}}}
+
+            return build_longest_starting_substring(mapped, filter);
+        },
 
         get_help_completions: function(filter) //{{{
         {
