@@ -773,7 +773,7 @@ const vimperator = (function() //{{{
                     // thrown if directory does not exist
                     //vimperator.log("Error sourcing plugin directory: " + e);
                 }
-            }, 50);
+            }, 0);
 
             vimperator.statusline.update();
             vimperator.log("Vimperator fully initialized", 1);
