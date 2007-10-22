@@ -1121,7 +1121,7 @@ vimperator.Commands = function() //{{{
 
             if (rhs)
             {
-                vimperator.mappings.add(new Map([vimperator.modes.NORMAL], [lhs],
+                vimperator.mappings.add(new vimperator.Map([vimperator.modes.NORMAL], [lhs],
                     function() { vimperator.events.feedkeys(rhs); }, { rhs: rhs }
                 ));
             }
@@ -1300,7 +1300,7 @@ vimperator.Commands = function() //{{{
                 if (/^:/.test(rhs))
                 {
                     vimperator.mappings.add(
-                        new Map([vimperator.modes.NORMAL], [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
+                        new vimperator.Map([vimperator.modes.NORMAL], [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
                     );
                 }
                 else
@@ -1315,7 +1315,7 @@ vimperator.Commands = function() //{{{
                     // is created not at runtime
                     if (map)
                         vimperator.mappings.add(
-                            new Map([vimperator.modes.NORMAL], [lhs], map.action, { flags: map.flags, rhs: rhs })
+                            new vimperator.Map([vimperator.modes.NORMAL], [lhs], map.action, { flags: map.flags, rhs: rhs })
                         );
                     else
                         vimperator.echoerr("E475: Invalid argument: " + "{rhs} must be a existing singular mapping");
