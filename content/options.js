@@ -75,7 +75,7 @@ function Option(names, type, extra_info) //{{{
         }
     }
 
-    // NOTE: forced defaults need to use Options.getPref
+    // NOTE: forced defaults need to use vimperator.options.getPref
     this.__defineGetter__("value",
         function()
         {
@@ -363,22 +363,22 @@ function Options() //{{{
 
     // TODO: separate Preferences from Options? Would these utility functions
     // be better placed in the 'core' vimperator namespace somewhere?
-    Options.setPref = function(name, value)
+    this.setPref = function(name, value)
     {
         return storePreference(name, value, true);
     }
 
-    Options.getPref = function(name, forced_default)
+    this.getPref = function(name, forced_default)
     {
         return loadPreference(name, forced_default, true);
     }
 
-    Options.setFirefoxPref = function(name, value)
+    this.setFirefoxPref = function(name, value)
     {
         return storePreference(name, value);
     }
 
-    Options.getFirefoxPref = function(name, forced_default)
+    this.getFirefoxPref = function(name, forced_default)
     {
         return loadPreference(name, forced_default);
     }
@@ -664,7 +664,7 @@ function Options() //{{{
     addOption(new Option(["visualbell", "vb"], "boolean",
         {
             short_help: "Use visual bell instead of beeping on errors",
-            setter: function(value) { Options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
+            setter: function(value) { vimperator.options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
             default_value: false
         }
     ));
@@ -672,7 +672,7 @@ function Options() //{{{
         {
             short_help: "CSS specification of the visual bell",
             help: "To hide the visual bell use a value of \"display: none;\" or unset it with <code class=\"command\">:set t_vb=</code>",
-            setter: function(value) { if (!value) value = "display: none;"; Options.setPref("visualbellstyle", value); },
+            setter: function(value) { if (!value) value = "display: none;"; },
             default_value: "background-color: black; color: black;"
         }
     ));

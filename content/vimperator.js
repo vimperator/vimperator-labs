@@ -401,7 +401,7 @@ const vimperator = (function() //{{{
         // if msg is an object, it is beautified
         log: function(msg, level)
         {
-            //if (Options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
+            //if (vimperator.options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
             if (typeof msg == "object")
                 msg = this.objectToString(msg, false);
 
@@ -481,9 +481,9 @@ const vimperator = (function() //{{{
         quit: function(save_session)
         {
             if (save_session)
-                Options.setFirefoxPref("browser.startup.page", 3); // start with saved session
+                vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
             else
-                Options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
+                vimperator.options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
 
             goQuitApplication();
         },
@@ -727,11 +727,11 @@ const vimperator = (function() //{{{
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return vimperator.completion.exTabCompletion(str); } );
 
             // first time intro message
-            if (Options.getPref("firsttime", true))
+            if (vimperator.options.getPref("firsttime", true))
             {
                 setTimeout(function() {
                     vimperator.help(null, null, null, { inTab: true });
-                    Options.setPref("firsttime", false);
+                    vimperator.options.setPref("firsttime", false);
                 }, 1000);
             }
 
