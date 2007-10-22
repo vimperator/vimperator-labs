@@ -20,11 +20,11 @@ syn region vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" onel
 
 syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load] bw[ipeout] delbm[arks]
 	\ delm[arks] delqm[arks] dl downl[oads] e[dit] ec[ho] echoe[rr] exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy]
-	\ hist[ory] hs javas[cript] js ls ma[rk] map mapc[lear] marks no[remap] noh[lsearch] norm[al] o[pen] pc[lose]
-	\ let pref[erences] prefs q[uit] qa[ll] qma[rk] qmarks quita[ll] re[load] reloada[ll] res[tart] sav[eas] sideb[ar] sb[ar]
-	\ sbcl[ose] sb[open] se[t] so[urce] st[op] time tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast]
-	\ tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tn[ext] tp[revious] u[ndo] unl[et] unm[ap]
-	\ ve[rsion] viu[sage] w[rite] win[open] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om] run
+	\ hist[ory] hs javas[cript] js ls ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen]
+	\ pc[lose] let pref[erences] prefs q[uit] qa[ll] qma[rk] qmarks quita[ll] re[load] reloada[ll] res[tart] sav[eas]
+	\ sideb[ar] sb[ar] sbcl[ose] sb[open] se[t] so[urce] st[op] time tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit]
+	\ tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tn[ext] tp[revious]
+	\ u[ndo] unl[et] unm[ap] ve[rsion] viu[sage] w[rite] win[open] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om] run
 	\ contained
 
 syn match vimperatorCommand "!" contained
