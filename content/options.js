@@ -105,6 +105,11 @@ vimperator.Option = function(names, type, extra_info) //{{{
         }
         return false;
     }
+
+    this.reset = function()
+    {
+        this.value = this.default_value;
+    }
 } //}}}
 
 vimperator.Options = function() //{{{
@@ -112,11 +117,20 @@ vimperator.Options = function() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
     var firefox_prefs = Components.classes["@mozilla.org/preferences-service;1"]
         .getService(Components.interfaces.nsIPrefBranch);
     var vimperator_prefs = firefox_prefs.getBranch("extensions.vimperator.");
     var options = [];
+
+    // save if we already changed a GUI related option, used for setInitialGUI
+    var guioptions_done = false, showtabline_done = false, laststatus_done = false;
+
+    function addOption(option)
+    {
+        Options.prototype.__defineGetter__(option.name, function() { return option.value; });
+        Options.prototype.__defineSetter__(option.name, function(value) { option.value = value; });
+        options.push(option);
+    }
 
     function optionsIterator()
     {
@@ -207,9 +221,11 @@ vimperator.Options = function() //{{{
         // and bookmarks toolbar
         document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
         document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
+
+        guioptions_done = true;
     }
 
-    function setStatusLine(value)
+    function setLastStatus(value)
     {
         if (value == 0)
         {
@@ -225,6 +241,8 @@ vimperator.Options = function() //{{{
             document.getElementById("status-bar").collapsed = false;
             document.getElementById("status-bar").hidden = false;
         }
+
+        laststatus_done = true;
     }
 
     function setShowTabline(value)
@@ -247,6 +265,8 @@ vimperator.Options = function() //{{{
             storePreference("browser.tabs.autoHide", false);
             tabs.collapsed = false;
         }
+
+        showtabline_done = true;
     }
 
     function setTitleString(value)
@@ -359,6 +379,18 @@ vimperator.Options = function() //{{{
         list += "</table>";
 
         vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+    }
+
+    // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
+    this.setInitialGUI = function()
+    {
+        dump("initial GUI: ");// + guioptions_done + " - " + laststatus_done + " - " + tabline_done );
+        if (!guioptions_done)
+            this.get("guioptions").reset();
+        if (!laststatus_done)
+            this.get("laststatus").reset();
+        if (!showtabline_done)
+            this.get("showtabline").reset();
     }
 
     // TODO: separate Preferences from Options? Would these utility functions
@@ -546,7 +578,7 @@ vimperator.Options = function() //{{{
                   "</ul>" +
                   "NOTE: laststatus=1 not implemented yet.",
             default_value: 2,
-            setter: function(value) { setStatusLine(value); },
+            setter: function(value) { setLastStatus(value); },
             validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
         }
     ));
@@ -733,9 +765,13 @@ vimperator.Options = function() //{{{
     ));
     //}}}
 
-    setShowTabline(this.showtabline);
-    setGuiOptions(this.guioptions);
-    setStatusLine(this.laststatus);
+    // we start with an "empty" GUI so that no toolbars or tabbar is shown if the user
+    // sets them to empty in the .vimperatorrc, which is sourced asynchronously
+    setShowTabline(0);
+    setGuiOptions("");
+    setLastStatus(0);
+    guioptions_done = showtabline_done = laststatus_done = false;
+
     setTitleString(this.titlestring);
     setPopups(this.popups);
 } //}}}

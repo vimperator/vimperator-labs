@@ -2,6 +2,9 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* IMPORTANT! options are no longer automatically stored - use the
+	  ~/.vimperatorrc file instead for persistent options
+	* added new :mkvimperatorrc command
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
 	* :open, :bmarks, etc. filter on space separated tokens now, so you can
 	  search with :open linux windows &lt;tab&gt; all your bookmarks/history
