@@ -336,14 +336,19 @@ vimperator.Editor = function() //{{{
         args.push(tmpfile.path)
 
         textBox.setAttribute("readonly", "true");
+        var oldBg = textBox.style.backgroundColor;
+        var tmpBg = "yellow";
+        textBox.style.backgroundColor = "#bbbbbb";
         var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
         // TODO: save return value in v:shell_error
         vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
         textBox.removeAttribute("readonly");
 
-//        if (retcode != 0)
+
+//        if (v:shell_error != 0)
 //        {
-//            err("External editor returned with exit code " + retcode);
+//            tmpBg = "red";
+//            vimperator.echoerr("External editor returned with exit code " + retcode);
 //        }
 //        else
         {
@@ -354,9 +359,24 @@ vimperator.Editor = function() //{{{
             }
             catch (e)
             {
+                tmpBg = "red";
                 vimperator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
             }
         }
+
+        // blink the textbox after returning
+        var timeout = 100;
+        textBox.style.backgroundColor = tmpBg;
+        setTimeout( function() {
+            textBox.style.backgroundColor = oldBg;
+            setTimeout( function() {
+                textBox.style.backgroundColor = tmpBg;
+                setTimeout( function() {
+                    textBox.style.backgroundColor = oldBg;
+                }, timeout);
+            }, timeout);
+        }, timeout);
+
         tmpfile.remove(false);
     }
 } //}}}

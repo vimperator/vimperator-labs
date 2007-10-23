@@ -377,7 +377,6 @@ vimperator.Options = function() //{{{
     // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
     this.setInitialGUI = function()
     {
-        dump("initial GUI: ");// + guioptions_done + " - " + laststatus_done + " - " + tabline_done );
         if (!guioptions_done)
             this.get("guioptions").reset();
         if (!laststatus_done)
