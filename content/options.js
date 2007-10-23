@@ -125,13 +125,6 @@ vimperator.Options = function() //{{{
     // save if we already changed a GUI related option, used for setInitialGUI
     var guioptions_done = false, showtabline_done = false, laststatus_done = false;
 
-    function addOption(option)
-    {
-        Options.prototype.__defineGetter__(option.name, function() { return option.value; });
-        Options.prototype.__defineSetter__(option.name, function(value) { option.value = value; });
-        options.push(option);
-    }
-
     function optionsIterator()
     {
         for (var i = 0; i < options.length; i++)
