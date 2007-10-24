@@ -234,16 +234,20 @@ outer:
         if (!win)
             win = window.content;
 
-        for (var i = 0; i < hints.length; i++)
+        try
         {
-            // remove the span for the numeric display part
-            win.document.body.removeChild(hints[i][2]);
+            for (var i = 0; i < hints.length; i++)
+            {
+                // remove the span for the numeric display part
+                win.document.body.removeChild(hints[i][2]);
 
-            // restore colors
-            var elem = hints[i][0];
-            elem.style.backgroundColor = hints[i][3];
-            elem.style.color = hints[i][4];
+                // restore colors
+                var elem = hints[i][0];
+                elem.style.backgroundColor = hints[i][3];
+                elem.style.color = hints[i][4];
+            }
         }
+        catch(e) { vimperator.log("Error hiding hints, probably wrong window"); }
     };
 
     ////////////////////////////////////////////////////////////////////////////////
