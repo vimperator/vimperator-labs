@@ -1020,18 +1020,21 @@ vimperator.Mappings = function() //{{{
 
     // hint managment
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["f"],
-        function() { vimperator.hints.enableHahMode(vimperator.modes.QUICK_HINT); },
+        function() { vimperator.hints.show(vimperator.modes.QUICK_HINT); },
         {
             short_help: "Start QuickHint mode",
-            help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
-                  "If you then press the keys for a label, it is followed as soon as it can be uniquely identified and this mode is stopped. Or press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
-                  "If you write the hint in ALLCAPS, the hint is followed in a background tab."
+            usage: ["f{hint}"],
+            help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a unique number (FIXME: numbers shown, but not usable yet).<br/>" +
+                  "You can now either type this number or type any part of the URL which you want to follow, and it is followed as soon as it can be uniquely identified. " +
+                  //"If you write the hint in ALLCAPS, the hint is followed in a background tab.<br/>" +
+                  "Often it is can be useful to combine these techniques to narrow down results with some letters, and then typing a single digit to make the match unique.<br/>" +
+                  "<code class=\"mapping\">&lt;Esc&gt;</code> stops this mode at any time."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
-        function() { vimperator.hints.enableHahMode(vimperator.modes.ALWAYS_HINT); },
+        function() { vimperator.echo("Always HINT mode not available anymore"); },
         {
-            short_help: "Start AlwaysHint mode",
+            short_help: "Start AlwaysHint mode (CURRENTLY DISABLED)",
             help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
                   "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
                   "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
@@ -1039,26 +1042,28 @@ vimperator.Mappings = function() //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], [";"],
-        function() { vimperator.hints.enableHahMode(vimperator.modes.EXTENDED_HINT); },
+        function(arg) { vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg); },
         {
             short_help: "Start ExtendedHint mode",
-            help: "ExtendedHint mode is useful, since in this mode you can yank link locations, or open them in a new window.<br/>" +
-                  "E.g., if you want to yank the location of hint <code>AB</code>, press <code class=\"mapping\">;</code> to start this hint mode.<br/>" +
-                  "Then press <code>AB</code> to select the hint. Now press <code class=\"mapping\">y</code> to yank its location.<br/>" +
-                  "Actions for selected hints in ExtendedHint mode are:<br/>" +
+            usage: [";{mode}{hint}"],
+            help: "ExtendedHint mode is useful, since in this mode you can yank link locations, open them in a new window or save images.<br/>" +
+                  "If you want to yank the location of hint <code>24</code>, press <code class=\"mapping\">;y</code> to start this hint mode.<br/>" +
+                  "Then press <code>24</code> to copy the hint location.<br/>" +
+                  "{mode} can be either of:<br/>" +
                   "<ul>" +
-                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
-                  "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
+                  "<li><code class=\"mapping\">a</code> to save its destination (prompting for save location)</li>" +
+                  "<li><code class=\"mapping\">s</code> to save its destination</li>" +
                   "<li><code class=\"mapping\">o</code> to open its location in the current tab</li>" +
                   "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
-                  "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query (not implemented yet)</li>" +
-                  "<li><code class=\"mapping\">T</code> to open its location in an <code class=\"command\">:tabopen</code> query (not implemented yet)</li>" +
-                  "<li><code class=\"mapping\">s</code> to save its destination</li>" +
-                  "<li><code class=\"mapping\">a</code> to save its destination (prompting for save location)</li>" +
-                  "<li><code class=\"mapping\">&lt;C-w&gt;</code> to open its destination in a new window</li>" +
+                  "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query</li>" +
+                  "<li><code class=\"mapping\">T</code> to open its location in a <code class=\"command\">:tabopen</code> query</li>" +
+                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
+                  "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
+                  "<li><code class=\"mapping\">w</code> to open its destination in a new window</li>" +
+                  "<li><code class=\"mapping\">W</code> to open its location in a <code class=\"command\">:winopen</code> query</li>" +
                   "</ul>" +
-                  "Multiple hints can be separated by commas where it makes sense. <code class=\"mapping\">;ab,ac,adt</code> opens <code>AB</code>, <code>AC</code> and <code>AD</code> in a new tab.<br/>" +
-                  "Hintable elements for this mode can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string."
+                  "Hintable elements for this mode can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string.",
+            flags: vimperator.Mappings.flags.ARGUMENT
         }
     ));
 
@@ -1108,230 +1113,230 @@ vimperator.Mappings = function() //{{{
     // Hints mode
     // {{{
 
-    // action keys
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["o"],
-        function() { vimperator.hints.openHints(false, false); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["t"],
-        function() { vimperator.hints.openHints(true,  false); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-w>"],
-        function() { vimperator.hints.openHints(false, true ); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["s"],
-        function() { vimperator.hints.saveHints(true); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["a"],
-        function() { vimperator.hints.saveHints(false); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["y"],
-        function() { vimperator.hints.yankUrlHints(); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["Y"],
-        function() { vimperator.hints.yankTextHints(); },
-        {
-            cancel_mode: true,
-            always_active: false
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [","],
-        function() { vimperator.input.buffer += ','; vimperator.hints.setCurrentState(0); },
-        {
-            cancel_mode: false,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [":"],
-        function() { vimperator.commandline.open(':', '', vimperator.modes.EX); },
-        {
-            cancel_mode: false,
-            always_active: true
-        }
-    ));
-
-    // movement keys
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-e>"],
-        function(count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-y>"],
-        function(count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Home>"],
-        function() { vimperator.buffer.scrollTop(); },
-        {
-            cancel_mode: false,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<End>"],
-        function() { vimperator.buffer.scrollBottom(); },
-        {
-            cancel_mode: false,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageUp>", "<C-b>"],
-        function(count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageDown>", "<C-f>"],
-        function(count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Left>"],
-        function() { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Down>"],
-        function() { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Up>"],
-        function() { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Right>"],
-        function() { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-
-    // tab management
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-n>"],
-        function() { vimperator.tabs.select('+1', true); },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    )); // same as gt, but no count supported
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-p>"],
-        function() { vimperator.tabs.select('-1', true); },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));
-
-    // navigation
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-o>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-i>"],
-        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-h>"],
-        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-l>"],
-        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        {
-            cancel_mode: false,
-            always_active: true,
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-d>"],
-        function() { vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0); },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));
-
-    // cancel_mode hint mode keys
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-c>"],
-        function() { ; },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-g>"],
-        function() { ; },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-[>"],
-        function() { ; },
-        {
-            cancel_mode: true,
-            always_active: true
-        }
-    ));
+//    // action keys
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["o"],
+//        function() { vimperator.hints.openHints(false, false); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["t"],
+//        function() { vimperator.hints.openHints(true,  false); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-w>"],
+//        function() { vimperator.hints.openHints(false, true ); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["s"],
+//        function() { vimperator.hints.saveHints(true); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["a"],
+//        function() { vimperator.hints.saveHints(false); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["y"],
+//        function() { vimperator.hints.yankUrlHints(); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["Y"],
+//        function() { vimperator.hints.yankTextHints(); },
+//        {
+//            cancel_mode: true,
+//            always_active: false
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [","],
+//        function() { vimperator.input.buffer += ','; vimperator.hints.setCurrentState(0); },
+//        {
+//            cancel_mode: false,
+//            always_active: true
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [":"],
+//        function() { vimperator.commandline.open(':', '', vimperator.modes.EX); },
+//        {
+//            cancel_mode: false,
+//            always_active: true
+//        }
+//    ));
+//
+//    // movement keys
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-e>"],
+//        function(count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-y>"],
+//        function(count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Home>"],
+//        function() { vimperator.buffer.scrollTop(); },
+//        {
+//            cancel_mode: false,
+//            always_active: true
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<End>"],
+//        function() { vimperator.buffer.scrollBottom(); },
+//        {
+//            cancel_mode: false,
+//            always_active: true
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageUp>", "<C-b>"],
+//        function(count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageDown>", "<C-f>"],
+//        function(count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Left>"],
+//        function() { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Down>"],
+//        function() { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Up>"],
+//        function() { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Right>"],
+//        function() { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//
+//    // tab management
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-n>"],
+//        function() { vimperator.tabs.select('+1', true); },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    )); // same as gt, but no count supported
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-p>"],
+//        function() { vimperator.tabs.select('-1', true); },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    ));
+//
+//    // navigation
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-o>"],
+//        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-i>"],
+//        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-h>"],
+//        function(count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-l>"],
+//        function(count) { vimperator.history.stepTo(count > 1 ? count : 1); },
+//        {
+//            cancel_mode: false,
+//            always_active: true,
+//            flags: vimperator.Mappings.flags.COUNT
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-d>"],
+//        function() { vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0); },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    ));
+//
+//    // cancel_mode hint mode keys
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-c>"],
+//        function() { ; },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-g>"],
+//        function() { ; },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-[>"],
+//        function() { ; },
+//        {
+//            cancel_mode: true,
+//            always_active: true
+//        }
+//    ));
     
     // }}}
     // Caret mode

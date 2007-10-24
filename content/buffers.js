@@ -57,7 +57,7 @@ vimperator.Buffer = function() //{{{
         // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
         // on the recalculation side effect? -- djk
         // NOTE: we could really do with a zoom event...
-        vimperator.hints.reshowHints();
+        // vimperator.hints.reshowHints();
     }
 
     function bumpZoomLevel(steps, full_zoom)

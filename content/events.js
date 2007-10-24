@@ -489,6 +489,10 @@ vimperator.Events = function() //{{{
 
             switch (vimperator.mode)
             {
+                case vimperator.modes.HINTS:
+                        vimperator.modes.reset();
+                    break;
+
                 case vimperator.modes.VISUAL:
                     if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
                         vimperator.mode = vimperator.modes.TEXTAREA;
@@ -607,81 +611,24 @@ vimperator.Events = function() //{{{
 
 
         // if Hit-a-hint mode is on, special handling of keys is required
-        // FIXME: total mess
-        if (vimperator.mode == vimperator.modes.HINTS)
+        // FIXME: <Esc> should be handled properly!
+        if (key != "<Esc>" && key != "<C-[>")
         {
-            // never propagate this key to firefox, when hints are visible
-            //event.preventDefault();
-            //event.stopPropagation();
-
-            var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
-            if (map)
+//                // if the hint is all in UPPERCASE, open it in new tab
+//                vimperator.input.buffer += key;
+//                if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
+//                    vimperator.hints.openHints(true, false);
+//                else // open in current window
+//                    vimperator.hints.openHints(false, false);
+            if (vimperator.mode == vimperator.modes.HINTS)
             {
-                if (map.always_active || vimperator.hints.currentState() == 1)
-                {
-                    map.execute(null, vimperator.input.count);
-                    if (map.cancel_mode) // stop processing this event
-                    {
-                        vimperator.hints.disableHahMode();
-                        vimperator.input.buffer = "";
-                        vimperator.statusline.updateInputBuffer("");
-                        return false;
-                    }
-                    else
-                    {
-                        // FIXME: make sure that YOU update the statusbar message yourself
-                        // first in g_hint_mappings when in this mode!
-                        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                        return false;
-                    }
-                }
+                vimperator.hints.onEvent(event);
+                event.preventDefault();
+                event.stopPropagation();
+                // if i do an alert("x") here, it doesn't crash on up/down, why?
+                return false;
             }
-
-            // no mapping found, beep()
-            if (vimperator.hints.currentState() == 1)
-            {
-                vimperator.beep();
-                vimperator.hints.disableHahMode();
-                vimperator.input.buffer = "";
-                vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                return true;
-            }
-
-            // if we came here, let hit-a-hint process the key as it is part
-            // of a partial link
-            var res = vimperator.hints.processEvent(event);
-            if (res < 0) // error occured processing this key
-            {
-                vimperator.beep();
-                if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
-                    vimperator.hints.disableHahMode();
-                else // ALWAYS mode
-                    vimperator.hints.resetHintedElements();
-                vimperator.input.buffer = "";
-            }
-            else if (res == 0 || vimperator.modes.extended & vimperator.modes.EXTENDED_HINT) // key processed, part of a larger hint
-                vimperator.input.buffer += key;
-            else // this key completed a quick hint
-            {
-                // if the hint is all in UPPERCASE, open it in new tab
-                vimperator.input.buffer += key;
-                if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
-                    vimperator.hints.openHints(true, false);
-                else // open in current window
-                    vimperator.hints.openHints(false, false);
-
-                if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
-                    vimperator.hints.disableHahMode();
-                else // ALWAYS mode
-                    vimperator.hints.resetHintedElements();
-
-                vimperator.input.buffer = "";
-            }
-
-            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-            return true;
         }
-
 
         var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
         var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');

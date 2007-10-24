@@ -71,6 +71,10 @@ vimperator.modes = (function()
         }
     }
 
+    // XXX: Pay attention that you don't run into endless loops
+    // Usually you should only indicate to leave a special mode linke HINTS
+    // by calling vimperator.modes.reset() and adding the stuff which is needed
+    // for its cleanup here
     function handleModeChange(oldmode, newmode)
     {
         vimperator.log("switching from mode " + oldmode + " to mode " + newmode, 7);
@@ -96,13 +100,13 @@ vimperator.modes = (function()
                 break;
 
             case vimperator.modes.HINTS:
-                // XXX: for now this does not work, but later it should be here
-                // vimperator.hints.disableHahMode();
+                vimperator.hints.hide();
                 break;
         }
 
         if (newmode == vimperator.modes.NORMAL)
         {
+            // XXX: why this code?
             var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
             if (value)
                 vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
