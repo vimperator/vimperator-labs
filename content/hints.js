@@ -336,24 +336,58 @@ outer:
 
     this.onEvent = function(event)
     {
-        var num = String.fromCharCode(event.charCode).toLowerCase();
-        linkNumString += "" + num;
-        //setTimeout( function() { canUpdate = true; }, timeout);
+        var key = vimperator.events.toString(event);
+        var endAfterThisKey = false;
+        switch (key)
+        {
+            case "<Return>":
+                endAfterThisKey = true;
+                //if (valid_hints.length == 0)
+                //{
+                //    vimperator.beep();
+                //    vimperator.modes.reset();
+                //    return;
+                //}
+                //else
+                //    valid_hints = [valid_hints[0]];
+                break;
+
+            case "<Space>":
+                linkNumString += " ";
+                break;
+
+            case "<BS>":
+                if (linkNumString = "")
+                {
+                    vimperator.beep();
+                    return;
+                }
+                else
+                    linkNumString = linkNumString.substr(0, linkNumString.length-1);
+                break;
+
+            default:
+                linkNumString += key;
+        }
+
         vimperator.statusline.updateInputBuffer(linkNumString);
         showHints(null, linkNumString);
 
         if (valid_hints.length == 0)
             vimperator.beep();
-        else if (valid_hints.length >= 1)
+        else
         {
-            var first_href = valid_hints[0].getAttribute("href") || null;
-            if (first_href)
+            if (!endAfterThisKey)
             {
-                if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
+                var first_href = valid_hints[0].getAttribute("href") || null;
+                if (first_href)
+                {
+                    if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
+                        return;
+                }
+                else if (valid_hints.length > 1)
                     return;
             }
-            else if (valid_hints.length > 1)
-                return;
 
             vimperator.echo(" ");
             vimperator.statusline.updateInputBuffer("");
@@ -388,7 +422,7 @@ outer:
             setTimeout( function() {
                 if (vimperator.mode == vimperator.modes.HINTS)
                     vimperator.modes.reset(true);
-            }, 500);
+            }, endAfterThisKey ? 0 : 500);
         }
     }
 

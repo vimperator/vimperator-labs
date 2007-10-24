@@ -112,8 +112,8 @@ vimperator.modes = (function()
                 vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
 
             vimperator.statusline.updateUrl();
-            // XXX: auto-focusing of content disabled, as it breaks hints partly
-            //vimperator.focusContent();
+            // XXX: auto-focusing breaks hints partly, find a good solution
+            vimperator.focusContent();
         }
     }
 
