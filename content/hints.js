@@ -49,7 +49,6 @@ vimperator.Hints = function() //{{{
         var elem = valid_hints[0];
         var elemTagName = elem.tagName;
         elem.focus();
-
         if (elemTagName == 'FRAME' || elemTagName == 'IFRAME')
             return 0;
 
@@ -72,6 +71,38 @@ vimperator.Hints = function() //{{{
         elem.dispatchEvent(evt);
 
         return true;
+    };
+
+    function focusHint()
+    {
+        if (valid_hints.length < 1)
+            return false;
+
+        var elem = valid_hints[0];
+        var doc = window.content.document;
+        if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
+        {
+            elem.contentWindow.focus();
+            return;
+        }
+        else
+        {
+            elem.focus();
+        }
+
+        var evt = doc.createEvent('MouseEvents');
+        var x = 0;
+        var y = 0;
+        // for imagemap
+        if (elem.tagName == 'AREA')
+        {
+            var coords = elem.getAttribute("coords").split(",");
+            x = Number(coords[0]);
+            y = Number(coords[1]);
+        }
+
+        evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+        elem.dispatchEvent(evt);
     };
 
     function yankHint(text)
@@ -138,8 +169,6 @@ vimperator.Hints = function() //{{{
         for (var i = 0; i < res.snapshotLength; i++)
         {
             elem = res.snapshotItem(i);
-            tagname = elem.tagName.toLowerCase();
-            text = elem.textContent.toLowerCase();
             rect = elem.getBoundingClientRect();
             if (!rect || rect.bottom < 0 || rect.top > height || rect.right < 0 || rect.left > width)
                 continue;
@@ -147,6 +176,19 @@ vimperator.Hints = function() //{{{
             rect = elem.getClientRects()[0];
             if (!rect)
                 continue;
+
+            tagname = elem.tagName.toLowerCase();
+            if (tagname == "input" || tagname == "textarea")
+                text = elem.value.toLowerCase();
+            else if (tagname == "select")
+            {
+                if (elem.selectedIndex >= 0)
+                    text = elem.item(elem.selectedIndex).text.toLowerCase();
+                else
+                    text = "";
+            }
+            else
+                text = elem.textContent.toLowerCase();
 
             span = baseNodeAbsolute.cloneNode(true);
             span.innerHTML = "";
@@ -257,7 +299,7 @@ outer:
     // TODO: implement framesets
     this.show = function(mode, minor)
     {
-        if (mode == vimperator.modes.EXTENDED_HINT && !/^[aoOstTwWyY]$/.test(minor))
+        if (mode == vimperator.modes.EXTENDED_HINT && !/^[afoOstTwWyY]$/.test(minor))
         {
             vimperator.beep();
             return;
@@ -304,8 +346,13 @@ outer:
             vimperator.beep();
         else if (valid_hints.length >= 1)
         {
-            var first_href = valid_hints[0].getAttribute("href");
-            if (!first_href || valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
+            var first_href = valid_hints[0].getAttribute("href") || null;
+            if (first_href)
+            {
+                if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
+                    return;
+            }
+            else if (valid_hints.length > 1)
                 return;
 
             vimperator.echo(" ");
@@ -318,6 +365,7 @@ outer:
                 var loc = valid_hints.length > 0 ? valid_hints[0].href : "";
                 switch (submode)
                 {
+                    case "f": focusHint(); break;
                     case "o": openHint(false, false); break;
                     case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
                     case "t": openHint(true,  false); break;
@@ -336,7 +384,11 @@ outer:
 
             this.hide();
             // only close this mode half a second later, so we don't trigger accidental actions so easily
-            setTimeout( function() { if (vimperator.mode == vimperator.modes.HINTS) vimperator.modes.reset(true); }, 500);
+            // XXX: currently closes SELECT fields, need have an own mode for that
+            setTimeout( function() {
+                if (vimperator.mode == vimperator.modes.HINTS)
+                    vimperator.modes.reset(true);
+            }, 500);
         }
     }
 
@@ -363,34 +415,6 @@ outer:
 //    };
 //
 //
-//    function setMouseOverElement(elem)
-//    {
-//        var doc = window.document;
-//
-//        if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
-//        {
-//            elem.contentWindow.focus();
-//            return;
-//        }
-//        //else
-//        //{
-//        //    elem.focus();
-//        //}
-//
-//        var evt = doc.createEvent('MouseEvents');
-//        var x = 0;
-//        var y = 0;
-//        // for imagemap
-//        if (elem.tagName == 'AREA')
-//        {
-//            var coords = elem.getAttribute("coords").split(",");
-//            x = Number(coords[0]);
-//            y = Number(coords[1]);
-//        }
-//
-//        evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
-//        elem.dispatchEvent(evt);
-//    }
 
 } //}}}
 

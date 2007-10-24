@@ -1053,6 +1053,7 @@ vimperator.Mappings = function() //{{{
                   "<ul>" +
                   "<li><code class=\"mapping\">a</code> to save its destination (prompting for save location)</li>" +
                   "<li><code class=\"mapping\">s</code> to save its destination</li>" +
+                  "<li><code class=\"mapping\">f</code> to focus a link and hover it with the mouse</li>" +
                   "<li><code class=\"mapping\">o</code> to open its location in the current tab</li>" +
                   "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
                   "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query</li>" +
