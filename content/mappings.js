@@ -1027,25 +1027,40 @@ vimperator.Mappings = function() //{{{
             usage: ["f{hint}"],
             help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a unique number (FIXME: numbers shown, but not usable yet).<br/>" +
                   "You can now either type this number or type any part of the URL which you want to follow, and it is followed as soon as it can be uniquely identified. " +
-                  //"If you write the hint in ALLCAPS, the hint is followed in a background tab.<br/>" +
                   "Often it is can be useful to combine these techniques to narrow down results with some letters, and then typing a single digit to make the match unique.<br/>" +
                   "<code class=\"mapping\">&lt;Esc&gt;</code> stops this mode at any time."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
-        function() { vimperator.echo("Always HINT mode not available anymore"); },
+        function() { vimperator.hints.show(vimperator.modes.QUICK_HINT, "t"); },
         {
-            short_help: "Start AlwaysHint mode (CURRENTLY DISABLED)",
-            help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
-                  "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
-                  "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
-                  "Also, most <code class=\"mapping\">Ctrl</code>-prefixed shortcut keys are available in this mode for navigation."
+            short_help: "Start QuickHint mode, but open link in a new tab",
+            usage: ["F{hint}"],
+            help: "Like normal QuickMode (activated with <code class='mapping'>f</code>) but open the link in a new tab."
         }
     ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
+//        function() { vimperator.echo("Always HINT mode not available anymore"); },
+//        {
+//            short_help: "Start AlwaysHint mode (CURRENTLY DISABLED)",
+//            help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
+//                  "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
+//                  "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
+//                  "Also, most <code class=\"mapping\">Ctrl</code>-prefixed shortcut keys are available in this mode for navigation."
+//        }
+//    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], [";"],
-        function(arg) { vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg); },
+        function(arg)
         {
-            short_help: "Start ExtendedHint mode",
+            if (arg == "a")
+                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "o");
+            else if (arg == "A")
+                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "t");
+            else
+                vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg);
+        },
+        {
+            short_help: "Start an extended Hint mode",
             usage: [";{mode}{hint}"],
             help: "ExtendedHint mode is useful, since in this mode you can yank link locations, open them in a new window or save images.<br/>" +
                   "If you want to yank the location of hint <code>24</code>, press <code class=\"mapping\">;y</code> to start this hint mode.<br/>" +

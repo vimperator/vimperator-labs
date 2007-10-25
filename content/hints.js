@@ -35,10 +35,10 @@ vimperator.Hints = function() //{{{
     var hints = [];
     var valid_hints = []; // store the indices of the "hints" array with valid elements
     
-    var canUpdate = true;
+    var canUpdate = false;
+    var hintsGenerated = false;
     var timeout = 200; // only update every 200ms when typing fast, not used yet
-
-    var wins = []; // keep track of the windows which we display the hints for
+    var docs = []; // keep track of the documents which we display the hints for
 
     // this function 'click' an element, which also works
     // for javascript links
@@ -148,7 +148,7 @@ vimperator.Hints = function() //{{{
             win = window.content;
 
         var doc = win.document;
-        wins.push(doc);
+        docs.push(doc);
 
         var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
         baseNodeAbsolute.style.backgroundColor = "red";
@@ -201,7 +201,19 @@ vimperator.Hints = function() //{{{
             hints.push([elem, text, span, elem.style.backgroundColor, elem.style.color]);
         }
 
+        hintsGenerated = true;
         return true;
+    }
+
+    // reset all important variables
+    function reset()
+    {
+        vimperator.statusline.updateInputBuffer("");
+        linkNumString = "";
+        hints = [];
+        valid_hints = [];
+        canUpdate = false;
+        hintsGenerated = false;
     }
 
     function showHints(win, str, start_idx)
@@ -275,6 +287,7 @@ outer:
 
     function removeHints(doc, timeout)
     {
+        vimperator.log(timeout);
         if (!doc)
         {
             vimperator.log("Argument doc is required for internal removeHints() method", 9);
@@ -336,8 +349,11 @@ outer:
                         firstElem.style.color = firstElemColor;
                 }, timeout);
             }
+
         }
         catch (e) { vimperator.log("Error hiding hints, probably wrong window"); }
+
+        reset();
     };
 
     function processHints(followFirst)
@@ -347,47 +363,57 @@ outer:
             vimperator.beep();
             return false;
         }
-        else
+
+        if (!followFirst)
         {
-            if (!followFirst)
+            var first_href = valid_hints[0].getAttribute("href") || null;
+            if (first_href)
             {
-                var first_href = valid_hints[0].getAttribute("href") || null;
-                if (first_href)
-                {
-                    if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
-                        return false;
-                }
-                else if (valid_hints.length > 1)
+                if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
                     return false;
             }
-
-            if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
-                openHint(false, false);
-            else
-            {
-                var loc = valid_hints.length > 0 ? valid_hints[0].href : "";
-                switch (submode)
-                {
-                    case "f": focusHint(); break;
-                    case "o": openHint(false, false); break;
-                    case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
-                    case "t": openHint(true,  false); break;
-                    case "T": openHint(true,  false); break;
-                    case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
-                    case "w": openHint(false, true);  break;
-                    case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-                    case "a": saveHint(false); break;
-                    case "s": saveHint(true); break;
-                    case "y": yankHint(false); break;
-                    case "Y": yankHint(true); break;
-                    default:
-                    vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
-                }
-            }
-
-            // I KNOW, ugly but this. is not available in this context :(
-            vimperator.hints.hide(null, !followFirst);
+            else if (valid_hints.length > 1)
+                return false;
         }
+
+        var loc = valid_hints.length > 0 ? valid_hints[0].href : "";
+        switch (submode)
+        {
+            case "f": focusHint(); break;
+            case "o": openHint(false, false); break;
+            case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
+            case "t": openHint(true,  false); break;
+            case "T": openHint(true,  false); break;
+            case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
+            case "w": openHint(false, true);  break;
+            case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
+            case "a": saveHint(false); break;
+            case "s": saveHint(true); break;
+            case "y": yankHint(false); break;
+            case "Y": yankHint(true); break;
+            default:
+                vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
+        }
+
+        var timeout = followFirst ? 0 : 500;
+        removeHints(docs.pop(), timeout);
+
+        if (vimperator.modes.extended & vimperator.modes.ALWAYS_HINT)
+        {
+            setTimeout(function() {
+                canUpdate = true;
+                linkNumString = "";
+                vimperator.statusline.updateInputBuffer("");
+            }, timeout);
+        }
+        else
+        {
+            setTimeout( function() {
+                if (vimperator.mode == vimperator.modes.HINTS)
+                    vimperator.modes.reset(false);
+            }, timeout);
+        }
+
         return true;
     };
 
@@ -405,7 +431,7 @@ outer:
         }
 
         vimperator.modes.set(vimperator.modes.HINTS, mode);
-        submode = minor;
+        submode = minor || "o"; // open is the default mode
         linkNumString = filter || "";
         canUpdate = false;
 
@@ -432,26 +458,14 @@ outer:
             return true;
     };
 
-    this.hide = function(win, delayModeChange)
+    this.hide = function()
     {
-        var timeout = delayModeChange ? 500 : 0;
-        doc = wins.pop();
+        if (!hintsGenerated)
+            return;
+
+        doc = docs.pop();
         if(doc);
-            removeHints(doc, timeout);
-
-        vimperator.echo(" ");
-        vimperator.statusline.updateInputBuffer("");
-
-        linkNumString = "";
-        hints = [];
-        valid_hints = [];
-        canUpdate = false;
-
-        // only close this mode half a second later, so we don't trigger accidental actions so easily
-        setTimeout( function() {
-            if (vimperator.mode == vimperator.modes.HINTS)
-                vimperator.modes.reset(true);
-        }, timeout);
+            removeHints(doc, 0);
     };
 
     this.onEvent = function(event)
@@ -484,15 +498,34 @@ outer:
                 break;
 
             default:
+                // pass any special or ctrl- etc. prefixed key back to the main vimperator loop
+                if (/^<./.test(key) || key == ":")
+                {
+                    var map = null;
+                    if ((map = vimperator.mappings.get(vimperator.modes.NORMAL, key)) ||
+                        (map = vimperator.mappings.get(vimperator.modes.HINTS, key)))
+                    {
+                        map.execute(null, -1);
+                        return;
+                    }
+
+                    vimperator.beep();
+                    return;
+                }
+                    
                 linkNumString += key;
         }
 
         vimperator.statusline.updateInputBuffer(linkNumString);
         if (canUpdate)
         {
+            if (!hintsGenerated && linkNumString.length > 0)
+                generate();
+
             showHints(null, linkNumString);
             processHints(followFirst);
         }
+        return false;
     }
 
 

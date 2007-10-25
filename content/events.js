@@ -52,11 +52,15 @@ vimperator.Events = function() //{{{
         vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
+        if (vimperator.mode == vimperator.modes.HINTS)
+            vimperator.modes.reset();
+
         vimperator.commandline.clear();
         vimperator.modes.show();
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
         vimperator.tabs.updateSelectionHistory();
+
         setTimeout(function() { vimperator.focusContent(true); }, 10); // just make sure, that no widget has focus
     }, false);
 
@@ -620,7 +624,8 @@ vimperator.Events = function() //{{{
                 vimperator.hints.onEvent(event);
                 event.preventDefault();
                 event.stopPropagation();
-                return false;
+                return true;
+                
             }
         }
 
