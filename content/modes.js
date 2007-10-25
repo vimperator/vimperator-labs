@@ -102,6 +102,10 @@ vimperator.modes = (function()
             case vimperator.modes.HINTS:
                 vimperator.hints.hide();
                 break;
+
+            case vimperator.modes.COMMAND_LINE:
+                vimperator.commandline.close();
+                break;
         }
 
         if (newmode == vimperator.modes.NORMAL)
@@ -112,8 +116,7 @@ vimperator.modes = (function()
                 vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
 
             vimperator.statusline.updateUrl();
-            // XXX: auto-focusing breaks hints partly, find a good solution
-            vimperator.focusContent();
+            vimperator.focusContent(false);
         }
     }
 

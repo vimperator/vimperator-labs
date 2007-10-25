@@ -208,15 +208,15 @@ vimperator.Search = function() //{{{
         if (vimperator.options["hlsearch"])
             this.highlight(search_string);
 
-        vimperator.modes.set(vimperator.modes.NORMAL, null, true);
+        vimperator.modes.reset();
     }
 
-    // Called when the search is cancelled - for example if someone presses
+    // Called when the search is canceled - for example if someone presses
     // escape while typing a search
     this.searchCanceled = function()
     {
-        vimperator.modes.reset();          
-        //vimperator.focusContent();
+        this.clear();
+        // TODO: code to reposition the document to the place before search started
     }
 
     // this is not dependent on the value of 'hlsearch'

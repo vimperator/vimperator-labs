@@ -148,15 +148,16 @@ const vimperator = (function() //{{{
         },
 
         // after pressing Escape, put focus on a non-input field of the browser document
-        focusContent: function()
+        // if clearFocusedElement, also blur a focused link
+        focusContent: function(clearFocusedElement)
         {
             var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
                      getService(Components.interfaces.nsIWindowWatcher);
 
-            if (window == ww.activeWindow && document.commandDispatcher.focusedElement)
+            if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
-            content.focus(); // FIXME: shouldn't be window.document.content?
+            content.focus();
         },
 
         // partial sixth level expression evaluation

@@ -38,6 +38,8 @@ vimperator.Hints = function() //{{{
     var canUpdate = true;
     var timeout = 200; // only update every 200ms when typing fast, not used yet
 
+    var wins = []; // keep track of the windows which we display the hints for
+
     // this function 'click' an element, which also works
     // for javascript links
     function openHint(new_tab, new_window)
@@ -146,6 +148,7 @@ vimperator.Hints = function() //{{{
             win = window.content;
 
         var doc = win.document;
+        wins.push(doc);
 
         var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
         baseNodeAbsolute.style.backgroundColor = "red";
@@ -201,12 +204,8 @@ vimperator.Hints = function() //{{{
         return true;
     }
 
-    //this.show = function(doc, str, start_idx)
     function showHints(win, str, start_idx)
     {
-        if (!canUpdate)
-            return false;
-
         if (!win)
             win = window.content;
         if (!str)
@@ -239,25 +238,28 @@ outer:
             elem = hints[i][0];
             text = hints[i][1];
             span = hints[i][2];
-            //tagname = elem.tagName.toLowerCase();
 
             for (var k = 0; k < find_tokens.length; k++)
             {
                 if (text.indexOf(find_tokens[k]) < 0)
                 {
-                    //dump("NOT matching: " + text + "\n");
+                    // reset background color
                     elem.style.backgroundColor = hints[i][3];
                     elem.style.color = hints[i][4];
                     span.style.display = "none";
                     continue outer;
                 }
             }
-            //dump("MATCHING: " + text + "\n");
-            elem.style.backgroundColor = "yellow";
-            elem.style.color = "black";
+
             rect = elem.getClientRects()[0];
             if (rect)
             {
+                if (hintnum == 1)
+                    elem.style.backgroundColor = "#88FF00";
+                else
+                    elem.style.backgroundColor = "yellow";
+
+                elem.style.color = "black";
                 span.style.left = (rect.left + scrollX) + "px";
                 span.style.top = rect.top + scrollY + "px";
                 span.innerHTML = "" + (hintnum++);
@@ -271,126 +273,93 @@ outer:
         return true;
     }
 
-    function hideHints(win)
+    function removeHints(doc, timeout)
     {
-        if (!win)
-            win = window.content;
+        if (!doc)
+        {
+            vimperator.log("Argument doc is required for internal removeHints() method", 9);
+            return;
+        }
 
+        var firstElem = valid_hints[0] || null;
+        var firstElemBgColor = "";
+        var firstElemColor = "";
         try
         {
             for (var i = 0; i < hints.length; i++)
             {
                 // remove the span for the numeric display part
-                win.document.body.removeChild(hints[i][2]);
+                doc.body.removeChild(hints[i][2]);
 
-                // restore colors
-                var elem = hints[i][0];
-                elem.style.backgroundColor = hints[i][3];
-                elem.style.color = hints[i][4];
-            }
-        }
-        catch(e) { vimperator.log("Error hiding hints, probably wrong window"); }
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // TODO: implement framesets
-    this.show = function(mode, minor)
-    {
-        if (mode == vimperator.modes.EXTENDED_HINT && !/^[afoOstTwWyY]$/.test(minor))
-        {
-            vimperator.beep();
-            return;
-        }
-
-        vimperator.modes.set(vimperator.modes.HINTS, mode);
-        submode = minor;
-        linkNumString = "";
-        canUpdate = false;
-
-        generate();
-        // get all keys from the input queue
-        var mt = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
-        while (mt.hasPendingEvents())
-            mt.processNextEvent(true);
-            
-        canUpdate = true;
-        showHints(null, linkNumString);
-        return true;
-    };
-
-    // does not end the mode automatically
-    this.hide = function()
-    {
-        hideHints();
-
-        linkNumString = "";
-        hints = [];
-        valid_hints = [];
-        canUpdate = false;
-
-        return 0;
-    };
-
-    this.onEvent = function(event)
-    {
-        var key = vimperator.events.toString(event);
-        var endAfterThisKey = false;
-        switch (key)
-        {
-            case "<Return>":
-                endAfterThisKey = true;
-                //if (valid_hints.length == 0)
-                //{
-                //    vimperator.beep();
-                //    vimperator.modes.reset();
-                //    return;
-                //}
-                //else
-                //    valid_hints = [valid_hints[0]];
-                break;
-
-            case "<Space>":
-                linkNumString += " ";
-                break;
-
-            case "<BS>":
-                if (linkNumString = "")
+                if (timeout && firstElem == hints[i][0])
                 {
-                    vimperator.beep();
-                    return;
+                    firstElemBgColor = hints[i][3];
+                    firstElemColor = hints[i][4];
                 }
                 else
-                    linkNumString = linkNumString.substr(0, linkNumString.length-1);
-                break;
+                {
+                    // restore colors
+                    var elem = hints[i][0];
+                    elem.style.backgroundColor = hints[i][3];
+                    elem.style.color = hints[i][4];
+                }
+            }
 
-            default:
-                linkNumString += key;
+            // animate the disappearance of the first hint
+            if (timeout && firstElem)
+            {
+// USE THIS FOR MAKING THE SELECTED ELEM RED
+//                firstElem.style.backgroundColor = "red";
+//                firstElem.style.color = "white";
+//                setTimeout(function() {
+//                        firstElem.style.backgroundColor = firstElemBgColor;
+//                        firstElem.style.color = firstElemColor;
+//                }, 200);
+// OR USE THIS FOR BLINKING:
+//                var counter = 0;
+//                var id = setInterval(function() {
+//                    firstElem.style.backgroundColor = "red";
+//                    if (counter % 2 == 0)
+//                        firstElem.style.backgroundColor = "yellow";
+//                    else
+//                        firstElem.style.backgroundColor = "#88FF00";
+//
+//                    if (counter++ >= 2)
+//                    {
+//                        firstElem.style.backgroundColor = firstElemBgColor;
+//                        firstElem.style.color = firstElemColor;
+//                        clearTimeout(id);
+//                    }
+//                }, 100);
+                setTimeout(function() {
+                        firstElem.style.backgroundColor = firstElemBgColor;
+                        firstElem.style.color = firstElemColor;
+                }, timeout);
+            }
         }
+        catch (e) { vimperator.log("Error hiding hints, probably wrong window"); }
+    };
 
-        vimperator.statusline.updateInputBuffer(linkNumString);
-        showHints(null, linkNumString);
-
+    function processHints(followFirst)
+    {
         if (valid_hints.length == 0)
+        {
             vimperator.beep();
+            return false;
+        }
         else
         {
-            if (!endAfterThisKey)
+            if (!followFirst)
             {
                 var first_href = valid_hints[0].getAttribute("href") || null;
                 if (first_href)
                 {
                     if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
-                        return;
+                        return false;
                 }
                 else if (valid_hints.length > 1)
-                    return;
+                    return false;
             }
-
-            vimperator.echo(" ");
-            vimperator.statusline.updateInputBuffer("");
 
             if (vimperator.modes.extended & vimperator.modes.QUICK_HINT)
                 openHint(false, false);
@@ -412,17 +381,117 @@ outer:
                     case "y": yankHint(false); break;
                     case "Y": yankHint(true); break;
                     default:
-                        vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
+                    vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
                 }
             }
 
-            this.hide();
-            // only close this mode half a second later, so we don't trigger accidental actions so easily
-            // XXX: currently closes SELECT fields, need have an own mode for that
-            setTimeout( function() {
-                if (vimperator.mode == vimperator.modes.HINTS)
-                    vimperator.modes.reset(true);
-            }, endAfterThisKey ? 0 : 500);
+            // I KNOW, ugly but this. is not available in this context :(
+            vimperator.hints.hide(null, !followFirst);
+        }
+        return true;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: implement framesets
+    this.show = function(mode, minor, filter)
+    {
+        if (mode == vimperator.modes.EXTENDED_HINT && !/^[afoOstTwWyY]$/.test(minor))
+        {
+            vimperator.beep();
+            return;
+        }
+
+        vimperator.modes.set(vimperator.modes.HINTS, mode);
+        submode = minor;
+        linkNumString = filter || "";
+        canUpdate = false;
+
+        generate();
+        // get all keys from the input queue
+        var mt = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
+        while (mt.hasPendingEvents())
+            mt.processNextEvent(true);
+            
+        canUpdate = true;
+        showHints(null, linkNumString);
+        if (valid_hints.length == 0)
+        {
+            vimperator.beep();
+            vimperator.modes.reset();
+            return false;
+        }
+        else if (valid_hints.length == 1)
+        {
+            processHints(true);
+            return false;
+        }
+        else // still hints visible
+            return true;
+    };
+
+    this.hide = function(win, delayModeChange)
+    {
+        var timeout = delayModeChange ? 500 : 0;
+        doc = wins.pop();
+        if(doc);
+            removeHints(doc, timeout);
+
+        vimperator.echo(" ");
+        vimperator.statusline.updateInputBuffer("");
+
+        linkNumString = "";
+        hints = [];
+        valid_hints = [];
+        canUpdate = false;
+
+        // only close this mode half a second later, so we don't trigger accidental actions so easily
+        setTimeout( function() {
+            if (vimperator.mode == vimperator.modes.HINTS)
+                vimperator.modes.reset(true);
+        }, timeout);
+    };
+
+    this.onEvent = function(event)
+    {
+        var key = vimperator.events.toString(event);
+        var followFirst = false;
+        switch (key)
+        {
+            case "<Return>":
+                followFirst = true;
+                break;
+
+            case "<Space>":
+                linkNumString += " ";
+                break;
+
+            case "<BS>":
+                if (linkNumString == "")
+                {
+                    vimperator.beep();
+                    return;
+                }
+                else
+                    linkNumString = linkNumString.substr(0, linkNumString.length-1);
+                break;
+
+            case "<C-w>":
+            case "<C-u>":
+                linkNumString = "";
+                break;
+
+            default:
+                linkNumString += key;
+        }
+
+        vimperator.statusline.updateInputBuffer(linkNumString);
+        if (canUpdate)
+        {
+            showHints(null, linkNumString);
+            processHints(followFirst);
         }
     }
 
@@ -442,13 +511,6 @@ outer:
 //        else
 //            doc = window.content.document;
 //    }
-//
-//    this.reshowHints = function()
-//    {
-//        onResize(null);
-//    };
-//
-//
 
 } //}}}
 

@@ -284,7 +284,6 @@ vimperator.CommandLine = function() //{{{
     {
         var res = vimperator.triggerCallback("cancel", cur_extended_mode);
         history.add(this.getCommand());
-        //vimperator.modes.set(old_mode, old_extended_mode);
         vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
         this.clear();
     }

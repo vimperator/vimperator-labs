@@ -57,7 +57,7 @@ vimperator.Events = function() //{{{
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
         vimperator.tabs.updateSelectionHistory();
-        setTimeout(vimperator.focusContent, 10); // just make sure, that no widget has focus
+        setTimeout(function() { vimperator.focusContent(true); }, 10); // just make sure, that no widget has focus
     }, false);
 
     // this adds an event which is is called on each page load, even if the
@@ -490,7 +490,8 @@ vimperator.Events = function() //{{{
             switch (vimperator.mode)
             {
                 case vimperator.modes.HINTS:
-                        vimperator.modes.reset();
+                case vimperator.modes.COMMAND_LINE:
+                    vimperator.modes.reset();
                     break;
 
                 case vimperator.modes.VISUAL:
@@ -510,13 +511,12 @@ vimperator.Events = function() //{{{
                     if ((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
                         vimperator.mode = vimperator.modes.TEXTAREA;
                     else
+                    {
                         vimperator.modes.reset();
+                        vimperator.focusContent(true);
+                    }
                     break;
 
-                case vimperator.modes.COMMAND_LINE:
-                        vimperator.commandline.close();
-                        vimperator.modes.reset();
-                    break;
 
                 default:
                     // clear any selection made
@@ -527,6 +527,7 @@ vimperator.Events = function() //{{{
                     vimperator.commandline.clear();
 
                     vimperator.modes.reset();
+                    vimperator.focusContent(true);
             }
         }
     }
@@ -614,18 +615,11 @@ vimperator.Events = function() //{{{
         // FIXME: <Esc> should be handled properly!
         if (key != "<Esc>" && key != "<C-[>")
         {
-//                // if the hint is all in UPPERCASE, open it in new tab
-//                vimperator.input.buffer += key;
-//                if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
-//                    vimperator.hints.openHints(true, false);
-//                else // open in current window
-//                    vimperator.hints.openHints(false, false);
             if (vimperator.mode == vimperator.modes.HINTS)
             {
                 vimperator.hints.onEvent(event);
                 event.preventDefault();
                 event.stopPropagation();
-                // if i do an alert("x") here, it doesn't crash on up/down, why?
                 return false;
             }
         }
