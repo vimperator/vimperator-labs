@@ -217,7 +217,7 @@ vimperator.Mappings = function() //{{{
         for (var i = 0; i < map.names.length; i++)
         {
             // only store keysyms with uppercase modifier strings
-            map.names[i] = map.names[i].replace(/([casm]-)/g, function($0, $1) { return $1.toUpperCase(); })
+            map.names[i] = map.names[i].replace(/[casm]-/g, function($0) { return $0.toUpperCase(); });
             for (var j = 0; j < map.modes.length; j++)
                 removeMap(map.modes[j], map.names[i]);
         }
@@ -277,7 +277,6 @@ vimperator.Mappings = function() //{{{
         return matches;
     }
 
-    // TODO: implement filtering
     this.list = function(mode, filter)
     {
         var maps = user[mode];
