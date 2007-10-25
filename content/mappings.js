@@ -128,10 +128,8 @@ vimperator.Mappings = function() //{{{
 
         for (var i = 0; i < maps.length; i++)
         {
-            names = maps[i].names;
-            for (var j = 0; j < names.length; j++)
-                if (names[j] == cmd)
-                    return maps[i];
+            if (maps[i].hasName(cmd))
+                return maps[i];
         }
 
         return null;
@@ -308,6 +306,7 @@ vimperator.Mappings = function() //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var anymode = [vimperator.modes.NORMAL,
                    vimperator.modes.INSERT,
                    vimperator.modes.VISUAL,
@@ -324,6 +323,7 @@ vimperator.Mappings = function() //{{{
     //
     // Normal mode
     // {{{
+
     // vimperator management
     addDefaultMap(new vimperator.Map(anymode, ["<F1>"],
         function() { vimperator.help(null); },
