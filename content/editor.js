@@ -106,7 +106,7 @@ vimperator.Editor = function() //{{{
             count = 1;
 
         var did_command = false;
-        while(count--)
+        while (count--)
         {
             // some commands need this try/catch workaround, because a cmd_charPrevious triggered
             // at the beginning of the textarea, would hang the doCommand()
@@ -116,7 +116,7 @@ vimperator.Editor = function() //{{{
                 controller.doCommand(cmd);
                 did_command = true;
             }
-            catch(e)
+            catch (e)
             {
                 if (!did_command)
                     vimperator.beep();
@@ -270,7 +270,7 @@ vimperator.Editor = function() //{{{
             if (count == 0)
                 return i + 1; // always position the cursor after the char
         }
-        
+
         vimperator.beep();
         return -1;
     }
@@ -296,7 +296,7 @@ vimperator.Editor = function() //{{{
             if (count == 0)
                 return i;
         }
-        
+
         vimperator.beep();
         return -1;
     }
@@ -322,7 +322,7 @@ vimperator.Editor = function() //{{{
             vimperator.echoerr("Could not create temporary file: " + e.message);
             return;
         }
-        try 
+        try
         {
             vimperator.io.writeFile(tmpfile, textBox.value);
         }
