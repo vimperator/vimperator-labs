@@ -158,7 +158,7 @@ vimperator.Hints = function() //{{{
         baseNodeAbsolute.style.fontWeight = "bold";
         baseNodeAbsolute.style.lineHeight = "10px";
         baseNodeAbsolute.style.padding = "0px 1px 0px 0px";
-        baseNodeAbsolute.style.zIndex = "5000";
+        baseNodeAbsolute.style.zIndex = "10000001";
         baseNodeAbsolute.className = "vimperator-hint";
 
         var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc, null, true);
@@ -279,7 +279,7 @@ outer:
                     imgspan.style.backgroundColor = "yellow";
                     imgspan.style.position = "absolute";
                     imgspan.style.opacity = 0.5;
-                    imgspan.style.zIndex = "4999";
+                    imgspan.style.zIndex = "10000000";
                     imgspan.className = "vimperator-hint";
                     hints[i][3] = imgspan;
                     doc.body.appendChild(imgspan);
