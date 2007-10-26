@@ -150,6 +150,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: green;
     text-decoration: none;
 }
+/* NOTE: .aClass:hover not supported in quirks mode: http://developer.mozilla.org/en/docs/Mozilla_Quirks_Mode_Behavior */
 a.hl-URL:hover {
     text-decoration: underline;
     cursor: pointer;
