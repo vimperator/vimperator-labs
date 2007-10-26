@@ -31,7 +31,7 @@ vimperator.Hints = function() //{{{
     var linkNumString = ""; // the typed link number is in this string
     var submode = ""; // used for extended mode, can be "o", "t", "y", etc.
 
-    // hints[] = [elem, text, span, elem.style.backgroundColor, elem.style.color]
+    // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var hints = [];
     var valid_hints = []; // store the indices of the "hints" array with valid elements
     
@@ -198,7 +198,7 @@ vimperator.Hints = function() //{{{
             span.style.display = "none";
             doc.body.appendChild(span);
 
-            hints.push([elem, text, span, elem.style.backgroundColor, elem.style.color]);
+            hints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
         }
 
         hintsGenerated = true;
@@ -236,7 +236,7 @@ vimperator.Hints = function() //{{{
         var scrollX = doc.defaultView.scrollX;
         var scrollY = doc.defaultView.scrollY;
 
-        var elem, tagname, text, rect, span;
+        var elem, tagname, text, rect, span, imgspan;
         var hintnum = start_idx > 0 ? start_idx : 1;
 
         var height = window.content.innerHeight;
@@ -250,30 +250,62 @@ outer:
             elem = hints[i][0];
             text = hints[i][1];
             span = hints[i][2];
+            imgspan = hints[i][3];
 
             for (var k = 0; k < find_tokens.length; k++)
             {
                 if (text.indexOf(find_tokens[k]) < 0)
                 {
                     // reset background color
-                    elem.style.backgroundColor = hints[i][3];
-                    elem.style.color = hints[i][4];
+                    elem.style.backgroundColor = hints[i][4];
+                    elem.style.color = hints[i][5];
                     span.style.display = "none";
+                    if (imgspan)
+                        imgspan.style.display = "none";
+
                     continue outer;
                 }
             }
 
-            rect = elem.getClientRects()[0];
+            if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
+            {
+                rect = elem.firstChild.getBoundingClientRect();
+                if (!rect)
+                    continue;
+
+                if (!imgspan)
+                {
+                    imgspan = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
+                    imgspan.style.backgroundColor = "yellow";
+                    imgspan.style.position = "absolute";
+                    imgspan.style.opacity = 0.5;
+                    imgspan.style.zIndex = "4999";
+                    imgspan.className = "vimperator-hint";
+                    hints[i][3] = imgspan;
+                    doc.body.appendChild(imgspan);
+                }
+                imgspan.style.left = (rect.left + scrollX) + "px";
+                imgspan.style.top = (rect.top + scrollY) + "px";
+                imgspan.style.width = (rect.right - rect.left) + "px";
+                imgspan.style.height = (rect.bottom - rect.top) + "px";
+                imgspan.style.display = "inline";
+            }
+            else
+                rect = elem.getClientRects()[0];
+
             if (rect)
             {
-                if (hintnum == 1)
-                    elem.style.backgroundColor = "#88FF00";
-                else
-                    elem.style.backgroundColor = "yellow";
+                if (!imgspan)
+                {
+                    if (hintnum == 1)
+                        elem.style.backgroundColor = "#88FF00";
+                    else
+                        elem.style.backgroundColor = "yellow";
+                }
 
                 elem.style.color = "black";
                 span.style.left = (rect.left + scrollX) + "px";
-                span.style.top = rect.top + scrollY + "px";
+                span.style.top = (rect.top + scrollY) + "px";
                 span.innerHTML = "" + (hintnum++);
                 span.style.display = "inline";
                 valid_hints.push(elem);
@@ -303,18 +335,20 @@ outer:
             {
                 // remove the span for the numeric display part
                 doc.body.removeChild(hints[i][2]);
+                if (hints[i][3]) // a transparent span for images
+                    doc.body.removeChild(hints[i][3]);
 
                 if (timeout && firstElem == hints[i][0])
                 {
-                    firstElemBgColor = hints[i][3];
-                    firstElemColor = hints[i][4];
+                    firstElemBgColor = hints[i][4];
+                    firstElemColor = hints[i][5];
                 }
                 else
                 {
                     // restore colors
                     var elem = hints[i][0];
-                    elem.style.backgroundColor = hints[i][3];
-                    elem.style.color = hints[i][4];
+                    elem.style.backgroundColor = hints[i][4];
+                    elem.style.color = hints[i][5];
                 }
             }
 
