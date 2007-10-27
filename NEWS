@@ -6,7 +6,6 @@
 	  ~/.vimperatorrc file instead for persistent options
 	* IMPORTANT! Major hints rewrite
 	  read up the new help for the f, F and ; commands for details
-	* new :pa[geinfo] command (thanks Marco Candrian)
 	* added new :mkvimperatorrc command
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
 	* :open, :bmarks, etc. filter on space separated tokens now, so you can
