@@ -1,7 +1,9 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.3
-	* options are no longer stored in preferences - use the RC file instead
+	* new :pa[geinfo] command (thanks Marco Candrian)
+	* IMPORTANT! options are no longer automatically stored - use the
+	  ~/.vimperatorrc file instead for persistent options
 	* added new :mkvimperatorc command
 	* remove :redraw and Ctrl-L commands as they rely on FF3 features
 	* :ls, :history and :bmarks output is now hyperlinked

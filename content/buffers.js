@@ -444,6 +444,136 @@ vimperator.Buffer = function() //{{{
     {
         bumpZoomLevel(-steps);
     }
+
+    this.pageInfo = function(verbose) 
+    {  
+        // to get the file size later (from pageInfo.js) (setup cacheEntryDescriptor)
+        const nsICacheService = Components.interfaces.nsICacheService;
+        const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
+        const cacheService = Components.classes["@mozilla.org/network/cache-service;1"].getService(nsICacheService);
+        var httpCacheSession = cacheService.createSession("HTTP", 0, true);
+        httpCacheSession.doomEntriesIfExpired = false;
+        var ftpCacheSession = cacheService.createSession("FTP", 0, true);
+        ftpCacheSession.doomEntriesIfExpired = false;
+        var cacheKey = window.content.document.location.toString().replace(/#.*$/, "");
+        try
+        {
+            var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
+        }
+        catch (ex)
+        {
+            try
+            {
+                cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
+            }
+            catch (ex2) { }
+        }
+
+        if (!verbose) 
+        {
+            // TODO: strip off any component after &
+            var file = window.content.document.location.pathname.split('/').pop();
+            if (!file)
+                file = "[No Name]";
+
+            var title = window.content.document.title; 
+            if (title.length > 60)
+                title = title.substr(0,57) + "... "; 
+            else if (!title.length)
+                title = "[No Title]";
+
+            if (cacheEntryDescriptor) 
+                var pageSize = Math.round(cacheEntryDescriptor.dataSize / 1024 * 100) / 100 + "KB";
+
+            var pageInfoText = "" + file + ": " + title  + "  (" + pageSize + ", other cool things)";
+
+            vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
+            return;
+        }
+
+        var pageGeneral = [];       // keeps general infos
+        var pageMeta = [];          // keeps meta infos
+
+        // get general infos
+        pageGeneral.push(["Title", window.content.document.title]); 
+        pageGeneral.push(["URL", '<a class="hl-URL" href="' + window.content.document.location.toString() + '">' + 
+                window.content.document.location.toString() + '</a>']);
+        pageGeneral.push(["Referrer",  ("referrer" in window.content.document && window.content.document.referrer)]);
+        pageGeneral.push(["Mime-Type", window.content.document.contentType]);
+        pageGeneral.push(["Encoding",  window.content.document.characterSet]);
+
+
+        if (cacheEntryDescriptor) {
+            var pageSize = cacheEntryDescriptor.dataSize;
+            pageGeneral.push(["File Size", (Math.round(pageSize / 1024 * 100) / 100) + "KB (" + pageSize + " bytes)"]);
+        }
+
+        pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ? 
+                "Quirks Mode" : "Full/Almost Standard Mode"]);
+        pageGeneral.push(["Last Modified", window.content.document.lastModified]);
+
+        // get meta tag infos info and sort and put into pageMeta[]
+        var metaNodes = window.content.document.getElementsByTagName("meta");
+        var length = metaNodes.length;
+        if (length) 
+        {           
+            var tmpSort = [];
+            var tmpDict = [];
+
+            for (var i = 0; i < length; i++)
+            {
+                var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// + 
+                    //'<span style="font-weight: normal; font-size: 90%;">-eq</span>'; // XXX: really important?
+                var tmpTagNr = tmpTag + "-" + i;     // allows multiple (identical) meta names
+                tmpDict[tmpTagNr] = [tmpTag, metaNodes[i].content];
+                tmpSort.push(tmpTagNr);      // array for sorting
+            }
+
+            // sort: ignore-case                        
+            tmpSort.sort(function (a,b){return a.toLowerCase() > b.toLowerCase() ? 1 : -1;}); 
+
+            for (var i=0; i < tmpSort.length; i++)
+            {
+                pageMeta.push([tmpDict[tmpSort[i]][0], tmpDict[tmpSort[i]][1]]);
+            }
+        }
+
+        var pageInfoText = "";
+        var option = vimperator.options["pageinfo"];
+
+        for (var z = 0; z < option.length; z++)
+        {
+            var newLine = z > 0 ? "<br/>" : "";
+            switch (option[z])
+            {
+                case "g": pageInfoText += newLine + "<table><tr><td class='hl-Title' style='font-weight: bold;' colspan='2'>General</td></tr>";
+                    for (var i = 0; i < pageGeneral.length; i++)
+                    {
+                        if (pageGeneral[i][1])
+                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageGeneral[i][0] + ":&nbsp;</td><td>" + pageGeneral[i][1] + "</td></tr>";
+                    }
+                    pageInfoText += "</table>";
+                    break;
+
+                case "m": pageInfoText += newLine + "<table><tr><td class='hl-Title' style='font-weight: bold;' colspan='2'>Meta Tags</td></tr>";
+                    if (pageMeta.length)
+                    {
+                        for (var i = 0; i < pageMeta.length; i++)
+                        {
+                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageMeta[i][0] + ":&nbsp;</td><td>" + pageMeta[i][1] + "</td></tr>";
+                        }
+                    }
+                    else
+                    {
+                        pageInfoText += "<tr><td colspan='2'>(no Meta-Tags on this page)</td></tr>";
+                    }
+                    pageInfoText += "</table>";
+                    break;
+            }
+        }
+
+        vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
+    }
     //}}}
 } //}}}
 
