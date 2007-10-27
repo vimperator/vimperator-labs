@@ -937,6 +937,25 @@ vimperator.Mappings = function() //{{{
         }
     ));
 
+    // page info
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-g>"],
+        function(count) { vimperator.buffer.pageInfo(false); },
+        {
+            short_help: "Print the current file name",
+            help: "Also shows some additional file information like file size or the last modified date. " +
+                  "If <code class='argument'>{count}</code> is given print the current file name with full path.",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g<C-g>"],
+        function(count) { vimperator.buffer.pageInfo(true); },
+        {
+            short_help: "Print file information",
+            help: "Same as <code class='command'>:pa[geinfo]</code>."
+        }
+    ));
+
+
     // history manipulation and jumplist
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-o>"],
         function(count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },

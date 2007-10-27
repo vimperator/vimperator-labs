@@ -531,7 +531,7 @@ vimperator.Buffer = function() //{{{
 
             var lastmod = window.content.document.lastModified.slice(0, -3);
 
-            var pageInfoText = '"' + file + '" (' + pageSize + ", " + lastmod + ") " + title;
+            var pageInfoText = '"' + file + '" [' + pageSize + ", " + lastmod + "] " + title;
 
             vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
             return;
@@ -548,13 +548,12 @@ vimperator.Buffer = function() //{{{
         pageGeneral.push(["Mime-Type", window.content.document.contentType]);
         pageGeneral.push(["Encoding",  window.content.document.characterSet]);
 
-
-
-        if (cacheEntryDescriptor) {
+        if (cacheEntryDescriptor)
+        {
             var pageSize = cacheEntryDescriptor.dataSize;
             var bytes = pageSize + '';
             for (var u = bytes.length - 3; u > 0; u -= 3)        // make a 1400 -> 1'400
-                bytes = bytes.slice(0, u) + "'" + bytes.slice(u, bytes.length);
+                bytes = bytes.slice(0, u) + "," + bytes.slice(u, bytes.length);
             pageGeneral.push(["File Size", (Math.round(pageSize / 1024 * 100) / 100) + "KB (" + bytes + " bytes)"]);
         }
 
