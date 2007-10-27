@@ -751,7 +751,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
-                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
@@ -760,7 +760,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
-                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
@@ -769,7 +769,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
-                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
@@ -812,7 +812,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
-                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'beep'</code> is turned off).",
+                  "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
