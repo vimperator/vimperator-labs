@@ -474,6 +474,7 @@ vimperator.Commands = function() //{{{
         return null;
     }
 
+    // TODO: generalized 0 count handling -> "Zero count"
     // FIXME: doesn't really belong here...
     // return [null, null, null, null, heredoc_tag || false];
     //        [count, cmd, special, args] = match;
@@ -1802,10 +1803,30 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabn[ext]", "tn[ext]"],
-        function() { vimperator.tabs.select("+1", true); },
+        // TODO: count support
+        function(args)
         {
-            short_help: "Switch to the next tab",
-            help: "Cycles to the first tab, when the last is selected."
+            if (!args)
+            {
+                vimperator.tabs.select("+1", true);
+            }
+            else if (/^\d+$/.test(args))
+            {
+                var index = parseInt(args) - 1;
+                if (index < vimperator.tabs.count())
+                    vimperator.tabs.select(index, true);
+                else
+                    vimperator.beep();
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+            }
+        },
+        {
+            usage: ["tabn[ext] {count}"],
+            short_help: "Switch to the next or [count]th tab",
+            help: "Cycles to the first tab when the last is selected and <code class=\"argument\">{count}</code> is not specified."
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabo[nly]"],
@@ -1835,11 +1856,20 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
-        function() { vimperator.tabs.select("-1", true); },
+        // TODO: count support
+        function(args)
         {
-            usage: ["tabp[revious]", "tabN[ext]"],
-            short_help: "Switch to the previous tab",
-            help: "Cycles to the last tab, when the first is selected."
+            if (!args)
+                vimperator.tabs.select("-1", true);
+            else if (/^\d+$/.test(args))
+                vimperator.tabs.select("-" + args, true); // FIXME: urgh!
+            else
+                vimperator.echoerr("E488: Trailing characters");
+        },
+        {
+            usage: ["tabp[revious] {count}"],
+            short_help: "Switch to the previous tab or go [count] tabs back",
+            help: "Wraps around from the first tab to the last tab."
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabr[ewind]", "tabfir[st]"],

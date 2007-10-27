@@ -531,19 +531,19 @@ vimperator.Mappings = function() //{{{
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>"],
-        function(count) { vimperator.tabs.select(count > 0 ? count -1: "+1", count > 0 ? false : true); },
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
+        function(count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
         {
             short_help: "Go to the next tab",
             help: "Cycles to the first tab, when the last is selected.<br/>Count is supported: <code class=\"mapping\">3gt</code> goes to the third tab.",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>"],
-        function(count) { vimperator.tabs.select(count > 0 ? count -1: "-1", count > 0 ? false : true); },
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
+        function(count) { vimperator.tabs.select("-" + (count < 1 ? 1 : count), true); },
         {
-            short_help: "Go to the previous tab",
-            help: "Cycles to the last tab, when the first is selected.<br/>Count is supported: <code class=\"mapping\">3gT</code> goes to the third tab.",
+            short_help: "Go {count} pages back",
+            help: "Wraps around from the first tab to the last tab.<br/>Count is supported: <code class=\"mapping\">3gT</code> goes three tabs back.",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));

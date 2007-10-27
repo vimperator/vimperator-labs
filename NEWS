@@ -2,6 +2,8 @@
 2007-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
+	* :tabnext and :tabprevious now accept an argument
+	* the count to gT now specifies a relative tab motion like
 	* IMPORTANT! options are no longer automatically stored - use the
 	  ~/.vimperatorrc file instead for persistent options
 	* IMPORTANT! Major hints rewrite
