@@ -124,10 +124,8 @@ vimperator.Mappings = function() //{{{
 
         for (var i = 0; i < maps.length; i++)
         {
-            names = maps[i].names;
-            for (var j = 0; j < names.length; j++)
-                if (names[j] == cmd)
-                    return maps[i];
+            if (maps[i].hasName(cmd))
+                return maps[i];
         }
 
         return null;
@@ -213,7 +211,11 @@ vimperator.Mappings = function() //{{{
     this.add = function(map)
     {
         for (var i = 0; i < map.names.length; i++)
+        {
+            // only store keysyms with uppercase modifier strings
+            map.names[i] = map.names[i].replace(/[casm]-/g, function($0) { return $0.toUpperCase(); });
             removeMap(map.mode, map.names[i]);
+        }
 
         user[map.mode].push(map);
     }
