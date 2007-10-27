@@ -217,10 +217,10 @@ vimperator.Commands = function() //{{{
                     else
                     {
                         // only escape "\\" and "\ " in non quoted strings
-                        if (!in_single_string && !in_double_string && str[i+1] != "\\" && str[i+1] != " ")
+                        if (!in_single_string && !in_double_string && str[i + 1] != "\\" && str[i + 1] != " ")
                             continue outer;
                         // only escape "\\" and "\'" in single quoted strings
-                        else if (in_single_string && str[i+1] != "\\" && str[i+1] != "'")
+                        else if (in_single_string && str[i + 1] != "\\" && str[i + 1] != "'")
                             break;
                         else
                         {
@@ -276,7 +276,7 @@ vimperator.Commands = function() //{{{
         var count = 0; // the length of the argument
         var i = 0;
         outer:
-        while(i < str.length)
+        while (i < str.length)
         {
             // skip whitespace
             if (/\s/.test(str[i]))
@@ -1209,15 +1209,15 @@ vimperator.Commands = function() //{{{
     ));
     addDefaultCommand(new vimperator.Command(["mkv[imperatorrc]"],
         function(args, special)
-        {   
+        {
             var filename;
-            
+
             // TODO: "E172: Only one file name allowed"
             if (args)
                 filename = args;
             else
                 filename = vimperator.io.expandPath(navigator.platform == "Win32" ? "~/_vimperatorrc" : "~/.vimperatorrc");
-            
+
             var file = vimperator.io.getFile(filename);
             if (file.exists() && !special)
             {
@@ -1235,7 +1235,7 @@ vimperator.Commands = function() //{{{
             }
 
             for (var option in vimperator.options)
-            {   
+            {
                 // TODO: options should be queried for this info
                 // TODO: string/list options might need escaping in future
                 if (!/fullscreen|usermode/.test(option.name) && option.value != option.default_value)
@@ -1251,7 +1251,7 @@ vimperator.Commands = function() //{{{
 
             vimperator.io.writeFile(file, line);
         },
-        {   
+        {
             usage: ["mkv[imperatorrc] [file]"],
             short_help: "Write current keymappings and changed options to [file]",
             help: "If no <code class=\"argument\">[file]</code> is specified then ~/.vimperatorrc is written unless this file already exists. " +
@@ -1722,7 +1722,7 @@ vimperator.Commands = function() //{{{
                 document.getElementById("sidebar-box").contentWindow.focus();
                 return;
             }
-            
+
             var menu = document.getElementById("viewSidebarMenu")
 
             for (var i = 0; i < menu.childNodes.length; i++)
@@ -1871,7 +1871,7 @@ vimperator.Commands = function() //{{{
                         return;
 
                     var after_time = Date.now();
-                
+
                     if ((after_time - before_time) / count >= 100)
                         var each = "<td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" +
                             ((after_time - before_time) / 1000.0 / count) +
@@ -1911,7 +1911,7 @@ vimperator.Commands = function() //{{{
                         return;
 
                     var after_time = Date.now();
-                    
+
                     if (after_time - before_time >= 100)
                         vimperator.echo("Total time: " + ((after_time - before_time) / 1000.0) + " sec");
                     else
