@@ -520,14 +520,6 @@ vimperator.Commands = function() //{{{
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
-        function () { vimperator.buffer.pageInfo(true); },
-        {
-            short_help: "Show general and/or meta-content site informations",
-            help: "Show general and/or meta-content site informations"
-        }
-    ));
-
     addDefaultCommand(new vimperator.Command(["addo[ns]"],
         function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
@@ -1382,6 +1374,13 @@ vimperator.Commands = function() //{{{
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
             completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
+        function () { vimperator.buffer.pageInfo(true); },
+        {
+            short_help: "Show general and/or meta-content site informations",
+            help: "Show general and/or meta-content site informations"
         }
     ));
     addDefaultCommand(new vimperator.Command(["pc[lose]"],
