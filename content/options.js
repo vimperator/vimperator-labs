@@ -435,6 +435,20 @@ vimperator.Options = function() //{{{
             default_value: false
         }
     ));
+    this.add(new vimperator.Option(["pageinfo", "pa"], "charlist",
+        {
+            short_help: "Desired info on :pa[geinfo]",
+            help: "Available items:<br/>" +
+                  "<ul>" +
+                  "<li><b>g</b>: general info</li>" +
+                  "<li><b>m</b>: meta tags</li>" +
+                  "</ul>" +
+                  "The order matters",
+            default_value: "gm",
+            validator: function (value) { if (/[^gm]/.test(value) || value.length > 2 || 
+                    value.length < 1) return false; else return true; }
+        }
+    ));
     this.add(new vimperator.Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",

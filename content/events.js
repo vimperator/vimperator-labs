@@ -231,6 +231,12 @@ vimperator.Events = function() //{{{
                 // FIXME: this currently causes window map events which is _very_ annoying
                 // we want to stay in command mode after a page has loaded
                 //setTimeout(vimperator.focusContent, 10);
+                // setTimeout(function() {
+                //     if (doc.commandDispatcher.focusedElement)
+                //         doc.commandDispatcher.focusedElement.blur();
+                //         alert(doc.commandDispatcher.focusedElement);
+                // }, 1000);
+
             }
         }
     }

@@ -522,6 +522,14 @@ vimperator.Commands = function() //{{{
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
+        function () { vimperator.buffer.pageInfo(true); },
+        {
+            short_help: "Show general and/or meta-content site informations",
+            help: "Show general and/or meta-content site informations"
+        }
+    ));
+
     addDefaultCommand(new vimperator.Command(["addo[ns]"],
         function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
