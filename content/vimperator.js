@@ -753,11 +753,9 @@ const vimperator = (function() //{{{
                     vimperator.log("No user RC file found", 3);
 
                 // also source plugins in ~/.vimperator/plugin/
-                var entries = [];
                 try
                 {
                     var plugin_dir = vimperator.io.getPluginDir();
-
                     if (plugin_dir)
                     {
                         var files = vimperator.io.readDirectory(plugin_dir.path);
@@ -777,6 +775,11 @@ const vimperator = (function() //{{{
                     // thrown if directory does not exist
                     //vimperator.log("Error sourcing plugin directory: " + e);
                 }
+
+                // after sourcing the initialization files, this function will set
+                // all gui options to their default values, if they have not been
+                // set before by any rc file
+                vimperator.options.setInitialGUI();
             }, 0);
 
             vimperator.statusline.update();

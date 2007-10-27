@@ -914,6 +914,7 @@ vimperator.Commands = function() //{{{
             for (var option in vimperator.options)
             {   
                 // TODO: options should be queried for this info
+                // TODO: string/list options might need escaping in future
                 if (!/fullscreen|usermode/.test(option.name) && option.value != option.default_value)
                 {
                     if (option.type == "boolean")
@@ -932,7 +933,7 @@ vimperator.Commands = function() //{{{
             short_help: "Write current keymappings and changed options to [file]",
             help: "If no <code class=\"argument\">[file]</code> is specified then ~/.vimperatorrc is written unless this file already exists. " +
                   "The special version will overwrite <code class=\"argument\">[file]</code> if it exists.<br/>" +
-                  "WARNING: this differs from Vim's behaviour which defaults to writing the file in the current directory."
+                  "WARNING: this differs from Vim's behavior which defaults to writing the file in the current directory."
         }
     ));
     addDefaultCommand(new vimperator.Command(["noh[lsearch]"],
@@ -1249,17 +1250,16 @@ vimperator.Commands = function() //{{{
                 val = "";
 
             // reset a variable to its default value
-            // TODO: remove the value from about:config instead of setting it to the current default value
             if (reset)
             {
                 if (all)
                 {
                     for (let opt in vimperator.options)
-                        opt.value = opt.default_value;
+                        opt.reset();
                 }
                 else
                 {
-                    option.value = option.default_value;
+                    option.reset();
                 }
             }
             // read access
