@@ -1902,28 +1902,33 @@ vimperator.Commands = function() //{{{
                     var after_time = Date.now();
 
                     if ((after_time - before_time) / count >= 100)
-                        var each = "<td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" +
-                            ((after_time - before_time) / 1000.0 / count) +
-                            "</span></td><td>sec</td>";
+                    {
+                        var each = ((after_time - before_time) / 1000.0 / count);
+                        var each_units = "sec";
+                    }
                     else
-                        var each = "<td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" +
-                            ((after_time - before_time) / count) +
-                            "</span></td><td>msec</td>";
+                    {
+                        var each = ((after_time - before_time) / count);
+                        var each_units = "msec";
+                    }
 
                     if (after_time - before_time >= 100)
-                        var total = "<td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" +
-                            ((after_time - before_time) / 1000.0) +
-                            "</span></td><td>sec</td>";
+                    {
+                        var total = ((after_time - before_time) / 1000.0);
+                        var total_units = "sec";
+                    }
                     else
-                        var total = "<td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" +
-                            (after_time - before_time) + "</span></td><td>msec</td>";
+                    {
+                        var total = (after_time - before_time);
+                        var total_units = "msec";
+                    }
 
                     var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                               "<table>" +
                               "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
                               "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
-                              "<tr>" + each + "</tr>" +
-                              "<tr>" + total + "</tr>" +
+                              "<tr><td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" + each.toFixed(2) + "</span></td><td>" + each_units + "</td></tr>" +
+                              "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + total_units + "</td></tr>" +
                               "</table>";
 
                     vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
@@ -1942,7 +1947,7 @@ vimperator.Commands = function() //{{{
                     var after_time = Date.now();
 
                     if (after_time - before_time >= 100)
-                        vimperator.echo("Total time: " + ((after_time - before_time) / 1000.0) + " sec");
+                        vimperator.echo("Total time: " + ((after_time - before_time) / 1000.0).toFixed(2) + " sec");
                     else
                         vimperator.echo("Total time: " + (after_time - before_time) + " msec");
                 }
