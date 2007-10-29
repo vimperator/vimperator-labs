@@ -558,7 +558,7 @@ vimperator.Buffer = function() //{{{
         }
 
         pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?
-                "Quirks Mode" : "Full/Almost Standard Mode"]);
+                "Quirks Mode" : "Full/Almost Standards Mode"]);
         pageGeneral.push(["Last Modified", window.content.document.lastModified]);
 
         // get meta tag data, sort and put into pageMeta[]
