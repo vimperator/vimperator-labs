@@ -559,14 +559,7 @@ const vimperator = (function() //{{{
             catch (e)
             {
                 if (!silent)
-                {
-                    if (e.name == "NS_ERROR_FILE_NOT_FOUND")
-                        vimperator.echoerr("E484: Can't open file " + filename);
-                    else if (e.name == "NS_ERROR_FILE_ACCESS_DENIED")
-                        vimperator.echoerr("E485: Can't read file " + filename);
-                    else
-                        vimperator.echoerr(e);
-                }
+                    vimperator.echoerr(e);
             }
         },
 
@@ -622,7 +615,7 @@ const vimperator = (function() //{{{
             vimperator.globalVariables = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { document.getElementById("vimperator-multiline-output").collapsed = true; vimperator.execute(command); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
             vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return vimperator.completion.exTabCompletion(str); } );
 
             // first time intro message
