@@ -1599,7 +1599,7 @@ vimperator.Commands = function() //{{{
                               "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + total_units + "</td></tr>" +
                               "</table>";
 
-                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, true);
+                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
                 }
                 else
                 {

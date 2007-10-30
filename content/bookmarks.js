@@ -281,7 +281,7 @@ vimperator.Bookmarks = function() //{{{
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
     }
 
@@ -513,7 +513,7 @@ vimperator.History = function() //{{{
                 list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
             }
             list += "</table>";
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true);
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
     }
     //}}}
@@ -769,7 +769,7 @@ vimperator.Marks = function() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
     //}}}
 } //}}}
@@ -861,7 +861,7 @@ vimperator.QuickMarks = function() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
 
     this.destroy = function()

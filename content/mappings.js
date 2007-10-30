@@ -292,7 +292,7 @@ vimperator.Mappings = function() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, true); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
