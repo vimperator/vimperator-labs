@@ -1758,7 +1758,8 @@ vimperator.Commands = function() //{{{
             if (special)
                 vimperator.open("about:");
             else
-                vimperator.echo("Vimperator " + vimperator.version);
+                vimperator.echo(":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) +
+                                "\nVimperator " + vimperator.version + " running on:\n" + navigator.userAgent);
         },
         {
             usage: ["ve[rsion][!]"],
