@@ -761,7 +761,7 @@ const vimperator = (function() //{{{
                         var files = vimperator.io.readDirectory(plugin_dir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
                         files.forEach(function(file) {
-                            if (!file.isDirectory())
+                            if (!file.isDirectory() && /\.js$/.test(file.path))
                                 vimperator.source(file.path, false);
                         });
                     }
