@@ -597,7 +597,6 @@ vimperator.Events = function() //{{{
             return true;
         }
 
-
         var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
         var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
         var map;
@@ -648,7 +647,6 @@ vimperator.Events = function() //{{{
             else
             {
                 vimperator.input.buffer = "";
-                // vimperator.log("executed: " + candidate_command + " in mode: " + mode, 8);
                 map.execute(null, vimperator.input.count);
             }
         }
@@ -763,7 +761,7 @@ vimperator.Events = function() //{{{
                 if (ssli == 1)
                     vimperator.statusline.updateUrl("Link: " + link);
                 else if (ssli == 2)
-                    vimperator.echo("Link: " + link);
+                    vimperator.echo("Link: " + link, vimperator.commandline.DISALLOW_MULTILINE);
             }
 
             if (link == "")
