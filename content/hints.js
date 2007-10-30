@@ -483,14 +483,14 @@ vimperator.Hints = function() //{{{
 
             setHintStyle(elem, vimperator.options["hintstyle"]);
             elem = elem.refElem;
-            var elemTagName = elem.tagName;
+            var elemTagName = elem.localName.toLowerCase();
             elem.focus();
 
-            if (elemTagName == 'FRAME' || elemTagName == 'IFRAME')
+            if (elemTagName == 'frame' || elemTagName == 'iframe')
                 return 0;
 
             // for imagemap
-            if (elemTagName == 'AREA')
+            if (elemTagName == 'area')
             {
                 var coords = elem.getAttribute("coords").split(",");
                 x = Number(coords[0]);
@@ -588,8 +588,9 @@ vimperator.Hints = function() //{{{
     function setMouseOverElement(elem)
     {
         var doc = window.document;
+        var elemTagName = elem.localName.toLowerCase();
 
-        if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
+        if (elemTagName == 'frame' || elemTagName == 'iframe')
         {
             elem.contentWindow.focus();
             return;
@@ -603,7 +604,7 @@ vimperator.Hints = function() //{{{
         var x = 0;
         var y = 0;
         // for imagemap
-        if (elem.tagName == 'AREA')
+        if (elemTagName == 'area')
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
