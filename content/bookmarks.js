@@ -727,7 +727,7 @@ vimperator.Marks = function() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
     //}}}
 } //}}}
@@ -819,7 +819,7 @@ vimperator.QuickMarks = function() //{{{
         }
         list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE); // TODO: force of multiline widget a better way
+        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
 
     this.destroy = function()
