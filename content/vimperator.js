@@ -234,21 +234,21 @@ const vimperator = (function() //{{{
             clipboardHelper.copyString(str);
         },
 
-        execute: function(string, modifiers)
+        execute: function(str, modifiers)
         {
             // skip comments and blank lines
-            if (/^\s*("|$)/.test(string))
+            if (/^\s*("|$)/.test(str))
                 return;
 
             if (!modifiers)
                 modifiers = {};
 
-            var [count, cmd, special, args] = vimperator.commands.parseCommand(string.replace(/^'(.*)'$/, '$1'));
+            var [count, cmd, special, args] = vimperator.commands.parseCommand(str.replace(/^'(.*)'$/, '$1'));
             var command = vimperator.commands.get(cmd);
 
             if (command === null)
             {
-                vimperator.echoerr("E492: Not an editor command: " + cmd);
+                vimperator.echoerr("E492: Not an editor command: " + str);
                 vimperator.focusContent();
                 return;
             }
