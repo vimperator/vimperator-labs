@@ -372,10 +372,6 @@ vimperator.Events = function() //{{{
                 if (modifier.length == 0)
                     return key;
             }
-
-            if (key == null)
-                return null;
-
         }
         else if (event.type == "click" || event.type == "dblclick")
         {
@@ -631,7 +627,6 @@ vimperator.Events = function() //{{{
                 event.preventDefault();
                 event.stopPropagation();
                 return true;
-                
             }
         }
 
