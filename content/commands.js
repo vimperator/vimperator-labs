@@ -181,33 +181,30 @@ vimperator.Commands = function() //{{{
     // FIXME: doesn't really belong here...
     // return [null, null, null, null, heredoc_tag || false];
     //        [count, cmd, special, args] = match;
-    this.parseCommand = function(string, tag)
+    this.parseCommand = function(str, tag)
     {
-        // removing comments
-        string.replace(/\s*".*$/, '');
+        // remove comments
+        str.replace(/\s*".*$/, '');
+
         if (tag) // we already have a multiline heredoc construct
         {
-            if (string == tag)
+            if (str == tag)
                 return [null, null, null, null, false];
             else
-                return [null, null, null, string, tag];
+                return [null, null, null, str, tag];
         }
 
         // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-        var matches = string.match(/^:*(\d+)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
+        var matches = str.match(/^:*(\d+)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
         if (!matches)
             return [null, null, null, null, null];
         matches.shift();
 
         // parse count
         if (matches[0])
-        {
             matches[0] = parseInt(matches[0]);
-            if (isNaN(matches[0]))
-                matches[0] = 0; // 0 is the default if no count given
-        }
         else
-            matches[0] = 0;
+            matches[0] = -1;
 
         matches[2] = !!matches[2];
         matches.push(null);
@@ -286,7 +283,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
-        function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, special, 0); },
+        function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0); },
         {
             usage: ["[count]bd[elete][!]"],
             short_help: "Delete current buffer (=tab)",
@@ -1523,9 +1520,6 @@ vimperator.Commands = function() //{{{
     addDefaultCommand(new vimperator.Command(["time"],
         function(args, special, count)
         {
-            if (!count || count < 1)
-                count = 1;
-
             try
             {
                 if (count > 1)
@@ -1619,12 +1613,12 @@ vimperator.Commands = function() //{{{
                 {
                     if (undoItems[i].state.entries[0].url == args)
                     {
-                        count = i+1;
+                        count = i + 1;
                         break;
                     }
                 }
             }
-            undoCloseTab(count-1);
+            undoCloseTab(count - 1);
         },
         {
             usage: ["[count]u[ndo][!] [url]"],
@@ -1652,8 +1646,16 @@ vimperator.Commands = function() //{{{
     addDefaultCommand(new vimperator.Command(["undoa[ll]"],
         function(args, special, count)
         {
-            if (count || special)
-                return vimperator.echoerr("E488: Trailing characters");
+            if (count > -1)
+            {
+                vimperator.echoerr("E481: No range allowed");
+                return;
+            }
+            if (special)
+            {
+                vimperator.echoerr("E477: No ! allowed");
+                return;
+            }
 
             var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
             var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
