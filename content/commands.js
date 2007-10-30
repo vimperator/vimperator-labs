@@ -225,14 +225,6 @@ vimperator.Commands = function() //{{{
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
-        function () { vimperator.buffer.pageInfo(true); },
-        {
-            short_help: "Show general and/or meta-content site informations",
-            help: "Show general and/or meta-content site informations"
-        }
-    ));
-
     addDefaultCommand(new vimperator.Command(["addo[ns]"],
         function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
@@ -1067,6 +1059,13 @@ vimperator.Commands = function() //{{{
             completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
+    addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
+        function () { vimperator.buffer.pageInfo(true); },
+        {
+            short_help: "Show general and/or meta-content site informations",
+            help: "Show general and/or meta-content site informations"
+        }
+    ));
     addDefaultCommand(new vimperator.Command(["pc[lose]"],
         function() { vimperator.previewwindow.hide(); },
         {
@@ -1568,7 +1567,7 @@ vimperator.Commands = function() //{{{
                         return;
 
                     var after_time = Date.now();
-                
+
                     if ((after_time - before_time) / count >= 100)
                     {
                         var each = ((after_time - before_time) / 1000.0 / count);
@@ -1613,7 +1612,7 @@ vimperator.Commands = function() //{{{
                         return;
 
                     var after_time = Date.now();
-                    
+
                     if (after_time - before_time >= 100)
                         vimperator.echo("Total time: " + ((after_time - before_time) / 1000.0).toFixed(2) + " sec");
                     else
