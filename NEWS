@@ -1,9 +1,11 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.3
-	* new :pa[geinfo] command, and ctrl-g and g, ctrl-g mappings (thanks Marco Candrian)
 	* IMPORTANT! options are no longer automatically stored - use the
 	  ~/.vimperatorrc file instead for persistent options
+	* :tabnext and :tabprevious now accept an argument
+	* the count to gT now specifies a relative tab motion like Vim
+	* new :pa[geinfo] command, and ctrl-g and g, ctrl-g mappings (thanks Marco Candrian)
 	* added new :mkvimperatorc command
 	* remove :redraw and Ctrl-L commands as they rely on FF3 features
 	* :ls, :history and :bmarks output is now hyperlinked
