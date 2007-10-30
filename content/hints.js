@@ -83,7 +83,7 @@ vimperator.Hints = function() //{{{
         var elem = valid_hints[0];
         var doc = window.content.document;
         var elemTagName = elem.localName.toLowerCase();
-        if (elemtagName == 'frame' || elemtagName == 'iframe')
+        if (elemTagName == 'frame' || elemTagName == 'iframe')
         {
             elem.contentWindow.focus();
             return;
@@ -97,7 +97,7 @@ vimperator.Hints = function() //{{{
         var x = 0;
         var y = 0;
         // for imagemap
-        if (elemtagName == 'area')
+        if (elemTagName == 'area')
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
