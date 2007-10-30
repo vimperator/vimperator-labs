@@ -1,7 +1,7 @@
 <pre>
 2007-XX-XX:
 	* version 0.5.3
-	* new :pa[geinfo] command (thanks Marco Candrian)
+	* new :pa[geinfo] command, and ctrl-g and g, ctrl-g mappings (thanks Marco Candrian)
 	* IMPORTANT! options are no longer automatically stored - use the
 	  ~/.vimperatorrc file instead for persistent options
 	* added new :mkvimperatorc command
