@@ -164,12 +164,13 @@ vimperator.modes = (function()
         },
 
         // helper function to set both modes in one go
+        // if silent == true, you also need to take care of the mode handling changes yourself
         set: function(main_mode, extended_mode, silent)
         {
             // if a main mode is set, the extended is always cleared
             if (typeof main_mode === "number")
             {
-                if (main_mode != main)
+                if (!silent && main_mode != main)
                     handleModeChange(main, main_mode);
 
                 main = main_mode;

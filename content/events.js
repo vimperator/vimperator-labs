@@ -508,14 +508,16 @@ vimperator.Events = function() //{{{
                     break;
 
                 case vimperator.modes.CARET:
-                    // setting this option will trigger an observer which will care about all other details
-                    // like setting the NORMAL mode
+                    // setting this option will trigger an observer which will
+                    // care about all other details like setting the NORMAL mode
                     vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
                     break;
 
                 case vimperator.modes.INSERT:
                     if ((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
+                    {
                         vimperator.mode = vimperator.modes.TEXTAREA;
+                    }
                     else
                     {
                         vimperator.modes.reset();
@@ -527,9 +529,11 @@ vimperator.Events = function() //{{{
                 default:
                     // clear any selection made
                     var selection = window.content.getSelection();
-                    try { // a simple if (selection) does not work
+                    try
+                    { // a simple if (selection) does not seem to work
                         selection.collapseToStart();
-                    } catch (e) { }
+                    }
+                    catch (e) { }
                     vimperator.commandline.clear();
 
                     vimperator.modes.reset();

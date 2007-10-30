@@ -288,6 +288,15 @@ vimperator.CommandLine = function() //{{{
         this.clear();
     }
 
+    this.clear = function()
+    {
+        multiline_input_widget.collapsed = true;
+        multiline_output_widget.collapsed = true;
+        completionlist.hide();
+
+        setLine("", this.HL_NORMAL);
+    };
+
     // TODO: add :messages entry
     // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
     this.echo = function(str, highlight_group, flags)
@@ -354,15 +363,6 @@ vimperator.CommandLine = function() //{{{
         }, 10);
     };
 
-    this.clear = function()
-    {
-        multiline_input_widget.collapsed = true;
-        multiline_output_widget.collapsed = true;
-        completionlist.hide();
-
-        setLine("", this.HL_NORMAL);
-    };
-
     this.onEvent = function(event)
     {
         var command = this.getCommand();
@@ -401,6 +401,7 @@ vimperator.CommandLine = function() //{{{
                 history.add(command);
                 vimperator.modes.reset(true); //FIXME: use mode stack
                 completionlist.hide();
+                vimperator.focusContent(false);
                 vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                 return vimperator.triggerCallback("submit", mode, command);
             }
@@ -650,6 +651,9 @@ vimperator.CommandLine = function() //{{{
 
         switch (key)
         {
+            case "<Esc>":
+                return; // handled globally in events.js:onEscape()
+
             case ":":
                 vimperator.commandline.open(":", "", vimperator.modes.EX);
                 return;
