@@ -1055,7 +1055,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Start QuickHint mode, but open link in a new tab",
             usage: ["F{hint}"],
-            help: "Like normal QuickMode (activated with <code class='mapping'>f</code>) but open the link in a new tab."
+            help: "Like normal QuickMode (activated with <code class='mapping'>f</code>) but opens the link in a new tab."
         }
     ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
@@ -1071,34 +1071,41 @@ vimperator.Mappings = function() //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], [";"],
         function(arg)
         {
-            if (arg == "a")
+            if (arg == "f")
                 vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "o");
-            else if (arg == "A")
+            else if (arg == "F")
                 vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "t");
             else
                 vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg);
         },
         {
-            short_help: "Start an extended Hint mode",
+            short_help: "Start an extended hint mode",
             usage: [";{mode}{hint}"],
             help: "ExtendedHint mode is useful, since in this mode you can yank link locations, open them in a new window or save images.<br/>" +
-                  "If you want to yank the location of hint <code>24</code>, press <code class=\"mapping\">;y</code> to start this hint mode.<br/>" +
-                  "Then press <code>24</code> to copy the hint location.<br/>" +
-                  "{mode} can be either of:<br/>" +
+                  "If you want to yank the location of hint <code>24</code>, press <code class=\"mapping\">;y</code> to start this hint mode. " +
+                  "Then press <code>24</code> to copy the hint location.<br/><br/>" +
+                  "<code class='argument'>{mode}</code> can be either one of:<br/>" +
                   "<ul>" +
+                  "<li><code class=\"mapping\">;</code> to focus a link and hover it with the mouse</li>" +
                   "<li><code class=\"mapping\">a</code> to save its destination (prompting for save location)</li>" +
                   "<li><code class=\"mapping\">s</code> to save its destination</li>" +
-                  "<li><code class=\"mapping\">f</code> to focus a link and hover it with the mouse</li>" +
                   "<li><code class=\"mapping\">o</code> to open its location in the current tab</li>" +
                   "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
                   "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query</li>" +
                   "<li><code class=\"mapping\">T</code> to open its location in a <code class=\"command\">:tabopen</code> query</li>" +
-                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
-                  "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
                   "<li><code class=\"mapping\">w</code> to open its destination in a new window</li>" +
                   "<li><code class=\"mapping\">W</code> to open its location in a <code class=\"command\">:winopen</code> query</li>" +
+                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
+                  "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
                   "</ul>" +
-                  "Hintable elements for this mode can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string.",
+                  "Additionally there are two <code class='argument'>{mode}</code>s, which will start an AlwaysHint mode:<br/>"+
+                  "<ul>" +
+                  "<li><code class=\"mapping\">f</code> to open its location in the current tab</li>" +
+                  "<li><code class=\"mapping\">F</code> to open its location in a new tab</li>" +
+                  "</ul>" +
+                  "These work like the <code class='mapping'>f</code> or <code class='mapping'>F</code> mappings but will keep you in AlwaysHint mode. " +
+                  "This is useful if you want to open many links of one page without pressing <code class='mapping'>f</code> or <code class='mapping'>F</code> each time.<br/>" +
+                  "Hintable elements for all extended hint modes can be set in the <code class=\"option\">'extendedhinttags'</code> XPath string.",
             flags: vimperator.Mappings.flags.ARGUMENT
         }
     ));

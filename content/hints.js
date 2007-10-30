@@ -414,7 +414,9 @@ outer:
         var loc = valid_hints.length > 0 ? valid_hints[0].href : "";
         switch (submode)
         {
-            case "f": focusHint(); break;
+            case ";": focusHint(); break;
+            case "a": saveHint(false); break;
+            case "s": saveHint(true); break;
             case "o": openHint(false, false); break;
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
             case "t": openHint(true,  false); break;
@@ -422,8 +424,6 @@ outer:
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
             case "w": openHint(false, true);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-            case "a": saveHint(false); break;
-            case "s": saveHint(true); break;
             case "y": yankHint(false); break;
             case "Y": yankHint(true); break;
             default:
@@ -459,7 +459,7 @@ outer:
     // TODO: implement framesets
     this.show = function(mode, minor, filter)
     {
-        if (mode == vimperator.modes.EXTENDED_HINT && !/^[afoOstTwWyY]$/.test(minor))
+        if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTwWyY]$/.test(minor))
         {
             vimperator.beep();
             return;
