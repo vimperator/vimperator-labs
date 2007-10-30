@@ -49,13 +49,13 @@ vimperator.Hints = function() //{{{
 
         var x = 0, y = 0;
         var elem = valid_hints[0];
-        var elemTagName = elem.tagName;
+        var elemTagName = elem.localName.toLowerCase();
         elem.focus();
-        if (elemTagName == 'FRAME' || elemTagName == 'IFRAME')
+        if (elemTagName == 'frame' || elemTagName == 'iframe')
             return 0;
 
         // for imagemap
-        if (elemTagName == 'AREA')
+        if (elemTagName == 'area')
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
@@ -82,7 +82,8 @@ vimperator.Hints = function() //{{{
 
         var elem = valid_hints[0];
         var doc = window.content.document;
-        if (elem.tagName == 'FRAME' || elem.tagName == 'IFRAME')
+        var elemTagName = elem.localName.toLowerCase();
+        if (elemtagName == 'frame' || elemtagName == 'iframe')
         {
             elem.contentWindow.focus();
             return;
@@ -96,7 +97,7 @@ vimperator.Hints = function() //{{{
         var x = 0;
         var y = 0;
         // for imagemap
-        if (elem.tagName == 'AREA')
+        if (elemtagName == 'area')
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);

@@ -503,7 +503,7 @@ const vimperator = (function() //{{{
                 var str = vimperator.io.readFile(filename);
 
                 // handle pure javascript files specially
-                if (filename.search("\.js$") != -1)
+                if (/\.js$/.test(filename))
                 {
                     eval(str);
                 }
@@ -654,7 +654,7 @@ const vimperator = (function() //{{{
                         var files = vimperator.io.readDirectory(plugin_dir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
                         files.forEach(function(file) {
-                            if (!file.isDirectory() && /\.js$/.test(file.path))
+                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                 vimperator.source(file.path, false);
                         });
                     }
