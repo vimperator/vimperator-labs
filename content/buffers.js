@@ -599,7 +599,7 @@ vimperator.Buffer = function() //{{{
                     for (var i = 0; i < pageGeneral.length; i++)
                     {
                         if (pageGeneral[i][1])
-                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageGeneral[i][0] + ":&nbsp;</td><td>" + pageGeneral[i][1] + "</td></tr>";
+                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageGeneral[i][0] + ": </td><td>" + pageGeneral[i][1] + "</td></tr>";
                     }
                     pageInfoText += "</table>";
                     break;
@@ -609,7 +609,7 @@ vimperator.Buffer = function() //{{{
                     {
                         for (var i = 0; i < pageMeta.length; i++)
                         {
-                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageMeta[i][0] + ":&nbsp;</td><td>" + pageMeta[i][1] + "</td></tr>";
+                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageMeta[i][0] + ": </td><td>" + pageMeta[i][1] + "</td></tr>";
                         }
                     }
                     else
