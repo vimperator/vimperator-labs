@@ -363,7 +363,7 @@ vimperator.Commands = function() //{{{
                                 }
                                 break;
                             case OPTION_INT:
-                                arg = parseInt(arg);
+                                arg = parseInt(arg, 10);
                                 if (isNaN(arg))
                                 {
                                     vimperator.echoerr("Numeric argument required for integer option: " + optname);
@@ -499,7 +499,7 @@ vimperator.Commands = function() //{{{
 
         // parse count
         if (matches[0])
-            matches[0] = parseInt(matches[0]);
+            matches[0] = parseInt(matches[0], 10);
         else
             matches[0] = -1;
 
@@ -1812,7 +1812,7 @@ vimperator.Commands = function() //{{{
             }
             else if (/^\d+$/.test(args))
             {
-                var index = parseInt(args) - 1;
+                var index = parseInt(args, 10) - 1;
                 if (index < vimperator.tabs.count())
                     vimperator.tabs.select(index, true);
                 else
@@ -2150,14 +2150,14 @@ vimperator.Commands = function() //{{{
             }
             else if (/^\d+$/.test(args))
             {
-                level = parseInt(args);
+                level = parseInt(args, 10);
             }
             else if (/^[+-]\d+$/.test(args))
             {
                 if (special)
-                    level = vimperator.buffer.fullZoom + parseInt(args);
+                    level = vimperator.buffer.fullZoom + parseInt(args, 10);
                 else
-                    level = vimperator.buffer.textZoom + parseInt(args);
+                    level = vimperator.buffer.textZoom + parseInt(args, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < 1)

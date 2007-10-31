@@ -448,7 +448,7 @@ vimperator.Buffer = function() //{{{
 
         var match;
         if (match = buffer.match(/^(\d+):?/))
-            return vimperator.tabs.select(parseInt(match[1]) - 1, false); // make it zero-based
+            return vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
 
         var matches = [];
         var lower_buffer = buffer.toLowerCase();

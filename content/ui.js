@@ -699,7 +699,7 @@ vimperator.CommandLine = function() //{{{
             case "<LeftMouse>":
                 if (event.originalTarget.className == "hl-URL buffer-list")
                 {
-                    vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent) - 1);
+                    vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
                     close_window = true;
                     break;
                 }
