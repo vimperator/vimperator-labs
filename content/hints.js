@@ -423,7 +423,6 @@ outer:
             case "o": openHint(false, false); break;
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
             case "t": openHint(true,  false); break;
-            case "T": openHint(true,  false); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
             case "w": openHint(false, true);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
