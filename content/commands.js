@@ -114,10 +114,14 @@ vimperator.Command.prototype.hasName = function(name)
     for (var i = 0; i < this.specs.length; i++)
     {
         if (this.specs[i] == name)                    // literal command name
+        {
             return true;
+        }
         else if (this.specs[i].match(/^(\w+|!)\[\w+\]$/)) // abbreviation spec
+        {
             if (matchAbbreviation(name, this.specs[i]))
                 return true;
+        }
     }
     return false;
 }
@@ -421,7 +425,7 @@ vimperator.Commands = function() //{{{
             i += count; // hopefully count is always >0, otherwise we get an endless loop
         }
 
-        return { opts: opts, args: args }
+        return { opts: opts, args: args };
     }
 
     function getOption(opts, option, def)
@@ -721,7 +725,7 @@ vimperator.Commands = function() //{{{
             if (special && args)
             {
                 vimperator.echoerr("E474: Invalid argument");
-                return
+                return;
             }
             var matches;
             if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
@@ -775,7 +779,7 @@ vimperator.Commands = function() //{{{
             if (special && args)
             {
                 vimperator.echoerr("E474: Invalid argument");
-                return
+                return;
             }
 
             if (special)
@@ -1106,7 +1110,7 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
             var [lhs, rhs] = [matches[1], matches[2]];
             var leader_reg = /<Leader>/i;
 
@@ -1192,7 +1196,7 @@ vimperator.Commands = function() //{{{
             }
 
             var filter = args.replace(/[^a-zA-Z]/g, '');
-            vimperator.marks.list(filter)
+            vimperator.marks.list(filter);
         },
         {
             usage: ["marks [arg]"],
@@ -1215,7 +1219,7 @@ vimperator.Commands = function() //{{{
             if (file.exists() && !special)
             {
                 vimperator.echoerr("E189: \".vimperatorrc\" exists (add ! to override)");
-                return
+                return;
             }
 
             var line = "\" " + vimperator.version + "\n";
@@ -1537,7 +1541,7 @@ vimperator.Commands = function() //{{{
             var only_non_default = false; //used for :set to print non-default options
             if (!args)
             {
-                args = "all?"
+                args = "all?";
                 only_non_default = true;
             }
 
@@ -1723,13 +1727,13 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var menu = document.getElementById("viewSidebarMenu")
+            var menu = document.getElementById("viewSidebarMenu");
 
             for (var i = 0; i < menu.childNodes.length; i++)
             {
                 if (menu.childNodes[i].label == args)
                 {
-                    eval(menu.childNodes[i].getAttribute('oncommand'))
+                    eval(menu.childNodes[i].getAttribute('oncommand'));
                     break;
                 }
             }
@@ -1890,11 +1894,15 @@ vimperator.Commands = function() //{{{
                     var before_time = Date.now();
 
                     if (args && args[0] == ":")
+                    {
                         while (i--)
                             vimperator.execute(args);
+                    }
                     else
+                    {
                         while (i--)
                             eval(args);
+                    }
 
                     if (special)
                         return;
@@ -2033,7 +2041,7 @@ vimperator.Commands = function() //{{{
             short_help: "Undo closing of all closed tabs",
             help: "Firefox stores up to 10 closed tabs, even after a browser restart."
         }
-    )),
+    ));
     addDefaultCommand(new vimperator.Command(["unl[et]"],
         function(args, special)
         {
@@ -2113,7 +2121,7 @@ vimperator.Commands = function() //{{{
         },
         {
             usage: ["winc[ose] [url] [, url]"],
-            short_help: "Close window",
+            short_help: "Close window"
         }
     ));
     addDefaultCommand(new vimperator.Command(["wino[pen]", "wo[pen]", "wine[dit]"],
@@ -2195,7 +2203,7 @@ vimperator.Commands = function() //{{{
             args = args.replace(/(^|[^\\])!/g, "$1" + last_run_command);
             last_run_command = args;
 
-            var output = vimperator.system(args)
+            var output = vimperator.system(args);
             if (output)
                 vimperator.echo(vimperator.util.escapeHTML(output));
         },
@@ -2243,7 +2251,7 @@ String.prototype.toURLArray = function() // {{{
         {
             var location = window.content.document.location;
             var tail = matches[1] ? matches[1] : "";
-            urls[url] = location.protocol + "//" + location.host + "/" + tail
+            urls[url] = location.protocol + "//" + location.host + "/" + tail;
             continue;
         }
 
@@ -2252,7 +2260,7 @@ String.prototype.toURLArray = function() // {{{
         // or keyword bookmark
         if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
         {
-            matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/)
+            matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
 
             var alias = matches[1];
             var text = matches[2] ? matches[2] : null;
