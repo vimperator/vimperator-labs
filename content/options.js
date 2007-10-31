@@ -429,12 +429,6 @@ vimperator.Options = function() //{{{
             default_value: "homepage,quickmark,tabopen,paste"
         }
     ));
-    this.add(new vimperator.Option(["autohints", "ah"], "boolean",
-        {
-            short_help: "Automatically show hints on every web page",
-            default_value: false
-        }
-    ));
     this.add(new vimperator.Option(["complete", "cpt"], "charlist",
         {
             short_help: "Items which are completed at the :[tab]open prompt",
@@ -505,10 +499,11 @@ vimperator.Options = function() //{{{
             validator: function (value) { if (/[^mTb]/.test(value)) return false; else return true; }
         }
     ));
-    this.add(new vimperator.Option(["hintchars", "hc"], "charlist",
+    this.add(new vimperator.Option(["hinttimeout", "hto"], "number",
         {
-            short_help: "String of single characters which can be used to follow hints",
-            default_value: "hjklasdfgyuiopqwertnmzxcvb"
+            short_help: "Automatically follow non unique numerical hint after {arg} ms",
+            default_value: 500,
+            validator: function (value) { if (value >= 0) return true; else return false; }
         }
     ));
     this.add(new vimperator.Option(["hintstyle", "hs"], "string",

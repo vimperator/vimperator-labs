@@ -1,351 +1,1277 @@
-2007-09-24 14:41  stubenschrott
+2007-10-31 11:23  dougkearns
 
-	* chrome/content/vimperator/: events.js, mappings.js, ui.js: -
-	  g<esc> doesn't beep anymore - /<up><down> searches for the
-	  changed string
+	* content/: completion.js, events.js, find.js, help.js, hints.js,
+	  mappings.js, tabs.js, ui.js, vimperator.js: add some more missing
+	  semicolons
+
+2007-10-31 10:31  dougkearns
+
+	* content/hints.js: remove duplicate "T" hints mapping
+
+2007-10-31 10:20  dougkearns
+
+	* content/events.js: remove empty statement
+
+2007-10-31 10:02  dougkearns
+
+	* content/commands.js: add some missing semicolons
+
+2007-10-31 08:57  dougkearns
+
+	* content/options.js: move the definition of v.options.pageinfo to
+	  its proper alphabetical position
+
+2007-10-31 08:44  dougkearns
+
+	* content/bookmarks.js: remove redundant equality test for
+	  engine_name in v.bookmarks.getSearchURL
+
+2007-10-31 07:27  stubenschrott
+
+	* content/hints.js: tab-support for hints
+
+2007-10-31 05:28  dougkearns
+
+	* content/: buffers.js, commands.js, tabs.js, ui.js, vimperator.js:
+	  always specify the radix arg when calling parseInt rather than
+	  rely on it 'guessing' correctly
+
+2007-10-30 15:26  stubenschrott
+
+	* content/: hints.js, mappings.js: changed always hints keys to ;f
+	  and ;F
+
+2007-10-30 15:06  stubenschrott
+
+	* content/: events.js, modes.js, ui.js: fixed MOW message stacking
+	  and some small speed improvements
+
+2007-10-30 14:15  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-30 13:34  dougkearns
+
+	* content/hints.js: make sure frame, iframe and area elements are
+	  properly hinted on XHTML pages
+
+2007-10-30 13:32  dougkearns
+
+	* content/hints.js: fix capitalisation typo
+
+2007-10-30 10:54  dougkearns
+
+	* content/: commands.js, hints.js, vimperator.js: make sure frame,
+	  iframe and area elements are properly hinted on XHTML pages
+
+2007-10-30 10:44  dougkearns
+
+	* content/events.js: make sure the MOW is not used when 'ssli' is
+	  set to 2
+
+2007-10-30 10:41  dougkearns
+
+	* content/events.js: remove redundant return statement from
+	  v.events.toString
+
+2007-10-30 10:33  dougkearns
+
+	* content/commands.js: merge improved :version command
+
+2007-10-30 10:30  dougkearns
+
+	* content/commands.js: move :pageinfo command definition to its
+	  proper alphabetical position
+
+2007-10-30 10:29  dougkearns
+
+	* content/bookmarks.js: remove some old TODO comments
+
+2007-10-30 10:24  dougkearns
+
+	* content/buffers.js: merge improved v.buffer.evaluateXPath
+
+2007-10-30 10:20  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, mappings.js:
+	  make use of v.commandline.FORCE_MULTILINE in multiline echo calls
+
+2007-10-30 10:05  dougkearns
+
+	* content/commands.js: round the output times of :time to 2 decimal
+	  places
+
+2007-10-30 10:04  dougkearns
+
+	* content/vimperator.js: only source JavaScript files (*.js) from
+	  the plugin directory on startup
+
+2007-10-30 10:03  dougkearns
+
+	* NEWS, content/commands.js, content/mappings.js: allow :tabnext
+	  and :tabprevious to accept an arg and make gT use its count for
+	  relative tab motion
+
+2007-10-30 09:48  dougkearns
+
+	* NEWS, content/buffers.js, content/mappings.js: merge new <C-g>
+	  and g<C-g> mappings and improved :pageinfo
+
+2007-10-30 09:42  dougkearns
+
+	* content/commands.js: use -1 as the default value for the ex
+	  command count
+
+2007-10-30 09:40  dougkearns
+
+	* content/vimperator.js: display a better error message for invalid
+	  ex commands
+
+2007-10-30 06:54  dougkearns
+
+	* content/buffers.js: remove unnecessary &nbsp; entities from the
+	  output of :pageinfo (really this time)
+
+2007-10-30 06:49  dougkearns
+
+	* content/vimperator.js: revert last accidental commit
+
+2007-10-30 04:23  dougkearns
+
+	* content/vimperator.js: remove unnecessary &nbsp; entities from
+	  the output of :pageinfo
+
+2007-10-29 12:48  dougkearns
+
+	* content/buffers.js: fix typo in :pageinfo compatibility string
+
+2007-10-28 10:16  dougkearns
+
+	* content/commands.js: round the output times of :time to 2 decimal
+	  places
+
+2007-10-28 08:09  dougkearns
+
+	* content/vimperator.js: only source JavaScript files (*.js) from
+	  the plugin directory on startup
+
+2007-10-27 17:04  dougkearns
+
+	* NEWS: fix some typos in NEWS
+
+2007-10-27 16:38  stubenschrott
+
+	* NEWS, content/buffers.js, content/mappings.js: new ctrl-g and
+	  g,ctrl-g commands
+
+2007-10-27 15:37  dougkearns
+
+	* content/buffers.js: make further refinements to the output of
+	  :pageinfo
+
+2007-10-27 15:05  dougkearns
+
+	* NEWS, content/commands.js, content/mappings.js: allow :tabnext
+	  and :tabprevious to accept an arg and make gT use its count for
+	  relative tab motion
+
+2007-10-27 13:15  dougkearns
+
+	* content/commands.js: move :pageinfo command definition to its
+	  proper alphabetical position
+
+2007-10-27 13:01  dougkearns
+
+	* content/commands.js: fix whitespace
+
+2007-10-27 12:44  dougkearns
+
+	* content/commands.js: use -1 as the default value for the ex
+	  command count
+
+2007-10-27 09:12  dougkearns
+
+	* content/vimperator.js: display a better error message for invalid
+	  ex commands
+
+2007-10-27 07:45  dougkearns
+
+	* content/mappings.js: allow lowercase modifier chars in the {lhs}
+	  arg of :map and related commands
+
+2007-10-27 03:59  dougkearns
+
+	* content/mappings.js: replace references to 'beep' in the help
+	  with 'visualbell'
+
+2007-10-27 03:57  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-27 03:57  dougkearns
+
+	* NEWS, content/buffers.js, content/commands.js,
+	  content/options.js: merge new :pageinfo command
+
+2007-10-27 03:44  dougkearns
+
+	* content/: commands.js, options.js, vimperator.js: merge faster
+	  initial setting of gui options
+
+2007-10-27 02:52  stubenschrott
+
+	* NEWS, content/buffers.js, content/commands.js, content/events.js,
+	  content/options.js: new :pageinfo command (thanks calmar)
+
+2007-10-26 16:39  dougkearns
+
+	* content/commands.js: prepend the count specified to a user
+	  mapping to the map's RHS
+
+2007-10-26 15:04  dougkearns
+
+	* content/commands.js: prepend the count specified to a user
+	  mapping to the map's RHS
+
+2007-10-26 14:09  dougkearns
+
+	* skin/vimperator.css: add a note about :hover requiring an element
+	  in the selector when in quirks mode
+
+2007-10-26 06:48  dougkearns
+
+	* content/util.js: replace & with the HTML entity in escapeHTML
+
+2007-10-26 05:47  stubenschrott
+
+	* content/hints.js: increased zIndex as there seem to be sites with
+	  zIndex = 1.000.000 out there
+
+2007-10-26 04:59  stubenschrott
+
+	* content/hints.js: experimental hinting of images with a
+	  transparent span
+
+2007-10-26 01:30  stubenschrott
+
+	* NEWS, TODO, content/events.js, content/hints.js,
+	  content/mappings.js: new alwayshints mode on ;a and F for
+	  quickhints in new tab
+
+2007-10-25 21:57  stubenschrott
+
+	* content/: events.js, find.js, hints.js, modes.js, ui.js,
+	  vimperator.js: many small fixes to the hints, and some minor mode
+	  handling changes
+
+2007-10-25 15:25  dougkearns
+
+	* content/editor.js: trivial whitespace fixes
+
+2007-10-25 14:48  dougkearns
+
+	* content/mappings.js: add TODO and simplify replace 'pattern' for
+	  uppercasing modifier chars
+
+2007-10-25 09:59  dougkearns
+
+	* content/mappings.js: allow lowercase modifier chars in the {lhs}
+	  arg of :map and related commands
+
+2007-10-25 09:42  dougkearns
+
+	* content/mappings.js: remove duplication in private getMap() of
+	  Mappings
+
+2007-10-25 03:53  dougkearns
+
+	* content/mappings.js: replace references to 'beep' in the help
+	  with 'visualbell'
+
+2007-10-24 23:20  stubenschrott
+
+	* content/: hints.js, modes.js: <return> support for hints
+
+2007-10-24 21:32  stubenschrott
+
+	* content/: hints.js, mappings.js, modes.js: extract better text
+	  for input or select fields
+
+2007-10-24 13:52  stubenschrott
+
+	* content/hints.js: quick fix for hints.hide(), will need to change
+	  to something better
+
+2007-10-24 10:21  stubenschrott
+
+	* content/: buffers.js, events.js, hints.js, mappings.js, modes.js:
+	  initial rewrite of the hints, please test and report (and i know,
+	  it has problems, mainly it does not yet support framesets)
+
+2007-10-23 16:01  stubenschrott
+
+	* content/: editor.js, options.js: blink text box after editing
+	  with external editor
+
+2007-10-23 10:14  dougkearns
+
+	* content/options.js: remove accidentally included addOption()
+	  cruft from last commit
+
+2007-10-22 14:41  stubenschrott
+
+	* NEWS, content/commands.js, content/options.js,
+	  content/vimperator.js: made initial setting of gui options faster
+
+2007-10-22 08:39  dougkearns
+
+	* content/commands.js: use a regexp literal for matching the leader
+	  token in :map
+
+2007-10-22 08:36  dougkearns
+
+	* content/: events.js, mappings.js, vimperator.js: move Mappings()
+	  to the vimperator namespace
+
+2007-10-22 08:09  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  events.js, find.js, hints.js, io.js, mappings.js, options.js,
+	  tabs.js, ui.js, vimperator.js: merge moving global constructor
+	  functions to the vimperator namespace
+
+2007-10-22 07:32  dougkearns
+
+	* content/commands.js: use a regexp literal for matching the leader
+	  token in :map
+
+2007-10-22 07:18  dougkearns
+
+	* content/: commands.js, mappings.js: move Map() to the vimperator
+	  namespace
+
+2007-10-22 06:45  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-22 05:47  dougkearns
+
+	* content/: bookmarks.js, options.js, ui.js, vimperator.js: merge
+	  relocation of
+	  Options.{setPref,getPref,setFirefoxPref,getFirefoxPref} to slots
+	  of vimperator.options
+
+2007-10-22 05:38  dougkearns
+
+	* content/vimperator.js: reduced timeout of asynchronous
+	  vimperatorrc loading
+
+2007-10-22 05:37  dougkearns
+
+	* vimperator.vim: add :mkvimperatorrc to RC file highlighter
+
+2007-10-22 05:35  dougkearns
+
+	* NEWS, content/options.js: don't store options as preferences
+	  anymore
+
+2007-10-22 05:14  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-22 05:13  dougkearns
+
+	* NEWS, content/commands.js, content/mappings.js: add new
+	  :mkvimperatorrc command
+
+2007-10-22 05:08  dougkearns
+
+	* vimperator.vim: add :mkvimperatorrc to RC file highlighter
+
+2007-10-22 04:55  dougkearns
+
+	* content/: completion.js, io.js, mappings.js, vimperator.js: merge
+	  new vimperator.io object
+
+2007-10-22 04:19  dougkearns
+
+	* content/: file.js, io.js, vimperator.xul: rename file.js to io.js
+
+2007-10-22 03:37  dougkearns
+
+	* NEWS, content/commands.js, content/mappings.js: remove :redraw as
+	  it relys on a FF3 only feature
+
+2007-10-21 12:39  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  editor.js, events.js, find.js, hints.js, io.js, options.js,
+	  tabs.js, ui.js, vimperator.js: move remaining global constructor
+	  functions to the vimperator namespace
+
+2007-10-21 07:34  dougkearns
+
+	* content/: bookmarks.js, events.js, mappings.js, modes.js,
+	  options.js, ui.js, vimperator.js: move
+	  Options.{setPref,getPref,setFirefoxPref,getFirefoxPref} to slots
+	  of vimperator.options
+
+2007-10-21 06:53  dougkearns
+
+	* vimperator.vim: add 'editor' to RC file syntax highlighter
+
+2007-10-21 04:00  dougkearns
+
+	* content/modes.js: remove modes.js - accidentally included during
+	  the directory structure change
+
+2007-10-21 01:04  stubenschrott
+
+	* content/vimperator.js: reduced timeout of asynchronous
+	  vimperatorrc loading
+
+2007-10-20 14:47  dougkearns
+
+	* NEWS, content/options.js: don't store options as preferences
+	  anymore
+
+2007-10-20 14:40  dougkearns
+
+	* content/commands.js, content/mappings.js, NEWS: add new
+	  :mkvimperatorrc command
+
+2007-10-20 09:39  dougkearns
+
+	* vimperator.vim: match comments more aggressively - add a
+	  vimperatorLineComment group
+
+2007-10-20 04:53  dougkearns
+
+	* NEWS, content/io.js, content/vimperator.js: remove
+	  io.pathExists()
+
+2007-10-19 20:32  stubenschrott
+
+	* content/editor.js: changed to error printing
+
+2007-10-19 20:15  stubenschrott
+
+	* NEWS, content/editor.js, content/mappings.js, content/options.js,
+	  content/vimperator.js: external editor support
+
+2007-10-19 17:54  dougkearns
+
+	* content/: commands.js, help.js, mappings.js: merge some minor
+	  documentation improvements
+
+2007-10-19 17:26  dougkearns
+
+	* skin/: vimperator.css: move cursor property assignment to .hl-URL
+
+2007-10-19 17:23  dougkearns
+
+	* NEWS: update NEWS - remove MOW hyperlinking
+
+2007-10-19 17:23  dougkearns
+
+	* NEWS: update NEWS for MOW hyperlinking
+
+2007-10-19 17:20  dougkearns
+
+	* content/bookmarks.js, content/buffers.js, content/ui.js,
+	  skin/vimperator.css: merge hyperlinked MOW URLs feature
+
+2007-10-19 13:22  dougkearns
+
+	* vimperator.vim: add basic string highlighting for the Vim RC file
+
+2007-10-19 06:13  stubenschrott
+
+	* TODO: added :iabbr idea
+
+2007-10-19 05:45  stubenschrott
+
+	* content/: completion.js, io.js, mappings.js, vimperator.js: new
+	  vimperator.io. object
+
+2007-10-19 02:00  dougkearns
+
+	* content/: file.js, io.js, vimperator.xul: rename file.js io.js
+
+2007-10-18 23:36  stubenschrott
+
+	* content/: commands.js, mappings.js, util.js: get rid of
+	  will/would in help
+
+2007-10-18 20:30  stubenschrott
+
+	* content/commands.js: allow -option foo in adition to -option=foo
+
+2007-10-18 20:12  stubenschrott
+
+	* content/commands.js: made quoting a little more bash/vim-like
+
+2007-10-18 19:38  stubenschrott
+
+	* NEWS, content/bookmarks.js, content/completion.js: better tab
+	  completion for URL commands, tokenize "filter" on \s+ and match
+	  each of the tokens
+
+2007-10-18 18:45  stubenschrott
+
+	* content/bookmarks.js, content/commands.js, content/completion.js,
+	  content/util.js, skin/vimperator.css: :bmarks [filter] works
+	  again, now even with -tags=foo filtering
+
+2007-10-18 14:42  dougkearns
+
+	* content/ui.js: fix link target of :ls URLs in the MOW
+
+2007-10-18 13:35  dougkearns
+
+	* skin/vimperator.css: explicity use an element in the
+	  .hl-URL:hover selector since the MOW currently uses about:blank
+	  which puts FF in quirks mode where this is required
+
+2007-10-18 13:32  dougkearns
+
+	* content/commands.js: allow _ in option names
+
+2007-10-18 07:58  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-18 07:26  dougkearns
+
+	* NEWS, content/buffers.js, content/commands.js,
+	  content/mappings.js: merge new gb and gB commands
+
+2007-10-18 06:01  dougkearns
+
+	* AUTHORS, Donators: update AUTHORS and Donators
+
+2007-10-18 05:57  dougkearns
+
+	* NEWS, content/commands.js, content/tabs.js,
+	  content/vimperator.js: merge better :q
+
+2007-10-18 05:53  dougkearns
+
+	* NEWS, TODO, content/commands.js: merge new :winclose command
+
+2007-10-18 05:46  dougkearns
+
+	* content/: ui.js, vimperator.js: merge update statusline on
+	  browser start
+
+2007-10-17 23:07  stubenschrott
+
+	* TODO: updated todo
+
+2007-10-17 23:01  stubenschrott
+
+	* NEWS, TODO, content/commands.js: new :winclose command
+
+2007-10-17 22:42  stubenschrott
+
+	* content/: tabs.js, ui.js, vimperator.js: * return after quitting
+	  last tab * update statusline on browser start
+
+2007-10-17 22:34  stubenschrott
+
+	* AUTHORS, Donators, NEWS, content/commands.js, content/tabs.js,
+	  content/vimperator.js, skin/vimperator.css: better :q
+
+2007-10-17 02:35  dougkearns
+
+	* vimperator.vim: update vimperator.vim revision date
+
+2007-10-17 02:33  dougkearns
+
+	* vimperator.vim: further limit where vimperatorCommandWrapper
+	  matches
+
+2007-10-17 01:40  stubenschrott
+
+	* content/: util.js, vimperator.js: improvements in :echo object,
+	  :echo getBrowser() should work now reliable
+
+2007-10-16 23:43  stubenschrott
+
+	* NEWS, content/buffers.js, content/commands.js,
+	  content/mappings.js: new gb and gB commands
+
+2007-10-16 16:05  dougkearns
+
+	* content/buffers.js, content/ui.js, skin/vimperator.css: use the
+	  value of 'activate' when opening new tabs from the MOW
+
+2007-10-16 15:27  stubenschrott
+
+	* content/: buffers.js, ui.js: * only switch tabs when clicking the
+	  URL in :ls, to make it easier to select text * allow
+	  ctrl-(shift-)-clicks to select cells in the MOW
+
+2007-10-16 14:49  dougkearns
+
+	* NEWS: update NEWS for hyperlinked MOW output
+
+2007-10-16 14:05  dougkearns
+
+	* content/bookmarks.js, content/buffers.js, content/ui.js,
+	  skin/vimperator.css: make each row of the buffer list clickable
+	  and jump to the selected buffer
+
+2007-10-16 13:11  dougkearns
+
+	* content/bookmarks.js, content/ui.js, skin/vimperator.css: make
+	  URLs in the :bmarks output clickable
+
+2007-10-16 06:08  stubenschrott
+
+	* Donators, NEWS, content/bookmarks.js, content/commands.js,
+	  content/events.js: new args parser, converted :bmarks to it,
+	  which can now user -keyword= and -tags=
+
+2007-10-16 05:58  dougkearns
+
+	* content/vimperator.js: minor refactoring of vimperator.beep
+
+2007-10-16 03:53  dougkearns
+
+	* content/: completion.js, file.js, mappings.js, vimperator.js:
+	  move LocalFile and fopen to a vimperator.io namespace
+
+2007-10-16 02:30  dougkearns
+
+	* NEWS: remove backported NEWS item
+
+2007-10-16 02:15  dougkearns
+
+	* content/mappings.js, NEWS: merged change of "b" mapping to
+	  :buffer!
+
+2007-10-16 02:06  dougkearns
+
+	* content/events.js: merge reshowing of the mode after a TabSelect
+	  event
+
+2007-10-16 00:57  stubenschrott
+
+	* NEWS, content/commands.js, content/events.js,
+	  content/mappings.js: * b is now :buffer! with ! * show mode again
+	  on tabchange * temporary :command without real function, sorry
+	  for the commit ;)
+
+2007-10-15 16:18  dougkearns
+
+	* content/options.js: use getAnonymousElementByAttribute to find
+	  tabbrowser-tabs since FF2 doesn't have getElementsByClassName
+
+2007-10-15 02:22  dougkearns
+
+	* Makefile, chrome.manifest: allow Vimperator to run directly from
+	  an unpackaged development directory
+
+2007-10-15 00:47  dougkearns
+
+	* content/: events.js, tabs.js: beep if trying to delete the last
+	  tab which is already an empty tab
+
+2007-10-15 00:40  dougkearns
+
+	* NEWS, content/commands.js, content/help.js: remove backported
+	  NEWS items
+
+2007-10-15 00:39  dougkearns
+
+	* NEWS, content/ui.js: [+] marker in the statusline
+
+2007-10-15 00:21  dougkearns
+
+	* NEWS, content/options.js: working showtabline!
+
+2007-10-14 16:05  stubenschrott
+
+	* NEWS, content/ui.js: [+] marker in the statusline
+
+2007-10-14 15:47  stubenschrott
+
+	* NEWS, content/options.js: working showtabline!
+
+2007-10-14 12:28  stubenschrott
+
+	* content/: events.js, tabs.js: beep if trying to delete the last
+	  tab which is already an empty tab
+
+2007-10-12 06:08  dougkearns
+
+	* skin/: vimperator.css: enforce our status bar styles
+
+2007-10-12 05:50  stubenschrott
+
+	* TODO: updated TODO a little
+
+2007-10-12 03:51  stubenschrott
+
+	* content/bookmarks.js: removed useless outer loop
+
+2007-10-11 20:36  stubenschrott
+
+	* content/: bookmarks.js, commands.js: more verbose :version output
+
+2007-10-11 16:12  stubenschrott
+
+	* content/bookmarks.js: show keywords and tags in the :bmarks
+	  output
+
+2007-10-11 14:55  stubenschrott
+
+	* NEWS: updated news so that we don't show 0.5.2 features for 0.6
+
+2007-10-11 14:10  dougkearns
+
+	* content/events.js: pass all key events through to FF when in
+	  designMode
+
+2007-10-11 14:01  dougkearns
+
+	* NEWS, vimperator.vim: update vimperator.vim
+
+2007-10-11 10:35  dougkearns
+
+	* content/events.js: pass all key events through to FF when in
+	  designMode
+
+2007-10-11 06:02  dougkearns
+
+	* Makefile: bump version number
+
+2007-10-11 05:19  dougkearns
+
+	* ChangeLog, Makefile, NEWS: update version number for pending
+	  release
+
+2007-10-11 04:06  dougkearns
+
+	* content/bookmarks.js: remove unused keyword and tag columns from
+	  :bmark output
+
+2007-10-11 03:26  dougkearns
+
+	* content/: help.js: put the help section locating block in a
+	  timeout to sure the first call to :help {arg} works
+
+2007-10-11 03:06  dougkearns
+
+	* content/: commands.js: fix typo in :preferences usage
+
+2007-10-10 13:52  dougkearns
+
+	* ChangeLog: update ChangeLog
+
+2007-10-10 08:02  dougkearns
+
+	* content/: help.js: mention $VIMPERATOR_HOME in the help
+
+2007-10-10 07:32  dougkearns
+
+	* ChangeLog, content/commands.js: minor improvement to :sbclose
+	  help
+
+2007-10-10 04:54  dougkearns
+
+	* content/: commands.js, options.js, util.js, vimperator.js: new
+	  :set and :prefs commands, tweaked :set output to use colors
+
+2007-10-10 04:46  dougkearns
+
+	* NEWS, TODO: update NEWS and TODO
+
+2007-10-10 02:39  dougkearns
+
+	* content/: commands.js, vimperator.js: add :!! support and don't
+	  show error on :!non-existing-command (as the non-existing-command
+	  can't be known if it really does not exist)
+
+2007-10-10 02:23  stubenschrott
+
+	* NEWS, content/commands.js, content/options.js, content/util.js,
+	  content/vimperator.js: new :set and :prefs commands, tweaked :set
+	  output to use colors
+
+2007-10-10 01:21  dougkearns
+
+	* skin/vimperator.css: allow the sidebar width to range from 10% -
+	  90%
+
+2007-10-10 01:19  dougkearns
+
+	* skin/vimperator.css: allowd the sidebar width to range from 10% -
+	  90%
+
+2007-10-09 17:49  stubenschrott
+
+	* content/: commands.js, vimperator.js: add :!! support and don't
+	  show error on :!non-existing-command (as the non-existing-command
+	  can't be known if it really does not exist)
+
+2007-10-09 15:50  dougkearns
+
+	* NEWS, TODO, content/commands.js, content/mappings.js,
+	  content/tabs.js: merge count support for deleting buffers
+
+2007-10-09 15:34  dougkearns
+
+	* NEWS, TODO, content/commands.js, content/completion.js:
+	  back/:forward has tab completion, slightly broken for
+	  wildmode=longest for now, as we need to refactor g_substrings
+	  later
+
+2007-10-09 15:19  dougkearns
+
+	* NEWS, content/commands.js: :undoall + :undo tab-completion
+
+2007-10-09 14:51  dougkearns
+
+	* NEWS, content/hints.js, content/mappings.js: add "s" and "a"
+	  mappings to extended hints mode for saving hint targets
+
+2007-10-09 14:47  dougkearns
+
+	* NEWS, content/hints.js, content/mappings.js: add "s" and "a"
+	  mappings to extended hints mode for saving hint targets
+
+2007-10-09 08:40  dougkearns
+
+	* content/: mappings.js: update / and ? help for changed
+	  'linksearch' modifiers
+
+2007-10-09 08:38  dougkearns
+
+	* Donators, NEWS, content/commands.js, content/find.js,
+	  content/mappings.js: merge new :redraw command and changed
+	  'linksearch' pattern modifiers
+
+2007-10-09 07:44  dougkearns
+
+	* content/: ui.js, vimperator.xul: merge MOW improvements
+
+2007-10-09 07:13  dougkearns
+
+	* content/: help.js, ui.js: merge use of "[Help]" and "[No Name]"
+	  in the status line for the internal help page and about:blank
+
+2007-10-09 07:08  dougkearns
+
+	* content/: help.js, ui.js: use "[Help]" in the status line for the
+	  internal help page
+
+2007-10-09 06:40  dougkearns
+
+	* content/: ui.js, vimperator.xul: revert to using the text box for
+	  echoing commands
+
+2007-10-09 05:09  stubenschrott
+
+	* content/: commands.js, mappings.js: fixed typo
+
+2007-10-09 04:59  stubenschrott
+
+	* NEWS, TODO, content/commands.js, content/mappings.js,
+	  content/tabs.js, content/ui.js: count support for deleting
+	  buffers
+
+2007-10-09 03:39  stubenschrott
+
+	* NEWS, TODO, content/commands.js, content/completion.js:
+	  :back/:forward has tab completion, slightly broken for
+	  wildmode=longest for now, as we need to refactor g_substrings
+	  later
+
+2007-10-09 02:33  stubenschrott
+
+	* NEWS, content/commands.js: :undoall + :undo tab-completion
+
+2007-10-09 02:20  dougkearns
+
+	* content/completion.js: use the document's title attribute to grab
+	  the page title for buffer completions rather than the raw text
+	  node content
+
+2007-10-09 01:22  stubenschrott
+
+	* content/: bookmarks.js, buffers.js, commands.js, events.js,
+	  find.js, hints.js, mappings.js, modes.js, options.js, ui.js,
+	  vimperator.js: added flags to vimperator.commandline.echo()
+
+2007-10-08 15:21  stubenschrott
+
+	* Donators, NEWS, content/commands.js, content/find.js,
+	  content/mappings.js: * :redraw and ctrl-l commands * \u\U changed
+	  to \l\L
+
+2007-10-08 08:58  dougkearns
+
+	* content/ui.js: restore appending of echoed single lines to the
+	  MOW when it's already open and fix vimperator.commandline.echo so
+	  it can display non-string args again
+
+2007-10-08 03:36  dougkearns
+
+	* content/: vimperator.xul: sst default highlight group class to
+	  hl-Normal for #status-bar and #vimperator-commandline
+
+2007-10-08 02:44  dougkearns
+
+	* content/ui.js, skin/vimperator.css: use standard-ish Vim
+	  highlight group names for the statusline styling
+
+2007-10-08 01:08  dougkearns
+
+	* content/: commands.js: close :time MOW output table element
+
+2007-10-07 23:19  dougkearns
+
+	* content/: events.js: clear the commandline when changing tabs
+
+2007-10-06 16:40  dougkearns
+
+	* NEWS, content/commands.js, content/vimperator.js: merge :! es
+	  command
+
+2007-10-06 16:35  dougkearns
+
+	* NEWS, content/commands.js, content/vimperator.js: make
+	  vimperator.system() Windows aware
+
+2007-10-06 15:18  dougkearns
+
+	* vimperatorrc.example: update vimperatorrc.example - 'beep' is now
+	  'visualbell'
+
+2007-10-06 15:17  dougkearns
+
+	* content/commands.js: display an error message if :buffers is
+	  given an argument
+
+2007-10-06 15:16  dougkearns
+
+	* content/bookmarks.js, content/buffers.js, content/commands.js,
+	  content/find.js, content/mappings.js, content/options.js,
+	  content/ui.js, content/util.js, content/vimperator.js,
+	  content/vimperator.xul, skin/vimperator.css: merge MOW
+	  improvements
+
+2007-10-06 09:07  dougkearns
+
+	* content/vimperator.js: make vimperator.run() Windows aware...poor
+	  thing
+
+2007-10-06 04:14  dougkearns
+
+	* vimperatorrc.example: update vimperatorrc.example - 'beep' is now
+	  'visualbell'
+
+2007-10-06 04:10  dougkearns
+
+	* content/commands.js: display an error message if :buffers is
+	  given an argument
+
+2007-10-06 04:05  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, options.js:
+	  escape ex command stings prepended to the MOW output
+
+2007-10-06 03:58  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, help.js,
+	  mappings.js, util.js, vimperator.js, vimperator.xul: add
+	  vimperator.util.escapeHTML
+
+2007-10-06 03:12  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, mappings.js,
+	  options.js, ui.js: don't prepend the ex command string to the MOW
+	  output for all commands
+
+2007-10-05 03:43  stubenschrott
+
+	* content/: ui.js, vimperator.js: faster echo() method
+
+2007-10-04 22:35  dougkearns
+
+	* content/ui.js, skin/vimperator.css: append command output to the
+	  MOW rather than overwriting if it is already open
+
+2007-10-04 21:10  dougkearns
+
+	* content/: vimperator.xul: allow the Console to be opened by
+	  :sidebar
+
+2007-10-04 15:59  dougkearns
+
+	* content/vimperator.xul: move the completion widget beneath the
+	  MOW
+
+2007-10-04 15:29  dougkearns
+
+	* content/: completion.js: add fold markers
+
+2007-10-04 13:45  dougkearns
+
+	* vimperator.vim: update RC file highlighting
+
+2007-10-04 13:23  dougkearns
+
+	* vimperator.vim: update RC file highlighting
+
+2007-10-04 12:53  dougkearns
+
+	* content/: events.js: don't call focusContent() on page load since
+	  it causes window map events to be fired
+
+2007-10-04 12:44  dougkearns
+
+	* content/vimperator.xul: move the completion widget beneath the
+	  MOW
+
+2007-10-02 22:45  dougkearns
+
+	* content/bookmarks.js, content/buffers.js, content/commands.js,
+	  content/mappings.js, content/options.js, content/ui.js,
+	  content/vimperator.js, skin/vimperator.css: move more-prompt
+	  messages to the commandline and use the default UI font size in
+	  the MOW
+
+2007-10-02 21:40  dougkearns
+
+	* vimperator.vim: add 'more' to vimperator.vim
+
+2007-10-02 20:24  dougkearns
+
+	* content/modes.js: use hl-ModeMsg for highlighting mode messages
+
+2007-10-02 20:20  dougkearns
+
+	* skin/vimperator.css, content/bookmarks.js, content/buffers.js,
+	  content/find.js, content/mappings.js, content/options.js,
+	  content/ui.js, content/vimperator.js: add more CSS classes for
+	  highlighting output messages and use hl-Warning (red on white)
+	  for find related wrap messages
+
+2007-10-01 21:13  dougkearns
+
+	* NEWS: update NEWS
+
+2007-10-01 21:10  dougkearns
+
+	* content/: commands.js, completion.js, vimperator.js: merge
+	  improved :echo, :echoerr and :javascript commands
+
+2007-10-01 21:04  dougkearns
+
+	* content/completion.js: merge completion refactoring
+
+2007-10-01 20:49  dougkearns
+
+	* content/commands.js: replace < and > with HTML entities in
+	  :javascript help string
+
+2007-10-01 20:48  dougkearns
+
+	* content/: help.js: close help logo img element
+
+2007-10-01 19:38  dougkearns
+
+	* Makefile: don't run the binary files through sed when replacing
+	  the VERSION token
+
+2007-10-01 15:31  dougkearns
+
+	* NEWS, vimperator.vim, content/options.js: merge new 'laststatus'
+	  option
+
+2007-10-01 14:57  dougkearns
+
+	* NEWS, content/options.js: remove "s" value from 'guioptions' as
+	  we now have 'laststatus'
+
+2007-10-01 12:28  dougkearns
+
+	* install.rdf, skin/icon.png: add icon for addons dialog
+
+2007-10-01 12:23  dougkearns
+
+	* Makefile, chrome.manifest, content/bookmarks.js,
+	  content/buffers.js, content/commands.js, content/completion.js,
+	  content/events.js, content/file.js, content/find.js,
+	  content/help.css, content/help.js, content/hints.js,
+	  content/logo_white.png, content/mappings.js, content/modes.js,
+	  content/options.js, content/tabs.js, content/test.js,
+	  content/ui.js, content/vimperator.js, content/vimperator.xul,
+	  skin/vimperator.css: change directory structure to follow the
+	  more standard package hierarchy
+
+2007-10-01 12:08  dougkearns
+
+	* content/vimperator.xul: remove invalid comment
+
+2007-10-01 09:02  dougkearns
+
+	* vimperator.vim, content/options.js: change short version of
+	  'linksearch' to 'lks' since 'ls' is used by 'laststatus'
+
+2007-09-30 19:08  dougkearns
+
+	* NEWS, content/options.js: add 'laststatus' option
+
+2007-09-30 18:41  dougkearns
+
+	* Makefile, chrome.manifest, install.rdf, content/bookmarks.js,
+	  content/buffers.js, content/commands.js, content/completion.js,
+	  content/editor.js, content/events.js, content/file.js,
+	  content/find.js, content/help.css, content/help.js,
+	  content/hints.js, content/logo_white.png, content/mappings.js,
+	  content/modes.js, content/options.js, content/tabs.js,
+	  content/ui.js, content/vimperator.js, content/vimperator.xul,
+	  skin/icon.png, skin/vimperator.css: change directory structure to
+	  follow the more standard package hierarchy
+
+2007-09-30 02:55  stubenschrott
+
+	* Donators, NEWS: simple tab-completion for :javascript and :echo,
+	  really just a quick time saver, but prone to errors
+
+2007-09-27 14:52  stubenschrott
+
+	* NEWS: new vimperator.hints.show() method, DOES NOT work on framed
+	  pages for now.  The colors will change later, they are just to
+	  see which type of hint it is
+
+2007-09-25 21:37  dougkearns
+
+	* AUTHORS: merge new VIMPERATOR_HOME env variable support
+
+2007-09-25 21:19  dougkearns
+
+	* NEWS: mention new :let and :unlet commands in NEWS file
+
+2007-09-25 20:42  dougkearns
+
+	* NEWS: merge new :let and :unlet commands and support for <Leader>
+	  in mappings
+
+2007-09-24 15:11  stubenschrott
+
+	* ChangeLog, NEWS: changed statusbar colors to match vim by default
 
 2007-09-24 13:48  stubenschrott
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/vimperator.js: :! command, fixed
-	  statusbar height properly, system() now returns the stdout string
-
-2007-09-23 21:25  vkojouharov
-
-	* chrome/content/vimperator/commands.js: mapleader support
-
-2007-09-23 18:56  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: system() returns the
-	  stdout string now, still not working on windows is createUnique
-	  secure? I doubt it, biesi from #extdev thinks so
-
-2007-09-23 16:17  dougkearns
-
-	* chrome/content/vimperator/find.js: prevent the failed find error
-	  message from being cleared
+	* NEWS: :! command, fixed statusbar height properly, system() now
+	  returns the stdout string
 
 2007-09-23 16:14  dougkearns
 
-	* NEWS, chrome/content/vimperator/ui.js: separate Ex command and
-	  search commandline history
-
-2007-09-23 15:30  dougkearns
-
-	* chrome/content/vimperator/events.js: allow all unknown key
-	  mappings to be passed through to FF
-
-2007-09-23 15:15  dougkearns
-
-	* chrome/content/vimperator/events.js: allow all unknown key
-	  mappings to be passed through to FF
+	* NEWS: separate Ex command and search commandline history
 
 2007-09-23 12:21  dougkearns
 
-	* NEWS, chrome/content/vimperator/commands.js: merge new :time
-	  command
+	* NEWS: merge new :time command
 
 2007-09-23 10:52  dougkearns
 
-	* chrome/content/vimperator/ui.js, NEWS: separate Ex command and
-	  search commandline history
+	* NEWS: separate Ex command and search commandline history
 
 2007-09-22 17:44  dougkearns
 
-	* NEWS, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/vimperator.js: add a new
-	  'visualbellstyle' option
-
-2007-09-22 16:51  dougkearns
-
-	* chrome/content/vimperator/commands.js: don't close the sidebar if
-	  it is already open with the requested type
+	* NEWS: add a new 'visualbellstyle' option
 
 2007-09-22 16:50  dougkearns
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/find.js: process link text only find
-	  modifiers \[uU] before looking for capitalized letters when
-	  'smartcase' is set
+	* NEWS: process link text only find modifiers \[uU] before looking
+	  for capitalized letters when 'smartcase' is set
 
 2007-09-22 16:29  dougkearns
 
-	* NEWS, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.xul: merge the existing
-	  status bar with the standard FF status bar
+	* NEWS: merge the existing status bar with the standard FF status
+	  bar
 
 2007-09-22 16:07  dougkearns
 
-	* NEWS, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.xul: merge the existing
-	  status bar with the standard FF status bar
-
-2007-09-21 13:17  dougkearns
-
-	* chrome/content/vimperator/commands.js: don't close the sidebar if
-	  it is already open with the requested type
-
-2007-09-21 06:58  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: new
-	  vimperator.{run/system}() methods, not sure if i'll keep both.
-	  Only work on UNIX for now.
+	* NEWS: merge the existing status bar with the standard FF status
+	  bar
 
 2007-09-20 15:17  dougkearns
 
 	* vimperator.vim: add 'hlsearchstyle' to Vim syntax file
 
-2007-09-20 15:08  dougkearns
-
-	* chrome/content/vimperator/find.js: process link text only find
-	  modifiers \[uU] before looking for capitalized letters when
-	  'smartcase' is set
-
-2007-09-19 14:25  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: merge
-	  refactored key event handlers
-
 2007-09-19 05:20  stubenschrott
 
-	* NEWS, TODO, chrome/content/vimperator/buffers.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/mappings.js: added full zoom, and
-	  changed some zoom shortcuts
+	* NEWS, TODO: added full zoom, and changed some zoom shortcuts
 
 2007-09-19 03:15  stubenschrott
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/events.js: added intelligent :buffer
-	  selection
-
-2007-09-19 02:32  stubenschrott
-
-	* chrome/content/vimperator/editor.js: fixed textarea/location bar
-	  keys properly (location bar still not working, when completion
-	  popup is open)
+	* NEWS: added intelligent :buffer selection
 
 2007-09-19 01:57  stubenschrott
 
-	* NEWS, chrome/content/vimperator/commands.js: added ! version to
-	  :time
-
-2007-09-19 01:46  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, events.js, modes.js:
-	  added :time command, please use when writing new functions and
-	  you think they are slow
+	* NEWS: added ! version to :time
 
 2007-09-19 00:27  stubenschrott
 
-	* AUTHORS, ChangeLog, chrome/content/vimperator/editor.js,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/vimperator.js: - fixed generating
-	  artificial firefox commands with feedkeys()/:norm/:map -
-	  home/end/etc. keys work again in the location bar - <c-v><c-k>,
-	  etc. work again to focus special form fields - small formatting
-	  improvements
-
-2007-09-18 22:23  vkojouharov
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: basic
-	  eval function and variable let/unlet
-
-2007-09-18 18:30  dougkearns
-
-	* chrome/content/vimperator/completion.js: use
-	  build_longest_common_substring rather than
-	  build_longest_starting_substring for :sidebar completion
-
-2007-09-18 18:20  dougkearns
-
-	* chrome/content/vimperator/completion.js: only call
-	  build_longest_common_substring() for :sidebar completion if a
-	  completion filter is passed
-
-2007-09-18 13:33  dougkearns
-
-	* chrome/content/vimperator/commands.js: use toggleSidebar for
-	  closing the sidebar so that the menu state is properly updated
-
-2007-09-18 13:21  dougkearns
-
-	* chrome/content/vimperator/completion.js: revert to using
-	  build_longest_starting_substring until an infinite loop bugin
-	  build_longest_common_substring is resolved
-
-2007-09-18 11:33  dougkearns
-
-	* chrome/content/vimperator/commands.js: use toggleSidebar for
-	  closing the sidebar so that the menu state is properly updated
-
-2007-09-18 11:31  dougkearns
-
-	* chrome/content/vimperator/completion.js: fix typo - use
-	  build_longest_common_substring for :sidebar completion
+	* AUTHORS, ChangeLog: - fixed generating artificial firefox
+	  commands with feedkeys()/:norm/:map - home/end/etc. keys work
+	  again in the location bar - <c-v><c-k>, etc. work again to focus
+	  special form fields - small formatting improvements
 
 2007-09-18 10:49  dougkearns
 
-	* NEWS, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.xul: merge :sbclose and
-	  viewSidebarMenu menuitem additions
+	* NEWS, TODO: merge :sbclose and viewSidebarMenu menuitem additions
 
 2007-09-18 10:25  dougkearns
 
-	* NEWS, TODO, chrome/content/vimperator/commands.js: add :sbclose
-	  to close the sidebar and :sbar, :sbopen aliases for :sidebar
-
-2007-09-18 09:19  dougkearns
-
-	* chrome/content/vimperator/vimperator.xul: add Add-ons,
-	  Preferences, and Downloads to :sidebar
+	* NEWS, TODO: add :sbclose to close the sidebar and :sbar, :sbopen
+	  aliases for :sidebar
 
 2007-09-17 15:26  dougkearns
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js: add an initial
-	  implementation of :sidebar
+	* NEWS: add an initial implementation of :sidebar
 
 2007-09-17 14:43  dougkearns
 
-	* NEWS, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js: add an initial
-	  implementation of :sidebar
+	* NEWS, TODO: add an initial implementation of :sidebar
 
 2007-09-17 07:49  dougkearns
 
-	* NEWS, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: merge new 'more' option
-	  and more-prompt improvements
-
-2007-09-17 07:37  dougkearns
-
-	* chrome/content/vimperator/: events.js, ui.js, vimperator.xul:
-	  enable vimperator.events.toString() to return keysyms for mouse
-	  events
-
-2007-09-17 03:37  dougkearns
-
-	* chrome/content/vimperator/ui.js: when closing the more-prompt
-	  don't pass through accept keys
-
-2007-09-17 03:33  dougkearns
-
-	* chrome/content/vimperator/events.js: fix onKeyDown handler to use
-	  0.5 style mode handling - bad merge
-
-2007-09-16 19:11  dougkearns
-
-	* chrome/content/vimperator/modes.js: add Vim modeline and
-	  whitespace formatting
-
-2007-09-16 17:38  dougkearns
-
-	* chrome/content/vimperator/ui.js: add "f" as a page-down key
-	  mapping in the more-prompt pager
+	* NEWS: merge new 'more' option and more-prompt improvements
 
 2007-09-16 14:18  dougkearns
 
-	* NEWS, chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.xul: add 'more' option and
-	  standard more-prompt key mappings
+	* NEWS: add 'more' option and standard more-prompt key mappings
 
 2007-09-14 15:38  dougkearns
 
-	* NEWS, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: add a 'hlsearchstyle'
-	  option to allow for match styling and a 'linksearch' option to
-	  restrict page searches to link text
+	* NEWS: add a 'hlsearchstyle' option to allow for match styling and
+	  a 'linksearch' option to restrict page searches to link text
 
 2007-09-14 15:24  dougkearns
 
-	* NEWS, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: add a 'hlsearchstyle'
-	  option to allow for match styling and a 'linksearch' option to
-	  restrict page searches to link text
-
-2007-09-14 14:53  stubenschrott
-
-	* chrome/content/vimperator/mappings.js: small help refinements to
-	  help remember the ctrl-q setting by having the word "quit" in the
-	  help
-
-2007-09-14 12:39  dougkearns
-
-	* chrome/content/vimperator/mappings.js: update <C-v> help - "I"
-	  mapping is now "<C-q>"
-
-2007-09-14 08:00  stubenschrott
-
-	* chrome/content/vimperator/events.js: do not go into insert mode
-	  on readOnly elems
-
-2007-09-14 06:42  stubenschrott
-
-	* chrome/content/vimperator/editor.js: fixed motion commands in
-	  textarea
-
-2007-09-14 06:37  dougkearns
-
-	* chrome/content/vimperator/events.js: merge keyDown event handling
-	  from MAIN - helps with sites such as yahoo.com which trap all
-	  keyDown events
-
-2007-09-14 06:30  dougkearns
-
-	* chrome/content/vimperator/: vimperator.js: allow single line :js
-	  commands to be source from RC files
-
-2007-09-14 06:23  stubenschrott
-
-	* chrome/content/vimperator/events.js: fixed visual->caret
-	  transistion on escape
-
-2007-09-14 05:59  stubenschrott
-
-	* chrome/content/vimperator/ui.js: only allow g and G mapping in
-	  the MOW if scrollable
-
-2007-09-14 05:56  stubenschrott
-
-	* chrome/content/vimperator/: buffers.js, find.js, modes.js, ui.js:
-	  commands in the -- more -- prompt are now passed to vimperator if
-	  they don't make sense in the MOW
+	* NEWS: add a 'hlsearchstyle' option to allow for match styling and
+	  a 'linksearch' option to restrict page searches to link text
 
 2007-09-14 05:35  stubenschrott
 
-	* ChangeLog, NEWS, TODO, chrome/content/vimperator/editor.js,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/modes.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: major mode rewrite,
-	  still not fully complete, but usable
+	* ChangeLog, NEWS, TODO: major mode rewrite, still not fully
+	  complete, but usable
 
 2007-09-13 01:49  stubenschrott
 
-	* Donators, chrome/content/vimperator/events.js: allow number input
-	  in command line
+	* Donators: allow number input in command line
 
 2007-09-12 17:45  stubenschrott
 
-	* NEWS, chrome/content/vimperator/events.js: fixed msn.com
+	* NEWS: fixed msn.com
 
 2007-09-12 17:42  dougkearns
 
@@ -354,101 +1280,18 @@
 
 2007-09-12 15:41  stubenschrott
 
-	* NEWS, vimperator.vim, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: - new 'insertmode' option -
-	  fixed c-u behavior
-
-2007-09-12 07:43  stubenschrott
-
-	* chrome/content/vimperator/: editor.js, events.js, mappings.js,
-	  vimperator.js, vimperator.xul: removed block cursor, it is just
-	  too unreliable :( Many improvments in textarea mode with support
-	  for motion commands like c or d; initial f,F,t and T support
-	  (only textarea + visual mode, no motion yet);
-
-2007-09-11 16:01  dougkearns
-
-	* chrome/content/vimperator/options.js: merge new 'popups' option
-
-2007-09-11 06:14  dougkearns
-
-	* chrome/content/vimperator/: options.js: fix 'cpt' help typo
-
-2007-09-11 06:09  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: fix :map
-	  and :noremap to work with new multi-mode mappings
-
-2007-09-11 04:03  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, mappings.js,
-	  vimperator.js: move vimperator.getCurrentWord to
-	  vimperator.buffer
+	* NEWS, vimperator.vim: - new 'insertmode' option - fixed c-u
+	  behavior
 
 2007-09-10 15:40  dougkearns
 
 	* TODO: add document relationship navigation to pending feature
 	  list
 
-2007-09-09 12:22  dougkearns
-
-	* chrome/content/vimperator/find.js: fix case sensitivity of search
-	  highlighting - gFindBar.setCaseSensitivity() in FF2 does not set
-	  the preference as _setCaseSensitivity() does in FF3
-
-2007-09-08 17:21  stubenschrott
-
-	* chrome/content/vimperator/: editor.js, events.js, mappings.js: a
-	  little better block cursor, broke i and a however a little
-
-2007-09-08 16:20  stubenschrott
-
-	* chrome/content/vimperator/editor.js: quick'n dirty block cursor,
-	  VERY BUGGY, stay in insert mode of textareas for now
-
-2007-09-08 14:15  stubenschrott
-
-	* chrome/content/vimperator/editor.js: added forgotten editor.js
-
-2007-09-08 12:10  dougkearns
-
-	* chrome/content/vimperator/ui.js: fixed multiline input widget
-
-2007-09-08 12:08  dougkearns
-
-	* chrome/content/vimperator/commands.js: added :w -> :saveas alias,
-	  and changed :w[open] to :wo[pen]
-
-2007-09-08 12:05  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: fixed
-	  saving qmarks
-
-2007-09-08 12:02  dougkearns
-
-	* chrome/content/vimperator/options.js: merge improved
-	  setTitleString() from MAIN
-
-2007-09-08 11:58  dougkearns
-
-	* chrome/content/vimperator/options.js: use true as the default
-	  value of 'hlsearch' and 'ignorecase' and store 'hlsearch' as a
-	  preference
-
 2007-09-08 11:50  dougkearns
 
-	* NEWS, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: added a visual bell and
-	  replaced the 'beep' option with 'visualbell'
-
-2007-09-08 11:45  dougkearns
-
-	* chrome/content/vimperator/find.js: merge minor Search#find
-	  refactoring from MAIN
+	* NEWS: added a visual bell and replaced the 'beep' option with
+	  'visualbell'
 
 2007-09-08 11:41  dougkearns
 
@@ -456,122 +1299,57 @@
 
 2007-09-08 06:17  stubenschrott
 
-	* NEWS, chrome/content/vimperator/buffers.js,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: - TEXTAREA support! Not
-	  working perfectly, but for a one-day-work i am impressed myself,
-	  now just needing to add commands with MOTION like cw or d0.
-	  Visual mode works already quite well.  - gi support - BUG:
-	  special keys like home/end in the location bar stoped working by
-	  this dramatic changes
+	* NEWS: - TEXTAREA support! Not working perfectly, but for a
+	  one-day-work i am impressed myself, now just needing to add
+	  commands with MOTION like cw or d0. Visual mode works already
+	  quite well.  - gi support - BUG: special keys like home/end in
+	  the location bar stoped working by this dramatic changes
 
 2007-09-07 14:08  stubenschrott
 
 	* vimperator.vim: updated vimperator.vim
 
-2007-09-07 10:06  dougkearns
-
-	* chrome/content/vimperator/options.js: minor improvement to
-	  'popups' help wording
-
-2007-09-07 02:53  stubenschrott
-
-	* chrome/content/vimperator/commands.js: added :w -> :saveas alias,
-	  and changed :w[open] to :wo[pen]
-
-2007-09-06 23:36  stubenschrott
-
-	* chrome/content/vimperator/: events.js, vimperator.js: fixed
-	  saving qmarks
-
 2007-09-06 20:46  stubenschrott
 
-	* vimperator.vim, chrome/content/vimperator/options.js: new
-	  'popups' option, please test thorougly!
-
-2007-09-06 19:48  stubenschrott
-
-	* chrome/content/vimperator/options.js: changed some default
-	  options, fixed "hlsearch"
+	* vimperator.vim: new 'popups' option, please test thorougly!
 
 2007-09-06 19:39  stubenschrott
 
-	* Donators, NEWS, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js: * and # support
+	* Donators, NEWS: * and # support
 
 2007-09-06 18:10  stubenschrott
 
-	* NEWS, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/mappings.js: First commit of caret
-	  mode, many things work, some bugs of course, not sure if we can
-	  fix them since we heavily rely on the firefox interface for it.
+	* NEWS: First commit of caret mode, many things work, some bugs of
+	  course, not sure if we can fix them since we heavily rely on the
+	  firefox interface for it.
 
 2007-09-06 16:24  stubenschrott
 
-	* NEWS, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: start of a caret mode
+	* NEWS: start of a caret mode
 
 2007-09-06 14:32  stubenschrott
 
-	* NEWS, chrome/content/vimperator/events.js: experimental attempt
-	  to keep you in command mode after loading pages
-
-2007-09-06 03:19  stubenschrott
-
-	* chrome/content/vimperator/ui.js: fixed multiline input widget
+	* NEWS: experimental attempt to keep you in command mode after
+	  loading pages
 
 2007-09-06 02:04  dougkearns
 
-	* NEWS, vimperator.vim, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: merge new 'incsearch',
-	  'ignorecase', 'smartcase', 'hlsearch' options from MAIN
-
-2007-09-05 22:46  dougkearns
-
-	* chrome/content/vimperator/: default.css, vimperator.js: make the
-	  visual bell solid black and shorten the timeout interval
-
-2007-09-05 22:39  dougkearns
-
-	* chrome/content/vimperator/help.js: allow the hidden help sections
-	  to be found
+	* NEWS, vimperator.vim: merge new 'incsearch', 'ignorecase',
+	  'smartcase', 'hlsearch' options from MAIN
 
 2007-09-05 21:33  stubenschrott
 
 	* Donators: updated Donators once again, thanks so much all the
 	  recent donators!
 
-2007-09-05 21:33  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: limit the visual bell to
-	  the web page content area
-
-2007-09-05 21:10  dougkearns
-
-	* chrome/content/vimperator/default.css: remove the border from the
-	  visual bell popup
-
 2007-09-05 20:49  dougkearns
 
-	* NEWS, vimperator.vim, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: add a visual bell and
-	  replace 'beep' with 'visualbell'
+	* NEWS, vimperator.vim: add a visual bell and replace 'beep' with
+	  'visualbell'
 
 2007-09-05 15:44  stubenschrott
 
-	* Makefile, NEWS, install.rdf, chrome/content/vimperator/icon.png:
-	  fixed makefile
+	* Makefile, NEWS, install.rdf: fixed makefile
 
 2007-09-05 14:51  stubenschrott
 
@@ -579,9 +1357,8 @@
 
 2007-09-05 14:19  dougkearns
 
-	* TODO, chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: document that incremental
-	  searching doesn't search backwards when using ?
+	* TODO: document that incremental searching doesn't search
+	  backwards when using ?
 
 2007-09-05 13:45  dougkearns
 
@@ -593,49 +1370,24 @@
 
 2007-09-05 13:32  dougkearns
 
-	* NEWS, vimperator.vim, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: add the 'smartcase' option
-	  and support for \c and \C in search patterns
-
-2007-09-05 10:25  dougkearns
-
-	* chrome/content/vimperator/: default.css: remove some redundant
-	  help page CSS properties
-
-2007-09-04 13:30  stubenschrott
-
-	* chrome/content/vimperator/options.js: Made all new search options
-	  true by default, sorry Doug.
+	* NEWS, vimperator.vim: add the 'smartcase' option and support for
+	  \c and \C in search patterns
 
 2007-09-04 10:08  dougkearns
 
-	* Makefile, chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/logo_white.png: add logo to help page
+	* Makefile: add logo to help page
 
 2007-09-04 08:21  dougkearns
 
-	* NEWS, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/options.js: add 'ignorecase' option
+	* NEWS: add 'ignorecase' option
 
 2007-09-04 04:50  dougkearns
 
-	* Makefile, chrome/content/vimperator/vimperator.js: update version
-	  to 0.6dev
+	* Makefile: update version to 0.6dev
 
 2007-09-04 04:50  dougkearns
 
 	* Makefile, NEWS: update version to 0.5.2dev
-
-2007-09-04 04:12  dougkearns
-
-	* chrome/content/vimperator/options.js: fix typo in 'scroll'
-	  validator - incorrectly restricting value to 0-2
-
-2007-09-04 03:32  stubenschrott
-
-	* chrome/content/vimperator/logo_white.png: made holes in the logo
-	  transparent as well
 
 2007-09-04 02:13  stubenschrott
 
@@ -645,277 +1397,62 @@
 
 	* NEWS: update NEWS for 'hlsearch' and 'incsearch'
 
-2007-09-03 21:43  dougkearns
-
-	* chrome/content/vimperator/: find.js, options.js: add 'incsearch'
-	  option
-
-2007-09-03 21:10  dougkearns
-
-	* chrome/content/vimperator/: find.js, options.js: add 'hlsearch'
-	  option
-
 2007-09-03 17:14  dougkearns
 
 	* ChangeLog, NEWS: update NEWS and ChangeLog for release
-
-2007-09-03 16:48  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: remove CVS from version
-	  string for release
 
 2007-09-03 16:21  dougkearns
 
 	* vimperator.vim: add highlighting for :nohlsearch
 
-2007-09-03 16:20  dougkearns
-
-	* chrome/content/vimperator/default.css: remove the help page
-	  tagline's negative top margin
-
-2007-09-03 16:18  dougkearns
-
-	* chrome/content/vimperator/help.js: remove blank line after logo
-	  in help page
-
-2007-09-03 14:46  dougkearns
-
-	* chrome/content/vimperator/: mappings.js: add usage and long help
-	  for / and ? mappings
-
-2007-09-03 12:18  dougkearns
-
-	* chrome/content/vimperator/: help.js: remove extra blank lines
-	  from help page
-
-2007-09-03 07:26  dougkearns
-
-	* chrome/content/vimperator/options.js: whitespace formatting
-	  improvements
-
 2007-09-03 07:12  dougkearns
 
-	* NEWS, vimperator.vim, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/ui.js: merge native / and ? search
-
-2007-09-02 16:12  stubenschrott
-
-	* chrome/content/vimperator/help.js: added the vimperator logo to
-	  the help file
-
-2007-09-02 04:27  stubenschrott
-
-	* chrome/content/vimperator/: find.js, ui.js: - Made ? work much
-	  better now - backspacing over the prompt works again
-
-2007-09-01 20:50  dougkearns
-
-	* chrome/content/vimperator/find.js: search entire page page text -
-	  not just links
+	* NEWS, vimperator.vim: merge native / and ? search
 
 2007-09-01 20:14  stubenschrott
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: first commit of native /
-	  and ? search, especially ? is buggy right now
-
-2007-09-01 17:57  dougkearns
-
-	* chrome/content/vimperator/: buffers.js: use
-	  document.location.href for buffer.URL rather than document.URL
-	  since the latter is undefined for XUL documents
+	* NEWS: first commit of native / and ? search, especially ? is
+	  buggy right now
 
 2007-09-01 13:49  dougkearns
 
 	* vimperatorrc.example: remove outdated :js examples
 
-2007-09-01 13:39  dougkearns
-
-	* chrome/content/vimperator/: completion.js, help.js: add
-	  initialization section to help
-
-2007-08-31 08:54  dougkearns
-
-	* chrome/content/vimperator/events.js: comment out currently unused
-	  DOMTitleChanged event handler
-
-2007-08-31 08:53  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: don't indicate menu mode
-	  when 'smd' is set
-
-2007-08-29 17:55  dougkearns
-
-	* chrome/content/vimperator/events.js: use gContextMenu and the
-	  menubar events for controlling menu mode
-
-2007-08-29 15:20  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: don't enter
-	  menu mode when tooltip popups are shown
-
-2007-08-29 00:41  stubenschrott
-
-	* chrome/content/vimperator/: events.js, hints.js, vimperator.js:
-	  Fixed menu mode to be reliable in Linux and made it more sane in
-	  general
-
-2007-08-28 15:28  stubenschrott
-
-	* chrome/content/vimperator/hints.js: first checkin of the new
-	  FF3-based genElemCoords
-
 2007-08-28 14:16  dougkearns
 
 	* NEWS: update NEWS
-
-2007-08-28 14:14  dougkearns
-
-	* chrome/content/vimperator/: commands.js: minor help highlighting
-	  improvments
-
-2007-08-28 11:55  dougkearns
-
-	* chrome/content/vimperator/vimperator.xul: allow text in the
-	  status line URL field to be selected
-
-2007-08-28 02:41  stubenschrott
-
-	* chrome/content/vimperator/vimperator.xul: text in the statusline
-	  URL can be selected again, sorry Doug :(
-
-2007-08-27 19:35  dougkearns
-
-	* chrome/content/vimperator/: events.js: fix typo in
-	  removeEventListener call
-
-2007-08-27 16:26  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: add menu
-	  mode
 
 2007-08-27 16:19  dougkearns
 
 	* Makefile: update Makefile version to 0.5.1
 
-2007-08-27 16:03  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: improve
-	  menu mode - track open popup count and menubar activation
-
-2007-08-27 14:21  dougkearns
-
-	* chrome/content/vimperator/: events.js, vimperator.js: revert
-	  changes to accidentally included files in last commit
-
 2007-08-27 14:08  dougkearns
 
-	* Makefile, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/vimperator.js: GNU make 3.80 can't
-	  parse "else ifeq"
-
-2007-08-27 13:44  dougkearns
-
-	* chrome/content/vimperator/: commands.js: use the coerced boolean
-	  value of args rather than testing for 0 string length when
-	  determining if an arg was passed to an ex command
-
-2007-08-27 09:07  dougkearns
-
-	* chrome/content/vimperator/: commands.js: if no argument is given
-	  to :winopen open about:blank in the new window
-
-2007-08-26 17:12  dougkearns
-
-	* chrome/content/vimperator/: completion.js: complete ':set inv'
-	  with boolean options
+	* Makefile: GNU make 3.80 can't parse "else ifeq"
 
 2007-08-26 16:27  dougkearns
 
-	* NEWS, chrome/content/vimperator/ui.js: fix commandline history on
-	  Windows - prevent the default cmd_charPrevious action from being
-	  invoked for <Up
+	* NEWS: fix commandline history on Windows - prevent the default
+	  cmd_charPrevious action from being invoked for <Up
 
 2007-08-26 16:26  dougkearns
 
-	* NEWS, chrome/content/vimperator/ui.js: fix commandline history on
-	  Windows - prevent the default cmd_charPrevious action from being
-	  invoked for <Up>
+	* NEWS: fix commandline history on Windows - prevent the default
+	  cmd_charPrevious action from being invoked for <Up>
 
 2007-08-26 14:05  dougkearns
 
 	* NEWS: update NEWS
 
-2007-08-26 13:57  dougkearns
-
-	* chrome/content/vimperator/completion.js: add filename completion
-	  for Windows
-
-2007-08-26 12:43  dougkearns
-
-	* chrome/content/vimperator/completion.js: add filename completion
-	  for Windows
-
-2007-08-25 17:48  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: read the Bookmarks
-	  Toolbar Folder when loading bookmarks - it has previously been
-	  skipped since BookmarksUtils.getAllChildren(root) doesn't read it
-
-2007-08-24 18:37  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: make sure search engine
-	  aliases are properly initialized
-
 2007-08-24 15:55  stubenschrott
 
-	* ChangeLog, NEWS, chrome/content/vimperator/bookmarks.js: fixed :o
-	  foo bla search
-
-2007-08-24 15:08  stubenschrott
-
-	* chrome/content/vimperator/bookmarks.js: updated history service
-	  to use Places
-
-2007-08-24 13:13  dougkearns
-
-	* chrome/content/vimperator/: ui.js: remove unnecessary temp
-	  variable
-
-2007-08-24 13:10  dougkearns
-
-	* chrome/content/vimperator/: default.css, vimperator.xul: make
-	  sure the active listcell in the second column of the preview
-	  window uses HighlightText as the CSS color value and move the
-	  #vimperator-multiline-output styles to default.css
+	* ChangeLog, NEWS: fixed :o foo bla search
 
 2007-08-24 06:57  stubenschrott
 
-	* Donators, install.rdf, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/vimperator.js: ATTENTION: FIRST FIREFOX
-	  3 alpha7+ ONLY RELEASE! Ported bookmarks/keywords to Places
-	  Disabled global history for now, will come soon.
-
-2007-08-23 17:11  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: allow ~/_vimperatorrc as
-	  the RC file and ~/vimperator/plugin as the plugin directory on
-	  Windows
-
-2007-08-23 16:07  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: allow ~/_vimperatorrc as
-	  the RC file and ~/vimperator/plugin as the plugin directory on
-	  Windows
+	* Donators, install.rdf: ATTENTION: FIRST FIREFOX 3 alpha7+ ONLY
+	  RELEASE! Ported bookmarks/keywords to Places Disabled global
+	  history for now, will come soon.
 
 2007-08-23 15:38  dougkearns
 
@@ -925,137 +1462,24 @@
 
 	* Donators: updated donators file
 
-2007-08-22 11:20  dougkearns
-
-	* chrome/content/vimperator/options.js: fix typo in 'pvh' help
-
 2007-08-22 01:15  stubenschrott
 
-	* Makefile, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/logo_white.png: first attempt for an
-	  logo probably at the wrong chrome location, it just didn't accept
-	  files in chrome/skin/ in my first attempts, but i don't really
-	  care as a logo is also "content" :)
+	* Makefile: first attempt for an logo probably at the wrong chrome
+	  location, it just didn't accept files in chrome/skin/ in my first
+	  attempts, but i don't really care as a logo is also "content" :)
 
 2007-08-21 23:54  dougkearns
 
-	* Makefile, NEWS, TODO, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/buffers.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/file.js,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/tabs.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js: merge HEAD
+	* Makefile, NEWS, TODO: merge HEAD
 
 2007-08-21 20:50  dougkearns
 
 	* NEWS: mention the new :set all and :set all& commands in NEWS
 
-2007-08-21 19:12  dougkearns
-
-	* chrome/content/vimperator/options.js: fix typos in short_help of
-	  'go' and 'fs' options
-
-2007-08-21 17:00  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: fix some
-	  trivial help typos
-
-2007-08-21 16:12  dougkearns
-
-	* chrome/content/vimperator/help.js: perform the & -> &amp; HTML
-	  entity replacement before replacing other characters
-
-2007-08-21 15:52  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js: escape literal
-	  & with the HTML entity in :set help string
-
-2007-08-21 13:29  dougkearns
-
-	* chrome/content/vimperator/options.js: make sure the usage
-	  property of an Option is always set
-
-2007-08-21 11:53  dougkearns
-
-	* chrome/content/vimperator/: commands.js, options.js: add support
-	  for :set all and :set all& to list and reset all options
-
-2007-08-20 13:06  dougkearns
-
-	* chrome/content/vimperator/commands.js: mention numerical options
-	  in :set option+={value} documentation
-
 2007-08-20 12:43  dougkearns
 
 	* NEWS, TODO: remove :set {option}! support from the TODO - now
 	  implemented
-
-2007-08-20 12:39  dougkearns
-
-	* chrome/content/vimperator/commands.js: add support for :set
-	  {option}! to toggle a boolean option's value
-
-2007-08-19 19:56  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix typo in "T" mappings
-	  help
-
-2007-08-19 19:21  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: use TH to markup the
-	  table headers in :marks/:qmarks output...again
-
-2007-08-19 16:15  dougkearns
-
-	* chrome/content/vimperator/commands.js: minor improvements to
-	  search string heuristic regexps in toURLArray
-
-2007-08-19 12:54  dougkearns
-
-	* chrome/content/vimperator/mappings.js: remove FIXME comment -
-	  allowing the "zz" mapping to use its count as the zoom value
-	  rather than an arg is the same as "gg", "G" and others in Vim
-
-2007-08-18 17:26  dougkearns
-
-	* chrome/content/vimperator/commands.js: improve toURLArray so that
-	  it can handle trailing /'s in its args - "gu" and :open should
-	  now behave as specified
-
-2007-08-18 16:22  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, commands.js, events.js,
-	  mappings.js, ui.js: rename the 'location' property of
-	  vimperator.buffer to 'URL'
-
-2007-08-17 18:40  dougkearns
-
-	* chrome/content/vimperator/: completion.js, file.js, find.js,
-	  vimperator.js: fix whitespace formatting - remove leading tab
-	  characters with :retab
-
-2007-08-17 18:20  dougkearns
-
-	* chrome/content/vimperator/tabs.js: fix broken :tabmove wrapping
-
-2007-08-17 18:04  dougkearns
-
-	* chrome/content/vimperator/default.css: revert mozdev style
-	  override
-
-2007-08-17 17:28  dougkearns
-
-	* chrome/content/vimperator/default.css: explictitly set
-	  list-style-* properties to override the default mozdev styles
-	  when viewing the help page at vimperator.mozdev.org
 
 2007-08-17 16:59  dougkearns
 
@@ -1068,533 +1492,90 @@
 
 2007-08-17 11:41  stubenschrott
 
-	* Makefile, NEWS, chrome/content/vimperator/vimperator.js: Changed
-	  version number to 0.6 CVS
+	* Makefile, NEWS: Changed version number to 0.6 CVS
 
 2007-08-16 23:50  stubenschrott
 
-	* Makefile, TODO, chrome/content/vimperator/help.js: only add NEWS
-	  instead of ChangeLog in .xpi, to dramatically reduce size for
-	  future releases
-
-2007-08-16 18:54  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, ui.js: fixed :map x
-	  :<cr> problem
+	* Makefile, TODO: only add NEWS instead of ChangeLog in .xpi, to
+	  dramatically reduce size for future releases
 
 2007-08-16 18:18  stubenschrott
 
 	* ChangeLog, NEWS: last commit before 0.5 is tagged
 
-2007-08-16 18:01  dougkearns
-
-	* chrome/content/vimperator/events.js: reset
-	  vimperator.input.buffer before executing mappings that may add
-	  more key events to the event buffer
-
-2007-08-16 17:56  dougkearns
-
-	* chrome/content/vimperator/commands.js: revert changes to :map arg
-	  parsing regexp in 1.190
-
-2007-08-16 17:51  dougkearns
-
-	* chrome/content/vimperator/help.js: fix help typo
-
-2007-08-16 17:49  dougkearns
-
-	* chrome/content/vimperator/commands.js: make sure URLs processed
-	  as a result of "gu" don't have //../ (the double forward slash)
-	  at the end
-
-2007-08-16 16:19  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, help.js, vimperator.js:
-	  Fixed :map partly, still cannot cope with :map commans, where lhs
-	  is a 2-char string
-
-2007-08-16 14:25  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: fix some
-	  trivial capitalization errors in help
-
-2007-08-16 13:21  dougkearns
-
-	* chrome/content/vimperator/mappings.js: replace '<' and '>' with
-	  HTML entities in help for n and N mappings
-
-2007-08-16 13:14  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, commands.js, help.js,
-	  hints.js: move the global evaluateXPath() function to
-	  vimperator.buffer
-
-2007-08-16 12:58  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js, events.js,
-	  hints.js, mappings.js, options.js: fix some help typos
-
-2007-08-16 11:31  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, default.css, help.js,
-	  mappings.js, options.js: many small help fixes
-
-2007-08-15 20:49  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove half-baked guard
-	  clauses for unimplemented bookmark commands
-
 2007-08-15 20:27  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/bookmarks.js: added colors
-	  to :ls
-
-2007-08-15 19:47  stubenschrott
-
-	* chrome/content/vimperator/ui.js: fixed focusing the MOW
-
-2007-08-15 19:45  stubenschrott
-
-	* chrome/content/vimperator/vimperator.xul: overflow: hidden for
-	  the MOW
-
-2007-08-15 19:31  stubenschrott
-
-	* chrome/content/vimperator/buffers.js: added colors to :ls
-
-2007-08-15 19:21  dougkearns
-
-	* chrome/content/vimperator/commands.js: use
-	  vimperator.events.feedkeys() for :map
-
-2007-08-15 18:45  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, commands.js, mappings.js,
-	  tabs.js: use the multiline output window for :buffers and move
-	  the existing persistent window functionality to :buffers!
+	* ChangeLog: added colors to :ls
 
 2007-08-15 17:32  dougkearns
 
-	* NEWS, chrome/content/vimperator/commands.js: update NEWS to
-	  mention the renaming of bookmark related commands and fix some
-	  trivial help typos
-
-2007-08-15 15:24  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: rename
-	  :bm, :bmadd, :bmdel to :bmarks, :bmark, :delbmarks respectively
-	  and use the multiline output window for :bmarks and :history
-
-2007-08-15 02:08  stubenschrott
-
-	* chrome/content/vimperator/: buffers.js, mappings.js:
-	  australian/british english -> american english in comments added
-	  more help
-
-2007-08-14 18:16  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: use TH to markup the
-	  table headers in :marks/:qmarks output
-
-2007-08-14 17:32  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, events.js, mappings.js,
-	  options.js: break up buffer.scrollAbsolute and
-	  buffer.scrollRelative into smaller, more specific, methods
-
-2007-08-14 17:24  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, default.css, events.js, file.js, find.js, ui.js,
-	  vimperator.js: some trivial formatting fixes
-
-2007-08-14 17:23  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: don't echo an error
-	  message if no plugin directory is found
+	* NEWS: update NEWS to mention the renaming of bookmark related
+	  commands and fix some trivial help typos
 
 2007-08-13 20:12  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.xul: hopefully made the MOW
-	  hack better, so that it doesn't show during startup fixed
-	  wildoptions=sort
-
-2007-08-13 11:29  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: fix plugin directory
-	  sourcing so it works on Windows - don't attempt to open the
-	  directory as an input stream
-
-2007-08-12 18:39  dougkearns
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: expand
-	  environment variables in the filename argument to :source
-
-2007-08-12 15:20  dougkearns
-
-	* chrome/content/vimperator/mappings.js: don't echo text after
-	  copying it to the clipboard with "Y"
-
-2007-08-12 12:30  dougkearns
-
-	* chrome/content/vimperator/buffers.js: display an informational
-	  message when the text zoom value is changed
+	* ChangeLog: hopefully made the MOW hack better, so that it doesn't
+	  show during startup fixed wildoptions=sort
 
 2007-08-12 08:48  dougkearns
 
-	* NEWS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/ui.js: add initial implementation of
-	  :normal command
+	* NEWS: add initial implementation of :normal command
 
 2007-08-12 02:03  stubenschrott
 
-	* NEWS, chrome/content/vimperator/events.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: commandline and MIW try
-	  to keep focus now changed commandline handling in general
-	  autosize MIW on new content new handling should be more robust,
-	  but there may be bugs, please report
-
-2007-08-11 22:05  stubenschrott
-
-	* chrome/content/vimperator/: events.js, ui.js: fixed/renamed
-	  vimperator.events.toString(event); v.e.is{Accept,Cancel}Key(key)
-	  helper functions
-
-2007-08-11 21:20  stubenschrott
-
-	* chrome/content/vimperator/: events.js, vimperator.xul: added
-	  <space>-support for feedkeys() moved
-	  KeyboardEvent.prototype.toString() ->
-	  vimperator.events.eventToString()
+	* NEWS: commandline and MIW try to keep focus now changed
+	  commandline handling in general autosize MIW on new content new
+	  handling should be more robust, but there may be bugs, please
+	  report
 
 2007-08-11 19:08  stubenschrott
 
 	* ChangeLog, NEWS: changelog->NEWS, ChangeLog autogenerated now
 
-2007-08-11 18:26  dougkearns
-
-	* chrome/content/vimperator/commands.js: only allow :source to
-	  accept a single filename
-
-2007-08-11 16:49  dougkearns
-
-	* chrome/content/vimperator/buffers.js: change the bounds checking
-	  in scrollAbsolute() to allow for the fact scrollY can be larger
-	  than scrollMaxY
-
-2007-08-11 15:18  dougkearns
-
-	* chrome/content/vimperator/commands.js: allow multiple ranges to
-	  be specified to :delmarks - missing global regexp flag
-
-2007-08-11 15:07  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: add
-	  support for the special version of :delqmarks!
-
-2007-08-11 14:46  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, completion.js,
-	  events.js, find.js, hints.js, ui.js: change remaining uses of the
-	  Array() constructor in array initializations to literals
-
-2007-08-11 13:53  dougkearns
-
-	* chrome/content/vimperator/buffers.js: beep when frame motion
-	  bounds are exceeded
-
 2007-08-11 11:28  dougkearns
 
-	* ChangeLog, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/mappings.js: rename :qmarkadd :qmark
-	  and :qmarkdel :delqmarks, sort :qmarks list output and limit
-	  buffer marks to [a-zA-Z]
+	* ChangeLog: rename :qmarkadd :qmark and :qmarkdel :delqmarks, sort
+	  :qmarks list output and limit buffer marks to [a-zA-Z]
 
 2007-08-10 20:30  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/events.js: "enter" is an
-	  alias for "return" or "cr"
-
-2007-08-10 19:52  stubenschrott
-
-	* chrome/content/vimperator/events.js: some whitespace formatting
-
-2007-08-10 19:48  stubenschrott
-
-	* chrome/content/vimperator/: events.js, hints.js: feedkeys()
-	  support!! Some bugs may remain, please test thorougly escaping
-	  the < char not yet done, as the semantics is not clear yet
-
-2007-08-10 14:57  dougkearns
-
-	* chrome/content/vimperator/mappings.js: allow the Ctrl-U/Ctrl-D
-	  scroll count to be >= 1
-
-2007-08-10 13:58  dougkearns
-
-	* chrome/content/vimperator/hints.js: declare loop counter in
-	  yankUrlHints() and yankTextHints() and reverse rev 1.27
-
-2007-08-10 13:14  dougkearns
-
-	* chrome/content/vimperator/hints.js: move win.res guard clause
-	  after initialisation of win in loadCoord()
-
-2007-08-10 04:36  stubenschrott
-
-	* chrome/content/vimperator/ui.js: fixed first use of
-	  setMultiline() with an ugly (but working) hack
-
-2007-08-10 03:38  stubenschrott
-
-	* chrome/content/vimperator/hints.js: attempt to fix problems with
-	  hints on not finished page load, should fix messages to the error
-	  console
+	* ChangeLog: "enter" is an alias for "return" or "cr"
 
 2007-08-10 00:41  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: - Fixed gn command - added
-	  gH to activate option
-
-2007-08-09 17:32  dougkearns
-
-	* chrome/content/vimperator/mappings.js: use
-	  vimperator.buffer.location rather than replaced
-	  getCurrentLocation() for "y" mapping
-
-2007-08-09 16:42  dougkearns
-
-	* chrome/content/vimperator/contents.rdf: whitespace formatting fix
-
-2007-08-09 16:25  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: don't output status
-	  messages when history bounds are exceeded - just beep
-
-2007-08-09 14:26  dougkearns
-
-	* chrome/content/vimperator/hints.js: don't add a trailing '\n'
-	  when yanking a single line of text in extended hints mode
-
-2007-08-09 14:15  dougkearns
-
-	* chrome/content/vimperator/: commands.js, hints.js: remove the
-	  word "version" from the :version output string
+	* ChangeLog, TODO: - Fixed gn command - added gH to activate option
 
 2007-08-09 06:29  dougkearns
 
 	* vimperator.vim: reorder vimperatorCommand highlight group so that
 	  :map is highlighted
 
-2007-08-08 18:47  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, commands.js,
-	  completion.js, ui.js, vimperator.js: move global completion
-	  functions into a vimperator.completion module
-
-2007-08-08 12:19  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: move global
-	  isDirectory() to Commands()
-
-2007-08-08 07:46  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js, mappings.js:
-	  change {count} to [count] in the usage strings since specifying a
-	  count is always optional
-
 2007-08-08 07:27  dougkearns
 
-	* ChangeLog, chrome/content/vimperator/buffers.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js: add C-u/C-d mappings and
-	  the associated 'scroll' option
-
-2007-08-07 16:19  dougkearns
-
-	* chrome/content/vimperator/: buffers.js, commands.js, events.js,
-	  mappings.js, tabs.js, ui.js, vimperator.js, vimperator.xul:
-	  initial buffer implementation
-
-2007-08-07 14:57  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: fix typo -
-	  using quickmark value from 'activate' rather than tabopen for
-	  :tabopen
-
-2007-08-07 14:14  dougkearns
-
-	* chrome/content/vimperator/: options.js, vimperator.js: move
-	  remaining preference setting from vimperator.startup to Options()
-
-2007-08-06 15:45  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, options.js, ui.js,
-	  vimperator.js: reverse last commit
-
-2007-08-06 14:52  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, options.js, ui.js,
-	  vimperator.js: move Option constructor to Options, move
-	  Options.{getPref,setPref,getFirefoxPref,setFirefoxPref} to a slot
-	  in vimperator.options and move all option initialisation to
-	  Options()
-
-2007-08-06 13:04  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: don't emit an error
-	  message when ~/.vimperatorrc doesn't exist
-
-2007-08-05 16:12  dougkearns
-
-	* chrome/content/vimperator/: options.js, vimperator.js: use an
-	  unordered list rather than a table in the 'activate' help
-
-2007-08-05 08:43  dougkearns
-
-	* chrome/content/vimperator/: commands.js, hints.js, mappings.js,
-	  vimperator.js: move the global copyToClipboard() to a slot in
-	  vimperator
-
-2007-08-05 08:29  dougkearns
-
-	* chrome/content/vimperator/: commands.js, events.js, ui.js: move
-	  the global isFormElemFocused() to Events
-
-2007-08-04 15:38  dougkearns
-
-	* chrome/content/vimperator/: ui.js, vimperator.xul: add
-	  onMultilineOutputEvent for handling more-prompt keypress events
-
-2007-08-04 14:40  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js, file.js,
-	  vimperator.js: move global fopen() to a slot in vimperator
-
-2007-08-04 14:35  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js, options.js:
-	  remove debug toString() methods now we have vimperator.logObject
-
-2007-08-04 14:33  dougkearns
-
-	* chrome/content/vimperator/ui.js: remove more unnecessary
-	  toString() calls
-
-2007-08-04 14:18  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: remove unnecessary
-	  toString() call
-
-2007-08-04 05:22  dougkearns
-
-	* chrome/content/vimperator/: find.js, hints.js: replace references
-	  to deprecated window._content with window.content
-
-2007-08-03 04:45  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, events.js, hints.js,
-	  mappings.js, vimperator.js: - code cleanup by removing old
-	  commented code - merged zoom_in/to into vimperator.zoom()
-
-2007-08-02 17:43  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js, ui.js,
-	  vimperator.js: merge vimperator.execute and the execute_command()
-	  global function
-
-2007-08-02 07:10  dougkearns
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: move the
-	  execute() global function to a slot of vimperator
-
-2007-08-01 14:29  stubenschrott
-
-	* chrome/content/vimperator/default.css: changed listitem selection
-	  color to be the normal selection color of the system theme
-
-2007-08-01 06:13  stubenschrott
-
-	* chrome/content/vimperator/default.css: finally found the CSS code
-	  to make the selection of listboxes better readable Putting it in
-	  default.css instead of my own userChrome.css, because also others
-	  have mentioned the hard readability.
+	* ChangeLog: add C-u/C-d mappings and the associated 'scroll'
+	  option
 
 2007-08-01 04:51  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js: couldn't resist, had to
-	  add support for auto-sourcing ~/.vimperator/plugin/ before we
-	  release 0.5
+	* ChangeLog: couldn't resist, had to add support for auto-sourcing
+	  ~/.vimperator/plugin/ before we release 0.5
 
 2007-08-01 03:17  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/options.js,
-	  chrome/content/vimperator/vimperator.js: winopen support
-
-2007-08-01 01:44  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  vimperator.js: changed vimperator.open() to accept postdata,
-	  makes the design a little uncleaner, but supports _all_ firefox
-	  search engines now.
-
-2007-07-31 18:15  dougkearns
-
-	* chrome/content/vimperator/: mappings.js, vimperator.xul: add
-	  missing crop attribute to #vimperator-statusline-field-url label
-	  use "end" value for crop attributes rather than the deprecated
-	  "right"
-
-2007-07-31 18:02  stubenschrott
-
-	* chrome/content/vimperator/commands.js: he is called linus
-	  torvalds
+	* ChangeLog: winopen support
 
 2007-07-31 17:41  stubenschrott
 
-	* TODO, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js: Make sure, search engine
-	  aliases are unique
+	* TODO: Make sure, search engine aliases are unique
 
 2007-07-29 05:48  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: inputMultiline method
-	  finished (some display bug may remain) :js <<EOF support is back,
-	  better than ever (TM)
-
-2007-07-27 20:49  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js, help.js,
-	  hints.js, mappings.js, ui.js, vimperator.js: openURLs ->
-	  vimperator.open(...) Support for adding bookmark groups to
-	  QuickMarks
-
-2007-07-27 12:24  stubenschrott
-
-	* chrome/content/vimperator/mappings.js: added <Nop> support
+	* ChangeLog, TODO: inputMultiline method finished (some display bug
+	  may remain) :js <<EOF support is back, better than ever (TM)
 
 2007-07-27 02:01  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js: stringToURLs ->
-	  String.prototype.toURLArray
+	* ChangeLog: stringToURLs -> String.prototype.toURLArray
 
 2007-07-26 15:39  dougkearns
 
@@ -1602,1117 +1583,161 @@
 
 2007-07-25 17:55  dougkearns
 
-	* TODO, chrome/content/vimperator/mappings.js: fix infinite loop
-	  when calling "gu" with a {count}
-
-2007-07-25 16:09  dougkearns
-
-	* chrome/content/vimperator/default.css: make sure the first status
-	  bar label is flush left
-
-2007-07-25 15:33  dougkearns
-
-	* chrome/content/vimperator/: commands.js, find.js, help.js,
-	  mappings.js, vimperator.js: intialize the vimperator global
-	  constant with an object literal rather than via a constructor
-	  function; move the init() and unload() global functions to
-	  startup and shutdown slots of vimperator
-
-2007-07-25 09:46  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix gH mapping so that it
-	  opens in a new tab - a regression
+	* TODO: fix infinite loop when calling "gu" with a {count}
 
 2007-07-22 17:15  dougkearns
 
 	* vimperator.vim: add map, mapclear, noremap and unmap commands to
 	  the vimperatorCommand highlight group
 
-2007-07-22 16:59  dougkearns
-
-	* chrome/content/vimperator/mappings.js: initial mapping tables for
-	  all modes at startup
-
-2007-07-22 14:59  dougkearns
-
-	* chrome/content/vimperator/mappings.js: restore guard clause to
-	  the head of getMap() to test for uninitialized stacks
-
 2007-07-22 13:44  dougkearns
 
-	* ChangeLog, chrome/content/vimperator/commands.js: allow :noremap
-	  name abbreviations
-
-2007-07-22 13:36  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: add initial
-	  (very rough) implementation of :noremap
-
-2007-07-22 09:18  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: allow
-	  {count}, and other flags, to be passed to e user mapping's action
-
-2007-07-21 18:42  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: add initial
-	  (very rough) implementations of :map, :mapclear and :unmap
-
-2007-07-21 16:19  dougkearns
-
-	* chrome/content/vimperator/commands.js: add missing :javascript[!]
-	  variant to the command's usage synopsis
-
-2007-07-21 16:12  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js: make sure [!]
-	  is highlighted properly in the help page for all command usage
-	  synopses
-
-2007-07-21 11:25  dougkearns
-
-	* chrome/content/vimperator/help.js: fix typo in introductory help
-	  text
-
-2007-07-19 18:58  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, mappings.js: fix
-	  trivial help text typos
-
-2007-07-19 17:23  dougkearns
-
-	* chrome/content/vimperator/commands.js: don't specify Command
-	  usage strings when they match the default
-
-2007-07-19 07:56  dougkearns
-
-	* chrome/content/vimperator/commands.js: fix trivial help text
-	  typos
-
-2007-07-18 12:12  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix some comment typos
+	* ChangeLog: allow :noremap name abbreviations
 
 2007-07-17 16:55  dougkearns
 
-	* ChangeLog, TODO, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: replace readonly
-	  textboxes in the commandline and statusbar with labels and
-	  simplify the skin styling
-
-2007-07-13 18:40  dougkearns
-
-	* chrome/content/vimperator/help.js: remove the trailing HR from
-	  the help tables
-
-2007-07-13 17:01  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: always
-	  construct a default usage string for mappings and commands
-
-2007-07-13 16:11  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, completion.js,
-	  events.js, mappings.js, options.js, tabs.js, ui.js,
-	  vimperator.js, vimperator.xul: move the Events and Tabs objects
-	  to files of their own and add a license header to files without
-	  one
-
-2007-07-12 09:48  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: move initialisation of
-	  vimperator.input to the constructor function
-
-2007-07-11 19:10  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: remove unused local
-	  variables in Vimperator()
-
-2007-07-11 10:35  dougkearns
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: don't
-	  update the alternate tab list on TabOpen events
-
-2007-07-11 07:04  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: move the
-	  global function focusNextFrame to a slot on vimperator -
-	  vimperator.shiftFrameFocus
-
-2007-07-10 17:02  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: add KeyEvent -> String
-	  mappings for DOM_VK_LEFT_SHIFT, DOM_VK_LEFT_SHIFT and
-	  DOM_VK_F13-24
-
-2007-07-10 15:39  dougkearns
-
-	* chrome/content/vimperator/options.js: make sure input fields
-	  without an explicit 'type' attribute are matched by hinttags and
-	  extendedhintags
-
-2007-07-10 12:25  dougkearns
-
-	* chrome/content/vimperator/default.css: fix typo
-
-2007-07-10 12:07  dougkearns
-
-	* chrome/content/vimperator/: mappings.js, ui.js: limit the size of
-	  the multiline output window to the size of the browser panel
-
-2007-07-10 01:55  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: changed shift-insert
-	  patch
+	* ChangeLog, TODO: replace readonly textboxes in the commandline
+	  and statusbar with labels and simplify the skin styling
 
 2007-07-10 01:12  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js: :saveas works
-	  now
+	* ChangeLog: :saveas works now
 
 2007-07-09 15:27  stubenschrott
 
-	* AUTHORS, chrome/content/vimperator/commands.js: reverted scroll
-	  window.content patch for now (untested)
-
-2007-07-09 08:47  dougkearns
-
-	* chrome/content/vimperator/: default.css, vimperator.xul: move all
-	  XUL styling to default.css
-
-2007-07-08 22:38  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: applied shift-insert
-	  patch
-
-2007-07-05 15:02  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js, options.js:
-	  use 'web page' rather than 'webpage' in the help text
-
-2007-07-05 08:52  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: inline
-	  yankCurrentSelection(), yankCurrentLocation(), goUp()
-
-2007-07-05 08:48  dougkearns
-
-	* chrome/content/vimperator/: mappings.js, vimperator.js: reformat
-	  hints mode mapping definitions
-
-2007-07-05 08:14  dougkearns
-
-	* chrome/content/vimperator/: commands.js, options.js,
-	  vimperator.js: move the global function updateBufferList() to
-	  vimperator.tabs until we have real buffers
-
-2007-07-04 19:32  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: applied the hintchar
-	  patch from calmar
+	* AUTHORS: reverted scroll window.content patch for now (untested)
 
 2007-07-04 15:32  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: changed '|' to ', ' as
-	  a url separator
-
-2007-07-04 13:59  dougkearns
-
-	* chrome/content/vimperator/commands.js: move the bmadd() and
-	  bmdel() global functions into the corresponding command
-	  definitions
-
-2007-07-04 12:58  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: move
-	  global function bmshow() to vimperator.bookmarks.list
-
-2007-07-04 12:31  dougkearns
-
-	* chrome/content/vimperator/commands.js: move tab() global function
-	  into :tab command definition
-
-2007-07-04 12:18  dougkearns
-
-	* chrome/content/vimperator/commands.js: complete :tab with command
-	  completions
-
-2007-07-04 12:11  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js, mappings.js,
-	  vimperator.js, vimperator.xul: move global help() command to a
-	  vimperator slot
-
-2007-07-03 14:46  dougkearns
-
-	* chrome/content/vimperator/: mappings.js, vimperator.js: remove
-	  g_hint_mappings - initialise hint mappings in vimperator.mappings
-
-2007-07-03 13:37  dougkearns
-
-	* chrome/content/vimperator/mappings.js: change last references to
-	  stepInHistory() to vimperator.history.stepTo
+	* ChangeLog: changed '|' to ', ' as a url separator
 
 2007-07-03 11:04  stubenschrott
 
-	* TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: Fixed some focus issues
-	  First (non-working) readMultiline implementation
-
-2007-07-03 08:49  dougkearns
-
-	* chrome/content/vimperator/mappings.js: update old references to
-	  g_inputbuffer and g_count to vimperator.input.buffer and
-	  vimperator.input.count respectively
-
-2007-07-03 07:41  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: move
-	  g_hint_mappings to mappings.js
-
-2007-07-03 07:30  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js, mappings.js,
-	  options.js, vimperator.js: move buffer_switch and
-	  toggleBufferList to the :buffer and :buffers ex-commands; make
-	  the "u" normal mode command call vimperator.commands.undo rather
-	  than execute_command() directly
-
-2007-07-02 17:06  dougkearns
-
-	* chrome/content/vimperator/commands.js: delete unused
-	  getCurrentLinkLocation() - moved to wiki
-
-2007-07-02 16:48  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: move the
-	  hsshow(), stepInHistory(), historyGoToBeginning(), and
-	  historyGoToStart() global functions to vimperator.history
-
-2007-07-02 14:40  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js,
-	  vimperator.js: move reload() and reload_all() global functions to
-	  vimperator.tabs
-
-2007-07-02 14:15  dougkearns
-
-	* chrome/content/vimperator/commands.js: don't prefix false boolean
-	  option values with whitespace when reporting the value
-
-2007-07-02 13:59  dougkearns
-
-	* chrome/content/vimperator/commands.js: move the global set()
-	  command to the ex-command definition and return "name|noname' for
-	  boolean option queries rather than "name=value"
-
-2007-07-02 13:40  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove template
-	  *_url_mark() functions now QuickMarks has been implemented
-
-2007-07-02 13:34  dougkearns
-
-	* chrome/content/vimperator/commands.js: move global restart()
-	  command to a vimperator slot
-
-2007-07-02 13:17  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js,
-	  vimperator.js: move global quit() command to a vimperator slot
-
-2007-07-02 12:29  dougkearns
-
-	* chrome/content/vimperator/: commands.js, hints.js, ui.js,
-	  vimperator.js: move global beep() command to a vimperator slot
-
-2007-07-02 11:43  dougkearns
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: move
-	  global source() command to a vimperator slot
-
-2007-07-02 09:55  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix typo in help for 'M'
-	  mapping
-
-2007-07-02 09:40  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: allow
-	  :marks to take an argument and sort its output properly
+	* TODO: Fixed some focus issues First (non-working) readMultiline
+	  implementation
 
 2007-07-02 08:57  dougkearns
 
-	* ChangeLog, chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js: add new Ctrl-^ mapping
-	  for selecting the alternate tab
-
-2007-07-01 15:04  dougkearns
-
-	* chrome/content/vimperator/commands.js: declare undeclared
-	  variable url
-
-2007-07-01 13:04  stubenschrott
-
-	* chrome/content/vimperator/: hints.js, ui.js: autosize multiline
-	  widget
+	* ChangeLog: add new Ctrl-^ mapping for selecting the alternate tab
 
 2007-06-30 15:14  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/mappings.js: changed gO to
-	  gn
-
-2007-06-30 12:37  dougkearns
-
-	* chrome/content/vimperator/mappings.js: allow multi-character
-	  normal mode user mappings
-
-2007-06-29 13:45  stubenschrott
-
-	* chrome/content/vimperator/bookmarks.js: fixed :qmarks output
-
-2007-06-29 13:44  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  mappings.js, vimperator.js: added QuickMarks
-
-2007-06-29 08:29  dougkearns
-
-	* chrome/content/vimperator/: hints.js, vimperator.js: rename the
-	  hints constructor hit_a_hint() to Hints()
-
-2007-06-29 06:30  dougkearns
-
-	* chrome/content/vimperator/help.js: declare undeclared variable
-	  'element'
+	* ChangeLog: changed gO to gn
 
 2007-06-28 04:16  dougkearns
 
-	* TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js: move the global variable
-	  hah to vimperator.hints and fix bug #17254
-
-2007-06-27 16:45  stubenschrott
-
-	* chrome/content/vimperator/bookmarks.js: small display fixes in
-	  :marks
-
-2007-06-27 16:35  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, ui.js: :marks support
-
-2007-06-27 15:10  stubenschrott
-
-	* chrome/content/vimperator/: ui.js, vimperator.js, vimperator.xul:
-	  initial commit of multiline echo()
-
-2007-06-27 13:22  dougkearns
-
-	* chrome/content/vimperator/ui.js: declare loop counter in
-	  InformationList#fill
-
-2007-06-26 16:45  dougkearns
-
-	* chrome/content/vimperator/completion.js: remove unused var in
-	  exTabCompletion()
-
-2007-06-26 15:11  dougkearns
-
-	* chrome/content/vimperator/ui.js: rename StatusLine#setClass's
-	  parameter to 'type' since 'class' is a reserved word
-
-2007-06-26 14:50  dougkearns
-
-	* chrome/content/vimperator/find.js: comment out unused :nohlsearch
-	  for now
-
-2007-06-26 14:32  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: don't
-	  bother returning a status value in Marks#jumpTo and remove
-	  trailing comma in :mark help propery assignment
-
-2007-06-26 14:19  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove trailing comma in
-	  :delmarks help propery assignment
-
-2007-06-26 07:07  dougkearns
-
-	* chrome/content/vimperator/help.js: remove FIXME comment
-
-2007-06-26 06:44  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  vimperator.js: fix :mark and :delmarks (AKA return of the marks)
-	  and add range support to :delmarks
+	* TODO: move the global variable hah to vimperator.hints and fix
+	  bug #17254
 
 2007-06-25 23:23  stubenschrott
 
 	* vimperator.vim: verbosity -> verbose
 
-2007-06-25 17:57  dougkearns
-
-	* chrome/content/vimperator/options.js: remove unnecessarily
-	  defined getters for the go, stal, titlestring options
-
 2007-06-25 17:54  dougkearns
 
 	* vimperator.vim: add verbosity and vbs to options syntax group
-
-2007-06-25 17:37  dougkearns
-
-	* chrome/content/vimperator/: completion.js, options.js: add basic
-	  validators for the cpt, go, ssli, vbs, wim, and wop options
-
-2007-06-25 14:53  dougkearns
-
-	* chrome/content/vimperator/commands.js: make :set display an error
-	  message and abort if an explicit value is specified for a boolean
-	  option
-
-2007-06-25 14:06  dougkearns
-
-	* chrome/content/vimperator/commands.js: make error messages
-	  generated by :set more Vim-like
 
 2007-06-23 13:08  dougkearns
 
 	* vimperator.vim: link vimperatorTodo to the Todo highlight group
 
-2007-06-22 13:00  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: move hrist's incomplete
-	  tab numbering patch to the Wiki for now
-
-2007-06-22 12:42  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, file.js, find.js, help.js, hints.js, mappings.js,
-	  options.js, ui.js, vimperator.js: normalise fold markers
-
-2007-06-21 18:13  dougkearns
-
-	* chrome/content/vimperator/completion.js: remove FIXME comment
-
-2007-06-21 16:29  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: add fold markers
-
-2007-06-21 13:45  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: improve the
-	  frame motion command - add [f to the existing ]f and support
-	  {count} for both
-
-2007-06-20 16:07  stubenschrott
-
-	* chrome/content/vimperator/: ui.js, vimperator.js: keyToString ->
-	  event.toString()
-
-2007-06-20 01:01  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, find.js, hints.js,
-	  options.js, ui.js, vimperator.js: moved log and logObject into
-	  the vimperator object
-
-2007-06-19 16:57  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove unused functions
-	  outputAddonsList, selectInput, and toggle_image
-
-2007-06-19 16:34  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: declare title temporary
-	  variable
-
-2007-06-19 15:42  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: remove unused prev_match
-	  and heredoc global variables
-
-2007-06-19 14:37  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js: make the
-	  global function parseBookmarkString a static function of
-	  Bookmarks
-
-2007-06-19 08:27  dougkearns
-
-	* chrome/content/vimperator/commands.js: add all commands by name
-	  as properties of vimperator.commands
-
-2007-06-19 08:22  dougkearns
-
-	* chrome/content/vimperator/commands.js: output "not implemented
-	  yet" messages for all unimplemented commands
-
 2007-06-19 06:40  dougkearns
 
 	* vimperator.vim: update vimperator.vim with new commands
 
-2007-06-19 06:18  dougkearns
-
-	* chrome/content/vimperator/commands.js: make sure Command.names
-	  includes unabbreviatable names
-
-2007-06-18 16:34  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js, vimperator.js:
-	  rename vimperator.ver to vimperator.version
-
-2007-06-18 09:59  dougkearns
-
-	* chrome/content/vimperator/options.js: don't include "no" prefixed
-	  variants of boolean option names in the usage
-
-2007-06-18 09:31  dougkearns
-
-	* chrome/content/vimperator/commands.js: fix typo in :bdelete help
-
-2007-06-18 08:28  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js: remove
-	  COMMANDS, USAGE, SHORTHELP and HELP global constants
-
-2007-06-18 07:37  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: improve
-	  whitespace formatting of Command.toString
-
-2007-06-17 13:56  dougkearns
-
-	* chrome/content/vimperator/help.js: fix typo in previous commit
-
-2007-06-17 11:34  stubenschrott
-
-	* chrome/content/vimperator/help.js: made default value in help
-	  monospace again
-
-2007-06-16 13:36  dougkearns
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, help.js, hints.js, mappings.js, options.js, ui.js,
-	  vimperator.js: initial Option/Options implementation - replacing
-	  g_options
-
-2007-06-15 13:08  dougkearns
-
-	* chrome/content/vimperator/completion.js: allow :set no<TAB> to be
-	  completed with the "no"-prefix version of all boolean options
-
-2007-06-15 12:37  dougkearns
-
-	* chrome/content/vimperator/commands.js: reorder Command.names as
-	  longname1, shortname1, longname2, shortname2
-
-2007-06-14 06:11  dougkearns
-
-	* chrome/content/vimperator/: commands.js, options.js, ui.js,
-	  vimperator.js: remove unnecessary parentheses from typeof
-	  operands
-
-2007-06-13 09:53  dougkearns
-
-	* chrome/content/vimperator/default.css: don't specify a font-size
-	  for the help page
-
-2007-06-13 09:17  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: remove some
-	  unnecessary guard clauses
-
-2007-06-13 09:14  dougkearns
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: prefer
-	  comparison with the undefined literal rather than using typeof
-	  and comparing against "undefined"
-
 2007-06-12 12:48  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: - fixed commandline
-	  focus/blur behavior - could be buggy, so please report any bugs -
-	  text selection is not possible anymore for :echo'ed things,
-	  should come later when holding shift - cleared commandline on
-	  scroll events
-
-2007-06-12 08:21  vkojouharov
-
-	* chrome/content/vimperator/bookmarks.js: uppercase marks work once
-	  again
-
-2007-06-11 14:51  dougkearns
-
-	* chrome/content/vimperator/: completion.js, default.css, help.js:
-	  use code.tag element's text content to anchor the help 'section'
-	  location rather than code.id
-
-2007-06-10 18:03  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove unused var
-	  declaration in commandsIterator()
-
-2007-06-10 13:16  dougkearns
-
-	* chrome/content/vimperator/commands.js: translate ~ to HOME on
-	  Windows for use with :source
-
-2007-06-09 16:06  stubenschrott
-
-	* chrome/content/vimperator/: mappings.js, vimperator.js: Final
-	  commit for the weekend: moved onKeyPress -> vimperator.events;
+	* ChangeLog, TODO: - fixed commandline focus/blur behavior - could
+	  be buggy, so please report any bugs - text selection is not
+	  possible anymore for :echo'ed things, should come later when
+	  holding shift - cleared commandline on scroll events
 
 2007-06-09 15:39  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: now we have a Events()
-	  class Please report all bugs which arised because of these
-	  changes Still not sure, if we should put that into an event.js
-
-2007-06-09 15:20  vkojouharov
-
-	* chrome/content/vimperator/bookmarks.js: The global marks
-	  correctly jump to their stored position, once the page has been
-	  loaded
-
-2007-06-09 15:05  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: Finally made event
-	  handling sane, creating an Events object will come soon.  This
-	  fixed many bugs like the reload/stop buttons being correctly
-	  updated now, while getting rid of lots of old code.
+	* ChangeLog, TODO: now we have a Events() class Please report all
+	  bugs which arised because of these changes Still not sure, if we
+	  should put that into an event.js
 
 2007-06-08 19:21  stubenschrott
 
 	* mozunit.js: added preliminary unit tests, not working yet,
 	  because the vimperator object cannot be found in this context.
 
-2007-06-08 17:33  dougkearns
-
-	* chrome/content/vimperator/: default.css, help.js: make sure the
-	  help text is using a fixed-pitch font
-
-2007-06-08 17:16  dougkearns
-
-	* chrome/content/vimperator/: commands.js, mappings.js: use ||
-	  short-circuit initialization idiom when processing Command and
-	  Map constructor args
-
-2007-06-08 08:48  dougkearns
-
-	* chrome/content/vimperator/commands.js: markup the ex-command
-	  special flag '!' with code.command in help text
-
-2007-06-08 02:46  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove old/disabled
-	  :addons command
-
-2007-06-08 02:06  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: small fixes to the input
-	  handling
-
 2007-06-08 01:33  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/find.js,
-	  chrome/content/vimperator/mappings.js,
-	  chrome/content/vimperator/vimperator.js: marks support (thanks
-	  viktor)
-
-2007-06-07 14:53  stubenschrott
-
-	* chrome/content/vimperator/commands.js: added back zoom_to
-	  function
-
-2007-06-07 08:54  dougkearns
-
-	* chrome/content/vimperator/commands.js: markup 'activate' option
-	  as such in :tabopen help text
-
-2007-06-07 08:45  dougkearns
-
-	* chrome/content/vimperator/: commands.js, help.js, mappings.js,
-	  options.js: fix some help text typos
-
-2007-06-07 06:40  stubenschrott
-
-	* chrome/content/vimperator/default.css: changed the colors back to
-	  green/red.
-
-2007-06-06 18:01  dougkearns
-
-	* chrome/content/vimperator/commands.js: remove unused global
-	  constants FUNCTION and COMPLETEFUNC
-
-2007-06-06 17:32  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js,
-	  default.css, help.js, mappings.js, options.js, settings.js,
-	  vimperator.xul: change all references to "settings" to "options"
-
-2007-06-06 15:52  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js,
-	  default.css, help.js, mappings.js, settings.js, vimperator.xul:
-	  convert help page to XHTML Strict (excepting the id values) and
-	  add initial implementations for the :viusage and :exusage
-	  commands
-
-2007-06-06 08:42  dougkearns
-
-	* chrome/content/vimperator/: commands.js, completion.js, find.js,
-	  help.js, mappings.js: initial Command/Commands implementation -
-	  replacing g_commands
-
-2007-06-05 16:05  dougkearns
-
-	* chrome/content/vimperator/bookmarks.js: comment out debugging log
-	  message
+	* ChangeLog: marks support (thanks viktor)
 
 2007-06-05 07:22  dougkearns
 
 	* TODO: add <ESC> closes :addons window bug to TODO
 
-2007-06-03 18:12  dougkearns
-
-	* chrome/content/vimperator/: mappings.js, vimperator.js: fix
-	  missing [count] functionality in normal mode commands
-
-2007-05-31 19:58  stubenschrott
-
-	* chrome/content/vimperator/mappings.js: made action public to
-	  change .execute() to be a prototype
-
-2007-05-31 13:02  dougkearns
-
-	* chrome/content/vimperator/: completion.js, help.js: add missing
-	  var declarations
-
-2007-05-31 11:11  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js, help.js,
-	  mappings.js, vimperator.js, vimperator.xul: merged the new
-	  mappings code, all glory goes to Doug!
-
-2007-05-31 08:45  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix the mapping usage
-	  string to only show the primary command
-
-2007-05-30 15:03  dougkearns
-
-	* chrome/content/vimperator/ui.js: fix typo in bufferposition_str
-	  variable declaration
-
-2007-05-30 13:58  dougkearns
-
-	* chrome/content/vimperator/mappings.js: remove a trailing , and
-	  :retab the file
-
-2007-05-30 11:35  dougkearns
-
-	* chrome/content/vimperator/mappings.js: change references to
-	  vimperator.mode to vimperator.modes
-
-2007-05-30 09:22  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix extra_info processing
-	  in Map() and other minor typos
-
-2007-05-30 06:25  stubenschrott
-
-	* chrome/content/vimperator/mappings.js: cleaned up mappings code,
-	  should be feature complete now (apart from the non-implemented
-	  getAll() method.
-
-2007-05-29 12:42  stubenschrott
-
-	* chrome/content/vimperator/: settings.js, vimperator.js: Added
-	  (outcommented because too slow) 'numbertabs' option (by hrist).
-
-2007-05-29 08:38  vkojouharov
-
-	* chrome/content/vimperator/mappings.js: changed the flags back.
-	  don't use 1 << 0 for any of the flags, since the 'default' one is
-	  0
-
-2007-05-29 03:55  dougkearns
-
-	* chrome/content/vimperator/mappings.js: fix some minor,
-	  reintroduced, typos and add missing help line for <ESC> map
-
-2007-05-29 00:46  stubenschrott
-
-	* chrome/content/vimperator/mappings.js: changed coding style,
-	  commented things which should be changed with XXX:
-
-2007-05-28 19:09  dougkearns
-
-	* chrome/content/vimperator/commands.js: add missing var
-	  declaration to urls in openURLs*()
-
-2007-05-28 18:49  dougkearns
-
-	* chrome/content/vimperator/mappings.js: finish converting the
-	  mappings to the new Map() format
-
-2007-05-28 09:22  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: add missing variable
-	  declaration for thistype, thismode, thisfunc in triggerCallBack()
-
-2007-05-28 03:06  dougkearns
-
-	* chrome/content/vimperator/: find.js, vimperator.js: remove last
-	  references to command_line and status_line
-
-2007-05-27 17:48  stubenschrott
-
-	* chrome/content/vimperator/: vimperator.js, vimperator.xul:
-	  explicitly set JS version to 1.7
-
-2007-05-27 17:20  vkojouharov
-
-	* chrome/content/vimperator/mappings.js: RFC: the api for the new
-	  mappings
-
-2007-05-25 15:11  stubenschrott
-
-	* chrome/content/vimperator/find.js: removed 'noh'
-
-2007-05-25 13:13  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, find.js: changed
-	  nohlsearch to the new spec
-
-2007-05-25 08:59  dougkearns
-
-	* chrome/content/vimperator/commands.js: fix accidental regression
-	  in :tabmove name specification
-
 2007-05-24 23:57  stubenschrott
 
-	* AUTHORS, ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: added Y command
-
-2007-05-24 18:54  dougkearns
-
-	* chrome/content/vimperator/vimperator.js: update the buffer list
-	  on page load completion (the non-existant showBufferList() was
-	  being called rather than updateBufferList())
-
-2007-05-24 13:49  dougkearns
-
-	* chrome/content/vimperator/commands.js: fix typo in :open
-	  command's short help description
+	* AUTHORS, ChangeLog, TODO: added Y command
 
 2007-05-24 12:47  stubenschrott
 
-	* AUTHORS, ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: flashing frame works now
+	* AUTHORS, ChangeLog: flashing frame works now
 
 2007-05-23 03:18  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: moved tab related
-	  functions to the Tabs class
+	* ChangeLog: moved tab related functions to the Tabs class
 
 2007-05-22 11:13  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/ui.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: many help fixes moved
-	  echo() -> vimperator.echo() and removed old XUL entries.
+	* ChangeLog, TODO: many help fixes moved echo() ->
+	  vimperator.echo() and removed old XUL entries.
 
 2007-05-21 11:35  stubenschrott
 
-	* ChangeLog, TODO, vimperator.vim,
-	  chrome/content/vimperator/commands.js: "R" -> reload without
-	  cache
+	* ChangeLog, TODO, vimperator.vim: "R" -> reload without cache
 
 2007-05-20 18:01  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/default.css,
-	  chrome/content/vimperator/vimperator.js: changed colors
-
-2007-05-20 17:52  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js, help.js,
-	  vimperator.js: commited help typos
-
-2007-05-20 15:53  vkojouharov
-
-	* chrome/content/vimperator/: default.css, ui.js, vimperator.js:
-	  move the statusbar color handling to the css file. for the
-	  future, whenever a background color is set, the foreground color
-	  should also be set, otherwise text might be unreadable in dark
-	  themes (or light themes, depending on what theme the user has)
-
-2007-05-20 13:05  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  contents.rdf, vimperator.js: commited pending changes, nothing
-	  big
-
-2007-05-18 17:43  stubenschrott
-
-	* chrome/content/vimperator/completion.js: one less global variable
-	  (g_completions)
-
-2007-05-18 17:36  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, ui.js, vimperator.js: fully objectized History()
-	  and Bookmarks()
-
-2007-05-18 06:13  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, find.js, hints.js,
-	  settings.js, ui.js, vimperator.js: rewrote mode-handling
+	* ChangeLog: changed colors
 
 2007-05-17 20:48  stubenschrott
 
-	* AUTHORS, ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: Added "titlestring"
-	  setting
-
-2007-05-16 17:31  stubenschrott
-
-	* chrome/content/vimperator/: commandline.js, commands.js, find.js,
-	  ui.js, vimperator.js, vimperator.xul: renamed commandline.js ->
-	  ui.js moved all statusbar code to the StatusLine() class
-
-2007-05-15 06:50  stubenschrott
-
-	* chrome/content/vimperator/: commandline.js, commands.js,
-	  completion.js, settings.js, tags, vimperator.js, vimperator.xul:
-	  renamed CompletionList -> InformationList which is now a common
-	  class for the completion window, for the preview window and the
-	  buffer window ("B").	Only the StatusLine class to go...
-
-2007-05-14 15:51  stubenschrott
-
-	* chrome/content/vimperator/: commandline.js, default.css, find.js:
-	  small CSS fixes by Doug and added modelines to find.js and
-	  commandline.js
+	* AUTHORS, ChangeLog, TODO: Added "titlestring" setting
 
 2007-05-14 15:24  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js: initial
-	  :tabmove command
-
-2007-05-14 00:29  vkojouharov
-
-	* chrome/content/vimperator/help.js: The Help Strikes Back
-
-2007-05-13 23:36  vkojouharov
-
-	* chrome/content/vimperator/: settings.js, vimperator.js: The
-	  Return of the Link
-
-2007-05-13 19:17  vkojouharov
-
-	* chrome/content/vimperator/commandline.js: fixed the indentation
-	  and and command line completion
-
-2007-05-12 17:27  stubenschrott
-
-	* chrome/content/vimperator/: commandline.js, find.js: add
-	  forgotten files
+	* ChangeLog: initial :tabmove command
 
 2007-05-11 14:42  stubenschrott
 
-	* Makefile, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: First attempt in making
-	  vimperator object orietened.	For now only the CommandLine widget
-	  was made a real encapsulated object.
+	* Makefile: First attempt in making vimperator object orietened.
+	  For now only the CommandLine widget was made a real encapsulated
+	  object.
 
 2007-05-09 13:56  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: final commit before
-	  trying to integrate the search patch
-
-2007-05-09 03:44  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: changed setOverLink back
-	  to echo() as I really couldn't stand it anymore in the statusbar
-	  Mail me if you really want it in the statusbar, and come up with
-	  a good setting name for this preference
+	* ChangeLog: final commit before trying to integrate the search
+	  patch
 
 2007-05-09 02:31  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: cleaned up html code for
-	  :help to make it more xhtml compatible :help now opens in the
-	  current tab even when current tab is a xhtml document
+	* ChangeLog: cleaned up html code for :help to make it more xhtml
+	  compatible :help now opens in the current tab even when current
+	  tab is a xhtml document
 
 2007-05-08 23:21  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/settings.js: hint work on xhtml pages
-	  now (slight problem with not disapperaring them still open)
+	* ChangeLog: hint work on xhtml pages now (slight problem with not
+	  disapperaring them still open)
 
 2007-05-08 18:57  stubenschrott
 
-	* AUTHORS, ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/help.js: added :tablast etc. commands
-
-2007-05-08 17:04  vkojouharov
-
-	* chrome/content/vimperator/completion.js: the substrings shouldn't
-	  be cleared in this particular case
+	* AUTHORS, ChangeLog, TODO: added :tablast etc. commands
 
 2007-05-05 00:48  stubenschrott
 
-	* AUTHORS, ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js: fixed :dl command
+	* AUTHORS, ChangeLog: fixed :dl command
 
 2007-05-04 20:04  stubenschrott
 
 	* ChangeLog, Donators, Makefile, vimperator.vim,
-	  vimperatorrc.example, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js: keyword support for
-	  bookmarks
-
-2007-05-03 15:27  stubenschrott
-
-	* chrome/content/vimperator/help.js: fixed \\n in help files
+	  vimperatorrc.example: keyword support for bookmarks
 
 2007-05-02 14:59  stubenschrott
 
@@ -2720,60 +1745,28 @@
 
 2007-05-02 14:55  stubenschrott
 
-	* ChangeLog, Makefile, chrome/content/vimperator/bookmarks.js: bug
-	  fix release
+	* ChangeLog, Makefile: bug fix release
 
 2007-05-02 14:47  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js: fixed :open
-	  google.com opening google for searching ".com"
-
-2007-05-02 14:28  stubenschrott
-
-	* chrome/content/vimperator/: default.css, help.js, vimperator.js:
-	  pass <enter> <space> <tab> etc. to vimperator now, so that they
-	  can perform their default action without beeping.  Quite hacky so
-	  far, should be cleaned up.
-
-2007-05-02 06:18  stubenschrott
-
-	* chrome/content/vimperator/: default.css, help.js: added version
-	  info to help file, fixed font size for tables
+	* ChangeLog: fixed :open google.com opening google for searching
+	  ".com"
 
 2007-05-01 19:29  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js: added 'defsearch'
-	  setting
-
-2007-05-01 17:31  vkojouharov
-
-	* chrome/content/vimperator/help.js: scroll to the proper location
-	  without the need of an offset
+	* ChangeLog: added 'defsearch' setting
 
 2007-05-01 13:23  stubenschrott
 
-	* ChangeLog, TODO, install.rdf,
-	  chrome/content/vimperator/commands.js: [no log message]
+	* ChangeLog, TODO, install.rdf: [no log message]
 
 2007-05-01 02:19  stubenschrott
 
-	* Makefile, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js: fixed gu and gU
+	* Makefile: fixed gu and gU
 
 2007-04-30 12:59  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js: fixed :o
-	  http://www.url.com
-
-2007-04-30 05:15  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js: - use default firefox engines :qsadd, :qsdel
-	  commands not yet done
+	* ChangeLog: fixed :o http://www.url.com
 
 2007-04-29 21:13  stubenschrott
 
@@ -2787,148 +1780,56 @@
 
 	* Makefile: [no log message]
 
-2007-04-29 19:51  stubenschrott
-
-	* chrome/content/vimperator/default.css: add
-
 2007-04-29 18:31  stubenschrott
 
 	* ChangeLog, install.rdf: website updates
 
 2007-04-29 17:04  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: Many small bugfixes
-	  changed wildsort -> wildoptions=sort added completion for
-	  filenames
-
-2007-04-29 05:35  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js, help.js,
-	  tags, vimperator.js: changed ":help open" to ":help :open"
-
-2007-04-29 04:18  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, help.js: fixed display
-	  of <> in help
-
-2007-04-29 03:48  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, help.js: experimental
-	  new help design
+	* ChangeLog, TODO: Many small bugfixes changed wildsort ->
+	  wildoptions=sort added completion for filenames
 
 2007-04-29 02:26  stubenschrott
 
-	* Makefile, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/vimperator.xul: Makefile fixes and much
-	  sexier help file
+	* Makefile, TODO: Makefile fixes and much sexier help file
 
 2007-04-28 20:08  stubenschrott
 
-	* update.rdf.in, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/settings.js: added update.rdf.in
-	  changed help file to look much more vim like (with monospaced
-	  font)
-
-2007-04-28 19:18  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, help.js, settings.js,
-	  vimperator.js: fixed :q command
+	* update.rdf.in: added update.rdf.in changed help file to look much
+	  more vim like (with monospaced font)
 
 2007-04-28 18:05  stubenschrott
 
-	* chrome/content/vimperator/vimperator.js: typo
-
-2007-04-28 18:05  stubenschrott
-
-	* install.rdf, chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: added ###VERSION### and
-	  ###DATE### for being seded in the Makefile
-
-2007-04-28 17:39  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, help.js, hints.js,
-	  settings.js, vimperator.js: fixed hints
+	* install.rdf: added ###VERSION### and ###DATE### for being seded
+	  in the Makefile
 
 2007-04-28 14:14  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/help.js: added goUp() and
-	  isDirectory(uri) functions gu and gU mappings for going up
-
-2007-04-28 12:15  vkojouharov
-
-	* chrome/content/vimperator/vimperator.js: delay sourcing of the rc
-	  file so that commands that open new tabs (like js!) can work
-
-2007-04-28 11:52  vkojouharov
-
-	* chrome/content/vimperator/: commands.js, completion.js, file.js,
-	  help.js: fixes:   'tag' command works once more   'source ~/'
-	  shows the matches   fdopen checks whether the file exists, and
-	  throws a more-readable error if it doesn't   'help' work if the
-	  current document is a XULDocument (it shows the help in a new
-	  tab)
+	* ChangeLog, TODO: added goUp() and isDirectory(uri) functions gu
+	  and gU mappings for going up
 
 2007-04-28 03:56  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/help.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: major code cleanup by
-	  using constants instead of indices, small bugs still may occur
-	  due to this change
+	* ChangeLog: major code cleanup by using constants instead of
+	  indices, small bugs still may occur due to this change
 
 2007-04-27 21:06  stubenschrott
 
-	* TODO, install.rdf, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js: wildmode and wildsort
-	  support :open . and .. and .../ supported
-
-2007-04-26 01:49  stubenschrott
-
-	* chrome/content/vimperator/commands.js: small changes
+	* TODO, install.rdf: wildmode and wildsort support :open . and ..
+	  and .../ supported
 
 2007-04-25 19:11  stubenschrott
 
 	* Makefile, TODO, vimperatorrc.example: Makefile changes for
 	  missing chrome/ dir
 
-2007-04-25 11:30  stubenschrott
-
-	* chrome/content/vimperator/vimperator.js: changed version number
-	  for now a little
-
 2007-04-25 11:20  stubenschrott
 
-	* TODO, chrome/content/vimperator/commands.js: added feeling lucky
-	  'lucky' quick search
+	* TODO: added feeling lucky 'lucky' quick search
 
 2007-04-24 23:06  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: esc -> C-c to stop page
-	  :stop command added
-
-2007-04-24 21:47  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, vimperator.js: 'B' works
-	  now as it is supposed to do
-
-2007-04-24 20:42  stubenschrott
-
-	* chrome/content/vimperator/settings.js: hinttags fixes
+	* ChangeLog, TODO: esc -> C-c to stop page :stop command added
 
 2007-04-24 16:10  stubenschrott
 
@@ -2937,56 +1838,21 @@
 
 2007-04-24 14:12  stubenschrott
 
-	* AUTHORS, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/vimperator.js: applied 'B' patch from
-	  Lars (not working fully) cleaned up init() and moved all
-	  eventlisteneres code to addEventListeners()
-
-2007-04-23 20:46  vkojouharov
-
-	* chrome/content/vimperator/: commands.js, help.js: removed the
-	  command wrapping in the help output
-
-2007-04-23 20:23  vkojouharov
-
-	* chrome/content/vimperator/: commands.js, vimperator.xul: fix the
-	  :help command
-
-2007-04-23 13:14  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js, help.js,
-	  tags, vimperator.xul: make help.js a seperate file, small
-	  indention fixes
-
-2007-04-23 01:56  vkojouharov
-
-	* chrome/content/vimperator/completion.js: file completion now
-	  works for the path '/' also
+	* AUTHORS: applied 'B' patch from Lars (not working fully) cleaned
+	  up init() and moved all eventlisteneres code to
+	  addEventListeners()
 
 2007-04-23 01:21  vkojouharov
 
-	* Makefile, install.rdf, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: redesing of the help
-	  page to be more like vim's help. :tab command like in vim.  the
-	  extension id has changed to a more readable string. any older
-	  versions of vimperator MUST be uninstalled, otherwise there will
-	  be 2 versions of the extension in the addons list.
+	* Makefile, install.rdf: redesing of the help page to be more like
+	  vim's help. :tab command like in vim.  the extension id has
+	  changed to a more readable string. any older versions of
+	  vimperator MUST be uninstalled, otherwise there will be 2
+	  versions of the extension in the addons list.
 
 2007-04-22 19:50  stubenschrott
 
 	* Donators: update
-
-2007-04-22 16:17  vkojouharov
-
-	* chrome/content/vimperator/: commands.js, completion.js, file.js,
-	  settings.js, vimperator.js, vimperator.xul: ex parser for use
-	  with .vimperatorrc, the command line and other sourced files.
-	  sourced files are no longer javascript code, but can use the new
-	  :javascript ex command to execute javascript. :javascript also
-	  supports multiline with heredocs (:js <<EOF). File completion for
-	  the :source command.
 
 2007-04-22 16:10  vkojouharov
 
@@ -3003,29 +1869,15 @@
 
 2007-04-21 20:06  stubenschrott
 
-	* ChangeLog, chrome/content/vimperator/commands.js: :back! and
-	  :forward! support
+	* ChangeLog: :back! and :forward! support
 
 2007-04-21 13:18  stubenschrott
 
-	* Donators, chrome/content/vimperator/commands.js: set horizontal
-	  offset to 0
-
-2007-04-21 04:08  stubenschrott
-
-	* chrome/content/vimperator/commands.js: coding style fixes
-
-2007-04-21 04:05  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, hints.js, vimperator.js:
-	  valign=top for cells
+	* Donators: set horizontal offset to 0
 
 2007-04-20 23:25  stubenschrott
 
-	* ChangeLog, Donators, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/vimperator.js: added section support
-	  for :help
+	* ChangeLog, Donators, TODO: added section support for :help
 
 2007-04-20 17:23  stubenschrott
 
@@ -3037,101 +1889,46 @@
 
 2007-04-20 17:03  stubenschrott
 
-	* ChangeLog, Makefile, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: :source support
+	* ChangeLog, Makefile: :source support
 
 2007-04-20 16:46  stubenschrott
 
-	* ChangeLog, Makefile, build.sh,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/file.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: now we have a new build
-	  Makefile also added file.js which is responsible for file
-	  writing/loading in future
+	* ChangeLog, Makefile, build.sh: now we have a new build Makefile
+	  also added file.js which is responsible for file writing/loading
+	  in future
 
 2007-04-20 15:33  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js: - fixed hints display on
-	  zoom - fixed n and N commands (don't use closures)
+	* ChangeLog, TODO: - fixed hints display on zoom - fixed n and N
+	  commands (don't use closures)
 
 2007-04-20 05:01  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js: hmm, forgot what I
-	  changed :)
-
-2007-04-20 01:35  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js, hints.js,
-	  settings.js, vimperator.js: added showmode setting
-
-2007-04-19 18:21  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, hints.js, settings.js, vimperator.js: change
-	  tabs->4 spaces
+	* ChangeLog, TODO: hmm, forgot what I changed :)
 
 2007-04-19 18:09  stubenschrott
 
-	* ChangeLog, Donators, TODO,
-	  chrome/content/vimperator/bookmarks.js,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/completion.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/tags,
-	  chrome/content/vimperator/vimperator.js: added modelines
-	  everywhere
-
-2007-04-19 16:00  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, completion.js: added
-	  :buffer(s) commands
+	* ChangeLog, Donators, TODO: added modelines everywhere
 
 2007-04-19 15:29  stubenschrott
 
-	* TODO, chrome/content/vimperator/commands.js: restart command
+	* TODO: restart command
 
 2007-04-18 15:33  stubenschrott
 
-	* TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/settings.js: added contact section to
-	  homepage
+	* TODO: added contact section to homepage
 
 2007-04-18 13:42  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js,
-	  chrome/content/vimperator/vimperator.js: support for space and
-	  alt-left/right keys
+	* ChangeLog, TODO: support for space and alt-left/right keys
 
 2007-04-18 13:06  stubenschrott
 
-	* ChangeLog, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: [+-] support for
-	  settings
-
-2007-04-18 03:18  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, settings.js,
-	  vimperator.xul: added counter to web site
-
-2007-04-18 00:44  stubenschrott
-
-	* chrome/content/vimperator/: commands.js, settings.js: Changed
-	  wiki search engine
+	* ChangeLog, TODO: [+-] support for settings
 
 2007-04-17 22:07  stubenschrott
 
-	* ChangeLog, Donators, TODO, chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/hints.js: Added n and N commands
+	* ChangeLog, Donators, TODO: Added n and N commands
 
 2007-04-17 19:34  stubenschrott
 
@@ -3139,23 +1936,17 @@
 
 2007-04-17 18:44  stubenschrott
 
-	* ChangeLog, Donators, TODO, build.sh, install.rdf,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/vimperator.js: version 0.3, added
-	  ignorekeys support
+	* ChangeLog, Donators, TODO, build.sh, install.rdf: version 0.3,
+	  added ignorekeys support
 
 2007-04-17 01:31  stubenschrott
 
-	* ChangeLog, Contributors, Donators, TODO, build.sh,
-	  chrome/content/vimperator/commands.js,
-	  chrome/content/vimperator/settings.js,
-	  chrome/content/vimperator/vimperator.js,
-	  chrome/content/vimperator/vimperator.xul: Added Ctrl-[ alias, and
-	  's' guioption
+	* ChangeLog, Contributors, Donators, TODO, build.sh: Added Ctrl-[
+	  alias, and 's' guioption
 
 2007-04-11 20:38  stubenschrott
 
-	* TODO, chrome/content/vimperator/commands.js: go_tab -> tab_go
+	* TODO: go_tab -> tab_go
 
 2007-04-11 05:15  stubenschrott
 
@@ -3164,12 +1955,6 @@
 2007-04-11 04:04  stubenschrott
 
 	* ChangeLog, TODO: [no log message]
-
-2007-04-10 21:43  stubenschrott
-
-	* chrome/content/vimperator/: bookmarks.js, commands.js,
-	  completion.js, contents.rdf, hints.js, settings.js, tags,
-	  vimperator.js, vimperator.xul: Initial import
 
 2007-04-10 21:32  stubenschrott
 
