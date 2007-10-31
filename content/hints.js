@@ -29,6 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.Hints = function() //{{{
 {
     var linkNumString = ""; // the typed link number is in this string
+    var linkNum = 1; // only the numerical part of the hint
     var submode = ""; // used for extended mode, can be "o", "t", "y", etc.
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
@@ -48,7 +49,7 @@ vimperator.Hints = function() //{{{
             return false;
 
         var x = 0, y = 0;
-        var elem = valid_hints[0];
+        var elem = valid_hints[linkNum - 1];
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
         if (elemTagName == 'frame' || elemTagName == 'iframe')
@@ -80,7 +81,7 @@ vimperator.Hints = function() //{{{
         if (valid_hints.length < 1)
             return false;
 
-        var elem = valid_hints[0];
+        var elem = valid_hints[linkNum - 1];
         var doc = window.content.document;
         var elemTagName = elem.localName.toLowerCase();
         if (elemTagName == 'frame' || elemTagName == 'iframe')
@@ -114,9 +115,9 @@ vimperator.Hints = function() //{{{
             return false;
 
         if (text)
-            var loc = valid_hints[0].href;
+            var loc = valid_hints[linkNum - 1].href;
         else
-            var loc = valid_hints[0].textContent;
+            var loc = valid_hints[linkNum - 1].textContent;
 
         vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
@@ -127,7 +128,7 @@ vimperator.Hints = function() //{{{
         if (valid_hints.length < 1)
             return false;
 
-        var elem = valid_hints[0];
+        var elem = valid_hints[linkNum - 1];
         var doc  = elem.ownerDocument;
         var url = makeURLAbsolute(elem.baseURI, elem.href);
         var text = elem.textContent;
@@ -145,6 +146,9 @@ vimperator.Hints = function() //{{{
     
     function generate(win)
     {
+        if (hintsGenerated)
+            return;
+
         if (!win)
             win = window.content;
 
@@ -211,18 +215,17 @@ vimperator.Hints = function() //{{{
     {
         vimperator.statusline.updateInputBuffer("");
         linkNumString = "";
+        linkNum = 1;
         hints = [];
         valid_hints = [];
         canUpdate = false;
         hintsGenerated = false;
     }
 
-    function showHints(win, str, start_idx)
+    function showHints(win, start_idx)
     {
         if (!win)
             win = window.content;
-        if (!str)
-            str = "";
 
         if (win.document.body.localName.toLowerCase() == "frameset")
         {
@@ -231,7 +234,7 @@ vimperator.Hints = function() //{{{
             vimperator.echo("hint support for frameset pages not fully implemented yet");
         }
 
-        vimperator.log("Show hints matching: " + str, 7);
+        vimperator.log("Show hints matching: " + linkNumString, 7);
 
         var doc = win.document;
         var scrollX = doc.defaultView.scrollX;
@@ -242,7 +245,7 @@ vimperator.Hints = function() //{{{
 
         var height = window.content.innerHeight;
         var width  = window.content.innerWidth;
-        var find_tokens = str.split(/ +/);
+        var find_tokens = linkNumString.split(/ +/);
         valid_hints = [];
 
 outer:
@@ -257,12 +260,13 @@ outer:
             {
                 if (text.indexOf(find_tokens[k]) < 0)
                 {
-                    // reset background color
-                    elem.style.backgroundColor = hints[i][4];
-                    elem.style.color = hints[i][5];
                     span.style.display = "none";
                     if (imgspan)
                         imgspan.style.display = "none";
+
+                    // reset background color
+                    elem.style.backgroundColor = hints[i][4];
+                    elem.style.color = hints[i][5];
 
                     continue outer;
                 }
@@ -298,7 +302,7 @@ outer:
             {
                 if (!imgspan)
                 {
-                    if (hintnum == 1)
+                    if (hintnum == linkNum)
                         elem.style.backgroundColor = "#88FF00";
                     else
                         elem.style.backgroundColor = "yellow";
@@ -314,13 +318,12 @@ outer:
             }
         }
 
-        vimperator.log("Hinted " + valid_hints.length + " items of " + hints.length + " matching " + str, 7);
+        vimperator.log("Hinted " + valid_hints.length + " items of " + hints.length + " matching " + linkNumString, 7);
         return true;
     }
 
     function removeHints(doc, timeout)
     {
-        vimperator.log(timeout);
         if (!doc)
         {
             vimperator.log("Argument doc is required for internal removeHints() method", 9);
@@ -411,7 +414,7 @@ outer:
                 return false;
         }
 
-        var loc = valid_hints.length > 0 ? valid_hints[0].href : "";
+        var loc = valid_hints.length > 0 ? valid_hints[linkNum - 1].href : "";
         switch (submode)
         {
             case ";": focusHint(); break;
@@ -438,6 +441,7 @@ outer:
             setTimeout(function() {
                 canUpdate = true;
                 linkNumString = "";
+                linkNum = 1;
                 vimperator.statusline.updateInputBuffer("");
             }, timeout);
         }
@@ -468,6 +472,7 @@ outer:
         vimperator.modes.set(vimperator.modes.HINTS, mode);
         submode = minor || "o"; // open is the default mode
         linkNumString = filter || "";
+        linkNum = 1;
         canUpdate = false;
 
         generate();
@@ -477,7 +482,7 @@ outer:
             mt.processNextEvent(true);
             
         canUpdate = true;
-        showHints(null, linkNumString);
+        showHints(null);
         if (valid_hints.length == 0)
         {
             vimperator.beep();
@@ -516,6 +521,23 @@ outer:
             case "<Space>":
                 linkNumString += " ";
                 break;
+
+            case "<Tab>":
+            case "<S-Tab>":
+                var oldElem = valid_hints[linkNum - 1];
+                if (key == "<Tab>")
+                {
+                    if (++linkNum > valid_hints.length)
+                        linkNum = 1;
+                }
+                else
+                {
+                    if (--linkNum < 1)
+                        linkNum = valid_hints.length;
+                }
+                oldElem.style.backgroundColor = "yellow";
+                valid_hints[linkNum - 1].style.backgroundColor = "#88FF00";
+                return;
 
             case "<BS>":
                 if (linkNumString == "")
@@ -557,7 +579,7 @@ outer:
             if (!hintsGenerated && linkNumString.length > 0)
                 generate();
 
-            showHints(null, linkNumString);
+            showHints(null);
             processHints(followFirst);
         }
         return false;
