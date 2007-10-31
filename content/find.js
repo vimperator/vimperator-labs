@@ -81,7 +81,7 @@ vimperator.Search = function() //{{{
             links_only = false;
 
         // strip links-only modifiers
-        pattern = pattern.replace(/(\\)?\\[uU]/g, function($0, $1) { return $1 ? $0 : "" });
+        pattern = pattern.replace(/(\\)?\\[uU]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // case sensitivity - \c wins if both modifiers specified
         if (/\c/.test(pattern))
@@ -96,10 +96,10 @@ vimperator.Search = function() //{{{
             case_sensitive = true;
 
         // strip case-sensitive modifiers
-        pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : "" });
+        pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // remove any modifer escape \
-        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1')
+        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1');
 
         search_string = pattern;
     }
@@ -229,15 +229,15 @@ vimperator.Search = function() //{{{
         if (!text)
             text = last_search_string;
 
-        gFindBar._setCaseSensitivity(case_sensitive)
+        gFindBar._setCaseSensitivity(case_sensitive);
         gFindBar._highlightDoc("white", "black", text);
 
         // TODO: seems fast enough for now...just
         (function(win)
         {
             for (var i = 0; i < win.frames.length; i++)
-                arguments.callee(win.frames[i])
-            var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search")
+                arguments.callee(win.frames[i]);
+            var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search");
             for (var i = 0; i < spans.length; i++)
                 spans[i].setAttribute("style", vimperator.options["hlsearchstyle"]);
         })(window.content);

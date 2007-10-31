@@ -147,7 +147,7 @@ vimperator.Mappings = function() //{{{
             {
                 if (names[j] == cmd)
                 {
-                    names.splice(j, 1)
+                    names.splice(j, 1);
 
                     if (names.length == 0)
                         maps.splice(i, 1);
@@ -269,7 +269,7 @@ vimperator.Mappings = function() //{{{
                 {
                     // for < only return a candidate if it doesn't seem like a <c-x> mapping
                     if (cmd != "<" || !/^<.+>/.test(map.names[j]))
-                        matches.push(map)
+                        matches.push(map);
                 }
             }
         }
@@ -293,7 +293,7 @@ vimperator.Mappings = function() //{{{
             for (var j = 0; j < maps[i].names.length; j++)
             {
                 list += "<tr>";
-                list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>"
+                list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
                 if (maps[i].rhs)
                     list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>"
                 list += "</tr>";
@@ -494,7 +494,7 @@ vimperator.Mappings = function() //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["go"],
-        function(arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB) },
+        function(arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB); },
         {
             short_help: "Jump to a QuickMark in the current tab",
             usage: ["go{a-zA-Z0-9}"],
@@ -564,7 +564,7 @@ vimperator.Mappings = function() //{{{
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
             if (index == -1)
-                vimperator.echoerr("E86: Buffer does not exist")  // TODO: This should read "Buffer N does not exist"
+                vimperator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
             else
                 vimperator.tabs.select(index);
         },
@@ -583,7 +583,7 @@ vimperator.Mappings = function() //{{{
                 return;
             }
 
-            vimperator.marks.add(arg)
+            vimperator.marks.add(arg);
         },
         {
             short_help: "Set mark at the cursor position",
@@ -593,7 +593,7 @@ vimperator.Mappings = function() //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["'", "`"],
-        function(arg) { vimperator.marks.jumpTo(arg) },
+        function(arg) { vimperator.marks.jumpTo(arg); },
         {
             short_help: "Jump to the mark in the current buffer",
             usage: ["'{a-zA-Z}"],
@@ -610,7 +610,7 @@ vimperator.Mappings = function() //{{{
                 return;
             }
 
-            vimperator.quickmarks.add(arg, vimperator.buffer.URL)
+            vimperator.quickmarks.add(arg, vimperator.buffer.URL);
         },
         {
             short_help: "Add new QuickMark for current URL",

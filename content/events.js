@@ -40,7 +40,7 @@ vimperator.Events = function() //{{{
     // any tab related events
     var tabcontainer = getBrowser().tabContainer;
     tabcontainer.addEventListener("TabMove",   function(event) {
-        vimperator.statusline.updateTabCount()
+        vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabOpen",   function(event) {
@@ -48,7 +48,7 @@ vimperator.Events = function() //{{{
         vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabClose",  function(event) {
-        vimperator.statusline.updateTabCount()
+        vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
     tabcontainer.addEventListener("TabSelect", function(event) {
@@ -156,7 +156,7 @@ vimperator.Events = function() //{{{
         [ KeyEvent.DOM_VK_F21, ["F21"] ],
         [ KeyEvent.DOM_VK_F22, ["F22"] ],
         [ KeyEvent.DOM_VK_F23, ["F23"] ],
-        [ KeyEvent.DOM_VK_F24, ["F24"] ],
+        [ KeyEvent.DOM_VK_F24, ["F24"] ]
     ];
 
     function getKeyCode(str)
@@ -384,13 +384,13 @@ vimperator.Events = function() //{{{
             switch (event.button)
             {
                 case 0:
-                    key = "LeftMouse"
+                    key = "LeftMouse";
                     break;
                 case 1:
-                    key = "MiddleMouse"
+                    key = "MiddleMouse";
                     break;
                 case 2:
-                    key = "RightMouse"
+                    key = "RightMouse";
                     break;
             }
         }
@@ -815,9 +815,9 @@ vimperator.Events = function() //{{{
         },
 
         // stub functions for the interfaces
-        setJSStatus : function(status) { ; },
-        setJSDefaultStatus : function(status) { ; },
-        setDefaultStatus : function(status) { ; },
+        setJSStatus: function(status) { ; },
+        setJSDefaultStatus: function(status) { ; },
+        setDefaultStatus: function(status) { ; },
         onLinkIconAvailable: function() { ; }
     };
 

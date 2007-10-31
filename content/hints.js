@@ -74,7 +74,7 @@ vimperator.Hints = function() //{{{
         elem.dispatchEvent(evt);
 
         return true;
-    };
+    }
 
     function focusHint()
     {
@@ -107,7 +107,7 @@ vimperator.Hints = function() //{{{
 
         evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evt);
-    };
+    }
 
     function yankHint(text)
     {
@@ -121,7 +121,7 @@ vimperator.Hints = function() //{{{
 
         vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
-    };
+    }
 
     function saveHint(skip_prompt)
     {
@@ -392,7 +392,7 @@ outer:
         catch (e) { vimperator.log("Error hiding hints, probably wrong window"); }
 
         reset();
-    };
+    }
 
     function processHints(followFirst)
     {
@@ -453,7 +453,7 @@ outer:
         }
 
         return true;
-    };
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

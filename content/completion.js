@@ -207,12 +207,7 @@ vimperator.Completion = function() // {{{
                               [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
             g_substrings = [];
             for (var command in vimperator.commands)
-            {
-                help_array.push([command.long_names.map(function($_) {
-                                                            return ":" + $_;
-                                                        }),
-                                command.short_help])
-            }
+                help_array.push([command.long_names.map(function($_) { return ":" + $_; }), command.short_help]);
             options = this.get_options_completions(filter, true);
             help_array = help_array.concat(options.map(function($_) {
                 return [
@@ -221,7 +216,7 @@ vimperator.Completion = function() // {{{
                     ];
             }));
             for (var map in vimperator.mappings)
-                help_array.push([map.names, map.short_help])
+                help_array.push([map.names, map.short_help]);
 
             if (!filter) return help_array.map(function($_) {
                 return [$_[0][0], $_[1]]; // unfiltered, use the first command
@@ -233,7 +228,7 @@ vimperator.Completion = function() // {{{
         get_command_completions: function(filter) //{{{
         {
             g_substrings = [];
-            var completions = []
+            var completions = [];
             if (!filter)
             {
                 for (var command in vimperator.commands)
@@ -262,7 +257,7 @@ vimperator.Completion = function() // {{{
                 {
                     if (prefix && option.type != "boolean")
                         continue;
-                    options.push([option.names, option.short_help])
+                    options.push([option.names, option.short_help]);
                 }
                 return options;
             }
@@ -274,7 +269,7 @@ vimperator.Completion = function() // {{{
                 {
                     if (prefix && option.type != "boolean")
                         continue;
-                    options.push([prefix + option.name, option.short_help])
+                    options.push([prefix + option.name, option.short_help]);
                 }
                 return options;
             }
@@ -442,7 +437,11 @@ vimperator.Completion = function() // {{{
                     "     else {" +
                     "          comp.push([[i], type]); }" +
                     "} comp;");
-            } catch (e) { completions = []; };
+            }
+            catch (e)
+            {
+                completions = [];
+            }
 
             return build_longest_starting_substring(completions, filter);
         }, // }}}

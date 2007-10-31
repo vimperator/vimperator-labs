@@ -256,7 +256,8 @@ vimperator.Tabs = function() //{{{
                 {
                     this.reload(getBrowser().mTabs[i], bypass_cache)
                 }
-                catch (e) {
+                catch (e)
+                {
                     // FIXME: can we do anything useful here without stopping the
                     //        other tabs from reloading?
                 }

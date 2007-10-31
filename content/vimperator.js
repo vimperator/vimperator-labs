@@ -101,7 +101,7 @@ const vimperator = (function() //{{{
 
                 popup.height = box.height;
                 popup.width = box.width;
-                popup.openPopup(win, "overlap", 0, 0, false, false)
+                popup.openPopup(win, "overlap", 0, 0, false, false);
                 setTimeout(function() { popup.hidePopup(); }, 50);
             }
             else
@@ -278,7 +278,7 @@ const vimperator = (function() //{{{
                         string += i + ": " + value + "\n";
                 }
             }
-            catch (e) { };
+            catch (e) { }
 
             return string;
         },
@@ -342,7 +342,7 @@ const vimperator = (function() //{{{
                     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                .getService(Components.interfaces.nsIWindowMediator);
                     whichwindow = wm.getMostRecentWindow("navigator:browser");
-                    whichwindow.loadURI(url, null, postdata)
+                    whichwindow.loadURI(url, null, postdata);
                     break;
 
                 default:
@@ -609,8 +609,8 @@ const vimperator = (function() //{{{
             vimperator.completion    = new vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); }
-            vimperator.echoerr = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); }
+            vimperator.echo    = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
+            vimperator.echoerr = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
 
             vimperator.globalVariables = {};
 
@@ -735,7 +735,7 @@ const vimperator = (function() //{{{
                     {
                         func.apply(window, args);
                     }
-                }
+                };
             }
 
             if (!thread)
