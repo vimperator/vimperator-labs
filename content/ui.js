@@ -93,7 +93,7 @@ vimperator.CommandLine = function() //{{{
 
     // for the example command "open sometext| othertext" (| is the cursor pos):
     var completion_start_index = 0;  // will be 5 because we want to complete arguments for the :open command
-    var completion_prefix = ""       // will be: "open sometext"
+    var completion_prefix = "";      // will be: "open sometext"
     var completion_postfix = "";     // will be: " othertext"
 
     var wild_index = 0;  // keep track how often we press <Tab> in a row
@@ -682,7 +682,7 @@ vimperator.CommandLine = function() //{{{
                 if (vimperator.options["more"] && isScrollable() && !atEnd())
                     win.scrollByLines(1);
                 else
-                    close_window = true;; // don't propagate the event for accept keys
+                    close_window = true; // don't propagate the event for accept keys
                 break;
 
             // up a line
@@ -807,7 +807,7 @@ vimperator.CommandLine = function() //{{{
 
             // close the window
             case "q":
-                close_window = true;;
+                close_window = true;
                 break;
 
             // unmapped key

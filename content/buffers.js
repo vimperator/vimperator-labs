@@ -32,7 +32,7 @@ vimperator.Buffer = function() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     // used for the "B" mapping to remember the last :buffer[!] command
-    var lastBufferSwitchArgs = ""; 
+    var lastBufferSwitchArgs = "";
     var lastBufferSwitchSpecial = true;
 
     var zoom_manager = ZoomManager.prototype.getInstance();

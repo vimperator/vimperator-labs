@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.util = {
     escapeHTML: function(str)
-    {   
+    {
         var e = window.content.document.createElement("div");
         e.appendChild(window.content.document.createTextNode(str));
         return e.innerHTML;
@@ -51,7 +51,7 @@ vimperator.util = {
                 arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
 
             return "<span style=\"color: green;\">" + arg + "</span>";
-        }           
+        }
         else if (type == "boolean")
         {
             return "<span style=\"color: blue;\">" + arg + "</span>";
@@ -62,9 +62,9 @@ vimperator.util = {
         }
         else if (type == "object" || type == "function")
         {
-            // for java packages value.toString() would crash so badly 
+            // for java packages value.toString() would crash so badly
             // that we cannot even try/catch it
-            if (/^\[JavaPackage.*\]$/.test(arg)) 
+            if (/^\[JavaPackage.*\]$/.test(arg))
                 return "[JavaPackage]";
 
             var str = arg.toString();

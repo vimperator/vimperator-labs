@@ -456,7 +456,7 @@ const vimperator = (function() //{{{
                     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                .getService(Components.interfaces.nsIWindowMediator);
                     whichwindow = wm.getMostRecentWindow("navigator:browser");
-                    whichwindow.loadURI(url, null, postdata)
+                    whichwindow.loadURI(url, null, postdata);
                     break;
 
                 default:
@@ -559,7 +559,7 @@ const vimperator = (function() //{{{
 
             var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
             process.init(file);
-             
+
             var ec = process.run(blocking, args, args.length);
             return ec;
         },
@@ -801,16 +801,16 @@ const vimperator = (function() //{{{
 
         sleep: function(ms)
         {
-            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager); 
-            var mainThread = threadManager.mainThread; 
+            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+            var mainThread = threadManager.mainThread;
 
-            var then = new Date().getTime(), now = then; 
-            for (; now - then < ms; now = new Date().getTime()) { 
-                mainThread.processNextEvent(true); 
-            } 
+            var then = new Date().getTime(), now = then;
+            for (; now - then < ms; now = new Date().getTime()) {
+                mainThread.processNextEvent(true);
+            }
         },
 
-        get windows() 
+        get windows()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
             var wa = [];

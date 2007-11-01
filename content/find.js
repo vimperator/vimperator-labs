@@ -81,7 +81,7 @@ vimperator.Search = function() //{{{
             links_only = false;
 
         // strip links-only modifiers
-        pattern = pattern.replace(/(\\)?\\[uU]/g, function($0, $1) { return $1 ? $0 : "" });
+        pattern = pattern.replace(/(\\)?\\[uU]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // case sensitivity - \c wins if both modifiers specified
         if (/\c/.test(pattern))
@@ -96,10 +96,10 @@ vimperator.Search = function() //{{{
             case_sensitive = true;
 
         // strip case-sensitive modifiers
-        pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : "" });
+        pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // remove any modifer escape \
-        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1')
+        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1');
 
         search_string = pattern;
     }
@@ -246,8 +246,8 @@ vimperator.Search = function() //{{{
         (function(win)
         {
             for (var i = 0; i < win.frames.length; i++)
-                arguments.callee(win.frames[i])
-            var spans = vimperator.buffer.evaluateXPath('//span[@id="__firefox-findbar-search-id"]', win.document)
+                arguments.callee(win.frames[i]);
+            var spans = vimperator.buffer.evaluateXPath('//span[@id="__firefox-findbar-search-id"]', win.document);
             for (var i = 0; i < spans.snapshotLength; i++)
                 spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
         })(window.content);

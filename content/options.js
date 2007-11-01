@@ -439,7 +439,7 @@ vimperator.Options = function() //{{{
                   "</ul>" +
                   "The order matters",
             default_value: "gm",
-            validator: function (value) { if (/[^gm]/.test(value) || value.length > 2 || 
+            validator: function (value) { if (/[^gm]/.test(value) || value.length > 2 ||
                     value.length < 1) return false; else return true; }
         }
     ));

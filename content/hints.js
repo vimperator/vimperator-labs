@@ -412,7 +412,7 @@ vimperator.Hints = function() //{{{
         showHints(null, 0);
 
         return true;
-    };
+    }
 
     /**
      * Disables the HaH-mode by hiding the hints and disabling the input mode
