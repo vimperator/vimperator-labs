@@ -1,17 +1,29 @@
 /***** BEGIN LICENSE BLOCK ***** {{{
- *
- * Mozilla Public License Notice
- *
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1  (the "License"); you may  not use this  file except in
- * compliance with the  License. You may obtain a  copy of the License
- * at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
- * the  License  for  the   specific  language  governing  rights  and
- * limitations under the License.
- *
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+(c) 2006-2007: Martin Stubenschrott <stubenschrott@gmx.net>
+
+Alternatively, the contents of this file may be used under the terms of
+either the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the GPL or the LGPL are applicable instead
+of those above. If you wish to allow use of your version of this file only
+under the terms of either the GPL or the LGPL, and not to allow others to
+use your version of this file under the terms of the MPL, indicate your
+decision by deleting the provisions above and replace them with the notice
+and other provisions required by the GPL or the LGPL. If you do not delete
+the provisions above, a recipient may use your version of this file under
+the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // command names taken from:
@@ -19,9 +31,10 @@
 
 vimperator.Editor = function() //{{{
 {
-    // store our last search with f,F,t or T
+    // store our last search with f, F, t or T
     var last_findChar = null;
     var last_findChar_func = null;
+    var abbrev = {}; // abbrev["lhr"][0] is the {rhs} and abbrev["lhr"][1] the mode {i,c,!}
 
     function editor()
     {
@@ -379,6 +392,119 @@ vimperator.Editor = function() //{{{
 
         tmpfile.remove(false);
     }
+
+    // Abbreviations {{{
+    // TODO: won't save into vimperatorrc? with mkvimperatorrc
+
+    // filter is i, c or "!" (insert or command abbreviations or both)
+    this.listAbbreviations = function(filter, lhs)
+    {
+        if (lhs)    // list only that one
+        {
+            if (abbrev[lhs])
+            {
+                vimperator.echo(abbrev[lhs][1] + "    " + lhs + "        " + abbrev[lhs][0]);
+                return true;
+            }
+            vimperator.echoerr("No abbreviations found");
+            return false;
+        } 
+        else      // list all (for that filter {i,c,!})
+        {
+            var flagFound = false;
+            var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
+            var list = "<table>";
+            for (var item in abbrev)
+            {
+                if (searchFilter.indexOf(abbrev[item][1]) > -1)
+                {
+                    if (!flagFound)
+                        flagFound = true;
+
+                    list += "<tr>";
+                    list += "<td> " + abbrev[item][1] + "</td>";
+                    list += "<td> " + vimperator.util.escapeHTML(item) + "</td>";
+                    list += "<td> " + vimperator.util.escapeHTML(abbrev[item][0]) + "</td>";
+                    list += "</tr>";
+                }
+            }
+            if (!flagFound)
+            {
+                vimperator.echoerr("No abbreviations found");
+                return;
+            }
+            list += "</table>";
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        }
+    }
+
+    this.addAbbreviation = function(filter, lhs, rhs)
+    {
+        var modeSign = filter;
+
+        // get proper Mode value i + c = ! on identical abbreviations
+        if (abbrev[lhs] && abbrev[lhs][0] == rhs && abbrev[lhs][1] != filter)
+            modeSign = "!";
+
+        abbrev[lhs] = [rhs, modeSign];
+    }
+
+    this.removeAbbreviation = function(filter, lhs)
+    {
+        if (abbrev[lhs]) // abbrev exists
+        {
+            if (filter == "!" || (abbrev[lhs][1] == filter && filter != "!" ))
+            {                
+                delete (abbrev[lhs]);
+                return true;
+            }
+            else if (abbrev[lhs][1] == "!") // exists as ! -> no 'full' delete, since filter is not either
+            {
+                abbrev[lhs][1] = filter == "i" ? "c" : "i";   // it's a !; e.g. ! - i = c; ! - c = i
+                return true;
+            }
+        }
+        vimperator.echoerr("E24: No such abbreviation");
+        return false;
+    }
+
+    this.removeAllAbbreviations = function(filter)
+    {
+        for (var item in abbrev)
+        {
+            if (filter == "!" || abbrev[item][1] == "!" || abbrev[item][1] == filter)
+                this.removeAbbreviation(filter, item);
+        }
+    }
+
+    this.expandAbbreviation = function(filter) // try to find an candidate and replace accordingly
+    {
+        var textbox   = editor();
+        var text      = textbox.value;
+        var currStart = textbox.selectionStart;
+        var currEnd   = textbox.selectionEnd;
+        var foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
+        if (!foundWord)
+            return true;
+            
+        for (var item in abbrev)
+        {
+            if (item == foundWord && (abbrev[item][1] == filter || abbrev[item][1] == "!"))
+            {
+                // if found, replace accordingly
+                var len = foundWord.length;
+                var abbr_text = abbrev[item][0];
+                text = text.substring(0, currStart - len) + abbr_text + text.substring(currStart);
+                textbox.value = text;
+                textbox.selectionStart = currStart - len + abbr_text.length;
+                textbox.selectionEnd   = currEnd   - len + abbr_text.length;
+                break;
+            }
+        }
+        return true;
+    }
+
+    //}}}
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

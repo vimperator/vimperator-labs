@@ -87,7 +87,8 @@ vimperator.Map.prototype.execute = function(motion, count, argument)
         args.push(count);
     if (this.flags & vimperator.Mappings.flags.ARGUMENT)
         args.push(argument);
-    this.action.apply(this, args);
+
+    return this.action.apply(this, args);
 }
 //}}}
 
@@ -176,9 +177,10 @@ vimperator.Mappings = function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     vimperator.Mappings.flags = {
-        MOTION:     1 << 0,
-        COUNT:      1 << 1,
-        ARGUMENT:   1 << 2
+        ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox
+        MOTION:              1 << 1,
+        COUNT:               1 << 2,
+        ARGUMENT:            1 << 3
     };
 
     // NOTE: just normal mode for now
@@ -1948,7 +1950,7 @@ vimperator.Mappings = function() //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-u>"],
         function()
         {
-            // broken in FF3, deletes the wohle line:
+            // broken in FF3, deletes the whole line:
             // vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
             vimperator.editor.executeCommand("cmd_selectBeginLine", 1);
             vimperator.editor.executeCommand("cmd_delete", 1);
@@ -1978,6 +1980,24 @@ vimperator.Mappings = function() //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<C-i>"], 
         function() { vimperator.editor.editWithExternalEditor(); }, 
         { }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<Space>", "<Tab>", "<Return>"],
+        function() { return vimperator.editor.expandAbbreviation("i"); },
+        { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
+        ["<C-]>", "<C-5>"], function() { vimperator.editor.expandAbbreviation("i"); }, { }
+    ));
+
+    //}}}
+    // COMMAND_LINE mode
+    //{{{
+    addDefaultMap(new vimperator.Map([vimperator.modes.COMMAND_LINE], ["<Space>"],
+        function() { return vimperator.editor.expandAbbreviation("c"); },
+        { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.COMMAND_LINE],
+        ["<C-]>", "<C-5>"], function() { vimperator.editor.expandAbbreviation("c"); }, { }
     ));
 
     //}}}

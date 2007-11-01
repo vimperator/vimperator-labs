@@ -622,7 +622,6 @@ vimperator.Events = function() //{{{
 
 
         // if Hit-a-hint mode is on, special handling of keys is required
-        // FIXME: <Esc> should be handled properly!
         if (key != "<Esc>" && key != "<C-[>")
         {
             if (vimperator.mode == vimperator.modes.HINTS)
@@ -684,7 +683,9 @@ vimperator.Events = function() //{{{
             else
             {
                 vimperator.input.buffer = "";
-                map.execute(null, vimperator.input.count);
+                var ret = map.execute(null, vimperator.input.count);
+                if (map.flags & vimperator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                    stop = false;
             }
         }
         else if (vimperator.mappings.getCandidates(vimperator.mode, candidate_command).length > 0)

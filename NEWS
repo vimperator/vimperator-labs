@@ -8,6 +8,7 @@
 	  read up the new help for the f, F and ; commands for details
 	  removed the following hint options: 'hintchars'
 	  added the following hint options: 'hinttimeout'
+	* abbreviations for text fields (:abbr etc.) (thanks calmar)
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
 	* :open, :bmarks, etc. filter on space separated tokens now, so you can
 	  search with :open linux windows &lt;tab&gt; all your bookmarks/history

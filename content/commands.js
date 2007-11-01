@@ -92,7 +92,7 @@ vimperator.Command = function(specs, action, extra_info) //{{{
 
 vimperator.Command.prototype.execute = function(args, special, count, modifiers)
 {
-    this.action.call(this, args, special, count, modifiers);
+    return this.action.call(this, args, special, count, modifiers);
 }
 
 // return true if the candidate name matches one of the command's aliases
@@ -1097,6 +1097,110 @@ vimperator.Commands = function() //{{{
                   "If no expression is given, the value of the variable is displayed." +
                   "Without arguments, displays a list of all variables."
         }
+    ));
+    // code for abbreviations
+    addDefaultCommand(new vimperator.Command(["ab[breviate]"],
+        function(args)
+        {
+            if (!args)
+            {
+                vimperator.editor.listAbbreviations("!", "");
+                return;
+            }
+
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var [lhs, rhs] = [matches[1], matches[2]];
+            if (rhs)
+                vimperator.editor.addAbbreviation("!", lhs, rhs); 
+            else
+                vimperator.editor.listAbbreviations("!", lhs);
+        },
+        {
+            usage: ["ab[breviate] {lhs} {rhs}", "ab[breviate] {lhs}", "ab[breviate]"],
+            short_help: "Abbreviate a key sequence",
+            help: "Abbreviate <code class=\"argument\">{lhs}</code> to <code class=\"argument\">{rhs}</code>.<br/>" +
+                  "If only <code class=\"argument\">{lhs}</code> given, list that particual abbreviation.<br/>" +
+                  "List all abbreviations, if no arguments to are given.<br/>"
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["ca[bbrev]"],
+        function(args)
+        {
+            if (!args)
+            {
+                vimperator.editor.listAbbreviations("c", "");
+                return;
+            }
+
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var [lhs, rhs] = [matches[1], matches[2]];
+            if (rhs)
+                vimperator.editor.addAbbreviation("c", lhs, rhs); 
+            else
+                vimperator.editor.listAbbreviations("c", lhs);
+        },
+        {
+            usage: ["ca[bbrev] {lhs} {rhs}", "ca[bbrev] {lhs}", "ca[bbrev]"],
+            short_help: "Abbreviate a key sequence for Command-line mode",
+            help: "Same as <code class='command'>:ab[reviate]</code>, but for Command-line mode only."
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["ia[bbrev]"],
+        function(args)
+        {
+            if (!args)
+            {
+                vimperator.editor.listAbbreviations("i", "");
+                return;
+            }
+
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var [lhs, rhs] = [matches[1], matches[2]];
+            if (rhs)
+                vimperator.editor.addAbbreviation("i", lhs, rhs); 
+            else
+                vimperator.editor.listAbbreviations("i", lhs);
+        },
+        {
+            usage: ["ia[bbrev] {lhs} {rhs}", "ia[bbrev] {lhs}", "ia[bbrev]"],
+            short_help: "Abbreviate a key sequence for Insert mode",
+            help: "Same as <code class='command'>:ab[breviate]</code>, but for Insert mode only."
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["una[bbreviate]"],
+        function(args) { vimperator.editor.removeAbbreviation("!", args); },
+        {
+            usage: ["una[bbreviate] {lhs}"],
+            short_help: "Remove an abbreviation"
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["cuna[bbrev]"],
+        function(args) { vimperator.editor.removeAbbreviation("c", args); },
+        {
+            usage: ["cuna[bbrev] {lhs}"],
+            short_help: "Remove an abbreviation for Command-line mode",
+            help: "Same as <code class='command'>:una[bbreviate]</code>, but for Command-line mode only."
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["iuna[bbrev]"],
+        function(args) { vimperator.editor.removeAbbreviation("i", args); },
+        {
+            usage: ["iuna[bbrev] {lhs}"],
+            short_help: "Remove an abbreviation for Insert mode",
+            help: "Same as <code class='command'>:una[bbreviate]</code>, but for Insert mode only."
+        }
+    ));
+    addDefaultCommand(new vimperator.Command(["ab[clear]"],
+        function(args) { vimperator.editor.removeAllAbbreviations("!"); },
+        { short_help: "Remove all abbreviations" }
+    ));
+    addDefaultCommand(new vimperator.Command(["cab[clear]"],
+        function(args) { vimperator.editor.removeAllAbbreviations("c"); },
+        { short_help: "Remove all abbreviations for Command-line mode" }
+    ));
+    addDefaultCommand(new vimperator.Command(["iab[clear]"],
+        function(args) { vimperator.editor.removeAllAbbreviations("i"); },
+        { short_help: "Remove all abbreviations for Insert mode" }
     ));
     addDefaultCommand(new vimperator.Command(["map"],
         // 0 args -> list all maps
