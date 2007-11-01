@@ -149,11 +149,19 @@ vimperator.Hints = function() //{{{
         if (hintsGenerated)
             return;
 
+        var startDate = Date.now();
+        hints = [];
+
         if (!win)
             win = window.content;
 
         var doc = win.document;
         docs.push(doc);
+
+        var height = win.innerHeight;
+        var width  = win.innerWidth;
+        var scrollX = doc.defaultView.scrollX;
+        var scrollY = doc.defaultView.scrollY;
 
         var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
         baseNodeAbsolute.style.backgroundColor = "red";
@@ -164,21 +172,18 @@ vimperator.Hints = function() //{{{
         baseNodeAbsolute.style.lineHeight = "10px";
         baseNodeAbsolute.style.padding = "0px 1px 0px 0px";
         baseNodeAbsolute.style.zIndex = "10000001";
+        baseNodeAbsolute.style.display = "none";
         baseNodeAbsolute.className = "vimperator-hint";
 
-        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc, null, true);
         var elem, tagname, text, span, rect;
-        vimperator.log("Hinting " + res.snapshotLength + " items on " + doc.title);
+        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc, null, true);
+        vimperator.log("evaluated XPath after: " + (Date.now() - startDate) + "ms");
 
-        var height = window.content.innerHeight;
-        var width  = window.content.innerWidth;
-        hints = [];
-
-        for (var i = 0; i < res.snapshotLength; i++)
+        var fragment = doc.createDocumentFragment();
+        while ((elem = res.iterateNext()) != null)
         {
-            elem = res.snapshotItem(i);
             rect = elem.getBoundingClientRect();
-            if (!rect || rect.bottom < 0 || rect.top > height || rect.right < 0 || rect.left > width)
+            if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
                 continue;
 
             rect = elem.getClientRects()[0];
@@ -199,13 +204,15 @@ vimperator.Hints = function() //{{{
                 text = elem.textContent.toLowerCase();
 
             span = baseNodeAbsolute.cloneNode(true);
-            span.innerHTML = "";
-            span.style.display = "none";
-            doc.body.appendChild(span);
+            span.style.left = (rect.left + scrollX) + "px";
+            span.style.top = (rect.top + scrollY) + "px";
+            fragment.appendChild(span);
 
             hints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
         }
+        doc.body.appendChild(fragment);
 
+        vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms");
         hintsGenerated = true;
         return true;
     }
@@ -234,6 +241,8 @@ vimperator.Hints = function() //{{{
 
     function showHints(win, start_idx)
     {
+        var startDate = Date.now();
+
         if (!win)
             win = window.content;
 
@@ -256,6 +265,7 @@ vimperator.Hints = function() //{{{
         var height = window.content.innerHeight;
         var width  = window.content.innerWidth;
         var find_tokens = hintString.split(/ +/);
+        var activeHint = hintNumber || 1;
         valid_hints = [];
 
 outer:
@@ -284,52 +294,37 @@ outer:
 
             if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
             {
-                rect = elem.firstChild.getBoundingClientRect();
-                if (!rect)
-                    continue;
-
                 if (!imgspan)
                 {
+                    rect = elem.firstChild.getBoundingClientRect();
+                    if (!rect)
+                        continue;
+
                     imgspan = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-                    imgspan.style.backgroundColor = "yellow";
                     imgspan.style.position = "absolute";
                     imgspan.style.opacity = 0.5;
                     imgspan.style.zIndex = "10000000";
+                    imgspan.style.left = (rect.left + scrollX) + "px";
+                    imgspan.style.top = (rect.top + scrollY) + "px";
+                    imgspan.style.width = (rect.right - rect.left) + "px";
+                    imgspan.style.height = (rect.bottom - rect.top) + "px";
                     imgspan.className = "vimperator-hint";
                     hints[i][3] = imgspan;
                     doc.body.appendChild(imgspan);
                 }
-                imgspan.style.left = (rect.left + scrollX) + "px";
-                imgspan.style.top = (rect.top + scrollY) + "px";
-                imgspan.style.width = (rect.right - rect.left) + "px";
-                imgspan.style.height = (rect.bottom - rect.top) + "px";
+                imgspan.style.backgroundColor = (activeHint == i + 1) ? "#88FF00" : "yellow";
                 imgspan.style.display = "inline";
             }
-            else
-                rect = elem.getClientRects()[0];
 
-            if (rect)
-            {
-                if (!imgspan)
-                {
-                    var activeNum = hintNumber || 1;
-                    if (hintnum == activeNum)
-                        elem.style.backgroundColor = "#88FF00";
-                    else
-                        elem.style.backgroundColor = "yellow";
-                }
-
-                elem.style.color = "black";
-                span.style.left = (rect.left + scrollX) + "px";
-                span.style.top = (rect.top + scrollY) + "px";
-                span.innerHTML = "" + (hintnum++);
-                span.style.display = "inline";
-                valid_hints.push(elem);
-                continue;
-            }
+            if (!imgspan)
+                elem.style.backgroundColor = (activeHint == i + 1) ? "#88FF00" : "yellow";
+            elem.style.color = "black";
+            span.textContent = "" + (hintnum++);
+            span.style.display = "inline";
+            valid_hints.push(elem);
         }
 
-        vimperator.log("Hinted " + valid_hints.length + " items of " + hints.length + " matching " + hintString, 7);
+        vimperator.log("showHints() completed after: " + (Date.now() - startDate) + "ms");
         return true;
     }
 
@@ -501,6 +496,8 @@ outer:
             
         canUpdate = true;
         showHints(null);
+
+        vimperator.log("hints.show(" + filter  + ") took: " + (Date.now() - startDate) + "ms");
         if (valid_hints.length == 0)
         {
             vimperator.beep();
@@ -605,6 +602,15 @@ outer:
                         hintNumber = (hintNumber * 10) + parseInt(key, 10);
 
                     vimperator.statusline.updateInputBuffer(hintString + (hintNumber > 0 ? hintNumber : ""));
+                    if (!canUpdate)
+                        return;
+
+                    if (!hintsGenerated)
+                    {
+                        generate();
+                        showHints();
+                    }
+
                     if (hintNumber == 0 || hintNumber > valid_hints.length)
                     {
                         vimperator.beep();
@@ -623,10 +629,10 @@ outer:
             if (!hintsGenerated && hintString.length > 0)
                 generate();
 
-            showHints(null);
+            showHints();
             processHints(followFirst);
         }
-        return false;
+        return;
     }
 
 

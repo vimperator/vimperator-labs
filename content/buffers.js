@@ -167,7 +167,7 @@ vimperator.Buffer = function() //{{{
     });
 
     // returns an XPathResult object
-    this.evaluateXPath = function(expression, doc, elem, ordered)
+    this.evaluateXPath = function(expression, doc, elem, asIterator)
     {
         if (!doc)
             doc = window.content.document;
@@ -183,7 +183,7 @@ vimperator.Buffer = function() //{{{
                   return null;
               }
             },
-            ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+            asIterator ? XPathResult.UNORDERED_NODE_ITERATOR_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
             null
         );
 
