@@ -309,7 +309,7 @@ const vimperator = (function() //{{{
             // convert the string to an array of converted URLs
             // -> see String.prototype.toURLArray for more details
             if (typeof urls == "string")
-                urls = urls.toURLArray();
+                urls = vimperator.util.stringToURLArray(urls);
 
             if (urls.length == 0)
                 return false;
