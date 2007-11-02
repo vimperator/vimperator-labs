@@ -28,9 +28,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.Hints = function() //{{{
 {
+    var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
     var hintNumber = 0;  // only the numerical part of the hint
-    var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
+    var usedTabKey = false; // when we used <Tab> to select an element
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var hints = [];
@@ -39,6 +40,19 @@ vimperator.Hints = function() //{{{
     var canUpdate = false;
     var hintsGenerated = false;
     var docs = []; // keep track of the documents which we display the hints for
+
+    // reset all important variables
+    function reset()
+    {
+        vimperator.statusline.updateInputBuffer("");
+        hintString = "";
+        hintNumber = 0;
+        usedTabKey = false;
+        hints = [];
+        valid_hints = [];
+        canUpdate = false;
+        hintsGenerated = false;
+    }
 
     // this function 'click' an element, which also works
     // for javascript links
@@ -215,18 +229,6 @@ vimperator.Hints = function() //{{{
         vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms");
         hintsGenerated = true;
         return true;
-    }
-
-    // reset all important variables
-    function reset()
-    {
-        vimperator.statusline.updateInputBuffer("");
-        hintString = "";
-        hintNumber = 0;
-        hints = [];
-        valid_hints = [];
-        canUpdate = false;
-        hintsGenerated = false;
     }
 
     // no safety checks are done, be careful with this function
@@ -539,6 +541,7 @@ outer:
 
             case "<Tab>":
             case "<S-Tab>":
+                usedTabKey = true;
                 if (hintNumber == 0)
                     hintNumber = 1;
 
@@ -557,16 +560,20 @@ outer:
                 return;
 
             case "<BS>":
-                if (hintNumber > 0)
+                if (hintNumber > 0 && !usedTabKey)
                 {
                     hintNumber = Math.floor(hintNumber/10);
                 }
                 else if (hintString != "")
                 {
+                    usedTabKey = false;
+                    hintNumber = 0;
                     hintString = hintString.substr(0, hintString.length-1);
                 }
                 else
                 {
+                    usedTabKey = false;
+                    hintNumber = 0;
                     vimperator.beep();
                     return;
                 }
@@ -596,8 +603,11 @@ outer:
 
                 if (/^[0-9]$/.test(key))
                 {
-                    if (hintNumber == 0)
+                    if (hintNumber == 0 || usedTabKey)
+                    {
+                        usedTabKey = false;
                         hintNumber = parseInt(key, 10);
+                    }
                     else
                         hintNumber = (hintNumber * 10) + parseInt(key, 10);
 
