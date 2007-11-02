@@ -84,7 +84,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
                 <label class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
             </hbox>
-            <!-- just hide them so other elements since other elements expect them -->
+            <!-- just hide them since other elements expect them -->
             <statusbarpanel id="statusbar-display" hidden="true"/>
             <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
         </statusbar>

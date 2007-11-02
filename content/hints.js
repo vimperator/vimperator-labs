@@ -499,7 +499,6 @@ outer:
         canUpdate = true;
         showHints(null);
 
-        vimperator.log("hints.show(" + filter  + ") took: " + (Date.now() - startDate) + "ms");
         if (valid_hints.length == 0)
         {
             vimperator.beep();
