@@ -34,7 +34,7 @@ vimperator.Editor = function() //{{{
     // store our last search with f, F, t or T
     var last_findChar = null;
     var last_findChar_func = null;
-    var abbrev = {}; // abbrev["lhr"][0] is the {rhs} and abbrev["lhr"][1] the mode {i,c,!}
+    var abbrev = {}; // abbrev["lhr"][0]["{i,c,!}","rhs"]
 
     function editor()
     {
@@ -394,51 +394,61 @@ vimperator.Editor = function() //{{{
     }
 
     // Abbreviations {{{
-    // FIXME: iabbr foo bar  and cabbr foo abc  can't exist at the same time.
 
     this.abbreviations = {};
     this.abbreviations.__iterator__ = function ()
     { 
         var tmpCmd;
-        for (var item in abbrev) 
+        for (var lhs in abbrev) 
         {
-            tmpCmd = (abbrev[item][1] == "!") ? "abbreviate" : abbrev[item][1] + "abbrev";
-            yield (tmpCmd + " " + item + " " + abbrev[item][0] + "\n");
+            for (var i = 0; i < abbrev[lhs].length; i++)
+            {
+                tmpCmd = (abbrev[lhs][i][0] == "!") ? "abbreviate" : abbrev[lhs][i][0] + "abbrev";
+                yield (tmpCmd + " " + lhs + " " + abbrev[lhs][i][1] + "\n");
+            }
         }
     }
 
     // filter is i, c or "!" (insert or command abbreviations or both)
     this.listAbbreviations = function(filter, lhs)
     {
-        if (lhs)    // list only that one
+        if (lhs) // list only that one
         {
             if (abbrev[lhs])
             {
-                vimperator.echo(abbrev[lhs][1] + "    " + lhs + "        " + abbrev[lhs][0]);
-                return true;
+                for (var i = 0; i < abbrev[lhs].length; i++)
+                {
+                    if (abbrev[lhs][i][0] == filter)
+                        vimperator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
+                    return true;
+                }
             }
             vimperator.echoerr("No abbreviations found");
             return false;
         } 
-        else      // list all (for that filter {i,c,!})
+        else // list all (for that filter {i,c,!})
         {
             var flagFound = false;
             var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
             var list = "<table>";
-            for (var item in abbrev)
+            for (var tmplhs in abbrev)
             {
-                if (searchFilter.indexOf(abbrev[item][1]) > -1)
+                for (var i = 0; i < abbrev[tmplhs].length; i++)
                 {
-                    if (!flagFound)
-                        flagFound = true;
+                    if (searchFilter.indexOf(abbrev[tmplhs][i][0]) > -1)
+                    {
+                        if (!flagFound)
+                            flagFound = true;
 
-                    list += "<tr>";
-                    list += "<td> " + abbrev[item][1] + "</td>";
-                    list += "<td> " + vimperator.util.escapeHTML(item) + "</td>";
-                    list += "<td> " + vimperator.util.escapeHTML(abbrev[item][0]) + "</td>";
-                    list += "</tr>";
+                        list += "<tr>";
+                        list += "<td> " + abbrev[tmplhs][i][0] + "</td>";
+                        list += "<td> " + vimperator.util.escapeHTML(tmplhs) + "</td>";
+                        list += "<td> " + vimperator.util.escapeHTML(abbrev[tmplhs][i][1]) + "</td>";
+                        list += "</tr>";
+                    }
                 }
             }
+
             if (!flagFound)
             {
                 vimperator.echoerr("No abbreviations found");
@@ -451,40 +461,150 @@ vimperator.Editor = function() //{{{
 
     this.addAbbreviation = function(filter, lhs, rhs)
     {
-        var modeSign = filter;
+        if (!abbrev[lhs])
+        {
+            abbrev[lhs] = [];
+            abbrev[lhs][0] = [filter, rhs];
+            return;
+        }
 
-        // get proper Mode value i + c = ! on identical abbreviations
-        if (abbrev[lhs] && abbrev[lhs][0] == rhs && abbrev[lhs][1] != filter)
-            modeSign = "!";
+        if (filter == "!")
+        {
+            if (abbrev[lhs][1])
+                abbrev[lhs][1] = "";
+            abbrev[lhs][0] = [filter, rhs];
+            return;
+        }
 
-        abbrev[lhs] = [rhs, modeSign];
+        for (var i = 0; i < abbrev[lhs].length; i++)
+        {
+            if (abbrev[lhs][i][1] == rhs)
+            {
+                if (abbrev[lhs][i][0] == filter)
+                {
+                    abbrev[lhs][i] = [filter, rhs];
+                    return;
+                }
+                else
+                {
+                    if (abbrev[lhs][i][0] != "!")
+                    {
+                        if (abbrev[lhs][1])
+                            abbrev[lhs][1] = "";
+                        abbrev[lhs][0] = ["!", rhs];
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (abbrev[lhs][0][0] == "!")
+        {
+            var tmpOpp = ("i" == filter) ? "c" : "i";
+            abbrev[lhs][1] = [tmpOpp, abbrev[lhs][0][1]];
+            abbrev[lhs][0] = [filter, rhs];
+            return;
+        }
+
+        if (abbrev[lhs][0][0] != filter)
+            abbrev[lhs][1] = [filter, rhs];
+        else
+            abbrev[lhs][0] = [filter, rhs];
+
+        return;
+
+        // System above:
+        // filter == ! delete all, and set first (END)
+        //
+        // if filter == ! remove all and add it as only END
+        //
+        // variant 1: rhs matches anywere in loop
+        // 
+        //          1 mod matches anywhere in loop 
+        //                  a) simple replace and
+        //                      I)  (maybe there's another rhs that matches?  not possible)
+        //                          (when there's another item, it's opposite mod with different rhs)
+        //                          (so do nothing further but END)
+        //
+        //          2 mod does not match
+        //                  a) the opposite is there -> make a ! and put it as only and END
+        //                 (b) a ! is there. do nothing END)
+        // 
+        // variant 2: rhs matches *no*were in loop and filter is c or i
+        //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
+        //
+        //          1 mod is ! split into two i + c END
+        //          1 not !: opposite mode (first), add/change 'second' and END
+        //          1 not !: same mode (first), overwrite first this END
+        //
     }
 
     this.removeAbbreviation = function(filter, lhs)
     {
+        if (!lhs)
+        {
+            vimperator.echoerr("E474: Invalid argument");
+            return false;
+        }
+
         if (abbrev[lhs]) // abbrev exists
         {
-            if (filter == "!" || (abbrev[lhs][1] == filter && filter != "!" ))
-            {                
-                delete (abbrev[lhs]);
+            if (filter == "!")
+            {
+                abbrev[lhs] = "";
                 return true;
             }
-            else if (abbrev[lhs][1] == "!") // exists as ! -> no 'full' delete, since filter is not either
+            else
             {
-                abbrev[lhs][1] = filter == "i" ? "c" : "i";   // it's a !; e.g. ! - i = c; ! - c = i
-                return true;
+                if (!abbrev[lhs][1]) // only one exists
+                {
+                    if (abbrev[lhs][0][0] == "!") // exists as ! -> no 'full' delete
+                    {
+                        abbrev[lhs][0][0] = (filter == "i") ? "c" : "i";   // ! - i = c; ! - c = i
+                        return true;
+                    }
+                    else if (abbrev[lhs][0][0] == filter)
+                    {                
+                        abbrev[lhs] = "";
+                        return true;
+                    }
+                }
+                else // two abbrev's exists ( 'i' or  'c' (filter as well))
+                {
+                    if (abbrev[lhs][0][0] == "c" && filter == "c")
+                        abbrev[lhs][0] = abbrev[lhs][1];
+
+                    abbrev[lhs][1] = '';   
+
+                    return true;
+                }
             }
         }
-        vimperator.echoerr("E24: No such abbreviation");
-        return false;
+
+    vimperator.echoerr("E24: No such abbreviation");
+    return false;
     }
 
     this.removeAllAbbreviations = function(filter)
     {
-        for (var item in abbrev)
+        if (filter == "!")
         {
-            if (filter == "!" || abbrev[item][1] == "!" || abbrev[item][1] == filter)
-                this.removeAbbreviation(filter, item);
+            abbrev = {};
+        }
+        else
+        {
+            for (var lhs in abbrev)
+            {
+                for (var i = 0; i < abbrev[lhs].length; i++)
+                {
+                    if (abbrev[lhs][i][0] == "!" || abbrev[lhs][i][0] == filter)
+                        this.removeAbbreviation(filter, lhs);
+                }
+            }
         }
     }
 
@@ -498,24 +618,25 @@ vimperator.Editor = function() //{{{
         if (!foundWord)
             return true;
             
-        for (var item in abbrev)
+        for (var lhs in abbrev)
         {
-            if (item == foundWord && (abbrev[item][1] == filter || abbrev[item][1] == "!"))
-            {
-                // if found, replace accordingly
-                var len = foundWord.length;
-                var abbr_text = abbrev[item][0];
-                text = text.substring(0, currStart - len) + abbr_text + text.substring(currStart);
-                textbox.value = text;
-                textbox.selectionStart = currStart - len + abbr_text.length;
-                textbox.selectionEnd   = currEnd   - len + abbr_text.length;
-                break;
-            }
+                for (var i = 0; i < abbrev[lhs].length; i++)
+                {
+                    if (lhs == foundWord && (abbrev[lhs][i][0] == filter || abbrev[lhs][i][0] == "!"))
+                    {
+                        // if found, replace accordingly
+                        var len = foundWord.length;
+                        var abbr_text = abbrev[lhs][i][1];
+                        text = text.substring(0, currStart - len) + abbr_text + text.substring(currStart);
+                        textbox.value = text;
+                        textbox.selectionStart = currStart - len + abbr_text.length;
+                        textbox.selectionEnd   = currEnd   - len + abbr_text.length;
+                        break;
+                    }
+                }
         }
         return true;
-    }
-
-    //}}}
+    } //}}}
 } //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
