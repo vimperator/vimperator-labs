@@ -723,7 +723,7 @@ vimperator.Events = function() //{{{
     window.addEventListener("keypress", this.onKeyPress, true);
 
     // this is need for sites like msn.com which focus the input field on keydown
-    this.onKeyDown = function(event)
+    this.onKeyUpOrDown = function(event)
     {
         if (vimperator.modes.passNextKey ^ vimperator.modes.passAllKeys || isFormElemFocused())
             return true;
@@ -731,7 +731,8 @@ vimperator.Events = function() //{{{
         event.stopPropagation();
         return false;
     }
-    window.addEventListener("keydown", this.onKeyDown, true);
+    window.addEventListener("keydown", this.onKeyUpOrDown, true);
+    window.addEventListener("keyup", this.onKeyUpOrDown, true);
 
     this.progressListener =
     {
