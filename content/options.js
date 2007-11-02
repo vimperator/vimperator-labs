@@ -458,7 +458,7 @@ vimperator.Options = function() //{{{
         {
             short_help: "Set the external text editor",
             help: "Sets the editor to run when <code class=\"mapping\">&lt;C-i&gt;</code> " +
-                  "is pressed in INSERT and TEXTAREA modes. Note that vimperator will " +
+                  "is pressed in INSERT and TEXTAREA modes. Note that Vimperator will " +
                   "not behave correctly if the editor forks its own process, such as with "+ 
                   "gvim without the -f argument.", 
             default_value: "gvim -f"

@@ -359,7 +359,7 @@ vimperator.Mappings = function() //{{{
         },
         {
             short_help: "Start caret mode",
-            help: "This mode resembles the vim normal mode where you see a text cursor and can move around. " +
+            help: "This mode resembles the Vim normal mode where you see a text cursor and can move around. " +
             "If you want to select text in this mode, press <code class=\"mapping\">v</code> to start its Visual mode."
         }
     ));
@@ -1057,7 +1057,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Start QuickHint mode, but open link in a new tab",
             usage: ["F{hint}"],
-            help: "Like normal QuickMode (activated with <code class='mapping'>f</code>) but opens the link in a new tab."
+            help: "Like normal QuickHint mode (activated with <code class='mapping'>f</code>) but opens the link in a new tab."
         }
     ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
@@ -1118,7 +1118,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Search forward for a pattern",
             usage: ["/{pattern}[/]<CR>"],
-            help: "Search forward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
+            help: "Search forward for the first occurrence of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
                   "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
@@ -1130,7 +1130,7 @@ vimperator.Mappings = function() //{{{
         {
             short_help: "Search backwards for a pattern",
             usage: ["?{pattern}[?]<CR>"],
-            help: "Search backward for the first occurance of <code class=\"argument\">{pattern}</code>.<br/>" +
+            help: "Search backward for the first occurrence of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
                   "\"\\C\" forces case-sensitive matching for the whole pattern.<br/>" +
                   "If \"\\l\" appears in the pattern only the text of links is searched for a match as though <code class=\"option\">'linksearch'</code> is on. " +
