@@ -6,7 +6,7 @@
 	  ~/.vimperatorrc file instead for persistent options
 	* IMPORTANT! Major hints rewrite
 	  read up the new help for the f, F and ; commands for details
-	  removed the following hint options: 'hintchars'
+	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* abbreviations for text fields (:abbr etc.) (thanks calmar)
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
