@@ -307,7 +307,7 @@ const vimperator = (function() //{{{
         open: function(urls, where, callback)
         {
             // convert the string to an array of converted URLs
-            // -> see String.prototype.toURLArray for more details
+            // -> see vimperator.util.stringToURLArray for more details
             if (typeof urls == "string")
                 urls = vimperator.util.stringToURLArray(urls);
 
