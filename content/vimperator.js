@@ -500,8 +500,15 @@ const vimperator = (function() //{{{
 
             try
             {
+                var file = vimperator.io.getFile(filename);
+                if (!file.exists())
+                {
+                    if (!silent)
+                        vimperator.echoerr("E484: Can't open file " + filename);
+                    return false;
+                }
                 var str = vimperator.io.readFile(filename);
-
+ 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {

@@ -1311,13 +1311,12 @@ vimperator.Commands = function() //{{{
     addDefaultCommand(new vimperator.Command(["mkv[imperatorrc]"],
         function(args, special)
         {
-            var filename;
-
             // TODO: "E172: Only one file name allowed"
+            var filename;
             if (args)
                 filename = args;
             else
-                filename = vimperator.io.expandPath(navigator.platform == "Win32" ? "~/_vimperatorrc" : "~/.vimperatorrc");
+                filename = (navigator.platform == "Win32") ? "~/_vimperatorrc" : "~/.vimperatorrc";
 
             var file = vimperator.io.getFile(filename);
             if (file.exists() && !special)
@@ -1327,6 +1326,7 @@ vimperator.Commands = function() //{{{
             }
 
             var line = "\" " + vimperator.version + "\n";
+            line += "\" Mappings\n";
 
             // TODO: write user maps for all modes when we have mode dependant map support
             for (var map in vimperator.mappings.getUserIterator(vimperator.modes.NORMAL))
@@ -1335,6 +1335,7 @@ vimperator.Commands = function() //{{{
                     line += "map " + map.names[i] + " " + map.rhs + "\n";
             }
 
+            line += "\n\" Options\n";
             for (var option in vimperator.options)
             {
                 // TODO: options should be queried for this info
@@ -1348,7 +1349,13 @@ vimperator.Commands = function() //{{{
                 }
             }
 
-            line += "\" vim: set ft=vimperator:";
+            line += "\n\" Abbreviations\n";
+            for (var abbrCmd in vimperator.editor.abbreviations)
+                line += abbrCmd;
+
+            // source a user .vimperatorrc file
+            line += "\nsource! " + filename + ".local\n"
+            line += "\n\" vim: set ft=vimperator:";
 
             vimperator.io.writeFile(file, line);
         },
@@ -1851,7 +1858,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["so[urce]"],
-        function(args)
+        function(args, special)
         {
             // FIXME: implement proper filename quoting
             //if (/[^\\]\s/.test(args))
@@ -1860,7 +1867,7 @@ vimperator.Commands = function() //{{{
             //    return;
             //}
 
-            vimperator.source(args);
+            vimperator.source(args, special);
         },
         {
             usage: ["so[urce][!] {file}"],

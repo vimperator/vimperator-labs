@@ -394,7 +394,18 @@ vimperator.Editor = function() //{{{
     }
 
     // Abbreviations {{{
-    // TODO: won't save into vimperatorrc? with mkvimperatorrc
+    // FIXME: iabbr foo bar  and cabbr foo abc  can't exist at the same time.
+
+    this.abbreviations = {};
+    this.abbreviations.__iterator__ = function ()
+    { 
+        var tmpCmd;
+        for (var item in abbrev) 
+        {
+            tmpCmd = (abbrev[item][1] == "!") ? "abbreviate" : abbrev[item][1] + "abbrev";
+            yield (tmpCmd + " " + item + " " + abbrev[item][0] + "\n");
+        }
+    }
 
     // filter is i, c or "!" (insert or command abbreviations or both)
     this.listAbbreviations = function(filter, lhs)
