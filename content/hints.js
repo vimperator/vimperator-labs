@@ -314,12 +314,12 @@ outer:
                     hints[i][3] = imgspan;
                     doc.body.appendChild(imgspan);
                 }
-                imgspan.style.backgroundColor = (activeHint == i + 1) ? "#88FF00" : "yellow";
+                imgspan.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
                 imgspan.style.display = "inline";
             }
 
             if (!imgspan)
-                elem.style.backgroundColor = (activeHint == i + 1) ? "#88FF00" : "yellow";
+                elem.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
             elem.style.color = "black";
             span.textContent = "" + (hintnum++);
             span.style.display = "inline";
