@@ -75,15 +75,15 @@ vimperator.Hints = function() //{{{
             x = Number(coords[0]);
             y = Number(coords[1]);
         }
-        doc = window.content.document;
-        view = window.document.defaultView;
+        var doc = window.content.document;
+        var view = window.document.defaultView;
 
         var evt = doc.createEvent('MouseEvents');
-        evt.initMouseEvent('mousedown', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+        evt.initMouseEvent('mousedown', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
         elem.dispatchEvent(evt);
 
         var evt = doc.createEvent('MouseEvents');
-        evt.initMouseEvent('click', true, true, view, 1, x+1, y+1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+        evt.initMouseEvent('click', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
         elem.dispatchEvent(evt);
 
         return true;
@@ -519,8 +519,8 @@ outer:
         if (!hintsGenerated)
             return;
 
-        doc = docs.pop();
-        if(doc);
+        var doc = docs.pop();
+        if (doc);
             removeHints(doc, 0);
     };
 
@@ -561,13 +561,13 @@ outer:
             case "<BS>":
                 if (hintNumber > 0 && !usedTabKey)
                 {
-                    hintNumber = Math.floor(hintNumber/10);
+                    hintNumber = Math.floor(hintNumber / 10);
                 }
                 else if (hintString != "")
                 {
                     usedTabKey = false;
                     hintNumber = 0;
-                    hintString = hintString.substr(0, hintString.length-1);
+                    hintString = hintString.substr(0, hintString.length - 1);
                 }
                 else
                 {

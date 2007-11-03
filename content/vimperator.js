@@ -212,7 +212,8 @@ const vimperator = (function() //{{{
             if (!string)
                 return [null, null, null];
 
-            if (match = string.match(/^([bwtglsv]):(\w+)/)) // Variable
+            var match = string.match(/^([bwtglsv]):(\w+)/);
+            if (match) // Variable
             {
                 // Other variables should be implemented
                 if (match[1] == "g")
