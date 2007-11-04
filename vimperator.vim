@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 October 22
+" Latest Revision:  2007 November 4
 
 if exists("b:current_syntax")
   finish
@@ -13,11 +13,11 @@ set cpo&vim
 syn include @javascriptTop syntax/javascript.vim
 unlet b:current_syntax
 
-syn region  vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
-
-" FIXME: or just tell everyone to use single quotes for strings
 syn keyword vimperatorTodo FIXME NOTE TODO XXX contained
 syn match   vimperatorComment     +".*$+     contains=vimperatorTodo,@Spell
+
+syn region  vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
+
 syn match   vimperatorLineComment +^\s*".*$+ contains=vimperatorTodo,@Spell
 
 syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load] bw[ipeout] delbm[arks]
@@ -35,13 +35,12 @@ syn match vimperatorCommand "!" contained
 syn match vimperatorCommandWrapper "\%(^\|:\|\s\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act autohints ah noautohints noah complete cpt defsearch ds editor extendedhinttags eht
-	\ focusedhintstyle fhs fullscreen fs nofullscreen nofs guioptions go hintchars hc hintstyle hs hinttags hlsearch hls
-	\ nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic
-	\ insertmode im noinsertmode noim laststatus ls linksearch lks nolinksearch nolks maxhints mh more nomore popups pps
-	\ preload nopreload previewheight pvh scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal
-	\ smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
-	\ wildmode wim wildoptions wop
+syn keyword vimperatorOption activate act complete cpt defsearch ds editor extendedhinttags eht focusedhintstyle fhs fullscreen fs
+	\ nofullscreen nofs guioptions go hintstyle hs hinttags hinttimeout hto hlsearch hls nohlsearch nohls hlsearchstyle hlss
+	\ nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim
+	\ laststatus ls linksearch lks nolinksearch nolks more nomore popups pps preload nopreload previewheight pvh scroll scr
+	\ showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs titlestring usermode
+	\ um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim wildoptions wop
 	\ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
