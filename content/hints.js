@@ -630,6 +630,12 @@ outer:
                 }
 
                 hintString += key;
+                if (usedTabKey)
+                {
+                    usedTabKey = false;
+                    showActiveHint(1, hintNumber);
+                    hintNumber = 1;
+                }
         }
 
         vimperator.statusline.updateInputBuffer(hintString + (hintNumber > 0 ? hintNumber : ""));
