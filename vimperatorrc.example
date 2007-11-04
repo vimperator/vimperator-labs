@@ -2,7 +2,6 @@
 
 " I don't like beeps
 set visualbell
-echo vimperatorrc found
 
 " embedded javascript is possible
 " You can even add new functions which are then available in the :js command
@@ -12,5 +11,7 @@ hello = function(name)
 	alert("Hello world: " + name);
 }
 EOF
+
+echo "vimperatorrc sourced"
 
 " vim: ft=vimperator:
