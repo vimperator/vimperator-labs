@@ -129,9 +129,9 @@ vimperator.Hints = function() //{{{
 
         var elem = valid_hints[hintNumber - 1] || valid_hints[0];
         if (text)
-            var loc = elem.href;
-        else
             var loc = elem.textContent;
+        else
+            var loc = elem.href;
 
         vimperator.copyToClipboard(loc);
         vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
