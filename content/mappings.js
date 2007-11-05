@@ -1973,6 +1973,18 @@ vimperator.Mappings = function() //{{{
         function() { vimperator.editor.executeCommand("cmd_deleteCharBackward", 1); },
         { }
     ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-d>"],
+        function() { vimperator.editor.executeCommand("cmd_deleteCharForward", 1); },
+        { }
+    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-b>"],
+//        function() { vimperator.editor.executeCommand("cmd_charPrevious", 1); },
+//        { }
+//    ));
+//    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-f>"],
+//        function() { vimperator.editor.executeCommand("cmd_charNext", 1); },
+//        { }
+//    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<S-Insert>"],
         function() { vimperator.editor.pasteClipboard(); },
         { }

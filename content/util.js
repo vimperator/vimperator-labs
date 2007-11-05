@@ -91,7 +91,7 @@ vimperator.util = {
 
     // takes a string like 'google bla, www.osnews.com'
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
-    stringToURLArray: function(str) // {{{
+    stringToURLArray: function(str)
     {
         var urls = str.split(/\s*\,\s+/);
 
@@ -164,8 +164,28 @@ vimperator.util = {
         }
 
         return urls;
-    } // }}}
+    },
 
+    highlightURL: function(str, force)
+    {
+        if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
+            return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
+        else 
+            return str;
+    },
+
+    formatNumber: function(num)
+    {
+        var strNum = (num + "").split(".", 2);
+
+        for (var u = strNum[0].length - 3; u > 0; u -= 3)
+            strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
+
+        if (strNum[1])
+            strNum[0] += "." + strNum[1]
+
+        return strNum[0];
+    }
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

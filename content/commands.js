@@ -1495,8 +1495,8 @@ vimperator.Commands = function() //{{{
     addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
         function () { vimperator.buffer.pageInfo(true); },
         {
-            short_help: "Show general and/or meta-content site informations",
-            help: "Show general and/or meta-content site informations"
+            short_help: "Show various page information",
+            help: "See :help 'pageinfo' for available options",
         }
     ));
     addDefaultCommand(new vimperator.Command(["pc[lose]"],

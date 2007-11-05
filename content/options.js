@@ -590,12 +590,12 @@ vimperator.Options = function() //{{{
             help: "Available items:<br/>" +
                   "<ul>" +
                   "<li><b>g</b>: general info</li>" +
+                  "<li><b>f</b>: feeds</li>" +
                   "<li><b>m</b>: meta tags</li>" +
                   "</ul>" +
                   "The order matters",
-            default_value: "gm",
-            validator: function (value) { if (/[^gm]/.test(value) || value.length > 2 || 
-                    value.length < 1) return false; else return true; }
+            default_value: "gfm",
+            validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1) }
         }
     ));
     this.add(new vimperator.Option(["popups", "pps"], "number",
