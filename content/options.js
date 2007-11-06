@@ -436,7 +436,8 @@ vimperator.Options = function() //{{{
                   "<li><b>tabopen</b>:   <code class=\"command\">:tabopen[!]</code> command</li>" +
                   "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
                   "</ul>",
-            default_value: "homepage,quickmark,tabopen,paste"
+            default_value: "homepage,quickmark,tabopen,paste",
+            validator: function(value) { return value.split(",").every(function(item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); }); }
         }
     ));
     this.add(new vimperator.Option(["complete", "cpt"], "charlist",
