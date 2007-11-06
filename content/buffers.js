@@ -311,103 +311,100 @@ vimperator.Buffer = function() //{{{
     // TODO: allow callback for filtering out unwanted frames? User defined?
     this.shiftFrameFocus = function(count, forward)
     {
-        try
+        if (!window.content.document instanceof HTMLDocument)
+            return;
+
+        var frames = [];
+
+        // find all frames - depth-first search
+        (function(frame)
         {
-            var frames = [];
+            if (frame.document.body.localName.toLowerCase() == "body")
+                frames.push(frame);
+            for (var i = 0; i < frame.frames.length; i++)
+                arguments.callee(frame.frames[i])
+        })(window.content);
 
-            // find all frames - depth-first search
-            (function(frame)
+        if (frames.length == 0) // currently top is always included
+            return;
+
+        // remove all unfocusable frames
+        // TODO: find a better way to do this - walking the tree is too slow
+        var start = document.commandDispatcher.focusedWindow;
+        frames = frames.filter(function(frame) {
+                frame.focus();
+                if (document.commandDispatcher.focusedWindow == frame)
+                    return frame;
+        });
+        start.focus();
+
+        // find the currently focused frame index
+        // TODO: If the window is a frameset then the first _frame_ should be
+        //       focused.  Since this is not the current FF behaviour,
+        //       we initalize current to -1 so the first call takes us to the
+        //       first frame.
+        var current = -1;
+        for (var i = 0; i < frames.length; i++)
+        {
+            if (frames[i] == document.commandDispatcher.focusedWindow)
             {
-                if (frame.document.body.localName.toLowerCase() == "body")
-                    frames.push(frame);
-                for (var i = 0; i < frame.frames.length; i++)
-                    arguments.callee(frame.frames[i])
-            })(window.content);
-
-            if (frames.length == 0) // currently top is always included
-                return;
-
-            // remove all unfocusable frames
-            // TODO: find a better way to do this
-            var start = document.commandDispatcher.focusedWindow;
-            frames = frames.filter(function(frame) {
-                    frame.focus();
-                    if (document.commandDispatcher.focusedWindow == frame)
-                        return frame;
-            });
-            start.focus();
-
-            // find the currently focused frame index
-            // TODO: If the window is a frameset then the first _frame_ should be
-            //       focused.  Since this is not the current FF behaviour,
-            //       we initalize current to -1 so the first call takes us to the
-            //       first frame.
-            var current = -1;
-            for (var i = 0; i < frames.length; i++)
-            {
-                if (frames[i] == document.commandDispatcher.focusedWindow)
-                {
-                    var current = i;
-                    break;
-                }
+                var current = i;
+                break;
             }
+        }
 
-            // calculate the next frame to focus
-            var next = current;
-            if (forward)
-            {
-                if (count > 1)
-                    next = current + count;
-                else
-                    next++;
-
-                if (next > frames.length - 1)
-                {
-                    if (current == frames.length - 1)
-                        vimperator.beep(); // still allow the frame indicator to be activated
-
-                    next = frames.length - 1;
-                }
-            }
+        // calculate the next frame to focus
+        var next = current;
+        if (forward)
+        {
+            if (count > 1)
+                next = current + count;
             else
+                next++;
+
+            if (next > frames.length - 1)
             {
-                if (count > 1)
-                    next = current - count;
-                else
-                    next--;
+                if (current == frames.length - 1)
+                    vimperator.beep(); // still allow the frame indicator to be activated
 
-                if (next < 0)
-                {
-                    if (current == 0)
-                        vimperator.beep(); // still allow the frame indicator to be activated
-
-                    next = 0;
-                }
+                next = frames.length - 1;
             }
-
-            // focus next frame and scroll into view
-            frames[next].focus();
-            if (frames[next] != window.content)
-                frames[next].frameElement.scrollIntoView(false);
-
-            // add the frame indicator
-            var doc = frames[next].document;
-            var indicator = doc.createElement("div");
-            indicator.id = "vimperator-frame-indicator";
-            // NOTE: need to set a high z-index - it's a crapshoot!
-            var style = "background-color: red; opacity: 0.5; z-index: 999;" +
-                        "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
-            indicator.setAttribute("style", style);
-            doc.body.appendChild(indicator);
-
-            // remove the frame indicator
-            setTimeout(function() { doc.body.removeChild(indicator); }, 500);
         }
-        catch (e)
+        else
         {
-            // FIXME: fail silently here for now
-            //vimperator.log(e);
+            if (count > 1)
+                next = current - count;
+            else
+                next--;
+
+            if (next < 0)
+            {
+                if (current == 0)
+                    vimperator.beep(); // still allow the frame indicator to be activated
+
+                next = 0;
+            }
         }
+
+        // focus next frame and scroll into view
+        frames[next].focus();
+        if (frames[next] != window.content)
+            frames[next].frameElement.scrollIntoView(false);
+
+        // add the frame indicator
+        // TODO: make this an XBL element rather than messing with the content
+        // document
+        var doc = frames[next].document;
+        var indicator = doc.createElement("div");
+        indicator.id = "vimperator-frame-indicator";
+        // NOTE: need to set a high z-index - it's a crapshoot!
+        var style = "background-color: red; opacity: 0.5; z-index: 999;" +
+                    "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
+        indicator.setAttribute("style", style);
+        doc.body.appendChild(indicator);
+
+        // remove the frame indicator
+        setTimeout(function() { doc.body.removeChild(indicator); }, 500);
     }
 
     // updates the buffer preview in place only if list is visible
@@ -506,13 +503,13 @@ vimperator.Buffer = function() //{{{
             if (!aData || !aPrincipal)
                 return false;
 
-            if (!aIsFeed) 
+            if (!aIsFeed)
             {
                 var type = aData.type && aData.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
                 aIsFeed = (type == "application/rss+xml" || type == "application/atom+xml");
-                if (!aIsFeed) 
+                if (!aIsFeed)
                 {
                     // really slimy: general XML types with magic letters in the title
                     const titleRegex = /(^|\s)rss($|\s)/i;
@@ -521,7 +518,7 @@ vimperator.Buffer = function() //{{{
                 }
             }
 
-            if (aIsFeed) 
+            if (aIsFeed)
             {
                 try
                 {
@@ -595,7 +592,7 @@ vimperator.Buffer = function() //{{{
         // put feeds rss into pageFeeds[]
         var linkNodes = window.content.document.getElementsByTagName("link");
         var length = linkNodes.length;
-        for (var i = 0; i < length; i++) 
+        for (var i = 0; i < length; i++)
         {
             var link = linkNodes[i];
             if (!link.href)
@@ -603,16 +600,16 @@ vimperator.Buffer = function() //{{{
 
             var rel = link.rel && link.rel.toLowerCase();
             var rels = {};
-            if (rel) 
+            if (rel)
             {
                 for each (let relVal in rel.split(/\s+/))
                     rels[relVal] = true;
             }
 
-            if (rels.feed || (link.type && rels.alternate && !rels.stylesheet)) 
+            if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
             {
                 var feed = { title: link.title, href: link.href, type: link.type || "" };
-                if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed)) 
+                if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
                 {
 //                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"]; // TODO: dig into that.. --calmar
                     var type = feed.type || "application/rss+xml";
@@ -628,18 +625,18 @@ vimperator.Buffer = function() //{{{
             var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
             var title = window.content.document.title || "[No Title]";
 
-            if (pageSize[1]) 
+            if (pageSize[1])
                 info.push(pageSize[1] + "KiB");
 
             var lastMod = window.content.document.lastModified.slice(0, -3);
-            if (lastMod) 
+            if (lastMod)
                 info.push(lastMod);
 
             var countFeeds = "";
             if (pageFeeds.length)
-                countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds"); 
+                countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds");
 
-            if (countFeeds) 
+            if (countFeeds)
                 info.push(countFeeds);
 
             var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
@@ -652,7 +649,7 @@ vimperator.Buffer = function() //{{{
         pageGeneral.push(["URL", vimperator.util.highlightURL(window.content.document.location.toString(), true)]);
 
         var ref = "referrer" in window.content.document && window.content.document.referrer;
-        if (ref) 
+        if (ref)
             pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
 
         if (pageSize[0])
@@ -697,26 +694,26 @@ vimperator.Buffer = function() //{{{
         {
             switch (option[z])
             {
-                case "g": 
+                case "g":
                     if (pageGeneral.length > 1)
                     {
-                        pageInfoText += br + createTable(pageGeneral); 
+                        pageInfoText += br + createTable(pageGeneral);
                         if (!br)
                             br = "<br/>";
                     }
                     break;
-                case "f": 
+                case "f":
                     if (pageFeeds.length > 1)
                     {
-                        pageInfoText += br + createTable(pageFeeds); 
+                        pageInfoText += br + createTable(pageFeeds);
                         if (!br)
                             br = "<br/>";
                     }
                     break;
-                case "m": 
+                case "m":
                     if (pageMeta.length > 1)
                     {
-                        pageInfoText += br + createTable(pageMeta); 
+                        pageInfoText += br + createTable(pageMeta);
                         if (!br)
                             br = "<br/>";
                     }
