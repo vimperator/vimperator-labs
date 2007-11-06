@@ -40,7 +40,7 @@ vimperator.Bookmarks = function() //{{{
                               .getService(Components.interfaces.nsITaggingService);
     const search_service    = Components.classes["@mozilla.org/browser/search-service;1"]
                               .getService(Components.interfaces.nsIBrowserSearchService);
-    const io_service        = Components.classes['@mozilla.org/network/io-service;1']
+    const io_service        = Components.classes["@mozilla.org/network/io-service;1"]
                               .getService(Components.interfaces.nsIIOService);
 
     var bookmarks = null;
@@ -623,7 +623,7 @@ vimperator.Marks = function() //{{{
         }
         else
         {
-            var pattern = new RegExp("[" + filter.replace(/\s+/g, '') + "]");
+            var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
             for (var mark in url_marks)
             {
                 if (pattern.test(mark))
@@ -758,7 +758,7 @@ vimperator.QuickMarks = function() //{{{
 
     this.remove = function(filter)
     {
-        var pattern = new RegExp("[" + filter.replace(/\s+/g, '') + "]");
+        var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
         for (var qmark in qmarks)
         {

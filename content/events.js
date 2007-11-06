@@ -634,7 +634,7 @@ vimperator.Events = function() //{{{
         }
 
         var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-        var candidate_command = (vimperator.input.buffer + key).replace(count_str, '');
+        var candidate_command = (vimperator.input.buffer + key).replace(count_str, "");
         var map;
 
         // counts must be at the start of a complete mapping (10j -> go 10 lines down)

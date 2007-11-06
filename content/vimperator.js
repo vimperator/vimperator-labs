@@ -33,9 +33,9 @@ const vimperator = (function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // our services
-    var sound_service = Components.classes['@mozilla.org/sound;1']
+    var sound_service = Components.classes["@mozilla.org/sound;1"]
         .getService(Components.interfaces.nsISound);
-    var console_service = Components.classes['@mozilla.org/consoleservice;1']
+    var console_service = Components.classes["@mozilla.org/consoleservice;1"]
         .getService(Components.interfaces.nsIConsoleService);
     var environment_service = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
@@ -126,7 +126,7 @@ const vimperator = (function() //{{{
             if (!modifiers)
                 modifiers = {};
 
-            var [count, cmd, special, args] = vimperator.commands.parseCommand(str.replace(/^'(.*)'$/, '$1'));
+            var [count, cmd, special, args] = vimperator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
             var command = vimperator.commands.get(cmd);
 
             if (command === null)
@@ -292,7 +292,7 @@ const vimperator = (function() //{{{
             if (typeof msg == "object")
                 msg = this.objectToString(msg, false);
 
-            console_service.logStringMessage('vimperator: ' + msg);
+            console_service.logStringMessage("vimperator: " + msg);
         },
 
         // open one or more URLs

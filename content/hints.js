@@ -65,11 +65,11 @@ vimperator.Hints = function() //{{{
         var elem = valid_hints[hintNumber - 1] || valid_hints[0];
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
-        if (elemTagName == 'frame' || elemTagName == 'iframe')
+        if (elemTagName == "frame" || elemTagName == "iframe")
             return 0;
 
         // for imagemap
-        if (elemTagName == 'area')
+        if (elemTagName == "area")
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
@@ -78,12 +78,12 @@ vimperator.Hints = function() //{{{
         var doc = window.content.document;
         var view = window.document.defaultView;
 
-        var evt = doc.createEvent('MouseEvents');
-        evt.initMouseEvent('mousedown', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+        var evt = doc.createEvent("MouseEvents");
+        evt.initMouseEvent("mousedown", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
         elem.dispatchEvent(evt);
 
-        var evt = doc.createEvent('MouseEvents');
-        evt.initMouseEvent('click', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+        var evt = doc.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
         elem.dispatchEvent(evt);
 
         return true;
@@ -97,7 +97,7 @@ vimperator.Hints = function() //{{{
         var elem = valid_hints[hintNumber - 1] || valid_hints[0];
         var doc = window.content.document;
         var elemTagName = elem.localName.toLowerCase();
-        if (elemTagName == 'frame' || elemTagName == 'iframe')
+        if (elemTagName == "frame" || elemTagName == "iframe")
         {
             elem.contentWindow.focus();
             return;
@@ -107,18 +107,18 @@ vimperator.Hints = function() //{{{
             elem.focus();
         }
 
-        var evt = doc.createEvent('MouseEvents');
+        var evt = doc.createEvent("MouseEvents");
         var x = 0;
         var y = 0;
         // for imagemap
-        if (elemTagName == 'area')
+        if (elemTagName == "area")
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
             y = Number(coords[1]);
         }
 
-        evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+        evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evt);
     }
 
@@ -492,7 +492,7 @@ outer:
 
         generate();
         // get all keys from the input queue
-        var mt = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
+        var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
         while (mt.hasPendingEvents())
             mt.processNextEvent(true);
             

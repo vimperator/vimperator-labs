@@ -578,7 +578,7 @@ vimperator.Editor = function() //{{{
                     if (abbrev[lhs][0][0] == "c" && filter == "c")
                         abbrev[lhs][0] = abbrev[lhs][1];
 
-                    abbrev[lhs][1] = '';   
+                    abbrev[lhs][1] = "";   
 
                     return true;
                 }

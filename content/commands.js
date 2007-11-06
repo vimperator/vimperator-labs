@@ -103,8 +103,8 @@ vimperator.Command.prototype.hasName = function(name)
     // true if the candidate matches unambiguously
     function matchAbbreviation(name, format)
     {
-        var minimum = format.indexOf('[');                    // minumum number of characters for a command name match
-        var fullname = format.replace(/\[(\w+)\]$/, '$1');    // full command name
+        var minimum = format.indexOf("[");                    // minumum number of characters for a command name match
+        var fullname = format.replace(/\[(\w+)\]$/, "$1");    // full command name
         if (fullname.indexOf(name) == 0 && name.length >= minimum)
             return true;
         else
@@ -485,7 +485,7 @@ vimperator.Commands = function() //{{{
     this.parseCommand = function(str, tag)
     {
         // remove comments
-        str.replace(/\s*".*$/, '');
+        str.replace(/\s*".*$/, "");
 
         if (tag) // we already have a multiline heredoc construct
         {
@@ -516,7 +516,7 @@ vimperator.Commands = function() //{{{
                 matches[4] = tag[1];
         }
         else
-            matches[3] = '';
+            matches[3] = "";
 
         return matches;
     }
@@ -1052,7 +1052,7 @@ vimperator.Commands = function() //{{{
                     else
                     {
                         if (!reference[0]) {
-                            if (reference[2] == 'g')
+                            if (reference[2] == "g")
                                 reference[0] = vimperator.globalVariables;
                             else
                                 return; // for now
@@ -1060,11 +1060,11 @@ vimperator.Commands = function() //{{{
 
                         if (match[3])
                         {
-                            if (match[3] == '+')
+                            if (match[3] == "+")
                                 reference[0][reference[1]] += expr;
-                            else if (match[3] == '-')
+                            else if (match[3] == "-")
                                 reference[0][reference[1]] -= expr;
-                            else if (match[3] == '.')
+                            else if (match[3] == ".")
                                 reference[0][reference[1]] += expr.toString();
                         }
                         else
@@ -1080,13 +1080,13 @@ vimperator.Commands = function() //{{{
                     return vimperator.echoerr("E121: Undefined variable: " + match[1]);
 
                 var value = reference[0][reference[1]];
-                if (typeof value == 'number')
-                    var prefix = '#';
-                else if (typeof value == 'function')
-                    var prefix = '*';
+                if (typeof value == "number")
+                    var prefix = "#";
+                else if (typeof value == "function")
+                    var prefix = "*";
                 else
-                    var prefix = '';
-                vimperator.echo(reference[1] + '\t\t' + prefix + value);
+                    var prefix = "";
+                vimperator.echo(reference[1] + "\t\t" + prefix + value);
             }
         },
         {
@@ -1220,8 +1220,8 @@ vimperator.Commands = function() //{{{
 
             if (leader_reg.test(lhs))
             {
-                var leader_ref = vimperator.variableReference('mapleader');
-                var leader = leader_ref[0] ? leader_ref[0][leader_ref[1]] : '\\';
+                var leader_ref = vimperator.variableReference("mapleader");
+                var leader = leader_ref[0] ? leader_ref[0][leader_ref[1]] : "\\";
 
                 lhs = lhs.replace(leader_reg, leader);
             }
@@ -1299,7 +1299,7 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var filter = args.replace(/[^a-zA-Z]/g, '');
+            var filter = args.replace(/[^a-zA-Z]/g, "");
             vimperator.marks.list(filter);
         },
         {
@@ -1571,7 +1571,7 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var filter = args.replace(/[^a-zA-Z0-9]/g, '');
+            var filter = args.replace(/[^a-zA-Z0-9]/g, "");
             vimperator.quickmarks.list(filter);
         },
         {
@@ -1893,7 +1893,7 @@ vimperator.Commands = function() //{{{
             {
                 if (menu.childNodes[i].label == args)
                 {
-                    eval(menu.childNodes[i].getAttribute('oncommand'));
+                    eval(menu.childNodes[i].getAttribute("oncommand"));
                     break;
                 }
             }
@@ -2209,7 +2209,7 @@ vimperator.Commands = function() //{{{
                 return vimperator.echoerr("E471: Argument required");
 
             var names = args.split(/ /);
-            if (typeof names == 'string') names = [names];
+            if (typeof names == "string") names = [names];
             var length = names.length;
             for (var i = 0, name = names[i]; i < length; name = names[++i])
             {

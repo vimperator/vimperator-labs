@@ -175,8 +175,8 @@ vimperator.Buffer = function() //{{{
         var result = doc.evaluate(expression, elem,
             function lookupNamespaceURI(prefix) {
               switch (prefix) {
-                case 'xhtml':
-                  return 'http://www.w3.org/1999/xhtml';
+                case "xhtml":
+                  return "http://www.w3.org/1999/xhtml";
                 default:
                   return null;
               }
@@ -625,7 +625,7 @@ vimperator.Buffer = function() //{{{
         if (!verbose)
         {
             var info = []; // tmp array for joining later
-            var file = window.content.document.location.pathname.split('/').pop() || "[No Name]";
+            var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
             var title = window.content.document.title || "[No Title]";
 
             if (pageSize[1]) 

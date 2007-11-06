@@ -99,7 +99,7 @@ vimperator.Search = function() //{{{
         pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // remove any modifer escape \
-        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1');
+        pattern = pattern.replace(/\\(\\[cCuU])/g, "$1");
 
         search_string = pattern;
     }
