@@ -90,12 +90,15 @@ tr.description {
 }
 table.commands {
     background-color: rgb(250, 240, 230);
+    color: black;
 }
 table.mappings {
     background-color: rgb(230, 240, 250);
+    color: black;
 }
 table.options {
     background-color: rgb(240, 250, 230);
+    color: black;
 }
 
 fieldset.paypal {
