@@ -182,7 +182,7 @@ vimperator.Commands = function() //{{{
             outer:
             for (var i = 0; i < str.length; i++)
             {
-                switch(str[i])
+                switch (str[i])
                 {
                 case "\"":
                     if (in_escape_key)
@@ -1111,7 +1111,7 @@ vimperator.Commands = function() //{{{
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
-                vimperator.editor.addAbbreviation("!", lhs, rhs); 
+                vimperator.editor.addAbbreviation("!", lhs, rhs);
             else
                 vimperator.editor.listAbbreviations("!", lhs);
         },
@@ -1135,7 +1135,7 @@ vimperator.Commands = function() //{{{
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
-                vimperator.editor.addAbbreviation("c", lhs, rhs); 
+                vimperator.editor.addAbbreviation("c", lhs, rhs);
             else
                 vimperator.editor.listAbbreviations("c", lhs);
         },
@@ -1157,7 +1157,7 @@ vimperator.Commands = function() //{{{
             var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
-                vimperator.editor.addAbbreviation("i", lhs, rhs); 
+                vimperator.editor.addAbbreviation("i", lhs, rhs);
             else
                 vimperator.editor.listAbbreviations("i", lhs);
         },
@@ -1641,6 +1641,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["se[t]"],
+        // TODO: support setting multiple options at once
         function(args, special, count, modifiers)
         {
             if (special)
@@ -1649,63 +1650,64 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var only_non_default = false; //used for :set to print non-default options
+            var only_non_default = false; // used for :set to print non-default options
             if (!args)
             {
-                args = "all?";
+                args = "all";
                 only_non_default = true;
             }
 
-            //                               1        2       3    4  5      6
-            var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?(([+-])?=(.*))?/);
+            //                               1        2       3       4  5       6
+            var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
             if (!matches)
             {
                 vimperator.echoerr("E518: Unknown option: " + args);
                 return;
             }
 
-            var no = false;
+            var unset_boolean = false;
             if (matches[1] == "no")
-                no = true;
+                unset_boolean = true;
 
-            var opt = matches[2];
-
+            var name = matches[2];
             var all = false;
-            if (opt == "all")
+            if (name == "all")
                 all = true;
 
-            var option = vimperator.options.get(opt);
+            var option = vimperator.options.get(name);
             if (!option && !all)
             {
-                vimperator.echoerr("E518: Unknown option: " + opt);
+                vimperator.echoerr("E518: Unknown option: " + args);
                 return;
             }
 
+            var value_given = !!matches[4];
+
             var get = false;
-            if (all || matches[3] == "?" || (option.type != "boolean" && matches[4] === undefined))
+            if (all || matches[3] == "?" || (option.type != "boolean" && !value_given))
                 get = true;
 
             var reset = false;
             if (matches[3] == "&")
                 reset = true;
 
-            var invert = false;
+            var invert_boolean = false;
             if (matches[1] == "inv" || matches[3] == "!")
-                invert = true;
+                invert_boolean = true;
 
-            var oper = matches[5];
+            var operator = matches[5];
 
-            var val = matches[6];
-            if (val === undefined)
-                val = "";
+            var value = matches[6];
+            if (value === undefined)
+                value = "";
 
             // reset a variable to its default value
             if (reset)
             {
                 if (all)
                 {
-                    for (let opt in vimperator.options)
-                        opt.reset();
+                    for (let option in vimperator.options)
+                        option.reset();
                 }
                 else
                 {
@@ -1728,68 +1730,116 @@ vimperator.Commands = function() //{{{
                 }
             }
             // write access
+            // NOTE: the behaviour is generally Vim compatible but could be
+            // improved. i.e. Vim's behaviour is pretty sloppy to no real
+            // benefit
             else
             {
-                var type = option.type;
-                if (type == "boolean")
+                var current_value = option.value;
+                var new_value;
+
+                switch (option.type)
                 {
-                    if (matches[4])
-                        vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
-                    else if (invert)
-                        option.value = !option.value;
-                    else
-                        option.value = !no;
-                }
-                else if (type == "number")
-                {
-                    var num = parseInt(val, 10);
-                    if (isNaN(num))
-                        vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
-                    else
-                    {
-                        var cur_val = option.value;
-                        if (oper == '+') num = cur_val + num;
-                        if (oper == '-') num = cur_val - num;
-                        // FIXME
-                        if (option.validator != null && option.validator.call(this, num) == false)
-                            vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val); // FIXME: need to be able to specify unique parse error messages
-                        else // all checks passed, execute option handler
-                            option.value = num;
-                    }
-                }
-                else if (type == "charlist" || type == "stringlist" || type == "string")
-                {
-                    var cur_val = option.value;
-                    if (type == "charlist" || type == "string")
-                    {
-                        if (oper == '+' && !cur_val.match(val))
-                            val = cur_val + val;
-                        if (oper == '-') val = cur_val.replace(val, '');
-                    }
-                    else
-                    {
-                        if (oper == '+' && !cur_val.match(val) && cur_val.length > 0)
-                                val = cur_val + ',' + val;
-                        if (oper == '-')
+                    case "boolean":
+                        if (value_given)
                         {
-                            val = cur_val.replace(new RegExp(',?' + val), '');
-                            val = val.replace(/^,?/, '');
+                            vimperator.echoerr("E474: Invalid argument: " + args);
+                            return;
                         }
-                    }
-                    // FIXME
-                    if (option.validator != null && option.validator.call(this, val) == false)
-                        vimperator.echoerr("E474: Invalid argument: " + option.name + "=" + val);
-                    else // all checks passed, execute option handler
-                        option.value = val;
+
+                        if (invert_boolean)
+                            new_value = !option.value;
+                        else
+                            new_value = !unset_boolean;
+
+                        break;
+
+                    case "number":
+                        value = parseInt(value, 10);
+
+                        if (isNaN(value))
+                        {
+                            vimperator.echoerr("E521: Number required after =: " + args);
+                            return;
+                        }
+
+                        if (operator == "+")
+                            new_value = current_value + value;
+                        else if (operator == "-")
+                            new_value = current_value - value;
+                        else if (operator == "^")
+                            new_value = current_value * value;
+                        else
+                            new_value = value;
+
+                        break;
+
+                    case "charlist":
+                        if (operator == "+")
+                            new_value = current_value.replace(new RegExp("[" + value + "]", "g"), "") + value;
+                        else if (operator == "-")
+                            new_value = current_value.replace(value, "");
+                        else if (operator == "^")
+                            // NOTE: Vim doesn't prepend if there's a match in the current value
+                            new_value = value + current_value.replace(new RegExp("[" + value + "]", "g"), "");
+                        else
+                            new_value = value;
+
+                        break;
+
+                    case "stringlist":
+                        if (operator == "+")
+                        {
+                            if (!current_value.match(value))
+                                new_value = (current_value ? current_value + "," : "") + value;
+                            else
+                                new_value = current_value;
+                        }
+                        else if (operator == "-")
+                        {
+                            new_value = current_value.replace(new RegExp("^" + value + ",?|," + value), "");
+                        }
+                        else if (operator == "^")
+                        {
+                            if (!current_value.match(value))
+                                new_value = value + (current_value ? "," : "") + current_value;
+                            else
+                                new_value = current_value;
+                        }
+                        else
+                        {
+                            new_value = value;
+                        }
+
+                        break;
+
+                    case "string":
+                        if (operator == "+")
+                            new_value = current_value + value;
+                        else if (operator == "-")
+                            new_value = current_value.replace(value, "");
+                        else if (operator == "^")
+                            new_value = value + current_value;
+                        else
+                            new_value = value;
+
+                        break;
+
+                    default:
+                        vimperator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
                 }
+
+                if (option.isValidValue(new_value))
+                    option.value = new_value;
                 else
-                    vimperator.echoerr("E685: Internal error: option format `" + type + "' not supported");
+                    // FIXME: need to be able to specify more specific errors
+                    vimperator.echoerr("E474: Invalid argument: " + args);
             }
         },
         {
             usage: ["se[t][!]", "se[t] {option}?", "se[t] [no]{option}", "se[t] {option}[+-]={value}", "se[t] {option}! | inv{option}", "se[t] {option}&"],
             short_help: "Set an option",
-            help: "Permanently change an option. In contrast to Vim options are currently stored throughout sessions.<br/>" +
+            help: "Permanently change an option.<br/>" +
                   "<code class=\"command\">:set</code> without an argument shows all Vimperator options which differ from their default values.<br/>" +
                   "<code class=\"command\">:set!</code> without an argument shows all about:config preferences which differ from their default values.<br/>" +
                   "There are three types of options: boolean, number and string. " +
@@ -1798,7 +1848,8 @@ vimperator.Commands = function() //{{{
                   "<code class=\"command\">:set option!</code> and <code class=\"command\">:set invoption</code> invert the value of a boolean option.<br/>" +
                   "<code class=\"command\">:set option?</code> or <code class=\"command\">:set option</code>(for string and list options) shows the current value of an option.<br/>" +
                   "<code class=\"command\">:set option&amp;</code> resets an option to its default value.<br/>" +
-                  "<code class=\"command\">:set option+={value}</code> and <code class=\"command\">:set option-={value}</code> adds/subtracts {value} to a number option and append/remove {value} to a string option.<br/>" +
+                  "<code class=\"command\">:set option+={value}</code>, <code class=\"command\">:set option^={value}</code> and <code class=\"command\">:set option-={value}</code> " +
+                  "adds/multiplies/subtracts <code class=\"argument\">{value}</code> from a number option and appends/prepends/removes <code class=\"argument\">{value}</code> from a string option.<br/>" +
                   "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
             completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
         }
