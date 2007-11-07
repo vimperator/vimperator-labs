@@ -311,7 +311,7 @@ const vimperator = (function() //{{{
             // Number
             else if (match = string.match(/^(\d+)$/))
             {
-                return parseInt(match[1]);
+                return parseInt(match[1], 10);
             }
 
             var reference = this.variableReference(string);

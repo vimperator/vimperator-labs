@@ -67,9 +67,9 @@ vimperator.Tabs = function() //{{{
         else
         {
             if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
-                position += parseInt(spec);
+                position += parseInt(spec, 10);
             else                           // absolute position
-                position = parseInt(spec);
+                position = parseInt(spec, 10);
         }
 
         if (position > last)

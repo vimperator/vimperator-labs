@@ -207,7 +207,7 @@ vimperator.Commands = function() //{{{
 
         // parse count
         if (matches[0])
-            matches[0] = parseInt(matches[0]);
+            matches[0] = parseInt(matches[0], 10);
         else
             matches[0] = -1;
 
@@ -1301,7 +1301,7 @@ vimperator.Commands = function() //{{{
                 }
                 else if (type == "number")
                 {
-                    var num = parseInt(val, 10);
+                    var num = parseInt(val);
                     if (isNaN(num))
                         vimperator.echoerr("E521: Number required after =: " + option.name + "=" + val);
                     else
@@ -1483,7 +1483,7 @@ vimperator.Commands = function() //{{{
             }
             else if (/^\d+$/.test(args))
             {
-                var index = parseInt(args) - 1;
+                var index = parseInt(args, 10) - 1;
                 if (index < vimperator.tabs.count())
                     vimperator.tabs.select(index, true);
                 else
