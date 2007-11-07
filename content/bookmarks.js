@@ -760,12 +760,12 @@ vimperator.Marks = function() //{{{
                    "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
         for (var i = 0; i < marks.length; i++)
         {
-            list += "<tr>"
-                  + "<td> "                        + marks[i][0]                              +  "</td>"
-                  + "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>"
-                  + "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>"
-                  + "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) +  "</td>"
-                  + "</tr>";
+            list += "<tr>" +
+                    "<td> "                        + marks[i][0]                              +  "</td>" +
+                    "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
+                    "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
+                    "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) + "</td>" +
+                    "</tr>";
         }
         list += "</table>";
 
