@@ -29,9 +29,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.util = {
     escapeHTML: function(str)
     {
-        var e = window.content.document.createElement("div");
-        e.appendChild(window.content.document.createTextNode(str));
-        return e.innerHTML;
+        // XXX: the following code is _much_ slower than a simple .replace()
+        // :history display went down from 2 to 1 second after changing
+        //
+        // var e = window.content.document.createElement("div");
+        // e.appendChild(window.content.document.createTextNode(str));
+        // return e.innerHTML;
+        return str.replace("&", "&amp;", "g").replace("<", "&lt;", "g").replace(">", "&gt;", "g");
     },
 
     // TODO: use :highlight color groups
@@ -81,7 +85,7 @@ vimperator.util = {
     {
         if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
             return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
-        else 
+        else
             return str;
     },
 
