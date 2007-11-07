@@ -1753,7 +1753,7 @@ vimperator.Commands = function() //{{{
                         break;
 
                     case "number":
-                        value = parseInt(value, 10);
+                        value = parseInt(value);
 
                         if (isNaN(value))
                         {
