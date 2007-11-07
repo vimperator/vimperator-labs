@@ -75,6 +75,27 @@ vimperator.util = {
         }
 
         return arg;
+    },
+
+    highlightURL: function(str, force)
+    {
+        if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
+            return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
+        else 
+            return str;
+    },
+
+    formatNumber: function(num)
+    {
+        var strNum = (num + "").split(".", 2);
+
+        for (var u = strNum[0].length - 3; u > 0; u -= 3)
+            strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
+
+        if (strNum[1])
+            strNum[0] += "." + strNum[1]
+
+        return strNum[0];
     }
 }
 

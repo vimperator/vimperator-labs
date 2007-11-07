@@ -449,13 +449,83 @@ vimperator.Buffer = function() //{{{
 
     this.pageInfo = function(verbose)
     {
-        // to get the file size later (from pageInfo.js) (setup cacheEntryDescriptor)
+        // TODO: copied from firefox. Needs some review/work...
+        //    const feedTypes = {
+        //        "application/rss+xml": gBundle.getString("feedRss"),
+        //        "application/atom+xml": gBundle.getString("feedAtom"),
+        //        "text/xml": gBundle.getString("feedXML"),
+        //        "application/xml": gBundle.getString("feedXML"),
+        //        "application/rdf+xml": gBundle.getString("feedXML")
+        //    };
+        function isValidFeed(aData, aPrincipal, aIsFeed)
+        {
+            if (!aData || !aPrincipal)
+                return false;
+
+            if (!aIsFeed)
+            {
+                var type = aData.type && aData.type.toLowerCase();
+                type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
+
+                aIsFeed = (type == "application/rss+xml" || type == "application/atom+xml");
+                if (!aIsFeed)
+                {
+                    // really slimy: general XML types with magic letters in the title
+                    const titleRegex = /(^|\s)rss($|\s)/i;
+                    aIsFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
+                                type == "application/xml") && titleRegex.test(aData.title));
+                }
+            }
+
+            if (aIsFeed)
+            {
+                try
+                {
+                    urlSecurityCheck(aData.href, aPrincipal,
+                            Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                }
+                catch(ex)
+                {
+                    aIsFeed = false;
+                }
+            }
+
+            if (type)
+                aData.type = type;
+
+            return aIsFeed;
+        }
+
+        // TODO: could this be useful for other commands?
+        function createTable(data)
+        {
+            var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
+                      data[data.length -1][0] + "</th></tr>";
+
+            if (data.length - 1)
+            {
+                for (var i = 0; i < data.length - 1 ; i++)
+                    ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
+            }
+            else
+            {
+                ret += "<tr><td colspan='2'>  (" + data[data.length - 1][1] + ")</td></tr>";
+            }
+
+            return ret + "</table>";
+        }
+
+        var pageGeneral = [];
+        var pageFeeds = [];
+        var pageMeta = [];
+
+        // get file size
         const nsICacheService = Components.interfaces.nsICacheService;
         const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
         const cacheService = Components.classes["@mozilla.org/network/cache-service;1"].getService(nsICacheService);
         var httpCacheSession = cacheService.createSession("HTTP", 0, true);
-        httpCacheSession.doomEntriesIfExpired = false;
         var ftpCacheSession = cacheService.createSession("FTP", 0, true);
+        httpCacheSession.doomEntriesIfExpired = false;
         ftpCacheSession.doomEntriesIfExpired = false;
         var cacheKey = window.content.document.location.toString().replace(/#.*$/, "");
         try
@@ -471,49 +541,83 @@ vimperator.Buffer = function() //{{{
             catch (ex2) { }
         }
 
+        var pageSize = []; // [0] bytes; [1] kbytes
+        if (cacheEntryDescriptor)
+        {
+            pageSize[0] = vimperator.util.formatNumber(cacheEntryDescriptor.dataSize);
+            pageSize[1] = vimperator.util.formatNumber(Math.round(cacheEntryDescriptor.dataSize / 1024 * 100) / 100);
+        }
+
+        // put feeds rss into pageFeeds[]
+        var linkNodes = window.content.document.getElementsByTagName("link");
+        var length = linkNodes.length;
+        for (var i = 0; i < length; i++)
+        {
+            var link = linkNodes[i];
+            if (!link.href)
+                continue;
+
+            var rel = link.rel && link.rel.toLowerCase();
+            var rels = {};
+            if (rel)
+            {
+                for each (let relVal in rel.split(/\s+/))
+                    rels[relVal] = true;
+            }
+
+            if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
+            {
+                var feed = { title: link.title, href: link.href, type: link.type || "" };
+                if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
+                {
+//                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"]; // TODO: dig into that.. --calmar
+                    var type = feed.type || "application/rss+xml";
+                    pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true)]);
+                }
+            }
+        }
+
+        // Ctrl-g single line output
         if (!verbose)
         {
-            // TODO: strip off any component after &
-            var file = window.content.document.location.pathname.split('/').pop();
-            if (!file)
-                file = "[No Name]";
-
+            var info = []; // tmp array for joining later
+            var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
             var title = window.content.document.title || "[No Title]";
 
-            if (cacheEntryDescriptor)
-                var pageSize = Math.round(cacheEntryDescriptor.dataSize / 1024 * 100) / 100 + "KB";
+            if (pageSize[1])
+                info.push(pageSize[1] + "KiB");
 
-            var lastmod = window.content.document.lastModified.slice(0, -3);
+            var lastMod = window.content.document.lastModified.slice(0, -3);
+            if (lastMod)
+                info.push(lastMod);
 
-            var pageInfoText = '"' + file + '" [' + pageSize + ", " + lastmod + "] " + title;
+            var countFeeds = "";
+            if (pageFeeds.length)
+                countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds");
 
+            if (countFeeds)
+                info.push(countFeeds);
+
+            var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
             vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
             return;
         }
 
-        var pageGeneral = [];       // keeps general infos
-        var pageMeta = [];          // keeps meta infos
-
         // get general infos
         pageGeneral.push(["Title", window.content.document.title]);
-        pageGeneral.push(["URL", '<a class="hl-URL" href="' + window.content.document.location.toString() + '">' +
-                window.content.document.location.toString() + '</a>']);
-        pageGeneral.push(["Referrer",  ("referrer" in window.content.document && window.content.document.referrer)]);
+        pageGeneral.push(["URL", vimperator.util.highlightURL(window.content.document.location.toString(), true)]);
+
+        var ref = "referrer" in window.content.document && window.content.document.referrer;
+        if (ref)
+            pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
+
+        if (pageSize[0])
+            pageGeneral.push(["File Size", pageSize[1] + "KiB (" + pageSize[0] + " bytes)"]);
+
         pageGeneral.push(["Mime-Type", window.content.document.contentType]);
         pageGeneral.push(["Encoding",  window.content.document.characterSet]);
-
-        if (cacheEntryDescriptor)
-        {
-            var pageSize = cacheEntryDescriptor.dataSize;
-            var bytes = pageSize + '';
-            for (var u = bytes.length - 3; u > 0; u -= 3)        // make a 1400 -> 1'400
-                bytes = bytes.slice(0, u) + "," + bytes.slice(u, bytes.length);
-            pageGeneral.push(["File Size", (Math.round(pageSize / 1024 * 100) / 100) + "KB (" + bytes + " bytes)"]);
-        }
-
-        pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?
-                "Quirks Mode" : "Full/Almost Standards Mode"]);
-        pageGeneral.push(["Last Modified", window.content.document.lastModified]);
+        pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
+        pageGeneral.push(["Last Modified", window.content.document.lastModified]); //TODO: do not show bogus times (=current time)
 
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
@@ -526,55 +630,55 @@ vimperator.Buffer = function() //{{{
             for (var i = 0; i < length; i++)
             {
                 var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// +
-                    //'<span style="font-weight: normal; font-size: 90%;">-eq</span>'; // XXX: really important?
-                var tmpTagNr = tmpTag + "-" + i;     // allows multiple (identical) meta names
+                var tmpTagNr = tmpTag + "-" + i; // allows multiple (identical) meta names
                 tmpDict[tmpTagNr] = [tmpTag, metaNodes[i].content];
-                tmpSort.push(tmpTagNr);      // array for sorting
+                tmpSort.push(tmpTagNr); // array for sorting
             }
 
             // sort: ignore-case
             tmpSort.sort(function (a,b){return a.toLowerCase() > b.toLowerCase() ? 1 : -1;});
-
             for (var i=0; i < tmpSort.length; i++)
-            {
-                pageMeta.push([tmpDict[tmpSort[i]][0], tmpDict[tmpSort[i]][1]]);
-            }
+                pageMeta.push([tmpDict[tmpSort[i]][0], vimperator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
         }
+
+        pageMeta.push(["Meta Tags", ""]); // add extra text to the end
+        pageGeneral.push(["General Info", ""]);
+        pageFeeds.push(["Feeds", ""]);
 
         var pageInfoText = "";
         var option = vimperator.options["pageinfo"];
+        var br = "";
 
         for (var z = 0; z < option.length; z++)
         {
-            var newLine = z > 0 ? "<br/>" : "";
             switch (option[z])
             {
-                case "g": pageInfoText += newLine + "<table><tr><td class='hl-Title' style='font-weight: bold;' colspan='2'>General</td></tr>";
-                    for (var i = 0; i < pageGeneral.length; i++)
+                case "g":
+                    if (pageGeneral.length > 1)
                     {
-                        if (pageGeneral[i][1])
-                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageGeneral[i][0] + ": </td><td>" + pageGeneral[i][1] + "</td></tr>";
+                        pageInfoText += br + createTable(pageGeneral);
+                        if (!br)
+                            br = "<br/>";
                     }
-                    pageInfoText += "</table>";
                     break;
-
-                case "m": pageInfoText += newLine + "<table><tr><td class='hl-Title' style='font-weight: bold;' colspan='2'>Meta Tags</td></tr>";
-                    if (pageMeta.length)
+                case "f":
+                    if (pageFeeds.length > 1)
                     {
-                        for (var i = 0; i < pageMeta.length; i++)
-                        {
-                            pageInfoText += "<tr><td style='font-weight: bold;'>  " + pageMeta[i][0] + ": </td><td>" + pageMeta[i][1] + "</td></tr>";
-                        }
+                        pageInfoText += br + createTable(pageFeeds);
+                        if (!br)
+                            br = "<br/>";
                     }
-                    else
+                    break;
+                case "m":
+                    if (pageMeta.length > 1)
                     {
-                        pageInfoText += "<tr><td colspan='2'>(no Meta-Tags on this page)</td></tr>";
+                        pageInfoText += br + createTable(pageMeta);
+                        if (!br)
+                            br = "<br/>";
                     }
-                    pageInfoText += "</table>";
                     break;
             }
         }
-
         vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
     }
     //}}}
