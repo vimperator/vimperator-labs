@@ -81,6 +81,83 @@ vimperator.util = {
         return arg;
     },
 
+    // takes a string like 'google bla, www.osnews.com'
+    // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
+    stringToURLArray: function(str)
+    {
+        var urls = str.split(/\s*\,\s+/);
+
+        begin: for (var url = 0; url < urls.length; url++)
+        {
+            var new_url = vimperator.buffer.URL;
+            var matches;
+
+            // strip each 'URL' - makes things simpler later on
+            urls[url] = urls[url].replace(/^\s+/, '').replace(/\s+$/, '');
+
+            // FIXME: not really that good (doesn't handle .. in the middle)
+            // check for ./ and ../ (or even .../) to go to a file in the upper directory
+            if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
+            {
+                var tail = matches[1] || "";
+                urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
+                continue;
+            }
+            else if (matches = urls[url].match(/^(?:\.\.$|\.\.\/(\S*))/))
+            {
+                var tail = matches[1] || "";
+                urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1../" + tail);
+                continue;
+            }
+            else if (matches = urls[url].match(/^(?:\.\.\.$|\.\.\.\/(\S*))/))
+            {
+                var location = window.content.document.location;
+                var tail = matches[1] || "";
+                urls[url] = location.protocol + "//" + location.host + "/" + tail;
+                continue;
+            }
+
+            // if the string doesn't look like a valid URL (i.e. contains a space
+            // or does not contain any of: .:/) try opening it with a search engine
+            // or keyword bookmark
+            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
+            {
+                matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
+
+                var alias = matches[1];
+                var text = matches[2] || null;
+
+                // TODO: it would be clearer if the appropriate call to
+                // getSearchURL was made based on whether or not the first word was
+                // indeed an SE alias rather than seeing if getSearchURL can
+                // process the call usefully and trying again if it fails - much
+                // like the comments below ;-)
+
+                // check if the first word is a search engine
+                var search_url = vimperator.bookmarks.getSearchURL(text, alias);
+                if (search_url/* && search_url.length >= 1*/)
+                {
+                    urls[url] = search_url;
+                    continue;
+                }
+                else // the first word was not a search engine, search for the whole string in the default engine
+                {
+                    search_url = vimperator.bookmarks.getSearchURL(urls[url], null);
+                    if (search_url/* && search_url.length >= 1*/)
+                    {
+                        urls[url] = search_url;
+                        continue;
+                    }
+                }
+            }
+
+            // if we are here let Firefox handle the url and hope it does
+            // something useful with it :)
+        }
+
+        return urls;
+    },
+
     highlightURL: function(str, force)
     {
         if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
