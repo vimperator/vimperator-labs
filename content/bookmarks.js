@@ -205,7 +205,7 @@ vimperator.Bookmarks = function() //{{{
     {
         var url = null;
         var postdata = null;
-        if (!engine_name || engine_name == "")
+        if (!engine_name)
             engine_name = vimperator.options["defsearch"];
 
         // we need to make sure our custom alias have been set, even if the user
