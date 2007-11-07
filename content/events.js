@@ -221,12 +221,12 @@ vimperator.Events = function() //{{{
             vimperator.history.add(url, title);
 
             // code which is only relevant if the page load is the current tab goes here:
-            if (doc == getBrowser().selectedBrowser.contentDocument)
-            {
-                // FIXME: this currently causes window map events which is _very_ annoying
-                // we want to stay in command mode after a page has loaded
-                //setTimeout(vimperator.focusContent, 10);
-            }
+            //if (doc == getBrowser().selectedBrowser.contentDocument)
+            //{
+            //    // FIXME: this currently causes window map events which is _very_ annoying
+            //    // we want to stay in command mode after a page has loaded
+            //    //setTimeout(vimperator.focusContent, 10);
+            //}
         }
     }
 
