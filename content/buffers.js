@@ -618,6 +618,12 @@ vimperator.Buffer = function() //{{{
             }
         }
 
+        var lastMod = new Date(window.content.document.lastModified).toLocaleString();
+        // FIXME: probably unportable across differnet language versions
+        if (lastMod == "Invalid Date")
+            lastMod = null;
+
+
         // Ctrl-g single line output
         if (!verbose)
         {
@@ -628,7 +634,6 @@ vimperator.Buffer = function() //{{{
             if (pageSize[1])
                 info.push(pageSize[1] + "KiB");
 
-            var lastMod = window.content.document.lastModified.slice(0, -3);
             if (lastMod)
                 info.push(lastMod);
 
@@ -655,10 +660,11 @@ vimperator.Buffer = function() //{{{
         if (pageSize[0])
             pageGeneral.push(["File Size", pageSize[1] + "KiB (" + pageSize[0] + " bytes)"]);
 
-        pageGeneral.push(["Mime-Type", window.content.document.contentType]);
-        pageGeneral.push(["Encoding",  window.content.document.characterSet]);
+        pageGeneral.push(["Mime-Type", content.document.contentType]);
+        pageGeneral.push(["Encoding",  content.document.characterSet]);
         pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
-        pageGeneral.push(["Last Modified", window.content.document.lastModified]); //TODO: do not show bogus times (=current time)
+        if (lastMod)
+            pageGeneral.push(["Last Modified", lastMod]);
 
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
