@@ -1117,15 +1117,13 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            var matches1 = args.match(/([a-zA-Z0-9])\s+(.+)/);
-            var matches2 = args.match(/([a-zA-Z0-9])\s*$/);
-
-            if (matches1 && matches1[1])
-                vimperator.quickmarks.add(matches1[1], matches1[2]);
-            else if (matches2 && matches2)
-                vimperator.quickmarks.add(matches2[1], vimperator.buffer.URL);
-            else
+            var matches = args.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
+            if (!matches)
                 vimperator.echoerr("E488: Trailing characters");
+            else if (!matches[2])
+                vimperator.quickmarks.add(matches[1], vimperator.buffer.URL);
+            else
+                vimperator.quickmarks.add(matches[1], matches[2]);
         },
         {
             usage: ["qma[rk] {a-zA-Z0-9} [url]"],
