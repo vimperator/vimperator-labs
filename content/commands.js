@@ -233,7 +233,7 @@ vimperator.Commands = function() //{{{
         function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show available Browser Extensions and Themes",
-            help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some keybindings and changes Firefox's GUI."
+            help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some key bindings and changes Firefox's GUI."
         }
     ));
     addDefaultCommand(new vimperator.Command(["ba[ck]"],
@@ -624,7 +624,7 @@ vimperator.Commands = function() //{{{
             usage: ["h[elp] {subject}"],
             short_help: "Open the help window",
             help: "You can jump to the specified <code class=\"argument\">{subject}</code> with <code class=\"command\">:help {subject}</code>.<br/>" +
-                  "Make sure you use the full vim notation when jumping to <code class=\"argument\">{subject}</code>. This means:<br/>" +
+                  "Make sure you use the full Vim notation when jumping to <code class=\"argument\">{subject}</code>. This means:<br/>" +
                   "<ul>" +
                   "<li><code class=\"command\">:help :help</code> for commands (: prefix)</li>" +
                   "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
@@ -932,7 +932,7 @@ vimperator.Commands = function() //{{{
         },
         {
             usage: ["mkv[imperatorrc] [file]"],
-            short_help: "Write current keymappings and changed options to [file]",
+            short_help: "Write current key mappings and changed options to [file]",
             help: "If no <code class=\"argument\">[file]</code> is specified then ~/.vimperatorrc is written unless this file already exists. " +
                   "The special version will overwrite <code class=\"argument\">[file]</code> if it exists.<br/>" +
                   "WARNING: this differs from Vim's behavior which defaults to writing the file in the current directory."
@@ -1104,7 +1104,7 @@ vimperator.Commands = function() //{{{
             usage: ["pref[erences][!]"],
             short_help: "Show Browser Preferences",
             help: "You can change the browser preferences from this dialog. " +
-                  "Be aware that not all Firefox preferences work, because Vimperator overrides some keybindings and changes Firefox's GUI.<br/>" +
+                  "Be aware that not all Firefox preferences work, because Vimperator overrides some key bindings and changes Firefox's GUI.<br/>" +
                   "<code class=\"command\">:prefs!</code> opens about:config in the current tab where you can change advanced Firefox preferences."
         }
     ));
@@ -1637,7 +1637,7 @@ vimperator.Commands = function() //{{{
             short_help: "Profile a piece of code or a command",
             help: "Runs <code class=\"argument\">{code} {count}</code> times (default 1) and returns the elapsed time. " +
                   "<code class=\"argument\">{code}</code> is always passed to JavaScript's eval(), which might be slow, so take the results with a grain of salt.<br/>" +
-                  "If <code class=\"argument\">{code}</code> starts with a :, it is executed as a vimperator command.<br/>" +
+                  "If <code class=\"argument\">{code}</code> starts with a :, it is executed as a Vimperator command.<br/>" +
                   "Use the special version with [!] if you just want to run any command multiple times without showing profiling statistics."
         }
     ));
