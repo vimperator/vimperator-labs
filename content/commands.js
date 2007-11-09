@@ -780,43 +780,41 @@ vimperator.Commands = function() //{{{
                   "Without arguments, displays a list of all variables."
         }
     ));
-    addDefaultCommand(new vimperator.Command(["map"],
-        // 0 args -> list all maps
-        // 1 arg  -> list the maps starting with args
-        // 2 args -> map arg1 to arg*
-        function(args)
+    function map(args, noremap)
+    {
+        if (!args)
         {
-            if (!args)
-            {
-                vimperator.mappings.list(vimperator.modes.NORMAL);
-                return;
-            }
+            vimperator.mappings.list(vimperator.modes.NORMAL);
+            return;
+        }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-            var leader_reg = /<Leader>/i;
+        var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
+        var [lhs, rhs] = [matches[1], matches[2]];
+        var leader_reg = /<Leader>/i;
 
-            if (leader_reg.test(lhs))
-            {
-                var leader_ref = vimperator.variableReference("mapleader");
-                var leader = leader_ref[0] ? leader_ref[0][leader_ref[1]] : "\\";
+        if (leader_reg.test(lhs))
+        {
+            var leader_ref = vimperator.variableReference("mapleader");
+            var leader = leader_ref[0] ? leader_ref[0][leader_ref[1]] : "\\";
 
-                lhs = lhs.replace(leader_reg, leader);
-            }
+            lhs = lhs.replace(leader_reg, leader);
+        }
 
-            if (rhs)
-            {
-                vimperator.mappings.add(new vimperator.Map(vimperator.modes.NORMAL, [lhs],
-                    function(count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs); },
-                    { flags: vimperator.Mappings.flags.COUNT, rhs: rhs }
-                ));
-            }
-            else
-            {
-                // FIXME: no filtering for now
-                vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
-            }
-        },
+        if (rhs)
+        {
+            vimperator.mappings.add(new vimperator.Map(vimperator.modes.NORMAL, [lhs],
+                function(count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                { flags: vimperator.Mappings.flags.COUNT, rhs: rhs }
+            ));
+        }
+        else
+        {
+            // FIXME: no filtering for now
+            vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
+        }
+    }
+    addDefaultCommand(new vimperator.Command(["map"],
+        function(args) { map(args, false) },
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
@@ -968,56 +966,11 @@ vimperator.Commands = function() //{{{
     ));
     // TODO: remove duplication in :map
     addDefaultCommand(new vimperator.Command(["no[remap]"],
-        // 0 args -> list all maps
-        // 1 arg  -> list the maps starting with args
-        // 2 args -> map arg1 to arg*
-        function(args)
-        {
-            if (!args)
-            {
-                vimperator.mappings.list(vimperator.modes.NORMAL);
-                return;
-            }
-
-            var matches = args.match(/^([^ ]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-
-            if (rhs)
-            {
-                if (/^:/.test(rhs))
-                {
-                    vimperator.mappings.add(
-                        new vimperator.Map(vimperator.modes.NORMAL, [lhs], function() { vimperator.execute(rhs); }, { rhs: rhs })
-                    );
-                }
-                else
-                {
-                    // NOTE: we currently only allow one normal mode command in {rhs}
-                    var map = vimperator.mappings.getDefaultMap(vimperator.modes.NORMAL, rhs);
-
-                    // create a Map for {lhs} with the same action as
-                    // {rhs}...until we have feedkeys().
-                    // NOTE: Currently only really intended for static use (e.g.
-                    // from the RC file) since {rhs} is evaluated when the map
-                    // is created not at runtime
-                    if (map)
-                        vimperator.mappings.add(
-                            new vimperator.Map(vimperator.modes.NORMAL, [lhs], map.action, { flags: map.flags, rhs: rhs })
-                        );
-                    else
-                        vimperator.echoerr("E475: Invalid argument: " + "{rhs} must be a existing singular mapping");
-                }
-            }
-            else
-            {
-                // FIXME: no filtering for now
-                vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
-            }
-        },
+        function(args) { map(args, true) },
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed.<br/>NOTE: :noremap does not yet work as reliably as :map."
+            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
         }
     ));
     addDefaultCommand(new vimperator.Command(["o[pen]", "e[dit]"],

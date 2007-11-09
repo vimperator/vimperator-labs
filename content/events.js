@@ -256,11 +256,13 @@ vimperator.Events = function() //{{{
     //
     // @param keys: a string like "2<C-f>" to pass
     //              if you want < to be taken literally, prepend it with a \\
-    this.feedkeys = function(keys)
+    this.feedkeys = function(keys, noremap)
     {
         var doc = window.document;
         var view = window.document.defaultView;
         var escapeKey = false; // \ to escape some special keys
+
+        noremap = !!noremap;
 
         for (var i = 0; i < keys.length; i++)
         {
@@ -270,7 +272,7 @@ vimperator.Events = function() //{{{
             //if (charCode == 92) // the '\' key FIXME: support the escape key
             if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
             {
-                var matches = keys.substr(i+1).match(/([CSMAcsma]-)*([^>]+)/);
+                var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
                 if (matches && matches[2])
                 {
                     if (matches[1]) // check for modifiers
@@ -294,8 +296,10 @@ vimperator.Events = function() //{{{
                     {
                         charCode = 0;
                     }
-                    else //an invalid key like <A-xxx> was found, stop propagation here (like vim)
+                    else //an invalid key like <A-xxx> was found, stop propagation here (like Vim)
+                    {
                         return;
+                    }
 
                     i += matches[0].length + 1;
                 }
@@ -306,7 +310,8 @@ vimperator.Events = function() //{{{
                 elem = window.content;
 
             var evt = doc.createEvent("KeyEvents");
-            evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode );
+            evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
+            evt.noremap = noremap;
             elem.dispatchEvent(evt);
         }
     }
@@ -600,6 +605,10 @@ vimperator.Events = function() //{{{
         var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
         var candidate_command = (vimperator.input.buffer + key).replace(count_str, "");
         var map;
+        if (event.noremap)
+            map = vimperator.mappings.getDefaultMap(vimperator.modes.NORMAL, candidate_command);
+        else
+            map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command);
 
         // counts must be at the start of a complete mapping (10j -> go 10 lines down)
         if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
@@ -619,7 +628,7 @@ vimperator.Events = function() //{{{
 
             vimperator.input.pendingArgMap = null;
         }
-        else if (map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command))
+        else if (map)
         {
             vimperator.input.count = parseInt(count_str, 10);
             if (isNaN(vimperator.input.count))
