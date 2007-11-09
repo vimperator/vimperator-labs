@@ -236,14 +236,16 @@ vimperator.Hints = function() //{{{
         return true;
     }
 
-    // no safety checks are done, be careful with this function
     // TODO: make it aware of imgspans
     function showActiveHint(newID, oldID)
     {
         var oldElem = valid_hints[oldID - 1];
+        if (oldElem)
+            oldElem.style.backgroundColor = "yellow";
+
         var newElem = valid_hints[newID - 1];
-        oldElem.style.backgroundColor = "yellow";
-        newElem.style.backgroundColor = "#88FF00";
+        if (newElem)
+            newElem.style.backgroundColor = "#88FF00";
     }
 
     function showHints(win, start_idx)
