@@ -1164,12 +1164,12 @@ vimperator.StatusLine = function() //{{{
             {
                 progress_str = "[";
                 var done = Math.floor(progress * 20);
-                for (i=0; i < done; i++)
+                for (var i = 0; i < done; i++)
                     progress_str += "=";
 
                 progress_str += ">";
 
-                for (i=19; i > done; i--)
+                for (var i = 19; i > done; i--)
                     progress_str += " ";
 
                 progress_str += "]";

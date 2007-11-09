@@ -135,6 +135,8 @@ vimperator.Options = function() //{{{
 
     function storePreference(name, value, vimperator_branch)
     {
+        var branch;
+
         if (vimperator_branch)
             branch = vimperator_prefs;
         else
