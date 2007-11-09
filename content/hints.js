@@ -53,6 +53,10 @@ vimperator.Hints = function() //{{{
         valid_hints = [];
         canUpdate = false;
         hintsGenerated = false;
+
+        if (activeTimeout)
+            clearTimeout(activeTimeout);
+        activeTimeout = null;
     }
 
     // this function 'click' an element, which also works
