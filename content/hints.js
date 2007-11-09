@@ -642,7 +642,7 @@ outer:
                     {
                         var timeout = vimperator.options["hinttimeout"];
                         if (timeout > 0)
-                            activeTimeout = setTimeout(function() { processHints(true); }, timeout, true);
+                            activeTimeout = setTimeout(function() { processHints(true); }, timeout);
                         
                         return false;
                     }
