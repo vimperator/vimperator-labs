@@ -267,103 +267,100 @@ vimperator.Buffer = function() //{{{
     // TODO: allow callback for filtering out unwanted frames? User defined?
     this.shiftFrameFocus = function(count, forward)
     {
-        try
+        if (!window.content.document instanceof HTMLDocument)
+            return;
+
+        var frames = [];
+
+        // find all frames - depth-first search
+        (function(frame)
         {
-            var frames = [];
+            if (frame.document.body.localName.toLowerCase() == "body")
+                frames.push(frame);
+            for (var i = 0; i < frame.frames.length; i++)
+                arguments.callee(frame.frames[i])
+        })(window.content);
 
-            // find all frames - depth-first search
-            (function(frame)
+        if (frames.length == 0) // currently top is always included
+            return;
+
+        // remove all unfocusable frames
+        // TODO: find a better way to do this - walking the tree is too slow
+        var start = document.commandDispatcher.focusedWindow;
+        frames = frames.filter(function(frame) {
+                frame.focus();
+                if (document.commandDispatcher.focusedWindow == frame)
+                    return frame;
+        });
+        start.focus();
+
+        // find the currently focused frame index
+        // TODO: If the window is a frameset then the first _frame_ should be
+        //       focused.  Since this is not the current FF behaviour,
+        //       we initalize current to -1 so the first call takes us to the
+        //       first frame.
+        var current = -1;
+        for (var i = 0; i < frames.length; i++)
+        {
+            if (frames[i] == document.commandDispatcher.focusedWindow)
             {
-                if (frame.document.body.localName.toLowerCase() == "body")
-                    frames.push(frame);
-                for (var i = 0; i < frame.frames.length; i++)
-                    arguments.callee(frame.frames[i])
-            })(window.content);
-
-            if (frames.length == 0) // currently top is always included
-                return;
-
-            // remove all unfocusable frames
-            // TODO: find a better way to do this
-            var start = document.commandDispatcher.focusedWindow;
-            frames = frames.filter(function(frame) {
-                    frame.focus();
-                    if (document.commandDispatcher.focusedWindow == frame)
-                        return frame;
-            });
-            start.focus();
-
-            // find the currently focused frame index
-            // TODO: If the window is a frameset then the first _frame_ should be
-            //       focused.  Since this is not the current FF behaviour,
-            //       we initalize current to -1 so the first call takes us to the
-            //       first frame.
-            var current = -1;
-            for (var i = 0; i < frames.length; i++)
-            {
-                if (frames[i] == document.commandDispatcher.focusedWindow)
-                {
-                    var current = i;
-                    break;
-                }
+                var current = i;
+                break;
             }
+        }
 
-            // calculate the next frame to focus
-            var next = current;
-            if (forward)
-            {
-                if (count > 1)
-                    next = current + count;
-                else
-                    next++;
-
-                if (next > frames.length - 1)
-                {
-                    if (current == frames.length - 1)
-                        vimperator.beep(); // still allow the frame indicator to be activated
-
-                    next = frames.length - 1;
-                }
-            }
+        // calculate the next frame to focus
+        var next = current;
+        if (forward)
+        {
+            if (count > 1)
+                next = current + count;
             else
+                next++;
+
+            if (next > frames.length - 1)
             {
-                if (count > 1)
-                    next = current - count;
-                else
-                    next--;
+                if (current == frames.length - 1)
+                    vimperator.beep(); // still allow the frame indicator to be activated
 
-                if (next < 0)
-                {
-                    if (current == 0)
-                        vimperator.beep(); // still allow the frame indicator to be activated
-
-                    next = 0;
-                }
+                next = frames.length - 1;
             }
-
-            // focus next frame and scroll into view
-            frames[next].focus();
-            if (frames[next] != window.content)
-                frames[next].frameElement.scrollIntoView(false);
-
-            // add the frame indicator
-            var doc = frames[next].document;
-            var indicator = doc.createElement("div");
-            indicator.id = "vimperator-frame-indicator";
-            // NOTE: need to set a high z-index - it's a crapshoot!
-            var style = "background-color: red; opacity: 0.5; z-index: 999;" +
-                        "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
-            indicator.setAttribute("style", style);
-            doc.body.appendChild(indicator);
-
-            // remove the frame indicator
-            setTimeout(function() { doc.body.removeChild(indicator); }, 500);
         }
-        catch (e)
+        else
         {
-            // FIXME: fail silently here for now
-            //vimperator.log(e);
+            if (count > 1)
+                next = current - count;
+            else
+                next--;
+
+            if (next < 0)
+            {
+                if (current == 0)
+                    vimperator.beep(); // still allow the frame indicator to be activated
+
+                next = 0;
+            }
         }
+
+        // focus next frame and scroll into view
+        frames[next].focus();
+        if (frames[next] != window.content)
+            frames[next].frameElement.scrollIntoView(false);
+
+        // add the frame indicator
+        // TODO: make this an XBL element rather than messing with the content
+        // document
+        var doc = frames[next].document;
+        var indicator = doc.createElement("div");
+        indicator.id = "vimperator-frame-indicator";
+        // NOTE: need to set a high z-index - it's a crapshoot!
+        var style = "background-color: red; opacity: 0.5; z-index: 999;" +
+                    "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
+        indicator.setAttribute("style", style);
+        doc.body.appendChild(indicator);
+
+        // remove the frame indicator
+        setTimeout(function() { doc.body.removeChild(indicator); }, 500);
     }
 
     // updates the buffer preview in place only if list is visible
