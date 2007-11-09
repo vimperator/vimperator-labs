@@ -37,10 +37,13 @@ vimperator.Hints = function() //{{{
     var hints = [];
     var valid_hints = []; // store the indices of the "hints" array with valid elements
     
+    var escapeNumbers = false ; // escape mode for numbers. true -> treated as hint-text
     var activeTimeout = null; // needed for hinttimeout > 0
     var canUpdate = false;
-    var hintsGenerated = false;
-    var docs = []; // keep track of the documents which we display the hints for
+
+    // keep track of the documents which we generated the hints for
+    // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
+    var docs = []; 
 
     // reset all important variables
     function reset()
@@ -52,11 +55,19 @@ vimperator.Hints = function() //{{{
         hints = [];
         valid_hints = [];
         canUpdate = false;
-        hintsGenerated = false;
+        docs = [];
+        escapeNumbers = false;
 
         if (activeTimeout)
             clearTimeout(activeTimeout);
         activeTimeout = null;
+    }
+
+    function updateStatusline()
+    {
+        vimperator.statusline.updateInputBuffer((escapeNumbers ? "\\ ": "" ) + // sign for escapeNumbers
+                (hintString ? "\"" + hintString + "\"" : "") +
+                (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
 
     // this function 'click' an element, which also works
@@ -71,7 +82,7 @@ vimperator.Hints = function() //{{{
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
         if (elemTagName == "frame" || elemTagName == "iframe")
-            return 0;
+            return false;
 
         // for imagemap
         if (elemTagName == "area")
@@ -105,7 +116,7 @@ vimperator.Hints = function() //{{{
         if (elemTagName == "frame" || elemTagName == "iframe")
         {
             elem.contentWindow.focus();
-            return;
+            return false;
         }
         else
         {
@@ -165,18 +176,12 @@ vimperator.Hints = function() //{{{
     
     function generate(win)
     {
-        if (hintsGenerated)
-            return;
-
         var startDate = Date.now();
-        hints = [];
 
         if (!win)
             win = window.content;
 
         var doc = win.document;
-        docs.push(doc);
-
         var height = win.innerHeight;
         var width  = win.innerWidth;
         var scrollX = doc.defaultView.scrollX;
@@ -199,8 +204,10 @@ vimperator.Hints = function() //{{{
         vimperator.log("evaluated XPath after: " + (Date.now() - startDate) + "ms");
 
         var fragment = doc.createDocumentFragment();
+        var start = hints.length;
         while ((elem = res.iterateNext()) != null)
         {
+            // TODO: for frames, this calculation is wrong
             rect = elem.getBoundingClientRect();
             if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
                 continue;
@@ -209,6 +216,7 @@ vimperator.Hints = function() //{{{
             if (!rect)
                 continue;
 
+            // TODO: mozilla docs recommend localName instead of tagName
             tagname = elem.tagName.toLowerCase();
             if (tagname == "input" || tagname == "textarea")
                 text = elem.value.toLowerCase();
@@ -229,10 +237,15 @@ vimperator.Hints = function() //{{{
 
             hints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
         }
+
         doc.body.appendChild(fragment);
+        docs.push({ doc: doc, start: start, end: hints.length - 1});
+
+        // also generate hints for frames
+        for (var i = 0; i < win.frames.length; i++)
+            generate(win.frames[i]);
 
         vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms");
-        hintsGenerated = true;
         return true;
     }
 
@@ -248,109 +261,102 @@ vimperator.Hints = function() //{{{
             newElem.style.backgroundColor = "#88FF00";
     }
 
-    function showHints(win, start_idx)
+    function showHints()
     {
         var startDate = Date.now();
-
-        if (!win)
-            win = window.content;
-
-        if (win.document.body.localName.toLowerCase() == "frameset")
-        {
-//        for (i = 0; i < win.frames.length; i++)
-//            removeHints(win.frames[i]);
-            vimperator.echo("hint support for frameset pages not fully implemented yet");
-        }
+        var win = window.content;
+        var height = win.innerHeight;
+        var width  = win.innerWidth;
 
         vimperator.log("Show hints matching: " + hintString, 7);
 
-        var doc = win.document;
-        var scrollX = doc.defaultView.scrollX;
-        var scrollY = doc.defaultView.scrollY;
-
         var elem, tagname, text, rect, span, imgspan;
-        var hintnum = start_idx > 0 ? start_idx : 1;
-
-        var height = window.content.innerHeight;
-        var width  = window.content.innerWidth;
+        var hintnum = 1;
         var find_tokens = hintString.split(/ +/);
         var activeHint = hintNumber || 1;
         valid_hints = [];
 
-outer:
-        for (var i = 0; i < hints.length; i++)
+        for (var j = 0; j < docs.length; j++)
         {
-            elem = hints[i][0];
-            text = hints[i][1];
-            span = hints[i][2];
-            imgspan = hints[i][3];
+            var doc = docs[j].doc;
+            var start = docs[j].start;
+            var end = docs[j].end;
+            var scrollX = doc.defaultView.scrollX;
+            var scrollY = doc.defaultView.scrollY;
 
-            for (var k = 0; k < find_tokens.length; k++)
+        outer:
+            for (var i = start; i <= end; i++)
             {
-                if (text.indexOf(find_tokens[k]) < 0)
+                elem = hints[i][0];
+                text = hints[i][1];
+                span = hints[i][2];
+                imgspan = hints[i][3];
+
+                for (var k = 0; k < find_tokens.length; k++)
                 {
-                    span.style.display = "none";
-                    if (imgspan)
-                        imgspan.style.display = "none";
+                    if (text.indexOf(find_tokens[k]) < 0)
+                    {
+                        span.style.display = "none";
+                        if (imgspan)
+                            imgspan.style.display = "none";
 
-                    // reset background color
-                    elem.style.backgroundColor = hints[i][4];
-                    elem.style.color = hints[i][5];
-
-                    continue outer;
+                        // reset background color
+                        elem.style.backgroundColor = hints[i][4];
+                        elem.style.color = hints[i][5];
+                        continue outer;
+                    }
                 }
-            }
 
-            if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
-            {
+                if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
+                {
+                    if (!imgspan)
+                    {
+                        rect = elem.firstChild.getBoundingClientRect();
+                        if (!rect)
+                            continue;
+
+                        imgspan = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
+                        imgspan.style.position = "absolute";
+                        imgspan.style.opacity = 0.5;
+                        imgspan.style.zIndex = "10000000";
+                        imgspan.style.left = (rect.left + scrollX) + "px";
+                        imgspan.style.top = (rect.top + scrollY) + "px";
+                        imgspan.style.width = (rect.right - rect.left) + "px";
+                        imgspan.style.height = (rect.bottom - rect.top) + "px";
+                        imgspan.className = "vimperator-hint";
+                        hints[i][3] = imgspan;
+                        doc.body.appendChild(imgspan);
+                    }
+                    imgspan.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
+                    imgspan.style.display = "inline";
+                }
+
                 if (!imgspan)
-                {
-                    rect = elem.firstChild.getBoundingClientRect();
-                    if (!rect)
-                        continue;
-
-                    imgspan = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-                    imgspan.style.position = "absolute";
-                    imgspan.style.opacity = 0.5;
-                    imgspan.style.zIndex = "10000000";
-                    imgspan.style.left = (rect.left + scrollX) + "px";
-                    imgspan.style.top = (rect.top + scrollY) + "px";
-                    imgspan.style.width = (rect.right - rect.left) + "px";
-                    imgspan.style.height = (rect.bottom - rect.top) + "px";
-                    imgspan.className = "vimperator-hint";
-                    hints[i][3] = imgspan;
-                    doc.body.appendChild(imgspan);
-                }
-                imgspan.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
-                imgspan.style.display = "inline";
+                    elem.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
+                elem.style.color = "black";
+                span.textContent = "" + (hintnum++);
+                span.style.display = "inline";
+                valid_hints.push(elem);
             }
-
-            if (!imgspan)
-                elem.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
-            elem.style.color = "black";
-            span.textContent = "" + (hintnum++);
-            span.style.display = "inline";
-            valid_hints.push(elem);
         }
 
         vimperator.log("showHints() completed after: " + (Date.now() - startDate) + "ms");
         return true;
     }
 
-    function removeHints(doc, timeout)
+    function removeHints(timeout)
     {
-        if (!doc)
-        {
-            vimperator.log("Argument doc is required for internal removeHints() method", 9);
-            return;
-        }
-
         var firstElem = valid_hints[0] || null;
         var firstElemBgColor = "";
         var firstElemColor = "";
-        try
+
+        for (var j = 0; j < docs.length; j++)
         {
-            for (var i = 0; i < hints.length; i++)
+            var doc = docs[j].doc;
+            var start = docs[j].start;
+            var end = docs[j].end;
+
+            for (var i = start; i <= end; i++)
             {
                 // remove the span for the numeric display part
                 doc.body.removeChild(hints[i][2]);
@@ -374,38 +380,37 @@ outer:
             // animate the disappearance of the first hint
             if (timeout && firstElem)
             {
-// USE THIS FOR MAKING THE SELECTED ELEM RED
-//                firstElem.style.backgroundColor = "red";
-//                firstElem.style.color = "white";
-//                setTimeout(function() {
-//                        firstElem.style.backgroundColor = firstElemBgColor;
-//                        firstElem.style.color = firstElemColor;
-//                }, 200);
-// OR USE THIS FOR BLINKING:
-//                var counter = 0;
-//                var id = setInterval(function() {
-//                    firstElem.style.backgroundColor = "red";
-//                    if (counter % 2 == 0)
-//                        firstElem.style.backgroundColor = "yellow";
-//                    else
-//                        firstElem.style.backgroundColor = "#88FF00";
-//
-//                    if (counter++ >= 2)
-//                    {
-//                        firstElem.style.backgroundColor = firstElemBgColor;
-//                        firstElem.style.color = firstElemColor;
-//                        clearTimeout(id);
-//                    }
-//                }, 100);
+                // USE THIS FOR MAKING THE SELECTED ELEM RED
+                //                firstElem.style.backgroundColor = "red";
+                //                firstElem.style.color = "white";
+                //                setTimeout(function() {
+                //                        firstElem.style.backgroundColor = firstElemBgColor;
+                //                        firstElem.style.color = firstElemColor;
+                //                }, 200);
+                // OR USE THIS FOR BLINKING:
+                //                var counter = 0;
+                //                var id = setInterval(function() {
+                //                    firstElem.style.backgroundColor = "red";
+                //                    if (counter % 2 == 0)
+                //                        firstElem.style.backgroundColor = "yellow";
+                //                    else
+                //                        firstElem.style.backgroundColor = "#88FF00";
+                //
+                //                    if (counter++ >= 2)
+                //                    {
+                //                        firstElem.style.backgroundColor = firstElemBgColor;
+                //                        firstElem.style.color = firstElemColor;
+                //                        clearTimeout(id);
+                //                    }
+                //                }, 100);
                 setTimeout(function() {
                         firstElem.style.backgroundColor = firstElemBgColor;
                         firstElem.style.color = firstElemColor;
                 }, timeout);
             }
-
         }
-        catch (e) { vimperator.log("Error hiding hints, probably wrong window"); }
 
+        vimperator.log("removeHints() done");
         reset();
     }
 
@@ -449,7 +454,7 @@ outer:
         }
 
         var timeout = followFirst ? 0 : 500;
-        removeHints(docs.pop(), timeout);
+        removeHints(timeout);
 
         if (vimperator.modes.extended & vimperator.modes.ALWAYS_HINT)
         {
@@ -491,13 +496,14 @@ outer:
         canUpdate = false;
 
         generate();
+
         // get all keys from the input queue
         var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
         while (mt.hasPendingEvents())
             mt.processNextEvent(true);
             
         canUpdate = true;
-        showHints(null);
+        showHints();
 
         if (valid_hints.length == 0)
         {
@@ -516,12 +522,7 @@ outer:
 
     this.hide = function()
     {
-        if (!hintsGenerated)
-            return;
-
-        var doc = docs.pop();
-        if (doc);
-            removeHints(doc, 0);
+        removeHints(0);
     };
 
     this.onEvent = function(event)
@@ -544,6 +545,7 @@ outer:
 
             case "<Space>":
                 hintString += " ";
+                escapeNumbers = false;
                 break;
 
             case "<Tab>":
@@ -592,6 +594,14 @@ outer:
                 hintNumber = 0;
                 break;
 
+           case "\\":
+               escapeNumbers = !escapeNumbers;
+               if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
+                   hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
+                        
+               updateStatusline();
+               return;
+
             default:
                 // pass any special or ctrl- etc. prefixed key back to the main vimperator loop
                 if (/^<./.test(key) || key == ":")
@@ -608,7 +618,7 @@ outer:
                     return;
                 }
 
-                if (/^[0-9]$/.test(key))
+                if (/^[0-9]$/.test(key) && !escapeNumbers)
                 {
                     var oldHintNumber = hintNumber;
                     if (hintNumber == 0 || usedTabKey)
@@ -619,11 +629,12 @@ outer:
                     else
                         hintNumber = (hintNumber * 10) + parseInt(key, 10);
 
-                    vimperator.statusline.updateInputBuffer(hintString + (hintNumber > 0 ? hintNumber : ""));
+                    updateStatusline();
+
                     if (!canUpdate)
                         return;
 
-                    if (!hintsGenerated)
+                    if (docs.length == 0)
                     {
                         generate();
                         showHints();
@@ -652,18 +663,19 @@ outer:
                 }
 
                 hintString += key;
+                hintNumber = 0; // after some text input
                 if (usedTabKey)
                 {
                     usedTabKey = false;
                     showActiveHint(1, hintNumber);
-                    hintNumber = 1;
                 }
         }
 
-        vimperator.statusline.updateInputBuffer(hintString + (hintNumber > 0 ? hintNumber : ""));
+        updateStatusline();
+
         if (canUpdate)
         {
-            if (!hintsGenerated && hintString.length > 0)
+            if (docs.length == 0 && hintString.length > 0)
                 generate();
 
             showHints();
@@ -672,22 +684,16 @@ outer:
         return;
     }
 
-
     // FIXME: add resize support
-    //window.addEventListener("resize", onResize, null);
+    // window.addEventListener("resize", onResize, null);
 
-   // getBrowser().addEventListener("DOMContentLoaded", function(event) {
-   //         if (vimperator.options["autohints"])
-   //             vimperator.hints.show(event.target);
-   // }, false);
-
-//    function onResize(event)
-//    {
-//        if (event)
-//            doc = event.originalTarget;
-//        else
-//            doc = window.content.document;
-//    }
+    // function onResize(event)
+    // {
+    //     if (event)
+    //         doc = event.originalTarget;
+    //     else
+    //         doc = window.content.document;
+    // }
 
 } //}}}
 
