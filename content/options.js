@@ -106,6 +106,14 @@ vimperator.Option = function(names, type, extra_info) //{{{
         return false;
     }
 
+    this.isValidValue = function(value)
+    {
+        if (this.validator)
+            return this.validator(value);
+        else
+            return true;
+    }
+
     this.reset = function()
     {
         this.value = this.default_value;
