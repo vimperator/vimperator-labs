@@ -154,8 +154,8 @@ vimperator.Buffer = function() //{{{
         var result = doc.evaluate(expression, elem,
             function lookupNamespaceURI(prefix) {
               switch (prefix) {
-                case 'xhtml':
-                  return 'http://www.w3.org/1999/xhtml';
+                case "xhtml":
+                  return "http://www.w3.org/1999/xhtml";
                 default:
                   return null;
               }

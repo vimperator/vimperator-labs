@@ -49,7 +49,7 @@ vimperator.IO = function()
 
             // TODO: proper pathname separator translation like Vim
             if (WINDOWS)
-                path = path.replace('/', '\\', 'g');
+                path = path.replace("/", "\\", "g");
 
             // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
             if (/^~/.test(path))

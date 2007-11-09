@@ -100,11 +100,11 @@ vimperator.CommandLine = function() //{{{
     var completion_index = UNINITIALIZED;
 
     // the containing box for the prompt_widget and command_widget
-    var commandline_widget = document.getElementById('vimperator-commandline');
+    var commandline_widget = document.getElementById("vimperator-commandline");
     // the prompt for the current command, for example : or /. Can be blank
-    var prompt_widget = document.getElementById('vimperator-commandline-prompt');
+    var prompt_widget = document.getElementById("vimperator-commandline-prompt");
     // the command bar which contains the current command
-    var command_widget = document.getElementById('vimperator-commandline-command');
+    var command_widget = document.getElementById("vimperator-commandline-command");
 
     // the widget used for multiline output
     var multiline_output_widget = document.getElementById("vimperator-multiline-output");
@@ -520,11 +520,11 @@ vimperator.CommandLine = function() //{{{
                 var longest = false;
                 var full = false;
                 var wildtype = wim[wild_index++] || wim[wim.length - 1];
-                if (wildtype == 'list' || wildtype == 'list:full' || wildtype == 'list:longest')
+                if (wildtype == "list" || wildtype == "list:full" || wildtype == "list:longest")
                     has_list = true;
-                if (wildtype == 'longest' || wildtype == 'list:longest')
+                if (wildtype == "longest" || wildtype == "list:longest")
                     longest = true;
-                else if (wildtype == 'full' || wildtype == 'list:full')
+                else if (wildtype == "full" || wildtype == "list:full")
                     full = true;
 
                 // show the list

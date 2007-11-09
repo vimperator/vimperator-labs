@@ -93,7 +93,7 @@ vimperator.util = {
             var matches;
 
             // strip each 'URL' - makes things simpler later on
-            urls[url] = urls[url].replace(/^\s+/, '').replace(/\s+$/, '');
+            urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
             // FIXME: not really that good (doesn't handle .. in the middle)
             // check for ./ and ../ (or even .../) to go to a file in the upper directory

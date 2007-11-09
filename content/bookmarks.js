@@ -665,7 +665,7 @@ vimperator.Marks = function() //{{{
         }
         else
         {
-            var pattern = new RegExp("[" + filter.replace(/\s+/g, '') + "]");
+            var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
             for (var mark in url_marks)
             {
                 if (pattern.test(mark))
@@ -800,7 +800,7 @@ vimperator.QuickMarks = function() //{{{
 
     this.remove = function(filter)
     {
-        var pattern = new RegExp("[" + filter.replace(/\s+/g, '') + "]");
+        var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
         for (var qmark in qmarks)
         {

@@ -499,7 +499,7 @@ vimperator.Mappings = function() //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new vimperator.Map(vimperator.modes.NORMAL, ['<C-^>', '<C-6>'],
+    addDefaultMap(new vimperator.Map(vimperator.modes.NORMAL, ["<C-^>", "<C-6>"],
         function()
         {
             if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
@@ -522,7 +522,7 @@ vimperator.Mappings = function() //{{{
         },
         {
             short_help: "Select the alternate tab",
-            usage: ['<C-^>'],
+            usage: ["<C-^>"],
             help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
         }
     ));
@@ -1077,14 +1077,14 @@ vimperator.Mappings = function() //{{{
         }
     ));
     addDefaultMap(new vimperator.Map(vimperator.modes.HINTS, [","],
-        function() { vimperator.input.buffer += ','; vimperator.hints.setCurrentState(0); },
+        function() { vimperator.input.buffer += ","; vimperator.hints.setCurrentState(0); },
         {
             cancel_mode: false,
             always_active: true
         }
     ));
     addDefaultMap(new vimperator.Map(vimperator.modes.HINTS, [":"],
-        function() { vimperator.commandline.open(':', '', vimperator.modes.EX); },
+        function() { vimperator.commandline.open(":", "", vimperator.modes.EX); },
         {
             cancel_mode: false,
             always_active: true
@@ -1173,14 +1173,14 @@ vimperator.Mappings = function() //{{{
 
     // tab management
     addDefaultMap(new vimperator.Map(vimperator.modes.HINTS, ["<C-n>"],
-        function() { vimperator.tabs.select('+1', true); },
+        function() { vimperator.tabs.select("+1", true); },
         {
             cancel_mode: true,
             always_active: true
         }
     )); // same as gt, but no count supported
     addDefaultMap(new vimperator.Map(vimperator.modes.HINTS, ["<C-p>"],
-        function() { vimperator.tabs.select('-1', true); },
+        function() { vimperator.tabs.select("-1", true); },
         {
             cancel_mode: true,
             always_active: true

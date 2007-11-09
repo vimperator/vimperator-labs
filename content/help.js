@@ -104,7 +104,7 @@ vimperator.help = function(section, easter) //{{{
             // add more space between entries
             ret += separator;
         }
-        ret = ret.replace(new RegExp(separator + '$'), ''); // FIXME: far too tasty!
+        ret = ret.replace(new RegExp(separator + "$"), ""); // FIXME: far too tasty!
         return ret;
     }
 
@@ -121,7 +121,7 @@ vimperator.help = function(section, easter) //{{{
         }
         else
         {
-            if (typeof command.default_value == 'string' && command.default_value.length == 0)
+            if (typeof command.default_value == "string" && command.default_value.length == 0)
                 ret += "''";
             else
                 ret += command.default_value;
@@ -181,14 +181,14 @@ vimperator.help = function(section, easter) //{{{
         '<table class="vimperator mappings">';
     mappings += makeHelpString(vimperator.mappings, "", "", null);
     mappings += '</table>';
-    if (section && section == 'holy-grail')
+    if (section && section == "holy-grail")
         mappings += '<div><p id="holy-grail">You found it, Arthur!</p></div>\n';
 
     var commands = '<span style="float: right"><code class="tag">commands</code></span><h2 id="commands">Commands</h2>' +
         '<table class="vimperator commands">\n';
     commands += makeHelpString(vimperator.commands, ":", "", null);
     commands += '</table>';
-    if (section && section == '42')
+    if (section && section == "42")
         commands += '<div><p id="42">What is the meaning of life, the universe and everything?<br/>' +
                     'Douglas Adams, the only person who knew what this question really was about is<br/>' +
                     'now dead, unfortunately.  So now you might wonder what the meaning of death<br/>' +
@@ -268,9 +268,9 @@ vimperator.help = function(section, easter) //{{{
             if (!element)
             {
                 var firstChar = section.charAt(0);
-                if (firstChar != ':' && firstChar != "'")
+                if (firstChar != ":" && firstChar != "'")
                 {
-                    element = findSectionElement(':' + section);
+                    element = findSectionElement(":" + section);
                     if (!element)
                         element = findSectionElement("'" + section + "'");
                 }

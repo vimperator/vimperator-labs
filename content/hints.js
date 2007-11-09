@@ -24,7 +24,7 @@
 
 vimperator.Hints = function() //{{{
 {
-    const HINT_PREFIX = 'hah_hint_'; // prefix for the hint id
+    const HINT_PREFIX = "hah_hint_"; // prefix for the hint id
 
     this.hintedElements = function() { return hintedElems; };
     this.currentState = function() { return state;};
@@ -145,15 +145,15 @@ vimperator.Hints = function() //{{{
 
         var elem, i;
 
-        hintElemSpan = doc.createElement('SPAN');
+        hintElemSpan = doc.createElement("SPAN");
         hintElemSpan.style.cssText = vimperator.options["hintstyle"];
-        hintElemSpan.setAttribute('name', 'hah_hint');
+        hintElemSpan.setAttribute("name", "hah_hint");
 
-        var hintContainer = doc.getElementById('hah_hints');
+        var hintContainer = doc.getElementById("hah_hints");
         if (hintContainer == null)
         {
             genHintContainer(doc);
-            hintContainer = doc.getElementById('hah_hints');
+            hintContainer = doc.getElementById("hah_hints");
             if (!hintContainer)
                 return false;
         }
@@ -192,7 +192,7 @@ vimperator.Hints = function() //{{{
                 hintContainer.appendChild(hintElem);
             }
 
-            hintElem.style.display = 'none';
+            hintElem.style.display = "none";
             hintElem.style.top = elem.absoTop + "px";
             hintElem.style.left = elem.absoLeft + "px";
             hintElem.refElem = elem;
@@ -223,7 +223,7 @@ vimperator.Hints = function() //{{{
             // FIXME: this.disableHahMode(win);
             vimperator.setMode(vimperator.modes.NORMAL);
             isHahModeEnabled = false;
-            linkNumString = '';
+            linkNumString = "";
             hintedElems = [];
 
             return;
@@ -231,7 +231,7 @@ vimperator.Hints = function() //{{{
 
         var doc = win.document;
         var hintElem = null;
-        var hintContainer = doc.getElementById('hah_hints');
+        var hintContainer = doc.getElementById("hah_hints");
         var hints = hintContainer.childNodes;
         var i, j;
 
@@ -239,8 +239,8 @@ vimperator.Hints = function() //{{{
         {
             hintText = formatHint(offset+i);
             hintElem = hints[i];
-            hintElem.style.display = 'inline';
-            //hintElem.style.position = 'absolute';
+            hintElem.style.display = "inline";
+            //hintElem.style.position = "absolute";
             hintElem.innerHTML = hintText;
             hintElem.id = HINT_PREFIX + hintText;
         }
@@ -267,7 +267,7 @@ vimperator.Hints = function() //{{{
         {
             elem = res.snapshotItem(i);
             setHintStyle(elem, vimperator.options["hintstyle"]);
-            elem.style.display = 'none';
+            elem.style.display = "none";
         }
 
         for (i = 0; i < win.frames.length; i++)
@@ -337,7 +337,7 @@ vimperator.Hints = function() //{{{
         var str = hintNum.toString(hintCharacters.length); // turn hintNum into a base(length) number
 
         // map the number onto the chars in the numbers string
-        var result = '';
+        var result = "";
         // make all links the same length
         var hintLength = 1;
         var tmp = linkCount;
@@ -405,7 +405,7 @@ vimperator.Hints = function() //{{{
         vimperator.setMode(vimperator.modes.HINTS, mode);
         state = 0;
         linkCount = 0;
-        linkNumString = '';
+        linkNumString = "";
         isHahModeEnabled = true;
 
         createHints();
@@ -431,7 +431,7 @@ vimperator.Hints = function() //{{{
 
         vimperator.setMode(vimperator.modes.NORMAL);
         isHahModeEnabled = false;
-        linkNumString = '';
+        linkNumString = "";
         hintedElems = [];
 
         removeHints(win);
@@ -440,7 +440,7 @@ vimperator.Hints = function() //{{{
 
     this.resetHintedElements = function()
     {
-        linkNumString = '';
+        linkNumString = "";
         state = 0;
 
         while (hintedElems.length > 0)
@@ -486,11 +486,11 @@ vimperator.Hints = function() //{{{
             var elemTagName = elem.localName.toLowerCase();
             elem.focus();
 
-            if (elemTagName == 'frame' || elemTagName == 'iframe')
+            if (elemTagName == "frame" || elemTagName == "iframe")
                 return 0;
 
             // for imagemap
-            if (elemTagName == 'area')
+            if (elemTagName == "area")
             {
                 var coords = elem.getAttribute("coords").split(",");
                 x = Number(coords[0]);
@@ -499,12 +499,12 @@ vimperator.Hints = function() //{{{
             var doc = window.content.document;
             var view = window.document.defaultView;
 
-            var evt = doc.createEvent('MouseEvents');
-            evt.initMouseEvent('mousedown', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            var evt = doc.createEvent("MouseEvents");
+            evt.initMouseEvent("mousedown", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
             elem.dispatchEvent(evt);
 
-            var evt = doc.createEvent('MouseEvents');
-            evt.initMouseEvent('click', true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            var evt = doc.createEvent("MouseEvents");
+            evt.initMouseEvent("click", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
             elem.dispatchEvent(evt);
 
             // for 'pure' open calls without a new tab or window it doesn't
@@ -525,7 +525,7 @@ vimperator.Hints = function() //{{{
         for (var i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.href;
-            if (typeof(tmp) != 'undefined' && tmp.length > 0)
+            if (typeof(tmp) != "undefined" && tmp.length > 0)
             {
                 if (i > 0)
                     loc += "\n";
@@ -548,7 +548,7 @@ vimperator.Hints = function() //{{{
         for (var i = 0; i < elems.length; i++)
         {
             tmp = elems[i].refElem.textContent;
-            if (typeof(tmp) != 'undefined' && tmp.length > 0)
+            if (typeof(tmp) != "undefined" && tmp.length > 0)
             {
                 if (i > 0)
                     loc += "\n";
@@ -590,7 +590,7 @@ vimperator.Hints = function() //{{{
         var doc = window.document;
         var elemTagName = elem.localName.toLowerCase();
 
-        if (elemTagName == 'frame' || elemTagName == 'iframe')
+        if (elemTagName == "frame" || elemTagName == "iframe")
         {
             elem.contentWindow.focus();
             return;
@@ -600,18 +600,18 @@ vimperator.Hints = function() //{{{
         //    elem.focus();
         //}
 
-        var evt = doc.createEvent('MouseEvents');
+        var evt = doc.createEvent("MouseEvents");
         var x = 0;
         var y = 0;
         // for imagemap
-        if (elemTagName == 'area')
+        if (elemTagName == "area")
         {
             var coords = elem.getAttribute("coords").split(",");
             x = Number(coords[0]);
             y = Number(coords[1]);
         }
 
-        evt.initMouseEvent('mouseover', true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+        evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evt);
     }
 
@@ -635,7 +635,7 @@ vimperator.Hints = function() //{{{
         if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
         {
             var oldLinkNumString = linkNumString;
-            linkNumString += '' + num;
+            linkNumString += "" + num;
             // update reference to currently selected node;
             var elem = getHintById(linkNumString);
             changeHintFocus(linkNumString, oldLinkNumString);
@@ -644,7 +644,7 @@ vimperator.Hints = function() //{{{
             if (elem)
             {
                 hintedElems.push(elem);
-                linkNumString = '';
+                linkNumString = "";
                 state = 1;
                 return hintedElems.length;
             }
@@ -666,10 +666,10 @@ vimperator.Hints = function() //{{{
 
     function genHintContainer(doc)
     {
-        if (doc.getElementsByTagName('HINTS').length > 0)
+        if (doc.getElementsByTagName("HINTS").length > 0)
             return;
 
-        hints = doc.createElement('HINTS');
+        hints = doc.createElement("HINTS");
         hints.id = "hah_hints";
         hints.valid_hint_count = 0; // initially 0 elements are usable as hints
 
@@ -703,7 +703,7 @@ vimperator.Hints = function() //{{{
         {
             state = 0;
             linkCount = 0;
-            linkNumString = '';
+            linkNumString = "";
             isHahModeEnabled = true;
 
             setTimeout( function() {

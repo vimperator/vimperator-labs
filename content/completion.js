@@ -171,7 +171,7 @@ vimperator.Completion = function() // {{{
         get_longest_substring: function() //{{{
         {
             if (g_substrings.length == 0)
-                return '';
+                return "";
 
             var longest = g_substrings[0];
             for (var i = 1; i < g_substrings.length; i++)
@@ -198,13 +198,13 @@ vimperator.Completion = function() // {{{
             // join all completion arrays together
             for (var i = 0; i < cpt.length; i++)
             {
-                if (cpt[i] == 's')
+                if (cpt[i] == "s")
                     completions = completions.concat(this.get_search_completions(filter));
-                else if (cpt[i] == 'b')
+                else if (cpt[i] == "b")
                     completions = completions.concat(this.get_bookmark_completions(filter));
-                else if (cpt[i] == 'h')
+                else if (cpt[i] == "h")
                     completions = completions.concat(this.get_history_completions(filter));
-                else if (cpt[i] == 'f')
+                else if (cpt[i] == "f")
                     completions = completions.concat(this.get_file_completions(filter, true));
             }
 
@@ -402,7 +402,7 @@ vimperator.Completion = function() // {{{
             {
                 try
                 {
-                    title = getBrowser().getBrowserAtIndex(i).contentDocument.getElementsByTagName('title')[0].text;
+                    title = getBrowser().getBrowserAtIndex(i).contentDocument.getElementsByTagName("title")[0].text;
                 }
                 catch (e)
                 {

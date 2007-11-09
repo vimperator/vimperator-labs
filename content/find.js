@@ -99,7 +99,7 @@ vimperator.Search = function() //{{{
         pattern = pattern.replace(/(\\)?\\[cC]/g, function($0, $1) { return $1 ? $0 : ""; });
 
         // remove any modifer escape \
-        pattern = pattern.replace(/\\(\\[cCuU])/g, '$1');
+        pattern = pattern.replace(/\\(\\[cCuU])/g, "$1");
 
         search_string = pattern;
     }
@@ -247,7 +247,7 @@ vimperator.Search = function() //{{{
         {
             for (var i = 0; i < win.frames.length; i++)
                 arguments.callee(win.frames[i]);
-            var spans = vimperator.buffer.evaluateXPath('//span[@id="__firefox-findbar-search-id"]', win.document);
+            var spans = vimperator.buffer.evaluateXPath("//span[@id='__firefox-findbar-search-id']", win.document);
             for (var i = 0; i < spans.snapshotLength; i++)
                 spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
         })(window.content);
