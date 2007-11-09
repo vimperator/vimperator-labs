@@ -437,7 +437,10 @@ vimperator.Options = function() //{{{
                   "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
                   "</ul>",
             default_value: "homepage,quickmark,tabopen,paste",
-            validator: function(value) { return value.split(",").every(function(item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); }); }
+            validator: function(value)
+            {
+                return value.split(",").every(function(item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
+            }
         }
     ));
     this.add(new vimperator.Option(["complete", "cpt"], "charlist",
@@ -453,7 +456,7 @@ vimperator.Options = function() //{{{
                   "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
                   "Add <code class=\"option\">'sort'</code> to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
             default_value: "sfbh",
-            validator: function (value) { if (/[^sfbh]/.test(value)) return false; else return true; }
+            validator: function(value) { return !/[^sfbh]/.test(value); }
         }
     ));
     this.add(new vimperator.Option(["defsearch", "ds"], "string",
@@ -497,7 +500,7 @@ vimperator.Options = function() //{{{
                   "</ul>",
             setter: function(value) { setGuiOptions(value); },
             default_value: "",
-            validator: function (value) { if (/[^mTb]/.test(value)) return false; else return true; }
+            validator: function(value) { return !/[^mTb]/.test(value); }
         }
     ));
     this.add(new vimperator.Option(["hintchars", "hc"], "charlist",
@@ -558,7 +561,7 @@ vimperator.Options = function() //{{{
                   "NOTE: laststatus=1 not implemented yet.",
             default_value: 2,
             setter: function(value) { setLastStatus(value); },
-            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+            validator: function(value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["linksearch", "lks"], "boolean",
@@ -610,7 +613,7 @@ vimperator.Options = function() //{{{
                   "NOTE: This option does not change the popup blocker of Firefox in any way.",
             default_value: 1,
             setter: function(value) { setPopups(value); },
-            validator: function (value) { if (value >= 0 && value <= 3) return true; else return false; }
+            validator: function(value) { return (value >= 0 && value <= 3); }
         }
     ));
     this.add(new vimperator.Option(["preload"], "boolean",
@@ -628,7 +631,7 @@ vimperator.Options = function() //{{{
                   "Close the preview window with <code class=\"command\">:pclose</code>.<br/>" +
                   "NOTE: Option currently disabled",
             default_value: 10,
-            validator: function (value) { if (value >= 1 && value <= 50) return true; else return false; }
+            validator: function(value) { return (value >= 1 && value <= 50); }
         }
     ));
     this.add(new vimperator.Option(["scroll", "scr"], "number",
@@ -638,7 +641,7 @@ vimperator.Options = function() //{{{
                   "When a <code class=\"argument\">{count}</code> is specified to the <code class=\"mapping\">&lt;C-u&gt;</code> or <code class=\"mapping\">&lt;C-d&gt;</code> commands this is used to set the value of <code class=\"option\">'scroll'</code> and also used for the current command. " +
                   "The value can be reset to half the window height with <code class=\"command\">:set scroll=0</code>.",
             default_value: 0,
-            validator: function (value) { if (value >= 0) return true; else return false; }
+            validator: function(value) { return value >= 0; }
         }
     ));
     this.add(new vimperator.Option(["showmode", "smd"], "boolean",
@@ -658,7 +661,7 @@ vimperator.Options = function() //{{{
                   "<li><b>2</b>: Show the link in the command line</li>" +
                   "</ul>",
             default_value: 1,
-            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+            validator: function(value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["showtabline", "stal"], "number",
@@ -672,7 +675,7 @@ vimperator.Options = function() //{{{
                   "</ul>",
             setter: function(value) { setShowTabline(value); },
             default_value: 2,
-            validator: function (value) { if (value >= 0 && value <= 2) return true; else return false; }
+            validator: function(value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["smartcase", "scs"], "boolean",
@@ -707,7 +710,7 @@ vimperator.Options = function() //{{{
             help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
                   "The highest value is 9, being the most verbose mode.",
             default_value: 0,
-            validator: function (value) { if (value >= 0 && value <= 9) return true; else return false; }
+            validator: function(value) { return (value >= 0 && value <= 9); }
         }
     ));
     this.add(new vimperator.Option(["visualbell", "vb"], "boolean",
@@ -743,12 +746,9 @@ vimperator.Options = function() //{{{
                   "</table>" +
                   "When there is only a single match, it is fully completed regardless of the case.",
             default_value: "list:full",
-            validator: function (value)
+            validator: function(value)
             {
-                if (/^(?:(?:full|longest|list|list:full|list:longest)(?:,(?!,))?){0,3}(?:full|longest|list|list:full|list:longest)?$/.test(value))
-                    return true;
-                else
-                    return false;
+                return value.split(",").every(function(item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
             }
         }
     ));
@@ -761,7 +761,7 @@ vimperator.Options = function() //{{{
                   "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
                   "</table>",
             default_value: "",
-            validator: function (value) { if (/^sort$/.test(value)) return true; else return false; }
+            validator: function(value) { return /^sort$/.test(value); }
         }
     ));
     //}}}
