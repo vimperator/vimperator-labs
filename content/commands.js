@@ -1402,8 +1402,7 @@ vimperator.Commands = function() //{{{
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
-            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed.<br/>" +
-                  "NOTE: :noremap does not yet work as reliably as :map."
+            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
         }
     ));
     addDefaultCommand(new vimperator.Command(["o[pen]", "e[dit]"],
