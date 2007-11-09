@@ -125,7 +125,7 @@ vimperator.Buffer = function() //{{{
 
     this.__defineGetter__("pageHeight", function()
     {
-        return getBrowser().mPanelContainer.boxObject.height; // FIXME: best way to do this?
+        return window.content.innerHeight;
     });
 
     this.__defineGetter__("textZoom", function()
