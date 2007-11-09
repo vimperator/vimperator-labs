@@ -516,7 +516,8 @@ vimperator.Options = function() //{{{
     this.add(new vimperator.Option(["hinttimeout", "hto"], "number",
         {
             short_help: "Automatically follow non unique numerical hint after {arg} ms",
-            default_value: 500,
+            help: "Set to 0 (the default) to only follow numeric hints after pressing &lt;Return&gt; or when the hint is unique.",
+            default_value: 0,
             validator: function(value) { return value >= 0; }
         }
     ));

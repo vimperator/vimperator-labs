@@ -37,6 +37,7 @@ vimperator.Hints = function() //{{{
     var hints = [];
     var valid_hints = []; // store the indices of the "hints" array with valid elements
     
+    var activeTimeout = null; // needed for hinttimeout > 0
     var canUpdate = false;
     var hintsGenerated = false;
     var docs = []; // keep track of the documents which we display the hints for
@@ -421,13 +422,6 @@ outer:
             else if (valid_hints.length > 1)
                 return false;
         }
-        // if we write a numeric part like 3, but we have 45 hints, only follow
-        // the hint after a timeout, as the user might have wanted to follow link 34
-        else if (hintNumber > 0 && hintNumber * 10 <= valid_hints.length)
-        {
-            var timeout = vimperator.options["hinttimeout"];
-            return;
-        }
 
         var activeNum = hintNumber || 1;
         var loc = valid_hints[activeNum - 1].href || "";
@@ -528,6 +522,14 @@ outer:
     {
         var key = vimperator.events.toString(event);
         var followFirst = false;
+
+        // clear any timeout which might be active after pressing a number
+        if (activeTimeout)
+        {
+            clearTimeout(activeTimeout);
+            activeTimeout = null;
+        }
+
         switch (key)
         {
             case "<Return>":
@@ -602,6 +604,7 @@ outer:
 
                 if (/^[0-9]$/.test(key))
                 {
+                    var oldHintNumber = hintNumber;
                     if (hintNumber == 0 || usedTabKey)
                     {
                         usedTabKey = false;
@@ -619,12 +622,25 @@ outer:
                         generate();
                         showHints();
                     }
+                    showActiveHint(hintNumber, oldHintNumber || 1);
 
                     if (hintNumber == 0 || hintNumber > valid_hints.length)
                     {
                         vimperator.beep();
                         return;
                     }
+
+                    // if we write a numeric part like 3, but we have 45 hints, only follow
+                    // the hint after a timeout, as the user might have wanted to follow link 34
+                    if (hintNumber > 0 && hintNumber * 10 <= valid_hints.length)
+                    {
+                        var timeout = vimperator.options["hinttimeout"];
+                        if (timeout > 0)
+                            activeTimeout = setTimeout(function() { processHints(true); }, timeout, true);
+                        
+                        return false;
+                    }
+                    // we have a unique hint
                     processHints(true);
                     return;
                 }
