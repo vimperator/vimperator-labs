@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
-vimperator.Editor = function() //{{{
+vimperator.Editor = function () //{{{
 {
     // store our last search with f, F, t or T
     var last_findChar = null;
@@ -50,7 +50,7 @@ vimperator.Editor = function() //{{{
         return ed.controllers.getControllerForCommand("cmd_beginLine");
     }
 
-    this.line = function()
+    this.line = function ()
     {
         var line = 1;
         var text = editor().value;
@@ -60,7 +60,7 @@ vimperator.Editor = function() //{{{
         return line;
     }
 
-    this.col = function()
+    this.col = function ()
     {
         var col = 1;
         var text = editor().value;
@@ -73,20 +73,20 @@ vimperator.Editor = function() //{{{
         return col;
     }
 
-    this.unselectText = function()
+    this.unselectText = function ()
     {
         var elt = window.document.commandDispatcher.focusedElement;
         if (elt && elt.selectionEnd)
             elt.selectionEnd = elt.selectionStart;
     }
 
-    this.selectedText = function()
+    this.selectedText = function ()
     {
         var text = editor().value;
         return text.substring(editor().selectionStart, editor().selectionEnd);
     }
 
-    this.pasteClipboard = function()
+    this.pasteClipboard = function ()
     {
         var elt = window.document.commandDispatcher.focusedElement;
 
@@ -106,7 +106,7 @@ vimperator.Editor = function() //{{{
     }
 
     // count is optional, defaults to 1
-    this.executeCommand = function(cmd, count)
+    this.executeCommand = function (cmd, count)
     {
         var controller = getController();
         if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
@@ -142,7 +142,7 @@ vimperator.Editor = function() //{{{
 
     // cmd = y, d, c
     // motion = b, 0, gg, G, etc.
-    this.executeCommandWithMotion = function(cmd, motion, count)
+    this.executeCommandWithMotion = function (cmd, motion, count)
     {
         if (!typeof count == "number" || count < 1)
             count = 1;
@@ -229,7 +229,7 @@ vimperator.Editor = function() //{{{
     // Simple setSelectionRange() would be better, but we want to maintain the correct
     // order of selectionStart/End (a firefox bug always makes selectionStart <= selectionEnd)
     // Use only for small movements!
-    this.moveToPosition = function(pos, forward, select)
+    this.moveToPosition = function (pos, forward, select)
     {
         if (!select)
         {
@@ -262,7 +262,7 @@ vimperator.Editor = function() //{{{
     }
 
     // returns the position of char
-    this.findCharForward = function(char, count)
+    this.findCharForward = function (char, count)
     {
         if (!editor())
             return -1;
@@ -288,7 +288,7 @@ vimperator.Editor = function() //{{{
         return -1;
     }
     // returns the position of char
-    this.findCharBackward = function(char, count)
+    this.findCharBackward = function (char, count)
     {
         if (!editor())
             return -1;
@@ -314,7 +314,7 @@ vimperator.Editor = function() //{{{
         return -1;
     }
 
-    this.editWithExternalEditor = function()
+    this.editWithExternalEditor = function ()
     {
         var textBox = document.commandDispatcher.focusedElement;
         var editor = vimperator.options["editor"];
@@ -380,11 +380,11 @@ vimperator.Editor = function() //{{{
         // blink the textbox after returning
         var timeout = 100;
         textBox.style.backgroundColor = tmpBg;
-        setTimeout( function() {
+        setTimeout( function () {
             textBox.style.backgroundColor = oldBg;
-            setTimeout( function() {
+            setTimeout( function () {
                 textBox.style.backgroundColor = tmpBg;
-                setTimeout( function() {
+                setTimeout( function () {
                     textBox.style.backgroundColor = oldBg;
                 }, timeout);
             }, timeout);
@@ -397,9 +397,9 @@ vimperator.Editor = function() //{{{
 
     this.abbreviations = {};
     this.abbreviations.__iterator__ = function ()
-    { 
+    {
         var tmpCmd;
-        for (var lhs in abbrev) 
+        for (var lhs in abbrev)
         {
             for (var i = 0; i < abbrev[lhs].length; i++)
             {
@@ -410,7 +410,7 @@ vimperator.Editor = function() //{{{
     }
 
     // filter is i, c or "!" (insert or command abbreviations or both)
-    this.listAbbreviations = function(filter, lhs)
+    this.listAbbreviations = function (filter, lhs)
     {
         if (lhs) // list only that one
         {
@@ -425,7 +425,7 @@ vimperator.Editor = function() //{{{
             }
             vimperator.echoerr("No abbreviations found");
             return false;
-        } 
+        }
         else // list all (for that filter {i,c,!})
         {
             var flagFound = false;
@@ -459,7 +459,7 @@ vimperator.Editor = function() //{{{
         }
     }
 
-    this.addAbbreviation = function(filter, lhs, rhs)
+    this.addAbbreviation = function (filter, lhs, rhs)
     {
         if (!abbrev[lhs])
         {
@@ -523,8 +523,8 @@ vimperator.Editor = function() //{{{
         // if filter == ! remove all and add it as only END
         //
         // variant 1: rhs matches anywere in loop
-        // 
-        //          1 mod matches anywhere in loop 
+        //
+        //          1 mod matches anywhere in loop
         //                  a) simple replace and
         //                      I)  (maybe there's another rhs that matches?  not possible)
         //                          (when there's another item, it's opposite mod with different rhs)
@@ -533,7 +533,7 @@ vimperator.Editor = function() //{{{
         //          2 mod does not match
         //                  a) the opposite is there -> make a ! and put it as only and END
         //                 (b) a ! is there. do nothing END)
-        // 
+        //
         // variant 2: rhs matches *no*were in loop and filter is c or i
         //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
         //
@@ -543,7 +543,7 @@ vimperator.Editor = function() //{{{
         //
     }
 
-    this.removeAbbreviation = function(filter, lhs)
+    this.removeAbbreviation = function (filter, lhs)
     {
         if (!lhs)
         {
@@ -568,7 +568,7 @@ vimperator.Editor = function() //{{{
                         return true;
                     }
                     else if (abbrev[lhs][0][0] == filter)
-                    {                
+                    {
                         abbrev[lhs] = "";
                         return true;
                     }
@@ -578,7 +578,7 @@ vimperator.Editor = function() //{{{
                     if (abbrev[lhs][0][0] == "c" && filter == "c")
                         abbrev[lhs][0] = abbrev[lhs][1];
 
-                    abbrev[lhs][1] = "";   
+                    abbrev[lhs][1] = "";
 
                     return true;
                 }
@@ -589,7 +589,7 @@ vimperator.Editor = function() //{{{
     return false;
     }
 
-    this.removeAllAbbreviations = function(filter)
+    this.removeAllAbbreviations = function (filter)
     {
         if (filter == "!")
         {
@@ -608,7 +608,7 @@ vimperator.Editor = function() //{{{
         }
     }
 
-    this.expandAbbreviation = function(filter) // try to find an candidate and replace accordingly
+    this.expandAbbreviation = function (filter) // try to find an candidate and replace accordingly
     {
         var textbox   = editor();
         var text      = textbox.value;
@@ -617,7 +617,7 @@ vimperator.Editor = function() //{{{
         var foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
         if (!foundWord)
             return true;
-            
+
         for (var lhs in abbrev)
         {
                 for (var i = 0; i < abbrev[lhs].length; i++)

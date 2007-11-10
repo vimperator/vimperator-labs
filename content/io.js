@@ -27,7 +27,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.IO = function() 
+vimperator.IO = function ()
 {
     var environment_service = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
@@ -43,7 +43,7 @@ vimperator.IO = function()
         MODE_SYNC: 0x40,
         MODE_EXCL: 0x80,
 
-        expandPath: function(path)
+        expandPath: function (path)
         {
             const WINDOWS = navigator.platform == "Win32";
 
@@ -84,7 +84,7 @@ vimperator.IO = function()
             return path;
         },
 
-        getPluginDir: function()
+        getPluginDir: function ()
         {
             var plugin_dir;
 
@@ -98,7 +98,7 @@ vimperator.IO = function()
             return plugin_dir.exists() && plugin_dir.isDirectory() ? plugin_dir : null;
         },
 
-        getRCFile: function()
+        getRCFile: function ()
         {
             var rc_file1 = this.getFile(this.expandPath("~/.vimperatorrc"));
             var rc_file2 = this.getFile(this.expandPath("~/_vimperatorrc"));
@@ -116,7 +116,7 @@ vimperator.IO = function()
 
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
-        getFile: function(path)
+        getFile: function (path)
         {
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
@@ -127,7 +127,7 @@ vimperator.IO = function()
 
         // TODO: make secure
         // returns a nsILocalFile or null if it could not be created
-        createTempFile: function()
+        createTempFile: function ()
         {
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
@@ -150,7 +150,7 @@ vimperator.IO = function()
         },
 
         // file is either a full pathname or an instance of file instanceof nsILocalFile
-        readDirectory: function(file)
+        readDirectory: function (file)
         {
             if (typeof file == "string")
                 file = this.getFile(file);
@@ -175,7 +175,7 @@ vimperator.IO = function()
 
         // file is either a full pathname or an instance of file instanceof nsILocalFile
         // reads a file in "text" mode and returns the string
-        readFile: function(file)
+        readFile: function (file)
         {
             var ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
                            .createInstance(Components.interfaces.nsIFileInputStream);
@@ -206,7 +206,7 @@ vimperator.IO = function()
         // file is either a full pathname or an instance of file instanceof nsILocalFile
         // default permission = 0644, only used when creating a new file, does not change permissions if the file exists
         // mode can be ">" or ">>" in addition to the normal MODE_* flags
-        writeFile: function(file, buf, mode, perms)
+        writeFile: function (file, buf, mode, perms)
         {
             var ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
                            .createInstance(Components.interfaces.nsIFileOutputStream);

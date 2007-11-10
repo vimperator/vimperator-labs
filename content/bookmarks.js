@@ -27,7 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // also includes methods for dealing with keywords and search engines
-vimperator.Bookmarks = function() //{{{
+vimperator.Bookmarks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -47,7 +47,7 @@ vimperator.Bookmarks = function() //{{{
     var keywords = null;
 
     if (vimperator.options["preload"])
-        setTimeout(function() { load(); } , 100);
+        setTimeout(function () { load(); } , 100);
 
     function load()
     {
@@ -102,7 +102,7 @@ vimperator.Bookmarks = function() //{{{
     // if "bypass_cache" is true, it will force a reload of the bookmarks database
     // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
     // takes about 1 sec
-    this.get = function(filter, tags, bypass_cache)
+    this.get = function (filter, tags, bypass_cache)
     {
         if (!bookmarks || bypass_cache)
             load();
@@ -147,7 +147,7 @@ vimperator.Bookmarks = function() //{{{
     }
 
     // returns number of deleted bookmarks
-    this.remove = function(url)
+    this.remove = function (url)
     {
         if (!url)
             return 0;
@@ -178,7 +178,7 @@ vimperator.Bookmarks = function() //{{{
 
     // TODO: add filtering
     // also ensures that each search engine has a Vimperator-friendly alias
-    this.getSearchEngines = function()
+    this.getSearchEngines = function ()
     {
         var search_engines = [];
         var firefox_engines = search_service.getVisibleEngines({ });
@@ -194,7 +194,7 @@ vimperator.Bookmarks = function() //{{{
             var newalias = alias;
             for (var j = 1; j <= 10; j++) // <=10 is intentional
             {
-                if (!search_engines.some(function(item) { return (item[0] == newalias); }))
+                if (!search_engines.some(function (item) { return (item[0] == newalias); }))
                     break;
 
                 newalias = alias + j;
@@ -212,7 +212,7 @@ vimperator.Bookmarks = function() //{{{
     // TODO: add filtering
     // format of returned array:
     // [keyword, helptext, url]
-    this.getKeywords = function()
+    this.getKeywords = function ()
     {
         if (!keywords)
             load();
@@ -223,7 +223,7 @@ vimperator.Bookmarks = function() //{{{
     // if @param engine_name is null, it uses the default search engine
     // @returns the url for the search string
     //          if the search also requires a postdata, [url, postdata] is returned
-    this.getSearchURL = function(text, engine_name)
+    this.getSearchURL = function (text, engine_name)
     {
         var url = null;
         var postdata = null;
@@ -271,7 +271,7 @@ vimperator.Bookmarks = function() //{{{
             return url; // can be null
     }
 
-    this.list = function(filter, tags, fullmode)
+    this.list = function (filter, tags, fullmode)
     {
         if (fullmode)
         {
@@ -328,7 +328,7 @@ vimperator.Bookmarks = function() //{{{
     //}}}
 } //}}}
 
-vimperator.History = function() //{{{
+vimperator.History = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -339,7 +339,7 @@ vimperator.History = function() //{{{
     var history = null;
 
     if (vimperator.options["preload"])
-        setTimeout(function() { load(); } , 100);
+        setTimeout(function () { load(); } , 100);
 
     function load()
     {
@@ -374,7 +374,7 @@ vimperator.History = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.get = function(filter)
+    this.get = function (filter)
     {
         if (!history)
             load();
@@ -389,7 +389,7 @@ vimperator.History = function() //{{{
         if (!history)
             load();
 
-        history = history.filter(function(elem) {
+        history = history.filter(function (elem) {
             return elem[0] != url;
         });
 
@@ -399,7 +399,7 @@ vimperator.History = function() //{{{
 
     // TODO: better names?
     //       and move to vimperator.buffer.?
-    this.stepTo = function(steps)
+    this.stepTo = function (steps)
     {
         var index = getWebNavigation().sessionHistory.index + steps;
 
@@ -413,7 +413,7 @@ vimperator.History = function() //{{{
         }
     }
 
-    this.goToStart = function()
+    this.goToStart = function ()
     {
         var index = getWebNavigation().sessionHistory.index;
 
@@ -426,7 +426,7 @@ vimperator.History = function() //{{{
         getWebNavigation().gotoIndex(0);
     }
 
-    this.goToEnd = function()
+    this.goToEnd = function ()
     {
         var index = getWebNavigation().sessionHistory.index;
         var max = getWebNavigation().sessionHistory.count - 1;
@@ -440,7 +440,7 @@ vimperator.History = function() //{{{
         getWebNavigation().gotoIndex(max);
     }
 
-    this.list = function(filter, fullmode)
+    this.list = function (filter, fullmode)
     {
         if (fullmode)
         {
@@ -477,7 +477,7 @@ vimperator.History = function() //{{{
     //}}}
 } //}}}
 
-vimperator.Marks = function() //{{{
+vimperator.Marks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -566,7 +566,7 @@ vimperator.Marks = function() //{{{
             umarks.push([mark, url_marks[mark]]);
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        umarks.sort(function(a, b) {
+        umarks.sort(function (a, b) {
             if (a[0] < b[0])
                 return -1;
             else if (a[0] > b[0])
@@ -583,7 +583,7 @@ vimperator.Marks = function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // TODO: add support for frameset pages
-    this.add = function(mark)
+    this.add = function (mark)
     {
         var win = window.content;
 
@@ -613,7 +613,7 @@ vimperator.Marks = function() //{{{
         }
     }
 
-    this.remove = function(filter, special)
+    this.remove = function (filter, special)
     {
         if (special)
         {
@@ -637,7 +637,7 @@ vimperator.Marks = function() //{{{
         }
     }
 
-    this.jumpTo = function(mark)
+    this.jumpTo = function (mark)
     {
         var ok = false;
 
@@ -691,7 +691,7 @@ vimperator.Marks = function() //{{{
             vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
     }
 
-    this.list = function(filter)
+    this.list = function (filter)
     {
         var marks = getSortedMarks();
 
@@ -703,7 +703,7 @@ vimperator.Marks = function() //{{{
 
         if (filter.length > 0)
         {
-            marks = marks.filter(function(mark) {
+            marks = marks.filter(function (mark) {
                     if (filter.indexOf(mark[0]) > -1)
                         return mark;
             });
@@ -732,7 +732,7 @@ vimperator.Marks = function() //{{{
     //}}}
 } //}}}
 
-vimperator.QuickMarks = function() //{{{
+vimperator.QuickMarks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -751,12 +751,12 @@ vimperator.QuickMarks = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.add = function(qmark, location)
+    this.add = function (qmark, location)
     {
         qmarks[qmark] = location;
     }
 
-    this.remove = function(filter)
+    this.remove = function (filter)
     {
         var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
@@ -767,12 +767,12 @@ vimperator.QuickMarks = function() //{{{
         }
     }
 
-    this.removeAll = function()
+    this.removeAll = function ()
     {
         qmarks = {};
     }
 
-    this.jumpTo = function(qmark, where)
+    this.jumpTo = function (qmark, where)
     {
         var url = qmarks[qmark];
 
@@ -782,7 +782,7 @@ vimperator.QuickMarks = function() //{{{
             vimperator.echoerr("E20: QuickMark not set");
     }
 
-    this.list = function(filter)
+    this.list = function (filter)
     {
         var marks = [];
 
@@ -799,7 +799,7 @@ vimperator.QuickMarks = function() //{{{
 
         if (filter.length > 0)
         {
-            marks = marks.filter(function(mark) {
+            marks = marks.filter(function (mark) {
                     if (filter.indexOf(mark[0]) > -1)
                         return mark;
             });
@@ -822,7 +822,7 @@ vimperator.QuickMarks = function() //{{{
         vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
     }
 
-    this.destroy = function()
+    this.destroy = function ()
     {
         // save the quickmarks
         var saved_qmarks = "";

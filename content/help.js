@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.help = function(section, easter) //{{{
+vimperator.help = function (section, easter) //{{{
 {
     if (easter)
     {
@@ -131,7 +131,7 @@ vimperator.help = function(section, easter) //{{{
         return ret;
     }
 
-    var header = '<h1><img src="chrome://vimperator/content/logo_white.png" alt="Vimperator"/></h1>' + 
+    var header = '<h1><img src="chrome://vimperator/content/logo_white.png" alt="Vimperator"/></h1>' +
         '<p class="tagline">First there was a Navigator, then there was an Explorer.\n' +
         'Later it was time for a Konqueror. Now it\'s time for an Imperator, the VIMperator :)</p>';
 
@@ -255,7 +255,7 @@ vimperator.help = function(section, easter) //{{{
     }
 
     // FIXME
-    setTimeout(function() {
+    setTimeout(function () {
         if (section)
         {
             function findSectionElement(section)

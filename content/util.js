@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 vimperator.util = {
-    escapeHTML: function(str)
-    {   
+    escapeHTML: function (str)
+    {
         // XXX: the following code is _much_ slower than a simple .replace()
         // :history display went down from 2 to 1 second after changing
         //
@@ -41,7 +41,7 @@ vimperator.util = {
     // TODO: use :highlight color groups
     // if "process_strings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
-    colorize: function(arg, process_strings)
+    colorize: function (arg, process_strings)
     {
         var type = typeof(arg);
 
@@ -58,7 +58,7 @@ vimperator.util = {
                     arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
 
                 return "<span style=\"color: green;\">" + arg + "</span>";
-            }           
+            }
             else if (type == "boolean")
             {
                 return "<span style=\"color: blue;\">" + arg + "</span>";
@@ -69,9 +69,9 @@ vimperator.util = {
             }
             else if (type == "object" || type == "function")
             {
-                // for java packages value.toString() would crash so badly 
+                // for java packages value.toString() would crash so badly
                 // that we cannot even try/catch it
-                if (/^\[JavaPackage.*\]$/.test(arg)) 
+                if (/^\[JavaPackage.*\]$/.test(arg))
                     return "[JavaPackage]";
 
                 var str = arg.toString();
@@ -91,7 +91,7 @@ vimperator.util = {
 
     // takes a string like 'google bla, www.osnews.com'
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
-    stringToURLArray: function(str)
+    stringToURLArray: function (str)
     {
         var urls = str.split(/\s*\,\s+/);
 
@@ -166,15 +166,15 @@ vimperator.util = {
         return urls;
     },
 
-    highlightURL: function(str, force)
+    highlightURL: function (str, force)
     {
         if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
             return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
-        else 
+        else
             return str;
     },
 
-    formatNumber: function(num)
+    formatNumber: function (num)
     {
         var strNum = (num + "").split(".", 2);
 

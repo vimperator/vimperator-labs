@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * it consists of a prompt and command field
  * be sure to only create objects of this class when the chrome is ready
  */
-vimperator.CommandLine = function() //{{{
+vimperator.CommandLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -51,22 +51,22 @@ vimperator.CommandLine = function() //{{{
         cmd: null,    // ex command history
         search: null, // text search history
 
-        get: function() { return this[this._mode]; },
-        set: function(lines) { this[this._mode] = lines; },
+        get: function () { return this[this._mode]; },
+        set: function (lines) { this[this._mode] = lines; },
 
-        load: function()
+        load: function ()
         {
             this.cmd = vimperator.options.getPref("commandline_cmd_history", "").split("\n");
             this.search = vimperator.options.getPref("commandline_search_history", "").split("\n");
         },
 
-        save: function()
+        save: function ()
         {
             vimperator.options.setPref("commandline_cmd_history", this.cmd.join("\n"));
             vimperator.options.setPref("commandline_search_history", this.search.join("\n"));
         },
 
-        add: function(str)
+        add: function (str)
         {
             if (!str)
                 return;
@@ -74,7 +74,7 @@ vimperator.CommandLine = function() //{{{
             var lines = this.get();
 
             // remove all old history lines which have this string
-            lines = lines.filter(function(line) {
+            lines = lines.filter(function (line) {
                     return line != str;
             });
 
@@ -251,12 +251,12 @@ vimperator.CommandLine = function() //{{{
                                        // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
     this.APPEND_TO_MESSAGES  = 1 << 3; // will show the string in :messages
 
-    this.getCommand = function()
+    this.getCommand = function ()
     {
         return command_widget.value;
     };
 
-    this.open = function(prompt, cmd, ext_mode)
+    this.open = function (prompt, cmd, ext_mode)
     {
         // save the current prompts, we need it later if the command widget
         // receives focus without calling the this.open() method
@@ -279,7 +279,7 @@ vimperator.CommandLine = function() //{{{
     };
 
     // normally used when pressing esc, does not execute a command
-    this.close = function()
+    this.close = function ()
     {
         var res = vimperator.triggerCallback("cancel", cur_extended_mode);
         history.add(this.getCommand());
@@ -287,7 +287,7 @@ vimperator.CommandLine = function() //{{{
         this.clear();
     }
 
-    this.clear = function()
+    this.clear = function ()
     {
         multiline_input_widget.collapsed = true;
         multiline_output_widget.collapsed = true;
@@ -298,7 +298,7 @@ vimperator.CommandLine = function() //{{{
 
     // TODO: add :messages entry
     // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
-    this.echo = function(str, highlight_group, flags)
+    this.echo = function (str, highlight_group, flags)
     {
         var focused = document.commandDispatcher.focusedElement;
         if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
@@ -331,7 +331,7 @@ vimperator.CommandLine = function() //{{{
 
     // this will prompt the user for a string
     // vimperator.commandline.input("(s)ave or (o)pen the file?")
-    this.input = function(str)
+    this.input = function (str)
     {
         // TODO: unfinished, need to find out how/if we can block the execution of code
         // to make this code synchronous or at least use a callback
@@ -342,7 +342,7 @@ vimperator.CommandLine = function() //{{{
 
     // reads a multi line input and returns the string once the last line matches
     // @param until_regexp
-    this.inputMultiline = function(until_regexp, callback_func)
+    this.inputMultiline = function (until_regexp, callback_func)
     {
         // save the mode, because we need to restore it
         old_mode = vimperator.mode;
@@ -357,19 +357,19 @@ vimperator.CommandLine = function() //{{{
         multiline_input_widget.value = "";
         autosizeMultilineInputWidget();
 
-        setTimeout(function() {
+        setTimeout(function () {
             multiline_input_widget.focus();
         }, 10);
     };
 
-    this.onEvent = function(event)
+    this.onEvent = function (event)
     {
         var command = this.getCommand();
 
         if (event.type == "blur")
         {
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
-            setTimeout(function() {
+            setTimeout(function () {
                 if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
                     !(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE) &&
                     !(vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
@@ -484,7 +484,7 @@ vimperator.CommandLine = function() //{{{
                     // sort the completion list
                     if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
                     {
-                        completions.sort(function(a, b) {
+                        completions.sort(function (a, b) {
                                 if (a[0] < b[0])
                                     return -1;
                                 else if (a[0] > b[0])
@@ -598,7 +598,7 @@ vimperator.CommandLine = function() //{{{
         }
     }
 
-    this.onMultilineInputEvent = function(event)
+    this.onMultilineInputEvent = function (event)
     {
         if (event.type == "keypress")
         {
@@ -623,7 +623,7 @@ vimperator.CommandLine = function() //{{{
         else if (event.type == "blur")
         {
             if (vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE)
-                setTimeout(function() { multiline_input_widget.inputField.focus(); }, 0);
+                setTimeout(function () { multiline_input_widget.inputField.focus(); }, 0);
         }
         else if (event.type == "input")
         {
@@ -633,7 +633,7 @@ vimperator.CommandLine = function() //{{{
 
     // FIXME: if 'more' is set and the MOW is not scrollable we should still
     // allow a down motion after an up rather than closing
-    this.onMultilineOutputEvent = function(event)
+    this.onMultilineOutputEvent = function (event)
     {
         var win = multiline_output_widget.contentWindow;
 
@@ -829,7 +829,7 @@ vimperator.CommandLine = function() //{{{
     }
 
     // it would be better if we had a destructor in javascript ...
-    this.destroy = function()
+    this.destroy = function ()
     {
         history.save();
     }
@@ -842,7 +842,7 @@ vimperator.CommandLine = function() //{{{
  * @param id: the id of the the XUL widget which we want to fill
  * @param options: an optional hash which modifies the behavior of the list
  */
-vimperator.InformationList = function(id, options) //{{{
+vimperator.InformationList = function (id, options) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -942,7 +942,7 @@ vimperator.InformationList = function(id, options) //{{{
      *          use entries of 'compl' to fill the list.
      *          Required format: [["left", "right"], ["another"], ["completion"]]
      */
-    this.show = function(compl)
+    this.show = function (compl)
     {
         //max_items = vimperator.options["previewheight"];
 
@@ -968,12 +968,12 @@ vimperator.InformationList = function(id, options) //{{{
         }
     }
 
-    this.hide = function()
+    this.hide = function ()
     {
         widget.hidden = true;
     }
 
-    this.visible = function()
+    this.visible = function ()
     {
         return !widget.hidden;
     }
@@ -981,7 +981,7 @@ vimperator.InformationList = function(id, options) //{{{
     /**
      * select index, refill list if necessary
      */
-    this.selectItem = function(index)
+    this.selectItem = function (index)
     {
         if (widget.hidden)
             return;
@@ -1029,7 +1029,7 @@ vimperator.InformationList = function(id, options) //{{{
         widget.selectedIndex = index - list_offset;
     }
 
-    this.onEvent = function(event)
+    this.onEvent = function (event)
     {
         var listcells = document.getElementsByTagName("listcell");
         // 2 columns for now, use the first column
@@ -1045,7 +1045,7 @@ vimperator.InformationList = function(id, options) //{{{
     //}}}
 } //}}}
 
-vimperator.StatusLine = function() //{{{
+vimperator.StatusLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1065,7 +1065,7 @@ vimperator.StatusLine = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.setClass = function(type)
+    this.setClass = function (type)
     {
         var highlight_group;
 
@@ -1086,7 +1086,7 @@ vimperator.StatusLine = function() //{{{
     };
 
     // update all fields of the statusline
-    this.update = function()
+    this.update = function ()
     {
         this.updateUrl();
         this.updateInputBuffer();
@@ -1096,7 +1096,7 @@ vimperator.StatusLine = function() //{{{
     }
 
     // if "url" is ommited, build a usable string for the URL
-    this.updateUrl = function(url)
+    this.updateUrl = function (url)
     {
         if (typeof url == "string")
         {
@@ -1130,7 +1130,7 @@ vimperator.StatusLine = function() //{{{
         url_widget.value = url;
     };
 
-    this.updateInputBuffer = function(buffer)
+    this.updateInputBuffer = function (buffer)
     {
         if (!buffer || typeof buffer != "string")
             buffer = "";
@@ -1138,7 +1138,7 @@ vimperator.StatusLine = function() //{{{
         inputbuffer_widget.value = buffer;
     };
 
-    this.updateProgress = function(progress)
+    this.updateProgress = function (progress)
     {
         if (!progress)
             progress = "";
@@ -1169,7 +1169,7 @@ vimperator.StatusLine = function() //{{{
     };
 
     // you can omit either of the 2 arguments
-    this.updateTabCount = function(cur_index, total_tabs)
+    this.updateTabCount = function (cur_index, total_tabs)
     {
         if (!cur_index || typeof cur_index != "number")
             cur_index = vimperator.tabs.index() + 1;
@@ -1180,7 +1180,7 @@ vimperator.StatusLine = function() //{{{
     };
 
     // percent is given between 0 and 1
-    this.updateBufferPosition = function(percent)
+    this.updateBufferPosition = function (percent)
     {
         if (!percent || typeof percent != "number")
         {
@@ -1189,7 +1189,7 @@ vimperator.StatusLine = function() //{{{
         }
 
         var bufferposition_str = "";
-        percent = Math.round(percent*100);
+        percent = Math.round(percent * 100);
         if (percent < 0)          bufferposition_str = "All";
         else if (percent == 0)    bufferposition_str = "Top";
         else if (percent < 10)    bufferposition_str = " " + percent + "%";

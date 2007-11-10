@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Option = function(names, type, extra_info) //{{{
+vimperator.Option = function (names, type, extra_info) //{{{
 {
     if (!names || !type)
         return null;
@@ -77,7 +77,7 @@ vimperator.Option = function(names, type, extra_info) //{{{
 
     // NOTE: forced defaults need to use vimperator.options.getPref
     this.__defineGetter__("value",
-        function()
+        function ()
         {
             if (this.getter)
                 this.getter.call(this);
@@ -85,7 +85,7 @@ vimperator.Option = function(names, type, extra_info) //{{{
         }
     );
     this.__defineSetter__("value",
-        function(new_value)
+        function (new_value)
         {
             value = new_value;
             if (this.setter)
@@ -96,7 +96,7 @@ vimperator.Option = function(names, type, extra_info) //{{{
     // TODO: add is[Type]() queries for use in set()?
     //     : add isValid() or just throw an exception?
 
-    this.hasName = function(name)
+    this.hasName = function (name)
     {
         for (var i = 0; i < this.names.length; i++)
         {
@@ -106,7 +106,7 @@ vimperator.Option = function(names, type, extra_info) //{{{
         return false;
     }
 
-    this.isValidValue = function(value)
+    this.isValidValue = function (value)
     {
         if (this.validator)
             return this.validator(value);
@@ -114,13 +114,13 @@ vimperator.Option = function(names, type, extra_info) //{{{
             return true;
     }
 
-    this.reset = function()
+    this.reset = function ()
     {
         this.value = this.default_value;
     }
 } //}}}
 
-vimperator.Options = function() //{{{
+vimperator.Options = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -312,12 +312,12 @@ vimperator.Options = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.__iterator__ = function()
+    this.__iterator__ = function ()
     {
         return optionsIterator();
     }
 
-    this.get = function(name)
+    this.get = function (name)
     {
         for (var i = 0; i < options.length; i++)
         {
@@ -327,14 +327,14 @@ vimperator.Options = function() //{{{
         return null;
     }
 
-    this.add = function(option)
+    this.add = function (option)
     {
-        this.__defineGetter__(option.name, function() { return option.value; });
-        this.__defineSetter__(option.name, function(value) { option.value = value; });
+        this.__defineGetter__(option.name, function () { return option.value; });
+        this.__defineSetter__(option.name, function (value) { option.value = value; });
         options.push(option);
     }
 
-    this.destroy = function()
+    this.destroy = function ()
     {
         // reset some modified firefox prefs
         if (loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit")
@@ -342,7 +342,7 @@ vimperator.Options = function() //{{{
             storePreference("dom.popup_allowed_events", popup_allowed_events);
     }
 
-    this.list = function(only_non_default)
+    this.list = function (only_non_default)
     {
         // TODO: columns like Vim?
         var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
@@ -385,7 +385,7 @@ vimperator.Options = function() //{{{
     }
 
     // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
-    this.setInitialGUI = function()
+    this.setInitialGUI = function ()
     {
         if (!guioptions_done)
             this.get("guioptions").reset();
@@ -397,22 +397,22 @@ vimperator.Options = function() //{{{
 
     // TODO: separate Preferences from Options? Would these utility functions
     // be better placed in the 'core' vimperator namespace somewhere?
-    this.setPref = function(name, value)
+    this.setPref = function (name, value)
     {
         return storePreference(name, value, true);
     }
 
-    this.getPref = function(name, forced_default)
+    this.getPref = function (name, forced_default)
     {
         return loadPreference(name, forced_default, true);
     }
 
-    this.setFirefoxPref = function(name, value)
+    this.setFirefoxPref = function (name, value)
     {
         return storePreference(name, value);
     }
 
-    this.getFirefoxPref = function(name, forced_default)
+    this.getFirefoxPref = function (name, forced_default)
     {
         return loadPreference(name, forced_default);
     }
@@ -437,9 +437,9 @@ vimperator.Options = function() //{{{
                   "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
                   "</ul>",
             default_value: "homepage,quickmark,tabopen,paste",
-            validator: function(value)
+            validator: function (value)
             {
-                return value.split(",").every(function(item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
+                return value.split(",").every(function (item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
             }
         }
     ));
@@ -456,7 +456,7 @@ vimperator.Options = function() //{{{
                   "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
                   "Add <code class=\"option\">'sort'</code> to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
             default_value: "sfbh",
-            validator: function(value) { return !/[^sfbh]/.test(value); }
+            validator: function (value) { return !/[^sfbh]/.test(value); }
         }
     ));
     this.add(new vimperator.Option(["defsearch", "ds"], "string",
@@ -464,7 +464,7 @@ vimperator.Options = function() //{{{
             short_help: "Set the default search engine",
             help: "The default search engine is used in the <code class=\"command\">:[tab]open [arg]</code> command " +
                   "if [arg] neither looks like a URL or like a specified search engine/keyword.",
-            completer: function() { return [["foo", "bar"], ["shit", "blub"]]; },
+            completer: function () { return [["foo", "bar"], ["shit", "blub"]]; },
             default_value: "google"
         }
     ));
@@ -494,8 +494,8 @@ vimperator.Options = function() //{{{
     this.add(new vimperator.Option(["fullscreen", "fs"], "boolean",
         {
             short_help: "Show the current window fullscreen",
-            setter: function(value) { window.fullScreen = value; },
-            getter: function() { return window.fullScreen; },
+            setter: function (value) { window.fullScreen = value; },
+            getter: function () { return window.fullScreen; },
             default_value: false
         }
     ));
@@ -508,9 +508,9 @@ vimperator.Options = function() //{{{
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
                   "</ul>",
-            setter: function(value) { setGuiOptions(value); },
+            setter: function (value) { setGuiOptions(value); },
             default_value: "",
-            validator: function(value) { return !/[^mTb]/.test(value); }
+            validator: function (value) { return !/[^mTb]/.test(value); }
         }
     ));
     this.add(new vimperator.Option(["hinttimeout", "hto"], "number",
@@ -518,7 +518,7 @@ vimperator.Options = function() //{{{
             short_help: "Automatically follow non unique numerical hint after {arg} ms",
             help: "Set to 0 (the default) to only follow numeric hints after pressing &lt;Return&gt; or when the hint is unique.",
             default_value: 0,
-            validator: function(value) { return value >= 0; }
+            validator: function (value) { return value >= 0; }
         }
     ));
     this.add(new vimperator.Option(["hintstyle", "hs"], "string",
@@ -537,7 +537,7 @@ vimperator.Options = function() //{{{
     this.add(new vimperator.Option(["hlsearch", "hls"], "boolean",
         {
             short_help: "Highlight previous search pattern matches",
-            setter: function(value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
+            setter: function (value) { if (value) vimperator.search.highlight(); else vimperator.search.clear(); },
             default_value: false
         }
     ));
@@ -580,8 +580,8 @@ vimperator.Options = function() //{{{
                   "</ul>" +
                   "NOTE: laststatus=1 not implemented yet.",
             default_value: 2,
-            setter: function(value) { setLastStatus(value); },
-            validator: function(value) { return (value >= 0 && value <= 2); }
+            setter: function (value) { setLastStatus(value); },
+            validator: function (value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["linksearch", "lks"], "boolean",
@@ -624,8 +624,8 @@ vimperator.Options = function() //{{{
                   "</ul>" +
                   "NOTE: This option does not change the popup blocker of Firefox in any way.",
             default_value: 1,
-            setter: function(value) { setPopups(value); },
-            validator: function(value) { return (value >= 0 && value <= 3); }
+            setter: function (value) { setPopups(value); },
+            validator: function (value) { return (value >= 0 && value <= 3); }
         }
     ));
     this.add(new vimperator.Option(["preload"], "boolean",
@@ -643,7 +643,7 @@ vimperator.Options = function() //{{{
                   "Close the preview window with <code class=\"command\">:pclose</code>.<br/>" +
                   "NOTE: Option currently disabled",
             default_value: 10,
-            validator: function(value) { return (value >= 1 && value <= 50); }
+            validator: function (value) { return (value >= 1 && value <= 50); }
         }
     ));
     this.add(new vimperator.Option(["scroll", "scr"], "number",
@@ -653,7 +653,7 @@ vimperator.Options = function() //{{{
                   "When a <code class=\"argument\">{count}</code> is specified to the <code class=\"mapping\">&lt;C-u&gt;</code> or <code class=\"mapping\">&lt;C-d&gt;</code> commands this is used to set the value of <code class=\"option\">'scroll'</code> and also used for the current command. " +
                   "The value can be reset to half the window height with <code class=\"command\">:set scroll=0</code>.",
             default_value: 0,
-            validator: function(value) { return value >= 0; }
+            validator: function (value) { return value >= 0; }
         }
     ));
     this.add(new vimperator.Option(["showmode", "smd"], "boolean",
@@ -673,7 +673,7 @@ vimperator.Options = function() //{{{
                   "<li><b>2</b>: Show the link in the command line</li>" +
                   "</ul>",
             default_value: 1,
-            validator: function(value) { return (value >= 0 && value <= 2); }
+            validator: function (value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["showtabline", "stal"], "number",
@@ -685,9 +685,9 @@ vimperator.Options = function() //{{{
                   "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
                   "<li><b>2</b>: Always show tab bar</li>" +
                   "</ul>",
-            setter: function(value) { setShowTabline(value); },
+            setter: function (value) { setShowTabline(value); },
             default_value: 2,
-            validator: function(value) { return (value >= 0 && value <= 2); }
+            validator: function (value) { return (value >= 0 && value <= 2); }
         }
     ));
     this.add(new vimperator.Option(["smartcase", "scs"], "boolean",
@@ -703,7 +703,7 @@ vimperator.Options = function() //{{{
             help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
                   "\"Title of web page - Vimperator\".<br/>If you don't like that, you can restore it with: " +
                   "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
-            setter: function(value) { setTitleString(value); },
+            setter: function (value) { setTitleString(value); },
             default_value: "Vimperator"
         }
     ));
@@ -711,8 +711,8 @@ vimperator.Options = function() //{{{
         {
             short_help: "Show current website with a minimal style sheet to make it easily accessible",
             help: "Note that this is a local option for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
-            setter: function(value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
-            getter: function() { return getMarkupDocumentViewer().authorStyleDisabled; },
+            setter: function (value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
+            getter: function () { return getMarkupDocumentViewer().authorStyleDisabled; },
             default_value: false
         }
     ));
@@ -722,13 +722,13 @@ vimperator.Options = function() //{{{
             help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
                   "The highest value is 9, being the most verbose mode.",
             default_value: 0,
-            validator: function(value) { return (value >= 0 && value <= 9); }
+            validator: function (value) { return (value >= 0 && value <= 9); }
         }
     ));
     this.add(new vimperator.Option(["visualbell", "vb"], "boolean",
         {
             short_help: "Use visual bell instead of beeping on errors",
-            setter: function(value) { vimperator.options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
+            setter: function (value) { vimperator.options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
             default_value: false
         }
     ));
@@ -750,9 +750,9 @@ vimperator.Options = function() //{{{
                   "</table>" +
                   "When there is only a single match, it is fully completed regardless of the case.",
             default_value: "list:full",
-            validator: function(value)
+            validator: function (value)
             {
-                return value.split(",").every(function(item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
+                return value.split(",").every(function (item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
             }
         }
     ));
@@ -765,7 +765,7 @@ vimperator.Options = function() //{{{
                   "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
                   "</table>",
             default_value: "",
-            validator: function(value) { return /^sort$/.test(value); }
+            validator: function (value) { return /^sort$/.test(value); }
         }
     ));
     //}}}

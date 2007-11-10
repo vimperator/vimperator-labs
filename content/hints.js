@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Hints = function() //{{{
+vimperator.Hints = function () //{{{
 {
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
@@ -36,14 +36,14 @@ vimperator.Hints = function() //{{{
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var hints = [];
     var valid_hints = []; // store the indices of the "hints" array with valid elements
-    
+
     var escapeNumbers = false ; // escape mode for numbers. true -> treated as hint-text
     var activeTimeout = null; // needed for hinttimeout > 0
     var canUpdate = false;
 
     // keep track of the documents which we generated the hints for
     // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
-    var docs = []; 
+    var docs = [];
 
     // reset all important variables
     function reset()
@@ -173,7 +173,7 @@ vimperator.Hints = function() //{{{
             vimperator.echoerr(e);
         }
     }
-    
+
     function generate(win)
     {
         var startDate = Date.now();
@@ -383,13 +383,13 @@ vimperator.Hints = function() //{{{
                 // USE THIS FOR MAKING THE SELECTED ELEM RED
                 //                firstElem.style.backgroundColor = "red";
                 //                firstElem.style.color = "white";
-                //                setTimeout(function() {
+                //                setTimeout(function () {
                 //                        firstElem.style.backgroundColor = firstElemBgColor;
                 //                        firstElem.style.color = firstElemColor;
                 //                }, 200);
                 // OR USE THIS FOR BLINKING:
                 //                var counter = 0;
-                //                var id = setInterval(function() {
+                //                var id = setInterval(function () {
                 //                    firstElem.style.backgroundColor = "red";
                 //                    if (counter % 2 == 0)
                 //                        firstElem.style.backgroundColor = "yellow";
@@ -403,7 +403,7 @@ vimperator.Hints = function() //{{{
                 //                        clearTimeout(id);
                 //                    }
                 //                }, 100);
-                setTimeout(function() {
+                setTimeout(function () {
                         firstElem.style.backgroundColor = firstElemBgColor;
                         firstElem.style.color = firstElemColor;
                 }, timeout);
@@ -427,7 +427,7 @@ vimperator.Hints = function() //{{{
             var first_href = valid_hints[0].getAttribute("href") || null;
             if (first_href)
             {
-                if (valid_hints.some( function(e) { return e.getAttribute("href") != first_href; } ))
+                if (valid_hints.some( function (e) { return e.getAttribute("href") != first_href; } ))
                     return false;
             }
             else if (valid_hints.length > 1)
@@ -458,7 +458,7 @@ vimperator.Hints = function() //{{{
 
         if (vimperator.modes.extended & vimperator.modes.ALWAYS_HINT)
         {
-            setTimeout(function() {
+            setTimeout(function () {
                 canUpdate = true;
                 hintString = "";
                 hintNumber = 0;
@@ -467,7 +467,7 @@ vimperator.Hints = function() //{{{
         }
         else
         {
-            setTimeout( function() {
+            setTimeout( function () {
                 if (vimperator.mode == vimperator.modes.HINTS)
                     vimperator.modes.reset(false);
             }, timeout);
@@ -481,7 +481,7 @@ vimperator.Hints = function() //{{{
     ////////////////////////////////////////////////////////////////////////////////
 
     // TODO: implement framesets
-    this.show = function(mode, minor, filter)
+    this.show = function (mode, minor, filter)
     {
         if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTwWyY]$/.test(minor))
         {
@@ -501,7 +501,7 @@ vimperator.Hints = function() //{{{
         var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
         while (mt.hasPendingEvents())
             mt.processNextEvent(true);
-            
+
         canUpdate = true;
         showHints();
 
@@ -520,12 +520,12 @@ vimperator.Hints = function() //{{{
             return true;
     };
 
-    this.hide = function()
+    this.hide = function ()
     {
         removeHints(0);
     };
 
-    this.onEvent = function(event)
+    this.onEvent = function (event)
     {
         var key = vimperator.events.toString(event);
         var followFirst = false;
@@ -598,7 +598,7 @@ vimperator.Hints = function() //{{{
                escapeNumbers = !escapeNumbers;
                if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                    hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
-                        
+
                updateStatusline();
                return;
 
@@ -653,8 +653,8 @@ vimperator.Hints = function() //{{{
                     {
                         var timeout = vimperator.options["hinttimeout"];
                         if (timeout > 0)
-                            activeTimeout = setTimeout(function() { processHints(true); }, timeout);
-                        
+                            activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+
                         return false;
                     }
                     // we have a unique hint

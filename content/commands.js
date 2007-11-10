@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Command = function(specs, action, extra_info) //{{{
+vimperator.Command = function (specs, action, extra_info) //{{{
 {
     if (!specs || !action)
         return null;
@@ -34,7 +34,7 @@ vimperator.Command = function(specs, action, extra_info) //{{{
     // convert command name abbreviation specs of the form
     // 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
     // 'abc', 'abcdef'
-    var parseSpecs = function(specs)
+    var parseSpecs = function (specs)
     {
         var short_names = [];
         var long_names  = [];
@@ -90,14 +90,14 @@ vimperator.Command = function(specs, action, extra_info) //{{{
 
 }
 
-vimperator.Command.prototype.execute = function(args, special, count, modifiers)
+vimperator.Command.prototype.execute = function (args, special, count, modifiers)
 {
     return this.action.call(this, args, special, count, modifiers);
 }
 
 // return true if the candidate name matches one of the command's aliases
 // (including all acceptable abbreviations)
-vimperator.Command.prototype.hasName = function(name)
+vimperator.Command.prototype.hasName = function (name)
 {
     // match a candidate name against a command name abbreviation spec - returning
     // true if the candidate matches unambiguously
@@ -127,7 +127,7 @@ vimperator.Command.prototype.hasName = function(name)
 }
 //}}}
 
-vimperator.Commands = function() //{{{
+vimperator.Commands = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -148,7 +148,7 @@ vimperator.Commands = function() //{{{
     function addDefaultCommand(command)
     {
         ex_commands.push(command);
-        vimperator.Commands.prototype[command.name] = function(args, special, count, modifiers)
+        vimperator.Commands.prototype[command.name] = function (args, special, count, modifiers)
         {
             command.execute(args, special, count, modifiers);
         }
@@ -452,12 +452,12 @@ vimperator.Commands = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.__iterator__ = function()
+    this.__iterator__ = function ()
     {
         return commandsIterator();
     }
 
-    this.add = function(command)
+    this.add = function (command)
     {
         if (!command)
             return false;
@@ -467,7 +467,7 @@ vimperator.Commands = function() //{{{
         return true;
     }
 
-    this.get = function(name)
+    this.get = function (name)
     {
         for (var i = 0; i < ex_commands.length; i++)
         {
@@ -482,7 +482,7 @@ vimperator.Commands = function() //{{{
     // FIXME: doesn't really belong here...
     // return [null, null, null, null, heredoc_tag || false];
     //        [count, cmd, special, args] = match;
-    this.parseCommand = function(str, tag)
+    this.parseCommand = function (str, tag)
     {
         // remove comments
         str.replace(/\s*".*$/, "");
@@ -526,14 +526,14 @@ vimperator.Commands = function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     addDefaultCommand(new vimperator.Command(["addo[ns]"],
-        function() { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
+        function () { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show available Browser Extensions and Themes",
             help: "You can add/remove/disable browser extensions from this dialog.<br/>Be aware that not all Firefox extensions work, because Vimperator overrides some key bindings and changes Firefox's GUI."
         }
     ));
     addDefaultCommand(new vimperator.Command(["ba[ck]"],
-        function(args, special, count)
+        function (args, special, count)
         {
             if (special)
                 vimperator.history.goToStart();
@@ -559,7 +559,7 @@ vimperator.Commands = function() //{{{
             short_help: "Go back in the browser history",
             help: "Count is supported, <code class=\"command\">:3back</code> goes back 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:back!</code> goes to the beginning of the browser history.",
-            completer: function(filter)
+            completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
@@ -576,7 +576,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
-        function(args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0); },
+        function (args, special, count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0); },
         {
             usage: ["[count]bd[elete][!]"],
             short_help: "Delete current buffer (=tab)",
@@ -585,13 +585,13 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["beep"],
-        function() { vimperator.beep(); },
+        function () { vimperator.beep(); },
         {
             short_help: "Play a system beep"
         }
     ));
     addDefaultCommand(new vimperator.Command(["bma[rk]"],
-        function(args)
+        function (args)
         {
             var res = parseArgs(args, this.args);
             if (!res)
@@ -620,11 +620,11 @@ vimperator.Commands = function() //{{{
                   " -keyword=keyword<br/>",
             args: [[["-title", "-t"],    OPTION_STRING],
                    [["-tags", "-T"],     OPTION_LIST],
-                   [["-keyword", "-k"],  OPTION_STRING, function(arg) { return /\w/.test(arg); } ]]
+                   [["-keyword", "-k"],  OPTION_STRING, function (arg) { return /\w/.test(arg); } ]]
         }
     ));
     addDefaultCommand(new vimperator.Command(["bmarks"],
-        function(args, special)
+        function (args, special)
         {
             var res = parseArgs(args, this.args);
             if (!res)
@@ -640,12 +640,12 @@ vimperator.Commands = function() //{{{
                   "The special version <code class=\"command\">:bmarks!</code> opens the default Firefox bookmarks window.<br/>" +
                   "Filter can also contain the following options:<br/>" +
                   "-tags=comma,separated,tag,list<br/>",
-            completer: function(filter) { return vimperator.bookmarks.get(filter); },
+            completer: function (filter) { return vimperator.bookmarks.get(filter); },
             args: [[["-tags", "-T"],     OPTION_LIST]]
         }
     ));
     addDefaultCommand(new vimperator.Command(["b[uffer]"],
-        function(args, special) { vimperator.buffer.switchTo(args, special); },
+        function (args, special) { vimperator.buffer.switchTo(args, special); },
         {
             usage: ["b[uffer][!] {url|index}"],
             short_help: "Go to buffer from buffer list",
@@ -654,11 +654,11 @@ vimperator.Commands = function() //{{{
                   "it is selected. With <code class=\"argument\">[!]</code> the next buffer matching the argument " +
                   "is selected, even if it cannot be identified uniquely.<br/>" +
                   "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
-            completer: function(filter) { return vimperator.completion.get_buffer_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["buffers", "files", "ls", "tabs"],
-        function(args, special)
+        function (args, special)
         {
             if (args)
             {
@@ -676,7 +676,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["delbm[arks]"],
-        function(args, special)
+        function (args, special)
         {
             var url = args;
             if (!url)
@@ -693,11 +693,11 @@ vimperator.Commands = function() //{{{
                   "Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " [!] a special version to delete ALL bookmarks <br/>",
-            completer: function(filter) { return vimperator.bookmarks.get(filter); }
+            completer: function (filter) { return vimperator.bookmarks.get(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["com[mand]"],
-        function(args)
+        function (args)
         {
             var res = parseArgs(args, this.args);
             if (!res)
@@ -709,13 +709,13 @@ vimperator.Commands = function() //{{{
             usage: ["com[mand][!] [{attr}...] {cmd} {rep}"],
             short_help: "Temporarily used for testing args parser",
             help: "",
-            args: [[["-nargs"],    OPTION_STRING, function(arg) { return /^(0|1|\*|\?|\+)$/.test(arg); } ],
+            args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); } ],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]]
         }
     ));
     addDefaultCommand(new vimperator.Command(["delm[arks]"],
-        function(args, special)
+        function (args, special)
         {
             if (!special && !args)
             {
@@ -768,7 +768,7 @@ vimperator.Commands = function() //{{{
 
     ));
     addDefaultCommand(new vimperator.Command(["delqm[arks]"],
-        function(args, special)
+        function (args, special)
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!special && !args)
@@ -797,7 +797,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["downl[oads]", "dl"],
-        function() { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); },
+        function () { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); },
         {
             short_help: "Show progress of current downloads",
             help: "Open the original Firefox download dialog in a new tab.<br/>" +
@@ -833,7 +833,7 @@ vimperator.Commands = function() //{{{
         return arg;
     }
     addDefaultCommand(new vimperator.Command(["ec[ho]"],
-        function(args)
+        function (args)
         {
             var res = argToString(args, true);
             if (res != null)
@@ -845,11 +845,11 @@ vimperator.Commands = function() //{{{
             help: "Useful for showing informational messages. Multiple lines can be separated by \\n.<br/>" +
                   "<code class=\"argument\">{expr}</code> can either be a quoted string, or any expression which can be fed to eval() like 4+5. " +
                   "You can also view the source code of objects and functions if the return value of <code class=\"argument\">{expr}</code> is an object or function.",
-            completer: function(filter) { return vimperator.completion.javascript(filter); }
+            completer: function (filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["echoe[rr]"],
-        function(args)
+        function (args)
         {
             var res = argToString(args, false);
             if (res != null)
@@ -859,11 +859,11 @@ vimperator.Commands = function() //{{{
             usage: ["echoe[rr] {expr}"],
             short_help: "Display an error string at the bottom of the window",
             help: "Just like <code class=\"command\">:ec[ho]</code>, but echoes the result highlighted in red. Useful for showing important messages.",
-            completer: function(filter) { return vimperator.completion.javascript(filter); }
+            completer: function (filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["exe[cute]"],
-        function(args)
+        function (args)
         {
             // TODO: :exec has some difficult semantics -> later
             // var res = parseArgs(args, this.args);
@@ -881,13 +881,13 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["exu[sage]"],
-        function(args, special, count, modifiers) { vimperator.help("commands", special, null, modifiers); },
+        function (args, special, count, modifiers) { vimperator.help("commands", special, null, modifiers); },
         {
             short_help: "Show help for Ex commands"
         }
     ));
     addDefaultCommand(new vimperator.Command(["fo[rward]", "fw"],
-        function(args, special, count)
+        function (args, special, count)
         {
             if (special)
                 vimperator.history.goToEnd();
@@ -913,7 +913,7 @@ vimperator.Commands = function() //{{{
             short_help: "Go forward in the browser history",
             help: "Count is supported, <code class=\"command\">:3forward</code> goes forward 3 pages in the browser history.<br/>" +
                   "The special version <code class=\"command\">:forward!</code> goes to the end of the browser history.",
-            completer: function(filter)
+            completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
@@ -930,14 +930,14 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ha[rdcopy]"],
-        function() { getBrowser().contentWindow.print(); },
+        function () { getBrowser().contentWindow.print(); },
         {
             short_help: "Print current document",
             help: "Open a GUI dialog where you can select the printer, number of copies, orientation, etc."
         }
     ));
     addDefaultCommand(new vimperator.Command(["h[elp]"],
-        function(args, special, count, modifiers) { vimperator.help(args, special, null, modifiers); },
+        function (args, special, count, modifiers) { vimperator.help(args, special, null, modifiers); },
         {
             usage: ["h[elp] {subject}"],
             short_help: "Open the help window",
@@ -949,21 +949,21 @@ vimperator.Commands = function() //{{{
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
                   "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
-            completer: function(filter) { return vimperator.completion.get_help_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_help_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["hist[ory]", "hs"],
-        function(args, special) { vimperator.history.list(args, special); },
+        function (args, special) { vimperator.history.list(args, special); },
         {
             usage: ["hist[ory] [filter]", "history!"],
             short_help: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
                   "The special version <code class=\"command\">:history!</code> opens the default Firefox history window.",
-            completer: function(filter) { return vimperator.history.get(filter); }
+            completer: function (filter) { return vimperator.history.get(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["javas[cript]", "js"],
-        function(args, special)
+        function (args, special)
         {
             if (special) // open javascript console
                 vimperator.open("chrome://global/content/console.xul", vimperator.NEW_TAB);
@@ -974,7 +974,7 @@ vimperator.Commands = function() //{{{
                 if (matches && matches[2])
                 {
                     vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                        function(code) {
+                        function (code) {
                             try
                             {
                                 eval(matches[1] + "\n" + code);
@@ -1008,11 +1008,11 @@ vimperator.Commands = function() //{{{
                   "Rudimentary <code class=\"mapping\">&lt;Tab&gt;</code> completion is available for <code class=\"command\">:javascript {cmd}&lt;Tab&gt;</code> (but not yet for the " +
                   "<code class=\"command\">:js &lt;&lt;EOF</code> multiline widget). Be aware that Vimperator needs to run {cmd} through eval() " +
                   "to get the completions, which could have unwanted side effects.",
-            completer: function(filter) { return vimperator.completion.javascript(filter); }
+            completer: function (filter) { return vimperator.completion.javascript(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["let"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1100,7 +1100,7 @@ vimperator.Commands = function() //{{{
     ));
     // code for abbreviations
     addDefaultCommand(new vimperator.Command(["ab[breviate]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1124,7 +1124,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ca[bbrev]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1146,7 +1146,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ia[bbrev]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1168,14 +1168,14 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["una[bbreviate]"],
-        function(args) { vimperator.editor.removeAbbreviation("!", args); },
+        function (args) { vimperator.editor.removeAbbreviation("!", args); },
         {
             usage: ["una[bbreviate] {lhs}"],
             short_help: "Remove an abbreviation"
         }
     ));
     addDefaultCommand(new vimperator.Command(["cuna[bbrev]"],
-        function(args) { vimperator.editor.removeAbbreviation("c", args); },
+        function (args) { vimperator.editor.removeAbbreviation("c", args); },
         {
             usage: ["cuna[bbrev] {lhs}"],
             short_help: "Remove an abbreviation for Command-line mode",
@@ -1183,7 +1183,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["iuna[bbrev]"],
-        function(args) { vimperator.editor.removeAbbreviation("i", args); },
+        function (args) { vimperator.editor.removeAbbreviation("i", args); },
         {
             usage: ["iuna[bbrev] {lhs}"],
             short_help: "Remove an abbreviation for Insert mode",
@@ -1191,15 +1191,15 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ab[clear]"],
-        function(args) { vimperator.editor.removeAllAbbreviations("!"); },
+        function (args) { vimperator.editor.removeAllAbbreviations("!"); },
         { short_help: "Remove all abbreviations" }
     ));
     addDefaultCommand(new vimperator.Command(["cab[clear]"],
-        function(args) { vimperator.editor.removeAllAbbreviations("c"); },
+        function (args) { vimperator.editor.removeAllAbbreviations("c"); },
         { short_help: "Remove all abbreviations for Command-line mode" }
     ));
     addDefaultCommand(new vimperator.Command(["iab[clear]"],
-        function(args) { vimperator.editor.removeAllAbbreviations("i"); },
+        function (args) { vimperator.editor.removeAllAbbreviations("i"); },
         { short_help: "Remove all abbreviations for Insert mode" }
     ));
     // 0 args -> list all maps
@@ -1228,7 +1228,7 @@ vimperator.Commands = function() //{{{
         if (rhs)
         {
             vimperator.mappings.add(new vimperator.Map([vimperator.modes.NORMAL], [lhs],
-                function(count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
                 { flags: vimperator.Mappings.flags.COUNT, rhs: rhs }
             ));
         }
@@ -1239,7 +1239,7 @@ vimperator.Commands = function() //{{{
         }
     }
     addDefaultCommand(new vimperator.Command(["map"],
-        function(args) { map(args, false) },
+        function (args) { map(args, false) },
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
@@ -1248,7 +1248,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["mapc[lear]"],
-        function(args)
+        function (args)
         {
             if (args)
             {
@@ -1265,7 +1265,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ma[rk]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1291,7 +1291,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["marks"],
-        function(args)
+        function (args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
@@ -1310,7 +1310,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["mkv[imperatorrc]"],
-        function(args, special)
+        function (args, special)
         {
             // TODO: "E172: Only one file name allowed"
             var filename;
@@ -1369,7 +1369,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["noh[lsearch]"],
-        function(args)
+        function (args)
         {
             vimperator.search.clear();
         },
@@ -1380,7 +1380,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["norm[al]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1398,7 +1398,7 @@ vimperator.Commands = function() //{{{
     ));
     // TODO: remove duplication in :map
     addDefaultCommand(new vimperator.Command(["no[remap]"],
-        function(args) { map(args, true) },
+        function (args) { map(args, true) },
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
@@ -1406,7 +1406,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["o[pen]", "e[dit]"],
-        function(args, special)
+        function (args, special)
         {
             if (args)
             {
@@ -1445,7 +1445,7 @@ vimperator.Commands = function() //{{{
                   "The items which are completed on <code class=\"mapping\">&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
-            completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["pa[geinfo]"],
@@ -1456,13 +1456,13 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["pc[lose]"],
-        function() { vimperator.previewwindow.hide(); },
+        function () { vimperator.previewwindow.hide(); },
         {
             short_help: "Close preview window on bottom of screen"
         }
     ));
     addDefaultCommand(new vimperator.Command(["pref[erences]", "prefs"],
-        function(args, special, count, modifiers)
+        function (args, special, count, modifiers)
         {
             if (!args)
             {
@@ -1494,7 +1494,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["qma[rk]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1518,7 +1518,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["qmarks"],
-        function(args)
+        function (args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
@@ -1537,7 +1537,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["q[uit]"],
-        function() { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
+        function () { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
         {
             short_help: "Quit current tab",
             help: "If this is the last tab in the window, close the window. If this was the " +
@@ -1545,14 +1545,14 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["quita[ll]", "qa[ll]"],
-        function() { vimperator.quit(false); },
+        function () { vimperator.quit(false); },
         {
             short_help: "Quit Vimperator",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is not stored."
         }
     ));
     addDefaultCommand(new vimperator.Command(["redr[aw]"],
-        function()
+        function ()
         {
             var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
                             getInterface(Components.interfaces.nsIDOMWindowUtils);
@@ -1564,7 +1564,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["re[load]"],
-        function(args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); },
+        function (args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); },
         {
             usage: ["re[load][!]"],
             short_help: "Reload current page",
@@ -1572,7 +1572,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["reloada[ll]"],
-        function(args, special) { vimperator.tabs.reloadAll(special); },
+        function (args, special) { vimperator.tabs.reloadAll(special); },
         {
             usage: ["reloada[ll][!]"],
             short_help: "Reload all pages",
@@ -1580,14 +1580,14 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["res[tart]"],
-        function() { vimperator.restart(); },
+        function () { vimperator.restart(); },
         {
             short_help: "Force the browser to restart",
             help: "Useful when installing extensions."
         }
     ));
     addDefaultCommand(new vimperator.Command(["sav[eas]", "w[rite]"],
-        function() { saveDocument(window.content.document); },
+        function () { saveDocument(window.content.document); },
         {
             short_help: "Save current web page to disk",
             help: "Opens the original Firefox \"Save page as...\" dialog.<br/>" +
@@ -1596,7 +1596,7 @@ vimperator.Commands = function() //{{{
     ));
     addDefaultCommand(new vimperator.Command(["se[t]"],
         // TODO: support setting multiple options at once
-        function(args, special, count, modifiers)
+        function (args, special, count, modifiers)
         {
             if (special)
             {
@@ -1805,12 +1805,12 @@ vimperator.Commands = function() //{{{
                   "<code class=\"command\">:set option+={value}</code>, <code class=\"command\">:set option^={value}</code> and <code class=\"command\">:set option-={value}</code> " +
                   "adds/multiplies/subtracts <code class=\"argument\">{value}</code> from a number option and appends/prepends/removes <code class=\"argument\">{value}</code> from a string option.<br/>" +
                   "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
-            completer: function(filter) { return vimperator.completion.get_options_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_options_completions(filter); }
         }
     ));
     // TODO: sclose instead?
     addDefaultCommand(new vimperator.Command(["sbcl[ose]"],
-        function(args)
+        function (args)
         {
             if (args)
             {
@@ -1828,7 +1828,7 @@ vimperator.Commands = function() //{{{
     // TODO: sopen instead? Separate :sidebar from :sbopen and make them behave
     // more like :cw, :cope etc
     addDefaultCommand(new vimperator.Command(["sideb[ar]", "sb[ar]", "sbope[n]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1859,11 +1859,11 @@ vimperator.Commands = function() //{{{
             short_help: "Open the sidebar window",
             help: "<code class=\"argument\">{name}</code> is any of the menu items listed under the standard Firefox View->Sidebar " +
                   "menu. Add-ons, Preferences and Downloads are also available in the sidebar.",
-            completer: function(filter) { return vimperator.completion.get_sidebar_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_sidebar_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["so[urce]"],
-        function(args, special)
+        function (args, special)
         {
             // FIXME: implement proper filename quoting
             //if (/[^\\]\s/.test(args))
@@ -1879,14 +1879,14 @@ vimperator.Commands = function() //{{{
             short_help: "Read Ex commands from {file}",
             help: "You can either source files which mostly contain Ex commands like <code class=\"command\">map &lt; gt</code> " +
                   "and put JavaScript code within a:<br/><code class=\"code\">" +
-                  "js &lt;&lt;EOF<br/>hello = function() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/>EOF<br/></code> section.<br/>" +
+                  "js &lt;&lt;EOF<br/>hello = function () {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/>EOF<br/></code> section.<br/>" +
                   "Or you can alternatively source a file which ends in .js, these files are automatically sourced as pure JavaScript files.<br/>" +
                   "NOTE: In both cases you must add functions to the global window object like shown above, functions written as:<br/>" +
                   "<code class=\"code\">function hello2() {<br/>&nbsp;&nbsp;alert(\"Hello world\");<br/>}<br/></code>are only available within the scope of the script. <br/><br/>" +
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
                   "~ is supported as a shortcut for the <var>$HOME</var> directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
-            completer: function(filter) { return vimperator.completion.get_file_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_file_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["st[op]"],
@@ -1897,24 +1897,24 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["tab"],
-        function(args) { vimperator.execute(args, { inTab: true }); },
+        function (args) { vimperator.execute(args, { inTab: true }); },
         {
             usage: ["tab {cmd}"],
             short_help: "Execute {cmd} and tell it to output in a new tab",
             help: "Works only for commands that support it, currently:" +
                   "<ul><li>:tab help</li>" +
                   "<li>:tab prefs[!]</li></ul>",
-            completer: function(filter) { return vimperator.completion.get_command_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_command_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabl[ast]"],
-        function() { vimperator.tabs.select("$", false); },
+        function () { vimperator.tabs.select("$", false); },
         {
             short_help: "Switch to the last tab"
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabm[ove]"],
-        function(args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
+        function (args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
         {
             usage: ["tabm[ove] [N]", "tabm[ove][!] +N | -N"],
             short_help: "Move the current tab after tab N",
@@ -1924,7 +1924,7 @@ vimperator.Commands = function() //{{{
     ));
     addDefaultCommand(new vimperator.Command(["tabn[ext]", "tn[ext]"],
         // TODO: count support
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -1950,13 +1950,13 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabo[nly]"],
-        function() { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
+        function () { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); },
         {
             short_help: "Close all other tabs"
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
-        function(args, special)
+        function (args, special)
         {
             var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
             if (/\btabopen\b/.test(vimperator.options["activate"]))
@@ -1972,12 +1972,12 @@ vimperator.Commands = function() //{{{
             short_help: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
-            completer: function(filter) { return vimperator.completion.get_url_completions(filter); }
+            completer: function (filter) { return vimperator.completion.get_url_completions(filter); }
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
         // TODO: count support
-        function(args)
+        function (args)
         {
             if (!args)
                 vimperator.tabs.select("-1", true);
@@ -1993,14 +1993,14 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["tabr[ewind]", "tabfir[st]"],
-        function() { vimperator.tabs.select(0, false); },
+        function () { vimperator.tabs.select(0, false); },
         {
             usage: ["tabr[ewind]", "tabfir[st]"],
             short_help: "Switch to the first tab"
         }
     ));
     addDefaultCommand(new vimperator.Command(["time"],
-        function(args, special, count)
+        function (args, special, count)
         {
             try
             {
@@ -2091,7 +2091,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["u[ndo]"],
-        function(args, special, count)
+        function (args, special, count)
         {
             if (count < 1)
                 count = 1;
@@ -2116,7 +2116,7 @@ vimperator.Commands = function() //{{{
             short_help: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab. " +
                   "With <code class=\"argument\">[url]</code> restores the tab matching the url.",
-            completer: function(filter)
+            completer: function (filter)
             {
                 // get closed-tabs from nsSessionStore
                 var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
@@ -2135,7 +2135,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["undoa[ll]"],
-        function(args, special, count)
+        function (args, special, count)
         {
             if (count > -1)
             {
@@ -2159,7 +2159,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["unl[et]"],
-        function(args, special)
+        function (args, special)
         {
             if (!args)
                 return vimperator.echoerr("E471: Argument required");
@@ -2188,7 +2188,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["unm[ap]"],
-        function(args)
+        function (args)
         {
             if (!args)
             {
@@ -2210,7 +2210,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["ve[rsion]"],
-        function(args, special)
+        function (args, special)
         {
             if (special)
                 vimperator.open("about:");
@@ -2225,13 +2225,13 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["viu[sage]"],
-        function(args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
+        function (args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
         {
             short_help: "Show help for normal mode commands"
         }
     ));
     addDefaultCommand(new vimperator.Command(["winc[lose]", "wc[lose]"],
-        function(args)
+        function (args)
         {
             window.close();
         },
@@ -2241,7 +2241,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["wino[pen]", "wo[pen]", "wine[dit]"],
-        function(args)
+        function (args)
         {
             if (args)
                 vimperator.open(args, vimperator.NEW_WINDOW);
@@ -2255,7 +2255,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["wqa[ll]", "wq", "xa[ll]"],
-        function() { vimperator.quit(true); },
+        function () { vimperator.quit(true); },
         {
             usage: ["wqa[ll]", "xa[ll]"],
             short_help: "Save the session and quit",
@@ -2264,7 +2264,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["zo[om]"],
-        function(args, special)
+        function (args, special)
         {
             var level;
 
@@ -2309,7 +2309,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["!", "run"],
-        function(args, special)
+        function (args, special)
         {
             // :!! needs to be treated specially as the command parser sets the special flag but removes the ! from args
             if (special)

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-const vimperator = (function() //{{{
+const vimperator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -72,13 +72,13 @@ const vimperator = (function() //{{{
         //  "cancel"
         //  "complete"
         //  TODO: "zoom": if the zoom value of the current buffer changed
-        registerCallback: function(type, mode, func)
+        registerCallback: function (type, mode, func)
         {
             // TODO: check if callback is already registered
             callbacks.push([type, mode, func]);
         },
 
-        triggerCallback: function(type, mode, data)
+        triggerCallback: function (type, mode, data)
         {
             // dump("type: " + type + " mode: " + mode + "data: " + data  + "\n");
             for (var i in callbacks)
@@ -90,7 +90,7 @@ const vimperator = (function() //{{{
             return false;
         },
 
-        beep: function()
+        beep: function ()
         {
             if (vimperator.options["visualbell"])
             {
@@ -102,7 +102,7 @@ const vimperator = (function() //{{{
                 popup.height = box.height;
                 popup.width = box.width;
                 popup.openPopup(win, "overlap", 0, 0, false, false);
-                setTimeout(function() { popup.hidePopup(); }, 50);
+                setTimeout(function () { popup.hidePopup(); }, 50);
             }
             else
             {
@@ -110,14 +110,14 @@ const vimperator = (function() //{{{
             }
         },
 
-        copyToClipboard: function(str)
+        copyToClipboard: function (str)
         {
             var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
                 .getService(Components.interfaces.nsIClipboardHelper);
             clipboardHelper.copyString(str);
         },
 
-        execute: function(str, modifiers)
+        execute: function (str, modifiers)
         {
             // skip comments and blank lines
             if (/^\s*("|$)/.test(str))
@@ -149,7 +149,7 @@ const vimperator = (function() //{{{
 
         // after pressing Escape, put focus on a non-input field of the browser document
         // if clearFocusedElement, also blur a focused link
-        focusContent: function(clearFocusedElement)
+        focusContent: function (clearFocusedElement)
         {
             var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
                      getService(Components.interfaces.nsIWindowWatcher);
@@ -161,7 +161,7 @@ const vimperator = (function() //{{{
         },
 
         // partial sixth level expression evaluation
-        eval: function(string)
+        eval: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
             var match = string.match(/^&(\w+)/);
@@ -207,7 +207,7 @@ const vimperator = (function() //{{{
             return;
         },
 
-        variableReference: function(string)
+        variableReference: function (string)
         {
             if (!string)
                 return [null, null, null];
@@ -235,7 +235,7 @@ const vimperator = (function() //{{{
 
         // TODO: move to vimp.util.? --mst
         // if color = true it uses HTML markup to color certain items
-        objectToString: function(object, color)
+        objectToString: function (object, color)
         {
             if (object === null)
                 return "null";
@@ -286,7 +286,7 @@ const vimperator = (function() //{{{
 
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
-        log: function(msg, level)
+        log: function (msg, level)
         {
             //if (vimperator.options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
             if (typeof msg == "object")
@@ -305,7 +305,7 @@ const vimperator = (function() //{{{
         // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
         // @returns true when load was initiated, or false on error
-        open: function(urls, where, callback)
+        open: function (urls, where, callback)
         {
             // convert the string to an array of converted URLs
             // -> see vimperator.util.stringToURLArray for more details
@@ -365,7 +365,7 @@ const vimperator = (function() //{{{
         },
 
         // quit vimperator, no matter how many tabs/windows are open
-        quit: function(save_session)
+        quit: function (save_session)
         {
             if (save_session)
                 vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
@@ -375,7 +375,7 @@ const vimperator = (function() //{{{
             goQuitApplication();
         },
 
-        restart: function()
+        restart: function ()
         {
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
@@ -407,7 +407,7 @@ const vimperator = (function() //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
-        run: function(program, args, blocking)
+        run: function (program, args, blocking)
         {
             var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
             const WINDOWS = navigator.platform == "Win32";
@@ -446,7 +446,7 @@ const vimperator = (function() //{{{
 
             var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
             process.init(file);
-             
+
             var ec = process.run(blocking, args, args.length);
             return ec;
         },
@@ -487,15 +487,15 @@ const vimperator = (function() //{{{
                 filein.remove(false);
 
             // if there is only one \n at the end, chop it off
-            if (output && output.indexOf("\n") == output.length-1)
-                output = output.substr(0, output.length-1);
+            if (output && output.indexOf("\n") == output.length - 1)
+                output = output.substr(0, output.length - 1);
 
             return output;
         },
 
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
-        source: function(filename, silent)
+        source: function (filename, silent)
         {
             filename = vimperator.io.expandPath(filename);
 
@@ -509,7 +509,7 @@ const vimperator = (function() //{{{
                     return false;
                 }
                 var str = vimperator.io.readFile(filename);
- 
+
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
@@ -519,7 +519,7 @@ const vimperator = (function() //{{{
                 {
                     var heredoc = "";
                     var heredoc_end = null; // the string which ends the heredoc
-                    str.split("\n").forEach(function(line)
+                    str.split("\n").forEach(function (line)
                     {
                         if (heredoc_end) // we already are in a heredoc
                         {
@@ -571,7 +571,7 @@ const vimperator = (function() //{{{
             }
         },
 
-        startup: function()
+        startup: function ()
         {
             window.dump("Vimperator startup\n");
             vimperator.log("Initializing vimperator object...", 1);
@@ -617,19 +617,19 @@ const vimperator = (function() //{{{
             vimperator.completion    = new vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
-            vimperator.echoerr = function(str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
+            vimperator.echo    = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
+            vimperator.echoerr = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
 
             vimperator.globalVariables = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
-            vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return vimperator.completion.exTabCompletion(str); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); } );
+            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); } );
 
             // first time intro message
             if (vimperator.options.getPref("firsttime", true))
             {
-                setTimeout(function() {
+                setTimeout(function () {
                     vimperator.help(null, null, null, { inTab: true });
                     vimperator.options.setPref("firsttime", false);
                 }, 1000);
@@ -644,7 +644,7 @@ const vimperator = (function() //{{{
 
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
-            setTimeout(function() {
+            setTimeout(function () {
 
                 var rc_file = vimperator.io.getRCFile();
 
@@ -661,7 +661,7 @@ const vimperator = (function() //{{{
                     {
                         var files = vimperator.io.readDirectory(plugin_dir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
-                        files.forEach(function(file) {
+                        files.forEach(function (file) {
                             if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                 vimperator.source(file.path, false);
                         });
@@ -687,7 +687,7 @@ const vimperator = (function() //{{{
             vimperator.log("Vimperator fully initialized", 1);
         },
 
-        shutdown: function()
+        shutdown: function ()
         {
             window.dump("Vimperator shutdown\n");
 
@@ -700,18 +700,18 @@ const vimperator = (function() //{{{
             window.dump("All vimperator modules destroyed\n");
         },
 
-        sleep: function(ms)
+        sleep: function (ms)
         {
-            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager); 
-            var mainThread = threadManager.mainThread; 
+            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+            var mainThread = threadManager.mainThread;
 
-            var then = new Date().getTime(), now = then; 
-            for (; now - then < ms; now = new Date().getTime()) { 
-                mainThread.processNextEvent(true); 
-            } 
+            var then = new Date().getTime(), now = then;
+            for (; now - then < ms; now = new Date().getTime()) {
+                mainThread.processNextEvent(true);
+            }
         },
 
-        get windows() 
+        get windows()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
@@ -723,23 +723,23 @@ const vimperator = (function() //{{{
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
-        callFunctionInThread: function(thread, func, args)
+        callFunctionInThread: function (thread, func, args)
         {
-            function CallbackEvent (func, args) 
+            function CallbackEvent(func, args)
             {
                 if (!(args instanceof Array))
                     args = [];
 
                 return {
-                    QueryInterface: function(iid) 
+                    QueryInterface: function (iid)
                     {
-                        if (iid.equals(Components.interfaces.nsIRunnable) || 
+                        if (iid.equals(Components.interfaces.nsIRunnable) ||
                             iid.equals(Components.interfaces.nsISupports))
                             return this;
                         throw Components.results.NS_ERROR_NO_INTERFACE;
                     },
 
-                    run: function()
+                    run: function ()
                     {
                         func.apply(window, args);
                     }

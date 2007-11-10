@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.modes = (function()
+vimperator.modes = (function ()
 {
     var main = 1;     // NORMAL
     var extended = 0; // NONE
@@ -143,12 +143,12 @@ vimperator.modes = (function()
         MENU:             1 << 18, // a popupmenu is active
         LINE:             1 << 19, // linewise visual mode
 
-        reset: function(silent)
+        reset: function (silent)
         {
             this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
         },
 
-        show: function()
+        show: function ()
         {
             if (!vimperator.options["showmode"])
                 return;
@@ -166,7 +166,7 @@ vimperator.modes = (function()
 
         // helper function to set both modes in one go
         // if silent == true, you also need to take care of the mode handling changes yourself
-        set: function(main_mode, extended_mode, silent)
+        set: function (main_mode, extended_mode, silent)
         {
             // if a main mode is set, the extended is always cleared
             if (typeof main_mode === "number")
@@ -187,12 +187,12 @@ vimperator.modes = (function()
         },
 
         // add/remove always work on the extended mode only
-        add: function(mode)
+        add: function (mode)
         {
             extended |= mode;
             this.show();
         },
-        remove: function(mode)
+        remove: function (mode)
         {
             extended = (extended | mode) ^ mode;
             this.show();
