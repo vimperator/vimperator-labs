@@ -682,7 +682,7 @@ vimperator.Hints = function () //{{{
             processHints(followFirst);
         }
         return;
-    }
+    };
 
     // FIXME: add resize support
     // window.addEventListener("resize", onResize, null);
@@ -695,6 +695,6 @@ vimperator.Hints = function () //{{{
     //         doc = window.content.document;
     // }
 
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

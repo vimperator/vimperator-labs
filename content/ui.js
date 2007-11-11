@@ -838,7 +838,7 @@ vimperator.CommandLine = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 /**
  * The list which is used for the completion box, the preview window and the buffer preview window
@@ -1051,7 +1051,7 @@ vimperator.InformationList = function (id, options) //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 vimperator.StatusLine = function () //{{{
 {
@@ -1135,7 +1135,7 @@ vimperator.StatusLine = function () //{{{
                 modified += "-";
 
             if (modified)
-                url += " [" + modified + "]"
+                url += " [" + modified + "]";
 
             url_widget.value = url;
         },
@@ -1211,6 +1211,6 @@ vimperator.StatusLine = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

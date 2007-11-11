@@ -753,7 +753,7 @@ const vimperator = (function () //{{{
 			thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
         }
 
-    } //}}}
+    }; //}}}
 })(); //}}}
 
 // called when the chrome is fully loaded and before the main window is shown

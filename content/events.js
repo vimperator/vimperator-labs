@@ -260,7 +260,7 @@ vimperator.Events = function () //{{{
 
         window.removeEventListener("keypress", this.onKeyPress, true);
         window.removeEventListener("keydown", this.onKeyDown, true);
-    }
+    };
 
     // This method pushes keys into the event queue from vimperator
     // it is similar to vim's feedkeys() method, but cannot cope with
@@ -326,7 +326,7 @@ vimperator.Events = function () //{{{
             evt.noremap = noremap;
             elem.dispatchEvent(evt);
         }
-    }
+    };
 
     // this function converts the given event to
     // a keycode which can be used in mappings
@@ -406,16 +406,16 @@ vimperator.Events = function () //{{{
         // a key like F1 is always enclosed in < and >
         return "<" + modifier + key + ">";
 
-    } //}}}
+    }; //}}}
 
     this.isAcceptKey = function (key)
     {
         return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
-    }
+    };
     this.isCancelKey = function (key)
     {
         return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
-    }
+    };
 
     // argument "event" is delibarately not used, as i don't seem to have
     // access to the real focus target
@@ -460,7 +460,7 @@ vimperator.Events = function () //{{{
                         vimperator.modes.reset();
             }, 10);
         }
-    }
+    };
 
     this.onSelectionChange = function (event)
     {
@@ -485,7 +485,7 @@ vimperator.Events = function () //{{{
         //    if (!could_copy && vimperator.modes.extended & vimperator.modes.CARET)
         //        vimperator.mode = vimperator.modes.CARET;
         //}
-    }
+    };
 
     // global escape handler, is called in ALL modes
     this.onEscape = function ()
@@ -545,7 +545,7 @@ vimperator.Events = function () //{{{
                     vimperator.focusContent(true);
             }
         }
-    }
+    };
 
     // this keypress handler gets always called first, even if e.g.
     // the commandline has focus
@@ -728,7 +728,7 @@ vimperator.Events = function () //{{{
         var motion_map = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
         vimperator.statusline.updateInputBuffer(motion_map + vimperator.input.buffer);
         return false;
-    }
+    };
     window.addEventListener("keypress", this.onKeyPress, true);
 
     // this is need for sites like msn.com which focus the input field on keydown
@@ -739,7 +739,7 @@ vimperator.Events = function () //{{{
 
         event.stopPropagation();
         return false;
-    }
+    };
     window.addEventListener("keydown", this.onKeyUpOrDown, true);
     window.addEventListener("keyup", this.onKeyUpOrDown, true);
 
@@ -872,10 +872,10 @@ vimperator.Events = function () //{{{
                     break;
             }
          }
-    }
+    };
     this.prefObserver.register();
 
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

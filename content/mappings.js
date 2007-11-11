@@ -63,7 +63,7 @@ vimperator.Map = function (modes, cmds, action, extra_info) //{{{
         this.cancel_mode = extra_info.cancel_mode || false;
         this.always_active = extra_info.always_active || false;
     }
-}
+};
 
 vimperator.Map.prototype.hasName = function (name)
 {
@@ -74,7 +74,7 @@ vimperator.Map.prototype.hasName = function (name)
     }
 
     return false;
-}
+};
 
 // Since we will add many Map-objects, we add some functions as prototypes
 // this will ensure we only have one copy of each function, not one for each object
@@ -89,7 +89,7 @@ vimperator.Map.prototype.execute = function (motion, count, argument)
         args.push(argument);
 
     return this.action.apply(this, args);
-}
+};
 //}}}
 
 vimperator.Mappings = function () //{{{
@@ -187,19 +187,19 @@ vimperator.Mappings = function () //{{{
     this.__iterator__ = function ()
     {
         return mappingsIterator(vimperator.modes.NORMAL, main);
-    }
+    };
 
     // FIXME
     this.getIterator = function (mode)
     {
         return mappingsIterator(mode, main);
-    }
+    };
 
     // FIXME
     this.getUserIterator = function (mode)
     {
         return mappingsIterator(mode, user);
-    }
+    };
 
     this.hasMap = function (mode, cmd)
     {
@@ -212,7 +212,7 @@ vimperator.Mappings = function () //{{{
         }
 
         return false;
-    }
+    };
 
     this.add = function (map)
     {
@@ -226,17 +226,17 @@ vimperator.Mappings = function () //{{{
 
         for (var k = 0; k < map.modes.length; k++)
             user[map.modes[k]].push(map);
-    }
+    };
 
     this.remove = function (mode, cmd)
     {
         removeMap(mode, cmd);
-    }
+    };
 
     this.removeAll = function (mode)
     {
         user[mode] = [];
-    }
+    };
 
     this.get = function (mode, cmd)
     {
@@ -246,13 +246,13 @@ vimperator.Mappings = function () //{{{
             map = getMap(mode, cmd, main);
 
         return map;
-    }
+    };
 
     // TODO: move default maps to their own v.normal namespace
     this.getDefaultMap = function (mode, cmd)
     {
         return getMap(mode, cmd, main);
-    }
+    };
 
     // returns an array of mappings with names which start with "cmd"
     this.getCandidates = function (mode, cmd)
@@ -277,7 +277,7 @@ vimperator.Mappings = function () //{{{
         }
 
         return matches;
-    }
+    };
 
     this.list = function (mode, filter)
     {
@@ -297,14 +297,14 @@ vimperator.Mappings = function () //{{{
                 list += "<tr>";
                 list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
                 if (maps[i].rhs)
-                    list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>"
+                    list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
                 list += "</tr>";
             }
         }
         list += "</table>";
 
         vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-    }
+    };
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
@@ -2014,6 +2014,6 @@ vimperator.Mappings = function () //{{{
 
     //}}}
 
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

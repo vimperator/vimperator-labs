@@ -57,7 +57,7 @@ vimperator.Command = function (specs, action, extra_info) //{{{
             }
         }
         return { names: names, long_names: long_names, short_names: short_names };
-    }
+    };
 
     this.specs = specs;
     var expanded_specs = parseSpecs(specs);
@@ -88,12 +88,12 @@ vimperator.Command = function (specs, action, extra_info) //{{{
         this.args       = extra_info.args || [];
     }
 
-}
+};
 
 vimperator.Command.prototype.execute = function (args, special, count, modifiers)
 {
     return this.action.call(this, args, special, count, modifiers);
-}
+};
 
 // return true if the candidate name matches one of the command's aliases
 // (including all acceptable abbreviations)
@@ -124,7 +124,7 @@ vimperator.Command.prototype.hasName = function (name)
         }
     }
     return false;
-}
+};
 //}}}
 
 vimperator.Commands = function () //{{{
@@ -151,7 +151,7 @@ vimperator.Commands = function () //{{{
         vimperator.Commands.prototype[command.name] = function (args, special, count, modifiers)
         {
             command.execute(args, special, count, modifiers);
-        }
+        };
     }
 
     // in '-quoted strings, only ' and \ itself are escaped
@@ -455,7 +455,7 @@ vimperator.Commands = function () //{{{
     this.__iterator__ = function ()
     {
         return commandsIterator();
-    }
+    };
 
     this.add = function (command)
     {
@@ -465,7 +465,7 @@ vimperator.Commands = function () //{{{
         ex_commands.push(command);
 
         return true;
-    }
+    };
 
     this.get = function (name)
     {
@@ -476,7 +476,7 @@ vimperator.Commands = function () //{{{
         }
 
         return null;
-    }
+    };
 
     // TODO: generalized 0 count handling -> "Zero count"
     // FIXME: doesn't really belong here...
@@ -519,7 +519,7 @@ vimperator.Commands = function () //{{{
             matches[3] = "";
 
         return matches;
-    }
+    };
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
@@ -1108,7 +1108,7 @@ vimperator.Commands = function () //{{{
                 return;
             }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
                 vimperator.editor.addAbbreviation("!", lhs, rhs);
@@ -1132,7 +1132,7 @@ vimperator.Commands = function () //{{{
                 return;
             }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
                 vimperator.editor.addAbbreviation("c", lhs, rhs);
@@ -1154,7 +1154,7 @@ vimperator.Commands = function () //{{{
                 return;
             }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/)
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
             var [lhs, rhs] = [matches[1], matches[2]];
             if (rhs)
                 vimperator.editor.addAbbreviation("i", lhs, rhs);
@@ -1239,7 +1239,7 @@ vimperator.Commands = function () //{{{
         }
     }
     addDefaultCommand(new vimperator.Command(["map"],
-        function (args) { map(args, false) },
+        function (args) { map(args, false); },
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             short_help: "Map the key sequence {lhs} to {rhs}",
@@ -1355,7 +1355,7 @@ vimperator.Commands = function () //{{{
                 line += abbrCmd;
 
             // source a user .vimperatorrc file
-            line += "\nsource! " + filename + ".local\n"
+            line += "\nsource! " + filename + ".local\n";
             line += "\n\" vim: set ft=vimperator:";
 
             vimperator.io.writeFile(file, line);
@@ -1399,7 +1399,7 @@ vimperator.Commands = function () //{{{
     ));
     // TODO: remove duplication in :map
     addDefaultCommand(new vimperator.Command(["no[remap]"],
-        function (args) { map(args, true) },
+        function (args) { map(args, true); },
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             short_help: "Map the key sequence {lhs} to {rhs}",
@@ -2334,6 +2334,6 @@ vimperator.Commands = function () //{{{
         }
     ));
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

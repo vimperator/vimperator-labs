@@ -326,7 +326,7 @@ vimperator.Buffer = function () //{{{
                 if (frame.document.body.localName.toLowerCase() == "body")
                     frames.push(frame);
                 for (var i = 0; i < frame.frames.length; i++)
-                    arguments.callee(frame.frames[i])
+                    arguments.callee(frame.frames[i]);
             })(window.content);
 
             if (frames.length == 0) // currently top is always included
@@ -735,6 +735,6 @@ vimperator.Buffer = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

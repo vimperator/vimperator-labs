@@ -286,6 +286,6 @@ vimperator.help = function (section, easter) //{{{
             window.content.scrollTo(0, pos[1]);
         }
     }, 0);
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

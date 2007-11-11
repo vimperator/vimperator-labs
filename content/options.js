@@ -104,7 +104,7 @@ vimperator.Option = function (names, type, extra_info) //{{{
                 return true;
         }
         return false;
-    }
+    };
 
     this.isValidValue = function (value)
     {
@@ -112,13 +112,13 @@ vimperator.Option = function (names, type, extra_info) //{{{
             return this.validator(value);
         else
             return true;
-    }
+    };
 
     this.reset = function ()
     {
         this.value = this.default_value;
-    }
-} //}}}
+    };
+}; //}}}
 
 vimperator.Options = function () //{{{
 {
@@ -315,7 +315,7 @@ vimperator.Options = function () //{{{
     this.__iterator__ = function ()
     {
         return optionsIterator();
-    }
+    };
 
     this.get = function (name)
     {
@@ -325,14 +325,14 @@ vimperator.Options = function () //{{{
                 return options[i];
         }
         return null;
-    }
+    };
 
     this.add = function (option)
     {
         this.__defineGetter__(option.name, function () { return option.value; });
         this.__defineSetter__(option.name, function (value) { option.value = value; });
         options.push(option);
-    }
+    };
 
     this.destroy = function ()
     {
@@ -340,7 +340,7 @@ vimperator.Options = function () //{{{
         if (loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit")
                 == popup_allowed_events + " keypress")
             storePreference("dom.popup_allowed_events", popup_allowed_events);
-    }
+    };
 
     this.list = function (only_non_default)
     {
@@ -382,7 +382,7 @@ vimperator.Options = function () //{{{
         list += "</table>";
 
         vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-    }
+    };
 
     // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
     this.setInitialGUI = function ()
@@ -393,29 +393,29 @@ vimperator.Options = function () //{{{
             this.get("laststatus").reset();
         if (!showtabline_done)
             this.get("showtabline").reset();
-    }
+    };
 
     // TODO: separate Preferences from Options? Would these utility functions
     // be better placed in the 'core' vimperator namespace somewhere?
     this.setPref = function (name, value)
     {
         return storePreference(name, value, true);
-    }
+    };
 
     this.getPref = function (name, forced_default)
     {
         return loadPreference(name, forced_default, true);
-    }
+    };
 
     this.setFirefoxPref = function (name, value)
     {
         return storePreference(name, value);
-    }
+    };
 
     this.getFirefoxPref = function (name, forced_default)
     {
         return loadPreference(name, forced_default);
-    }
+    };
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// DEFAULT OPTIONS /////////////////////////////////////////
@@ -424,7 +424,7 @@ vimperator.Options = function () //{{{
     const DEFAULT_HINTTAGS = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
                              "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
-                             "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select"
+                             "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
 
     this.add(new vimperator.Option(["activate", "act"], "stringlist",
         {
@@ -608,7 +608,7 @@ vimperator.Options = function () //{{{
                   "</ul>" +
                   "The order matters",
             default_value: "gfm",
-            validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1) }
+            validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
         }
     ));
     this.add(new vimperator.Option(["popups", "pps"], "number",
@@ -779,6 +779,6 @@ vimperator.Options = function () //{{{
 
     setTitleString(this.titlestring);
     setPopups(this.popups);
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

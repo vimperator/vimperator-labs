@@ -182,10 +182,10 @@ vimperator.util = {
             strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
 
         if (strNum[1])
-            strNum[0] += "." + strNum[1]
+            strNum[0] += "." + strNum[1];
 
         return strNum[0];
     }
-}
+};
 
 // vim: set fdm=marker sw=4 ts=4 et:

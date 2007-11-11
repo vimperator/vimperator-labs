@@ -235,6 +235,6 @@ vimperator.IO = function ()
             ofstream.close();
         }
     };
-}
+};
 
 // vim: set fdm=marker sw=4 ts=4 et:

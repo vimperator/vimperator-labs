@@ -101,12 +101,12 @@ vimperator.Tabs = function () //{{{
         }
 
         return getBrowser().tabContainer.selectedIndex;
-    }
+    };
 
     this.count = function ()
     {
         return getBrowser().mTabs.length;
-    }
+    };
 
     // TODO: implement filter
     // @returns an array of tabs which match filter
@@ -122,7 +122,7 @@ vimperator.Tabs = function () //{{{
             buffers.push([number, title, uri]);
         }
         return buffers;
-    }
+    };
 
     this.getTab = function (index)
     {
@@ -130,7 +130,7 @@ vimperator.Tabs = function () //{{{
             return getBrowser().mTabs[index];
 
         return getBrowser().tabContainer.selectedItem;
-    }
+    };
 
     /*  spec == "" moves the tab to the last position as per Vim
      *  wrap causes the movement to wrap around the start and end of the tab list
@@ -144,7 +144,7 @@ vimperator.Tabs = function () //{{{
 
         var index = indexFromSpec(spec, wrap);
         getBrowser().moveTabTo(tab, index);
-    }
+    };
 
     /* quit_on_last_tab = 1: quit without saving session
      * quit_on_last_tab = 2: quit and save session
@@ -201,12 +201,12 @@ vimperator.Tabs = function () //{{{
             for (; i >= index; i--)
                 removeOrBlankTab(this.getTab(i));
         }
-    }
+    };
 
     this.keepOnly = function (tab)
     {
         getBrowser().removeAllTabsBut(tab);
-    }
+    };
 
     this.select = function (spec, wrap)
     {
@@ -217,7 +217,7 @@ vimperator.Tabs = function () //{{{
             return false;
         }
         getBrowser().mTabContainer.selectedIndex = index;
-    }
+    };
 
     // TODO: when restarting a session FF selects the first tab and then the
     // tab that was selected when the session was created.  As a result the
@@ -227,7 +227,7 @@ vimperator.Tabs = function () //{{{
     {
         alternates = [this.getTab(), alternates[0]];
         this.alternate = alternates[1];
-    }
+    };
 
     // TODO: move to v.buffers
     this.alternate = this.getTab();
@@ -244,7 +244,7 @@ vimperator.Tabs = function () //{{{
         {
             getBrowser().reloadTab(tab);
         }
-    }
+    };
 
     this.reloadAll = function (bypass_cache)
     {
@@ -254,7 +254,7 @@ vimperator.Tabs = function () //{{{
             {
                 try
                 {
-                    this.reload(getBrowser().mTabs[i], bypass_cache)
+                    this.reload(getBrowser().mTabs[i], bypass_cache);
                 }
                 catch (e)
                 {
@@ -267,8 +267,8 @@ vimperator.Tabs = function () //{{{
         {
             getBrowser().reloadAllTabs();
         }
-    }
+    };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

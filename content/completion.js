@@ -359,7 +359,7 @@ vimperator.Completion = function () // {{{
         get_sidebar_completions: function (filter) //{{{
         {
             g_substrings = [];
-            var menu = document.getElementById("viewSidebarMenu")
+            var menu = document.getElementById("viewSidebarMenu");
             var nodes = [];
 
             for (var i = 0; i < menu.childNodes.length; i++)
@@ -611,6 +611,6 @@ vimperator.Completion = function () // {{{
         } //}}}
 
     };
-} // }}}
+}; // }}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

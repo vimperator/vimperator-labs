@@ -330,7 +330,7 @@ vimperator.Bookmarks = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 vimperator.History = function () //{{{
 {
@@ -484,7 +484,7 @@ vimperator.History = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 vimperator.Marks = function () //{{{
 {
@@ -743,7 +743,7 @@ vimperator.Marks = function () //{{{
 
     };
     //}}}
-} //}}}
+}; //}}}
 
 vimperator.QuickMarks = function () //{{{
 {
@@ -852,6 +852,6 @@ vimperator.QuickMarks = function () //{{{
         }
     };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
