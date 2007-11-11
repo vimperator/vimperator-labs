@@ -264,12 +264,12 @@ vimperator.Editor = function () //{{{
         },
 
         // returns the position of char
-        findCharForward: function (char, count)
+        findCharForward: function (ch, count)
         {
             if (!editor())
                 return -1;
 
-            last_findChar = char;
+            last_findChar = ch;
             last_findChar_func = this.findCharForward;
 
             var text = editor().value;
@@ -280,7 +280,7 @@ vimperator.Editor = function () //{{{
             {
                 if (text[i] == "\n")
                     break;
-                if (text[i] == char)
+                if (text[i] == ch)
                     count--;
                 if (count == 0)
                     return i + 1; // always position the cursor after the char
@@ -291,12 +291,12 @@ vimperator.Editor = function () //{{{
         },
 
         // returns the position of char
-        findCharBackward: function (char, count)
+        findCharBackward: function (ch, count)
         {
             if (!editor())
                 return -1;
 
-            last_findChar = char;
+            last_findChar = ch;
             last_findChar_func = this.findCharBackward;
 
             var text = editor().value;
@@ -307,7 +307,7 @@ vimperator.Editor = function () //{{{
             {
                 if (text[i] == "\n")
                     break;
-                if (text[i] == char)
+                if (text[i] == ch)
                     count--;
                 if (count == 0)
                     return i;
