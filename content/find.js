@@ -81,7 +81,7 @@ vimperator.Search = function () //{{{
             links_only = false;
 
         // strip links-only modifiers
-        pattern = pattern.replace(/(\\)?\\[uU]/g, function ($0, $1) { return $1 ? $0 : ""; });
+        pattern = pattern.replace(/(\\)?\\[lL]/g, function ($0, $1) { return $1 ? $0 : ""; });
 
         // case sensitivity - \c wins if both modifiers specified
         if (/\c/.test(pattern))
@@ -99,7 +99,7 @@ vimperator.Search = function () //{{{
         pattern = pattern.replace(/(\\)?\\[cC]/g, function ($0, $1) { return $1 ? $0 : ""; });
 
         // remove any modifer escape \
-        pattern = pattern.replace(/\\(\\[cCuU])/g, "$1");
+        pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
         search_string = pattern;
     }
