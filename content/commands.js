@@ -948,7 +948,7 @@ vimperator.Commands = function() //{{{
         }
     ));
     addDefaultCommand(new vimperator.Command(["norm[al]"],
-        function(args)
+        function(args, special)
         {
             if (!args)
             {
@@ -956,12 +956,13 @@ vimperator.Commands = function() //{{{
                 return;
             }
 
-            vimperator.events.feedkeys(args);
+            vimperator.events.feedkeys(args, special);
         },
         {
             usage: ["norm[al][!] {commands}"],
             short_help: "Execute Normal mode commands",
-            help: "Example: <code class=\"command\">:normal 20j</code> scrolls 20 lines down."
+            help: "Example: <code class=\"command\">:normal 20j</code> scrolls 20 lines down. " + 
+                  "If the <code class=\"argument\">[!]</code> is specified mappings will not be used."
         }
     ));
     // TODO: remove duplication in :map
