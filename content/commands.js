@@ -1497,7 +1497,7 @@ vimperator.Commands = function() //{{{
             }
         },
         {
-            usage: ["tabn[ext] {count}"],
+            usage: ["tabn[ext] [count]"],
             short_help: "Switch to the next or [count]th tab",
             help: "Cycles to the first tab when the last is selected and <code class=\"argument\">{count}</code> is not specified."
         }
@@ -1540,7 +1540,7 @@ vimperator.Commands = function() //{{{
                 vimperator.echoerr("E488: Trailing characters");
         },
         {
-            usage: ["tabp[revious] {count}"],
+            usage: ["tabp[revious] [count]"],
             short_help: "Switch to the previous tab or go [count] tabs back",
             help: "Wraps around from the first tab to the last tab."
         }
