@@ -236,603 +236,607 @@ vimperator.CommandLine = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.HL_NORMAL   = "hl-Normal";
-    this.HL_ERRORMSG = "hl-ErrorMsg";
-    this.HL_MODEMSG  = "hl-ModeMsg";
-    this.HL_MOREMSG  = "hl-MoreMsg";
-    this.HL_QUESTION = "hl-Question";
-    this.HL_WARNING  = "hl-Warning";
+    return {
 
-    // not yet used
-    this.FORCE_MULTILINE     = 1 << 0;
-    this.FORCE_SINGLELINE    = 1 << 1;
-    this.DISALLOW_MULTILINE  = 1 << 2; // if an echo() should try to use the single line,
-                                       // but output nothing when the MOW is open; when also
-                                       // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
-    this.APPEND_TO_MESSAGES  = 1 << 3; // will show the string in :messages
+        HL_NORMAL  : "hl-Normal",
+        HL_ERRORMSG: "hl-ErrorMsg",
+        HL_MODEMSG : "hl-ModeMsg",
+        HL_MOREMSG : "hl-MoreMsg",
+        HL_QUESTION: "hl-Question",
+        HL_WARNING : "hl-Warning",
 
-    this.getCommand = function ()
-    {
-        return command_widget.value;
-    };
+        // not yet used
+        FORCE_MULTILINE    : 1 << 0,
+        FORCE_SINGLELINE   : 1 << 1,
+        DISALLOW_MULTILINE : 1 << 2, // if an echo() should try to use the single line,
+                                           // but output nothing when the MOW is open; when also
+                                           // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
+        APPEND_TO_MESSAGES : 1 << 3, // will show the string in :messages
 
-    this.open = function (prompt, cmd, ext_mode)
-    {
-        // save the current prompts, we need it later if the command widget
-        // receives focus without calling the this.open() method
-        cur_prompt = prompt || "";
-        cur_command = cmd || "";
-        cur_extended_mode = ext_mode || null;
-
-        history_index = UNINITIALIZED;
-        completion_index = UNINITIALIZED;
-
-        // save the mode, because we need to restore it
-        old_mode = vimperator.mode;
-        old_extended_mode = vimperator.mode.extended;
-        vimperator.modes.set(vimperator.modes.COMMAND_LINE, cur_extended_mode);
-        setHighlightGroup(this.HL_NORMAL);
-        setPrompt(cur_prompt);
-        setCommand(cur_command);
-
-        command_widget.focus();
-    };
-
-    // normally used when pressing esc, does not execute a command
-    this.close = function ()
-    {
-        var res = vimperator.triggerCallback("cancel", cur_extended_mode);
-        history.add(this.getCommand());
-        vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
-        this.clear();
-    }
-
-    this.clear = function ()
-    {
-        multiline_input_widget.collapsed = true;
-        multiline_output_widget.collapsed = true;
-        completionlist.hide();
-
-        setLine("", this.HL_NORMAL);
-    };
-
-    // TODO: add :messages entry
-    // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
-    this.echo = function (str, highlight_group, flags)
-    {
-        var focused = document.commandDispatcher.focusedElement;
-        if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
-            return false;
-
-        highlight_group = highlight_group || this.HL_NORMAL;
-
-        var where = setLine;
-        if (flags & this.FORCE_MULTILINE)
-            where = setMultiline;
-        else if (flags & this.FORCE_SINGLELINE)
-            where = setLine;
-        else if (!multiline_output_widget.collapsed)
+        getCommand: function ()
         {
-            if (flags & this.DISALLOW_MULTILINE)
-                where = null;
-            else
+            return command_widget.value;
+        },
+
+        open: function (prompt, cmd, ext_mode)
+        {
+            // save the current prompts, we need it later if the command widget
+            // receives focus without calling the this.open() method
+            cur_prompt = prompt || "";
+            cur_command = cmd || "";
+            cur_extended_mode = ext_mode || null;
+
+            history_index = UNINITIALIZED;
+            completion_index = UNINITIALIZED;
+
+            // save the mode, because we need to restore it
+            old_mode = vimperator.mode;
+            old_extended_mode = vimperator.mode.extended;
+            vimperator.modes.set(vimperator.modes.COMMAND_LINE, cur_extended_mode);
+            setHighlightGroup(this.HL_NORMAL);
+            setPrompt(cur_prompt);
+            setCommand(cur_command);
+
+            command_widget.focus();
+        },
+
+        // normally used when pressing esc, does not execute a command
+        close: function ()
+        {
+            var res = vimperator.triggerCallback("cancel", cur_extended_mode);
+            history.add(this.getCommand());
+            vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+            this.clear();
+        },
+
+        clear: function ()
+        {
+            multiline_input_widget.collapsed = true;
+            multiline_output_widget.collapsed = true;
+            completionlist.hide();
+
+            setLine("", this.HL_NORMAL);
+        },
+
+        // TODO: add :messages entry
+        // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
+        echo: function (str, highlight_group, flags)
+        {
+            var focused = document.commandDispatcher.focusedElement;
+            if (focused && focused == command_widget.inputField || focused == multiline_input_widget.inputField)
+                return false;
+
+            highlight_group = highlight_group || this.HL_NORMAL;
+
+            var where = setLine;
+            if (flags & this.FORCE_MULTILINE)
                 where = setMultiline;
-        }
-        else if (/\n|<br\/?>/.test(str))
-            where = setMultiline;
-
-        if (where)
-            where(str, highlight_group);
-
-        cur_extended_mode = null;
-
-        return true;
-    };
-
-    // this will prompt the user for a string
-    // vimperator.commandline.input("(s)ave or (o)pen the file?")
-    this.input = function (str)
-    {
-        // TODO: unfinished, need to find out how/if we can block the execution of code
-        // to make this code synchronous or at least use a callback
-        setLine(str, this.HL_QUESTION);
-        command_widget.focus();
-        return "not implemented";
-    };
-
-    // reads a multi line input and returns the string once the last line matches
-    // @param until_regexp
-    this.inputMultiline = function (until_regexp, callback_func)
-    {
-        // save the mode, because we need to restore it
-        old_mode = vimperator.mode;
-        old_extended_mode = vimperator.mode.extended;
-        vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.INPUT_MULTILINE);
-
-        // save the arguments, they are needed in the event handler onEvent
-        multiline_regexp = until_regexp;
-        multiline_callback = callback_func;
-
-        multiline_input_widget.collapsed = false;
-        multiline_input_widget.value = "";
-        autosizeMultilineInputWidget();
-
-        setTimeout(function () {
-            multiline_input_widget.focus();
-        }, 10);
-    };
-
-    this.onEvent = function (event)
-    {
-        var command = this.getCommand();
-
-        if (event.type == "blur")
-        {
-            // prevent losing focus, there should be a better way, but it just didn't work otherwise
-            setTimeout(function () {
-                if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                    !(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE) &&
-                    !(vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
-                            command_widget.inputField.focus();
-            }, 0);
-        }
-        else if (event.type == "focus")
-        {
-            if (!cur_extended_mode && event.target == command_widget.inputField)
-                event.target.blur();
-        }
-        else if (event.type == "input")
-        {
-            vimperator.triggerCallback("change", cur_extended_mode, command);
-        }
-        else if (event.type == "keypress")
-        {
-            if (!cur_extended_mode)
-                return;
-
-            var key = vimperator.events.toString(event);
-
-            // user pressed ENTER to carry out a command
-            // user pressing ESCAPE is handled in the global onEscape
-            if (vimperator.events.isAcceptKey(key))
+            else if (flags & this.FORCE_SINGLELINE)
+                where = setLine;
+            else if (!multiline_output_widget.collapsed)
             {
-                var mode = cur_extended_mode; // save it here, as setMode() resets it
-                history.add(command);
-                vimperator.modes.reset(true); //FIXME: use mode stack
-                completionlist.hide();
-                vimperator.focusContent(false);
-                vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
-                return vimperator.triggerCallback("submit", mode, command);
+                if (flags & this.DISALLOW_MULTILINE)
+                    where = null;
+                else
+                    where = setMultiline;
             }
+            else if (/\n|<br\/?>/.test(str))
+                where = setMultiline;
 
+            if (where)
+                where(str, highlight_group);
 
-            // user pressed UP or DOWN arrow to cycle history completion
-            else if (key == "<Up>" || key == "<Down>")
+            cur_extended_mode = null;
+
+            return true;
+        },
+
+        // this will prompt the user for a string
+        // vimperator.commandline.input("(s)ave or (o)pen the file?")
+        input: function (str)
+        {
+            // TODO: unfinished, need to find out how/if we can block the execution of code
+            // to make this code synchronous or at least use a callback
+            setLine(str, this.HL_QUESTION);
+            command_widget.focus();
+            return "not implemented";
+        },
+
+        // reads a multi line input and returns the string once the last line matches
+        // @param until_regexp
+        inputMultiline: function (until_regexp, callback_func)
+        {
+            // save the mode, because we need to restore it
+            old_mode = vimperator.mode;
+            old_extended_mode = vimperator.mode.extended;
+            vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.INPUT_MULTILINE);
+
+            // save the arguments, they are needed in the event handler onEvent
+            multiline_regexp = until_regexp;
+            multiline_callback = callback_func;
+
+            multiline_input_widget.collapsed = false;
+            multiline_input_widget.value = "";
+            autosizeMultilineInputWidget();
+
+            setTimeout(function () {
+                multiline_input_widget.focus();
+            }, 10);
+        },
+
+        onEvent: function (event)
+        {
+            var command = this.getCommand();
+
+            if (event.type == "blur")
             {
-                var lines = history.get();
+                // prevent losing focus, there should be a better way, but it just didn't work otherwise
+                setTimeout(function () {
+                    if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
+                        !(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE) &&
+                        !(vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+                                command_widget.inputField.focus();
+                }, 0);
+            }
+            else if (event.type == "focus")
+            {
+                if (!cur_extended_mode && event.target == command_widget.inputField)
+                    event.target.blur();
+            }
+            else if (event.type == "input")
+            {
+                vimperator.triggerCallback("change", cur_extended_mode, command);
+            }
+            else if (event.type == "keypress")
+            {
+                if (!cur_extended_mode)
+                    return;
 
-                event.preventDefault();
-                event.stopPropagation();
+                var key = vimperator.events.toString(event);
 
-                // always reset the tab completion if we use up/down keys
-                completion_index = UNINITIALIZED;
-
-                // save 'start' position for iterating through the history
-                if (history_index == UNINITIALIZED)
+                // user pressed ENTER to carry out a command
+                // user pressing ESCAPE is handled in the global onEscape
+                if (vimperator.events.isAcceptKey(key))
                 {
-                    history_index = lines.length;
-                    history_start = command;
+                    var mode = cur_extended_mode; // save it here, as setMode() resets it
+                    history.add(command);
+                    vimperator.modes.reset(true); //FIXME: use mode stack
+                    completionlist.hide();
+                    vimperator.focusContent(false);
+                    vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+                    return vimperator.triggerCallback("submit", mode, command);
                 }
 
-                // search the history for the first item matching the current
-                // commandline string
-                while (history_index >= -1 && history_index <= lines.length)
+
+                // user pressed UP or DOWN arrow to cycle history completion
+                else if (key == "<Up>" || key == "<Down>")
                 {
-                    key == "<Up>" ? history_index-- : history_index++;
+                    var lines = history.get();
 
-                    // user pressed DOWN when there is no newer history item
-                    if (history_index == lines.length)
-                    {
-                        setCommand(history_start);
-                        vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
-                        return;
-                    }
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                    // cannot go past history start/end
-                    if (history_index <= -1)
-                    {
-                        history_index = 0;
-                        vimperator.beep();
-                        break;
-                    }
-                    if (history_index >= lines.length + 1)
+                    // always reset the tab completion if we use up/down keys
+                    completion_index = UNINITIALIZED;
+
+                    // save 'start' position for iterating through the history
+                    if (history_index == UNINITIALIZED)
                     {
                         history_index = lines.length;
-                        vimperator.beep();
-                        break;
+                        history_start = command;
                     }
 
-                    if (lines[history_index].indexOf(history_start) == 0)
+                    // search the history for the first item matching the current
+                    // commandline string
+                    while (history_index >= -1 && history_index <= lines.length)
                     {
-                        setCommand(lines[history_index]);
-                        vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
+                        key == "<Up>" ? history_index-- : history_index++;
+
+                        // user pressed DOWN when there is no newer history item
+                        if (history_index == lines.length)
+                        {
+                            setCommand(history_start);
+                            vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
+                            return;
+                        }
+
+                        // cannot go past history start/end
+                        if (history_index <= -1)
+                        {
+                            history_index = 0;
+                            vimperator.beep();
+                            break;
+                        }
+                        if (history_index >= lines.length + 1)
+                        {
+                            history_index = lines.length;
+                            vimperator.beep();
+                            break;
+                        }
+
+                        if (lines[history_index].indexOf(history_start) == 0)
+                        {
+                            setCommand(lines[history_index]);
+                            vimperator.triggerCallback("change", cur_extended_mode, this.getCommand());
+                            return;
+                        }
+                    }
+                }
+
+                // user pressed TAB to get completions of a command
+                else if (key == "<Tab>" || key == "<S-Tab>")
+                {
+                    //always reset our completion history so up/down keys will start with new values
+                    history_index = UNINITIALIZED;
+
+                    // we need to build our completion list first
+                    if (completion_index == UNINITIALIZED)
+                    {
+                        completion_start_index = 0;
+
+                        completion_index = -1;
+                        wild_index = 0;
+
+                        completion_prefix = command.substring(0, command_widget.selectionStart);
+                        completion_postfix = command.substring(command_widget.selectionStart);
+                        var res = vimperator.triggerCallback("complete", cur_extended_mode, completion_prefix);
+                        if (res)
+                            [completion_start_index, completions] = res;
+
+                        // sort the completion list
+                        if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
+                        {
+                            completions.sort(function (a, b) {
+                                    if (a[0] < b[0])
+                                        return -1;
+                                    else if (a[0] > b[0])
+                                        return 1;
+                                    else
+                                        return 0;
+                            });
+                        }
+                    }
+
+                    if (completions.length == 0)
+                    {
+                        vimperator.beep();
+                        // prevent tab from moving to the next field
+                        event.preventDefault();
+                        event.stopPropagation();
                         return;
                     }
-                }
-            }
 
-            // user pressed TAB to get completions of a command
-            else if (key == "<Tab>" || key == "<S-Tab>")
-            {
-                //always reset our completion history so up/down keys will start with new values
-                history_index = UNINITIALIZED;
+                    var wim = vimperator.options["wildmode"].split(/,/);
+                    var has_list = false;
+                    var longest = false;
+                    var full = false;
+                    var wildtype = wim[wild_index++] || wim[wim.length - 1];
+                    if (wildtype == "list" || wildtype == "list:full" || wildtype == "list:longest")
+                        has_list = true;
+                    if (wildtype == "longest" || wildtype == "list:longest")
+                        longest = true;
+                    else if (wildtype == "full" || wildtype == "list:full")
+                        full = true;
 
-                // we need to build our completion list first
-                if (completion_index == UNINITIALIZED)
-                {
-                    completion_start_index = 0;
-
-                    completion_index = -1;
-                    wild_index = 0;
-
-                    completion_prefix = command.substring(0, command_widget.selectionStart);
-                    completion_postfix = command.substring(command_widget.selectionStart);
-                    var res = vimperator.triggerCallback("complete", cur_extended_mode, completion_prefix);
-                    if (res)
-                        [completion_start_index, completions] = res;
-
-                    // sort the completion list
-                    if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
+                    // show the list
+                    if (has_list)
                     {
-                        completions.sort(function (a, b) {
-                                if (a[0] < b[0])
-                                    return -1;
-                                else if (a[0] > b[0])
-                                    return 1;
-                                else
-                                    return 0;
-                        });
+                        if (completion_index < 0)
+                            completionlist.show(completions);
+                        else
+                            completionlist.show();
                     }
-                }
 
-                if (completions.length == 0)
-                {
-                    vimperator.beep();
+                    if (full)
+                    {
+                        if (event.shiftKey)
+                        {
+                            completion_index--;
+                            if (completion_index < -1)
+                                completion_index = completions.length -1;
+                        }
+                        else
+                        {
+                            completion_index++;
+                            if (completion_index >= completions.length)
+                                completion_index = -1;
+                        }
+
+                        vimperator.statusline.updateProgress("match " + (completion_index + 1) + " of " + completions.length);
+                        // if the list is hidden, this function does nothing
+                        completionlist.selectItem(completion_index);
+                    }
+
+
+                    if (completion_index == -1 && !longest) // wrapped around matches, reset command line
+                    {
+                        if (full && completions.length > 1)
+                        {
+                            setCommand(completion_prefix + completion_postfix);
+                        }
+                    }
+                    else
+                    {
+                        if (longest && completions.length > 1)
+                            var compl = vimperator.completion.get_longest_substring();
+                        else if (full)
+                            var compl = completions[completion_index][0];
+                        else if (completions.length == 1)
+                            var compl = completions[0][0];
+                        if (compl)
+                        {
+                            setCommand(command.substring(0, completion_start_index) + compl + completion_postfix);
+                            command_widget.selectionStart = command_widget.selectionEnd = completion_start_index + compl.length;
+
+                            // Start a new completion in the next iteration. Useful for commands like :source
+                            // RFC: perhaps the command can indicate whether the completion should be restarted
+                            // Needed for :source to grab another set of completions after a file/directory has been filled out
+                            if (completions.length == 1 && !full)
+                                completion_index = UNINITIALIZED;
+                        }
+                    }
+
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
-                    return;
                 }
-
-                var wim = vimperator.options["wildmode"].split(/,/);
-                var has_list = false;
-                var longest = false;
-                var full = false;
-                var wildtype = wim[wild_index++] || wim[wim.length - 1];
-                if (wildtype == "list" || wildtype == "list:full" || wildtype == "list:longest")
-                    has_list = true;
-                if (wildtype == "longest" || wildtype == "list:longest")
-                    longest = true;
-                else if (wildtype == "full" || wildtype == "list:full")
-                    full = true;
-
-                // show the list
-                if (has_list)
+                else if (key == "<BS>")
                 {
-                    if (completion_index < 0)
-                        completionlist.show(completions);
-                    else
-                        completionlist.show();
-                }
+                    // reset the tab completion
+                    completion_index = history_index = UNINITIALIZED;
 
-                if (full)
-                {
-                    if (event.shiftKey)
+                    // and blur the command line if there is no text left
+                    if (command.length == 0)
                     {
-                        completion_index--;
-                        if (completion_index < -1)
-                            completion_index = completions.length -1;
-                    }
-                    else
-                    {
-                        completion_index++;
-                        if (completion_index >= completions.length)
-                            completion_index = -1;
-                    }
-
-                    vimperator.statusline.updateProgress("match " + (completion_index + 1) + " of " + completions.length);
-                    // if the list is hidden, this function does nothing
-                    completionlist.selectItem(completion_index);
-                }
-
-
-                if (completion_index == -1 && !longest) // wrapped around matches, reset command line
-                {
-                    if (full && completions.length > 1)
-                    {
-                        setCommand(completion_prefix + completion_postfix);
+                        vimperator.triggerCallback("cancel", cur_extended_mode);
+                        vimperator.modes.reset(); // FIXME: use mode stack
                     }
                 }
-                else
+                else // any other key
                 {
-                    if (longest && completions.length > 1)
-                        var compl = vimperator.completion.get_longest_substring();
-                    else if (full)
-                        var compl = completions[completion_index][0];
-                    else if (completions.length == 1)
-                        var compl = completions[0][0];
-                    if (compl)
-                    {
-                        setCommand(command.substring(0, completion_start_index) + compl + completion_postfix);
-                        command_widget.selectionStart = command_widget.selectionEnd = completion_start_index + compl.length;
-
-                        // Start a new completion in the next iteration. Useful for commands like :source
-                        // RFC: perhaps the command can indicate whether the completion should be restarted
-                        // Needed for :source to grab another set of completions after a file/directory has been filled out
-                        if (completions.length == 1 && !full)
-                            completion_index = UNINITIALIZED;
-                    }
-                }
-
-                // prevent tab from moving to the next field
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            else if (key == "<BS>")
-            {
-                // reset the tab completion
-                completion_index = history_index = UNINITIALIZED;
-
-                // and blur the command line if there is no text left
-                if (command.length == 0)
-                {
-                    vimperator.triggerCallback("cancel", cur_extended_mode);
-                    vimperator.modes.reset(); // FIXME: use mode stack
+                    // reset the tab completion
+                    completion_index = history_index = UNINITIALIZED;
                 }
             }
-            else // any other key
-            {
-                // reset the tab completion
-                completion_index = history_index = UNINITIALIZED;
-            }
-        }
-    }
+        },
 
-    this.onMultilineInputEvent = function (event)
-    {
-        if (event.type == "keypress")
+        onMultilineInputEvent: function (event)
         {
-            var key = vimperator.events.toString(event);
-            if (vimperator.events.isAcceptKey(key))
+            if (event.type == "keypress")
             {
-                var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
-                if (text.match(multiline_regexp))
+                var key = vimperator.events.toString(event);
+                if (vimperator.events.isAcceptKey(key))
                 {
-                    text = text.replace(multiline_regexp, "");
+                    var text = multiline_input_widget.value.substr(0, multiline_input_widget.selectionStart);
+                    if (text.match(multiline_regexp))
+                    {
+                        text = text.replace(multiline_regexp, "");
+                        vimperator.modes.set(old_mode, old_extended_mode);
+                        multiline_input_widget.collapsed = true;
+                        multiline_callback.call(this, text);
+                    }
+                }
+                else if (vimperator.events.isCancelKey(key))
+                {
                     vimperator.modes.set(old_mode, old_extended_mode);
                     multiline_input_widget.collapsed = true;
-                    multiline_callback.call(this, text);
                 }
             }
-            else if (vimperator.events.isCancelKey(key))
+            else if (event.type == "blur")
             {
-                vimperator.modes.set(old_mode, old_extended_mode);
-                multiline_input_widget.collapsed = true;
+                if (vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE)
+                    setTimeout(function () { multiline_input_widget.inputField.focus(); }, 0);
             }
-        }
-        else if (event.type == "blur")
+            else if (event.type == "input")
+            {
+                autosizeMultilineInputWidget();
+            }
+        },
+
+        // FIXME: if 'more' is set and the MOW is not scrollable we should still
+        // allow a down motion after an up rather than closing
+        onMultilineOutputEvent: function (event)
         {
-            if (vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE)
-                setTimeout(function () { multiline_input_widget.inputField.focus(); }, 0);
-        }
-        else if (event.type == "input")
-        {
-            autosizeMultilineInputWidget();
-        }
-    }
+            var win = multiline_output_widget.contentWindow;
 
-    // FIXME: if 'more' is set and the MOW is not scrollable we should still
-    // allow a down motion after an up rather than closing
-    this.onMultilineOutputEvent = function (event)
-    {
-        var win = multiline_output_widget.contentWindow;
+            var show_more_help_prompt = false;
+            var show_more_prompt = false;
+            var close_window = false;
+            var pass_event = false;
 
-        var show_more_help_prompt = false;
-        var show_more_prompt = false;
-        var close_window = false;
-        var pass_event = false;
+            function isScrollable() { return !win.scrollMaxY == 0; }
 
-        function isScrollable() { return !win.scrollMaxY == 0; }
+            function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
 
-        function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
+            var key = vimperator.events.toString(event);
 
-        var key = vimperator.events.toString(event);
+            switch (key)
+            {
+                case "<Esc>":
+                    return; // handled globally in events.js:onEscape()
 
-        switch (key)
-        {
-            case "<Esc>":
-                return; // handled globally in events.js:onEscape()
+                case ":":
+                    vimperator.commandline.open(":", "", vimperator.modes.EX);
+                    return;
 
-            case ":":
-                vimperator.commandline.open(":", "", vimperator.modes.EX);
-                return;
+                // down a line
+                case "j":
+                case "<Down>":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollByLines(1);
+                    else
+                        pass_event = true;
+                    break;
 
-            // down a line
-            case "j":
-            case "<Down>":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollByLines(1);
-                else
-                    pass_event = true;
-                break;
+                case "<C-j>":
+                case "<C-m>":
+                case "<Return>":
+                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                        win.scrollByLines(1);
+                    else
+                        close_window = true; // don't propagate the event for accept keys
+                    break;
 
-            case "<C-j>":
-            case "<C-m>":
-            case "<Return>":
-                if (vimperator.options["more"] && isScrollable() && !atEnd())
-                    win.scrollByLines(1);
-                else
-                    close_window = true; // don't propagate the event for accept keys
-                break;
+                // up a line
+                case "k":
+                case "<Up>":
+                case "<BS>":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollByLines(-1);
+                    else if (vimperator.options["more"] && !isScrollable())
+                        show_more_prompt = true;
+                    else
+                        pass_event = true;
+                    break;
 
-            // up a line
-            case "k":
-            case "<Up>":
-            case "<BS>":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollByLines(-1);
-                else if (vimperator.options["more"] && !isScrollable())
-                    show_more_prompt = true;
-                else
-                    pass_event = true;
-                break;
+                // half page down
+                case "d":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollBy(0, win.innerHeight / 2);
+                    else
+                        pass_event = true;
+                    break;
 
-            // half page down
-            case "d":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollBy(0, win.innerHeight / 2);
-                else
-                    pass_event = true;
-                break;
+                case "<LeftMouse>":
+                    if (event.originalTarget.className == "hl-URL buffer-list")
+                    {
+                        vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                        close_window = true;
+                        break;
+                    }
+                    else if (event.originalTarget.localName.toLowerCase() == "a")
+                    {
+                        vimperator.open(event.originalTarget.textContent);
+                        break;
+                    }
+                case "<A-LeftMouse>": // for those not owning a 3-button mouse
+                case "<MiddleMouse>":
+                    if (event.originalTarget.localName.toLowerCase() == "a")
+                    {
+                        var where = /\btabopen\b/.test(vimperator.options["activate"]) ?
+                                    vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
+                        vimperator.open(event.originalTarget.textContent, where);
+                    }
+                    break;
 
-            case "<LeftMouse>":
-                if (event.originalTarget.className == "hl-URL buffer-list")
-                {
-                    vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                // let firefox handle those to select table cells or show a context menu
+                case "<C-LeftMouse>":
+                case "<RightMouse>":
+                case "<C-S-LeftMouse>":
+                    break;
+
+                // XXX: what's that for? --mst
+                case "<S-LeftMouse>":
+                    if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
+                        ; // fall through
+                    else
+                        break;
+
+                // page down
+                case "f":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollByPages(1);
+                    else
+                        pass_event = true;
+                    break;
+
+                case "<Space>":
+                case "<PageDown>":
+                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                        win.scrollByPages(1);
+                    else
+                        pass_event = true;
+                    break;
+
+                // half page up
+                case "u":
+                    // if (more and scrollable)
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollBy(0, -(win.innerHeight / 2));
+                    else
+                        pass_event = true;
+                    break;
+
+                // page up
+                case "b":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollByPages(-1);
+                    else if (vimperator.options["more"] && !isScrollable())
+                        show_more_prompt = true;
+                    else
+                        pass_event = true;
+                    break;
+
+                case "<PageUp>":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollByPages(-1);
+                    else
+                        pass_event = true;
+                    break;
+
+                // top of page
+                case "g":
+                    if (vimperator.options["more"] && isScrollable())
+                        win.scrollTo(0, 0);
+                    else if (vimperator.options["more"] && !isScrollable())
+                        show_more_prompt = true;
+                    else
+                        pass_event = true;
+                    break;
+
+                // bottom of page
+                case "G":
+                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                        win.scrollTo(0, win.scrollMaxY);
+                    else
+                        pass_event = true;
+                    break;
+
+                // copy text to clipboard
+                case "<C-y>":
+                    vimperator.copyToClipboard(win.getSelection());
+                    break;
+
+                // close the window
+                case "q":
                     close_window = true;
                     break;
-                }
-                else if (event.originalTarget.localName.toLowerCase() == "a")
-                {
-                    vimperator.open(event.originalTarget.textContent);
-                    break;
-                }
-            case "<A-LeftMouse>": // for those not owning a 3-button mouse
-            case "<MiddleMouse>":
-                if (event.originalTarget.localName.toLowerCase() == "a")
-                {
-                    var where = /\btabopen\b/.test(vimperator.options["activate"]) ?
-                                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
-                    vimperator.open(event.originalTarget.textContent, where);
-                }
-                break;
 
-            // let firefox handle those to select table cells or show a context menu
-            case "<C-LeftMouse>":
-            case "<RightMouse>":
-            case "<C-S-LeftMouse>":
-                break;
+                // unmapped key
+                default:
+                    if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
+                        pass_event = true;
+                    else
+                        show_more_help_prompt = true;
+            }
 
-            // XXX: what's that for? --mst
-            case "<S-LeftMouse>":
-                if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
-                    ; // fall through
+            if (pass_event || close_window)
+            {
+                // FIXME: use mode stack
+                vimperator.modes.reset();
+                this.clear();
+
+                if (pass_event)
+                    vimperator.events.onKeyPress(event);
+            }
+            else // set update the prompt string
+            {
+                if (show_more_help_prompt)
+                    setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
+                else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
+                    setLine("-- More --", this.HL_MOREMSG);
                 else
-                    break;
+                    setLine("Press ENTER or type command to continue", this.HL_QUESTION);
+            }
+        },
 
-            // page down
-            case "f":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollByPages(1);
-                else
-                    pass_event = true;
-                break;
-
-            case "<Space>":
-            case "<PageDown>":
-                if (vimperator.options["more"] && isScrollable() && !atEnd())
-                    win.scrollByPages(1);
-                else
-                    pass_event = true;
-                break;
-
-            // half page up
-            case "u":
-                // if (more and scrollable)
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollBy(0, -(win.innerHeight / 2));
-                else
-                    pass_event = true;
-                break;
-
-            // page up
-            case "b":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollByPages(-1);
-                else if (vimperator.options["more"] && !isScrollable())
-                    show_more_prompt = true;
-                else
-                    pass_event = true;
-                break;
-
-            case "<PageUp>":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollByPages(-1);
-                else
-                    pass_event = true;
-                break;
-
-            // top of page
-            case "g":
-                if (vimperator.options["more"] && isScrollable())
-                    win.scrollTo(0, 0);
-                else if (vimperator.options["more"] && !isScrollable())
-                    show_more_prompt = true;
-                else
-                    pass_event = true;
-                break;
-
-            // bottom of page
-            case "G":
-                if (vimperator.options["more"] && isScrollable() && !atEnd())
-                    win.scrollTo(0, win.scrollMaxY);
-                else
-                    pass_event = true;
-                break;
-
-            // copy text to clipboard
-            case "<C-y>":
-                vimperator.copyToClipboard(win.getSelection());
-                break;
-
-            // close the window
-            case "q":
-                close_window = true;
-                break;
-
-            // unmapped key
-            default:
-                if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
-                    pass_event = true;
-                else
-                    show_more_help_prompt = true;
-        }
-
-        if (pass_event || close_window)
+        // it would be better if we had a destructor in javascript ...
+        destroy: function ()
         {
-            // FIXME: use mode stack
-            vimperator.modes.reset();
-            this.clear();
-
-            if (pass_event)
-                vimperator.events.onKeyPress(event);
+            history.save();
         }
-        else // set update the prompt string
-        {
-            if (show_more_help_prompt)
-                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
-            else if (show_more_prompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
-                setLine("-- More --", this.HL_MOREMSG);
-            else
-                setLine("Press ENTER or type command to continue", this.HL_QUESTION);
-        }
-    }
 
-    // it would be better if we had a destructor in javascript ...
-    this.destroy = function ()
-    {
-        history.save();
-    }
+    };
     //}}}
 } //}}}
 
@@ -935,113 +939,117 @@ vimperator.InformationList = function (id, options) //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    /**
-     * Show the completion list window
-     *
-     * @param compl: if null, only show the list with current entries, otherwise
-     *          use entries of 'compl' to fill the list.
-     *          Required format: [["left", "right"], ["another"], ["completion"]]
-     */
-    this.show = function (compl)
-    {
-        //max_items = vimperator.options["previewheight"];
+    return {
 
-        if (compl)
+        /**
+         * Show the completion list window
+         *
+         * @param compl: if null, only show the list with current entries, otherwise
+         *          use entries of 'compl' to fill the list.
+         *          Required format: [["left", "right"], ["another"], ["completion"]]
+         */
+        show: function (compl)
         {
-            completions = compl;
-            fill(0);
-        }
+            //max_items = vimperator.options["previewheight"];
 
-        var length = completions.length;
-        if (length > max_items)
-            length = max_items;
-        if (length >= min_items)
-        {
-            widget.setAttribute("rows", length.toString());
-            widget.hidden = false;
-            return true;
-        }
-        else
+            if (compl)
+            {
+                completions = compl;
+                fill(0);
+            }
+
+            var length = completions.length;
+            if (length > max_items)
+                length = max_items;
+            if (length >= min_items)
+            {
+                widget.setAttribute("rows", length.toString());
+                widget.hidden = false;
+                return true;
+            }
+            else
+            {
+                widget.hidden = true;
+                return false;
+            }
+        },
+
+        hide: function ()
         {
             widget.hidden = true;
-            return false;
-        }
-    }
+        },
 
-    this.hide = function ()
-    {
-        widget.hidden = true;
-    }
-
-    this.visible = function ()
-    {
-        return !widget.hidden;
-    }
-
-    /**
-     * select index, refill list if necessary
-     */
-    this.selectItem = function (index)
-    {
-        if (widget.hidden)
-            return;
-
-        if (!incremental_fill)
+        visible: function ()
         {
-            widget.selectedIndex = index;
-            return;
-        }
+            return !widget.hidden;
+        },
 
-        // find start index
-        var new_offset = 0;
-        if (index >= list_offset + max_items - CONTEXT_LINES)
-            new_offset = index - max_items + CONTEXT_LINES + 1;
-        else if (index <= list_offset + CONTEXT_LINES)
-            new_offset = index - CONTEXT_LINES;
-        else
-            new_offset = list_offset;
-
-        if (new_offset + max_items > completions.length)
-            new_offset = completions.length - max_items;
-        if (new_offset < 0)
-            new_offset = 0;
-
-        // for speed reason: just remove old item, and add the new one at the end of the list
-        var items = widget.getElementsByTagName("listitem");
-        if (new_offset == list_offset + 1)
+        /**
+         * select index, refill list if necessary
+         */
+        selectItem: function (index)
         {
-            widget.removeChild(items[0]);
-            addItem(completions[index + CONTEXT_LINES], false);
-        }
-        else if (new_offset == list_offset - 1)
-        {
-            widget.removeChild(items[items.length-1]);
-            addItem(completions[index - CONTEXT_LINES], true);
-        }
-        else if (new_offset == list_offset)
-        {
-            // do nothing
-        }
-        else
-            fill(new_offset);
+            if (widget.hidden)
+                return;
 
-        list_offset = new_offset;
-        widget.selectedIndex = index - list_offset;
-    }
+            if (!incremental_fill)
+            {
+                widget.selectedIndex = index;
+                return;
+            }
 
-    this.onEvent = function (event)
-    {
-        var listcells = document.getElementsByTagName("listcell");
-        // 2 columns for now, use the first column
-        var index = (widget.selectedIndex * 2) + 0;
-        var val = listcells[index].getAttribute("label");
-        if (val && event.button == 0 && event.type == "dblclick") // left double click
-            vimperator.open(val);
-        else if (val && event.button == 1) // middle click
-            vimperator.open(val, vimperator.NEW_TAB);
-        else
-            return false;
-    }
+            // find start index
+            var new_offset = 0;
+            if (index >= list_offset + max_items - CONTEXT_LINES)
+                new_offset = index - max_items + CONTEXT_LINES + 1;
+            else if (index <= list_offset + CONTEXT_LINES)
+                new_offset = index - CONTEXT_LINES;
+            else
+                new_offset = list_offset;
+
+            if (new_offset + max_items > completions.length)
+                new_offset = completions.length - max_items;
+            if (new_offset < 0)
+                new_offset = 0;
+
+            // for speed reason: just remove old item, and add the new one at the end of the list
+            var items = widget.getElementsByTagName("listitem");
+            if (new_offset == list_offset + 1)
+            {
+                widget.removeChild(items[0]);
+                addItem(completions[index + CONTEXT_LINES], false);
+            }
+            else if (new_offset == list_offset - 1)
+            {
+                widget.removeChild(items[items.length-1]);
+                addItem(completions[index - CONTEXT_LINES], true);
+            }
+            else if (new_offset == list_offset)
+            {
+                // do nothing
+            }
+            else
+                fill(new_offset);
+
+            list_offset = new_offset;
+            widget.selectedIndex = index - list_offset;
+        },
+
+        onEvent: function (event)
+        {
+            var listcells = document.getElementsByTagName("listcell");
+            // 2 columns for now, use the first column
+            var index = (widget.selectedIndex * 2) + 0;
+            var val = listcells[index].getAttribute("label");
+            if (val && event.button == 0 && event.type == "dblclick") // left double click
+                vimperator.open(val);
+            else if (val && event.button == 1) // middle click
+                vimperator.open(val, vimperator.NEW_TAB);
+            else
+                return false;
+        }
+
+    };
     //}}}
 } //}}}
 
@@ -1065,138 +1073,142 @@ vimperator.StatusLine = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.setClass = function (type)
-    {
-        var highlight_group;
+    return {
 
-        switch (type)
+        setClass: function (type)
         {
-            case "secure":
-                highlight_group = "hl-StatusLineSecure";
-                break;
-            case "broken":
-                highlight_group = "hl-StatusLineBroken";
-                break;
-            case "insecure":
-                highlight_group = "hl-StatusLine";
-                break;
-        }
+            var highlight_group;
 
-        status_bar.setAttribute("class", "chromeclass-status " + highlight_group);
-    };
-
-    // update all fields of the statusline
-    this.update = function ()
-    {
-        this.updateUrl();
-        this.updateInputBuffer();
-        this.updateProgress();
-        this.updateTabCount();
-        this.updateBufferPosition();
-    }
-
-    // if "url" is ommited, build a usable string for the URL
-    this.updateUrl = function (url)
-    {
-        if (typeof url == "string")
-        {
-            url_widget.value = url;
-            return;
-        }
-
-        url = vimperator.buffer.URL;
-
-        // make it even more vim-like
-        if (url == "about:blank")
-        {
-            var title = vimperator.buffer.title;
-
-            if (title == "Vimperator Help")
-                url = "[Help]";
-            else if (!title)
-                url = "[No Name]";
-        }
-
-        var sh = getWebNavigation().sessionHistory;
-        var modified = "";
-        if (sh.index > 0)
-            modified += "+";
-        if (sh.index < sh.count -1)
-            modified += "-";
-
-        if (modified)
-            url += " [" + modified + "]"
-
-        url_widget.value = url;
-    };
-
-    this.updateInputBuffer = function (buffer)
-    {
-        if (!buffer || typeof buffer != "string")
-            buffer = "";
-
-        inputbuffer_widget.value = buffer;
-    };
-
-    this.updateProgress = function (progress)
-    {
-        if (!progress)
-            progress = "";
-
-        if (typeof progress == "string")
-            progress_widget.value = progress;
-        else if (typeof progress == "number")
-        {
-            var progress_str = "";
-            if (progress <= 0)
-                progress_str = "[ Loading...         ]";
-            else if (progress < 1)
+            switch (type)
             {
-                progress_str = "[";
-                var done = Math.floor(progress * 20);
-                for (var i = 0; i < done; i++)
-                    progress_str += "=";
-
-                progress_str += ">";
-
-                for (var i = 19; i > done; i--)
-                    progress_str += " ";
-
-                progress_str += "]";
+                case "secure":
+                    highlight_group = "hl-StatusLineSecure";
+                    break;
+                case "broken":
+                    highlight_group = "hl-StatusLineBroken";
+                    break;
+                case "insecure":
+                    highlight_group = "hl-StatusLine";
+                    break;
             }
-            progress_widget.value = progress_str;
-        }
-    };
 
-    // you can omit either of the 2 arguments
-    this.updateTabCount = function (cur_index, total_tabs)
-    {
-        if (!cur_index || typeof cur_index != "number")
-            cur_index = vimperator.tabs.index() + 1;
-        if (!total_tabs || typeof cur_index != "number")
-            total_tabs = vimperator.tabs.count();
+            status_bar.setAttribute("class", "chromeclass-status " + highlight_group);
+        },
 
-        tabcount_widget.value = "[" + cur_index + "/" + total_tabs + "]";
-    };
-
-    // percent is given between 0 and 1
-    this.updateBufferPosition = function (percent)
-    {
-        if (!percent || typeof percent != "number")
+        // update all fields of the statusline
+        update: function ()
         {
-            var win = document.commandDispatcher.focusedWindow;
-            percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
+            this.updateUrl();
+            this.updateInputBuffer();
+            this.updateProgress();
+            this.updateTabCount();
+            this.updateBufferPosition();
+        },
+
+        // if "url" is ommited, build a usable string for the URL
+        updateUrl: function (url)
+        {
+            if (typeof url == "string")
+            {
+                url_widget.value = url;
+                return;
+            }
+
+            url = vimperator.buffer.URL;
+
+            // make it even more vim-like
+            if (url == "about:blank")
+            {
+                var title = vimperator.buffer.title;
+
+                if (title == "Vimperator Help")
+                    url = "[Help]";
+                else if (!title)
+                    url = "[No Name]";
+            }
+
+            var sh = getWebNavigation().sessionHistory;
+            var modified = "";
+            if (sh.index > 0)
+                modified += "+";
+            if (sh.index < sh.count -1)
+                modified += "-";
+
+            if (modified)
+                url += " [" + modified + "]"
+
+            url_widget.value = url;
+        },
+
+        updateInputBuffer: function (buffer)
+        {
+            if (!buffer || typeof buffer != "string")
+                buffer = "";
+
+            inputbuffer_widget.value = buffer;
+        },
+
+        updateProgress: function (progress)
+        {
+            if (!progress)
+                progress = "";
+
+            if (typeof progress == "string")
+                progress_widget.value = progress;
+            else if (typeof progress == "number")
+            {
+                var progress_str = "";
+                if (progress <= 0)
+                    progress_str = "[ Loading...         ]";
+                else if (progress < 1)
+                {
+                    progress_str = "[";
+                    var done = Math.floor(progress * 20);
+                    for (var i = 0; i < done; i++)
+                        progress_str += "=";
+
+                    progress_str += ">";
+
+                    for (var i = 19; i > done; i--)
+                        progress_str += " ";
+
+                    progress_str += "]";
+                }
+                progress_widget.value = progress_str;
+            }
+        },
+
+        // you can omit either of the 2 arguments
+        updateTabCount: function (cur_index, total_tabs)
+        {
+            if (!cur_index || typeof cur_index != "number")
+                cur_index = vimperator.tabs.index() + 1;
+            if (!total_tabs || typeof cur_index != "number")
+                total_tabs = vimperator.tabs.count();
+
+            tabcount_widget.value = "[" + cur_index + "/" + total_tabs + "]";
+        },
+
+        // percent is given between 0 and 1
+        updateBufferPosition: function (percent)
+        {
+            if (!percent || typeof percent != "number")
+            {
+                var win = document.commandDispatcher.focusedWindow;
+                percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
+            }
+
+            var bufferposition_str = "";
+            percent = Math.round(percent * 100);
+            if (percent < 0)          bufferposition_str = "All";
+            else if (percent == 0)    bufferposition_str = "Top";
+            else if (percent < 10)    bufferposition_str = " " + percent + "%";
+            else if (percent >= 100)  bufferposition_str = "Bot";
+            else                      bufferposition_str = percent + "%";
+
+            bufferposition_widget.value = bufferposition_str;
         }
 
-        var bufferposition_str = "";
-        percent = Math.round(percent * 100);
-        if (percent < 0)          bufferposition_str = "All";
-        else if (percent == 0)    bufferposition_str = "Top";
-        else if (percent < 10)    bufferposition_str = " " + percent + "%";
-        else if (percent >= 100)  bufferposition_str = "Bot";
-        else                      bufferposition_str = percent + "%";
-
-        bufferposition_widget.value = bufferposition_str;
     };
     //}}}
 } //}}}

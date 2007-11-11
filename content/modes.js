@@ -92,9 +92,11 @@ vimperator.modes = (function ()
                 {
                     // clear any selection made
                     var selection = window.content.getSelection();
-                    try { // a simple if (selection) does not work
+                    try
+                    { // a simple if (selection) does not work
                         selection.collapseToStart();
-                    } catch (e) { }
+                    }
+                    catch (e) { }
                 }
                 else
                     vimperator.editor.unselectText();
@@ -122,6 +124,7 @@ vimperator.modes = (function ()
     }
 
     return {
+
         // main modes, only one should ever be active
         NONE:             0,
         NORMAL:           1 << 0,
@@ -219,7 +222,8 @@ vimperator.modes = (function ()
         set extended(value) {
             extended = value; this.show();
         }
-    }
+
+    };
 })();
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -32,6 +32,7 @@ vimperator.Bookmarks = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     const history_service   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                              .getService(Components.interfaces.nsINavHistoryService);
     const bookmarks_service = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
@@ -92,239 +93,242 @@ vimperator.Bookmarks = function () //{{{
             // close a container after using it!
             rootNode.containerOpen = false;
         }
-        return;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // if "bypass_cache" is true, it will force a reload of the bookmarks database
-    // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
-    // takes about 1 sec
-    this.get = function (filter, tags, bypass_cache)
-    {
-        if (!bookmarks || bypass_cache)
-            load();
+    return {
 
-        return vimperator.completion.filterURLArray(bookmarks, filter, tags);
-    }
-
-    this.add = function (title, url, keyword, tags)
-    {
-        if (!bookmarks)
-            load();
-
-        // if no protocol specified, default to http://, isn't there a better way?
-        if (!/^\w+:/.test(url))
-            url = "http://" + url;
-
-        try
+        // if "bypass_cache" is true, it will force a reload of the bookmarks database
+        // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
+        // takes about 1 sec
+        get: function (filter, tags, bypass_cache)
         {
-            var uri = io_service.newURI(url, null, null);
-            var id = bookmarks_service.insertBookmark(bookmarks_service.bookmarksRoot, uri, -1, title);
-            if (!id)
+            if (!bookmarks || bypass_cache)
+                load();
+
+            return vimperator.completion.filterURLArray(bookmarks, filter, tags);
+        },
+
+        add: function (title, url, keyword, tags)
+        {
+            if (!bookmarks)
+                load();
+
+            // if no protocol specified, default to http://, isn't there a better way?
+            if (!/^\w+:/.test(url))
+                url = "http://" + url;
+
+            try
+            {
+                var uri = io_service.newURI(url, null, null);
+                var id = bookmarks_service.insertBookmark(bookmarks_service.bookmarksRoot, uri, -1, title);
+                if (!id)
+                    return false;
+
+                if (keyword)
+                {
+                    bookmarks_service.setKeywordForBookmark(id, keyword);
+                    keywords.unshift([keyword, title, url]);
+                }
+
+                if (tags)
+                    tagging_service.tagURI(uri, tags);
+            }
+            catch (e)
+            {
+                vimperator.log(e);
                 return false;
-
-            if (keyword)
-            {
-                bookmarks_service.setKeywordForBookmark(id, keyword);
-                keywords.unshift([keyword, title, url]);
             }
 
-            if (tags)
-                tagging_service.tagURI(uri, tags);
-        }
-        catch (e)
+            //also update bookmark cache
+            bookmarks.unshift([url, title, keyword, tags || []]);
+            return true;
+        },
+
+        // returns number of deleted bookmarks
+        remove: function (url)
         {
-            vimperator.log(e);
-            return false;
-        }
+            if (!url)
+                return 0;
 
-        //also update bookmark cache
-        bookmarks.unshift([url, title, keyword, tags || []]);
-        return true;
-    }
-
-    // returns number of deleted bookmarks
-    this.remove = function (url)
-    {
-        if (!url)
-            return 0;
-
-        var i = 0;
-        try
-        {
-            var uri = io_service.newURI(url, null, null);
-            var count = {};
-            var bmarks = bookmarks_service.getBookmarkIdsForURI(uri, count);
-
-            for (; i < bmarks.length; i++)
-                bookmarks_service.removeItem(bmarks[i]);
-        }
-        catch (e)
-        {
-            vimperator.log(e);
-            return i;
-        }
-
-
-        // also update bookmark cache, if we removed at least one bookmark
-        if (count.value > 0)
-            load();
-
-        return count.value;
-    }
-
-    // TODO: add filtering
-    // also ensures that each search engine has a Vimperator-friendly alias
-    this.getSearchEngines = function ()
-    {
-        var search_engines = [];
-        var firefox_engines = search_service.getVisibleEngines({ });
-        for (var i in firefox_engines)
-        {
-            var alias = firefox_engines[i].alias;
-            if (!alias || !alias.match(/^[a-z0-9_-]+$/))
-                alias = firefox_engines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
-            if (!alias)
-                alias = "search"; // for search engines which we can't find a suitable alias
-
-            // make sure we can use search engines which would have the same alias (add numbers at the end)
-            var newalias = alias;
-            for (var j = 1; j <= 10; j++) // <=10 is intentional
+            var i = 0;
+            try
             {
-                if (!search_engines.some(function (item) { return (item[0] == newalias); }))
-                    break;
+                var uri = io_service.newURI(url, null, null);
+                var count = {};
+                var bmarks = bookmarks_service.getBookmarkIdsForURI(uri, count);
 
-                newalias = alias + j;
+                for (; i < bmarks.length; i++)
+                    bookmarks_service.removeItem(bmarks[i]);
             }
-            // only write when it changed, writes are really slow
-            if (firefox_engines[i].alias != newalias)
-                firefox_engines[i].alias = newalias;
-
-            search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
-        }
-
-        return search_engines;
-    }
-
-    // TODO: add filtering
-    // format of returned array:
-    // [keyword, helptext, url]
-    this.getKeywords = function ()
-    {
-        if (!keywords)
-            load();
-
-        return keywords;
-    }
-
-    // if @param engine_name is null, it uses the default search engine
-    // @returns the url for the search string
-    //          if the search also requires a postdata, [url, postdata] is returned
-    this.getSearchURL = function (text, engine_name)
-    {
-        var url = null;
-        var postdata = null;
-        if (!engine_name)
-            engine_name = vimperator.options["defsearch"];
-
-        // we need to make sure our custom alias have been set, even if the user
-        // did not :open <tab> once before
-        this.getSearchEngines();
-
-        // first checks the search engines for a match
-        var engine = search_service.getEngineByAlias(engine_name);
-        if (engine)
-        {
-            if (text)
+            catch (e)
             {
-                var submission = engine.getSubmission(text, null);
-                url = submission.uri.spec;
-                postdata = submission.postData;
+                vimperator.log(e);
+                return i;
             }
-            else
-                url = engine.searchForm;
-        }
-        else // check for keyword urls
+
+
+            // also update bookmark cache, if we removed at least one bookmark
+            if (count.value > 0)
+                load();
+
+            return count.value;
+        },
+
+        // TODO: add filtering
+        // also ensures that each search engine has a Vimperator-friendly alias
+        getSearchEngines: function ()
+        {
+            var search_engines = [];
+            var firefox_engines = search_service.getVisibleEngines({ });
+            for (var i in firefox_engines)
+            {
+                var alias = firefox_engines[i].alias;
+                if (!alias || !alias.match(/^[a-z0-9_-]+$/))
+                    alias = firefox_engines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
+                if (!alias)
+                    alias = "search"; // for search engines which we can't find a suitable alias
+
+                // make sure we can use search engines which would have the same alias (add numbers at the end)
+                var newalias = alias;
+                for (var j = 1; j <= 10; j++) // <=10 is intentional
+                {
+                    if (!search_engines.some(function (item) { return (item[0] == newalias); }))
+                        break;
+
+                    newalias = alias + j;
+                }
+                // only write when it changed, writes are really slow
+                if (firefox_engines[i].alias != newalias)
+                    firefox_engines[i].alias = newalias;
+
+                search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
+            }
+
+            return search_engines;
+        },
+
+        // TODO: add filtering
+        // format of returned array:
+        // [keyword, helptext, url]
+        getKeywords: function ()
         {
             if (!keywords)
                 load();
 
-            for (var i in keywords)
+            return keywords;
+        },
+
+        // if @param engine_name is null, it uses the default search engine
+        // @returns the url for the search string
+        //          if the search also requires a postdata, [url, postdata] is returned
+        getSearchURL: function (text, engine_name)
+        {
+            var url = null;
+            var postdata = null;
+            if (!engine_name)
+                engine_name = vimperator.options["defsearch"];
+
+            // we need to make sure our custom alias have been set, even if the user
+            // did not :open <tab> once before
+            this.getSearchEngines();
+
+            // first checks the search engines for a match
+            var engine = search_service.getEngineByAlias(engine_name);
+            if (engine)
             {
-                if (keywords[i][0] == engine_name)
+                if (text)
                 {
-                    if (text == null)
-                        text = "";
-                    url = keywords[i][2].replace(/%s/g, encodeURIComponent(text));
-                    break;
+                    var submission = engine.getSubmission(text, null);
+                    url = submission.uri.spec;
+                    postdata = submission.postData;
                 }
-            }
-        }
-
-        // if we came here, the engine_name is neither a search engine or URL
-        if (postdata)
-            return [url, postdata];
-        else
-            return url; // can be null
-    }
-
-    this.list = function (filter, tags, fullmode)
-    {
-        if (fullmode)
-        {
-            vimperator.open("chrome://browser/content/bookmarks/bookmarksPanel.xul", vimperator.NEW_TAB);
-        }
-        else
-        {
-            var items = this.get(filter, tags, false);
-
-            if (items.length == 0)
-            {
-                if (filter.length > 0 || tags.length > 0)
-                    vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
                 else
-                    vimperator.echoerr("No bookmarks set");
-
-                return;
+                    url = engine.searchForm;
             }
-
-            var title, url, tags, keyword, extra;
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-            for (var i = 0; i < items.length; i++)
+            else // check for keyword urls
             {
-                title = vimperator.util.escapeHTML(items[i][1]);
-                if (title.length > 50)
-                    title = title.substr(0, 47) + "...";
-                url = vimperator.util.escapeHTML(items[i][0]);
-                keyword = items[i][2];
-                tags = items[i][3].join(", ");
+                if (!keywords)
+                    load();
 
-                extra = "";
-                if (keyword)
+                for (var i in keywords)
                 {
-                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
-                    if (tags)
-                        extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
-                    else
-                        extra += ")</span>";
+                    if (keywords[i][0] == engine_name)
+                    {
+                        if (text == null)
+                            text = "";
+                        url = keywords[i][2].replace(/%s/g, encodeURIComponent(text));
+                        break;
+                    }
                 }
-                else if (tags)
-                {
-                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
-                }
-
-
-                list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
             }
-            list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            // if we came here, the engine_name is neither a search engine or URL
+            if (postdata)
+                return [url, postdata];
+            else
+                return url; // can be null
+        },
+
+        list: function (filter, tags, fullmode)
+        {
+            if (fullmode)
+            {
+                vimperator.open("chrome://browser/content/bookmarks/bookmarksPanel.xul", vimperator.NEW_TAB);
+            }
+            else
+            {
+                var items = this.get(filter, tags, false);
+
+                if (items.length == 0)
+                {
+                    if (filter.length > 0 || tags.length > 0)
+                        vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
+                    else
+                        vimperator.echoerr("No bookmarks set");
+
+                    return;
+                }
+
+                var title, url, tags, keyword, extra;
+                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    title = vimperator.util.escapeHTML(items[i][1]);
+                    if (title.length > 50)
+                        title = title.substr(0, 47) + "...";
+                    url = vimperator.util.escapeHTML(items[i][0]);
+                    keyword = items[i][2];
+                    tags = items[i][3].join(", ");
+
+                    extra = "";
+                    if (keyword)
+                    {
+                        extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
+                        if (tags)
+                            extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
+                        else
+                            extra += ")</span>";
+                    }
+                    else if (tags)
+                    {
+                        extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
+                    }
+
+
+                    list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
+                }
+                list += "</table>";
+
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            }
         }
-    }
+
+    };
     //}}}
 } //}}}
 
@@ -333,6 +337,7 @@ vimperator.History = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     const history_service   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                              .getService(Components.interfaces.nsINavHistoryService);
 
@@ -374,106 +379,110 @@ vimperator.History = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.get = function (filter)
-    {
-        if (!history)
-            load();
+    return {
 
-            return vimperator.completion.filterURLArray(history, filter);
-    }
-
-    // the history is automatically added to the Places global history
-    // so just update our cached history here
-    this.add = function (url, title)
-    {
-        if (!history)
-            load();
-
-        history = history.filter(function (elem) {
-            return elem[0] != url;
-        });
-
-        history.unshift([url, title]);
-        return true;
-    };
-
-    // TODO: better names?
-    //       and move to vimperator.buffer.?
-    this.stepTo = function (steps)
-    {
-        var index = getWebNavigation().sessionHistory.index + steps;
-
-        if (index >= 0 && index < getWebNavigation().sessionHistory.count)
+        get: function (filter)
         {
-            getWebNavigation().gotoIndex(index);
-        }
-        else
+            if (!history)
+                load();
+
+                return vimperator.completion.filterURLArray(history, filter);
+        },
+
+        // the history is automatically added to the Places global history
+        // so just update our cached history here
+        add: function (url, title)
         {
-            vimperator.beep();
-        }
-    }
+            if (!history)
+                load();
 
-    this.goToStart = function ()
-    {
-        var index = getWebNavigation().sessionHistory.index;
+            history = history.filter(function (elem) {
+                return elem[0] != url;
+            });
 
-        if (index == 0)
+            history.unshift([url, title]);
+            return true;
+        },
+
+        // TODO: better names?
+        //       and move to vimperator.buffer.?
+        stepTo: function (steps)
         {
-            vimperator.beep();
-            return;
-        }
+            var index = getWebNavigation().sessionHistory.index + steps;
 
-        getWebNavigation().gotoIndex(0);
-    }
-
-    this.goToEnd = function ()
-    {
-        var index = getWebNavigation().sessionHistory.index;
-        var max = getWebNavigation().sessionHistory.count - 1;
-
-        if (index == max)
-        {
-            vimperator.beep();
-            return;
-        }
-
-        getWebNavigation().gotoIndex(max);
-    }
-
-    this.list = function (filter, fullmode)
-    {
-        if (fullmode)
-        {
-            vimperator.open("chrome://browser/content/history/history-panel.xul", vimperator.NEW_TAB);
-        }
-        else
-        {
-            var items = this.get(filter);
-
-            if (items.length == 0)
+            if (index >= 0 && index < getWebNavigation().sessionHistory.count)
             {
-                if (filter.length > 0)
-                    vimperator.echoerr("E283: No history matching \"" + filter + "\"");
-                else
-                    vimperator.echoerr("No history set");
+                getWebNavigation().gotoIndex(index);
+            }
+            else
+            {
+                vimperator.beep();
+            }
+        },
 
+        goToStart: function ()
+        {
+            var index = getWebNavigation().sessionHistory.index;
+
+            if (index == 0)
+            {
+                vimperator.beep();
                 return;
             }
 
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
-            for (var i = 0; i < items.length; i++)
+            getWebNavigation().gotoIndex(0);
+        },
+
+        goToEnd: function ()
+        {
+            var index = getWebNavigation().sessionHistory.index;
+            var max = getWebNavigation().sessionHistory.count - 1;
+
+            if (index == max)
             {
-                var title = vimperator.util.escapeHTML(items[i][1]);
-                if (title.length > 50)
-                    title = title.substr(0, 47) + "...";
-                var url = vimperator.util.escapeHTML(items[i][0]);
-                list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
+                vimperator.beep();
+                return;
             }
-            list += "</table>";
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+
+            getWebNavigation().gotoIndex(max);
+        },
+
+        list: function (filter, fullmode)
+        {
+            if (fullmode)
+            {
+                vimperator.open("chrome://browser/content/history/history-panel.xul", vimperator.NEW_TAB);
+            }
+            else
+            {
+                var items = this.get(filter);
+
+                if (items.length == 0)
+                {
+                    if (filter.length > 0)
+                        vimperator.echoerr("E283: No history matching \"" + filter + "\"");
+                    else
+                        vimperator.echoerr("No history set");
+
+                    return;
+                }
+
+                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    var title = vimperator.util.escapeHTML(items[i][1]);
+                    if (title.length > 50)
+                        title = title.substr(0, 47) + "...";
+                    var url = vimperator.util.escapeHTML(items[i][0]);
+                    list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
+                }
+                list += "</table>";
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            }
         }
-    }
+
+    };
     //}}}
 } //}}}
 
@@ -582,153 +591,157 @@ vimperator.Marks = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: add support for frameset pages
-    this.add = function (mark)
-    {
-        var win = window.content;
+    return {
 
-        if (win.document.body.localName.toLowerCase() == "frameset")
-        {
-            vimperator.echoerr("marks support for frameset pages not implemented yet");
-            return;
-        }
-
-        var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
-        var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
-        var position = { x: x, y: y };
-
-        if (isURLMark(mark))
-        {
-            vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
-            url_marks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
-        }
-        else if (isLocalMark(mark))
-        {
-            // remove any previous mark of the same name for this location
-            removeLocalMark(mark);
-            if (!local_marks[mark])
-                local_marks[mark] = [];
-            vimperator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
-            local_marks[mark].push({ location: win.location.href, position: position });
-        }
-    }
-
-    this.remove = function (filter, special)
-    {
-        if (special)
-        {
-            // :delmarks! only deletes a-z marks
-            for (var mark in local_marks)
-                removeLocalMark(mark);
-        }
-        else
-        {
-            var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
-            for (var mark in url_marks)
-            {
-                if (pattern.test(mark))
-                    removeURLMark(mark);
-            }
-            for (var mark in local_marks)
-            {
-                if (pattern.test(mark))
-                    removeLocalMark(mark);
-            }
-        }
-    }
-
-    this.jumpTo = function (mark)
-    {
-        var ok = false;
-
-        if (isURLMark(mark))
-        {
-            var slice = url_marks[mark];
-            if (slice && slice.tab && slice.tab.linkedBrowser)
-            {
-                if (!slice.tab.parentNode)
-                {
-                    pending_jumps.push(slice);
-                    // NOTE: this obviously won't work on generated pages using
-                    // non-unique URLs, like Vimperator's help :(
-                    vimperator.open(slice.location, vimperator.NEW_TAB);
-                    return;
-                }
-                var index = vimperator.tabs.index(slice.tab);
-                if (index != -1)
-                {
-                    vimperator.tabs.select(index);
-                    var win = slice.tab.linkedBrowser.contentWindow;
-                    if (win.location.href != slice.location)
-                    {
-                        pending_jumps.push(slice);
-                        win.location.href = slice.location;
-                        return;
-                    }
-                    vimperator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + vimperator.tabs.index(slice.tab), 5);
-                    win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
-                    ok = true;
-                }
-            }
-        }
-        else if (isLocalMark(mark))
+        // TODO: add support for frameset pages
+        add: function (mark)
         {
             var win = window.content;
-            var slice = local_marks[mark] || [];
 
-            for (var i = 0; i < slice.length; i++)
+            if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                if (win.location.href == slice[i].location)
-                {
-                    vimperator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
-                    win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
-                    ok = true;
-                }
-            }
-        }
-
-        if (!ok)
-            vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
-    }
-
-    this.list = function (filter)
-    {
-        var marks = getSortedMarks();
-
-        if (marks.length == 0)
-        {
-            vimperator.echoerr("No marks set");
-            return;
-        }
-
-        if (filter.length > 0)
-        {
-            marks = marks.filter(function (mark) {
-                    if (filter.indexOf(mark[0]) > -1)
-                        return mark;
-            });
-            if (marks.length == 0)
-            {
-                vimperator.echoerr("E283: No marks matching \"" + filter + "\"");
+                vimperator.echoerr("marks support for frameset pages not implemented yet");
                 return;
             }
-        }
 
-        var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                   "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
-        for (var i = 0; i < marks.length; i++)
+            var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
+            var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
+            var position = { x: x, y: y };
+
+            if (isURLMark(mark))
+            {
+                vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
+                url_marks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
+            }
+            else if (isLocalMark(mark))
+            {
+                // remove any previous mark of the same name for this location
+                removeLocalMark(mark);
+                if (!local_marks[mark])
+                    local_marks[mark] = [];
+                vimperator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
+                local_marks[mark].push({ location: win.location.href, position: position });
+            }
+        },
+
+        remove: function (filter, special)
         {
-            list += "<tr>" +
-                    "<td> "                        + marks[i][0]                              +  "</td>" +
-                    "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
-                    "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
-                    "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) +  "</td>" +
-                    "</tr>";
-        }
-        list += "</table>";
+            if (special)
+            {
+                // :delmarks! only deletes a-z marks
+                for (var mark in local_marks)
+                    removeLocalMark(mark);
+            }
+            else
+            {
+                var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
+                for (var mark in url_marks)
+                {
+                    if (pattern.test(mark))
+                        removeURLMark(mark);
+                }
+                for (var mark in local_marks)
+                {
+                    if (pattern.test(mark))
+                        removeLocalMark(mark);
+                }
+            }
+        },
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-    }
+        jumpTo: function (mark)
+        {
+            var ok = false;
+
+            if (isURLMark(mark))
+            {
+                var slice = url_marks[mark];
+                if (slice && slice.tab && slice.tab.linkedBrowser)
+                {
+                    if (!slice.tab.parentNode)
+                    {
+                        pending_jumps.push(slice);
+                        // NOTE: this obviously won't work on generated pages using
+                        // non-unique URLs, like Vimperator's help :(
+                        vimperator.open(slice.location, vimperator.NEW_TAB);
+                        return;
+                    }
+                    var index = vimperator.tabs.index(slice.tab);
+                    if (index != -1)
+                    {
+                        vimperator.tabs.select(index);
+                        var win = slice.tab.linkedBrowser.contentWindow;
+                        if (win.location.href != slice.location)
+                        {
+                            pending_jumps.push(slice);
+                            win.location.href = slice.location;
+                            return;
+                        }
+                        vimperator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + vimperator.tabs.index(slice.tab), 5);
+                        win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                        ok = true;
+                    }
+                }
+            }
+            else if (isLocalMark(mark))
+            {
+                var win = window.content;
+                var slice = local_marks[mark] || [];
+
+                for (var i = 0; i < slice.length; i++)
+                {
+                    if (win.location.href == slice[i].location)
+                    {
+                        vimperator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
+                        win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
+                        ok = true;
+                    }
+                }
+            }
+
+            if (!ok)
+                vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
+        },
+
+        list: function (filter)
+        {
+            var marks = getSortedMarks();
+
+            if (marks.length == 0)
+            {
+                vimperator.echoerr("No marks set");
+                return;
+            }
+
+            if (filter.length > 0)
+            {
+                marks = marks.filter(function (mark) {
+                        if (filter.indexOf(mark[0]) > -1)
+                            return mark;
+                });
+                if (marks.length == 0)
+                {
+                    vimperator.echoerr("E283: No marks matching \"" + filter + "\"");
+                    return;
+                }
+            }
+
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+            for (var i = 0; i < marks.length; i++)
+            {
+                list += "<tr>" +
+                        "<td> "                        + marks[i][0]                              +  "</td>" +
+                        "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
+                        "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
+                        "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) +  "</td>" +
+                        "</tr>";
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        }
+
+    };
     //}}}
 } //}}}
 
@@ -751,90 +764,93 @@ vimperator.QuickMarks = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.add = function (qmark, location)
-    {
-        qmarks[qmark] = location;
-    }
+    return {
 
-    this.remove = function (filter)
-    {
-        var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
-
-        for (var qmark in qmarks)
+        add: function (qmark, location)
         {
-            if (pattern.test(qmark))
-                delete qmarks[qmark];
-        }
-    }
+            qmarks[qmark] = location;
+        },
 
-    this.removeAll = function ()
-    {
-        qmarks = {};
-    }
-
-    this.jumpTo = function (qmark, where)
-    {
-        var url = qmarks[qmark];
-
-        if (url)
-            vimperator.open(url, where);
-        else
-            vimperator.echoerr("E20: QuickMark not set");
-    }
-
-    this.list = function (filter)
-    {
-        var marks = [];
-
-        // TODO: should we sort these in a-zA-Z0-9 order?
-        for (var mark in qmarks)
-            marks.push([mark, qmarks[mark]]);
-        marks.sort();
-
-        if (marks.length == 0)
+        remove: function (filter)
         {
-            vimperator.echoerr("No QuickMarks set");
-            return;
-        }
+            var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
-        if (filter.length > 0)
+            for (var qmark in qmarks)
+            {
+                if (pattern.test(qmark))
+                    delete qmarks[qmark];
+            }
+        },
+
+        removeAll: function ()
         {
-            marks = marks.filter(function (mark) {
-                    if (filter.indexOf(mark[0]) > -1)
-                        return mark;
-            });
+            qmarks = {};
+        },
+
+        jumpTo: function (qmark, where)
+        {
+            var url = qmarks[qmark];
+
+            if (url)
+                vimperator.open(url, where);
+            else
+                vimperator.echoerr("E20: QuickMark not set");
+        },
+
+        list: function (filter)
+        {
+            var marks = [];
+
+            // TODO: should we sort these in a-zA-Z0-9 order?
+            for (var mark in qmarks)
+                marks.push([mark, qmarks[mark]]);
+            marks.sort();
+
             if (marks.length == 0)
             {
-                vimperator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                vimperator.echoerr("No QuickMarks set");
                 return;
             }
-        }
 
-        var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                   "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
-        for (var i = 0; i < marks.length; i++)
+            if (filter.length > 0)
+            {
+                marks = marks.filter(function (mark) {
+                        if (filter.indexOf(mark[0]) > -1)
+                            return mark;
+                });
+                if (marks.length == 0)
+                {
+                    vimperator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                    return;
+                }
+            }
+
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
+            for (var i = 0; i < marks.length; i++)
+            {
+                list += "<tr><td>    " + marks[i][0] +
+                        "</td><td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1]) + "</td></tr>";
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        },
+
+        destroy: function ()
         {
-            list += "<tr><td>    " + marks[i][0] +
-                    "</td><td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1]) + "</td></tr>";
+            // save the quickmarks
+            var saved_qmarks = "";
+
+            for (var i in qmarks)
+            {
+                saved_qmarks += i + "\n";
+                saved_qmarks += qmarks[i] + "\n";
+            }
+
+            vimperator.options.setPref("quickmarks", saved_qmarks);
         }
-        list += "</table>";
-
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-    }
-
-    this.destroy = function ()
-    {
-        // save the quickmarks
-        var saved_qmarks = "";
-
-        for (var i in qmarks)
-        {
-            saved_qmarks += i + "\n";
-            saved_qmarks += qmarks[i] + "\n";
-        }
-
-        vimperator.options.setPref("quickmarks", saved_qmarks);
-    }
+    };
     //}}}
 } //}}}
 
