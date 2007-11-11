@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.help = function(section, easter) //{{{
+vimperator.help = function (section, easter) //{{{
 {
     if (easter)
     {
@@ -220,7 +220,7 @@ vimperator.help = function(section, easter) //{{{
     {
         doc.open();
     }
-    catch(e)
+    catch (e)
     {
         // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
         // when the url is "about:" or any other xhtml page the doc is not open
@@ -255,7 +255,7 @@ vimperator.help = function(section, easter) //{{{
     }
 
     // FIXME
-    setTimeout(function() {
+    setTimeout(function () {
         if (section)
         {
             function findSectionElement(section)

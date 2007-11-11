@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Completion = function() // {{{
+vimperator.Completion = function () // {{{
 {
     // The completion substrings, used for showing the longest common match
     var g_substrings = [];
@@ -63,7 +63,7 @@ vimperator.Completion = function() // {{{
                 }
                 else
                 {
-                    g_substrings = g_substrings.filter(function($_) {
+                    g_substrings = g_substrings.filter(function ($_) {
                         return list[i][0][j].indexOf($_) >= 0;
                     });
                 }
@@ -93,7 +93,7 @@ vimperator.Completion = function() // {{{
                 }
                 else
                 {
-                    g_substrings = g_substrings.filter(function($_) {
+                    g_substrings = g_substrings.filter(function ($_) {
                         return list[i][0][j].indexOf($_) == 0;
                     });
                 }
@@ -112,7 +112,7 @@ vimperator.Completion = function() // {{{
         // list them add the end of the array
         var additional_completions = [];
 
-        if (!filter) return urls.map(function($_) {
+        if (!filter) return urls.map(function ($_) {
             return [$_[0], $_[1]]
         });
 
@@ -153,7 +153,7 @@ vimperator.Completion = function() // {{{
             }
             else
             {
-                g_substrings = g_substrings.filter(function($_) {
+                g_substrings = g_substrings.filter(function ($_) {
                     return url.indexOf($_) >= 0;
                 });
             }
@@ -168,7 +168,7 @@ vimperator.Completion = function() // {{{
          * returns the longest common substring
          * used for the 'longest' setting for wildmode
          */
-        get_longest_substring: function() //{{{
+        get_longest_substring: function () //{{{
         {
             if (g_substrings.length == 0)
                 return "";
@@ -189,7 +189,7 @@ vimperator.Completion = function() // {{{
          * depending on the 'complete' option
          * if the 'complete' argument is passed like "h", it temporarily overrides the complete option
          */
-        get_url_completions: function(filter, complete) //{{{
+        get_url_completions: function (filter, complete) //{{{
         {
             var completions = [];
             g_substrings = [];
@@ -211,33 +211,33 @@ vimperator.Completion = function() // {{{
             return completions;
         }, //}}}
 
-        get_search_completions: function(filter) //{{{
+        get_search_completions: function (filter) //{{{
         {
             var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
-            if (!filter) return engines.map(function(engine) {
+            if (!filter) return engines.map(function (engine) {
                 return [engine[0], engine[1]];
             });
-            var mapped = engines.map(function(engine) {
+            var mapped = engines.map(function (engine) {
                 return [[engine[0]], engine[1]];
             });
             return build_longest_common_substring(mapped, filter);
         }, //}}}
 
-        get_history_completions: function(filter) //{{{
+        get_history_completions: function (filter) //{{{
         {
             var items = vimperator.history.get();
             return filter_url_array(items, filter);
         }, //}}}
 
-        get_bookmark_completions: function(filter) //{{{
+        get_bookmark_completions: function (filter) //{{{
         {
             var bookmarks = vimperator.bookmarks.get();
             return filter_url_array(bookmarks, filter);
         }, //}}}
 
         // TODO: support file:// and \ or / path separators on both platforms
-        get_file_completions: function(filter)
+        get_file_completions: function (filter)
         {
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
@@ -256,7 +256,7 @@ vimperator.Completion = function() // {{{
             try
             {
                 files = vimperator.io.readDirectory(dir);
-                mapped = files.map(function(file) {
+                mapped = files.map(function (file) {
                     return [[file.path], file.isDirectory() ? "Directory" : "File"];
                 });
             }
@@ -269,7 +269,7 @@ vimperator.Completion = function() // {{{
             return build_longest_starting_substring(mapped, filter);
         },
 
-        get_help_completions: function(filter) //{{{
+        get_help_completions: function (filter) //{{{
         {
             var help_array = [[["introduction"], "Introductory text"],
                               [["initialization"], "Initialization and startup"],
@@ -278,25 +278,25 @@ vimperator.Completion = function() // {{{
                               [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
             g_substrings = [];
             for (var command in vimperator.commands)
-                help_array.push([command.long_names.map(function($_) { return ":" + $_; }), command.short_help]);
+                help_array.push([command.long_names.map(function ($_) { return ":" + $_; }), command.short_help]);
             options = this.get_options_completions(filter, true);
-            help_array = help_array.concat(options.map(function($_) {
+            help_array = help_array.concat(options.map(function ($_) {
                 return [
-                        $_[0].map(function($_) { return "'" + $_ + "'"; }),
+                        $_[0].map(function ($_) { return "'" + $_ + "'"; }),
                         $_[1]
                     ];
             }));
             for (var map in vimperator.mappings)
                 help_array.push([map.names, map.short_help]);
 
-            if (!filter) return help_array.map(function($_) {
+            if (!filter) return help_array.map(function ($_) {
                 return [$_[0][0], $_[1]]; // unfiltered, use the first command
             });
 
             return build_longest_common_substring(help_array, filter);
         }, //}}}
 
-        get_command_completions: function(filter) //{{{
+        get_command_completions: function (filter) //{{{
         {
             g_substrings = [];
             var completions = [];
@@ -312,7 +312,7 @@ vimperator.Completion = function() // {{{
             return build_longest_starting_substring(completions, filter);
         }, //}}}
 
-        get_options_completions: function(filter, unfiltered) //{{{
+        get_options_completions: function (filter, unfiltered) //{{{
         {
             g_substrings = [];
             var options_completions = [];
@@ -379,7 +379,7 @@ vimperator.Completion = function() // {{{
                     }
                     else
                     {
-                        g_substrings = g_substrings.filter(function($_) {
+                        g_substrings = g_substrings.filter(function ($_) {
                             return option.names[j].indexOf($_) == 0;
                         });
                     }
@@ -391,7 +391,7 @@ vimperator.Completion = function() // {{{
             return options_completions;
         }, //}}}
 
-        get_buffer_completions: function(filter) //{{{
+        get_buffer_completions: function (filter) //{{{
         {
             g_substrings = [];
             var items = [];
@@ -421,13 +421,13 @@ vimperator.Completion = function() // {{{
                     items.push([[(i + 1) + ": " + title, (i + 1) + ": " + url], url]);
                 }
             }
-            if (!filter) return items.map(function($_) {
+            if (!filter) return items.map(function ($_) {
                 return [$_[0][0], $_[1]];
             });
             return build_longest_common_substring(items, filter);
         }, //}}}
 
-        get_sidebar_completions: function(filter) //{{{
+        get_sidebar_completions: function (filter) //{{{
         {
             g_substrings = [];
             var menu = document.getElementById("viewSidebarMenu")
@@ -439,20 +439,20 @@ vimperator.Completion = function() // {{{
             if (!filter)
                 return nodes;
 
-            var mapped = nodes.map(function(node) {
+            var mapped = nodes.map(function (node) {
                 return [[node[0]], node[1]];
             });
 
             return build_longest_common_substring(mapped, filter);
         }, //}}}
 
-        javascript: function(str) // {{{
+        javascript: function (str) // {{{
         {
             g_substrings = [];
             var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
             var object = "window";
             var filter = matches[3] || "";
-            var start = matches[1].length-1;
+            var start = matches[1].length - 1;
             if (matches[2])
             {
                 var brackets = 0, parentheses = 0;
@@ -520,7 +520,7 @@ vimperator.Completion = function() // {{{
         // helper function which checks if the given arguments pass "filter"
         // items must be an array of strings
         // if case_sensitive == true, be sure to pass filter already in lowercased version
-        match: function(filter, items, case_sensitive)
+        match: function (filter, items, case_sensitive)
         {
             if (typeof(filter) != "string" || !items)
                 return false;
@@ -544,7 +544,7 @@ vimperator.Completion = function() // {{{
             return false;
         },
 
-        exTabCompletion: function(str) //{{{
+        exTabCompletion: function (str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
             var completions = [];

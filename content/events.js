@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Events = function() //{{{
+vimperator.Events = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -35,23 +35,23 @@ vimperator.Events = function() //{{{
     // this handler is for middle click only in the content
     //window.addEventListener("mousedown", onVimperatorKeypress, true);
     //content.mPanelContainer.addEventListener("mousedown", onVimperatorKeypress, true);
-    //document.getElementById("content").onclick = function(event) { alert("foo"); };
+    //document.getElementById("content").onclick = function (event) { alert("foo"); };
 
     // any tab related events
     var tabcontainer = getBrowser().tabContainer;
-    tabcontainer.addEventListener("TabMove",   function(event) {
+    tabcontainer.addEventListener("TabMove",   function (event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabOpen",   function(event) {
+    tabcontainer.addEventListener("TabOpen",   function (event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabClose",  function(event) {
+    tabcontainer.addEventListener("TabClose",  function (event) {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabSelect", function(event) {
+    tabcontainer.addEventListener("TabSelect", function (event) {
         vimperator.commandline.clear();
         vimperator.setMode(); // trick to reshow the mode in the command line
         vimperator.statusline.updateTabCount();
@@ -103,7 +103,7 @@ vimperator.Events = function() //{{{
     window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
 
-    // window.document.addEventListener("DOMTitleChanged", function(event)
+    // window.document.addEventListener("DOMTitleChanged", function (event)
     // {
     //     vimperator.log("titlechanged");
     // }, null);
@@ -234,7 +234,7 @@ vimperator.Events = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.destroy = function()
+    this.destroy = function ()
     {
         // removeEventListeners() to avoid mem leaks
         window.dump("TODO: remove all eventlisteners\n");
@@ -256,7 +256,7 @@ vimperator.Events = function() //{{{
     //
     // @param keys: a string like "2<C-f>" to pass
     //              if you want < to be taken literally, prepend it with a \\
-    this.feedkeys = function(keys, noremap)
+    this.feedkeys = function (keys, noremap)
     {
         var doc = window.document;
         var view = window.document.defaultView;
@@ -320,7 +320,7 @@ vimperator.Events = function() //{{{
     // a keycode which can be used in mappings
     // e.g. pressing ctrl+n would result in the string "<C-n>"
     // null if unknown key
-    this.toString = function(event) //{{{
+    this.toString = function (event) //{{{
     {
         if (!event)
             return;
@@ -396,17 +396,17 @@ vimperator.Events = function() //{{{
 
     } //}}}
 
-    this.isAcceptKey = function(key)
+    this.isAcceptKey = function (key)
     {
         return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
     }
-    this.isCancelKey = function(key)
+    this.isCancelKey = function (key)
     {
         return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
     }
 
     // global escape handler, is called in ALL modes
-    this.onEscape = function()
+    this.onEscape = function ()
     {
         if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
         {
@@ -426,7 +426,7 @@ vimperator.Events = function() //{{{
 
     // this keypress handler gets always called first, even if e.g.
     // the commandline has focus
-    this.onKeyPress = function(event)
+    this.onKeyPress = function (event)
     {
         var key = vimperator.events.toString(event);
         if (!key)
@@ -690,7 +690,7 @@ vimperator.Events = function() //{{{
     window.addEventListener("keypress", this.onKeyPress, true);
 
     // this is need for sites like msn.com which focus the input field on keydown
-    this.onKeyUpOrDown = function(event)
+    this.onKeyUpOrDown = function (event)
     {
         if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) || vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) || isFormElemFocused())
             return true;
@@ -703,7 +703,7 @@ vimperator.Events = function() //{{{
 
     this.progressListener =
     {
-        QueryInterface: function(aIID)
+        QueryInterface: function (aIID)
         {
             if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
                     aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
@@ -714,7 +714,7 @@ vimperator.Events = function() //{{{
         },
 
         // XXX: function may later be needed to detect a canceled synchronous openURL()
-        onStateChange: function(webProgress, aRequest, flags, aStatus)
+        onStateChange: function (webProgress, aRequest, flags, aStatus)
         {
             // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
             // receive statechange events for loading images and other parts of the web page
@@ -741,29 +741,29 @@ vimperator.Events = function() //{{{
             else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
                 vimperator.statusline.setClass("secure");
         },
-        onStatusChange: function(webProgress, request, status, message)
+        onStatusChange: function (webProgress, request, status, message)
         {
             vimperator.statusline.updateUrl(message);
         },
-        onProgressChange: function(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
+        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
         {
             vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
         },
         // happens when the users switches tabs
-        onLocationChange: function()
+        onLocationChange: function ()
         {
             vimperator.statusline.updateUrl();
             vimperator.statusline.updateProgress();
 
             // if this is not delayed we get the position of the old buffer
-            setTimeout(function() { vimperator.statusline.updateBufferPosition(); }, 100);
+            setTimeout(function () { vimperator.statusline.updateBufferPosition(); }, 100);
         },
         // called at the very end of a page load
-        asyncUpdateUI: function()
+        asyncUpdateUI: function ()
         {
             setTimeout(vimperator.statusline.updateUrl, 100);
         },
-        setOverLink : function(link, b)
+        setOverLink : function (link, b)
         {
             var ssli = vimperator.options["showstatuslinks"];
             if (link && ssli)
@@ -784,10 +784,10 @@ vimperator.Events = function() //{{{
         },
 
         // stub functions for the interfaces
-        setJSStatus: function(status) { ; },
-        setJSDefaultStatus: function(status) { ; },
-        setDefaultStatus: function(status) { ; },
-        onLinkIconAvailable: function() { ; }
+        setJSStatus: function (status) { ; },
+        setJSDefaultStatus: function (status) { ; },
+        setDefaultStatus: function (status) { ; },
+        onLinkIconAvailable: function () { ; }
     };
 
     window.XULBrowserWindow = this.progressListener;

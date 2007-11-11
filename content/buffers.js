@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Buffer = function() //{{{
+vimperator.Buffer = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -116,35 +116,35 @@ vimperator.Buffer = function() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.__defineGetter__("URL", function()
+    this.__defineGetter__("URL", function ()
     {
         // TODO: .URL is not defined for XUL documents
         //return window.content.document.URL;
         return window.content.document.location.href;
     });
 
-    this.__defineGetter__("pageHeight", function()
+    this.__defineGetter__("pageHeight", function ()
     {
         return window.content.innerHeight;
     });
 
-    this.__defineGetter__("textZoom", function()
+    this.__defineGetter__("textZoom", function ()
     {
         return zoom_manager.textZoom;
     });
 
-    this.__defineSetter__("textZoom", function(value)
+    this.__defineSetter__("textZoom", function (value)
     {
         setZoom(value);
     });
 
-    this.__defineGetter__("title", function()
+    this.__defineGetter__("title", function ()
     {
         return window.content.document.title;
     });
 
     // returns an XPathResult object
-    this.evaluateXPath = function(expression, doc, elem, ordered)
+    this.evaluateXPath = function (expression, doc, elem, ordered)
     {
         if (!doc)
             doc = window.content.document;
@@ -167,7 +167,7 @@ vimperator.Buffer = function() //{{{
         return result;
     }
 
-    this.list = function(fullmode)
+    this.list = function (fullmode)
     {
         if (fullmode)
         {
@@ -214,12 +214,12 @@ vimperator.Buffer = function() //{{{
         }
     }
 
-    this.scrollBottom = function()
+    this.scrollBottom = function ()
     {
         scrollToPercentiles(-1, 100);
     }
 
-    this.scrollColumns = function(cols)
+    this.scrollColumns = function (cols)
     {
         var win = window.document.commandDispatcher.focusedWindow;
         const COL_WIDTH = 20;
@@ -230,42 +230,42 @@ vimperator.Buffer = function() //{{{
         win.scrollBy(COL_WIDTH * cols, 0);
     }
 
-    this.scrollEnd = function()
+    this.scrollEnd = function ()
     {
         scrollToPercentiles(100, -1);
     }
 
-    this.scrollLines = function(lines)
+    this.scrollLines = function (lines)
     {
         var win = window.document.commandDispatcher.focusedWindow;
         checkScrollYBounds(win, lines);
         win.scrollByLines(lines);
     }
 
-    this.scrollPages = function(pages)
+    this.scrollPages = function (pages)
     {
         var win = window.document.commandDispatcher.focusedWindow;
         checkScrollYBounds(win, pages);
         win.scrollByPages(pages);
     }
 
-    this.scrollToPercentile = function(percentage)
+    this.scrollToPercentile = function (percentage)
     {
         scrollToPercentiles(-1, percentage);
     }
 
-    this.scrollStart = function()
+    this.scrollStart = function ()
     {
         scrollToPercentiles(0, -1);
     }
 
-    this.scrollTop = function()
+    this.scrollTop = function ()
     {
         scrollToPercentiles(-1, 0);
     }
 
     // TODO: allow callback for filtering out unwanted frames? User defined?
-    this.shiftFrameFocus = function(count, forward)
+    this.shiftFrameFocus = function (count, forward)
     {
         if (!window.content.document instanceof HTMLDocument)
             return;
@@ -273,7 +273,7 @@ vimperator.Buffer = function() //{{{
         var frames = [];
 
         // find all frames - depth-first search
-        (function(frame)
+        (function (frame)
         {
             if (frame.document.body.localName.toLowerCase() == "body")
                 frames.push(frame);
@@ -287,7 +287,7 @@ vimperator.Buffer = function() //{{{
         // remove all unfocusable frames
         // TODO: find a better way to do this - walking the tree is too slow
         var start = document.commandDispatcher.focusedWindow;
-        frames = frames.filter(function(frame) {
+        frames = frames.filter(function (frame) {
                 frame.focus();
                 if (document.commandDispatcher.focusedWindow == frame)
                     return frame;
@@ -360,11 +360,11 @@ vimperator.Buffer = function() //{{{
         doc.body.appendChild(indicator);
 
         // remove the frame indicator
-        setTimeout(function() { doc.body.removeChild(indicator); }, 500);
+        setTimeout(function () { doc.body.removeChild(indicator); }, 500);
     }
 
     // updates the buffer preview in place only if list is visible
-    this.updateBufferList = function()
+    this.updateBufferList = function ()
     {
         if (!vimperator.bufferwindow.visible())
             return false;
@@ -377,7 +377,7 @@ vimperator.Buffer = function() //{{{
     // XXX: should this be in v.buffers. or v.tabs.?
     // "buffer" is a string which matches the URL or title of a buffer, if it
     // is null, the last used string is used again
-    this.switchTo = function(buffer, allowNonUnique, count, reverse)
+    this.switchTo = function (buffer, allowNonUnique, count, reverse)
     {
         if (buffer != null)
         {
@@ -428,23 +428,23 @@ vimperator.Buffer = function() //{{{
                     index += matches.length;
             }
             else
-                index = (count-1) % matches.length;
+                index = (count - 1) % matches.length;
 
             vimperator.tabs.select(matches[index], false);
         }
     };
 
-    this.zoomIn = function(steps)
+    this.zoomIn = function (steps)
     {
         bumpZoomLevel(steps);
     }
 
-    this.zoomOut = function(steps)
+    this.zoomOut = function (steps)
     {
         bumpZoomLevel(-steps);
     }
 
-    this.pageInfo = function(verbose)
+    this.pageInfo = function (verbose)
     {
         // TODO: copied from firefox. Needs some review/work...
         //    const feedTypes = {
@@ -481,7 +481,7 @@ vimperator.Buffer = function() //{{{
                     urlSecurityCheck(aData.href, aPrincipal,
                             Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                 }
-                catch(ex)
+                catch (ex)
                 {
                     aIsFeed = false;
                 }
@@ -497,7 +497,7 @@ vimperator.Buffer = function() //{{{
         function createTable(data)
         {
             var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
-                      data[data.length -1][0] + "</th></tr>";
+                      data[data.length - 1][0] + "</th></tr>";
 
             if (data.length - 1)
             {

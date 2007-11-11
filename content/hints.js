@@ -22,13 +22,13 @@
  *
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Hints = function() //{{{
+vimperator.Hints = function () //{{{
 {
     const HINT_PREFIX = "hah_hint_"; // prefix for the hint id
 
-    this.hintedElements = function() { return hintedElems; };
-    this.currentState = function() { return state;};
-    this.setCurrentState = function(s) { state = s;};
+    this.hintedElements = function () { return hintedElems; };
+    this.currentState = function () { return state;};
+    this.setCurrentState = function (s) { state = s;};
 
     var isHahModeEnabled = false; // is typing mode on
     var hintedElems = [];
@@ -68,7 +68,7 @@ vimperator.Hints = function() //{{{
         win.coordLoaderId = window.setTimeout("vimperator.hints.loadCoord(" + win.winId + ", 0);", 1);
     }
 
-    this.loadCoord = function(winId, i)
+    this.loadCoord = function (winId, i)
     {
         win = wins[winId];
 
@@ -400,7 +400,7 @@ vimperator.Hints = function() //{{{
      * @return -1 if already enabled
      */
     //function enableHahMode(event, mode)
-    this.enableHahMode = function(mode)
+    this.enableHahMode = function (mode)
     {
         vimperator.setMode(vimperator.modes.HINTS, mode);
         state = 0;
@@ -424,7 +424,7 @@ vimperator.Hints = function() //{{{
      * @return -1 if already disabled
      */
     //function disableHahMode(event)
-    this.disableHahMode = function(win)
+    this.disableHahMode = function (win)
     {
         if (!isHahModeEnabled)
             return;
@@ -438,7 +438,7 @@ vimperator.Hints = function() //{{{
         return 0;
     };
 
-    this.resetHintedElements = function()
+    this.resetHintedElements = function ()
     {
         linkNumString = "";
         state = 0;
@@ -454,7 +454,7 @@ vimperator.Hints = function() //{{{
     };
 
 
-    this.reshowHints = function()
+    this.reshowHints = function ()
     {
         onResize(null);
 
@@ -471,7 +471,7 @@ vimperator.Hints = function() //{{{
 
     // this function 'click' an element, which also works
     // for javascript links
-    this.openHints = function(new_tab, new_window)
+    this.openHints = function (new_tab, new_window)
     {
         var x = 0, y = 0;
 
@@ -517,7 +517,7 @@ vimperator.Hints = function() //{{{
         return 0;
     };
 
-    this.yankUrlHints = function()
+    this.yankUrlHints = function ()
     {
         var loc = "";
         var elems = this.hintedElements();
@@ -540,7 +540,7 @@ vimperator.Hints = function() //{{{
         vimperator.echo("Yanked " + loc);
     };
 
-    this.yankTextHints = function()
+    this.yankTextHints = function ()
     {
         var loc = "";
         var elems = this.hintedElements();
@@ -563,7 +563,7 @@ vimperator.Hints = function() //{{{
         vimperator.echo("Yanked " + loc);
     };
 
-    this.saveHints = function(skip_prompt)
+    this.saveHints = function (skip_prompt)
     {
         var elems = this.hintedElements();
 
@@ -622,7 +622,7 @@ vimperator.Hints = function() //{{{
     // returns nr. of fully parsed links when a new hint has been found,
     // otherwise 0 if current state is part of a hint, or -1 if an error occured
     // (like we have typed keys which never can become a hint
-    this.processEvent = function(event)
+    this.processEvent = function (event)
     {
         if (!isHahModeEnabled)
             return -1;
@@ -706,7 +706,7 @@ vimperator.Hints = function() //{{{
             linkNumString = "";
             isHahModeEnabled = true;
 
-            setTimeout( function() {
+            setTimeout( function () {
                 createHints();
                 showHints(null, 0);
             }, 100);

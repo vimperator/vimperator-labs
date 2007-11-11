@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * Firefox 3.0, then this class should go away and their tab methods should be used
  * @deprecated
  */
-vimperator.Tabs = function() //{{{
+vimperator.Tabs = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -87,7 +87,7 @@ vimperator.Tabs = function() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // @returns the index of the currently selected tab starting with 0
-    this.index = function(tab)
+    this.index = function (tab)
     {
         if (tab)
         {
@@ -103,14 +103,14 @@ vimperator.Tabs = function() //{{{
         return getBrowser().tabContainer.selectedIndex;
     }
 
-    this.count = function()
+    this.count = function ()
     {
         return getBrowser().mTabs.length;
     }
 
     // TODO: implement filter
     // @returns an array of tabs which match filter
-    this.get = function(filter)
+    this.get = function (filter)
     {
         var buffers = [];
         var browsers = getBrowser().browsers;
@@ -124,7 +124,7 @@ vimperator.Tabs = function() //{{{
         return buffers;
     }
 
-    this.getTab = function(index)
+    this.getTab = function (index)
     {
         if (index)
             return getBrowser().mTabs[index];
@@ -137,7 +137,7 @@ vimperator.Tabs = function() //{{{
      *  NOTE: position is a 0 based index
      *  FIXME: tabmove! N should probably produce an error
      */
-    this.move = function(tab, spec, wrap)
+    this.move = function (tab, spec, wrap)
     {
         if (spec === "")
             spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
@@ -149,7 +149,7 @@ vimperator.Tabs = function() //{{{
     /* quit_on_last_tab = 1: quit without saving session
      * quit_on_last_tab = 2: quit and save session
      */
-    this.remove = function(tab, count, focus_left_tab, quit_on_last_tab)
+    this.remove = function (tab, count, focus_left_tab, quit_on_last_tab)
     {
         function removeOrBlankTab (tab)
         {
@@ -203,12 +203,12 @@ vimperator.Tabs = function() //{{{
         }
     }
 
-    this.keepOnly = function(tab)
+    this.keepOnly = function (tab)
     {
         getBrowser().removeAllTabsBut(tab);
     }
 
-    this.select = function(spec, wrap)
+    this.select = function (spec, wrap)
     {
         var index = indexFromSpec(spec, wrap);
         if (index === false)
@@ -223,7 +223,7 @@ vimperator.Tabs = function() //{{{
     // tab that was selected when the session was created.  As a result the
     // alternate after a restart is often incorrectly tab 1 when there
     // shouldn't be one yet.
-    this.updateSelectionHistory = function()
+    this.updateSelectionHistory = function ()
     {
         alternates = [this.getTab(), alternates[0]];
         this.alternate = alternates[1];
@@ -232,7 +232,7 @@ vimperator.Tabs = function() //{{{
     // TODO: move to v.buffers
     this.alternate = this.getTab();
 
-    this.reload = function(tab, bypass_cache)
+    this.reload = function (tab, bypass_cache)
     {
         if (bypass_cache)
         {
@@ -246,7 +246,7 @@ vimperator.Tabs = function() //{{{
         }
     }
 
-    this.reloadAll = function(bypass_cache)
+    this.reloadAll = function (bypass_cache)
     {
         if (bypass_cache)
         {

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-const vimperator = (function() //{{{
+const vimperator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -135,13 +135,13 @@ const vimperator = (function() //{{{
         //  "cancel"
         //  "complete"
         //  TODO: "zoom": if the zoom value of the current buffer changed
-        registerCallback: function(type, mode, func)
+        registerCallback: function (type, mode, func)
         {
             // TODO: check if callback is already registered
             callbacks.push([type, mode, func]);
         },
 
-        triggerCallback: function(type, mode, data)
+        triggerCallback: function (type, mode, data)
         {
             for (var i in callbacks)
             {
@@ -152,14 +152,14 @@ const vimperator = (function() //{{{
             return false;
         },
 
-        getMode: function()
+        getMode: function ()
         {
             return [mode, extended_mode];
         },
 
         // set current mode
         // use "null" if you only want to set one of those modes
-        setMode: function(main, extended, silent)
+        setMode: function (main, extended, silent)
         {
             // if a main mode is set, the extended is always cleared
             if (main)
@@ -176,12 +176,12 @@ const vimperator = (function() //{{{
 
         // returns true if "whichmode" is found in either the main or
         // extended mode
-        hasMode: function(whichmode)
+        hasMode: function (whichmode)
         {
             return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
         },
 
-        addMode: function(main, extended)
+        addMode: function (main, extended)
         {
             if (main)
                 mode |= main;
@@ -192,7 +192,7 @@ const vimperator = (function() //{{{
         },
 
         // always show the new mode in the statusline
-        removeMode: function(main, extended)
+        removeMode: function (main, extended)
         {
             if (main)
                 mode = (mode | main) ^ main;
@@ -202,7 +202,7 @@ const vimperator = (function() //{{{
             showMode();
         },
 
-        beep: function()
+        beep: function ()
         {
             if (vimperator.options["visualbell"])
             {
@@ -219,7 +219,7 @@ const vimperator = (function() //{{{
 
                 vbell.hidden = false
 
-                setTimeout(function() { vbell.hidden = true; }, 50); // may as well be 0 ;-)
+                setTimeout(function () { vbell.hidden = true; }, 50); // may as well be 0 ;-)
             }
             else
             {
@@ -227,14 +227,14 @@ const vimperator = (function() //{{{
             }
         },
 
-        copyToClipboard: function(str)
+        copyToClipboard: function (str)
         {
             var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
                 .getService(Components.interfaces.nsIClipboardHelper);
             clipboardHelper.copyString(str);
         },
 
-        execute: function(str, modifiers)
+        execute: function (str, modifiers)
         {
             // skip comments and blank lines
             if (/^\s*("|$)/.test(str))
@@ -265,7 +265,7 @@ const vimperator = (function() //{{{
         },
 
         // after pressing Escape, put focus on a non-input field of the browser document
-        focusContent: function()
+        focusContent: function ()
         {
             var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
                      getService(Components.interfaces.nsIWindowWatcher);
@@ -277,7 +277,7 @@ const vimperator = (function() //{{{
         },
 
         // partial sixth level expression evaluation
-        eval: function(string)
+        eval: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
             var match = string.match(/^&(\w+)/);
@@ -323,7 +323,7 @@ const vimperator = (function() //{{{
             return;
         },
 
-        variableReference: function(string)
+        variableReference: function (string)
         {
             if (!string)
                 return [null, null, null];
@@ -351,7 +351,7 @@ const vimperator = (function() //{{{
 
         // TODO: move to vimp.util.? --mst
         // if color = true it uses HTML markup to color certain items
-        objectToString: function(object, color)
+        objectToString: function (object, color)
         {
             if (object === null)
                 return "null";
@@ -361,9 +361,12 @@ const vimperator = (function() //{{{
 
             var string = "";
             var obj = "";
-            try { // for window.JSON
+            try
+            { // for window.JSON
                 obj = object.toString();
-            } catch (e) {
+            }
+            catch (e)
+            {
                 obj = "&lt;Object&gt;";
             }
 
@@ -400,7 +403,7 @@ const vimperator = (function() //{{{
 
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
-        log: function(msg, level)
+        log: function (msg, level)
         {
             //if (vimperator.options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
             if (typeof msg == "object")
@@ -419,7 +422,7 @@ const vimperator = (function() //{{{
         // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
         // @returns true when load was initiated, or false on error
-        open: function(urls, where, callback)
+        open: function (urls, where, callback)
         {
             // convert the string to an array of converted URLs
             // -> see vimperator.util.stringToURLArray for more details
@@ -479,7 +482,7 @@ const vimperator = (function() //{{{
         },
 
         // quit vimperator, no matter how many tabs/windows are open
-        quit: function(save_session)
+        quit: function (save_session)
         {
             if (save_session)
                 vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
@@ -489,7 +492,7 @@ const vimperator = (function() //{{{
             goQuitApplication();
         },
 
-        restart: function()
+        restart: function ()
         {
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
@@ -521,7 +524,7 @@ const vimperator = (function() //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
-        run: function(program, args, blocking)
+        run: function (program, args, blocking)
         {
             var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
             const WINDOWS = navigator.platform == "Win32";
@@ -609,7 +612,7 @@ const vimperator = (function() //{{{
 
         // files which end in .js are sourced as pure javascript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
-        source: function(filename, silent)
+        source: function (filename, silent)
         {
             filename = vimperator.io.expandPath(filename);
 
@@ -626,7 +629,7 @@ const vimperator = (function() //{{{
                 {
                     var heredoc = "";
                     var heredoc_end = null; // the string which ends the heredoc
-                    str.split("\n").forEach(function(line)
+                    str.split("\n").forEach(function (line)
                     {
                         if (heredoc_end) // we already are in a heredoc
                         {
@@ -678,7 +681,7 @@ const vimperator = (function() //{{{
             }
         },
 
-        startup: function()
+        startup: function ()
         {
             window.dump("Vimperator startup\n");
             vimperator.log("Initializing vimperator object...", 1);
@@ -722,19 +725,19 @@ const vimperator = (function() //{{{
             vimperator.completion    = new vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = function(str) { vimperator.commandline.echo(str); }
-            vimperator.echoerr = function(str) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG); }
+            vimperator.echo    = function (str) { vimperator.commandline.echo(str); }
+            vimperator.echoerr = function (str) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG); }
 
             vimperator.globalVariables = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function(command) { vimperator.execute(command); } );
-            vimperator.registerCallback("complete", vimperator.modes.EX, function(str) { return vimperator.completion.exTabCompletion(str); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); } );
+            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); } );
 
             // first time intro message
             if (vimperator.options.getPref("firsttime", true))
             {
-                setTimeout(function() {
+                setTimeout(function () {
                     vimperator.help(null, null, null, { inTab: true });
                     vimperator.options.setPref("firsttime", false);
                 }, 1000);
@@ -744,7 +747,7 @@ const vimperator = (function() //{{{
 
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
-            setTimeout(function() {
+            setTimeout(function () {
 
                 var rc_file = vimperator.io.getRCFile();
 
@@ -761,7 +764,7 @@ const vimperator = (function() //{{{
                     {
                         var files = vimperator.io.readDirectory(plugin_dir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
-                        files.forEach(function(file) {
+                        files.forEach(function (file) {
                             if (!file.isDirectory() && /\.js$/.test(file.path))
                                 vimperator.source(file.path, false);
                         });
@@ -787,7 +790,7 @@ const vimperator = (function() //{{{
             vimperator.log("Vimperator fully initialized", 1);
         },
 
-        shutdown: function()
+        shutdown: function ()
         {
             window.dump("Vimperator shutdown\n");
 
@@ -800,7 +803,7 @@ const vimperator = (function() //{{{
             window.dump("All vimperator modules destroyed\n");
         },
 
-        sleep: function(ms)
+        sleep: function (ms)
         {
             var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
             var mainThread = threadManager.mainThread;
