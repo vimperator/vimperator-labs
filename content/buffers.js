@@ -622,11 +622,11 @@ vimperator.Buffer = function () //{{{
                 }
             }
 
-            var lastMod = new Date(window.content.document.lastModified).toLocaleString();
+            var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
+            var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
             // FIXME: probably unportable across differnet language versions
-            if (lastMod == "Invalid Date")
-                lastMod = null;
-
+            if (lastModVerbose == "Invalid Date")
+                lastModVerbose = lastMod = null;
 
             // Ctrl-g single line output
             if (!verbose)
@@ -667,8 +667,8 @@ vimperator.Buffer = function () //{{{
             pageGeneral.push(["Mime-Type", content.document.contentType]);
             pageGeneral.push(["Encoding",  content.document.characterSet]);
             pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
-            if (lastMod)
-                pageGeneral.push(["Last Modified", lastMod]);
+            if (lastModVerbose)
+                pageGeneral.push(["Last Modified", lastModVerbose]);
 
             // get meta tag data, sort and put into pageMeta[]
             var metaNodes = window.content.document.getElementsByTagName("meta");
