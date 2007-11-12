@@ -168,24 +168,43 @@ vimperator.util = {
 
     highlightURL: function (str, force)
     {
-        if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
+        if (force || /^[a-zA-Z]+:\/\//.test(str))
             return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
         else
             return str;
     },
 
-    formatNumber: function (num)
+    formatBytes: function (num, decimalPlaces, humanReadable)
     {
-        var strNum = (num + "").split(".", 2);
+        const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+        var unitIndex = 0;
+        var tmpNum = parseInt(num) || 0;
+        var strNum = [tmpNum + ""];
 
-        for (var u = strNum[0].length - 3; u > 0; u -= 3)
+        if (humanReadable)
+        {
+            while (tmpNum >= 1024)
+            {
+                tmpNum /= 1024;
+                if (++unitIndex > (unitVal.length - 1))
+                    break;
+            }
+            let decPower = Math.pow(10, decimalPlaces);
+            strNum = ((Math.round(tmpNum * decPower) / decPower) + "").split(".", 2);
+
+            if (!strNum[1])
+                strNum[1] = "";
+            while (strNum[1].length < decimalPlaces) // padd with "0" to the desired decimalPlaces)
+                strNum[1] += "0";
+        }
+
+        for (var u = strNum[0].length - 3; u > 0; u -= 3) // make a 10000 a 10,000
             strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
 
-        if (strNum[1])
+        if (unitIndex) // decimalPlaces only when > Bytes
             strNum[0] += "." + strNum[1];
 
-        return strNum[0];
+        return strNum[0] + " " + unitVal[unitIndex];
     }
 };
-
 // vim: set fdm=marker sw=4 ts=4 et:

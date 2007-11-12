@@ -494,14 +494,14 @@ vimperator.Buffer = function () //{{{
 
         pageInfo: function (verbose)
         {
-            // TODO: copied from firefox. Needs some review/work...
-            //    const feedTypes = {
-            //        "application/rss+xml": gBundle.getString("feedRss"),
-            //        "application/atom+xml": gBundle.getString("feedAtom"),
-            //        "text/xml": gBundle.getString("feedXML"),
-            //        "application/xml": gBundle.getString("feedXML"),
-            //        "application/rdf+xml": gBundle.getString("feedXML")
-            //    };
+            const feedTypes = {
+                "application/rss+xml": "RSS",
+                "application/atom+xml": "Atom",
+                "text/xml": "XML",
+                "application/xml": "XML",
+                "application/rdf+xml": "XML"
+            };
+
             function isValidFeed(aData, aPrincipal, aIsFeed)
             {
                 if (!aData || !aPrincipal)
@@ -589,8 +589,10 @@ vimperator.Buffer = function () //{{{
             var pageSize = []; // [0] bytes; [1] kbytes
             if (cacheEntryDescriptor)
             {
-                pageSize[0] = vimperator.util.formatNumber(cacheEntryDescriptor.dataSize);
-                pageSize[1] = vimperator.util.formatNumber(Math.round(cacheEntryDescriptor.dataSize / 1024 * 100) / 100);
+                pageSize[0] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+                pageSize[1] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+                if (pageSize[1] == pageSize[0])
+                    pageSize[1] = null; // don't output "xx Bytes" twice
             }
 
             // put feeds rss into pageFeeds[]
@@ -615,9 +617,8 @@ vimperator.Buffer = function () //{{{
                     var feed = { title: link.title, href: link.href, type: link.type || "" };
                     if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
                     {
-    //                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"]; // TODO: dig into that.. --calmar
-                        var type = feed.type || "application/rss+xml";
-                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true)]);
+                        var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + "  (" + type + ")"]);
                     }
                 }
             }
@@ -635,8 +636,8 @@ vimperator.Buffer = function () //{{{
                 var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
                 var title = window.content.document.title || "[No Title]";
 
-                if (pageSize[1])
-                    info.push(pageSize[1] + "KiB");
+                if (pageSize[0])
+                    info.push(pageSize[1] || pageSize[0]);
 
                 if (lastMod)
                     info.push(lastMod);
@@ -662,7 +663,12 @@ vimperator.Buffer = function () //{{{
                 pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
 
             if (pageSize[0])
-                pageGeneral.push(["File Size", pageSize[1] + "KiB (" + pageSize[0] + " bytes)"]);
+            {
+                if (pageSize[1])
+                    pageGeneral.push(["File Size", pageSize[1] + " (" + pageSize[0] + ")"]);
+                else
+                    pageGeneral.push(["File Size", pageSize[0]]);
+            }
 
             pageGeneral.push(["Mime-Type", content.document.contentType]);
             pageGeneral.push(["Encoding",  content.document.characterSet]);
