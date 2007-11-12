@@ -529,7 +529,7 @@ vimperator.Buffer = function () //{{{
                         urlSecurityCheck(aData.href, aPrincipal,
                                 Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                     }
-                    catch(ex)
+                    catch (ex)
                     {
                         aIsFeed = false;
                     }
@@ -545,7 +545,7 @@ vimperator.Buffer = function () //{{{
             function createTable(data)
             {
                 var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
-                          data[data.length -1][0] + "</th></tr>";
+                          data[data.length - 1][0] + "</th></tr>";
 
                 if (data.length - 1)
                 {

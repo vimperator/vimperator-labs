@@ -1184,7 +1184,7 @@ vimperator.StatusLine = function () //{{{
             if (!cur_index || typeof cur_index != "number")
                 cur_index = vimperator.tabs.index() + 1;
             if (!total_tabs || typeof cur_index != "number")
-                total_tabs = vimperator.tabs.count();
+                total_tabs = vimperator.tabs.count;
 
             tabcount_widget.value = "[" + cur_index + "/" + total_tabs + "]";
         },

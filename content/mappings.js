@@ -552,7 +552,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-^>", "<C-6>"],
         function ()
         {
-            if (vimperator.tabs.getTab() == vimperator.tabs.alternate)
+            if (vimperator.tabs.alternate == null || vimperator.tabs.getTab() == vimperator.tabs.alternate)
             {
                 vimperator.echoerr("E23: No alternate page");
                 return;

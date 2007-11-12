@@ -1934,7 +1934,7 @@ vimperator.Commands = function () //{{{
             else if (/^\d+$/.test(args))
             {
                 var index = parseInt(args, 10) - 1;
-                if (index < vimperator.tabs.count())
+                if (index < vimperator.tabs.count)
                     vimperator.tabs.select(index, true);
                 else
                     vimperator.beep();

@@ -245,9 +245,12 @@ const vimperator = (function () //{{{
 
             var string = "";
             var obj = "";
-            try { // for window.JSON
+            try
+            { // for window.JSON
                 obj = object.toString();
-            } catch (e) {
+            }
+            catch (e)
+            {
                 obj = "&lt;Object&gt;";
             }
 
@@ -604,7 +607,7 @@ const vimperator = (function () //{{{
             vimperator.log("Loading module editor...", 3);
             vimperator.editor        = vimperator.Editor();
             vimperator.log("Loading module tabs...", 3);
-            vimperator.tabs          = new vimperator.Tabs();
+            vimperator.tabs          = vimperator.Tabs();
             vimperator.log("Loading module marks...", 3);
             vimperator.marks         = vimperator.Marks();
             vimperator.log("Loading module quickmarks...", 3);

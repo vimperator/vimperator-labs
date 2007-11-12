@@ -220,7 +220,7 @@ vimperator.help = function (section, easter) //{{{
     {
         doc.open();
     }
-    catch(e)
+    catch (e)
     {
         // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
         // when the url is "about:" or any other xhtml page the doc is not open
