@@ -618,7 +618,7 @@ vimperator.Buffer = function () //{{{
                     if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
                     {
                         var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
-                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + "  (" + type + ")"]);
+                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + " <span style='color: gray;'>(" + type + ")</span>"]);
                     }
                 }
             }
