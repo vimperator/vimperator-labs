@@ -516,7 +516,7 @@ const vimperator = (function () //{{{
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    eval(str);
+                    eval("with(vimperator){" + str + "}");
                 }
                 else
                 {
@@ -528,7 +528,7 @@ const vimperator = (function () //{{{
                         {
                             if (heredoc_end.test(line))
                             {
-                                eval(heredoc);
+                                eval("with(vimperator){" + heredoc + "}");
                                 heredoc = "";
                                 heredoc_end = null;
                             }
