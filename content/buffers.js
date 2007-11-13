@@ -626,7 +626,7 @@ vimperator.Buffer = function () //{{{
             var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
             var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
             // FIXME: probably unportable across differnet language versions
-            if (lastModVerbose == "Invalid Date")
+            if (lastModVerbose == "Invalid Date" || new Date(window.content.document.lastModified).getFullYear() == 1970) 
                 lastModVerbose = lastMod = null;
 
             // Ctrl-g single line output
