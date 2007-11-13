@@ -45,40 +45,48 @@ vimperator.util = {
     {
         var type = typeof(arg);
 
-        if (type == "number")
+        // some objects like window.JSON or getBrowsers()._browsers need the try/catch
+        try
         {
-            return "<span style=\"color: red;\">" + arg + "</span>";
-        }
-        else if (type == "string")
-        {
-            if (process_strings)
-                arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
+            if (type == "number")
+            {
+                return "<span style=\"color: red;\">" + arg + "</span>";
+            }
+            else if (type == "string")
+            {
+                if (process_strings)
+                    arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
 
-            return "<span style=\"color: green;\">" + arg + "</span>";
-        }
-        else if (type == "boolean")
-        {
-            return "<span style=\"color: blue;\">" + arg + "</span>";
-        }
-        else if (arg == null || arg == "undefined")
-        {
-            return "<span style=\"color: blue;\">" + arg + "</span>";
-        }
-        else if (type == "object" || type == "function")
-        {
-            // for java packages value.toString() would crash so badly
-            // that we cannot even try/catch it
-            if (/^\[JavaPackage.*\]$/.test(arg))
-                return "[JavaPackage]";
+                return "<span style=\"color: green;\">" + arg + "</span>";
+            }
+            else if (type == "boolean")
+            {
+                return "<span style=\"color: blue;\">" + arg + "</span>";
+            }
+            else if (arg == null || arg == "undefined")
+            {
+                return "<span style=\"color: blue;\">" + arg + "</span>";
+            }
+            else if (type == "object" || type == "function")
+            {
+                // for java packages value.toString() would crash so badly
+                // that we cannot even try/catch it
+                if (/^\[JavaPackage.*\]$/.test(arg))
+                    return "[JavaPackage]";
 
-            var str = arg.toString();
-            if (typeof str == "string")  // can be "undefined"
-                return vimperator.util.escapeHTML(str);
-            else
-                return "undefined";
+                var str = arg.toString();
+                if (typeof str == "string")  // can be "undefined"
+                    return vimperator.util.escapeHTML(str);
+                else
+                    return "undefined";
+            }
+        }
+        catch (e)
+        {
+            return "&lt;unknown&gt;";
         }
 
-        return arg;
+        return "&lt;unknown type&gt;";
     },
 
     // takes a string like 'google bla, www.osnews.com'
@@ -160,7 +168,7 @@ vimperator.util = {
 
     highlightURL: function (str, force)
     {
-        if (force || /^[a-zA-Z]+:\/\/.*\//.test(str))
+        if (force || /^[a-zA-Z]+:\/\//.test(str))
             return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
         else
             return str;
