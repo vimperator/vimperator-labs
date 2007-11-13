@@ -761,7 +761,7 @@ vimperator.Options = function () //{{{
                   "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
                   "</table>",
             default_value: "",
-            validator: function (value) { return /^sort$/.test(value); }
+            validator: function (value) { return /^(sort|)$/.test(value); }
         }
     ));
     //}}}
