@@ -165,7 +165,7 @@ vimperator.Buffer = function () //{{{
         );
 
         return result;
-    }
+    };
 
     this.list = function (fullmode)
     {
@@ -212,12 +212,12 @@ vimperator.Buffer = function () //{{{
 
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
-    }
+    };
 
     this.scrollBottom = function ()
     {
         scrollToPercentiles(-1, 100);
-    }
+    };
 
     this.scrollColumns = function (cols)
     {
@@ -228,41 +228,41 @@ vimperator.Buffer = function () //{{{
             vimperator.beep();
 
         win.scrollBy(COL_WIDTH * cols, 0);
-    }
+    };
 
     this.scrollEnd = function ()
     {
         scrollToPercentiles(100, -1);
-    }
+    };
 
     this.scrollLines = function (lines)
     {
         var win = window.document.commandDispatcher.focusedWindow;
         checkScrollYBounds(win, lines);
         win.scrollByLines(lines);
-    }
+    };
 
     this.scrollPages = function (pages)
     {
         var win = window.document.commandDispatcher.focusedWindow;
         checkScrollYBounds(win, pages);
         win.scrollByPages(pages);
-    }
+    };
 
     this.scrollToPercentile = function (percentage)
     {
         scrollToPercentiles(-1, percentage);
-    }
+    };
 
     this.scrollStart = function ()
     {
         scrollToPercentiles(0, -1);
-    }
+    };
 
     this.scrollTop = function ()
     {
         scrollToPercentiles(-1, 0);
-    }
+    };
 
     // TODO: allow callback for filtering out unwanted frames? User defined?
     this.shiftFrameFocus = function (count, forward)
@@ -361,7 +361,7 @@ vimperator.Buffer = function () //{{{
 
         // remove the frame indicator
         setTimeout(function () { doc.body.removeChild(indicator); }, 500);
-    }
+    };
 
     // updates the buffer preview in place only if list is visible
     this.updateBufferList = function ()
@@ -372,7 +372,7 @@ vimperator.Buffer = function () //{{{
         var items = vimperator.completion.get_buffer_completions("");
         vimperator.bufferwindow.show(items);
         vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-    }
+    };
 
     // XXX: should this be in v.buffers. or v.tabs.?
     // "buffer" is a string which matches the URL or title of a buffer, if it
@@ -437,23 +437,23 @@ vimperator.Buffer = function () //{{{
     this.zoomIn = function (steps)
     {
         bumpZoomLevel(steps);
-    }
+    };
 
     this.zoomOut = function (steps)
     {
         bumpZoomLevel(-steps);
-    }
+    };
 
     this.pageInfo = function (verbose)
     {
-        // TODO: copied from firefox. Needs some review/work...
-        //    const feedTypes = {
-        //        "application/rss+xml": gBundle.getString("feedRss"),
-        //        "application/atom+xml": gBundle.getString("feedAtom"),
-        //        "text/xml": gBundle.getString("feedXML"),
-        //        "application/xml": gBundle.getString("feedXML"),
-        //        "application/rdf+xml": gBundle.getString("feedXML")
-        //    };
+        const feedTypes = {
+            "application/rss+xml": "RSS",
+            "application/atom+xml": "Atom",
+            "text/xml": "XML",
+            "application/xml": "XML",
+            "application/rdf+xml": "XML"
+        };
+
         function isValidFeed(aData, aPrincipal, aIsFeed)
         {
             if (!aData || !aPrincipal)
@@ -541,8 +541,10 @@ vimperator.Buffer = function () //{{{
         var pageSize = []; // [0] bytes; [1] kbytes
         if (cacheEntryDescriptor)
         {
-            pageSize[0] = vimperator.util.formatNumber(cacheEntryDescriptor.dataSize);
-            pageSize[1] = vimperator.util.formatNumber(Math.round(cacheEntryDescriptor.dataSize / 1024 * 100) / 100);
+            pageSize[0] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+            pageSize[1] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+            if (pageSize[1] == pageSize[0])
+                pageSize[1] = null; // don't output "xx Bytes" twice
         }
 
         // put feeds rss into pageFeeds[]
@@ -567,12 +569,17 @@ vimperator.Buffer = function () //{{{
                 var feed = { title: link.title, href: link.href, type: link.type || "" };
                 if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
                 {
-//                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"]; // TODO: dig into that.. --calmar
-                    var type = feed.type || "application/rss+xml";
-                    pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true)]);
+                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                    pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + "  (" + type + ")"]);
                 }
             }
         }
+
+        var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
+        var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
+        // FIXME: probably unportable across differnet language versions
+        if (lastModVerbose == "Invalid Date")
+            lastModVerbose = lastMod = null;
 
         // Ctrl-g single line output
         if (!verbose)
@@ -581,10 +588,9 @@ vimperator.Buffer = function () //{{{
             var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
             var title = window.content.document.title || "[No Title]";
 
-            if (pageSize[1])
-                info.push(pageSize[1] + "KiB");
+            if (pageSize[0])
+                info.push(pageSize[1] || pageSize[0]);
 
-            var lastMod = window.content.document.lastModified.slice(0, -3);
             if (lastMod)
                 info.push(lastMod);
 
@@ -609,12 +615,18 @@ vimperator.Buffer = function () //{{{
             pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
 
         if (pageSize[0])
-            pageGeneral.push(["File Size", pageSize[1] + "KiB (" + pageSize[0] + " bytes)"]);
+        {
+            if (pageSize[1])
+                pageGeneral.push(["File Size", pageSize[1] + " (" + pageSize[0] + ")"]);
+            else
+                pageGeneral.push(["File Size", pageSize[0]]);
+        }
 
-        pageGeneral.push(["Mime-Type", window.content.document.contentType]);
-        pageGeneral.push(["Encoding",  window.content.document.characterSet]);
+        pageGeneral.push(["Mime-Type", content.document.contentType]);
+        pageGeneral.push(["Encoding",  content.document.characterSet]);
         pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
-        pageGeneral.push(["Last Modified", window.content.document.lastModified]); //TODO: do not show bogus times (=current time)
+        if (lastModVerbose)
+            pageGeneral.push(["Last Modified", lastModVerbose]);
 
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
@@ -677,7 +689,7 @@ vimperator.Buffer = function () //{{{
             }
         }
         vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
-    }
+    };
     //}}}
 } //}}}
 
