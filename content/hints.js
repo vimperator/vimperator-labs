@@ -72,12 +72,12 @@ vimperator.Hints = function () //{{{
 
     // this function 'click' an element, which also works
     // for javascript links
-    function openHint(new_tab, new_window)
+    function openHint(where)
     {
         if (valid_hints.length < 1)
             return false;
 
-        var x = 0, y = 0;
+        var x = 1, y = 1;
         var elem = valid_hints[hintNumber - 1] || valid_hints[0];
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
@@ -88,20 +88,11 @@ vimperator.Hints = function () //{{{
         if (elemTagName == "area")
         {
             var coords = elem.getAttribute("coords").split(",");
-            x = Number(coords[0]);
-            y = Number(coords[1]);
+            x = Number(coords[0]) + 1;
+            y = Number(coords[1]) + 1;
         }
-        var doc = window.content.document;
-        var view = window.document.defaultView;
 
-        var evt = doc.createEvent("MouseEvents");
-        evt.initMouseEvent("mousedown", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-        elem.dispatchEvent(evt);
-
-        var evt = doc.createEvent("MouseEvents");
-        evt.initMouseEvent("click", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-        elem.dispatchEvent(evt);
-
+        vimperator.buffer.followLink(elem, where, x, y);
         return true;
     }
 
@@ -441,11 +432,11 @@ vimperator.Hints = function () //{{{
             case ";": focusHint(); break;
             case "a": saveHint(false); break;
             case "s": saveHint(true); break;
-            case "o": openHint(false, false); break;
+            case "o": openHint(vimperator.CURRENT_TAB); break;
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
-            case "t": openHint(true,  false); break;
+            case "t": openHint(vimperator.NEW_TAB); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
-            case "w": openHint(false, true);  break;
+            case "w": openHint(vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
             case "y": yankHint(false); break;
             case "Y": yankHint(true); break;

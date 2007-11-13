@@ -50,7 +50,7 @@ const vimperator = (function () //{{{
         get mode() { return vimperator.modes.main; },
         set mode(value) { vimperator.modes.main = value; },
 
-        // Global contants
+        // Global constants
         CURRENT_TAB: 1,
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,

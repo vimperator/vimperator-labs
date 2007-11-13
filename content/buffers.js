@@ -192,6 +192,38 @@ vimperator.Buffer = function () //{{{
             return result;
         },
 
+        // artificially "clicks" a link in order to open it
+        followLink: function (elem, where, offsetX, offsetY)
+        {
+            var doc = window.content.document;
+            var view = window.document.defaultView;
+            //var view = doc.defaultView;
+            offsetX = offsetX || 1;
+            offsetY = offsetY || 1;
+
+            var new_tab = false, new_window = false;
+            switch (where)
+            {
+                case vimperator.NEW_TAB:
+                case vimperator.NEW_BACKGROUND_TAB:
+                    new_tab = true;
+                    break;
+                case vimperator.NEW_WINDOW:
+                    new_window = true;
+                    break;
+                default:
+                    vimperator.log("Invalid where argument for followLink()");
+            }
+
+            var evt = doc.createEvent("MouseEvents");
+            evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            elem.dispatchEvent(evt);
+
+            //var evt = doc.createEvent("MouseEvents");
+            evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            elem.dispatchEvent(evt);
+        },
+
         // in contrast to vim, returns the selection if one is made,
         // otherwise tries to guess the current word unter the text cursor
         // NOTE: might change the selection
