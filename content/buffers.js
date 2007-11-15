@@ -790,11 +790,11 @@ vimperator.Buffer = function () //{{{
                 default: vimperator.echoerr("bad relation");
             }
 
-            relText = new RegExp(relText);
+            relText = new RegExp(relText, "i");
             var elems = window.content.document.getElementsByTagName('a');
             for (pattern = 0; pattern < regexps.length; pattern++)
             {
-                patternText = new RegExp(regexps[pattern]);
+                patternText = new RegExp(regexps[pattern], "i");
                 for (i = 0; i < elems.length; i++)
                 {
                     if (patternText.test(elems[i].text) || relText.test(elems[i].rel) )
