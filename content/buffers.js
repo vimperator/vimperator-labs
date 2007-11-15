@@ -658,7 +658,7 @@ vimperator.Buffer = function () //{{{
             var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
             var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
             // FIXME: probably unportable across differnet language versions
-            if (lastModVerbose == "Invalid Date" || new Date(window.content.document.lastModified).getFullYear() == 1970) 
+            if (lastModVerbose == "Invalid Date" || new Date(window.content.document.lastModified).getFullYear() == 1970)
                 lastModVerbose = lastMod = null;
 
             // Ctrl-g single line output
@@ -769,8 +769,43 @@ vimperator.Buffer = function () //{{{
                 }
             }
             vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
-        }
+        },
 
+        followDocumentRelation: function (relation)
+        {
+            var regexps;
+            var relText;
+            var patternText;
+            switch (relation)
+            {
+                case "next":
+                    regexps = vimperator.options["nextpattern"].split(",");
+                    relText = "next";
+                break;
+                case "previous":
+                    //TODO: accept prev\%[ious]
+                    regexps = vimperator.options["previouspattern"].split(",");
+                    relText = "previous";
+                break;
+                default: vimperator.echoerr("bad relation");
+            }
+
+            relText = new RegExp(relText);
+            var elems = window.content.document.getElementsByTagName('a');
+            for (pattern = 0; pattern < regexps.length; pattern++)
+            {
+                patternText = new RegExp(regexps[pattern]);
+                for (i = 0; i < elems.length; i++)
+                {
+                    if (patternText.test(elems[i].text) || relText.test(elems[i].rel) )
+                    {
+                        vimperator.buffer.followLink(elems[i],vimperator.CURRENT_TAB);
+                        return;
+                    }
+                }
+            }
+            vimperator.beep();
+        }
     };
     //}}}
 }; //}}}

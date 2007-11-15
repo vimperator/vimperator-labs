@@ -8,6 +8,8 @@
 	  read up the new help for the f, F and ; commands for details
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
+	* added ]n and ]p to navigate to the next/previous document based on
+	  the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
 	* abbreviations for text fields (:abbr etc.) (thanks calmar)
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
 	* :open, :bmarks, etc. filter on space separated tokens now, so you can
@@ -24,7 +26,7 @@
 	* support for * and # mappings to search for the text selection or the text under the cursor
 	* Escape finally clears any selection made in the document
 	* initial start of caret mode. Start with 'i', stop with Escape;
-	* many small bug fixes and enhancments
+	* many small bug fixes and enhancements
 
 2007-10-11:
 	* version 0.5.2

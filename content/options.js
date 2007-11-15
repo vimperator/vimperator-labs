@@ -768,6 +768,22 @@ vimperator.Options = function () //{{{
             validator: function (value) { return /^(sort|)$/.test(value); }
         }
     ));
+    this.add(new vimperator.Option(["nextpattern"], "stringlist",
+        {
+            short_help: "String to search when looking for 'next' page in document relation",
+            help: "Change it to make it look for another string in links when pressing ]n<br/>" +
+            "This value is case insensitive",
+            default_value: "\\bnext,^>$"
+        }
+    ));
+    this.add(new vimperator.Option(["previouspattern"], "stringlist",
+        {
+            short_help: "String to search when looking for 'prev' page in document relation",
+            help: "Change it to make it look for another string in links when pressing ]p<br/>" +
+            "This value is case insensitive", 
+            default_value: "\\bprev,previous\\b,^<$"
+        }
+    ));
     //}}}
 
     // we start with an "empty" GUI so that no toolbars or tabbar is shown if the user
