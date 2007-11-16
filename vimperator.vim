@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 November 9
+" Latest Revision:  2007 November 16
 
 if exists("b:current_syntax")
   finish
@@ -33,7 +33,7 @@ syn keyword vimperatorCommand addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bm
 syn match vimperatorCommand "!" contained
 
 " FIXME
-syn match vimperatorCommandWrapper "\%(^\|:\|\s\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
+syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act complete cpt defsearch ds extendedhinttags eht focusedhintstyle fhs fullscreen fs
@@ -48,14 +48,19 @@ syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end
 syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
 	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
 
+syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<map\>" end="$" keepend oneline contains=vimperatorKeySym
+
+syn match vimperatorKeySym "<[0-9A-Za-z-]\+>"
+
 " Note: match vim.vim highlighting groups
 hi def link vimperatorCommand			Statement
-hi def link vimperatorTodo			Todo
 hi def link vimperatorComment			Comment
-hi def link vimperatorLineComment		Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
+hi def link vimperatorKeySym			Special
+hi def link vimperatorLineComment		Comment
 hi def link vimperatorOption			PreProc
 hi def link vimperatorString			String 
+hi def link vimperatorTodo			Todo
 
 let b:current_syntax = "vimperator"
 
