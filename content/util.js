@@ -43,7 +43,7 @@ vimperator.util = {
     // any line breaks are displayed as \n
     colorize: function (arg, process_strings)
     {
-        var type = typeof(arg);
+        var type = typeof arg;
 
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
         try

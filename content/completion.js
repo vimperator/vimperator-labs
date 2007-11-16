@@ -554,7 +554,7 @@ vimperator.Completion = function () // {{{
         // items must be an array of strings
         match: function (items, filter, case_sensitive)
         {
-            if (typeof(filter) != "string" || !items)
+            if (typeof filter != "string" || !items)
                 return false;
 
             var items_str = items.join(" ");

@@ -418,7 +418,7 @@ const vimperator = (function () //{{{
             if (!args)
                 args = [];
 
-            if (typeof(blocking) != "boolean")
+            if (typeof blocking != "boolean")
                 blocking = false;
 
             try
