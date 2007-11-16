@@ -1191,15 +1191,15 @@ vimperator.Commands = function () //{{{
             help: "Same as <code class='command'>:una[bbreviate]</code>, but for Insert mode only."
         }
     ));
-    addDefaultCommand(new vimperator.Command(["ab[clear]"],
+    addDefaultCommand(new vimperator.Command(["abc[lear]"],
         function (args) { vimperator.editor.removeAllAbbreviations("!"); },
         { short_help: "Remove all abbreviations" }
     ));
-    addDefaultCommand(new vimperator.Command(["cab[clear]"],
+    addDefaultCommand(new vimperator.Command(["cabc[lear]"],
         function (args) { vimperator.editor.removeAllAbbreviations("c"); },
         { short_help: "Remove all abbreviations for Command-line mode" }
     ));
-    addDefaultCommand(new vimperator.Command(["iab[clear]"],
+    addDefaultCommand(new vimperator.Command(["iabc[lear]"],
         function (args) { vimperator.editor.removeAllAbbreviations("i"); },
         { short_help: "Remove all abbreviations for Insert mode" }
     ));
