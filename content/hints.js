@@ -418,7 +418,7 @@ vimperator.Hints = function () //{{{
             var first_href = valid_hints[0].getAttribute("href") || null;
             if (first_href)
             {
-                if (valid_hints.some( function (e) { return e.getAttribute("href") != first_href; } ))
+                if (valid_hints.some(function (e) { return e.getAttribute("href") != first_href; }))
                     return false;
             }
             else if (valid_hints.length > 1)
@@ -458,7 +458,7 @@ vimperator.Hints = function () //{{{
         }
         else
         {
-            setTimeout( function () {
+            setTimeout(function () {
                 if (vimperator.mode == vimperator.modes.HINTS)
                     vimperator.modes.reset(false);
             }, timeout);

@@ -98,7 +98,7 @@ vimperator.Editor = function () //{{{
             {
                 var rangeStart = elt.selectionStart; // caret position
                 var rangeEnd = elt.selectionEnd;
-                var tempStr1 = elt.value.substring(0,rangeStart);
+                var tempStr1 = elt.value.substring(0, rangeStart);
                 var tempStr2 = readFromClipboard();
                 var tempStr3 = elt.value.substring(rangeEnd);
                 elt.value = tempStr1 + tempStr2  + tempStr3;
@@ -383,11 +383,11 @@ vimperator.Editor = function () //{{{
             // blink the textbox after returning
             var timeout = 100;
             textBox.style.backgroundColor = tmpBg;
-            setTimeout( function () {
+            setTimeout(function () {
                 textBox.style.backgroundColor = oldBg;
-                setTimeout( function () {
+                setTimeout(function () {
                     textBox.style.backgroundColor = tmpBg;
-                    setTimeout( function () {
+                    setTimeout(function () {
                         textBox.style.backgroundColor = oldBg;
                     }, timeout);
                 }, timeout);

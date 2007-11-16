@@ -709,9 +709,8 @@ const vimperator = (function () //{{{
             var mainThread = threadManager.mainThread;
 
             var then = new Date().getTime(), now = then;
-            for (; now - then < ms; now = new Date().getTime()) {
+            for (; now - then < ms; now = new Date().getTime())
                 mainThread.processNextEvent(true);
-            }
         },
 
         get windows()

@@ -229,7 +229,7 @@ vimperator.help = function (section, easter) //{{{
             return false;
 
         vimperator.open("about:blank");
-        setTimeout(function () { vimperator.help(section, false, null, {recursive: true}); }, 250);
+        setTimeout(function () { vimperator.help(section, false, null, { recursive: true }); }, 250);
         return;
     }
     doc.write(fulldoc);

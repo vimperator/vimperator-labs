@@ -464,7 +464,6 @@ vimperator.Options = function () //{{{
             short_help: "Set the default search engine",
             help: "The default search engine is used in the <code class=\"command\">:[tab]open [arg]</code> command " +
                   "if [arg] neither looks like a URL or like a specified search engine/keyword.",
-            completer: function () { return [["foo", "bar"], ["shit", "blub"]]; },
             default_value: "google"
         }
     ));

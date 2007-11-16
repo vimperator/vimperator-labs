@@ -620,7 +620,7 @@ vimperator.Commands = function () //{{{
                   " -keyword=keyword<br/>",
             args: [[["-title", "-t"],    OPTION_STRING],
                    [["-tags", "-T"],     OPTION_LIST],
-                   [["-keyword", "-k"],  OPTION_STRING, function (arg) { return /\w/.test(arg); } ]]
+                   [["-keyword", "-k"],  OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
         }
     ));
     addDefaultCommand(new vimperator.Command(["bmarks"],
@@ -709,7 +709,7 @@ vimperator.Commands = function () //{{{
             usage: ["com[mand][!] [{attr}...] {cmd} {rep}"],
             short_help: "Temporarily used for testing args parser",
             help: "",
-            args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); } ],
+            args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]]
         }
@@ -975,7 +975,8 @@ vimperator.Commands = function () //{{{
                 if (matches && matches[2])
                 {
                     vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                        function (code) {
+                        function (code)
+                        {
                             try
                             {
                                 eval(matches[1] + "\n" + code);
@@ -1045,14 +1046,21 @@ vimperator.Commands = function () //{{{
                 {
                     var reference = vimperator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
-                        return vimperator.echoerr("E121: Undefined variable: " + matches[2]);
+                    {
+                        vimperator.echoerr("E121: Undefined variable: " + matches[2]);
+                        return;
+                    }
 
                     var expr = vimperator.eval(matches[4]);
                     if (typeof expr === undefined)
-                        return vimperator.echoerr("E15: Invalid expression: " + matches[4]);
+                    {
+                        vimperator.echoerr("E15: Invalid expression: " + matches[4]);
+                        return;
+                    }
                     else
                     {
-                        if (!reference[0]) {
+                        if (!reference[0])
+                        {
                             if (reference[2] == "g")
                                 reference[0] = vimperator.globalVariables;
                             else
@@ -1078,7 +1086,10 @@ vimperator.Commands = function () //{{{
             {
                 var reference = vimperator.variableReference(matches[1]);
                 if (!reference[0])
-                    return vimperator.echoerr("E121: Undefined variable: " + matches[1]);
+                {
+                    vimperator.echoerr("E121: Undefined variable: " + matches[1]);
+                    return;
+                }
 
                 var value = reference[0][reference[1]];
                 if (typeof value == "number")
@@ -2164,7 +2175,10 @@ vimperator.Commands = function () //{{{
         function (args, special)
         {
             if (!args)
-                return vimperator.echoerr("E471: Argument required");
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
 
             var names = args.split(/ /);
             if (typeof names == "string") names = [names];

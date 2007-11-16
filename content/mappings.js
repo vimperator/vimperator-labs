@@ -415,7 +415,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]n"],
-        function (count) {vimperator.buffer.followDocumentRelation("next");},
+        function (count) { vimperator.buffer.followDocumentRelation("next"); },
         {
             short_help: "go to 'next' or '>' if it exists.  Beep otherwise.",
             help: "Opens link labeled with next or >.  Useful when browsing forums or documentation.  Change nextpattern to modify its behaviour.  It follows relations between files too.",
@@ -423,7 +423,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]p"],
-        function (count) {vimperator.buffer.followDocumentRelation("previous");},
+        function (count) { vimperator.buffer.followDocumentRelation("previous"); },
         {
             short_help: "go to 'prev', 'previous' or '<' if it exists.  Beep otherwise.",
             help: "Opens link labeled with prev, previous or <.  Useful when browsing forums or documentation.  Change nextpattern to modify its behaviour.  It follows relations between files too.",

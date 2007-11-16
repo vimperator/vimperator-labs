@@ -177,8 +177,10 @@ vimperator.Buffer = function () //{{{
                 elem = doc;
 
             var result = doc.evaluate(expression, elem,
-                function lookupNamespaceURI(prefix) {
-                  switch (prefix) {
+                function lookupNamespaceURI(prefix)
+                {
+                  switch (prefix)
+                  {
                     case "xhtml":
                       return "http://www.w3.org/1999/xhtml";
                     default:
@@ -725,8 +727,8 @@ vimperator.Buffer = function () //{{{
                 }
 
                 // sort: ignore-case
-                tmpSort.sort(function (a,b){return a.toLowerCase() > b.toLowerCase() ? 1 : -1;});
-                for (var i=0; i < tmpSort.length; i++)
+                tmpSort.sort(function (a, b) { return a.toLowerCase() > b.toLowerCase() ? 1 : -1; });
+                for (var i = 0; i < tmpSort.length; i++)
                     pageMeta.push([tmpDict[tmpSort[i]][0], vimperator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
             }
 
@@ -791,15 +793,15 @@ vimperator.Buffer = function () //{{{
             }
 
             relText = new RegExp(relText, "i");
-            var elems = window.content.document.getElementsByTagName('a');
-            for (pattern = 0; pattern < regexps.length; pattern++)
+            var elems = window.content.document.getElementsByTagName("a");
+            for (var pattern = 0; pattern < regexps.length; pattern++)
             {
                 patternText = new RegExp(regexps[pattern], "i");
-                for (i = 0; i < elems.length; i++)
+                for (var i = 0; i < elems.length; i++)
                 {
                     if (patternText.test(elems[i].text) || relText.test(elems[i].rel) )
                     {
-                        vimperator.buffer.followLink(elems[i],vimperator.CURRENT_TAB);
+                        vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
                         return;
                     }
                 }

@@ -48,7 +48,7 @@ vimperator.Bookmarks = function () //{{{
     var keywords = null;
 
     if (vimperator.options["preload"])
-        setTimeout(function () { load(); } , 100);
+        setTimeout(function () { load(); }, 100);
 
     function load()
     {
@@ -344,7 +344,7 @@ vimperator.History = function () //{{{
     var history = null;
 
     if (vimperator.options["preload"])
-        setTimeout(function () { load(); } , 100);
+        setTimeout(function () { load(); }, 100);
 
     function load()
     {
