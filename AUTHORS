@@ -5,6 +5,7 @@ Main developer:
 Developers:
   * Viktor Kojouharov (Виктор Кожухаров)
   * Doug Kearns (dougkearns@gmail.com)
+  * Marco Candrian (mac@calmar.ws)
  
 Patches:
   * Muthu Kannan (ctrl-v support)
@@ -12,7 +13,7 @@ Patches:
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
   * Hannes Rist (:set titlestring support)
-  * Marco Candrian (shift-insert patch)
   * Nikolai Weibull ($VIMPERATOR_HOME)
   * Joseph Xu (supporting multiple top level windows better)
+  * Raimon Grau Cusc� (document relationship navigation - ]n, ]p)
 </pre>
