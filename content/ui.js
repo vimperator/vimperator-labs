@@ -484,7 +484,7 @@ vimperator.CommandLine = function () //{{{
                             [completion_start_index, completions] = res;
 
                         // sort the completion list
-                        if (vimperator.options["wildoptions"].search(/\bsort\b/) > -1)
+                        if (/\bsort\b/.test(vimperator.options["wildoptions"]))
                         {
                             completions.sort(function (a, b) {
                                     if (a[0] < b[0])

@@ -207,4 +207,5 @@ vimperator.util = {
         return strNum[0] + " " + unitVal[unitIndex];
     }
 };
+
 // vim: set fdm=marker sw=4 ts=4 et:

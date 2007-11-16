@@ -164,13 +164,13 @@ const vimperator = (function () //{{{
         eval: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
-            var match = string.match(/^&(\w+)/);
-            if (match)
+            var matches = string.match(/^&(\w+)/);
+            if (matches)
             {
-                var opt = this.options.get(match[1]);
+                var opt = this.options.get(matches[1]);
                 if (!opt)
                 {
-                    this.echoerr("E113: Unknown option: " + match[1]);
+                    this.echoerr("E113: Unknown option: " + matches[1]);
                     return;
                 }
                 var type = opt.type;
@@ -181,10 +181,10 @@ const vimperator = (function () //{{{
             }
 
             // String
-            else if (match = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
+            else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
             {
-                if (match)
-                    return match[2].toString();
+                if (matches)
+                    return matches[2].toString();
                 else
                 {
                     this.echoerr("E115: Missing quote: " + string);
@@ -193,7 +193,7 @@ const vimperator = (function () //{{{
             }
 
             // Number
-            else if (match = string.match(/^(\d+)$/))
+            else if (matches = string.match(/^(\d+)$/))
             {
                 return parseInt(match[1], 10);
             }
@@ -212,16 +212,16 @@ const vimperator = (function () //{{{
             if (!string)
                 return [null, null, null];
 
-            var match = string.match(/^([bwtglsv]):(\w+)/);
-            if (match) // Variable
+            var matches = string.match(/^([bwtglsv]):(\w+)/);
+            if (matches) // Variable
             {
                 // Other variables should be implemented
-                if (match[1] == "g")
+                if (matches[1] == "g")
                 {
-                    if (match[2] in this.globalVariables)
-                        return [this.globalVariables, match[2], match[1]];
+                    if (matches[2] in this.globalVariables)
+                        return [this.globalVariables, matches[2], matches[1]];
                     else
-                        return [null, match[2], match[1]];
+                        return [null, matches[2], matches[1]];
                 }
             }
             else // Global variable

@@ -1009,20 +1009,18 @@ vimperator.Mappings = function () //{{{
     ));
     function isDirectory(url)
     {
-        if (url.match(/^file:\/\//) || url.match(/^\//))
+        if (/^file:\/\/|^\//.test(url))
         {
-            var stripedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-            var file = vimperator.io.getFile(stripedFilename);
+            var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
+            var file = vimperator.io.getFile(strippedFilename);
             if (!file || !file.isDirectory())
                 return false;
             else
                 return true;
         }
+
         // for all other locations just check if the URL ends with /
-        if (url.match(/\/$/))
-            return true;
-        else
-            return false;
+        return /\/$/.test(url);
     }
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gu", "<BS>"],
         function (count)

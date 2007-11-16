@@ -57,7 +57,7 @@ vimperator.Tabs = function () //{{{
             position = spec;
         else if (spec === "$")
             return last;
-        else if (!spec.match(/^([+-]?\d+|)$/))
+        else if (!/^([+-]?\d+|)$/.test(spec))
         {
             // TODO: move error reporting to ex-command?
             vimperator.echoerr("E488: Trailing characters");
@@ -65,7 +65,7 @@ vimperator.Tabs = function () //{{{
         }
         else
         {
-            if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
+            if (/^([+-]\d+)$/.test(spec)) // relative position +/-N
                 position += parseInt(spec, 10);
             else                           // absolute position
                 position = parseInt(spec, 10);

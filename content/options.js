@@ -297,7 +297,7 @@ vimperator.Options = function () //{{{
 
     // work around firefox popup blocker
     var popup_allowed_events = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
-    if (!popup_allowed_events.match("keypress"))
+    if (!/keypress/.test(popup_allowed_events))
         storePreference("dom.popup_allowed_events", popup_allowed_events + " keypress");
 
     // TODO: shouldn't we be resetting these in destroy() as well?
@@ -780,7 +780,7 @@ vimperator.Options = function () //{{{
         {
             short_help: "String to search when looking for 'prev' page in document relation",
             help: "Change it to make it look for another string in links when pressing ]p<br/>" +
-            "This value is case insensitive", 
+            "This value is case insensitive",
             default_value: "\\bprev,previous\\b,^<$"
         }
     ));
