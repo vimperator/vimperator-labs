@@ -534,43 +534,43 @@ vimperator.Buffer = function () //{{{
                 "application/rdf+xml": "XML"
             };
 
-            function isValidFeed(aData, aPrincipal, aIsFeed)
+            function isValidFeed(data, principal, isFeed)
             {
-                if (!aData || !aPrincipal)
+                if (!data || !principal)
                     return false;
 
-                if (!aIsFeed)
+                if (!isFeed)
                 {
-                    var type = aData.type && aData.type.toLowerCase();
+                    var type = data.type && data.type.toLowerCase();
                     type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
-                    aIsFeed = (type == "application/rss+xml" || type == "application/atom+xml");
-                    if (!aIsFeed)
+                    isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
+                    if (!isFeed)
                     {
                         // really slimy: general XML types with magic letters in the title
                         const titleRegex = /(^|\s)rss($|\s)/i;
-                        aIsFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
-                                    type == "application/xml") && titleRegex.test(aData.title));
+                        isFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
+                                    type == "application/xml") && titleRegex.test(data.title));
                     }
                 }
 
-                if (aIsFeed)
+                if (isFeed)
                 {
                     try
                     {
-                        urlSecurityCheck(aData.href, aPrincipal,
+                        urlSecurityCheck(data.href, principal,
                                 Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                     }
                     catch (ex)
                     {
-                        aIsFeed = false;
+                        isFeed = false;
                     }
                 }
 
                 if (type)
-                    aData.type = type;
+                    data.type = type;
 
-                return aIsFeed;
+                return isFeed;
             }
 
             // TODO: could this be useful for other commands?
