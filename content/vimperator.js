@@ -613,7 +613,7 @@ const vimperator = (function () //{{{
             vimperator.log("Loading module quickmarks...", 3);
             vimperator.quickmarks    = vimperator.QuickMarks();
             vimperator.log("Loading module hints...", 3);
-            vimperator.hints         = new vimperator.Hints();
+            vimperator.hints         = vimperator.Hints();
             vimperator.log("Loading module io...", 3);
             vimperator.io            = vimperator.IO();
             vimperator.log("Loading module completion...", 3);

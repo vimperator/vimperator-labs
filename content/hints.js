@@ -28,6 +28,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.Hints = function () //{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
     var hintNumber = 0;  // only the numerical part of the hint
@@ -467,211 +471,215 @@ vimperator.Hints = function () //{{{
         return true;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: implement framesets
-    this.show = function (mode, minor, filter)
-    {
-        if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTwWyY]$/.test(minor))
+    return {
+
+        // TODO: implement framesets
+        show: function (mode, minor, filter)
         {
-            vimperator.beep();
-            return;
-        }
-
-        vimperator.modes.set(vimperator.modes.HINTS, mode);
-        submode = minor || "o"; // open is the default mode
-        hintString = filter || "";
-        hintNumber = 0;
-        canUpdate = false;
-
-        generate();
-
-        // get all keys from the input queue
-        var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
-        while (mt.hasPendingEvents())
-            mt.processNextEvent(true);
-
-        canUpdate = true;
-        showHints();
-
-        if (valid_hints.length == 0)
-        {
-            vimperator.beep();
-            vimperator.modes.reset();
-            return false;
-        }
-        else if (valid_hints.length == 1)
-        {
-            processHints(true);
-            return false;
-        }
-        else // still hints visible
-            return true;
-    };
-
-    this.hide = function ()
-    {
-        removeHints(0);
-    };
-
-    this.onEvent = function (event)
-    {
-        var key = vimperator.events.toString(event);
-        var followFirst = false;
-
-        // clear any timeout which might be active after pressing a number
-        if (activeTimeout)
-        {
-            clearTimeout(activeTimeout);
-            activeTimeout = null;
-        }
-
-        switch (key)
-        {
-            case "<Return>":
-                followFirst = true;
-                break;
-
-            case "<Space>":
-                hintString += " ";
-                escapeNumbers = false;
-                break;
-
-            case "<Tab>":
-            case "<S-Tab>":
-                usedTabKey = true;
-                if (hintNumber == 0)
-                    hintNumber = 1;
-
-                var oldID = hintNumber;
-                if (key == "<Tab>")
-                {
-                    if (++hintNumber > valid_hints.length)
-                        hintNumber = 1;
-                }
-                else
-                {
-                    if (--hintNumber < 1)
-                        hintNumber = valid_hints.length;
-                }
-                showActiveHint(hintNumber, oldID);
+            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTwWyY]$/.test(minor))
+            {
+                vimperator.beep();
                 return;
+            }
 
-            case "<BS>":
-                if (hintNumber > 0 && !usedTabKey)
-                {
-                    hintNumber = Math.floor(hintNumber / 10);
-                }
-                else if (hintString != "")
-                {
-                    usedTabKey = false;
-                    hintNumber = 0;
-                    hintString = hintString.substr(0, hintString.length - 1);
-                }
-                else
-                {
-                    usedTabKey = false;
-                    hintNumber = 0;
-                    vimperator.beep();
-                    return;
-                }
-                break;
+            vimperator.modes.set(vimperator.modes.HINTS, mode);
+            submode = minor || "o"; // open is the default mode
+            hintString = filter || "";
+            hintNumber = 0;
+            canUpdate = false;
 
-            case "<C-w>":
-            case "<C-u>":
-                hintString = "";
-                hintNumber = 0;
-                break;
+            generate();
 
-           case "\\":
-               escapeNumbers = !escapeNumbers;
-               if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
-                   hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
+            // get all keys from the input queue
+            var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
+            while (mt.hasPendingEvents())
+                mt.processNextEvent(true);
 
-               updateStatusline();
-               return;
+            canUpdate = true;
+            showHints();
 
-            default:
-                // pass any special or ctrl- etc. prefixed key back to the main vimperator loop
-                if (/^<./.test(key) || key == ":")
-                {
-                    var map = null;
-                    if ((map = vimperator.mappings.get(vimperator.modes.NORMAL, key)) ||
-                        (map = vimperator.mappings.get(vimperator.modes.HINTS, key)))
+            if (valid_hints.length == 0)
+            {
+                vimperator.beep();
+                vimperator.modes.reset();
+                return false;
+            }
+            else if (valid_hints.length == 1)
+            {
+                processHints(true);
+                return false;
+            }
+            else // still hints visible
+                return true;
+        },
+
+        hide: function ()
+        {
+            removeHints(0);
+        },
+
+        onEvent: function (event)
+        {
+            var key = vimperator.events.toString(event);
+            var followFirst = false;
+
+            // clear any timeout which might be active after pressing a number
+            if (activeTimeout)
+            {
+                clearTimeout(activeTimeout);
+                activeTimeout = null;
+            }
+
+            switch (key)
+            {
+                case "<Return>":
+                    followFirst = true;
+                    break;
+
+                case "<Space>":
+                    hintString += " ";
+                    escapeNumbers = false;
+                    break;
+
+                case "<Tab>":
+                case "<S-Tab>":
+                    usedTabKey = true;
+                    if (hintNumber == 0)
+                        hintNumber = 1;
+
+                    var oldID = hintNumber;
+                    if (key == "<Tab>")
                     {
-                        map.execute(null, -1);
-                        return;
-                    }
-
-                    vimperator.beep();
-                    return;
-                }
-
-                if (/^[0-9]$/.test(key) && !escapeNumbers)
-                {
-                    var oldHintNumber = hintNumber;
-                    if (hintNumber == 0 || usedTabKey)
-                    {
-                        usedTabKey = false;
-                        hintNumber = parseInt(key, 10);
+                        if (++hintNumber > valid_hints.length)
+                            hintNumber = 1;
                     }
                     else
-                        hintNumber = (hintNumber * 10) + parseInt(key, 10);
-
-                    updateStatusline();
-
-                    if (!canUpdate)
-                        return;
-
-                    if (docs.length == 0)
                     {
-                        generate();
-                        showHints();
+                        if (--hintNumber < 1)
+                            hintNumber = valid_hints.length;
                     }
-                    showActiveHint(hintNumber, oldHintNumber || 1);
+                    showActiveHint(hintNumber, oldID);
+                    return;
 
-                    if (hintNumber == 0 || hintNumber > valid_hints.length)
+                case "<BS>":
+                    if (hintNumber > 0 && !usedTabKey)
                     {
+                        hintNumber = Math.floor(hintNumber / 10);
+                    }
+                    else if (hintString != "")
+                    {
+                        usedTabKey = false;
+                        hintNumber = 0;
+                        hintString = hintString.substr(0, hintString.length - 1);
+                    }
+                    else
+                    {
+                        usedTabKey = false;
+                        hintNumber = 0;
+                        vimperator.beep();
+                        return;
+                    }
+                    break;
+
+                case "<C-w>":
+                case "<C-u>":
+                    hintString = "";
+                    hintNumber = 0;
+                    break;
+
+               case "\\":
+                   escapeNumbers = !escapeNumbers;
+                   if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
+                       hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
+
+                   updateStatusline();
+                   return;
+
+                default:
+                    // pass any special or ctrl- etc. prefixed key back to the main vimperator loop
+                    if (/^<./.test(key) || key == ":")
+                    {
+                        var map = null;
+                        if ((map = vimperator.mappings.get(vimperator.modes.NORMAL, key)) ||
+                            (map = vimperator.mappings.get(vimperator.modes.HINTS, key)))
+                        {
+                            map.execute(null, -1);
+                            return;
+                        }
+
                         vimperator.beep();
                         return;
                     }
 
-                    // if we write a numeric part like 3, but we have 45 hints, only follow
-                    // the hint after a timeout, as the user might have wanted to follow link 34
-                    if (hintNumber > 0 && hintNumber * 10 <= valid_hints.length)
+                    if (/^[0-9]$/.test(key) && !escapeNumbers)
                     {
-                        var timeout = vimperator.options["hinttimeout"];
-                        if (timeout > 0)
-                            activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+                        var oldHintNumber = hintNumber;
+                        if (hintNumber == 0 || usedTabKey)
+                        {
+                            usedTabKey = false;
+                            hintNumber = parseInt(key, 10);
+                        }
+                        else
+                            hintNumber = (hintNumber * 10) + parseInt(key, 10);
 
-                        return false;
+                        updateStatusline();
+
+                        if (!canUpdate)
+                            return;
+
+                        if (docs.length == 0)
+                        {
+                            generate();
+                            showHints();
+                        }
+                        showActiveHint(hintNumber, oldHintNumber || 1);
+
+                        if (hintNumber == 0 || hintNumber > valid_hints.length)
+                        {
+                            vimperator.beep();
+                            return;
+                        }
+
+                        // if we write a numeric part like 3, but we have 45 hints, only follow
+                        // the hint after a timeout, as the user might have wanted to follow link 34
+                        if (hintNumber > 0 && hintNumber * 10 <= valid_hints.length)
+                        {
+                            var timeout = vimperator.options["hinttimeout"];
+                            if (timeout > 0)
+                                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+
+                            return false;
+                        }
+                        // we have a unique hint
+                        processHints(true);
+                        return;
                     }
-                    // we have a unique hint
-                    processHints(true);
-                    return;
-                }
 
-                hintString += key;
-                hintNumber = 0; // after some text input
-                if (usedTabKey)
-                {
-                    usedTabKey = false;
-                    showActiveHint(1, hintNumber);
-                }
+                    hintString += key;
+                    hintNumber = 0; // after some text input
+                    if (usedTabKey)
+                    {
+                        usedTabKey = false;
+                        showActiveHint(1, hintNumber);
+                    }
+            }
+
+            updateStatusline();
+
+            if (canUpdate)
+            {
+                if (docs.length == 0 && hintString.length > 0)
+                    generate();
+
+                showHints();
+                processHints(followFirst);
+            }
         }
 
-        updateStatusline();
-
-        if (canUpdate)
-        {
-            if (docs.length == 0 && hintString.length > 0)
-                generate();
-
-            showHints();
-            processHints(followFirst);
-        }
     };
 
     // FIXME: add resize support
@@ -685,6 +693,7 @@ vimperator.Hints = function () //{{{
     //         doc = window.content.document;
     // }
 
+    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
