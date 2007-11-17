@@ -589,7 +589,7 @@ vimperator.Completion = function () // {{{
                 var command = vimperator.commands.get(cmd);
                 if (command && command.completer)
                 {
-                    matches = str.match(/^:*\d*\w+\s+/);
+                    matches = str.match(/^:*\d*\w+!?\s+/);
                     start = matches ? matches[0].length : 0;
 
                     // TODO: maybe we should move these checks to the complete functions
