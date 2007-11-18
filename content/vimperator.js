@@ -47,6 +47,7 @@ const vimperator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
         get mode() { return vimperator.modes.main; },
         set mode(value) { vimperator.modes.main = value; },
 
@@ -581,11 +582,11 @@ const vimperator = (function () //{{{
 
             // these objects are created here only after the chrome is ready
             vimperator.log("Loading module options...", 3);
-            vimperator.options       = new vimperator.Options();
+            vimperator.options       = vimperator.Options();
             vimperator.log("Loading module events...", 3);
-            vimperator.events        = new vimperator.Events();
+            vimperator.events        = vimperator.Events();
             vimperator.log("Loading module commands...", 3);
-            vimperator.commands      = new vimperator.Commands();
+            vimperator.commands      = vimperator.Commands();
             vimperator.log("Loading module bookmarks...", 3);
             vimperator.bookmarks     = vimperator.Bookmarks();
             vimperator.log("Loading module history...", 3);
@@ -599,7 +600,7 @@ const vimperator = (function () //{{{
             vimperator.log("Loading module buffer window...", 3);
             vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
             vimperator.log("Loading module mappings...", 3);
-            vimperator.mappings      = new vimperator.Mappings();
+            vimperator.mappings      = vimperator.Mappings();
             vimperator.log("Loading module statusline...", 3);
             vimperator.statusline    = vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);

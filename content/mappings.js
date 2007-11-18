@@ -176,6 +176,7 @@ vimperator.Mappings = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // FIXME:
     vimperator.Mappings.flags = {
         ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox
         MOTION:              1 << 1,
@@ -183,127 +184,131 @@ vimperator.Mappings = function () //{{{
         ARGUMENT:            1 << 3
     };
 
-    // NOTE: just normal mode for now
-    this.__iterator__ = function ()
-    {
-        return mappingsIterator(vimperator.modes.NORMAL, main);
-    };
+    var mappingManager = {
 
-    // FIXME
-    this.getIterator = function (mode)
-    {
-        return mappingsIterator(mode, main);
-    };
-
-    // FIXME
-    this.getUserIterator = function (mode)
-    {
-        return mappingsIterator(mode, user);
-    };
-
-    this.hasMap = function (mode, cmd)
-    {
-        var user_maps = user[mode];
-
-        for (var i = 0; i < user_maps.length; i++)
+        // NOTE: just normal mode for now
+        __iterator__: function ()
         {
-            if (user_maps[i].names.indexOf(cmd) != -1)
-                return true;
-        }
+            return mappingsIterator(vimperator.modes.NORMAL, main);
+        },
 
-        return false;
-    };
-
-    this.add = function (map)
-    {
-        for (var i = 0; i < map.names.length; i++)
+        // FIXME
+        getIterator: function (mode)
         {
-            // only store keysyms with uppercase modifier strings
-            map.names[i] = map.names[i].replace(/[casm]-/g, function ($0) { return $0.toUpperCase(); });
-            for (var j = 0; j < map.modes.length; j++)
-                removeMap(map.modes[j], map.names[i]);
-        }
+            return mappingsIterator(mode, main);
+        },
 
-        for (var k = 0; k < map.modes.length; k++)
-            user[map.modes[k]].push(map);
-    };
-
-    this.remove = function (mode, cmd)
-    {
-        removeMap(mode, cmd);
-    };
-
-    this.removeAll = function (mode)
-    {
-        user[mode] = [];
-    };
-
-    this.get = function (mode, cmd)
-    {
-        var map = getMap(mode, cmd, user);
-
-        if (!map)
-            map = getMap(mode, cmd, main);
-
-        return map;
-    };
-
-    // TODO: move default maps to their own v.normal namespace
-    this.getDefaultMap = function (mode, cmd)
-    {
-        return getMap(mode, cmd, main);
-    };
-
-    // returns an array of mappings with names which start with "cmd"
-    this.getCandidates = function (mode, cmd)
-    {
-        var mappings = [];
-        var matches = [];
-
-        mappings = user[mode].concat(main[mode]);
-
-        for (var i = 0; i < mappings.length; i++)
+        // FIXME
+        getUserIterator: function (mode)
         {
-            var map = mappings[i];
-            for (var j = 0; j < map.names.length; j++)
+            return mappingsIterator(mode, user);
+        },
+
+        hasMap: function (mode, cmd)
+        {
+            var user_maps = user[mode];
+
+            for (var i = 0; i < user_maps.length; i++)
             {
-                if (map.names[j].indexOf(cmd) == 0)
+                if (user_maps[i].names.indexOf(cmd) != -1)
+                    return true;
+            }
+
+            return false;
+        },
+
+        add: function (map)
+        {
+            for (var i = 0; i < map.names.length; i++)
+            {
+                // only store keysyms with uppercase modifier strings
+                map.names[i] = map.names[i].replace(/[casm]-/g, function ($0) { return $0.toUpperCase(); });
+                for (var j = 0; j < map.modes.length; j++)
+                    removeMap(map.modes[j], map.names[i]);
+            }
+
+            for (var k = 0; k < map.modes.length; k++)
+                user[map.modes[k]].push(map);
+        },
+
+        remove: function (mode, cmd)
+        {
+            removeMap(mode, cmd);
+        },
+
+        removeAll: function (mode)
+        {
+            user[mode] = [];
+        },
+
+        get: function (mode, cmd)
+        {
+            var map = getMap(mode, cmd, user);
+
+            if (!map)
+                map = getMap(mode, cmd, main);
+
+            return map;
+        },
+
+        // TODO: move default maps to their own v.normal namespace
+        getDefaultMap: function (mode, cmd)
+        {
+            return getMap(mode, cmd, main);
+        },
+
+        // returns an array of mappings with names which start with "cmd"
+        getCandidates: function (mode, cmd)
+        {
+            var mappings = [];
+            var matches = [];
+
+            mappings = user[mode].concat(main[mode]);
+
+            for (var i = 0; i < mappings.length; i++)
+            {
+                var map = mappings[i];
+                for (var j = 0; j < map.names.length; j++)
                 {
-                    // for < only return a candidate if it doesn't seem like a <c-x> mapping
-                    if (cmd != "<" || !/^<.+>/.test(map.names[j]))
-                        matches.push(map);
+                    if (map.names[j].indexOf(cmd) == 0)
+                    {
+                        // for < only return a candidate if it doesn't seem like a <c-x> mapping
+                        if (cmd != "<" || !/^<.+>/.test(map.names[j]))
+                            matches.push(map);
+                    }
                 }
             }
-        }
 
-        return matches;
-    };
+            return matches;
+        },
 
-    this.list = function (mode, filter)
-    {
-        var maps = user[mode];
-
-        if (!maps || maps.length == 0)
+        list: function (mode, filter)
         {
-            vimperator.echo("No mappings found");
-            return;
-        }
+            var maps = user[mode];
 
-        var list = "<table>";
-        for (var i = 0; i < maps.length; i++)
-        {
-            for (var j = 0; j < maps[i].names.length; j++)
+            if (!maps || maps.length == 0)
             {
-                list += "<tr>";
-                list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
-                if (maps[i].rhs)
-                    list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
-                list += "</tr>";
+                vimperator.echo("No mappings found");
+                return;
             }
-        }
-        list += "</table>";
 
-        vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            var list = "<table>";
+            for (var i = 0; i < maps.length; i++)
+            {
+                for (var j = 0; j < maps[i].names.length; j++)
+                {
+                    list += "<tr>";
+                    list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
+                    if (maps[i].rhs)
+                        list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
+                    list += "</tr>";
+                }
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        }
+
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -324,7 +329,7 @@ vimperator.Mappings = function () //{{{
                    vimperator.modes.TEXTAREA];
 
     //
-    // Normal mode
+    // NORMAL mode
     // {{{
 
     // vimperator management
@@ -1187,9 +1192,8 @@ vimperator.Mappings = function () //{{{
         }
     ));
 
-
     // }}}
-    // Hints mode
+    // HINTS mode
     // {{{
 
 //    // action keys
@@ -1418,7 +1422,7 @@ vimperator.Mappings = function () //{{{
 //    ));
 
     // }}}
-    // Caret mode
+    // CARET mode
     // {{{
 
     function getSelectionController()
@@ -1766,9 +1770,8 @@ vimperator.Mappings = function () //{{{
         { }
     ));
 
-
     // }}}
-    // Textarea mode
+    // TEXTAREA mode
     // {{{
 
     addDefaultMap(new vimperator.Map([vimperator.modes.TEXTAREA], ["i", "<Insert>"],
@@ -1977,6 +1980,7 @@ vimperator.Mappings = function () //{{{
     // }}}
     // INSERT mode
     // {{{
+
     addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE], ["<C-w>"],
         function () { vimperator.editor.executeCommand("cmd_deleteWordBackward", 1); },
         { }
@@ -2038,6 +2042,7 @@ vimperator.Mappings = function () //{{{
     //}}}
     // COMMAND_LINE mode
     //{{{
+
     addDefaultMap(new vimperator.Map([vimperator.modes.COMMAND_LINE], ["<Space>"],
         function () { return vimperator.editor.expandAbbreviation("c"); },
         { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING }
@@ -2046,8 +2051,9 @@ vimperator.Mappings = function () //{{{
         ["<C-]>", "<C-5>"], function () { vimperator.editor.expandAbbreviation("c"); }, { }
     ));
 
-    //}}}
+    //}}} }}}
 
+    return mappingManager;
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
