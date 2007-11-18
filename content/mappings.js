@@ -430,6 +430,20 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["a"],
+        function () { vimperator.commandline.open(":", "bmark " + vimperator.buffer.URL, vimperator.modes.EX); },
+        {
+            short_help: "Open a prompt to bookmark the current URL",
+            help: "Look at <code class='command'>:bmark</code> for more information."
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["A"],
+        function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); },
+        {
+            short_help: "Toggle bookmarked state of current URL",
+            help: "Add/remove a bookmark for the current location, depending if it already is bookmarked or not."
+        }
+    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["b"],
         function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); },
         {

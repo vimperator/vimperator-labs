@@ -8,6 +8,7 @@
 	  read up the new help for the f, F and ; commands for details
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
+	* new a and A mappings to deal with bookmarks
 	* added ]n and ]p to navigate to the next/previous document based on
 	  the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
 	* abbreviations for text fields (:abbr etc.) (thanks calmar)

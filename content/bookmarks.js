@@ -148,6 +148,27 @@ vimperator.Bookmarks = function () //{{{
             return true;
         },
 
+        toggle: function(url)
+        {
+            if (!url)
+                return;
+
+            var count = this.remove(url);
+            if (count > 0)
+            {
+                vimperator.commandline.echo("Removed bookmark: " + url, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
+            }
+            else
+            {
+                var title = vimperator.buffer.title || url;
+                var extra = "";
+                if (title != url)
+                    extra = " (" + title + ")";
+                this.add(title, url);
+                vimperator.commandline.echo("Added bookmark: " + url + extra, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
+            }
+        },
+
         // returns number of deleted bookmarks
         remove: function (url)
         {

@@ -605,7 +605,12 @@ vimperator.Commands = function () //{{{
             var tags = getOption(res.opts, "-tags", []);
 
             if (vimperator.bookmarks.add(title, url, keyword, tags))
-                vimperator.echo("Bookmark `" + title + "' added with url `" + url + "'", vimperator.commandline.FORCE_SINGLELINE);
+            {
+                var extra = "";
+                if (title != url)
+                    extra = " (" + title + ")";
+                vimperator.echo("Added bookmark: " + url + extra, vimperator.commandline.FORCE_SINGLELINE);
+            }
             else
                 vimperator.echoerr("Exxx: Could not add bookmark `" + title + "'", vimperator.commandline.FORCE_SINGLELINE);
         },
