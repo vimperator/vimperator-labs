@@ -656,6 +656,45 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.get_buffer_completions(filter); }
         }
     ));
+    commandManager.add(new vimperator.Command(["dia[log]"],
+        function (args, special)
+        {
+            var openAt = special ? vimperator.NEW_TAB: vimperator.NEW_WINDOW;
+            switch (args)
+            {
+            case "about": openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
+            case "addbookmark": PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); break;
+            case "addons": BrowserOpenAddonsMgr(); break;
+            case "bookmarks": openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); break;
+            case "console": toJavaScriptConsole(); break;
+            case "customizetoolbar": BrowserCustomizeToolbar(); break;
+            case "downloads": toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); break;
+            case "history": openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); break;
+            case "import": BrowserImport(); break;
+            case "openfile": BrowserOpenFileWindow(); break;
+            case "pageinfo": BrowserPageInfo(); break;
+            case "pagesource": BrowserViewSourceOfDocument(content.document); break; 
+            case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
+            case "preferences": openPreferences(); break;
+                // XXX what are onEnter.. and onExit...?
+            case "printpreview": PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); break;
+            case "print": PrintUtils.print(); break;
+            case "printsetup": PrintUtils.showPageSetup(); break;
+            case "saveframe": saveFrameDocument(); break;
+            case "savepage": saveDocument(window.content.document); break;
+            case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
+                // TODO add viewPartialSource('selection'); ...
+            case "": vimperator.echoerr("E474: Invalid Argument"); break;
+            default: vimperator.echoerr("Dialog: '" + args + "' is not available");
+            }
+        },
+        {
+            usage: ["dia[log] [firefox-dialog]"],
+            short_help: "Open a firefox-dialog",
+            help: "Available dialogs: use completion on <code class=\"command\">:dialog</code> &lt;tab&gt;",
+            completer: function (filter) { return vimperator.completion.dialog(filter); }
+        }
+    ));
     commandManager.add(new vimperator.Command(["buffers", "files", "ls", "tabs"],
         function (args, special)
         {

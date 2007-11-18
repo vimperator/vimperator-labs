@@ -123,6 +123,41 @@ vimperator.Completion = function () // {{{
             return longest;
         }, //}}}
 
+        dialog: function (filter) //{{{
+        {
+            g_substrings = [];
+            var nodes = [
+            ["about", "About Firefox"],
+            ["addbookmark", "Add bookmarks for the current page"],
+            ["addons", "Manage Add-ons"],
+            ["bookmarks", "List your bookmarks"],
+            ["console", "JavaScript console"],
+            ["customizetoolbar", "Customize the Toolbar"],
+            ["downloads", "Manage Downloads"],
+            ["history", "List your history"],
+            ["import", "Import Preferences, Bookmarks, History, etc. from other browsers"],
+            ["openfile", "Open the file selector dialog"],
+            ["pageinfo", "Show information about the current page"],
+            ["pagesource", "View page source"],
+            ["places", "Places Organizer: Manage your bookmarks and history"],
+            ["preferences", "Show Firefox preferences dialog"],
+            ["printpreview", "Preview the page before printing"],
+            ["printsetup", "Setup the page size and orientation before printing"],
+            ["print", "Show print dialog"],
+            ["saveframe", "Save frame to disk"],
+            ["savepage", "Save page to disk"],
+            ["searchengines", "Manage installed search engines"]]
+
+            if (!filter)
+                return nodes;
+
+            var mapped = nodes.map(function (node) {
+                return [[node[0]], node[1]];
+            });
+
+            return build_longest_common_substring(mapped, filter);
+        }, //}}}
+
         /*
          * filter a list of urls
          *
