@@ -431,7 +431,13 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["a"],
-        function () { vimperator.commandline.open(":", "bmark " + vimperator.buffer.URL, vimperator.modes.EX); },
+        function ()
+        {
+            var title = "";
+            if (vimperator.buffer.title != vimperator.buffer.URL)
+                title = " -title=\"" + vimperator.buffer.title + "\"";
+            vimperator.commandline.open(":", "bmark " + vimperator.buffer.URL + title, vimperator.modes.EX);
+        },
         {
             short_help: "Open a prompt to bookmark the current URL",
             help: "Look at <code class='command'>:bmark</code> for more information."
