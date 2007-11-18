@@ -583,7 +583,7 @@ vimperator.Buffer = function () //{{{
 
                 if (data.length - 1)
                 {
-                    for (var i = 0; i < data.length - 1 ; i++)
+                    for (var i = 0; i < data.length - 1; i++)
                         ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
                 }
                 else
@@ -773,36 +773,61 @@ vimperator.Buffer = function () //{{{
             vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
         },
 
-        followDocumentRelation: function (relation)
+        followDocumentRelationship: function (relationship)
         {
             var regexps;
             var relText;
             var patternText;
-            switch (relation)
+            switch (relationship)
             {
                 case "next":
                     regexps = vimperator.options["nextpattern"].split(",");
-                    relText = "next";
-                break;
+                    break;
                 case "previous":
                     //TODO: accept prev\%[ious]
                     regexps = vimperator.options["previouspattern"].split(",");
-                    relText = "previous";
-                break;
-                default: vimperator.echoerr("bad relation");
+                    break;
+                default:
+                    vimperator.echoerr("Bad document relationship: " + relationship);
             }
 
-            relText = new RegExp(relText, "i");
-            var elems = window.content.document.getElementsByTagName("a");
+            relText = new RegExp(relationship, "i");
+            var elems = window.content.document.getElementsByTagName("link");
+            // links have higher priority than normal <a> hrefs  
+            for (var i = 0; i < elems.length; i++)
+            {
+                if (relText.test(elems[i].rel))
+                {
+                        vimperator.open(elems[i].href);
+                        return;
+                }
+            }
+
+            // no links? ok, look for hrefs
+            elems = window.content.document.getElementsByTagName("a");
             for (var pattern = 0; pattern < regexps.length; pattern++)
             {
                 patternText = new RegExp(regexps[pattern], "i");
                 for (var i = 0; i < elems.length; i++)
                 {
-                    if (patternText.test(elems[i].text) || relText.test(elems[i].rel) )
+                    if (patternText.test(elems[i].text) || relText.test(elems[i].rel))
                     {
                         vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
                         return;
+                    }
+                    else 
+                    {
+                        // images with alt text being href
+                        var children = elems[i].childNodes;
+                        for (var j = 0; j < children.length; j++)
+                        {
+                            if (patternText.test(children[j].alt))
+                            {
+                                vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                                return;
+                            }
+                        }
+
                     }
                 }
             }
