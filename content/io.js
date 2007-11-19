@@ -36,6 +36,8 @@ vimperator.IO = function ()//{{{
     var environmentService = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
 
+    const WINDOWS = navigator.platform == "Win32";
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -53,8 +55,6 @@ vimperator.IO = function ()//{{{
 
         expandPath: function (path)
         {
-            const WINDOWS = navigator.platform == "Win32";
-
             // TODO: proper pathname separator translation like Vim
             if (WINDOWS)
                 path = path.replace("/", "\\", "g");
@@ -96,7 +96,7 @@ vimperator.IO = function ()//{{{
         {
             var pluginDir;
 
-            if (navigator.platform == "Win32")
+            if (WINDOWS)
                 pluginDir = "~/vimperator/plugin";
             else
                 pluginDir = "~/.vimperator/plugin";
@@ -108,10 +108,10 @@ vimperator.IO = function ()//{{{
 
         getRCFile: function ()
         {
-            var rcFile1 = this.getFile(this.expandPath("~/.vimperatorrc"));
-            var rcFile2 = this.getFile(this.expandPath("~/_vimperatorrc"));
+            var rcFile1 = this.getFile("~/.vimperatorrc");
+            var rcFile2 = this.getFile("~/_vimperatorrc");
 
-            if (navigator.platform == "Win32")
+            if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1]
 
             if (rcFile1.exists() && rcFile1.isFile())
@@ -124,12 +124,18 @@ vimperator.IO = function ()//{{{
 
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
+        // also expands relative paths
         getFile: function (path)
         {
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
 
-            file.initWithPath(this.expandPath(path));
+            // convert relative to absolute pathnames
+            path = this.expandPath(path);
+            if (!/^([a-zA-Z]+:|\/)/.test(path)) // starts not with either /, C: or file:
+                path = this.expandPath("~") + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
+            
+            file.initWithPath(path);
             return file;
         },
 
@@ -139,7 +145,7 @@ vimperator.IO = function ()//{{{
         {
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
-            if (navigator.platform == "Win32")
+            if (WINDOWS)
             {
                 var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";
                 file.initWithPath(dir + "\\vimperator.tmp");

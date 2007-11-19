@@ -134,40 +134,41 @@ vimperator.Completion = function () //{{{
         {
             substrings = [];
             var nodes = [
-            ["about", "About Firefox"],
-            ["addbookmark", "Add bookmarks for the current page"],
-            ["addons", "Manage Add-ons"],
-            ["bookmarks", "List your bookmarks"],
-            ["console", "JavaScript console"],
-            ["customizetoolbar", "Customize the Toolbar"],
-            ["downloads", "Manage Downloads"],
-            ["history", "List your history"],
-            ["import", "Import Preferences, Bookmarks, History, etc. from other browsers"],
-            ["openfile", "Open the file selector dialog"],
-            ["pageinfo", "Show information about the current page"],
-            ["pagesource", "View page source"],
-            ["places", "Places Organizer: Manage your bookmarks and history"],
-            ["preferences", "Show Firefox preferences dialog"],
-            ["printpreview", "Preview the page before printing"],
-            ["printsetup", "Setup the page size and orientation before printing"],
-            ["print", "Show print dialog"],
-            ["saveframe", "Save frame to disk"],
-            ["savepage", "Save page to disk"],
-            ["searchengines", "Manage installed search engines"]]
+                ["about",            "About Firefox"],
+                ["addbookmark",      "Add bookmarks for the current page"],
+                ["addons",           "Manage Add-ons"],
+                ["bookmarks",        "List your bookmarks"],
+                ["console",          "JavaScript console"],
+                ["customizetoolbar", "Customize the Toolbar"],
+                ["downloads",        "Manage Downloads"],
+                ["history",          "List your history"],
+                ["import",           "Import Preferences, Bookmarks, History, etc. from other browsers"],
+                ["openfile",         "Open the file selector dialog"],
+                ["pageinfo",         "Show information about the current page"],
+                ["pagesource",       "View page source"],
+                ["places",           "Places Organizer: Manage your bookmarks and history"],
+                ["preferences",      "Show Firefox preferences dialog"],
+                ["printpreview",     "Preview the page before printing"],
+                ["printsetup",       "Setup the page size and orientation before printing"],
+                ["print",            "Show print dialog"],
+                ["saveframe",        "Save frame to disk"],
+                ["savepage",         "Save page to disk"],
+                ["searchengines",    "Manage installed search engines"]
+            ];
 
             if (!filter)
-                return nodes;
+                return [0, nodes];
 
             var mapped = nodes.map(function (node) {
                 return [[node[0]], node[1]];
             });
 
-            return buildLongestCommonSubstring(mapped, filter);
+            return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
         // filter a list of urls
         //
-        // may consist of searchengines, filenames, bookmarks and history,
+        // may consist of search engines, filenames, bookmarks and history,
         // depending on the 'complete' option
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
         url: function (filter, complete)
@@ -175,58 +176,68 @@ vimperator.Completion = function () //{{{
             var completions = [];
             substrings = [];
 
+            var start = 0;
+            var skip = filter.match(/^(.*,\s+)(.*)/); // start after the last ", "
+            if (skip)
+            {
+                start += skip[1].length;
+                filter = skip[2];
+            }
+
             var cpt = complete || vimperator.options["complete"];
             // join all completion arrays together
             for (var i = 0; i < cpt.length; i++)
             {
                 if (cpt[i] == "s")
-                    completions = completions.concat(this.search(filter));
+                    completions = completions.concat(this.search(filter)[1]);
                 else if (cpt[i] == "b")
                     completions = completions.concat(vimperator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
                     completions = completions.concat(vimperator.history.get(filter));
                 else if (cpt[i] == "f")
-                    completions = completions.concat(this.file(filter, true));
+                    completions = completions.concat(this.file(filter, false)[1]);
             }
 
-            return completions;
+            return [start, completions];
         },
 
         search: function (filter)
         {
             var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
-            if (!filter) return engines.map(function (engine) {
-                return [engine[0], engine[1]];
-            });
+            if (!filter)
+                return [0, engines];
+
             var mapped = engines.map(function (engine) {
                 return [[engine[0]], engine[1]];
             });
-            return buildLongestCommonSubstring(mapped, filter);
+            return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
         // TODO: support file:// and \ or / path separators on both platforms
-        file: function (filter)
+        // TODO: sort directories first
+        // if "short" is true, only return names without any directory components
+        file: function (filter, short)
         {
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
             if (!arguments[1])
                 substrings = [];
 
-            var matches = filter.match(/^(.*[\/\\])(.*?)$/);
-            var dir;
-
-            if (!matches || !(dir = matches[1]))
-                return [];
-
-            var compl = matches[2] || "";
-
+            var dir = "", compl = "";
+            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
+            if (matches)
+            {
+                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
+                compl = matches[2] || "";
+            }
             var files = [], mapped = [];
+
             try
             {
                 files = vimperator.io.readDirectory(dir);
                 mapped = files.map(function (file) {
-                    return [[file.path], file.isDirectory() ? "Directory" : "File"];
+                    return [[short ? file.leafName : dir + file.leafName], file.isDirectory() ? "Directory" : "File"];
                 });
             }
             catch (e)
@@ -234,21 +245,20 @@ vimperator.Completion = function () //{{{
                 return [];
             }
 
-
-            return buildLongestStartingSubstring(mapped, filter);
+            return [short ? dir.length : 0, buildLongestStartingSubstring(mapped, compl)];
         },
 
         help: function (filter)
         {
             var helpArray = [[["introduction"], "Introductory text"],
-                              [["initialization"], "Initialization and startup"],
-                              [["mappings"], "Normal mode commands"],
-                              [["commands"], "Ex commands"],
-                              [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
+                             [["initialization"], "Initialization and startup"],
+                             [["mappings"], "Normal mode commands"],
+                             [["commands"], "Ex commands"],
+                             [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
             substrings = [];
             for (var command in vimperator.commands)
                 helpArray.push([command.longNames.map(function ($_) { return ":" + $_; }), command.shortHelp]);
-            options = this.option(filter, true);
+            options = this.options(filter, true);
             helpArray = helpArray.concat(options.map(function ($_) {
                 return [
                         $_[0].map(function ($_) { return "'" + $_ + "'"; }),
@@ -258,14 +268,14 @@ vimperator.Completion = function () //{{{
             for (var map in vimperator.mappings)
                 helpArray.push([map.names, map.shortHelp]);
 
-            if (!filter) return helpArray.map(function ($_) {
-                return [$_[0][0], $_[1]]; // unfiltered, use the first command
-            });
+            // unfiltered, use the first command
+            if (!filter)
+                return [0, helpArray.map(function ($_) { return [$_[0][0], $_[1]]; })];
 
-            return buildLongestCommonSubstring(helpArray, filter);
+            return [0, buildLongestCommonSubstring(helpArray, filter)];
         },
 
-        command: function (filter)
+        commands: function (filter)
         {
             substrings = [];
             var completions = [];
@@ -273,15 +283,16 @@ vimperator.Completion = function () //{{{
             {
                 for (var command in vimperator.commands)
                     completions.push([command.name, command.shortHelp]);
-                return completions;
+                return [0, completions];
             }
 
             for (var command in vimperator.commands)
                 completions.push([command.longNames, command.shortHelp]);
-            return buildLongestStartingSubstring(completions, filter);
+
+            return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        option: function (filter, unfiltered)
+        options: function (filter, unfiltered)
         {
             substrings = [];
             var optionCompletions = [];
@@ -290,6 +301,8 @@ vimperator.Completion = function () //{{{
             if (prefix)
                 filter = filter.replace(prefix, "");
 
+            // needed for help-completions, don't return [start, options], just options
+            // FIXME: doesn't belong here to be honest (rather v.options.get(filter)) --mst
             if (unfiltered)
             {
                 var options = [];
@@ -311,7 +324,7 @@ vimperator.Completion = function () //{{{
                         continue;
                     options.push([prefix + option.name, option.shortHelp]);
                 }
-                return options;
+                return [0, options];
             }
             // check if filter ends with =, then complete current value
             else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
@@ -320,12 +333,9 @@ vimperator.Completion = function () //{{{
                 for (var option in vimperator.options)
                 {
                     if (option.hasName(filter))
-                    {
-                            optionCompletions.push([filter + "=" + option.value, ""]);
-                            return optionCompletions;
-                    }
+                        return [filter.length + 1, [[option.value, ""]]];
                 }
-                return optionCompletions;
+                return [0, optionCompletions];
             }
 
             // can't use b_l_s_s, since this has special requirements (the prefix)
@@ -357,10 +367,11 @@ vimperator.Completion = function () //{{{
                 }
             }
 
-            return optionCompletions;
+            return [0, optionCompletions];
         },
 
-        buffer: function (filter)
+        // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
+        buffers: function (filter)
         {
             substrings = [];
             var items = [];
@@ -390,10 +401,11 @@ vimperator.Completion = function () //{{{
                     items.push([[(i + 1) + ": " + title, (i + 1) + ": " + url], url]);
                 }
             }
-            if (!filter) return items.map(function ($_) {
-                return [$_[0][0], $_[1]];
-            });
-            return buildLongestCommonSubstring(items, filter);
+
+            if (!filter)
+                return [0, items.map(function ($_) { return [$_[0][0], $_[1]]; })];
+
+            return [0, buildLongestCommonSubstring(items, filter)];
         },
 
         sidebar: function (filter)
@@ -406,13 +418,13 @@ vimperator.Completion = function () //{{{
                 nodes.push([menu.childNodes[i].label, ""]);
 
             if (!filter)
-                return nodes;
+                return [0, nodes];
 
             var mapped = nodes.map(function (node) {
                 return [[node[0]], node[1]];
             });
 
-            return buildLongestCommonSubstring(mapped, filter);
+            return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
         javascript: function (str)
@@ -422,6 +434,9 @@ vimperator.Completion = function () //{{{
             var objects = [];
             var filter = matches[3] || "";
             var start = matches[1].length - 1;
+            var offset = matches[1] ? matches[1].length : 0;
+            offset += matches[2] ? matches[2].length : 0;
+
             if (matches[2])
             {
                 var brackets = 0, parentheses = 0;
@@ -488,7 +503,7 @@ vimperator.Completion = function () //{{{
                 completions = [];
             }
 
-            return buildLongestStartingSubstring(completions, filter);
+            return [offset, buildLongestStartingSubstring(completions, filter)];
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
@@ -523,8 +538,8 @@ vimperator.Completion = function () //{{{
             }
 
             // Longest Common Subsequence
-            // This shouldn't use buildLongestCommonSubstring
-            // for performance reasons, so as not to cycle through the urls twice
+            // This shouldn't use buildLongestCommonSubstring for performance
+            // reasons, so as not to cycle through the urls twice
             outer:
             for (var i = 0; i < urls.length; i++)
             {
@@ -609,51 +624,54 @@ vimperator.Completion = function () //{{{
         },
 
         // FIXME: rename
+        // TODO: get completions for "nested" command lines like ":time :js <tab>" or ":tab :he<tab>"
         exTabCompletion: function (str)
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
             var completions = [];
             var start = 0;
+            var exLength = 0;
 
             // if there is no space between the command name and the cursor
             // then get completions of the command name
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
+                return [matches[1].length, this.commands(cmd)[1]];
+                
+            // dynamically get completions as specified with the command's completer function
+            var command = vimperator.commands.get(cmd);
+            if (command && command.completer)
             {
-                completions = this.command(cmd);
-                start = matches[1].length;
-            }
-            else // dynamically get completions as specified with the command's completer function
-            {
-                var command = vimperator.commands.get(cmd);
-                if (command && command.completer)
-                {
-                    matches = str.match(/^:*\d*\w+!?\s+/);
-                    start = matches ? matches[0].length : 0;
+                matches = str.match(/^:*\d*\w+!?\s+/);
+                exLength = matches ? matches[0].length : 0;
 
-                    // TODO: maybe we should move these checks to the complete functions
-                    if (command.hasName("open") || command.hasName("tabopen") || command.hasName("winopen"))
-                    {
-                        var skip = args.match(/^(.*,\s+)(.*)/); // start after the last ", "
-                        if (skip)
-                        {
-                            start += skip[1].length;
-                            args = skip[2];
-                        }
-                    }
-                    else if (command.hasName("echo") || command.hasName("echoerr") || command.hasName("javascript"))
-                    {
-                        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
-                        if (skip)
-                            start += skip[1].length;
-                    }
+            //    // TODO: maybe we should move these checks to the complete functions
+            //    if (command.hasName("open") || command.hasName("tabopen") || command.hasName("winopen"))
+            //    {
+            //        var skip = args.match(/^(.*,\s+)(.*)/); // start after the last ", "
+            //        if (skip)
+            //        {
+            //            start += skip[1].length;
+            //            args = skip[2];
+            //        }
+            //    }
+            //    else if (command.hasName("echo") || command.hasName("echoerr") || command.hasName("javascript"))
+            //    {
+            //        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
+            //        if (skip)
+            //            start += skip[1].length;
+            //    }
+            //    else if (command.hasName("source"))
+            //    {
+            //        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
+            //        if (skip)
+            //            start += skip[1].length;
+            //    }
 
-                    completions = command.completer.call(this, args);
-                }
+                [start, completions] = command.completer.call(this, args);
             }
-            return [start, completions];
+            return [exLength + start, completions];
         }
-
     };
     //}}}
 }; //}}}

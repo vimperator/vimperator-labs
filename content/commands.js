@@ -565,7 +565,7 @@ vimperator.Commands = function () //{{{
                     if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
-                return completions;
+                return [0, completions];
             }
         }
     ));
@@ -639,7 +639,7 @@ vimperator.Commands = function () //{{{
                   "The special version <code class=\"command\">:bmarks!</code> opens the default Firefox bookmarks window.<br/>" +
                   "Filter can also contain the following options:<br/>" +
                   "-tags=comma,separated,tag,list<br/>",
-            completer: function (filter) { return vimperator.bookmarks.get(filter); },
+            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; },
             args: [[["-tags", "-T"],     OPTION_LIST]]
         }
     ));
@@ -653,7 +653,7 @@ vimperator.Commands = function () //{{{
                   "it is selected. With <code class=\"argument\">[!]</code> the next buffer matching the argument " +
                   "is selected, even if it cannot be identified uniquely.<br/>" +
                   "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
-            completer: function (filter) { return vimperator.completion.buffer(filter); }
+            completer: function (filter) { return vimperator.completion.buffers(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["dia[log]"],
@@ -684,8 +684,8 @@ vimperator.Commands = function () //{{{
             case "savepage": saveDocument(window.content.document); break;
             case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
                 // TODO add viewPartialSource('selection'); ...
-            case "": vimperator.echoerr("E474: Invalid Argument"); break;
-            default: vimperator.echoerr("Dialog: '" + args + "' is not available");
+            case "": vimperator.echoerr("E474: Invalid argument"); break;
+            default: vimperator.echoerr("Dialog '" + args + "' is not available");
             }
         },
         {
@@ -731,7 +731,7 @@ vimperator.Commands = function () //{{{
                   "Use <code>&lt;Tab&gt;</code> key on a string to complete the URL which you want to delete.<br/>" +
                   "The following options WILL be interpreted in the future:<br/>" +
                   " [!] a special version to delete ALL bookmarks <br/>",
-            completer: function (filter) { return vimperator.bookmarks.get(filter); }
+            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; }
         }
     ));
     commandManager.add(new vimperator.Command(["com[mand]"],
@@ -964,7 +964,7 @@ vimperator.Commands = function () //{{{
                     if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
-                return completions;
+                return [0, completions];
             }
         }
     ));
@@ -998,7 +998,7 @@ vimperator.Commands = function () //{{{
             shortHelp: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
                   "The special version <code class=\"command\">:history!</code> opens the default Firefox history window.",
-            completer: function (filter) { return vimperator.history.get(filter); }
+            completer: function (filter) { return [0, vimperator.history.get(filter)]; }
         }
     ));
     commandManager.add(new vimperator.Command(["javas[cript]", "js"],
@@ -1856,7 +1856,7 @@ vimperator.Commands = function () //{{{
                   "<code class=\"command\">:set option+={value}</code>, <code class=\"command\">:set option^={value}</code> and <code class=\"command\">:set option-={value}</code> " +
                   "adds/multiplies/subtracts <code class=\"argument\">{value}</code> from a number option and appends/prepends/removes <code class=\"argument\">{value}</code> from a string option.<br/>" +
                   "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
-            completer: function (filter) { return vimperator.completion.option(filter); }
+            completer: function (filter) { return vimperator.completion.options(filter); }
         }
     ));
     // TODO: sclose instead?
@@ -1937,7 +1937,7 @@ vimperator.Commands = function () //{{{
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
                   "~ is supported as a shortcut for the <var>$HOME</var> directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
-            completer: function (filter) { return vimperator.completion.file(filter); }
+            completer: function (filter) { return vimperator.completion.file(filter, true); }
         }
     ));
     commandManager.add(new vimperator.Command(["st[op]"],
@@ -1955,7 +1955,7 @@ vimperator.Commands = function () //{{{
             help: "Works only for commands that support it, currently:" +
                   "<ul><li>:tab help</li>" +
                   "<li>:tab prefs[!]</li></ul>",
-            completer: function (filter) { return vimperator.completion.command(filter); }
+            completer: function (filter) { return vimperator.completion.commands(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["tabl[ast]"],
@@ -2181,7 +2181,7 @@ vimperator.Commands = function () //{{{
                     if (vimperator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
-                return completions;
+                return [0, completions];
             }
         }
     ));

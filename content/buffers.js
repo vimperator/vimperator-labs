@@ -260,7 +260,7 @@ vimperator.Buffer = function () //{{{
                 }
                 else
                 {
-                    var items = vimperator.completion.buffer("");
+                    var items = vimperator.completion.buffers("")[1];
                     vimperator.bufferwindow.show(items);
                     vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
                 }
@@ -268,7 +268,7 @@ vimperator.Buffer = function () //{{{
             else
             {
                 // TODO: move this to vimperator.buffers.get()
-                var items = vimperator.completion.buffer("");
+                var items = vimperator.completion.buffers("")[1];
                 var number, indicator, title, url;
 
                 var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
@@ -451,7 +451,7 @@ vimperator.Buffer = function () //{{{
             if (!vimperator.bufferwindow.visible())
                 return false;
 
-            var items = vimperator.completion.buffer("");
+            var items = vimperator.completion.buffers("")[1];
             vimperator.bufferwindow.show(items);
             vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
         },
