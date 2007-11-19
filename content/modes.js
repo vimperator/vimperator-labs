@@ -75,12 +75,12 @@ vimperator.modes = (function ()
     // Usually you should only indicate to leave a special mode linke HINTS
     // by calling vimperator.modes.reset() and adding the stuff which is needed
     // for its cleanup here
-    function handleModeChange(oldmode, newmode)
+    function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work verbosity level
-        // vimperator.log("switching from mode " + oldmode + " to mode " + newmode, 7);
+        // vimperator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
 
-        switch (oldmode)
+        switch (oldMode)
         {
             case vimperator.modes.TEXTAREA:
             case vimperator.modes.INSERT:
@@ -88,7 +88,7 @@ vimperator.modes = (function ()
                 break;
 
             case vimperator.modes.VISUAL:
-                if (newmode == vimperator.modes.CARET)
+                if (newMode == vimperator.modes.CARET)
                 {
                     // clear any selection made
                     var selection = window.content.getSelection();
@@ -111,7 +111,7 @@ vimperator.modes = (function ()
                 break;
         }
 
-        if (newmode == vimperator.modes.NORMAL)
+        if (newMode == vimperator.modes.NORMAL)
         {
             // XXX: why this code?
             var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
@@ -169,21 +169,21 @@ vimperator.modes = (function ()
 
         // helper function to set both modes in one go
         // if silent == true, you also need to take care of the mode handling changes yourself
-        set: function (main_mode, extended_mode, silent)
+        set: function (mainMode, extendedMode, silent)
         {
             // if a main mode is set, the extended is always cleared
-            if (typeof main_mode === "number")
+            if (typeof mainMode === "number")
             {
-                if (!silent && main_mode != main)
-                    handleModeChange(main, main_mode);
+                if (!silent && mainMode != main)
+                    handleModeChange(main, mainMode);
 
-                main = main_mode;
-                if (!extended_mode)
+                main = mainMode;
+                if (!extendedMode)
                     extended = vimperator.modes.NONE;
 
             }
-            if (typeof extended_mode === "number")
-                extended = extended_mode;
+            if (typeof extendedMode === "number")
+                extended = extendedMode;
 
             if (!silent)
                 this.show();

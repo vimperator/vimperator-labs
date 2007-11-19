@@ -78,7 +78,7 @@ vimperator.Events = function () //{{{
 
     /////////////////////////////////////////////////////////
     // track if a popup is open or the menubar is active
-    var active_menubar = false;
+    var activeMenubar = false;
     function enterPopupMode(event)
     {
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
@@ -89,17 +89,17 @@ vimperator.Events = function () //{{{
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
-        if (!gContextMenu && !active_menubar)
+        if (!gContextMenu && !activeMenubar)
             vimperator.modes.remove(vimperator.modes.MENU);
     }
     function enterMenuMode()
     {
-        active_menubar = true;
+        activeMenubar = true;
         vimperator.modes.add(vimperator.modes.MENU);
     }
     function exitMenuMode()
     {
-        active_menubar = false;
+        activeMenubar = false;
         vimperator.modes.remove(vimperator.modes.MENU);
     }
     window.addEventListener("popupshown", enterPopupMode, true);
@@ -468,14 +468,14 @@ vimperator.Events = function () //{{{
 
         onSelectionChange: function (event)
         {
-            var could_copy = false;
+            var couldCopy = false;
             var controller = document.commandDispatcher.getControllerForCommand("cmd_copy");
             if (controller && controller.isCommandEnabled("cmd_copy"))
-                could_copy = true;
+                couldCopy = true;
 
             if (vimperator.mode != vimperator.modes.VISUAL)
             {
-                if (could_copy)
+                if (couldCopy)
                 {
                     if ((vimperator.mode == vimperator.modes.TEXTAREA || (vimperator.modes.extended & vimperator.modes.TEXTAREA))
                             && !vimperator.options["insertmode"])
@@ -486,7 +486,7 @@ vimperator.Events = function () //{{{
             }
             //else
             //{
-            //    if (!could_copy && vimperator.modes.extended & vimperator.modes.CARET)
+            //    if (!couldCopy && vimperator.modes.extended & vimperator.modes.CARET)
             //        vimperator.mode = vimperator.modes.CARET;
             //}
         },
@@ -642,13 +642,13 @@ vimperator.Events = function () //{{{
                 }
             }
 
-            var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-            var candidate_command = (vimperator.input.buffer + key).replace(count_str, "");
+            var countStr = vimperator.input.buffer.match(/^[0-9]*/)[0];
+            var candidateCommand = (vimperator.input.buffer + key).replace(countStr, "");
             var map;
             if (event.noremap)
-                map = vimperator.mappings.getDefaultMap(vimperator.mode, candidate_command);
+                map = vimperator.mappings.getDefaultMap(vimperator.mode, candidateCommand);
             else
-                map = vimperator.mappings.get(vimperator.mode, candidate_command);
+                map = vimperator.mappings.get(vimperator.mode, candidateCommand);
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
@@ -670,7 +670,7 @@ vimperator.Events = function () //{{{
             }
             else if (map)
             {
-                vimperator.input.count = parseInt(count_str, 10);
+                vimperator.input.count = parseInt(countStr, 10);
                 if (isNaN(vimperator.input.count))
                     vimperator.input.count = -1;
                 if (map.flags & vimperator.Mappings.flags.ARGUMENT)
@@ -682,7 +682,7 @@ vimperator.Events = function () //{{{
                 {
                     if (key != "<Esc>" && key != "<C-[>")
                     {
-                        vimperator.input.pendingMotionMap.execute(candidate_command, vimperator.input.count, null);
+                        vimperator.input.pendingMotionMap.execute(candidateCommand, vimperator.input.count, null);
                     }
                     vimperator.input.pendingMotionMap = null;
                     vimperator.input.buffer = "";
@@ -701,7 +701,7 @@ vimperator.Events = function () //{{{
                         stop = false;
                 }
             }
-            else if (vimperator.mappings.getCandidates(vimperator.mode, candidate_command).length > 0)
+            else if (vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length > 0)
             {
                 vimperator.input.buffer += key;
             }
@@ -729,8 +729,8 @@ vimperator.Events = function () //{{{
                 event.stopPropagation();
             }
 
-            var motion_map = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
-            vimperator.statusline.updateInputBuffer(motion_map + vimperator.input.buffer);
+            var motionMap = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
+            vimperator.statusline.updateInputBuffer(motionMap + vimperator.input.buffer);
             return false;
         },
 

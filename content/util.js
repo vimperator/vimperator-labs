@@ -27,6 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 vimperator.util = {
+
     escapeHTML: function (str)
     {
         // XXX: the following code is _much_ slower than a simple .replace()
@@ -39,9 +40,9 @@ vimperator.util = {
     },
 
     // TODO: use :highlight color groups
-    // if "process_strings" is true, any passed strings will be surrounded by " and
+    // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
-    colorize: function (arg, process_strings)
+    colorize: function (arg, processStrings)
     {
         var type = typeof arg;
 
@@ -54,7 +55,7 @@ vimperator.util = {
             }
             else if (type == "string")
             {
-                if (process_strings)
+                if (processStrings)
                     arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
 
                 return "<span style=\"color: green;\">" + arg + "</span>";
@@ -97,7 +98,7 @@ vimperator.util = {
 
         begin: for (var url = 0; url < urls.length; url++)
         {
-            var new_url = vimperator.buffer.URL;
+            var newURL = vimperator.buffer.URL;
             var matches;
 
             // strip each 'URL' - makes things simpler later on
@@ -108,13 +109,13 @@ vimperator.util = {
             if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
             {
                 var tail = matches[1] || "";
-                urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
+                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
                 continue;
             }
             else if (matches = urls[url].match(/^(?:\.\.$|\.\.\/(\S*))/))
             {
                 var tail = matches[1] || "";
-                urls[url] = new_url.replace(/(.+\/)[^\/]*/, "$1../" + tail);
+                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1../" + tail);
                 continue;
             }
             else if (matches = urls[url].match(/^(?:\.\.\.$|\.\.\.\/(\S*))/))
@@ -142,18 +143,18 @@ vimperator.util = {
                 // like the comments below ;-)
 
                 // check if the first word is a search engine
-                var search_url = vimperator.bookmarks.getSearchURL(text, alias);
-                if (search_url/* && search_url.length >= 1*/)
+                var searchURL = vimperator.bookmarks.getSearchURL(text, alias);
+                if (searchURL/* && searchURL.length >= 1*/)
                 {
-                    urls[url] = search_url;
+                    urls[url] = searchURL;
                     continue;
                 }
                 else // the first word was not a search engine, search for the whole string in the default engine
                 {
-                    search_url = vimperator.bookmarks.getSearchURL(urls[url], null);
-                    if (search_url/* && search_url.length >= 1*/)
+                    searchURL = vimperator.bookmarks.getSearchURL(urls[url], null);
+                    if (searchURL/* && searchURL.length >= 1*/)
                     {
-                        urls[url] = search_url;
+                        urls[url] = searchURL;
                         continue;
                     }
                 }
@@ -206,6 +207,7 @@ vimperator.util = {
 
         return strNum[0] + " " + unitVal[unitIndex];
     }
+
 };
 
 // vim: set fdm=marker sw=4 ts=4 et:

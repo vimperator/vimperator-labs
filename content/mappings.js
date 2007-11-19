@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Map = function (modes, cmds, action, extra_info) //{{{
+vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
 {
     if (!modes || (!cmds || !cmds.length) || !action)
         return null;
@@ -37,12 +37,12 @@ vimperator.Map = function (modes, cmds, action, extra_info) //{{{
 
     this.usage = [this.names[0]];
 
-    if (extra_info)
+    if (extraInfo)
     {
-        this.flags = extra_info.flags || 0;
+        this.flags = extraInfo.flags || 0;
 
-        if (extra_info.usage)
-            this.usage = extra_info.usage;
+        if (extraInfo.usage)
+            this.usage = extraInfo.usage;
         else
         {
             this.usage = this.names[0]; // only the first command name
@@ -53,15 +53,15 @@ vimperator.Map = function (modes, cmds, action, extra_info) //{{{
             this.usage = [this.usage]; // FIXME: usage an array - needed for the help
         }
 
-        this.help = extra_info.help || null;
-        this.short_help = extra_info.short_help || null;
+        this.help = extraInfo.help || null;
+        this.shortHelp = extraInfo.shortHelp || null;
 
-        this.rhs = extra_info.rhs || null;
+        this.rhs = extraInfo.rhs || null;
 
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
-        this.cancel_mode = extra_info.cancel_mode || false;
-        this.always_active = extra_info.always_active || false;
+        this.cancelMode = extraInfo.cancelMode || false;
+        this.alwaysActive = extraInfo.alwaysActive || false;
     }
 };
 
@@ -206,11 +206,11 @@ vimperator.Mappings = function () //{{{
 
         hasMap: function (mode, cmd)
         {
-            var user_maps = user[mode];
+            var userMaps = user[mode];
 
-            for (var i = 0; i < user_maps.length; i++)
+            for (var i = 0; i < userMaps.length; i++)
             {
-                if (user_maps[i].names.indexOf(cmd) != -1)
+                if (userMaps[i].names.indexOf(cmd) != -1)
                     return true;
             }
 
@@ -322,7 +322,7 @@ vimperator.Mappings = function () //{{{
                    vimperator.modes.COMMAND_LINE,
                    vimperator.modes.CARET,
                    vimperator.modes.TEXTAREA];
-    var any_non_insertmode = [vimperator.modes.NORMAL,
+    var anyNoninsertMode = [vimperator.modes.NORMAL,
                    vimperator.modes.VISUAL,
                    vimperator.modes.HINTS,
                    vimperator.modes.CARET,
@@ -336,22 +336,22 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map(anymode, ["<F1>"],
         function () { vimperator.help(null); },
         {
-            short_help: "Open help window",
+            shortHelp: "Open help window",
             help: "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code>."
         }
     ));
     addDefaultMap(new vimperator.Map(anymode, ["<Esc>", "<C-[>"],
         vimperator.events.onEscape,
         {
-            short_help: "Focus content",
+            shortHelp: "Focus content",
             help: "Exits any command line or hint mode and returns to browser mode.<br/>" +
                   "Also focuses the web page, in case a form field has focus and eats our key presses."
         }
     ));
-    addDefaultMap(new vimperator.Map(any_non_insertmode, [":"],
+    addDefaultMap(new vimperator.Map(anyNoninsertMode, [":"],
         function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
         {
-            short_help: "Start command line mode",
+            shortHelp: "Start command line mode",
             help: "In command line mode, you can perform extended commands, which may require arguments."
         }
     ));
@@ -363,7 +363,7 @@ vimperator.Mappings = function () //{{{
             vimperator.options.setFirefoxPref("accessibility.browsewithcaret", true);
         },
         {
-            short_help: "Start caret mode",
+            shortHelp: "Start caret mode",
             help: "This mode resembles the Vim normal mode where you see a text cursor and can move around. " +
             "If you want to select text in this mode, press <code class=\"mapping\">v</code> to start its Visual mode."
         }
@@ -371,7 +371,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map(anymode, ["<C-q>"],
         function () { vimperator.modes.passAllKeys = true; },
         {
-            short_help: "Temporarily quit Vimperator mode",
+            shortHelp: "Temporarily quit Vimperator mode",
             help: "Disable all Vimperator keys except <code class=\"mapping\">&lt;Esc&gt;</code> and pass them to the next event handler.<br/>" +
                   "This is especially useful, if JavaScript controlled forms like the RichEdit form fields of GMail don't work anymore.<br/>"  +
                   "To exit this mode, press <code class=\"mapping\">&lt;Esc&gt;</code>. If you also need to pass <code class=\"mapping\">&lt;Esc&gt;</code>" +
@@ -381,7 +381,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map(anymode, ["<C-v>"],
         function () { vimperator.modes.passNextKey = true; },
         {
-            short_help: "Pass through next key",
+            shortHelp: "Pass through next key",
             help: "If you need to pass a certain key to a JavaScript form field or another extension prefix the key with <code class=\"mapping\">&lt;C-v&gt;</code>.<br/>" +
                   "Also works to unshadow Firefox shortcuts like <code class=\"mapping\">&lt;C-o&gt;</code> which are otherwise hidden in Vimperator.<br/>" +
                   "When Vimperator mode is temporarily disabled with <code class=\"mapping\">&lt;C-q&gt;</code>, <code class=\"mapping\">&lt;C-v&gt;</code> will pass the next key to Vimperator instead of the web page."
@@ -390,14 +390,14 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-c>"],
         BrowserStop,
         {
-            short_help: "Stop loading",
+            shortHelp: "Stop loading",
             help: "Stops loading the current web page."
         }
     ));
     addDefaultMap(new vimperator.Map(anymode, ["<Nop>"],
         function () { return; },
         {
-            short_help: "Do nothing",
+            shortHelp: "Do nothing",
             help: "This command is useful for disabling a specific mapping. " +
                   "<code class=\"command\">:map &lt;C-n&gt; &lt;Nop&gt;</code> will prevent <code class=\"mapping\">&lt;C-n&gt;</code> from doing anything."
         }
@@ -406,7 +406,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]f"],
         function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
         {
-            short_help: "Focus next frame",
+            shortHelp: "Focus next frame",
             help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th next frame in order. The newly focused frame is briefly colored red. Does not wrap.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -414,7 +414,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["[f"],
         function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
         {
-            short_help: "Focus previous frame",
+            shortHelp: "Focus previous frame",
             help: "Transfers keyboard focus to the <code class=\"argument\">[count]</code>th previous frame in order. The newly focused frame is briefly colored red. Does not wrap.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -422,7 +422,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]n"],
         function (count) { vimperator.buffer.followDocumentRelationship("next"); },
         {
-            short_help: "go to 'next' or '>' if it exists.  Beep otherwise.",
+            shortHelp: "go to 'next' or '>' if it exists.  Beep otherwise.",
             help: "Opens link labeled with next or >.  Useful when browsing forums or documentation.  Change nextpattern to modify its behaviour.  It follows relations between files too.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -430,7 +430,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]p"],
         function (count) { vimperator.buffer.followDocumentRelationship("previous"); },
         {
-            short_help: "go to 'prev', 'previous' or '<' if it exists.  Beep otherwise.",
+            shortHelp: "go to 'prev', 'previous' or '<' if it exists.  Beep otherwise.",
             help: "Opens link labeled with prev, previous or <.  Useful when browsing forums or documentation.  Change nextpattern to modify its behaviour.  It follows relations between files too.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -444,28 +444,28 @@ vimperator.Mappings = function () //{{{
             vimperator.commandline.open(":", "bmark " + vimperator.buffer.URL + title, vimperator.modes.EX);
         },
         {
-            short_help: "Open a prompt to bookmark the current URL",
+            shortHelp: "Open a prompt to bookmark the current URL",
             help: "Look at <code class='command'>:bmark</code> for more information."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["A"],
         function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); },
         {
-            short_help: "Toggle bookmarked state of current URL",
+            shortHelp: "Toggle bookmarked state of current URL",
             help: "Add/remove a bookmark for the current location, depending if it already is bookmarked or not."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["b"],
         function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); },
         {
-            short_help: "Open a prompt to switch buffers",
+            shortHelp: "Open a prompt to switch buffers",
             help: "Typing the corresponding number switches to this buffer."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["B"],
         function () { vimperator.buffer.list(true); },
         {
-            short_help: "Toggle buffer list",
+            shortHelp: "Toggle buffer list",
             help: "Toggles the display of the buffer list which shows all opened tabs.<br/>" +
                   "WARNING: This mapping may be removed/changed in future."
         }
@@ -473,7 +473,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gb"],
         function (count) { vimperator.buffer.switchTo(null, null, count, false); },
         {
-            short_help: "Repeat last :buffer[!] command",
+            shortHelp: "Repeat last :buffer[!] command",
             help: "This is useful to quickly jump between buffers which have a similar URL or title.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -481,7 +481,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gB"],
         function (count) { vimperator.buffer.switchTo(null, null, count, true); },
         {
-            short_help: "Repeat last :buffer[!] command in reverse direction",
+            shortHelp: "Repeat last :buffer[!] command in reverse direction",
             help: "Just like <code class=\"mapping\">gb</code> but in the other direction.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -489,7 +489,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["d"],
         function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
         {
-            short_help: "Delete current buffer (=tab)",
+            shortHelp: "Delete current buffer (=tab)",
             help: "Count is supported, <code class=\"mapping\">2d</code> removes the current and next tab and the one to the right is selected. " +
                   "Does not wrap if <code class=\"argument\">[count]</code> is larger than available tabs to the right.",
             flags: vimperator.Mappings.flags.COUNT
@@ -498,7 +498,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["D"],
         function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
         {
-            short_help: "Delete current buffer (=tab)",
+            shortHelp: "Delete current buffer (=tab)",
             help: "Count is supported, <code class=\"mapping\">2D</code> removes the current and previous tab and the one to the left is selected. " +
                   "Does not wrap if <code class=\"argument\">[count]</code> is larger than available tabs to the left.",
             flags: vimperator.Mappings.flags.COUNT
@@ -507,7 +507,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gh"],
         BrowserHome,
         {
-            short_help: "Go home",
+            shortHelp: "Go home",
             help: "Opens the homepage in the current tab."
         }
     ));
@@ -519,7 +519,7 @@ vimperator.Mappings = function () //{{{
                     vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
-            short_help: "Go home in a new tab",
+            shortHelp: "Go home in a new tab",
             help: "Opens the homepage in a new tab. " +
                   "Whether the new tab is activated or not depends on the <code class=\"option\">'activate'</code> option.<br/>"
         }
@@ -533,13 +533,13 @@ vimperator.Mappings = function () //{{{
                 vimperator.beep();
         },
         {
-            short_help: "Focus last used input field"
+            shortHelp: "Focus last used input field"
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["go"],
         function (arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB); },
         {
-            short_help: "Jump to a QuickMark in the current tab",
+            shortHelp: "Jump to a QuickMark in the current tab",
             usage: ["go{a-zA-Z0-9}"],
             help: "Open any QuickMark in the current tab. You can mark any URLs with <code class=\"mapping\">M{a-zA-Z0-9}</code>. " +
                   "These QuickMarks are persistent across browser sessions.",
@@ -554,7 +554,7 @@ vimperator.Mappings = function () //{{{
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
-            short_help: "Jump to a QuickMark in a new tab",
+            shortHelp: "Jump to a QuickMark in a new tab",
             usage: ["gn{a-zA-Z0-9}"],
             help: "Works like <code class=\"mapping\">go{a-zA-Z0-9}</code> but opens the QuickMark in a new tab. " +
                    "Whether the new tab is activated or not depends on the <code class=\"option\">'activate'</code> option.<br/>" +
@@ -570,14 +570,14 @@ vimperator.Mappings = function () //{{{
                 vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
         },
         {
-            short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
+            shortHelp: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
         function (count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
         {
-            short_help: "Go to the next tab",
+            shortHelp: "Go to the next tab",
             help: "Cycles to the first tab, when the last is selected.<br/>Count is supported: <code class=\"mapping\">3gt</code> goes to the third tab.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -585,7 +585,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
         function (count) { vimperator.tabs.select("-" + (count < 1 ? 1 : count), true); },
         {
-            short_help: "Go {count} pages back",
+            shortHelp: "Go {count} pages back",
             help: "Wraps around from the first tab to the last tab.<br/>Count is supported: <code class=\"mapping\">3gT</code> goes three tabs back.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -612,7 +612,7 @@ vimperator.Mappings = function () //{{{
                 vimperator.tabs.select(index);
         },
         {
-            short_help: "Select the alternate tab",
+            shortHelp: "Select the alternate tab",
             usage: ["<C-^>"],
             help: "The alternate tab is the last selected tab. This provides a quick method of toggling between two tabs."
         }
@@ -629,7 +629,7 @@ vimperator.Mappings = function () //{{{
             vimperator.marks.add(arg);
         },
         {
-            short_help: "Set mark at the cursor position",
+            shortHelp: "Set mark at the cursor position",
             usage: ["m{a-zA-Z}"],
             help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
             flags: vimperator.Mappings.flags.ARGUMENT
@@ -638,7 +638,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["'", "`"],
         function (arg) { vimperator.marks.jumpTo(arg); },
         {
-            short_help: "Jump to the mark in the current buffer",
+            shortHelp: "Jump to the mark in the current buffer",
             usage: ["'{a-zA-Z}"],
             help: "Marks a-z are local to the buffer, whereas A-Z are valid between buffers.",
             flags: vimperator.Mappings.flags.ARGUMENT
@@ -656,7 +656,7 @@ vimperator.Mappings = function () //{{{
             vimperator.quickmarks.add(arg, vimperator.buffer.URL);
         },
         {
-            short_help: "Add new QuickMark for current URL",
+            shortHelp: "Add new QuickMark for current URL",
             usage: ["M{a-zA-Z0-9}"],
             help: "You can go to a marked URL in the current tab with <code class=\"mapping\">go{a-zA-Z0-9}</code> or in a new tab with <code class=\"mapping\">gn{a-zA-Z0-9}</code>. " +
                   "These QuickMarks are persistent across browser sessions.",
@@ -666,21 +666,21 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["o"],
         function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); },
         {
-            short_help: "Open one or more URLs in the current tab",
+            shortHelp: "Open one or more URLs in the current tab",
             help: "See <code class=\"command\">:open</code> for more details."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["O"],
         function () { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); },
         {
-            short_help: "Open one or more URLs in the current tab, based on current location",
+            shortHelp: "Open one or more URLs in the current tab, based on current location",
             help: "Works like <code class=\"mapping\">o</code>, but preselects current URL in the <code class=\"command\">:open</code> query."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["p", "<MiddleMouse>"],
         function () { vimperator.open(readFromClipboard()); },
         {
-            short_help: "Open (put) a URL based on the current clipboard contents in the current buffer",
+            shortHelp: "Open (put) a URL based on the current clipboard contents in the current buffer",
             help: "You can also just select (for non-X11 users: copy) some non-URL text, and search for it with the default search engine or keyword (specified by the <code class=\"option\">'defsearch'</code> option) with <code class=\"mapping\">p</code>."
         }
     ));
@@ -692,7 +692,7 @@ vimperator.Mappings = function () //{{{
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
-            short_help: "Open (put) a URL based on the current clipboard contents in a new buffer",
+            shortHelp: "Open (put) a URL based on the current clipboard contents in a new buffer",
             help: "Works like <code class=\"mapping\">p</code>, but opens a new tab.<br/>" +
                   "Whether the new buffer is activated, depends on the <code class=\"option\">'activate'</code> option."
         }
@@ -700,7 +700,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-l>"],
         function (count) { vimperator.commands.redraw(); },
         {
-            short_help: "Redraw the screen",
+            shortHelp: "Redraw the screen",
             help: "Works like <code class=\"command\">:redraw</code>.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -708,21 +708,21 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["r"],
         function () { vimperator.tabs.reload(getBrowser().mCurrentTab, false); },
         {
-            short_help: "Reload",
+            shortHelp: "Reload",
             help: "Forces reloading of the current page."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["R"],
         function () { vimperator.tabs.reload(getBrowser().mCurrentTab, true); },
         {
-            short_help: "Reload while skipping the cache",
+            shortHelp: "Reload while skipping the cache",
             help: "Forces reloading of the current page skipping the cache."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["t"],
         function () { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); },
         {
-            short_help: "Open one or more URLs in a new tab",
+            shortHelp: "Open one or more URLs in a new tab",
             help: "Like <code class=\"mapping\">o</code> but open URLs in a new tab.<br/>" +
                   "See <code class=\"command\">:tabopen</code> for more details."
         }
@@ -730,14 +730,14 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["T"],
         function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
         {
-            short_help: "Open one or more URLs in a new tab, based on current location",
+            shortHelp: "Open one or more URLs in a new tab, based on current location",
             help: "Works like <code class=\"mapping\">t</code>, but preselects current URL in the <code class=\"command\">:tabopen</code> query."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["u"],
         function (count) { vimperator.commands.undo("", false, count); },
         {
-            short_help: "Undo closing of a tab",
+            shortHelp: "Undo closing of a tab",
             help: "If a count is given, don't close the last but the <code class=\"argument\">[count]</code>th last tab.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -750,7 +750,7 @@ vimperator.Mappings = function () //{{{
             vimperator.echo("Yanked " + url, vimperator.commandline.FORCE_SINGLELINE);
         },
         {
-            short_help: "Yank current location to the clipboard",
+            shortHelp: "Yank current location to the clipboard",
             help: "When running in X11 the location is also put into the selection, which can be pasted with the middle mouse button."
         }
     ));
@@ -761,7 +761,7 @@ vimperator.Mappings = function () //{{{
             vimperator.copyToClipboard(sel);
         },
         {
-            short_help: "Copy selected text",
+            shortHelp: "Copy selected text",
             help: "The currently selected text is copied to the system clipboard."
         }
     ));
@@ -769,7 +769,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zi", "+"],
         function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, false); },
         {
-            short_help: "Enlarge text zoom of current web page",
+            shortHelp: "Enlarge text zoom of current web page",
             help: "Mnemonic: zoom in",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -777,7 +777,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zm"],
         function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
         {
-            short_help: "Enlarge text zoom of current web page by a larger amount",
+            shortHelp: "Enlarge text zoom of current web page by a larger amount",
             help: "Mnemonic: zoom more",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -785,7 +785,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zo", "-"],
         function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, false); },
         {
-            short_help: "Reduce text zoom of current web page",
+            shortHelp: "Reduce text zoom of current web page",
             help: "Mnemonic: zoom out",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -793,7 +793,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zr"],
         function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
         {
-            short_help: "Reduce text zoom of current web page by a larger amount",
+            shortHelp: "Reduce text zoom of current web page by a larger amount",
             help: "Mnemonic: zoom reduce",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -801,7 +801,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zz"],
         function (count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
         {
-            short_help: "Set text zoom value of current web page",
+            shortHelp: "Set text zoom value of current web page",
             help: "Zoom value can be between 1 and 2000%. If it is omitted, text zoom is reset to 100%.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -809,7 +809,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zI"],
         function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, true); },
         {
-            short_help: "Enlarge full zoom of current web page",
+            shortHelp: "Enlarge full zoom of current web page",
             help: "Mnemonic: zoom in",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -817,7 +817,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zM"],
         function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
         {
-            short_help: "Enlarge full zoom of current web page by a larger amount",
+            shortHelp: "Enlarge full zoom of current web page by a larger amount",
             help: "Mnemonic: zoom more",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -825,7 +825,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zO"],
         function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, true); },
         {
-            short_help: "Reduce full zoom of current web page",
+            shortHelp: "Reduce full zoom of current web page",
             help: "Mnemonic: zoom out",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -833,7 +833,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zR"],
         function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
         {
-            short_help: "Reduce full zoom of current web page by a larger amount",
+            shortHelp: "Reduce full zoom of current web page by a larger amount",
             help: "Mnemonic: zoom reduce",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -841,7 +841,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["zZ"],
         function (count) { vimperator.buffer.fullZoom = count > 1 ? count : 100; },
         {
-            short_help: "Set full zoom value of current web page",
+            shortHelp: "Set full zoom value of current web page",
             help: "Zoom value can be between 1 and 2000%. If it is omitted, full zoom is reset to 100%.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -850,14 +850,14 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["ZQ"],
         function () { vimperator.quit(false); },
         {
-            short_help: "Quit and don't save the session",
+            shortHelp: "Quit and don't save the session",
             help: "Works like <code class=\"command\">:qall</code>."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["ZZ"],
         function () { vimperator.quit(true); },
         {
-            short_help: "Quit and save the session",
+            shortHelp: "Quit and save the session",
             help: "Quit Vimperator, no matter how many tabs/windows are open. The session is stored.<br/>" +
                   "Works like <code class=\"command\">:xall</code>."
         }
@@ -867,20 +867,20 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["0", "^"],
         function () { vimperator.buffer.scrollStart(); },
         {
-            short_help: "Scroll to the absolute left of the document",
+            shortHelp: "Scroll to the absolute left of the document",
             help: "Unlike in Vim, <code class=\"mapping\">0</code> and <code class=\"mapping\">^</code> work exactly the same way."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["$"],
         function () { vimperator.buffer.scrollEnd(); },
         {
-            short_help: "Scroll to the absolute right of the document"
+            shortHelp: "Scroll to the absolute right of the document"
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gg", "<Home>"],
         function (count) { vimperator.buffer.scrollToPercentile(count >  0 ? count : 0); },
         {
-            short_help: "Goto the top of the document",
+            shortHelp: "Goto the top of the document",
             help: "When used with <code class=\"argument\">[count]</code> like in <code class=\"mapping\">35gg</code>, it scrolls to 35% of the document.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -888,7 +888,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["G", "<End>"],
         function (count) { vimperator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
         {
-            short_help: "Goto the end of the document",
+            shortHelp: "Goto the end of the document",
             help: "When used with <code class=\"argument\">[count]</code> like in <code class=\"mapping\">35G</code>, it scrolls to 35% of the document.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -896,7 +896,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["h", "<Left>"],
         function (count) { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
         {
-            short_help: "Scroll document to the left",
+            shortHelp: "Scroll document to the left",
             help: "Count is supported: <code class=\"mapping\">10h</code> will move 10 times as much to the left.<br/>" +
                   "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
@@ -905,7 +905,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["j", "<Down>", "<C-e>"],
         function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
         {
-            short_help: "Scroll document down",
+            shortHelp: "Scroll document down",
             help: "Count is supported: <code class=\"mapping\">10j</code> will move 10 times as much down.<br/>" +
                   "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
@@ -914,7 +914,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["k", "<Up>", "<C-y>"],
         function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         {
-            short_help: "Scroll document up",
+            shortHelp: "Scroll document up",
             help: "Count is supported: <code class=\"mapping\">10k</code> will move 10 times as much up.<br/>" +
                   "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
@@ -939,7 +939,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-d>"],
         function (count) { scrollByScrollSize(count, 1); },
         {
-            short_help: "Scroll window downwards in the buffer",
+            shortHelp: "Scroll window downwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
                   "If <code class=\"argument\">[count]</code> is given <code class=\"option\">'scroll'</code> is first set to this value.",
             flags: vimperator.Mappings.flags.COUNT
@@ -948,7 +948,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-u>"],
         function (count) { scrollByScrollSize(count, -1); },
         {
-            short_help: "Scroll window upwards in the buffer",
+            shortHelp: "Scroll window upwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
                   "If <code class=\"argument\">[count]</code> is given <code class=\"option\">'scroll'</code> is first set to this value.",
             flags: vimperator.Mappings.flags.COUNT
@@ -957,7 +957,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["l", "<Right>"],
         function (count) { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
         {
-            short_help: "Scroll document to the right",
+            shortHelp: "Scroll document to the right",
             help: "Count is supported: <code class=\"mapping\">10l</code> will move 10 times as much to the right.<br/>" +
                   "If the document cannot scroll more, a beep is emitted (unless <code class=\"option\">'visualbell'</code> is set).",
             flags: vimperator.Mappings.flags.COUNT
@@ -966,7 +966,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-b>", "<PageUp>", "<S-Space>"],
         function (count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
         {
-            short_help: "Scroll up a full page",
+            shortHelp: "Scroll up a full page",
             help: "Scroll window <code class=\"argument\">[count]</code> pages Backwards (upwards) in the buffer.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -974,7 +974,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-f>", "<PageDown>", "<Space>"],
         function (count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
         {
-            short_help: "Scroll down a full page",
+            shortHelp: "Scroll down a full page",
             help: "Scroll window <code class=\"argument\">[count]</code> pages Forwards (downwards) in the buffer.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -984,7 +984,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-g>"],
         function (count) { vimperator.buffer.pageInfo(false); },
         {
-            short_help: "Print the current file name",
+            shortHelp: "Print the current file name",
             help: "Also shows some additional file information like file size or the last modified date. " +
                   "If <code class='argument'>{count}</code> is given print the current file name with full path.",
             flags: vimperator.Mappings.flags.COUNT
@@ -993,7 +993,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g<C-g>"],
         function (count) { vimperator.buffer.pageInfo(true); },
         {
-            short_help: "Print file information",
+            shortHelp: "Print file information",
             help: "Same as <code class='command'>:pa[geinfo]</code>."
         }
     ));
@@ -1003,7 +1003,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-o>"],
         function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
         {
-            short_help: "Go to an older position in the jump list",
+            shortHelp: "Go to an older position in the jump list",
             help: "The jump list is just the browser history for now.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -1011,7 +1011,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-i>"],
         function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
-            short_help: "Go to a newer position in the jump list",
+            shortHelp: "Go to a newer position in the jump list",
             help: "The jump list is just the browser history for now.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -1019,7 +1019,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["H", "<A-Left>", "<M-Left>"],
         function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
         {
-            short_help: "Go back in the browser history",
+            shortHelp: "Go back in the browser history",
             help: "Count is supported: <code class=\"mapping\">3H</code> goes back 3 steps.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -1027,7 +1027,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["L", "<A-Right>", "<M-Right>"],
         function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         {
-            short_help: "Go forward in the browser history",
+            shortHelp: "Go forward in the browser history",
             help: "Count is supported: <code class=\"mapping\">3L</code> goes forward 3 steps.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -1065,7 +1065,7 @@ vimperator.Mappings = function () //{{{
             vimperator.open(gocmd);
         },
         {
-            short_help: "Go to parent directory",
+            shortHelp: "Go to parent directory",
             help: "Count is supported: <code class=\"mapping\">2gu</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> would open <code>http://www.example.com/dir1/</code>.",
             flags: vimperator.Mappings.flags.COUNT
         }
@@ -1073,7 +1073,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gU", "<C-BS>"],
         function () { vimperator.open("..."); },
         {
-            short_help: "Go to the root of the website",
+            shortHelp: "Go to the root of the website",
             help: "<code class=\"mapping\">gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>" +
                   "When browsing a local directory, it goes to the root document."
         }
@@ -1083,7 +1083,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["f"],
         function () { vimperator.hints.show(vimperator.modes.QUICK_HINT); },
         {
-            short_help: "Start QuickHint mode",
+            shortHelp: "Start QuickHint mode",
             usage: ["f{hint}"],
             help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a unique number (FIXME: numbers shown, but not usable yet).<br/>" +
                   "You can now either type this number or type any part of the URL which you want to follow, and it is followed as soon as it can be uniquely identified. " +
@@ -1094,7 +1094,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
         function () { vimperator.hints.show(vimperator.modes.QUICK_HINT, "t"); },
         {
-            short_help: "Start QuickHint mode, but open link in a new tab",
+            shortHelp: "Start QuickHint mode, but open link in a new tab",
             usage: ["F{hint}"],
             help: "Like normal QuickHint mode (activated with <code class='mapping'>f</code>) but opens the link in a new tab."
         }
@@ -1102,7 +1102,7 @@ vimperator.Mappings = function () //{{{
 //    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["F"],
 //        function () { vimperator.echo("Always HINT mode not available anymore"); },
 //        {
-//            short_help: "Start AlwaysHint mode (CURRENTLY DISABLED)",
+//            shortHelp: "Start AlwaysHint mode (CURRENTLY DISABLED)",
 //            help: "In AlwaysHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a label.<br/>" +
 //                  "If you then press the keys for a label, it is followed as soon as it can be uniquely identified. Labels stay active after following a hint in this mode, press <code class=\"mapping\">&lt;Esc&gt;</code> to stop this mode.<br/>" +
 //                  "This hint mode is especially useful for browsing large sites like Forums as hints are automatically regenerated when switching to a new document.<br/>" +
@@ -1120,7 +1120,7 @@ vimperator.Mappings = function () //{{{
                 vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg);
         },
         {
-            short_help: "Start an extended hint mode",
+            shortHelp: "Start an extended hint mode",
             usage: [";{mode}{hint}"],
             help: "ExtendedHint mode is useful, since in this mode you can yank link locations, open them in a new window or save images.<br/>" +
                   "If you want to yank the location of hint <code>24</code>, press <code class=\"mapping\">;y</code> to start this hint mode. " +
@@ -1155,7 +1155,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["/"],
         function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); },
         {
-            short_help: "Search forward for a pattern",
+            shortHelp: "Search forward for a pattern",
             usage: ["/{pattern}[/]<CR>"],
             help: "Search forward for the first occurrence of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
@@ -1167,7 +1167,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["?"],
         function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); },
         {
-            short_help: "Search backwards for a pattern",
+            shortHelp: "Search backwards for a pattern",
             usage: ["?{pattern}[?]<CR>"],
             help: "Search backward for the first occurrence of <code class=\"argument\">{pattern}</code>.<br/>" +
                   "If \"\\c\" appears anywhere in the pattern the whole pattern is handled as though <code class=\"option\">'ignorecase'</code> is on. " +
@@ -1180,14 +1180,14 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["n"],
         function () { vimperator.search.findAgain(false); },
         {
-            short_help: "Find next",
+            shortHelp: "Find next",
             help: "Repeat the last search 1 time (until count is supported)."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["N"],
         function () { vimperator.search.findAgain(true); },
         {
-            short_help: "Find previous",
+            shortHelp: "Find previous",
             help: "Repeat the last search 1 time (until count is supported) in the opposite direction."
         }
     ));
@@ -1200,64 +1200,64 @@ vimperator.Mappings = function () //{{{
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["o"],
 //        function () { vimperator.hints.openHints(false, false); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["t"],
 //        function () { vimperator.hints.openHints(true,  false); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-w>"],
 //        function () { vimperator.hints.openHints(false, true ); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["s"],
 //        function () { vimperator.hints.saveHints(true); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["a"],
 //        function () { vimperator.hints.saveHints(false); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["y"],
 //        function () { vimperator.hints.yankUrlHints(); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["Y"],
 //        function () { vimperator.hints.yankTextHints(); },
 //        {
-//            cancel_mode: true,
-//            always_active: false
+//            cancelMode: true,
+//            alwaysActive: false
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [","],
 //        function () { vimperator.input.buffer += ","; vimperator.hints.setCurrentState(0); },
 //        {
-//            cancel_mode: false,
-//            always_active: true
+//            cancelMode: false,
+//            alwaysActive: true
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], [":"],
 //        function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
 //        {
-//            cancel_mode: false,
-//            always_active: true
+//            cancelMode: false,
+//            alwaysActive: true
 //        }
 //    ));
 //
@@ -1265,78 +1265,78 @@ vimperator.Mappings = function () //{{{
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-e>"],
 //        function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-y>"],
 //        function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Home>"],
 //        function () { vimperator.buffer.scrollTop(); },
 //        {
-//            cancel_mode: false,
-//            always_active: true
+//            cancelMode: false,
+//            alwaysActive: true
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<End>"],
 //        function () { vimperator.buffer.scrollBottom(); },
 //        {
-//            cancel_mode: false,
-//            always_active: true
+//            cancelMode: false,
+//            alwaysActive: true
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageUp>", "<C-b>"],
 //        function (count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<PageDown>", "<C-f>"],
 //        function (count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Left>"],
 //        function () { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Down>"],
 //        function () { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Up>"],
 //        function () { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<Right>"],
 //        function () { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
@@ -1345,15 +1345,15 @@ vimperator.Mappings = function () //{{{
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-n>"],
 //        function () { vimperator.tabs.select("+1", true); },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    )); // same as gt, but no count supported
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-p>"],
 //        function () { vimperator.tabs.select("-1", true); },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    ));
 //
@@ -1361,63 +1361,63 @@ vimperator.Mappings = function () //{{{
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-o>"],
 //        function (count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-i>"],
 //        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-h>"],
 //        function (count) { vimperator.history.stepTo(count > 0 ? -count : -1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-l>"],
 //        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
 //        {
-//            cancel_mode: false,
-//            always_active: true,
+//            cancelMode: false,
+//            alwaysActive: true,
 //            flags: vimperator.Mappings.flags.COUNT
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-d>"],
 //        function () { vimperator.tabs.remove(getBrowser().mCurrentTab, vimperator.input.count, false, 0); },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    ));
 //
-//    // cancel_mode hint mode keys
+//    // cancelMode hint mode keys
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-c>"],
 //        function () { ; },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-g>"],
 //        function () { ; },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    ));
 //    addDefaultMap(new vimperator.Map([vimperator.modes.HINTS], ["<C-[>"],
 //        function () { ; },
 //        {
-//            cancel_mode: true,
-//            always_active: true
+//            cancelMode: true,
+//            alwaysActive: true
 //        }
 //    ));
 
@@ -1436,7 +1436,7 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["v"],
         function (count) { vimperator.modes.set(vimperator.modes.VISUAL, vimperator.mode); },
         {
-            short_help: "Start visual mode",
+            shortHelp: "Start visual mode",
             help: "Works for caret mode and textarea mode."
         }
     ));

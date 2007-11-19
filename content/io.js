@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.IO = function ()
 {
-    var environment_service = Components.classes["@mozilla.org/process/environment;1"]
+    var environmentService = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
 
     return {
@@ -54,30 +54,30 @@ vimperator.IO = function ()
             // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
             if (/^~/.test(path))
             {
-                var home = environment_service.get("VIMPERATOR_HOME");
+                var home = environmentService.get("VIMPERATOR_HOME");
 
                 if (!home)
-                    home = environment_service.get("HOME");
+                    home = environmentService.get("HOME");
 
                 if (WINDOWS && !home)
-                    home = environment_service.get("USERPROFILE") ||
-                           environment_service.get("HOMEDRIVE") + environment_service.get("HOMEPATH");
+                    home = environmentService.get("USERPROFILE") ||
+                           environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
 
                 path = path.replace("~", home);
             }
 
             // expand any $ENV vars
-            var env_vars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
+            var envVars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
 
-            if (env_vars)
+            if (envVars)
             {
                 var expansion;
 
-                for (var i = 0; i < env_vars.length; i++)
+                for (var i = 0; i < envVars.length; i++)
                 {
-                    expansion = environment_service.get(env_vars[i].replace("$", ""));
+                    expansion = environmentService.get(envVars[i].replace("$", ""));
                     if (expansion)
-                        path = path.replace(env_vars[i], expansion);
+                        path = path.replace(envVars[i], expansion);
                 }
             }
 
@@ -86,30 +86,30 @@ vimperator.IO = function ()
 
         getPluginDir: function ()
         {
-            var plugin_dir;
+            var pluginDir;
 
             if (navigator.platform == "Win32")
-                plugin_dir = "~/vimperator/plugin";
+                pluginDir = "~/vimperator/plugin";
             else
-                plugin_dir = "~/.vimperator/plugin";
+                pluginDir = "~/.vimperator/plugin";
 
-            plugin_dir = this.getFile(this.expandPath(plugin_dir));
+            pluginDir = this.getFile(this.expandPath(pluginDir));
 
-            return plugin_dir.exists() && plugin_dir.isDirectory() ? plugin_dir : null;
+            return pluginDir.exists() && pluginDir.isDirectory() ? pluginDir : null;
         },
 
         getRCFile: function ()
         {
-            var rc_file1 = this.getFile(this.expandPath("~/.vimperatorrc"));
-            var rc_file2 = this.getFile(this.expandPath("~/_vimperatorrc"));
+            var rcFile1 = this.getFile(this.expandPath("~/.vimperatorrc"));
+            var rcFile2 = this.getFile(this.expandPath("~/_vimperatorrc"));
 
             if (navigator.platform == "Win32")
-                [rc_file1, rc_file2] = [rc_file2, rc_file1]
+                [rcFile1, rcFile2] = [rcFile2, rcFile1]
 
-            if (rc_file1.exists() && rc_file1.isFile())
-                return rc_file1;
-            else if (rc_file2.exists() && rc_file2.isFile())
-                return rc_file2;
+            if (rcFile1.exists() && rcFile1.isFile())
+                return rcFile1;
+            else if (rcFile2.exists() && rcFile2.isFile())
+                return rcFile2;
             else
                 return null;
         },
@@ -133,12 +133,12 @@ vimperator.IO = function ()
                                   createInstance(Components.interfaces.nsILocalFile);
             if (navigator.platform == "Win32")
             {
-                var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "C:\\";
+                var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";
                 file.initWithPath(dir + "\\vimperator.tmp");
             }
             else
             {
-                var dir = environment_service.get("TMP") || environment_service.get("TEMP") || "/tmp/";
+                var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "/tmp/";
                 file.initWithPath(dir + "/vimperator.tmp");
             }
 

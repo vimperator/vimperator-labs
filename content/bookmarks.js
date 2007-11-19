@@ -33,15 +33,15 @@ vimperator.Bookmarks = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const history_service   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+    const historyService   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                              .getService(Components.interfaces.nsINavHistoryService);
-    const bookmarks_service = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
+    const bookmarksService = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
                              .getService(Components.interfaces.nsINavBookmarksService);
-    const tagging_service   = Components.classes["@mozilla.org/browser/tagging-service;1"]
+    const taggingService   = Components.classes["@mozilla.org/browser/tagging-service;1"]
                               .getService(Components.interfaces.nsITaggingService);
-    const search_service    = Components.classes["@mozilla.org/browser/search-service;1"]
+    const searchService    = Components.classes["@mozilla.org/browser/search-service;1"]
                               .getService(Components.interfaces.nsIBrowserSearchService);
-    const io_service        = Components.classes["@mozilla.org/network/io-service;1"]
+    const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
                               .getService(Components.interfaces.nsIIOService);
 
     var bookmarks = null;
@@ -55,18 +55,18 @@ vimperator.Bookmarks = function () //{{{
         // update our bookmark cache
         bookmarks = []; // also clear our bookmark cache
         keywords  = [];
-        var root = bookmarks_service.bookmarksRoot;
+        var root = bookmarksService.bookmarksRoot;
 
         var folders = [root];
-        var query = history_service.getNewQuery();
-        var options = history_service.getNewQueryOptions();
+        var query = historyService.getNewQuery();
+        var options = historyService.getNewQueryOptions();
 //        query.searchTerms = "test";
         while (folders.length > 0)
         {
             //comment out the next line for now; the bug hasn't been fixed; final version should include the next line
             //options.setGroupingMode(options.GROUP_BY_FOLDER);
             query.setFolders(folders, 1);
-            var result = history_service.executeQuery(query, options);
+            var result = historyService.executeQuery(query, options);
             //result.sortingMode = options.SORT_BY_DATE_DESCENDING;
             result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING;
             var rootNode = result.root;
@@ -81,11 +81,11 @@ vimperator.Bookmarks = function () //{{{
                     folders.push(node.itemId);
                 else if (node.type == node.RESULT_TYPE_URI) // bookmark
                 {
-                    var kw = bookmarks_service.getKeywordForBookmark(node.itemId);
+                    var kw = bookmarksService.getKeywordForBookmark(node.itemId);
                     if (kw)
                         keywords.push([kw, node.title, node.uri]);
 
-                    var tags = tagging_service.getTagsForURI(io_service.newURI(node.uri, null, null));
+                    var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null));
                     bookmarks.push([node.uri, node.title, kw, tags]);
                 }
             }
@@ -101,12 +101,12 @@ vimperator.Bookmarks = function () //{{{
 
     return {
 
-        // if "bypass_cache" is true, it will force a reload of the bookmarks database
+        // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
-        get: function (filter, tags, bypass_cache)
+        get: function (filter, tags, bypassCache)
         {
-            if (!bookmarks || bypass_cache)
+            if (!bookmarks || bypassCache)
                 load();
 
             return vimperator.completion.filterURLArray(bookmarks, filter, tags);
@@ -123,19 +123,19 @@ vimperator.Bookmarks = function () //{{{
 
             try
             {
-                var uri = io_service.newURI(url, null, null);
-                var id = bookmarks_service.insertBookmark(bookmarks_service.bookmarksRoot, uri, -1, title);
+                var uri = ioService.newURI(url, null, null);
+                var id = bookmarksService.insertBookmark(bookmarksService.bookmarksRoot, uri, -1, title);
                 if (!id)
                     return false;
 
                 if (keyword)
                 {
-                    bookmarks_service.setKeywordForBookmark(id, keyword);
+                    bookmarksService.setKeywordForBookmark(id, keyword);
                     keywords.unshift([keyword, title, url]);
                 }
 
                 if (tags)
-                    tagging_service.tagURI(uri, tags);
+                    taggingService.tagURI(uri, tags);
             }
             catch (e)
             {
@@ -178,12 +178,12 @@ vimperator.Bookmarks = function () //{{{
             var i = 0;
             try
             {
-                var uri = io_service.newURI(url, null, null);
+                var uri = ioService.newURI(url, null, null);
                 var count = {};
-                var bmarks = bookmarks_service.getBookmarkIdsForURI(uri, count);
+                var bmarks = bookmarksService.getBookmarkIdsForURI(uri, count);
 
                 for (; i < bmarks.length; i++)
-                    bookmarks_service.removeItem(bmarks[i]);
+                    bookmarksService.removeItem(bmarks[i]);
             }
             catch (e)
             {
@@ -203,33 +203,33 @@ vimperator.Bookmarks = function () //{{{
         // also ensures that each search engine has a Vimperator-friendly alias
         getSearchEngines: function ()
         {
-            var search_engines = [];
-            var firefox_engines = search_service.getVisibleEngines({ });
-            for (var i in firefox_engines)
+            var searchEngines = [];
+            var firefoxEngines = searchService.getVisibleEngines({ });
+            for (var i in firefoxEngines)
             {
-                var alias = firefox_engines[i].alias;
+                var alias = firefoxEngines[i].alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))
-                    alias = firefox_engines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
+                    alias = firefoxEngines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
                 if (!alias)
                     alias = "search"; // for search engines which we can't find a suitable alias
 
                 // make sure we can use search engines which would have the same alias (add numbers at the end)
-                var newalias = alias;
+                var newAlias = alias;
                 for (var j = 1; j <= 10; j++) // <=10 is intentional
                 {
-                    if (!search_engines.some(function (item) { return (item[0] == newalias); }))
+                    if (!searchEngines.some(function (item) { return (item[0] == newAlias); }))
                         break;
 
-                    newalias = alias + j;
+                    newAlias = alias + j;
                 }
                 // only write when it changed, writes are really slow
-                if (firefox_engines[i].alias != newalias)
-                    firefox_engines[i].alias = newalias;
+                if (firefoxEngines[i].alias != newAlias)
+                    firefoxEngines[i].alias = newAlias;
 
-                search_engines.push([firefox_engines[i].alias, firefox_engines[i].description]);
+                searchEngines.push([firefoxEngines[i].alias, firefoxEngines[i].description]);
             }
 
-            return search_engines;
+            return searchEngines;
         },
 
         // TODO: add filtering
@@ -243,29 +243,29 @@ vimperator.Bookmarks = function () //{{{
             return keywords;
         },
 
-        // if @param engine_name is null, it uses the default search engine
+        // if @param engineName is null, it uses the default search engine
         // @returns the url for the search string
-        //          if the search also requires a postdata, [url, postdata] is returned
-        getSearchURL: function (text, engine_name)
+        //          if the search also requires a postData, [url, postData] is returned
+        getSearchURL: function (text, engineName)
         {
             var url = null;
-            var postdata = null;
-            if (!engine_name)
-                engine_name = vimperator.options["defsearch"];
+            var postData = null;
+            if (!engineName)
+                engineName = vimperator.options["defsearch"];
 
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
             this.getSearchEngines();
 
             // first checks the search engines for a match
-            var engine = search_service.getEngineByAlias(engine_name);
+            var engine = searchService.getEngineByAlias(engineName);
             if (engine)
             {
                 if (text)
                 {
                     var submission = engine.getSubmission(text, null);
                     url = submission.uri.spec;
-                    postdata = submission.postData;
+                    postData = submission.postData;
                 }
                 else
                     url = engine.searchForm;
@@ -277,7 +277,7 @@ vimperator.Bookmarks = function () //{{{
 
                 for (var i in keywords)
                 {
-                    if (keywords[i][0] == engine_name)
+                    if (keywords[i][0] == engineName)
                     {
                         if (text == null)
                             text = "";
@@ -287,9 +287,9 @@ vimperator.Bookmarks = function () //{{{
                 }
             }
 
-            // if we came here, the engine_name is neither a search engine or URL
-            if (postdata)
-                return [url, postdata];
+            // if we came here, the engineName is neither a search engine or URL
+            if (postData)
+                return [url, postData];
             else
                 return url; // can be null
         },
@@ -359,7 +359,7 @@ vimperator.History = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const history_service   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+    const historyService   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                              .getService(Components.interfaces.nsINavHistoryService);
 
     var history = null;
@@ -373,11 +373,11 @@ vimperator.History = function () //{{{
 
         // no query parameters will get all history
         // XXX default sorting is... ?
-        var options = history_service.getNewQueryOptions();
-        var query = history_service.getNewQuery();
+        var options = historyService.getNewQueryOptions();
+        var query = historyService.getNewQuery();
 
         // execute the query
-        var result = history_service.executeQuery(query, options);
+        var result = historyService.executeQuery(query, options);
         var rootNode = result.root;
         rootNode.containerOpen = true;
         // iterate over the immediate children of this folder
@@ -513,24 +513,24 @@ vimperator.Marks = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var local_marks = {};
-    var url_marks = {};
-    var pending_jumps = [];
-    var appcontent = document.getElementById("appcontent");
+    var localMarks = {};
+    var urlMarks = {};
+    var pendingJumps = [];
+    var appContent = document.getElementById("appcontent");
 
-    if (appcontent)
-        appcontent.addEventListener("load", onPageLoad, true);
+    if (appContent)
+        appContent.addEventListener("load", onPageLoad, true);
 
     function onPageLoad(event)
     {
         var win = event.originalTarget.defaultView;
-        for (var i = 0, length = pending_jumps.length; i < length; i++)
+        for (var i = 0, length = pendingJumps.length; i < length; i++)
         {
-            var mark = pending_jumps[i];
+            var mark = pendingJumps[i];
             if (win.location.href == mark.location)
             {
                 win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
-                pending_jumps.splice(i, 1);
+                pendingJumps.splice(i, 1);
                 return;
             }
         }
@@ -538,17 +538,17 @@ vimperator.Marks = function () //{{{
 
     function removeLocalMark(mark)
     {
-        if (mark in local_marks)
+        if (mark in localMarks)
         {
             var win = window.content;
-            for (var i = 0; i < local_marks[mark].length; i++)
+            for (var i = 0; i < localMarks[mark].length; i++)
             {
-                if (local_marks[mark][i].location == win.location.href)
+                if (localMarks[mark][i].location == win.location.href)
                 {
-                    vimperator.log("Deleting local mark: " + mark + " | " + local_marks[mark][i].location + " | (" + local_marks[mark][i].position.x + ", " + local_marks[mark][i].position.y + ") | tab: " + vimperator.tabs.index(local_marks[mark][i].tab), 5);
-                    local_marks[mark].splice(i, 1);
-                    if (local_marks[mark].length == 0)
-                        delete local_marks[mark];
+                    vimperator.log("Deleting local mark: " + mark + " | " + localMarks[mark][i].location + " | (" + localMarks[mark][i].position.x + ", " + localMarks[mark][i].position.y + ") | tab: " + vimperator.tabs.index(localMarks[mark][i].tab), 5);
+                    localMarks[mark].splice(i, 1);
+                    if (localMarks[mark].length == 0)
+                        delete localMarks[mark];
                     break;
                 }
             }
@@ -557,10 +557,10 @@ vimperator.Marks = function () //{{{
 
     function removeURLMark(mark)
     {
-        if (mark in url_marks)
+        if (mark in urlMarks)
         {
-            vimperator.log("Deleting URL mark: " + mark + " | " + url_marks[mark].location + " | (" + url_marks[mark].position.x + ", " + url_marks[mark].position.y + ") | tab: " + vimperator.tabs.index(url_marks[mark].tab), 5);
-            delete url_marks[mark];
+            vimperator.log("Deleting URL mark: " + mark + " | " + urlMarks[mark].location + " | (" + urlMarks[mark].position.x + ", " + urlMarks[mark].position.y + ") | tab: " + vimperator.tabs.index(urlMarks[mark].tab), 5);
+            delete urlMarks[mark];
         }
     }
 
@@ -579,12 +579,12 @@ vimperator.Marks = function () //{{{
         // local marks
         var lmarks = [];
 
-        for (var mark in local_marks)
+        for (var mark in localMarks)
         {
-            for (var i = 0; i < local_marks[mark].length; i++)
+            for (var i = 0; i < localMarks[mark].length; i++)
             {
-                if (local_marks[mark][i].location == window.content.location.href)
-                    lmarks.push([mark, local_marks[mark][i]]);
+                if (localMarks[mark][i].location == window.content.location.href)
+                    lmarks.push([mark, localMarks[mark][i]]);
             }
         }
         lmarks.sort();
@@ -592,8 +592,8 @@ vimperator.Marks = function () //{{{
         // URL marks
         var umarks = [];
 
-        for (var mark in url_marks)
-            umarks.push([mark, url_marks[mark]]);
+        for (var mark in urlMarks)
+            umarks.push([mark, urlMarks[mark]]);
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
         umarks.sort(function (a, b) {
@@ -632,16 +632,16 @@ vimperator.Marks = function () //{{{
             if (isURLMark(mark))
             {
                 vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
-                url_marks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
+                urlMarks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
             }
             else if (isLocalMark(mark))
             {
                 // remove any previous mark of the same name for this location
                 removeLocalMark(mark);
-                if (!local_marks[mark])
-                    local_marks[mark] = [];
+                if (!localMarks[mark])
+                    localMarks[mark] = [];
                 vimperator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
-                local_marks[mark].push({ location: win.location.href, position: position });
+                localMarks[mark].push({ location: win.location.href, position: position });
             }
         },
 
@@ -650,18 +650,18 @@ vimperator.Marks = function () //{{{
             if (special)
             {
                 // :delmarks! only deletes a-z marks
-                for (var mark in local_marks)
+                for (var mark in localMarks)
                     removeLocalMark(mark);
             }
             else
             {
                 var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
-                for (var mark in url_marks)
+                for (var mark in urlMarks)
                 {
                     if (pattern.test(mark))
                         removeURLMark(mark);
                 }
-                for (var mark in local_marks)
+                for (var mark in localMarks)
                 {
                     if (pattern.test(mark))
                         removeLocalMark(mark);
@@ -675,12 +675,12 @@ vimperator.Marks = function () //{{{
 
             if (isURLMark(mark))
             {
-                var slice = url_marks[mark];
+                var slice = urlMarks[mark];
                 if (slice && slice.tab && slice.tab.linkedBrowser)
                 {
                     if (!slice.tab.parentNode)
                     {
-                        pending_jumps.push(slice);
+                        pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
                         // non-unique URLs, like Vimperator's help :(
                         vimperator.open(slice.location, vimperator.NEW_TAB);
@@ -693,7 +693,7 @@ vimperator.Marks = function () //{{{
                         var win = slice.tab.linkedBrowser.contentWindow;
                         if (win.location.href != slice.location)
                         {
-                            pending_jumps.push(slice);
+                            pendingJumps.push(slice);
                             win.location.href = slice.location;
                             return;
                         }
@@ -706,7 +706,7 @@ vimperator.Marks = function () //{{{
             else if (isLocalMark(mark))
             {
                 var win = window.content;
-                var slice = local_marks[mark] || [];
+                var slice = localMarks[mark] || [];
 
                 for (var i = 0; i < slice.length; i++)
                 {
@@ -773,12 +773,12 @@ vimperator.QuickMarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var qmarks = {};
-    var saved_marks = vimperator.options.getPref("quickmarks", "").split("\n");
+    var savedMarks = vimperator.options.getPref("quickmarks", "").split("\n");
 
     // load the saved quickmarks -- TODO: change to sqlite
-    for (var i = 0; i < saved_marks.length - 1; i += 2)
+    for (var i = 0; i < savedMarks.length - 1; i += 2)
     {
-        qmarks[saved_marks[i]] = saved_marks[i + 1];
+        qmarks[savedMarks[i]] = savedMarks[i + 1];
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -861,15 +861,15 @@ vimperator.QuickMarks = function () //{{{
         destroy: function ()
         {
             // save the quickmarks
-            var saved_qmarks = "";
+            var savedQuickMarks = "";
 
             for (var i in qmarks)
             {
-                saved_qmarks += i + "\n";
-                saved_qmarks += qmarks[i] + "\n";
+                savedQuickMarks += i + "\n";
+                savedQuickMarks += qmarks[i] + "\n";
             }
 
-            vimperator.options.setPref("quickmarks", saved_qmarks);
+            vimperator.options.setPref("quickmarks", savedQuickMarks);
         }
     };
     //}}}

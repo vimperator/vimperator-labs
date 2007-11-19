@@ -35,10 +35,10 @@ vimperator.Buffer = function () //{{{
     // used for the "B" mapping to remember the last :buffer[!] command
     var lastBufferSwitchArgs = "";
     var lastBufferSwitchSpecial = true;
-    var zoom_levels = [ 1, 10, 25, 50, 75, 90, 100,
+    var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
-    function setZoom(value, full_zoom)
+    function setZoom(value, fullZoom)
     {
         if (value < 1 || value > 2000)
         {
@@ -46,12 +46,12 @@ vimperator.Buffer = function () //{{{
             return false;
         }
 
-        if (full_zoom)
+        if (fullZoom)
             getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom = value / 100.0;
         else
             getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom = value / 100.0;
 
-        vimperator.echo((full_zoom ? "Full zoom: " : "Text zoom: ") + value + "%");
+        vimperator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
 
         // TODO: shouldn't this just recalculate hint coords, rather than
         // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
@@ -60,9 +60,9 @@ vimperator.Buffer = function () //{{{
         // vimperator.hints.reshowHints();
     }
 
-    function bumpZoomLevel(steps, full_zoom)
+    function bumpZoomLevel(steps, fullZoom)
     {
-        if (full_zoom)
+        if (fullZoom)
             var value = getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom * 100.0;
         else
             var value = getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom * 100.0;
@@ -70,9 +70,9 @@ vimperator.Buffer = function () //{{{
         var index = -1;
         if (steps <= 0)
         {
-            for (var i = zoom_levels.length - 1; i >= 0; i--)
+            for (var i = zoomLevels.length - 1; i >= 0; i--)
             {
-                if ((zoom_levels[i] + 0.01) < value) // 0.01 for float comparison
+                if ((zoomLevels[i] + 0.01) < value) // 0.01 for float comparison
                 {
                     index = i + 1 + steps;
                     break;
@@ -81,21 +81,21 @@ vimperator.Buffer = function () //{{{
         }
         else
         {
-            for (var i = 0; i < zoom_levels.length; i++)
+            for (var i = 0; i < zoomLevels.length; i++)
             {
-                if ((zoom_levels[i] - 0.01) > value) // 0.01 for float comparison
+                if ((zoomLevels[i] - 0.01) > value) // 0.01 for float comparison
                 {
                     index = i - 1 + steps;
                     break;
                 }
             }
         }
-        if (index < 0 || index >= zoom_levels.length)
+        if (index < 0 || index >= zoomLevels.length)
         {
             vimperator.beep();
             return;
         }
-        setZoom(zoom_levels[index], full_zoom);
+        setZoom(zoomLevels[index], fullZoom);
     }
 
     function checkScrollYBounds(win, direction)
@@ -203,26 +203,26 @@ vimperator.Buffer = function () //{{{
             offsetX = offsetX || 1;
             offsetY = offsetY || 1;
 
-            var new_tab = false, new_window = false;
+            var newTab = false, newWindow = false;
             switch (where)
             {
                 case vimperator.NEW_TAB:
                 case vimperator.NEW_BACKGROUND_TAB:
-                    new_tab = true;
+                    newTab = true;
                     break;
                 case vimperator.NEW_WINDOW:
-                    new_window = true;
+                    newWindow = true;
                     break;
                 default:
                     vimperator.log("Invalid where argument for followLink()");
             }
 
             var evt = doc.createEvent("MouseEvents");
-            evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
 
             //var evt = doc.createEvent("MouseEvents");
-            evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
+            evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
         },
 
@@ -235,14 +235,14 @@ vimperator.Buffer = function () //{{{
 
             if (!selection)
             {
-                var selection_controller = getBrowser().docShell
+                var selectionController = getBrowser().docShell
                     .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                     .getInterface(Components.interfaces.nsISelectionDisplay)
                     .QueryInterface(Components.interfaces.nsISelectionController);
 
-                selection_controller.setCaretEnabled(true);
-                selection_controller.wordMove(false, false);
-                selection_controller.wordMove(true, true);
+                selectionController.setCaretEnabled(true);
+                selectionController.wordMove(false, false);
+                selectionController.wordMove(true, true);
                 selection = window.content.getSelection().toString();
             }
 
@@ -260,7 +260,7 @@ vimperator.Buffer = function () //{{{
                 }
                 else
                 {
-                    var items = vimperator.completion.get_buffer_completions("");
+                    var items = vimperator.completion.getBufferCompletions("");
                     vimperator.bufferwindow.show(items);
                     vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
                 }
@@ -268,7 +268,7 @@ vimperator.Buffer = function () //{{{
             else
             {
                 // TODO: move this to vimperator.buffers.get()
-                var items = vimperator.completion.get_buffer_completions("");
+                var items = vimperator.completion.getBufferCompletions("");
                 var number, indicator, title, url;
 
                 var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
@@ -451,7 +451,7 @@ vimperator.Buffer = function () //{{{
             if (!vimperator.bufferwindow.visible())
                 return false;
 
-            var items = vimperator.completion.get_buffer_completions("");
+            var items = vimperator.completion.getBufferCompletions("");
             vimperator.bufferwindow.show(items);
             vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
         },
@@ -484,7 +484,7 @@ vimperator.Buffer = function () //{{{
                 return vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
 
             var matches = [];
-            var lower_buffer = buffer.toLowerCase();
+            var lowerBuffer = buffer.toLowerCase();
             var first = vimperator.tabs.index() + (reverse ? 0 : 1);
             for (var i = 0; i < getBrowser().browsers.length; i++)
             {
@@ -494,7 +494,7 @@ vimperator.Buffer = function () //{{{
                 if (url == buffer)
                     return vimperator.tabs.select(index, false);
 
-                if (url.indexOf(buffer) >= 0 || title.indexOf(lower_buffer) >= 0)
+                if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
                     matches.push(index);
             }
             if (matches.length == 0)
@@ -516,14 +516,14 @@ vimperator.Buffer = function () //{{{
             }
         },
 
-        zoomIn: function (steps, full_zoom)
+        zoomIn: function (steps, fullZoom)
         {
-            bumpZoomLevel(steps, full_zoom);
+            bumpZoomLevel(steps, fullZoom);
         },
 
-        zoomOut: function (steps, full_zoom)
+        zoomOut: function (steps, fullZoom)
         {
-            bumpZoomLevel(-steps, full_zoom);
+            bumpZoomLevel(-steps, fullZoom);
         },
 
         pageInfo: function (verbose)

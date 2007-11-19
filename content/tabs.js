@@ -145,9 +145,9 @@ vimperator.Tabs = function () //{{{
             getBrowser().moveTabTo(tab, index);
         },
 
-        // quit_on_last_tab = 1: quit without saving session
-        // quit_on_last_tab = 2: quit and save session
-        remove: function (tab, count, focus_left_tab, quit_on_last_tab)
+        // quitOnLastTab = 1: quit without saving session
+        // quitOnLastTab = 2: quit and save session
+        remove: function (tab, count, focusLeftTab, quitOnLastTab)
         {
             function removeOrBlankTab (tab)
             {
@@ -169,26 +169,26 @@ vimperator.Tabs = function () //{{{
             if (count < 1)
                 count = 1;
 
-            if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
+            if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)
             {
                 if (vimperator.windows.length > 1)
                     window.close();
                 else
-                    vimperator.quit(quit_on_last_tab == 2);
+                    vimperator.quit(quitOnLastTab == 2);
 
                 return;
             }
 
             var index = this.index(tab);
-            if (focus_left_tab)
+            if (focusLeftTab)
             {
-                var last_removed_tab = 0;
+                var lastRemovedTab = 0;
                 for (var i = index; i > index - count && i >= 0; i--)
                 {
                     removeOrBlankTab(this.getTab(i));
-                    last_removed_tab = i > 0 ? i : 1;
+                    lastRemovedTab = i > 0 ? i : 1;
                 }
-                getBrowser().mTabContainer.selectedIndex = last_removed_tab - 1;
+                getBrowser().mTabContainer.selectedIndex = lastRemovedTab - 1;
             }
             else
             {
@@ -226,9 +226,9 @@ vimperator.Tabs = function () //{{{
             alternates = [this.getTab(), alternates[0]];
         },
 
-        reload: function (tab, bypass_cache)
+        reload: function (tab, bypassCache)
         {
-            if (bypass_cache)
+            if (bypassCache)
             {
                 const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
                 const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
@@ -240,15 +240,15 @@ vimperator.Tabs = function () //{{{
             }
         },
 
-        reloadAll: function (bypass_cache)
+        reloadAll: function (bypassCache)
         {
-            if (bypass_cache)
+            if (bypassCache)
             {
                 for (var i = 0; i < getBrowser().mTabs.length; i++)
                 {
                     try
                     {
-                        this.reload(getBrowser().mTabs[i], bypass_cache);
+                        this.reload(getBrowser().mTabs[i], bypassCache);
                     }
                     catch (e)
                     {

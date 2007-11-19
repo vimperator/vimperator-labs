@@ -39,7 +39,7 @@ vimperator.Hints = function () //{{{
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var hints = [];
-    var valid_hints = []; // store the indices of the "hints" array with valid elements
+    var validHints = []; // store the indices of the "hints" array with valid elements
 
     var escapeNumbers = false ; // escape mode for numbers. true -> treated as hint-text
     var activeTimeout = null; // needed for hinttimeout > 0
@@ -57,7 +57,7 @@ vimperator.Hints = function () //{{{
         hintNumber = 0;
         usedTabKey = false;
         hints = [];
-        valid_hints = [];
+        validHints = [];
         canUpdate = false;
         docs = [];
         escapeNumbers = false;
@@ -78,11 +78,11 @@ vimperator.Hints = function () //{{{
     // for javascript links
     function openHint(where)
     {
-        if (valid_hints.length < 1)
+        if (validHints.length < 1)
             return false;
 
         var x = 1, y = 1;
-        var elem = valid_hints[hintNumber - 1] || valid_hints[0];
+        var elem = validHints[hintNumber - 1] || validHints[0];
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
         if (elemTagName == "frame" || elemTagName == "iframe")
@@ -102,10 +102,10 @@ vimperator.Hints = function () //{{{
 
     function focusHint()
     {
-        if (valid_hints.length < 1)
+        if (validHints.length < 1)
             return false;
 
-        var elem = valid_hints[hintNumber - 1] || valid_hints[0];
+        var elem = validHints[hintNumber - 1] || validHints[0];
         var doc = window.content.document;
         var elemTagName = elem.localName.toLowerCase();
         if (elemTagName == "frame" || elemTagName == "iframe")
@@ -135,10 +135,10 @@ vimperator.Hints = function () //{{{
 
     function yankHint(text)
     {
-        if (valid_hints.length < 1)
+        if (validHints.length < 1)
             return false;
 
-        var elem = valid_hints[hintNumber - 1] || valid_hints[0];
+        var elem = validHints[hintNumber - 1] || validHints[0];
         if (text)
             var loc = elem.textContent;
         else
@@ -148,12 +148,12 @@ vimperator.Hints = function () //{{{
         vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
     }
 
-    function saveHint(skip_prompt)
+    function saveHint(skipPrompt)
     {
-        if (valid_hints.length < 1)
+        if (validHints.length < 1)
             return false;
 
-        var elem = valid_hints[hintNumber - 1] || valid_hints[0];
+        var elem = validHints[hintNumber - 1] || validHints[0];
         var doc  = elem.ownerDocument;
         var url = makeURLAbsolute(elem.baseURI, elem.href);
         var text = elem.textContent;
@@ -161,7 +161,7 @@ vimperator.Hints = function () //{{{
         try
         {
             urlSecurityCheck(url, doc.nodePrincipal);
-            saveURL(url, text, null, true, skip_prompt, makeURI(url, doc.characterSet));
+            saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
         }
         catch (e)
         {
@@ -247,11 +247,11 @@ vimperator.Hints = function () //{{{
     // TODO: make it aware of imgspans
     function showActiveHint(newID, oldID)
     {
-        var oldElem = valid_hints[oldID - 1];
+        var oldElem = validHints[oldID - 1];
         if (oldElem)
             oldElem.style.backgroundColor = "yellow";
 
-        var newElem = valid_hints[newID - 1];
+        var newElem = validHints[newID - 1];
         if (newElem)
             newElem.style.backgroundColor = "#88FF00";
     }
@@ -267,9 +267,9 @@ vimperator.Hints = function () //{{{
 
         var elem, tagname, text, rect, span, imgspan;
         var hintnum = 1;
-        var find_tokens = hintString.split(/ +/);
+        var findTokens = hintString.split(/ +/);
         var activeHint = hintNumber || 1;
-        valid_hints = [];
+        validHints = [];
 
         for (var j = 0; j < docs.length; j++)
         {
@@ -287,9 +287,9 @@ vimperator.Hints = function () //{{{
                 span = hints[i][2];
                 imgspan = hints[i][3];
 
-                for (var k = 0; k < find_tokens.length; k++)
+                for (var k = 0; k < findTokens.length; k++)
                 {
-                    if (text.indexOf(find_tokens[k]) < 0)
+                    if (text.indexOf(findTokens[k]) < 0)
                     {
                         span.style.display = "none";
                         if (imgspan)
@@ -331,7 +331,7 @@ vimperator.Hints = function () //{{{
                 elem.style.color = "black";
                 span.textContent = "" + (hintnum++);
                 span.style.display = "inline";
-                valid_hints.push(elem);
+                validHints.push(elem);
             }
         }
 
@@ -341,7 +341,7 @@ vimperator.Hints = function () //{{{
 
     function removeHints(timeout)
     {
-        var firstElem = valid_hints[0] || null;
+        var firstElem = validHints[0] || null;
         var firstElemBgColor = "";
         var firstElemColor = "";
 
@@ -411,7 +411,7 @@ vimperator.Hints = function () //{{{
 
     function processHints(followFirst)
     {
-        if (valid_hints.length == 0)
+        if (validHints.length == 0)
         {
             vimperator.beep();
             return false;
@@ -419,18 +419,18 @@ vimperator.Hints = function () //{{{
 
         if (!followFirst)
         {
-            var first_href = valid_hints[0].getAttribute("href") || null;
-            if (first_href)
+            var firstHref = validHints[0].getAttribute("href") || null;
+            if (firstHref)
             {
-                if (valid_hints.some(function (e) { return e.getAttribute("href") != first_href; }))
+                if (validHints.some(function (e) { return e.getAttribute("href") != firstHref; }))
                     return false;
             }
-            else if (valid_hints.length > 1)
+            else if (validHints.length > 1)
                 return false;
         }
 
         var activeNum = hintNumber || 1;
-        var loc = valid_hints[activeNum - 1].href || "";
+        var loc = validHints[activeNum - 1].href || "";
         switch (submode)
         {
             case ";": focusHint(); break;
@@ -502,13 +502,13 @@ vimperator.Hints = function () //{{{
             canUpdate = true;
             showHints();
 
-            if (valid_hints.length == 0)
+            if (validHints.length == 0)
             {
                 vimperator.beep();
                 vimperator.modes.reset();
                 return false;
             }
-            else if (valid_hints.length == 1)
+            else if (validHints.length == 1)
             {
                 processHints(true);
                 return false;
@@ -554,13 +554,13 @@ vimperator.Hints = function () //{{{
                     var oldID = hintNumber;
                     if (key == "<Tab>")
                     {
-                        if (++hintNumber > valid_hints.length)
+                        if (++hintNumber > validHints.length)
                             hintNumber = 1;
                     }
                     else
                     {
                         if (--hintNumber < 1)
-                            hintNumber = valid_hints.length;
+                            hintNumber = validHints.length;
                     }
                     showActiveHint(hintNumber, oldID);
                     return;
@@ -638,7 +638,7 @@ vimperator.Hints = function () //{{{
                         }
                         showActiveHint(hintNumber, oldHintNumber || 1);
 
-                        if (hintNumber == 0 || hintNumber > valid_hints.length)
+                        if (hintNumber == 0 || hintNumber > validHints.length)
                         {
                             vimperator.beep();
                             return;
@@ -646,7 +646,7 @@ vimperator.Hints = function () //{{{
 
                         // if we write a numeric part like 3, but we have 45 hints, only follow
                         // the hint after a timeout, as the user might have wanted to follow link 34
-                        if (hintNumber > 0 && hintNumber * 10 <= valid_hints.length)
+                        if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
                         {
                             var timeout = vimperator.options["hinttimeout"];
                             if (timeout > 0)

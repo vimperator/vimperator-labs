@@ -33,11 +33,11 @@ const vimperator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // our services
-    var sound_service = Components.classes["@mozilla.org/sound;1"]
+    var soundService = Components.classes["@mozilla.org/sound;1"]
         .getService(Components.interfaces.nsISound);
-    var console_service = Components.classes["@mozilla.org/consoleservice;1"]
+    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
         .getService(Components.interfaces.nsIConsoleService);
-    var environment_service = Components.classes["@mozilla.org/process/environment;1"]
+    var environmentService = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
 
     var callbacks = [];
@@ -107,7 +107,7 @@ const vimperator = (function () //{{{
             }
             else
             {
-                sound_service.beep();
+                soundService.beep();
             }
         },
 
@@ -296,7 +296,7 @@ const vimperator = (function () //{{{
             if (typeof msg == "object")
                 msg = this.objectToString(msg, false);
 
-            console_service.logStringMessage("vimperator: " + msg);
+            consoleService.logStringMessage("vimperator: " + msg);
         },
 
         // open one or more URLs
@@ -369,9 +369,9 @@ const vimperator = (function () //{{{
         },
 
         // quit vimperator, no matter how many tabs/windows are open
-        quit: function (save_session)
+        quit: function (saveSession)
         {
-            if (save_session)
+            if (saveSession)
                 vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
             else
                 vimperator.options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
@@ -428,7 +428,7 @@ const vimperator = (function () //{{{
             }
             catch (e)
             {
-                var dirs = environment_service.get("PATH").split(WINDOWS ? ";" : ":");
+                var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
                 for (var i = 0; i < dirs.length; i++)
                 {
                     var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
@@ -522,16 +522,16 @@ const vimperator = (function () //{{{
                 else
                 {
                     var heredoc = "";
-                    var heredoc_end = null; // the string which ends the heredoc
+                    var heredocEnd = null; // the string which ends the heredoc
                     str.split("\n").forEach(function (line)
                     {
-                        if (heredoc_end) // we already are in a heredoc
+                        if (heredocEnd) // we already are in a heredoc
                         {
-                            if (heredoc_end.test(line))
+                            if (heredocEnd.test(line))
                             {
                                 eval("with(vimperator){" + heredoc + "}");
                                 heredoc = "";
-                                heredoc_end = null;
+                                heredocEnd = null;
                             }
                             else
                             {
@@ -548,7 +548,7 @@ const vimperator = (function () //{{{
                                 var matches = args.match(/(.*)<<\s*([^\s]+)$/);
                                 if (matches)
                                 {
-                                    heredoc_end = new RegExp("^" + matches[2] + "$", "m");
+                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
                                     if (matches[1])
                                         heredoc = matches[1] + "\n";
                                 }
@@ -596,9 +596,9 @@ const vimperator = (function () //{{{
             vimperator.log("Loading module search...", 3);
             vimperator.search        = vimperator.Search();
             vimperator.log("Loading module preview window...", 3);
-            vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
             vimperator.log("Loading module buffer window...", 3);
-            vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
             vimperator.log("Loading module mappings...", 3);
             vimperator.mappings      = vimperator.Mappings();
             vimperator.log("Loading module statusline...", 3);
@@ -650,20 +650,20 @@ const vimperator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                var rc_file = vimperator.io.getRCFile();
+                var rcFile = vimperator.io.getRCFile();
 
-                if (rc_file)
-                    vimperator.source(rc_file.path, true);
+                if (rcFile)
+                    vimperator.source(rcFile.path, true);
                 else
                     vimperator.log("No user RC file found", 3);
 
                 // also source plugins in ~/.vimperator/plugin/
                 try
                 {
-                    var plugin_dir = vimperator.io.getPluginDir();
-                    if (plugin_dir)
+                    var pluginDir = vimperator.io.getPluginDir();
+                    if (pluginDir)
                     {
-                        var files = vimperator.io.readDirectory(plugin_dir.path);
+                        var files = vimperator.io.readDirectory(pluginDir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
                         files.forEach(function (file) {
                             if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))

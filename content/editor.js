@@ -32,8 +32,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.Editor = function () //{{{
 {
     // store our last search with f, F, t or T
-    var last_findChar = null;
-    var last_findChar_func = null;
+    var lastFindChar = null;
+    var lastFindCharFunc = null;
     var abbrev = {}; // abbrev["lhr"][0]["{i,c,!}","rhs"]
 
     function editor()
@@ -120,7 +120,7 @@ vimperator.Editor = function () //{{{
             if (typeof count != "number" || count < 1)
                 count = 1;
 
-            var did_command = false;
+            var didCommand = false;
             while (count--)
             {
                 // some commands need this try/catch workaround, because a cmd_charPrevious triggered
@@ -129,11 +129,11 @@ vimperator.Editor = function () //{{{
                 try
                 {
                     controller.doCommand(cmd);
-                    did_command = true;
+                    didCommand = true;
                 }
                 catch (e)
                 {
-                    if (!did_command)
+                    if (!didCommand)
                         vimperator.beep();
                     return false;
                 }
@@ -269,8 +269,8 @@ vimperator.Editor = function () //{{{
             if (!editor())
                 return -1;
 
-            last_findChar = ch;
-            last_findChar_func = this.findCharForward;
+            lastFindChar = ch;
+            lastFindCharFunc = this.findCharForward;
 
             var text = editor().value;
             if (!typeof count == "number" || count < 1)
@@ -296,8 +296,8 @@ vimperator.Editor = function () //{{{
             if (!editor())
                 return -1;
 
-            last_findChar = ch;
-            last_findChar_func = this.findCharBackward;
+            lastFindChar = ch;
+            lastFindCharFunc = this.findCharBackward;
 
             var text = editor().value;
             if (!typeof count == "number" || count < 1)
@@ -630,11 +630,11 @@ vimperator.Editor = function () //{{{
                         {
                             // if found, replace accordingly
                             var len = foundWord.length;
-                            var abbr_text = abbrev[lhs][i][1];
-                            text = text.substring(0, currStart - len) + abbr_text + text.substring(currStart);
+                            var abbrText = abbrev[lhs][i][1];
+                            text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
                             textbox.value = text;
-                            textbox.selectionStart = currStart - len + abbr_text.length;
-                            textbox.selectionEnd   = currEnd   - len + abbr_text.length;
+                            textbox.selectionStart = currStart - len + abbrText.length;
+                            textbox.selectionEnd   = currEnd   - len + abbrText.length;
                             break;
                         }
                     }
