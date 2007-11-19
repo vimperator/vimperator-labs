@@ -26,14 +26,18 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Completion = function () // {{{
+vimperator.Completion = function () //{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // the completion substrings, used for showing the longest common match
     var substrings = [];
 
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
-    function buildLongestCommonSubstring(list, filter) //{{{
+    function buildLongestCommonSubstring(list, filter)
     {
         var filtered = [];
         var ignorecase = false;
@@ -72,10 +76,10 @@ vimperator.Completion = function () // {{{
             }
         }
         return filtered;
-    } //}}}
+    }
 
     // this function is case sensitive and should be documented about input and output ;)
-    function buildLongestStartingSubstring(list, filter) //{{{
+    function buildLongestStartingSubstring(list, filter)
     {
         var filtered = [];
         for (var i = 0; i < list.length; i++)
@@ -102,13 +106,17 @@ vimperator.Completion = function () // {{{
             }
         }
         return filtered;
-    } //}}}
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
 
         // returns the longest common substring
         // used for the 'longest' setting for wildmode
-        getLongestSubstring: function () //{{{
+        getLongestSubstring: function ()
         {
             if (substrings.length == 0)
                 return "";
@@ -120,9 +128,9 @@ vimperator.Completion = function () // {{{
                     longest = substrings[i];
             }
             return longest;
-        }, //}}}
+        },
 
-        dialog: function (filter) //{{{
+        dialog: function (filter)
         {
             substrings = [];
             var nodes = [
@@ -155,14 +163,14 @@ vimperator.Completion = function () // {{{
             });
 
             return buildLongestCommonSubstring(mapped, filter);
-        }, //}}}
+        },
 
         // filter a list of urls
         //
         // may consist of searchengines, filenames, bookmarks and history,
         // depending on the 'complete' option
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
-        url: function (filter, complete) //{{{
+        url: function (filter, complete)
         {
             var completions = [];
             substrings = [];
@@ -182,9 +190,9 @@ vimperator.Completion = function () // {{{
             }
 
             return completions;
-        }, //}}}
+        },
 
-        search: function (filter) //{{{
+        search: function (filter)
         {
             var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
@@ -195,7 +203,7 @@ vimperator.Completion = function () // {{{
                 return [[engine[0]], engine[1]];
             });
             return buildLongestCommonSubstring(mapped, filter);
-        }, //}}}
+        },
 
         // TODO: support file:// and \ or / path separators on both platforms
         file: function (filter)
@@ -230,7 +238,7 @@ vimperator.Completion = function () // {{{
             return buildLongestStartingSubstring(mapped, filter);
         },
 
-        help: function (filter) //{{{
+        help: function (filter)
         {
             var helpArray = [[["introduction"], "Introductory text"],
                               [["initialization"], "Initialization and startup"],
@@ -255,9 +263,9 @@ vimperator.Completion = function () // {{{
             });
 
             return buildLongestCommonSubstring(helpArray, filter);
-        }, //}}}
+        },
 
-        command: function (filter) //{{{
+        command: function (filter)
         {
             substrings = [];
             var completions = [];
@@ -271,9 +279,9 @@ vimperator.Completion = function () // {{{
             for (var command in vimperator.commands)
                 completions.push([command.longNames, command.shortHelp]);
             return buildLongestStartingSubstring(completions, filter);
-        }, //}}}
+        },
 
-        option: function (filter, unfiltered) //{{{
+        option: function (filter, unfiltered)
         {
             substrings = [];
             var optionCompletions = [];
@@ -350,9 +358,9 @@ vimperator.Completion = function () // {{{
             }
 
             return optionCompletions;
-        }, //}}}
+        },
 
-        buffer: function (filter) //{{{
+        buffer: function (filter)
         {
             substrings = [];
             var items = [];
@@ -386,9 +394,9 @@ vimperator.Completion = function () // {{{
                 return [$_[0][0], $_[1]];
             });
             return buildLongestCommonSubstring(items, filter);
-        }, //}}}
+        },
 
-        sidebar: function (filter) //{{{
+        sidebar: function (filter)
         {
             substrings = [];
             var menu = document.getElementById("viewSidebarMenu");
@@ -405,9 +413,9 @@ vimperator.Completion = function () // {{{
             });
 
             return buildLongestCommonSubstring(mapped, filter);
-        }, //}}}
+        },
 
-        javascript: function (str) // {{{
+        javascript: function (str)
         {
             substrings = [];
             var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
@@ -481,12 +489,12 @@ vimperator.Completion = function () // {{{
             }
 
             return buildLongestStartingSubstring(completions, filter);
-        }, // }}}
+        },
 
         // discard all entries in the 'urls' array, which don't match 'filter
         // urls must be of type [["url", "title"], [...]] or optionally
         //                      [["url", "title", keyword, [tags]], [...]]
-        filterURLArray: function (urls, filter, tags) //{{{
+        filterURLArray: function (urls, filter, tags)
         {
             var filtered = [];
             // completions which don't match the url but just the description
@@ -578,7 +586,7 @@ vimperator.Completion = function () // {{{
             }
 
             return filtered.concat(additionalCompletions);
-        }, //}}}
+        },
 
         // generic helper function which checks if the given "items" array pass "filter"
         // items must be an array of strings
@@ -601,7 +609,7 @@ vimperator.Completion = function () // {{{
         },
 
         // FIXME: rename
-        exTabCompletion: function (str) //{{{
+        exTabCompletion: function (str)
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
             var completions = [];
@@ -644,9 +652,10 @@ vimperator.Completion = function () // {{{
                 }
             }
             return [start, completions];
-        } //}}}
+        }
 
     };
-}; // }}}
+    //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

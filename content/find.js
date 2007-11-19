@@ -39,6 +39,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // make sure you only create this object when the "vimperator" object is ready
 vimperator.Search = function () //{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // FIXME:
     //var self = this;               // needed for callbacks since "this" is the "vimperator" object in a callback
     var found = false;               // true if the last search was successful
@@ -104,6 +108,10 @@ vimperator.Search = function () //{{{
 
         searchString = pattern;
     }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
 
@@ -260,6 +268,7 @@ vimperator.Search = function () //{{{
         }
 
     };
+    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

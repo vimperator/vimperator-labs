@@ -793,7 +793,7 @@ vimperator.Buffer = function () //{{{
 
             relText = new RegExp(relationship, "i");
             var elems = window.content.document.getElementsByTagName("link");
-            // links have higher priority than normal <a> hrefs  
+            // links have higher priority than normal <a> hrefs
             for (var i = 0; i < elems.length; i++)
             {
                 if (relText.test(elems[i].rel))
@@ -815,7 +815,7 @@ vimperator.Buffer = function () //{{{
                         vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
                         return;
                     }
-                    else 
+                    else
                     {
                         // images with alt text being href
                         var children = elems[i].childNodes;

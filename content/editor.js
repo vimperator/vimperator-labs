@@ -31,6 +31,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.Editor = function () //{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // store our last search with f, F, t or T
     var lastFindChar = null;
     var lastFindCharFunc = null;
@@ -49,6 +53,10 @@ vimperator.Editor = function () //{{{
 
         return ed.controllers.getControllerForCommand("cmd_beginLine");
     }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
 
@@ -248,7 +256,7 @@ vimperator.Editor = function () //{{{
                 {
                     this.executeCommand("cmd_selectCharNext", 1);
                 }
-                while ( editor().selectionEnd != pos );
+                while (editor().selectionEnd != pos);
             }
             else
             {
@@ -259,7 +267,7 @@ vimperator.Editor = function () //{{{
                 {
                     this.executeCommand("cmd_selectCharPrevious", 1);
                 }
-                while ( editor().selectionStart != pos );
+                while (editor().selectionStart != pos);
             }
         },
 
@@ -589,8 +597,8 @@ vimperator.Editor = function () //{{{
                 }
             }
 
-        vimperator.echoerr("E24: No such abbreviation");
-        return false;
+            vimperator.echoerr("E24: No such abbreviation");
+            return false;
         },
 
         removeAllAbbreviations: function (filter)
@@ -640,9 +648,10 @@ vimperator.Editor = function () //{{{
                     }
             }
             return true;
-        } //}}}
-
+        }
+        //}}}
     };
+    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -186,7 +186,7 @@ vimperator.Events = function () //{{{
             var tagname = elt.localName.toLowerCase();
             var type = elt.type.toLowerCase();
 
-            if ( (tagname == "input" && (type != "image")) ||
+            if ((tagname == "input" && (type != "image")) ||
                     tagname == "textarea" ||
                     //            tagName == "SELECT" ||
                     //            tagName == "BUTTON" ||

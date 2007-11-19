@@ -41,8 +41,8 @@ vimperator.Hints = function () //{{{
     var hints = [];
     var validHints = []; // store the indices of the "hints" array with valid elements
 
-    var escapeNumbers = false ; // escape mode for numbers. true -> treated as hint-text
-    var activeTimeout = null; // needed for hinttimeout > 0
+    var escapeNumbers = false; // escape mode for numbers. true -> treated as hint-text
+    var activeTimeout = null;  // needed for hinttimeout > 0
     var canUpdate = false;
 
     // keep track of the documents which we generated the hints for
@@ -69,7 +69,7 @@ vimperator.Hints = function () //{{{
 
     function updateStatusline()
     {
-        vimperator.statusline.updateInputBuffer((escapeNumbers ? "\\ ": "" ) + // sign for escapeNumbers
+        vimperator.statusline.updateInputBuffer((escapeNumbers ? "\\ ": "") + // sign for escapeNumbers
                 (hintString ? "\"" + hintString + "\"" : "") +
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }

@@ -673,7 +673,7 @@ vimperator.Commands = function () //{{{
             case "import": BrowserImport(); break;
             case "openfile": BrowserOpenFileWindow(); break;
             case "pageinfo": BrowserPageInfo(); break;
-            case "pagesource": BrowserViewSourceOfDocument(content.document); break; 
+            case "pagesource": BrowserViewSourceOfDocument(content.document); break;
             case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
             case "preferences": openPreferences(); break;
                 // XXX what are onEnter.. and onExit...?

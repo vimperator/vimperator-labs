@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.util = {
+vimperator.util = { //{{{
 
     escapeHTML: function (str)
     {
@@ -208,6 +208,6 @@ vimperator.util = {
         return strNum[0] + " " + unitVal[unitIndex];
     }
 
-};
+};//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

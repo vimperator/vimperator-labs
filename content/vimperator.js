@@ -627,8 +627,8 @@ const vimperator = (function () //{{{
             vimperator.globalVariables = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); } );
-            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); });
+            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); });
 
             // first time intro message
             if (vimperator.options.getPref("firsttime", true))

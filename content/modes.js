@@ -26,8 +26,12 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.modes = (function ()
+vimperator.modes = (function ()//{{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     var main = 1;     // NORMAL
     var extended = 0; // NONE
 
@@ -122,6 +126,10 @@ vimperator.modes = (function ()
             vimperator.focusContent(false);
         }
     }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
 
@@ -224,6 +232,7 @@ vimperator.modes = (function ()
         }
 
     };
-})();
+    //}}}
+})();//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
