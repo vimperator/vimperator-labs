@@ -601,6 +601,14 @@ vimperator.Options = function () //{{{
             defaultValue: true
         }
     ));
+    optionManager.add(new vimperator.Option(["nextpattern"], "stringlist",
+        {
+            shortHelp: "Patterns to use when guessing the 'next' page in a document sequence",
+            help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
+            "The patterns are case insensitive.",
+            defaultValue: "\\bnext,^>$"
+        }
+    ));
     optionManager.add(new vimperator.Option(["pageinfo", "pa"], "charlist",
         {
             shortHelp: "Desired info on :pa[geinfo]",
@@ -648,6 +656,14 @@ vimperator.Options = function () //{{{
                   "NOTE: Option currently disabled",
             defaultValue: 10,
             validator: function (value) { return (value >= 1 && value <= 50); }
+        }
+    ));
+    optionManager.add(new vimperator.Option(["previouspattern"], "stringlist",
+        {
+            shortHelp: "Patterns to use when guessing the 'previous' page in a document sequence",
+            help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
+            "The patterns are case insensitive.",
+            defaultValue: "\\bprev,previous\\b,^<$"
         }
     ));
     optionManager.add(new vimperator.Option(["scroll", "scr"], "number",
@@ -770,22 +786,6 @@ vimperator.Options = function () //{{{
                   "</table>",
             defaultValue: "",
             validator: function (value) { return /^(sort|)$/.test(value); }
-        }
-    ));
-    optionManager.add(new vimperator.Option(["nextpattern"], "stringlist",
-        {
-            shortHelp: "String to search when looking for 'next' page in document relation",
-            help: "Change it to make it look for another string in links when pressing ]n<br/>" +
-            "This value is case insensitive",
-            defaultValue: "\\bnext,^>$"
-        }
-    ));
-    optionManager.add(new vimperator.Option(["previouspattern"], "stringlist",
-        {
-            shortHelp: "String to search when looking for 'prev' page in document relation",
-            help: "Change it to make it look for another string in links when pressing ]p<br/>" +
-            "This value is case insensitive",
-            defaultValue: "\\bprev,previous\\b,^<$"
         }
     ));
     //}}}
