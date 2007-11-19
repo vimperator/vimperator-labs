@@ -653,7 +653,7 @@ vimperator.Commands = function () //{{{
                   "it is selected. With <code class=\"argument\">[!]</code> the next buffer matching the argument " +
                   "is selected, even if it cannot be identified uniquely.<br/>" +
                   "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
-            completer: function (filter) { return vimperator.completion.getBufferCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.buffer(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["dia[log]"],
@@ -988,7 +988,7 @@ vimperator.Commands = function () //{{{
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
                   "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
-            completer: function (filter) { return vimperator.completion.getHelpCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.help(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["hist[ory]", "hs"],
@@ -1496,7 +1496,7 @@ vimperator.Commands = function () //{{{
                   "The items which are completed on <code class=\"mapping\">&lt;Tab&gt;</code> are specified in the <code class=\"option\">'complete'</code> option.<br/>" +
                   "Without argument, reloads the current page.<br/>" +
                   "Without argument but with <code class=\"command\">!</code>, reloads the current page skipping the cache.",
-            completer: function (filter) { return vimperator.completion.getUrlCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.url(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["pa[geinfo]"],
@@ -1856,7 +1856,7 @@ vimperator.Commands = function () //{{{
                   "<code class=\"command\">:set option+={value}</code>, <code class=\"command\">:set option^={value}</code> and <code class=\"command\">:set option-={value}</code> " +
                   "adds/multiplies/subtracts <code class=\"argument\">{value}</code> from a number option and appends/prepends/removes <code class=\"argument\">{value}</code> from a string option.<br/>" +
                   "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
-            completer: function (filter) { return vimperator.completion.getOptionCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.option(filter); }
         }
     ));
     // TODO: sclose instead?
@@ -1910,7 +1910,7 @@ vimperator.Commands = function () //{{{
             shortHelp: "Open the sidebar window",
             help: "<code class=\"argument\">{name}</code> is any of the menu items listed under the standard Firefox View->Sidebar " +
                   "menu. Add-ons, Preferences and Downloads are also available in the sidebar.",
-            completer: function (filter) { return vimperator.completion.getSidebarCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.sidebar(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["so[urce]"],
@@ -1937,7 +1937,7 @@ vimperator.Commands = function () //{{{
                   "The .vimperatorrc file in your home directory and any files in ~/.vimperator/plugin/ are always sourced at startup.<br/>" +
                   "~ is supported as a shortcut for the <var>$HOME</var> directory.<br/>" +
                   "If <code class=\"command\">!</code> is specified, errors are not printed.",
-            completer: function (filter) { return vimperator.completion.getFileCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.file(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["st[op]"],
@@ -1955,7 +1955,7 @@ vimperator.Commands = function () //{{{
             help: "Works only for commands that support it, currently:" +
                   "<ul><li>:tab help</li>" +
                   "<li>:tab prefs[!]</li></ul>",
-            completer: function (filter) { return vimperator.completion.getCommandCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.command(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["tabl[ast]"],
@@ -2023,7 +2023,7 @@ vimperator.Commands = function () //{{{
             shortHelp: "Open one or more URLs in a new tab",
             help: "Like <code class=\"command\">:open</code> but open URLs in a new tab.<br/>" +
                   "If used with <code class=\"command\">!</code>, the 'tabopen' value of the <code class=\"option\">'activate'</code> option is negated.",
-            completer: function (filter) { return vimperator.completion.getUrlCompletions(filter); }
+            completer: function (filter) { return vimperator.completion.url(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],

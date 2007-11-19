@@ -260,7 +260,7 @@ vimperator.Buffer = function () //{{{
                 }
                 else
                 {
-                    var items = vimperator.completion.getBufferCompletions("");
+                    var items = vimperator.completion.buffer("");
                     vimperator.bufferwindow.show(items);
                     vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
                 }
@@ -268,7 +268,7 @@ vimperator.Buffer = function () //{{{
             else
             {
                 // TODO: move this to vimperator.buffers.get()
-                var items = vimperator.completion.getBufferCompletions("");
+                var items = vimperator.completion.buffer("");
                 var number, indicator, title, url;
 
                 var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
@@ -451,7 +451,7 @@ vimperator.Buffer = function () //{{{
             if (!vimperator.bufferwindow.visible())
                 return false;
 
-            var items = vimperator.completion.getBufferCompletions("");
+            var items = vimperator.completion.buffer("");
             vimperator.bufferwindow.show(items);
             vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
         },
@@ -784,7 +784,7 @@ vimperator.Buffer = function () //{{{
                     regexps = vimperator.options["nextpattern"].split(",");
                     break;
                 case "previous":
-                    //TODO: accept prev\%[ious]
+                    // TODO: accept prev\%[ious]
                     regexps = vimperator.options["previouspattern"].split(",");
                     break;
                 default:

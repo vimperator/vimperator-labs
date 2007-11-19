@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.Completion = function () // {{{
 {
-    // The completion substrings, used for showing the longest common match
+    // the completion substrings, used for showing the longest common match
     var substrings = [];
 
     // function uses smartcase
@@ -74,7 +74,7 @@ vimperator.Completion = function () // {{{
         return filtered;
     } //}}}
 
-    /* this function is case sensitive and should be documented about input and output ;) */
+    // this function is case sensitive and should be documented about input and output ;)
     function buildLongestStartingSubstring(list, filter) //{{{
     {
         var filtered = [];
@@ -105,10 +105,9 @@ vimperator.Completion = function () // {{{
     } //}}}
 
     return {
-        /*
-         * returns the longest common substring
-         * used for the 'longest' setting for wildmode
-         */
+
+        // returns the longest common substring
+        // used for the 'longest' setting for wildmode
         getLongestSubstring: function () //{{{
         {
             if (substrings.length == 0)
@@ -158,14 +157,12 @@ vimperator.Completion = function () // {{{
             return buildLongestCommonSubstring(mapped, filter);
         }, //}}}
 
-        /*
-         * filter a list of urls
-         *
-         * may consist of searchengines, filenames, bookmarks and history,
-         * depending on the 'complete' option
-         * if the 'complete' argument is passed like "h", it temporarily overrides the complete option
-         */
-        getUrlCompletions: function (filter, complete) //{{{
+        // filter a list of urls
+        //
+        // may consist of searchengines, filenames, bookmarks and history,
+        // depending on the 'complete' option
+        // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
+        url: function (filter, complete) //{{{
         {
             var completions = [];
             substrings = [];
@@ -175,19 +172,19 @@ vimperator.Completion = function () // {{{
             for (var i = 0; i < cpt.length; i++)
             {
                 if (cpt[i] == "s")
-                    completions = completions.concat(this.getSearchCompletions(filter));
+                    completions = completions.concat(this.search(filter));
                 else if (cpt[i] == "b")
                     completions = completions.concat(vimperator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
                     completions = completions.concat(vimperator.history.get(filter));
                 else if (cpt[i] == "f")
-                    completions = completions.concat(this.getFileCompletions(filter, true));
+                    completions = completions.concat(this.file(filter, true));
             }
 
             return completions;
         }, //}}}
 
-        getSearchCompletions: function (filter) //{{{
+        search: function (filter) //{{{
         {
             var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
 
@@ -201,7 +198,7 @@ vimperator.Completion = function () // {{{
         }, //}}}
 
         // TODO: support file:// and \ or / path separators on both platforms
-        getFileCompletions: function (filter)
+        file: function (filter)
         {
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
@@ -233,7 +230,7 @@ vimperator.Completion = function () // {{{
             return buildLongestStartingSubstring(mapped, filter);
         },
 
-        getHelpCompletions: function (filter) //{{{
+        help: function (filter) //{{{
         {
             var helpArray = [[["introduction"], "Introductory text"],
                               [["initialization"], "Initialization and startup"],
@@ -243,7 +240,7 @@ vimperator.Completion = function () // {{{
             substrings = [];
             for (var command in vimperator.commands)
                 helpArray.push([command.longNames.map(function ($_) { return ":" + $_; }), command.shortHelp]);
-            options = this.getOptionCompletions(filter, true);
+            options = this.option(filter, true);
             helpArray = helpArray.concat(options.map(function ($_) {
                 return [
                         $_[0].map(function ($_) { return "'" + $_ + "'"; }),
@@ -260,7 +257,7 @@ vimperator.Completion = function () // {{{
             return buildLongestCommonSubstring(helpArray, filter);
         }, //}}}
 
-        getCommandCompletions: function (filter) //{{{
+        command: function (filter) //{{{
         {
             substrings = [];
             var completions = [];
@@ -276,7 +273,7 @@ vimperator.Completion = function () // {{{
             return buildLongestStartingSubstring(completions, filter);
         }, //}}}
 
-        getOptionCompletions: function (filter, unfiltered) //{{{
+        option: function (filter, unfiltered) //{{{
         {
             substrings = [];
             var optionCompletions = [];
@@ -355,7 +352,7 @@ vimperator.Completion = function () // {{{
             return optionCompletions;
         }, //}}}
 
-        getBufferCompletions: function (filter) //{{{
+        buffer: function (filter) //{{{
         {
             substrings = [];
             var items = [];
@@ -391,7 +388,7 @@ vimperator.Completion = function () // {{{
             return buildLongestCommonSubstring(items, filter);
         }, //}}}
 
-        getSidebarCompletions: function (filter) //{{{
+        sidebar: function (filter) //{{{
         {
             substrings = [];
             var menu = document.getElementById("viewSidebarMenu");
@@ -517,11 +514,9 @@ vimperator.Completion = function () // {{{
                 tags = tags.map(function (t) { return t.toLowerCase(); });
             }
 
-            /*
-             * Longest Common Subsequence
-             * This shouldn't use buildLongestCommonSubstring
-             * for performance reasons, so as not to cycle through the urls twice
-             */
+            // Longest Common Subsequence
+            // This shouldn't use buildLongestCommonSubstring
+            // for performance reasons, so as not to cycle through the urls twice
             outer:
             for (var i = 0; i < urls.length; i++)
             {
@@ -605,6 +600,7 @@ vimperator.Completion = function () // {{{
             return false;
         },
 
+        // FIXME: rename
         exTabCompletion: function (str) //{{{
         {
             var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
@@ -616,7 +612,7 @@ vimperator.Completion = function () // {{{
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
             {
-                completions = this.getCommandCompletions(cmd);
+                completions = this.command(cmd);
                 start = matches[1].length;
             }
             else // dynamically get completions as specified with the command's completer function
