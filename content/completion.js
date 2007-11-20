@@ -190,12 +190,12 @@ vimperator.Completion = function () //{{{
             {
                 if (cpt[i] == "s")
                     completions = completions.concat(this.search(filter)[1]);
+                else if (cpt[i] == "f")
+                    completions = completions.concat(this.file(filter, false)[1]);
                 else if (cpt[i] == "b")
                     completions = completions.concat(vimperator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
                     completions = completions.concat(vimperator.history.get(filter));
-                else if (cpt[i] == "f")
-                    completions = completions.concat(this.file(filter, false)[1]);
             }
 
             return [start, completions];
@@ -237,7 +237,7 @@ vimperator.Completion = function () //{{{
             {
                 files = vimperator.io.readDirectory(dir);
                 mapped = files.map(function (file) {
-                    return [[short ? file.leafName : dir + file.leafName], file.isDirectory() ? "Directory" : "File"];
+                    return [[short ? file.leafName : (dir + file.leafName)], file.isDirectory() ? "Directory" : "File"];
                 });
             }
             catch (e)
@@ -245,7 +245,10 @@ vimperator.Completion = function () //{{{
                 return [];
             }
 
-            return [short ? dir.length : 0, buildLongestStartingSubstring(mapped, compl)];
+            if (short)
+                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
+            else
+                return [0, buildLongestStartingSubstring(mapped, filter)];
         },
 
         help: function (filter)

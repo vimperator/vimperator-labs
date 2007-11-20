@@ -734,6 +734,34 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; }
         }
     ));
+    commandManager.add(new vimperator.Command(["cd", "chd[ir]"],
+        function (args)
+        {
+            if (!args || vimperator.io.setCurrentDirectory(args))
+                vimperator.echo(vimperator.io.getCurrentDirectory());
+        },
+        {
+            usage: ["cd [-|path]"],
+            shortHelp: "Change the current directory",
+            help: "<code class='command'>:cd -</code> changes to the last directory.",
+            completer: function (filter) { return vimperator.completion.file(filter, true); }
+        }
+    ));
+    commandManager.add(new vimperator.Command(["pwd"],
+        function (args)
+        {
+            if (args)
+                vimperator.echoerr("E488: Trailing characters");
+            else
+                vimperator.echo(vimperator.io.getCurrentDirectory());
+        },
+        {
+            usage: ["cd [-|path]"],
+            shortHelp: "Change the current directory",
+            help: "<code class='command'>:cd -</code> changes to the last directory.",
+            completer: function (filter) { return vimperator.completion.file(filter, true); }
+        }
+    ));
     commandManager.add(new vimperator.Command(["com[mand]"],
         function (args)
         {
@@ -1477,10 +1505,9 @@ vimperator.Commands = function () //{{{
             help: "Multiple URLs can be separated with \", \". Note that the space after the comma is required.<br/>" +
                   "Each token is analyzed and in this order:<br/>" +
                   "<ol>" +
-                  "<li>Transformed to a relative URL of the current location if it starts with . or .. or ...;<br/>" +
-                  "... is special and moves up the directory hierarchy as far as possible." +
-                  "<ul><li><code class=\"command\">:open ...</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com\"</code></li>" +
-                  "<li><code class=\"command\">:open ./foo.html</code> with current location <code>\"http://www.example.com/dir1/dir2/file.html\"</code> opens <code>\"http://www.example.com/dir1/dir2/foo.html\"</code></li></ul></li>" +
+                  "<li>Opened as a local file if it is an existing relative or absolute filename. " +
+                  "<ul><li><code class=\"command\">:open /etc/fstab</code> shows the file system table.</li>" +
+                  "<li><code class=\"command\">:open ../other/foo.html</code> in your home directory opens <code>\"/home/other/foo.html\"</code></li></ul></li>" +
                   "<li>Opened with the specified search engine if the token looks like a search string " +
                   "and the first word is the name of a search engine (<code class=\"command\">:open wikipedia linus torvalds</code> " +
                   "opens the wikipedia entry for linus torvalds). The short name of a search engine is automatically guessed from its name. " +

@@ -504,6 +504,13 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["~"],
+        function () { vimperator.open("~"); },
+        {
+            shortHelp: "Open home directory",
+            help: "You can also use the hints to create the probably fastest file browser on earth."
+        }
+    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gh"],
         BrowserHome,
         {

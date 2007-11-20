@@ -104,27 +104,36 @@ vimperator.util = { //{{{
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
-            // FIXME: not really that good (doesn't handle .. in the middle)
-            // check for ./ and ../ (or even .../) to go to a file in the upper directory
-            if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
+            // first check if it is an existing local file
+            var file = vimperator.io.getFile(urls[url]);
+            if (file.exists())
             {
-                var tail = matches[1] || "";
-                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
+                urls[url] = file.path;
                 continue;
             }
-            else if (matches = urls[url].match(/^(?:\.\.$|\.\.\/(\S*))/))
-            {
-                var tail = matches[1] || "";
-                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1../" + tail);
-                continue;
-            }
-            else if (matches = urls[url].match(/^(?:\.\.\.$|\.\.\.\/(\S*))/))
-            {
-                var location = window.content.document.location;
-                var tail = matches[1] || "";
-                urls[url] = location.protocol + "//" + location.host + "/" + tail;
-                continue;
-            }
+
+// Disabled for now, use gu and GU or O and change the last part
+//            // FIXME: not really that good (doesn't handle .. in the middle)
+//            // check for ./ and ../ (or even .../) to go to a file in the upper directory
+//            if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
+//            {
+//                var tail = matches[1] || "";
+//                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1" + tail);  // NOTE: escape / in character sets so as not to break Vim syntax highlighting
+//                continue;
+//            }
+//            else if (matches = urls[url].match(/^(?:\.\.$|\.\.\/(\S*))/))
+//            {
+//                var tail = matches[1] || "";
+//                urls[url] = newURL.replace(/(.+\/)[^\/]*/, "$1../" + tail);
+//                continue;
+//            }
+//            else if (matches = urls[url].match(/^(?:\.\.\.$|\.\.\.\/(\S*))/))
+//            {
+//                var location = window.content.document.location;
+//                var tail = matches[1] || "";
+//                urls[url] = location.protocol + "//" + location.host + "/" + tail;
+//                continue;
+//            }
 
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine

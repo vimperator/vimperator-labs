@@ -37,6 +37,7 @@ vimperator.IO = function ()//{{{
         .getService(Components.interfaces.nsIEnvironment);
 
     const WINDOWS = navigator.platform == "Win32";
+    var cwd = null, oldcwd = null;
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -92,6 +93,41 @@ vimperator.IO = function ()//{{{
             return path;
         },
 
+        getCurrentDirectory: function ()
+        {
+            var dirs = [cwd, "$PWD", "~"];
+            for (var i = 0; i < dirs.length; i++)
+            {
+                if (!dirs[i])
+                    continue;
+
+                if (this.getFile(dirs[i]).exists())
+                    return this.expandPath(dirs[i]);
+            }
+        },
+
+        setCurrentDirectory: function (newdir)
+        {
+            if (!newdir)
+                newdir = "~";
+
+            if (newdir == "-")
+            {
+                [cwd, oldcwd] = [oldcwd, cwd];
+            }
+            else
+            {
+                newdir = this.expandPath(newdir);
+                if (!this.getFile(newdir).isDirectory())
+                {
+                    vimperator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
+                    return this.getCurrentDirectory();
+                }
+                [cwd, oldcwd] = [newdir, cwd];
+            }
+            return this.getCurrentDirectory();
+        },
+
         getPluginDir: function ()
         {
             var pluginDir;
@@ -122,6 +158,7 @@ vimperator.IO = function ()//{{{
                 return null;
         },
 
+
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
         // also expands relative paths
@@ -130,10 +167,12 @@ vimperator.IO = function ()//{{{
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
 
-            // convert relative to absolute pathnames
+            // convert relative to absolute pathname
             path = this.expandPath(path);
-            if (!/^([a-zA-Z]+:|\/)/.test(path)) // starts not with either /, C: or file:
-                path = this.expandPath("~") + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
+            if (!/^(file:|[a-zA-Z]:|\/)/.test(path)) // starts not with either /, C: or file:
+                path = this.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
+            else
+                path = path.replace(/^file:/, "");
             
             file.initWithPath(path);
             return file;
