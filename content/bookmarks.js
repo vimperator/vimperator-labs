@@ -118,7 +118,7 @@ vimperator.Bookmarks = function () //{{{
                 load();
 
             // if no protocol specified, default to http://, isn't there a better way?
-            if (!/^\w+:/.test(url))
+            if (!/^[\w-]+:/.test(url))
                 url = "http://" + url;
 
             try
@@ -142,6 +142,9 @@ vimperator.Bookmarks = function () //{{{
                 vimperator.log(e);
                 return false;
             }
+
+            // update the display of our "bookmarked" symbol
+            vimperator.statusline.updateUrl();
 
             //also update bookmark cache
             bookmarks.unshift([url, title, keyword, tags || []]);
@@ -167,9 +170,6 @@ vimperator.Bookmarks = function () //{{{
                 this.add(title, url);
                 vimperator.commandline.echo("Added bookmark: " + url + extra, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
             }
-
-            // update the display of our "bookmarked" symbol
-            vimperator.statusline.updateUrl();
         },
 
         isBookmarked: function(url)
@@ -211,6 +211,9 @@ vimperator.Bookmarks = function () //{{{
             // also update bookmark cache, if we removed at least one bookmark
             if (count.value > 0)
                 load();
+
+            // update the display of our "bookmarked" symbol
+            vimperator.statusline.updateUrl();
 
             return count.value;
         },
