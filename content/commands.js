@@ -737,7 +737,10 @@ vimperator.Commands = function () //{{{
     commandManager.add(new vimperator.Command(["cd", "chd[ir]"],
         function (args)
         {
-            if (!args || vimperator.io.setCurrentDirectory(args))
+            if (!args)
+                args = "~";
+
+            if (vimperator.io.setCurrentDirectory(args))
                 vimperator.echo(vimperator.io.getCurrentDirectory());
         },
         {

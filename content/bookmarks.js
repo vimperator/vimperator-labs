@@ -174,9 +174,13 @@ vimperator.Bookmarks = function () //{{{
 
         isBookmarked: function(url)
         {
-            var uri = ioService.newURI(url, null, null);
-            var count = {};
-            bookmarksService.getBookmarkIdsForURI(uri, count);
+            try
+            {
+                var uri = ioService.newURI(url, null, null);
+                var count = {};
+                bookmarksService.getBookmarkIdsForURI(uri, count);
+            }
+            catch (e) { return false; }
 
             return count.value > 0;
         },
