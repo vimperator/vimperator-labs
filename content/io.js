@@ -118,10 +118,11 @@ vimperator.IO = function ()//{{{
             else
             {
                 newdir = this.expandPath(newdir);
-                if (!this.getFile(newdir).isDirectory())
+                var file = this.getFile(newdir);
+                if (!file.exists() || !file.isDirectory())
                 {
                     vimperator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
-                    return this.getCurrentDirectory();
+                    return null;
                 }
                 [cwd, oldcwd] = [newdir, cwd];
             }
