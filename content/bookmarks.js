@@ -167,6 +167,18 @@ vimperator.Bookmarks = function () //{{{
                 this.add(title, url);
                 vimperator.commandline.echo("Added bookmark: " + url + extra, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
             }
+
+            // update the display of our "bookmarked" symbol
+            vimperator.statusline.updateUrl();
+        },
+
+        isBookmarked: function(url)
+        {
+            var uri = ioService.newURI(url, null, null);
+            var count = {};
+            bookmarksService.getBookmarkIdsForURI(uri, count);
+
+            return count.value > 0;
         },
 
         // returns number of deleted bookmarks

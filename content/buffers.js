@@ -683,6 +683,10 @@ vimperator.Buffer = function () //{{{
                 if (countFeeds)
                     info.push(countFeeds);
 
+                if (vimperator.bookmarks.isBookmarked(this.URL))
+                    info.push("bookmarked");
+
+
                 var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
                 vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
                 return;

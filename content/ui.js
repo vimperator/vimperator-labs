@@ -1134,6 +1134,9 @@ vimperator.StatusLine = function () //{{{
                 modified += "+";
             if (sh.index < sh.count -1)
                 modified += "-";
+            if (vimperator.bookmarks.isBookmarked(url))
+                modified += "\u2764"; // a heart symbol: ❤
+                //modified += "\u2665"; // a heart symbol: ♥
 
             if (modified)
                 url += " [" + modified + "]";
