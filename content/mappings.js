@@ -57,6 +57,7 @@ vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
         this.shortHelp = extraInfo.shortHelp || null;
 
         this.rhs = extraInfo.rhs || null;
+        this.noremap = extraInfo.noremapping || null; // XXX: needed for mkv; providing feedkeys true/false still neded?
 
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
@@ -99,7 +100,7 @@ vimperator.Mappings = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var main = []; // array of default Map() objects
-    var user = []; // array of objects created by :map
+    var user = []; // array of objects created by :map or :cmap
 
     for each (var mode in vimperator.modes)
     {
@@ -300,7 +301,7 @@ vimperator.Mappings = function () //{{{
                     list += "<tr>";
                     list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
                     if (maps[i].rhs)
-                        list += "<td> " + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
+                        list += "<td> " + (maps[i].noremap ? "*" : " ") + "</td>" + "<td>" + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
                     list += "</tr>";
                 }
             }

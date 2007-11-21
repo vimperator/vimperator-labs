@@ -659,33 +659,42 @@ vimperator.Commands = function () //{{{
     commandManager.add(new vimperator.Command(["dia[log]"],
         function (args, special)
         {
-            var openAt = special ? vimperator.NEW_TAB: vimperator.NEW_WINDOW;
-            switch (args)
+            try
             {
-            case "about": openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
-            case "addbookmark": PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); break;
-            case "addons": BrowserOpenAddonsMgr(); break;
-            case "bookmarks": openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); break;
-            case "console": toJavaScriptConsole(); break;
-            case "customizetoolbar": BrowserCustomizeToolbar(); break;
-            case "downloads": toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); break;
-            case "history": openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); break;
-            case "import": BrowserImport(); break;
-            case "openfile": BrowserOpenFileWindow(); break;
-            case "pageinfo": BrowserPageInfo(); break;
-            case "pagesource": BrowserViewSourceOfDocument(content.document); break;
-            case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
-            case "preferences": openPreferences(); break;
-                // XXX what are onEnter.. and onExit...?
-            case "printpreview": PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); break;
-            case "print": PrintUtils.print(); break;
-            case "printsetup": PrintUtils.showPageSetup(); break;
-            case "saveframe": saveFrameDocument(); break;
-            case "savepage": saveDocument(window.content.document); break;
-            case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
-                // TODO add viewPartialSource('selection'); ...
-            case "": vimperator.echoerr("E474: Invalid argument"); break;
-            default: vimperator.echoerr("Dialog '" + args + "' is not available");
+                switch (args)
+                {
+                case "about": openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
+                case "addbookmark": PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); break;
+                case "addons": BrowserOpenAddonsMgr(); break;
+                case "bookmarks": openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); break;
+                case "checkupdates": checkForUpdates(); break;
+                case "cleardata": Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); break;
+                case "console": toJavaScriptConsole(); break;
+                case "customizetoolbar": BrowserCustomizeToolbar(); break;
+                case "dominspector": inspectDOMDocument(content.document); break; // XXX: orig: _content.document
+                case "downloads": toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); break;
+                case "history": openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); break;
+                case "import": BrowserImport(); break;
+                case "openfile": BrowserOpenFileWindow(); break;
+                case "pageinfo": BrowserPageInfo(); break;
+                case "pagesource": BrowserViewSourceOfDocument(content.document); break;
+                case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
+                case "preferences": openPreferences(); break;
+                    // XXX what are onEnter.. and onExit...?
+                case "printpreview": PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); break;
+                case "print": PrintUtils.print(); break;
+                case "printsetup": PrintUtils.showPageSetup(); break;
+                case "saveframe": saveFrameDocument(); break;
+                case "savepage": saveDocument(window.content.document); break;
+                case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
+                    // TODO add viewPartialSource('selection'); ...
+                case "": vimperator.echoerr("E474: Invalid argument"); break;
+                default: vimperator.echoerr("Dialog '" + args + "' not available");
+                }
+            }
+            catch(err)
+            {
+                vimperator.echoerr("Error opening '" + args + "': " + err);
             }
         },
         {
@@ -1286,44 +1295,56 @@ vimperator.Commands = function () //{{{
     // 0 args -> list all maps
     // 1 arg  -> list the maps starting with args
     // 2 args -> map arg1 to arg*
-    function map(args, noremap)
+    function map(args, mode, noremap)
     {
-        if (!args)
+        for (var index = 0; index < mode.length; index++) // XXX: actually no multi-modes arrives here
         {
-            vimperator.mappings.list(vimperator.modes.NORMAL);
-            return;
-        }
+            if (!args) // TODO: list: function -> allow multiple modes, if once necessary
+            {
+                vimperator.mappings.list(mode[index]);
+                return;
+            }
 
-        var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-        var [lhs, rhs] = [matches[1], matches[2]];
-        var leaderRegexp = /<Leader>/i;
+            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
+            var [lhs, rhs] = [matches[1], matches[2]];
+            var leaderRegexp = /<Leader>/i;
 
-        if (leaderRegexp.test(lhs))
-        {
-            var leaderRef = vimperator.variableReference("mapleader");
-            var leader = leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
+            if (leaderRegexp.test(lhs))
+            {
+                var leaderRef = vimperator.variableReference("mapleader");
+                var leader = leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
 
-            lhs = lhs.replace(leaderRegexp, leader);
-        }
+                lhs = lhs.replace(leaderRegexp, leader);
+            }
 
-        if (rhs)
-        {
-            vimperator.mappings.add(new vimperator.Map([vimperator.modes.NORMAL], [lhs],
-                function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
-                { flags: vimperator.Mappings.flags.COUNT, rhs: rhs }
-            ));
-        }
-        else
-        {
-            // FIXME: no filtering for now
-            vimperator.mappings.list(vimperator.modes.NORMAL, lhs);
+            if (rhs)
+            {
+                vimperator.mappings.add(new vimperator.Map([mode[index]], [lhs],
+                    function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                    { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremapping: noremap}
+                ));
+            }
+            else
+            {
+                // FIXME: no filtering for now
+                vimperator.mappings.list(mode[index], lhs);
+            }
         }
     }
     commandManager.add(new vimperator.Command(["map"],
-        function (args) { map(args, false); },
+        function (args) { map(args, [vimperator.modes.NORMAL], false); },
         {
             usage: ["map {lhs} {rhs}", "map {lhs}", "map"],
             shortHelp: "Map the key sequence {lhs} to {rhs}",
+            help: "The <code class=\"argument\">{rhs}</code> is remapped, allowing for nested and recursive mappings.<br/>" +
+                  "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
+        }
+    ));
+    commandManager.add(new vimperator.Command(["cm[ap]"],
+        function (args) { map(args, [vimperator.modes.COMMAND_LINE], false); },
+        {
+            usage: ["cmap {lhs} {rhs}", "cmap {lhs}", "cmap"],
+            shortHelp: "Map the key sequence {lhs} to {rhs} (in command-line mode)",
             help: "The <code class=\"argument\">{rhs}</code> is remapped, allowing for nested and recursive mappings.<br/>" +
                   "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
         }
@@ -1343,6 +1364,23 @@ vimperator.Commands = function () //{{{
             shortHelp: "Remove all mappings",
             help: "All user-defined mappings which were set by " +
                   "<code class=\"command\">:map</code> or <code class=\"command\">:noremap</code> are cleared."
+        }
+    ));
+    commandManager.add(new vimperator.Command(["cmapc[lear]"],
+        function (args)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            vimperator.mappings.removeAll(vimperator.modes.COMMAND_LINE);
+        },
+        {
+            shortHelp: "Remove all mappings (in command-line mode)",
+            help: "All user-defined mappings which were set by " +
+                  "<code class=\"command\">:cmap</code> or <code class=\"command\">:cnoremap</code> are cleared."
         }
     ));
     commandManager.add(new vimperator.Command(["ma[rk]"],
@@ -1411,10 +1449,14 @@ vimperator.Commands = function () //{{{
             line += "\" Mappings\n";
 
             // TODO: write user maps for all modes when we have mode dependant map support
-            for (var map in vimperator.mappings.getUserIterator(vimperator.modes.NORMAL))
+            var mode = [[vimperator.modes.NORMAL, ""], [vimperator.modes.COMMAND_LINE, "c"]];
+            for (var y = 0; y < mode.length; y++)
             {
-                for (var i = 0; i < map.names.length; i++)
-                    line += "map " + map.names[i] + " " + map.rhs + "\n";
+                for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
+                {
+                    for (var i = 0; i < map.names.length; i++)
+                        line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[i] + " " + map.rhs + "\n";
+                }
             }
 
             line += "\n\" Options\n";
@@ -1480,10 +1522,19 @@ vimperator.Commands = function () //{{{
     ));
     // TODO: remove duplication in :map
     commandManager.add(new vimperator.Command(["no[remap]"],
-        function (args) { map(args, true); },
+        function (args) { map(args, [vimperator.modes.NORMAL], true); },
         {
             usage: ["no[remap] {lhs} {rhs}", "no[remap] {lhs}", "no[remap]"],
             shortHelp: "Map the key sequence {lhs} to {rhs}",
+            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
+        }
+    ));
+    // XXX: TODO: remove duplication in :cmap
+    commandManager.add(new vimperator.Command(["cno[remap]"],
+        function (args) { map(args, [vimperator.modes.COMMAND_LINE], true); },
+        {
+            usage: ["cno[remap] {lhs} {rhs}", "cno[remap] {lhs}", "cno[remap]"],
+            shortHelp: "Map the key sequence {lhs} to {rhs} (in command-line mode)",
             help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
         }
     ));
@@ -2290,6 +2341,28 @@ vimperator.Commands = function () //{{{
         {
             usage: ["unm[ap] {lhs}"],
             shortHelp: "Remove the mapping of {lhs}",
+            help: ""
+        }
+    ));
+    commandManager.add(new vimperator.Command(["cunm[ap]"],
+        function (args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            var lhs = args;
+
+            if (vimperator.mappings.hasMap(vimperator.modes.COMMAND_LINE, lhs))
+                vimperator.mappings.remove(vimperator.modes.COMMAND_LINE, lhs);
+            else
+                vimperator.echoerr("E31: No such mapping");
+        },
+        {
+            usage: ["cunm[ap] {lhs}"],
+            shortHelp: "Remove the mapping of {lhs} (in command-line mode)",
             help: ""
         }
     ));
