@@ -214,7 +214,7 @@ vimperator.Search = function () //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () { self.findAgain(false); }, 0);
+                setTimeout(function () { vimperator.search.findAgain(false); }, 0);
 
             if (vimperator.options["hlsearch"])
                 this.highlight(searchString);
