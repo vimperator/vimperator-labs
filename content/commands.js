@@ -1824,11 +1824,11 @@ vimperator.Commands = function () //{{{
             }
             else if (/^\d+$/.test(args))
             {
-                level = parseInt(args);
+                level = parseInt(args, 10);
             }
             else if (/^[+-]\d+$/.test(args))
             {
-                level = vimperator.buffer.textZoom + parseInt(args);
+                level = vimperator.buffer.textZoom + parseInt(args, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < 1)

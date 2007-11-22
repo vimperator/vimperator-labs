@@ -290,7 +290,7 @@ vimperator.Hints = function () //{{{
         var doc = win.document;
         var elem, i;
 
-        //var hintId = parseInt(id, nums.length);
+        //var hintId = parseInt(id, nums.length, 10);
         //elem = doc.getElementById(prefix + hintId);
         elem = doc.getElementById(HINT_PREFIX + id);
 
@@ -329,7 +329,7 @@ vimperator.Hints = function () //{{{
         }
 
         for (var i = 0; i < str.length; i++)
-            result += (hintCharacters.charAt(parseInt(str[i], hintCharacters.length))).toUpperCase();
+            result += (hintCharacters.charAt(parseInt(str[i], hintCharacters.length, 10))).toUpperCase();
 
         return result;
     }
