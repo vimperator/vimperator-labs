@@ -615,7 +615,7 @@ vimperator.Events = function () //{{{
                 map = vimperator.mappings.get(vimperator.modes.NORMAL, candidateCommand);
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
+            if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
             {
                 // no count for insert mode mappings
                 if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))

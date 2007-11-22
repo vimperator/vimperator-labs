@@ -166,7 +166,7 @@ vimperator.Bookmarks = function () //{{{
             for (var i in firefoxEngines)
             {
                 var alias = firefoxEngines[i].alias;
-                if (!alias || !alias.match(/^[a-z0-9_-]+$/))
+                if (!alias || !/^[a-z0-9_-]+$/.test(alias))
                     alias = firefoxEngines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
                 if (!alias)
                     alias = "search"; // for search engines which we can't find a suitable alias

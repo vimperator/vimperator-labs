@@ -116,7 +116,7 @@ vimperator.Command.prototype.hasName = function (name)
         {
             return true;
         }
-        else if (this.specs[i].match(/^(\w+|!)\[\w+\]$/)) // abbreviation spec
+        else if (/^(\w+|!)\[\w+\]$/.test(this.specs[i])) // abbreviation spec
         {
             if (matchAbbreviation(name, this.specs[i]))
                 return true;
@@ -713,19 +713,19 @@ vimperator.Commands = function () //{{{
                 return;
             }
 
-            var match;
+            var matches;
             // 1 - type, 2 - name, 3 - +-., 4 - expr
-            if (match = args.match(/([$@&])?([\w:]+)\s*([+-.])?=\s*(.+)/))
+            if (matches = args.match(/([$@&])?([\w:]+)\s*([+-.])?=\s*(.+)/))
             {
-                if (!match[1])
+                if (!matches[1])
                 {
-                    var reference = vimperator.variableReference(match[2]);
-                    if (!reference[0] && match[3])
-                        return vimperator.echoerr("E121: Undefined variable: " + match[2]);
+                    var reference = vimperator.variableReference(matches[2]);
+                    if (!reference[0] && matches[3])
+                        return vimperator.echoerr("E121: Undefined variable: " + matches[2]);
 
-                    var expr = vimperator.eval(match[4]);
+                    var expr = vimperator.eval(matches[4]);
                     if (typeof expr === undefined)
-                        return vimperator.echoerr("E15: Invalid expression: " + match[4]);
+                        return vimperator.echoerr("E15: Invalid expression: " + matches[4]);
                     else
                     {
                         if (!reference[0])
@@ -736,13 +736,13 @@ vimperator.Commands = function () //{{{
                                 return; // for now
                         }
 
-                        if (match[3])
+                        if (matches[3])
                         {
-                            if (match[3] == "+")
+                            if (matches[3] == "+")
                                 reference[0][reference[1]] += expr;
-                            else if (match[3] == "-")
+                            else if (matches[3] == "-")
                                 reference[0][reference[1]] -= expr;
-                            else if (match[3] == ".")
+                            else if (matches[3] == ".")
                                 reference[0][reference[1]] += expr.toString();
                         }
                         else
@@ -751,11 +751,11 @@ vimperator.Commands = function () //{{{
                 }
             }
             // 1 - name
-            else if (match = args.match(/^\s*([\w:]+)\s*$/))
+            else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
-                var reference = vimperator.variableReference(match[1]);
+                var reference = vimperator.variableReference(matches[1]);
                 if (!reference[0])
-                    return vimperator.echoerr("E121: Undefined variable: " + match[1]);
+                    return vimperator.echoerr("E121: Undefined variable: " + matches[1]);
 
                 var value = reference[0][reference[1]];
                 if (typeof value == "number")

@@ -298,7 +298,7 @@ vimperator.Options = function () //{{{
 
     // work around firefox popup blocker
     var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
-    if (!popupAllowedEvents.match("keypress"))
+    if (!/keypress/.test(popupAllowedEvents))
         storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
 
     // TODO: shouldn't we be resetting these in destroy() as well?
