@@ -36,7 +36,7 @@ vimperator.util = { //{{{
         // var e = window.content.document.createElement("div");
         // e.appendChild(window.content.document.createTextNode(str));
         // return e.innerHTML;
-        return str.replace("&", "&amp;", "g").replace("<", "&lt;", "g").replace(">", "&gt;", "g");
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
     // TODO: use :highlight color groups
