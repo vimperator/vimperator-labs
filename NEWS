@@ -1,13 +1,15 @@
 <pre>
 2007-xx-xx:
 	* version 0.6
-	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0
-	* IMPORTANT! options are no longer automatically stored - use the
+	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
+	* IMPORTANT: options are no longer automatically stored - use the
 	  ~/.vimperatorrc file instead for persistent options
-	* IMPORTANT! Major hints rewrite
+	* IMPORTANT: Major hints rewrite
 	  read up the new help for the f, F and ; commands for details
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
+	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+	* new ctrl-x and ctrl-a mappings to increment the last number in the URL
 	* new ~ mapping to open the home directory
 	* :open tries to open a relative filename now, if you do a :open foo.html
 	  or :open ../hello.txt;
@@ -24,7 +26,6 @@
 	* tags and keyword support for :bmark
 	* added full zoom, and changed keybindings slightly for text zoom
 	* improvements for scrollable -- more -- prompt
-	* changed 'I' key to Ctrl-Q to also work in textboxes
 	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
 	* new gi browser command to focus last used input box
 	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode

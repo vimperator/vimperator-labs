@@ -173,7 +173,7 @@ vimperator.IO = function () //{{{
             if (!/^(file:|[a-zA-Z]:|\/)/.test(path)) // starts not with either /, C: or file:
                 path = this.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
             else
-                path = path.replace(/^file:/, "");
+                path = path.replace(/^file:(\/\/)?/, "");
             
             file.initWithPath(path);
             return file;

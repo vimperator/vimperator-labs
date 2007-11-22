@@ -98,21 +98,19 @@ vimperator.util = { //{{{
 
         begin: for (var url = 0; url < urls.length; url++)
         {
-            var newURL = vimperator.buffer.URL;
-            var matches;
-
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
             // first check if it is an existing local file
             var file = vimperator.io.getFile(urls[url]);
-            if (file.exists())
+            if (file.exists() && file.isReadable())
             {
                 urls[url] = file.path;
                 continue;
             }
 
 // Disabled for now, use gu and GU or O and change the last part
+//            var newURL = vimperator.buffer.URL;
 //            // FIXME: not really that good (doesn't handle .. in the middle)
 //            // check for ./ and ../ (or even .../) to go to a file in the upper directory
 //            if (matches = urls[url].match(/^(?:\.$|\.\/(\S*))/))
@@ -138,6 +136,7 @@ vimperator.util = { //{{{
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine
             // or keyword bookmark
+            var matches;
             if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
             {
                 matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);

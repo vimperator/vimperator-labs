@@ -872,6 +872,44 @@ vimperator.Mappings = function () //{{{
                   "Works like <code class=\"command\">:xall</code>."
         }
     ));
+    function incrementURL(count)
+    {
+        var url = vimperator.buffer.URL;
+        var regex = /(.*?)(-?\d+)(\D*)$/;
+
+        var res = url.match(regex);
+        if(!res || !res[2]) // no number to increment
+        {
+            vimperator.beep();
+            return;
+        }
+
+        var newNum = parseInt(res[2], 10) + count + ""; // "" to make sure its a string
+        var nums = newNum.match(/^(-?)(\d+)$/);
+        var oldLength = res[2].replace(/-/, "").length, newLength = nums[2].length;
+        newNum = nums[1] || "";
+        for (let i = 0; i < oldLength - newLength; i++)
+            newNum += "0"; // keep leading zeros
+        newNum += nums[2];
+
+        vimperator.open(res[1] + newNum + res[3]);
+    }
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-x>"],
+        function (count) { if(count < 1) count = 1; incrementURL(-count); },
+        {
+            shortHelp: "Decrement last number in URL",
+            help: "Decrements the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-a>"],
+        function (count) { if(count < 1) count = 1; incrementURL(count); },
+        {
+            shortHelp: "Increment last number in URL",
+            help: "Increments the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
 
     // scrolling commands
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["0", "^"],
@@ -1042,37 +1080,44 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    function isDirectory(url)
-    {
-        if (/^file:\/\/|^\//.test(url))
-        {
-            var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-            var file = vimperator.io.getFile(strippedFilename);
-            if (!file || !file.isDirectory())
-                return false;
-            else
-                return true;
-        }
-
-        // for all other locations just check if the URL ends with /
-        return /\/$/.test(url);
-    }
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gu", "<BS>"],
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gu"],
         function (count)
         {
-            var gocmd = "";
-            if (isDirectory(vimperator.buffer.URL))
-                gocmd = "../";
-            else
-                gocmd = "./";
+            function isDirectory(url)
+            {
+                if (/^file:\/|^\//.test(url))
+                {
+                    //var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
+                    var file = vimperator.io.getFile(url);
+                    if (!file.exists() || !file.isDirectory())
+                        return false;
+                    else
+                        return true;
+                }
+
+                // for all other locations just check if the URL ends with /
+                return /\/$/.test(url);
+            }
 
             if (count < 1)
                 count = 1;
 
-            for (var i = 0; i < count - 1; i++)
-                gocmd += "../";
+            var url = vimperator.buffer.URL;
+            for (var i = 0; i < count; i++)
+            {
+                if (isDirectory(url))
+                    url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/")
+                else
+                    url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/")
+            }
+            url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
 
-            vimperator.open(gocmd);
+            if (url == vimperator.buffer.URL)
+            {
+                vimperator.beep();
+                return;
+            }
+            vimperator.open(url);
         },
         {
             shortHelp: "Go to parent directory",
@@ -1080,12 +1125,21 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gU", "<C-BS>"],
-        function () { vimperator.open("..."); },
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gU"],
+        function ()
+        {
+            var uri = content.document.location;
+            if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
+            {
+                vimperator.beep();
+                return;
+            }
+            vimperator.open(uri.protocol + "//" + (uri.host || "") + "/");
+        },
         {
             shortHelp: "Go to the root of the website",
             help: "<code class=\"mapping\">gU</code> on <code>http://www.example.com/dir1/dir2/file.htm</code> opens <code>http://www.example.com/</code>.<br/>" +
-                  "When browsing a local directory, it goes to the root document."
+                  "When browsing a local directory, it goes to the root directory."
         }
     ));
 

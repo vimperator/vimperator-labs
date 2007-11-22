@@ -40,9 +40,6 @@ RANDOM IDEAS:
 * numbered tabs
 * Would it be possible to add a setting "maxcompletionsshown" and 
   "maxpreviewwindowheight" or something like this?
-* 16:06:04       bartman| maxauthority: feature idea: what if :n and :N searched the 
-                        page and if they found a unique href=*next.* or 
-                        href=.*prev.* they would follow that link?
 * hide scrollbars: http://rafb.net/p/YHRhEe47.html (window.content.document.body.style.overflow = "hidden")
 
 </pre>
