@@ -611,7 +611,7 @@ vimperator.Options = function () //{{{
                   "<ul>" +
                   "<li><b>0</b>: Force to open in the current tab (NOTE: this can stop some web sites from working correctly!)</li>" +
                   "<li><b>1</b>: Always open in a new tab</li>" +
-                  "<li><b>2</b>: Open in a new window if it has a specific requested size (default in Firefox)</li>"+
+                  "<li><b>2</b>: Open in a new window if it has a specific requested size (default in Firefox)</li>" +
                   "<li><b>3</b>: Always open in a new window</li>" +
                   "</ul>" +
                   "NOTE: This option does not change the popup blocker of Firefox in any way.",
