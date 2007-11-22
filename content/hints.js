@@ -24,11 +24,11 @@
 
 vimperator.Hints = function () //{{{
 {
-    const HINT_PREFIX = "hah_hint_"; // prefix for the hint id
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.hintedElements = function () { return hintedElems; };
-    this.currentState = function () { return state;};
-    this.setCurrentState = function (s) { state = s;};
+    const HINT_PREFIX = "hah_hint_"; // prefix for the hint id
 
     var isHahModeEnabled = false; // is typing mode on
     var hintedElems = [];
@@ -68,27 +68,6 @@ vimperator.Hints = function () //{{{
         win.coordLoaderId = window.setTimeout("vimperator.hints.loadCoord(" + win.winId + ", 0);", 1);
     }
 
-    this.loadCoord = function (winId, i)
-    {
-        win = wins[winId];
-
-        // win.res is not ready when loading has not finished yet
-        if (!win.res)
-            return;
-
-        var elem = win.res.snapshotItem(i);
-
-        if (elem)
-            genElemCoords(elem);
-
-        i++;
-
-        if (i < win.res.snapshotLength && !isHahModeEnabled)
-            window.setTimeout("vimperator.hints.loadCoord(" + winId + ", "+ i +");", 1);
-        else
-            win.coordLoaderId = null;
-    };
-
     function genElemCoords(elem)
     {
         // NOTE: experiment for making the function faster, report problems
@@ -101,7 +80,7 @@ vimperator.Hints = function () //{{{
         //}
         //return;
 
-        if (typeof(elem.validCoord) != "undefined")
+        if (typeof elem.validCoord != "undefined")
         {
             if (elem.validCoord == elem.ownerDocument.validCoords)
                 return;
@@ -157,7 +136,7 @@ vimperator.Hints = function () //{{{
             if (!hintContainer)
                 return false;
         }
-        hintContainer.valid_hint_count = 0; // none of these hints should be visible initially
+        hintContainer.validHintCount = 0; // none of these hints should be visible initially
 
         var hints = hintContainer.childNodes;
         var maxhints = vimperator.options["maxhints"];
@@ -197,7 +176,7 @@ vimperator.Hints = function () //{{{
             hintElem.style.left = elem.absoLeft + "px";
             hintElem.refElem = elem;
 
-            hintContainer.valid_hint_count++; // one more visible hint in this frame
+            hintContainer.validHintCount++; // one more visible hint in this frame
             linkCount++;                      // and one more total hint
         }
 
@@ -235,7 +214,7 @@ vimperator.Hints = function () //{{{
         var hints = hintContainer.childNodes;
         var i, j;
 
-        for (i = 0; i < hintContainer.valid_hint_count; i++)
+        for (i = 0; i < hintContainer.validHintCount; i++)
         {
             hintText = formatHint(offset+i);
             hintElem = hints[i];
@@ -244,7 +223,7 @@ vimperator.Hints = function () //{{{
             hintElem.innerHTML = hintText;
             hintElem.id = HINT_PREFIX + hintText;
         }
-        offset += hintContainer.valid_hint_count;
+        offset += hintContainer.validHintCount;
 
         // recursively show hints
         for (j = 0; j < win.frames.length; j++)
@@ -260,7 +239,7 @@ vimperator.Hints = function () //{{{
             win = window.content;
 
         var doc = win.document;
-        var res = vimperator.buffer.evaluateXPath("//HINTS/SPAN", doc)
+        var res = vimperator.buffer.evaluateXPath("//HINTS/SPAN", doc);
         var elem, i;
 
         for (i = 0; i < res.snapshotLength; i++)
@@ -387,283 +366,6 @@ vimperator.Hints = function () //{{{
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // basic functionality
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Enables the HaH-mode by showing the hints and prepare to input the
-     * hint numbers
-     *
-     * @author Pekka Sillanpaa
-     * @param event that caused the mode to change
-     * @return -1 if already enabled
-     */
-    //function enableHahMode(event, mode)
-    this.enableHahMode = function (mode)
-    {
-        vimperator.setMode(vimperator.modes.HINTS, mode);
-        state = 0;
-        linkCount = 0;
-        linkNumString = "";
-        isHahModeEnabled = true;
-
-        createHints();
-        showHints(null, 0);
-
-        return true;
-    }
-
-    /**
-     * Disables the HaH-mode by hiding the hints and disabling the input mode
-     *
-     * @author Pekka Sillanpaa
-     * @param event that caused the mode to change
-     * @param action = true if something is to be clicked
-     *                 false if cancel
-     * @return -1 if already disabled
-     */
-    //function disableHahMode(event)
-    this.disableHahMode = function (win)
-    {
-        if (!isHahModeEnabled)
-            return;
-
-        vimperator.setMode(vimperator.modes.NORMAL);
-        isHahModeEnabled = false;
-        linkNumString = "";
-        hintedElems = [];
-
-        removeHints(win);
-        return 0;
-    };
-
-    this.resetHintedElements = function ()
-    {
-        linkNumString = "";
-        state = 0;
-
-        while (hintedElems.length > 0)
-        {
-            var elem = hintedElems.pop();
-            if (!elem)
-                return 0;
-            // reset style attribute
-            setHintStyle(elem, vimperator.options["hintstyle"]);
-        }
-    };
-
-
-    this.reshowHints = function ()
-    {
-        onResize(null);
-
-        if (isHahModeEnabled)
-        {
-            removeHints();
-            createHints();
-            showHints(null, 0);
-        }
-    };
-
-
-    // TODO: move these functions somewhere more general
-
-    // this function 'click' an element, which also works
-    // for javascript links
-    this.openHints = function (new_tab, new_window)
-    {
-        var x = 0, y = 0;
-
-        while (hintedElems.length > 0)
-        {
-            var elem = hintedElems.pop();
-            if (!elem)
-                return 0;
-
-            setHintStyle(elem, vimperator.options["hintstyle"]);
-            elem = elem.refElem;
-            var elemTagName = elem.localName.toLowerCase();
-            elem.focus();
-
-            if (elemTagName == "frame" || elemTagName == "iframe")
-                return 0;
-
-            // for imagemap
-            if (elemTagName == "area")
-            {
-                var coords = elem.getAttribute("coords").split(",");
-                x = Number(coords[0]);
-                y = Number(coords[1]);
-            }
-            var doc = window.content.document;
-            var view = window.document.defaultView;
-
-            var evt = doc.createEvent("MouseEvents");
-            evt.initMouseEvent("mousedown", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-            elem.dispatchEvent(evt);
-
-            var evt = doc.createEvent("MouseEvents");
-            evt.initMouseEvent("click", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ new_tab, /*event.altKey*/0, /*event.shiftKey*/ new_window, /*event.metaKey*/ new_tab, 0, null);
-            elem.dispatchEvent(evt);
-
-            // for 'pure' open calls without a new tab or window it doesn't
-            // make sense to open more hints in the current tab, open new tabs
-            // for it
-            if (!new_tab && !new_window)
-                new_tab = true;
-        }
-
-        return 0;
-    };
-
-    this.yankUrlHints = function ()
-    {
-        var loc = "";
-        var elems = this.hintedElements();
-        var tmp = "";
-        for (var i = 0; i < elems.length; i++)
-        {
-            tmp = elems[i].refElem.href;
-            if (typeof(tmp) != "undefined" && tmp.length > 0)
-            {
-                if (i > 0)
-                    loc += "\n";
-                loc += tmp;
-            }
-        }
-
-        // disable the hints before we can echo() an information
-        this.disableHahMode(null, true);
-
-        vimperator.copyToClipboard(loc);
-        vimperator.echo("Yanked " + loc);
-    };
-
-    this.yankTextHints = function ()
-    {
-        var loc = "";
-        var elems = this.hintedElements();
-        var tmp = "";
-        for (var i = 0; i < elems.length; i++)
-        {
-            tmp = elems[i].refElem.textContent;
-            if (typeof(tmp) != "undefined" && tmp.length > 0)
-            {
-                if (i > 0)
-                    loc += "\n";
-                loc += tmp;
-            }
-        }
-
-        // disable the hints before we can echo() an information
-        this.disableHahMode(null, true);
-
-        vimperator.copyToClipboard(loc);
-        vimperator.echo("Yanked " + loc);
-    };
-
-    this.saveHints = function (skip_prompt)
-    {
-        var elems = this.hintedElements();
-
-        for (var i = 0; i < elems.length; i++)
-        {
-            var doc  = elems[i].ownerDocument;
-            var url = makeURLAbsolute(elems[i].refElem.baseURI, elems[i].refElem.href);
-            var text = elems[i].refElem.textContent;
-
-            try
-            {
-                urlSecurityCheck(url, doc.location.href);
-                saveURL(url, text, null, true, skip_prompt, makeURI(url, doc.characterSet));
-            }
-            catch (e)
-            {
-                vimperator.echoerr(e);
-            }
-        }
-    }
-
-    function setMouseOverElement(elem)
-    {
-        var doc = window.document;
-        var elemTagName = elem.localName.toLowerCase();
-
-        if (elemTagName == "frame" || elemTagName == "iframe")
-        {
-            elem.contentWindow.focus();
-            return;
-        }
-        //else
-        //{
-        //    elem.focus();
-        //}
-
-        var evt = doc.createEvent("MouseEvents");
-        var x = 0;
-        var y = 0;
-        // for imagemap
-        if (elemTagName == "area")
-        {
-            var coords = elem.getAttribute("coords").split(",");
-            x = Number(coords[0]);
-            y = Number(coords[1]);
-        }
-
-        evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
-        elem.dispatchEvent(evt);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // event handlers
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // returns nr. of fully parsed links when a new hint has been found,
-    // otherwise 0 if current state is part of a hint, or -1 if an error occured
-    // (like we have typed keys which never can become a hint
-    this.processEvent = function (event)
-    {
-        if (!isHahModeEnabled)
-            return -1;
-
-        // reset state to show that we are in processing mode
-        state = 0;
-
-        var num = String.fromCharCode(event.charCode).toUpperCase();
-        var hintCharacters = vimperator.options["hintchars"];
-        if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
-        {
-            var oldLinkNumString = linkNumString;
-            linkNumString += "" + num;
-            // update reference to currently selected node;
-            var elem = getHintById(linkNumString);
-            changeHintFocus(linkNumString, oldLinkNumString);
-
-            // if we found the hint, fine just return it
-            if (elem)
-            {
-                hintedElems.push(elem);
-                linkNumString = "";
-                state = 1;
-                return hintedElems.length;
-            }
-
-            //calculate how many characters a hint must have
-            var hintLength = 1;
-            var tmp = linkCount;
-            while ((tmp /= hintCharacters.length) > 1.0)
-                hintLength++;
-
-            if (linkNumString.length >= hintLength)
-                return -1;
-            else
-                return 0;
-        }
-        // an unparseable or wrong key
-        return -1;
-    }
-
     function genHintContainer(doc)
     {
         if (doc.getElementsByTagName("HINTS").length > 0)
@@ -671,7 +373,7 @@ vimperator.Hints = function () //{{{
 
         hints = doc.createElement("HINTS");
         hints.id = "hah_hints";
-        hints.valid_hint_count = 0; // initially 0 elements are usable as hints
+        hints.validHintCount = 0; // initially 0 elements are usable as hints
 
         if (doc.body)
             doc.body.appendChild(hints);
@@ -706,16 +408,329 @@ vimperator.Hints = function () //{{{
             linkNumString = "";
             isHahModeEnabled = true;
 
-            setTimeout( function () {
+            setTimeout(function () {
                 createHints();
                 showHints(null, 0);
             }, 100);
         }
     }
 
+    function setMouseOverElement(elem)
+    {
+        var doc = window.document;
+        var elemTagName = elem.localName.toLowerCase();
+
+        if (elemTagName == "frame" || elemTagName == "iframe")
+        {
+            elem.contentWindow.focus();
+            return;
+        }
+        //else
+        //{
+        //    elem.focus();
+        //}
+
+        var evt = doc.createEvent("MouseEvents");
+        var x = 0;
+        var y = 0;
+        // for imagemap
+        if (elemTagName == "area")
+        {
+            var coords = elem.getAttribute("coords").split(",");
+            x = Number(coords[0]);
+            y = Number(coords[1]);
+        }
+
+        evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+        elem.dispatchEvent(evt);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var hintManager = {
+
+        get hintedElements() { return hintedElems; },
+        get currentState() { return state; },
+        get setCurrentState(s) { state = s; },
+
+        loadCoord: function (winId, i)
+        {
+            win = wins[winId];
+
+            // win.res is not ready when loading has not finished yet
+            if (!win.res)
+                return;
+
+            var elem = win.res.snapshotItem(i);
+
+            if (elem)
+                genElemCoords(elem);
+
+            i++;
+
+            if (i < win.res.snapshotLength && !isHahModeEnabled)
+                window.setTimeout("vimperator.hints.loadCoord(" + winId + ", "+ i +");", 1);
+            else
+                win.coordLoaderId = null;
+        },
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // basic functionality
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Enables the HaH-mode by showing the hints and prepare to input the
+         * hint numbers
+         *
+         * @author Pekka Sillanpaa
+         * @param event that caused the mode to change
+         * @return -1 if already enabled
+         */
+        //function enableHahMode(event, mode)
+        enableHahMode: function (mode)
+        {
+            vimperator.setMode(vimperator.modes.HINTS, mode);
+            state = 0;
+            linkCount = 0;
+            linkNumString = "";
+            isHahModeEnabled = true;
+
+            createHints();
+            showHints(null, 0);
+
+            return true;
+        },
+
+        /**
+         * Disables the HaH-mode by hiding the hints and disabling the input mode
+         *
+         * @author Pekka Sillanpaa
+         * @param event that caused the mode to change
+         * @param action = true if something is to be clicked
+         *                 false if cancel
+         * @return -1 if already disabled
+         */
+        //function disableHahMode(event)
+        disableHahMode: function (win)
+        {
+            if (!isHahModeEnabled)
+                return;
+
+            vimperator.setMode(vimperator.modes.NORMAL);
+            isHahModeEnabled = false;
+            linkNumString = "";
+            hintedElems = [];
+
+            removeHints(win);
+            return 0;
+        },
+
+        resetHintedElements: function ()
+        {
+            linkNumString = "";
+            state = 0;
+
+            while (hintedElems.length > 0)
+            {
+                var elem = hintedElems.pop();
+                if (!elem)
+                    return 0;
+                // reset style attribute
+                setHintStyle(elem, vimperator.options["hintstyle"]);
+            }
+        },
+
+
+        reshowHints: function ()
+        {
+            onResize(null);
+
+            if (isHahModeEnabled)
+            {
+                removeHints();
+                createHints();
+                showHints(null, 0);
+            }
+        },
+
+
+        // TODO: move these functions somewhere more general
+
+        // this function 'click' an element, which also works
+        // for javascript links
+        openHints: function (newTab, newWindow)
+        {
+            var x = 0, y = 0;
+
+            while (hintedElems.length > 0)
+            {
+                var elem = hintedElems.pop();
+                if (!elem)
+                    return 0;
+
+                setHintStyle(elem, vimperator.options["hintstyle"]);
+                elem = elem.refElem;
+                var elemTagName = elem.localName.toLowerCase();
+                elem.focus();
+
+                if (elemTagName == "frame" || elemTagName == "iframe")
+                    return 0;
+
+                // for imagemap
+                if (elemTagName == "area")
+                {
+                    var coords = elem.getAttribute("coords").split(",");
+                    x = Number(coords[0]);
+                    y = Number(coords[1]);
+                }
+                var doc = window.content.document;
+                var view = window.document.defaultView;
+
+                var evt = doc.createEvent("MouseEvents");
+                evt.initMouseEvent("mousedown", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
+                elem.dispatchEvent(evt);
+
+                var evt = doc.createEvent("MouseEvents");
+                evt.initMouseEvent("click", true, true, view, 1, x + 1, y + 1, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
+                elem.dispatchEvent(evt);
+
+                // for 'pure' open calls without a new tab or window it doesn't
+                // make sense to open more hints in the current tab, open new tabs
+                // for it
+                if (!newTab && !newWindow)
+                    newTab = true;
+            }
+
+            return 0;
+        },
+
+        yankUrlHints: function ()
+        {
+            var loc = "";
+            var elems = this.hintedElements();
+            var tmp = "";
+            for (var i = 0; i < elems.length; i++)
+            {
+                tmp = elems[i].refElem.href;
+                if (typeof tmp != "undefined" && tmp.length > 0)
+                {
+                    if (i > 0)
+                        loc += "\n";
+                    loc += tmp;
+                }
+            }
+
+            // disable the hints before we can echo() an information
+            this.disableHahMode(null, true);
+
+            vimperator.copyToClipboard(loc);
+            vimperator.echo("Yanked " + loc);
+        },
+
+        yankTextHints: function ()
+        {
+            var loc = "";
+            var elems = this.hintedElements();
+            var tmp = "";
+            for (var i = 0; i < elems.length; i++)
+            {
+                tmp = elems[i].refElem.textContent;
+                if (typeof tmp != "undefined" && tmp.length > 0)
+                {
+                    if (i > 0)
+                        loc += "\n";
+                    loc += tmp;
+                }
+            }
+
+            // disable the hints before we can echo() an information
+            this.disableHahMode(null, true);
+
+            vimperator.copyToClipboard(loc);
+            vimperator.echo("Yanked " + loc);
+        },
+
+        saveHints: function (skipPrompt)
+        {
+            var elems = this.hintedElements();
+
+            for (var i = 0; i < elems.length; i++)
+            {
+                var doc  = elems[i].ownerDocument;
+                var url = makeURLAbsolute(elems[i].refElem.baseURI, elems[i].refElem.href);
+                var text = elems[i].refElem.textContent;
+
+                try
+                {
+                    urlSecurityCheck(url, doc.location.href);
+                    saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
+                }
+                catch (e)
+                {
+                    vimperator.echoerr(e);
+                }
+            }
+        },
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // event handlers
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // returns nr. of fully parsed links when a new hint has been found,
+        // otherwise 0 if current state is part of a hint, or -1 if an error occured
+        // (like we have typed keys which never can become a hint
+        processEvent: function (event)
+        {
+            if (!isHahModeEnabled)
+                return -1;
+
+            // reset state to show that we are in processing mode
+            state = 0;
+
+            var num = String.fromCharCode(event.charCode).toUpperCase();
+            var hintCharacters = vimperator.options["hintchars"];
+            if (num != null && hintCharacters.toUpperCase().indexOf(num) > -1)
+            {
+                var oldLinkNumString = linkNumString;
+                linkNumString += "" + num;
+                // update reference to currently selected node;
+                var elem = getHintById(linkNumString);
+                changeHintFocus(linkNumString, oldLinkNumString);
+
+                // if we found the hint, fine just return it
+                if (elem)
+                {
+                    hintedElems.push(elem);
+                    linkNumString = "";
+                    state = 1;
+                    return hintedElems.length;
+                }
+
+                //calculate how many characters a hint must have
+                var hintLength = 1;
+                var tmp = linkCount;
+                while ((tmp /= hintCharacters.length) > 1.0)
+                    hintLength++;
+
+                if (linkNumString.length >= hintLength)
+                    return -1;
+                else
+                    return 0;
+            }
+            // an unparseable or wrong key
+            return -1;
+        }
+
+    };
+
     window.document.addEventListener("DOMContentLoaded", initDoc, null);
     // FIXME: add resize support
     //window.addEventListener("resize", onResize, null);
-} //}}}
+
+    return hintManager;
+    //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

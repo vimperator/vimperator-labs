@@ -38,13 +38,12 @@ vimperator.Tabs = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    /** @param spec can either be:
-     * - an absolute integer
-     * - "" for the current tab
-     * - "+1" for the next tab
-     * - "-3" for the tab, which is 3 positions left of the current
-     * - "$" for the last tab
-     */
+    // @param spec can either be:
+    // - an absolute integer
+    // - "" for the current tab
+    // - "+1" for the next tab
+    // - "-3" for the tab, which is 3 positions left of the current
+    // - "$" for the last tab
     function indexFromSpec(spec, wrap)
     {
         var position = getBrowser().tabContainer.selectedIndex;
@@ -58,7 +57,7 @@ vimperator.Tabs = function () //{{{
             position = spec;
         else if (spec === "$")
             return last;
-        else if (!spec.match(/^([+-]?\d+|)$/))
+        else if (!/^([+-]?\d+|)$/.test(spec))
         {
             // TODO: move error reporting to ex-command?
             vimperator.echoerr("E488: Trailing characters");
@@ -66,7 +65,7 @@ vimperator.Tabs = function () //{{{
         }
         else
         {
-            if (spec.match(/^([+-]\d+)$/)) // relative position +/-N
+            if (/^([+-]\d+)$/.test(spec)) // relative position +/-N
                 position += parseInt(spec, 10);
             else                           // absolute position
                 position = parseInt(spec, 10);
@@ -80,195 +79,192 @@ vimperator.Tabs = function () //{{{
         return position;
     }
 
-    var alternates = [null, null];
+    var alternates = [getBrowser().mCurrentTab, null];
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // @returns the index of the currently selected tab starting with 0
-    this.index = function (tab)
-    {
-        if (tab)
+    return {
+
+        get alternate() { return alternates[1]; },
+
+        get count() { return getBrowser().mTabs.length; },
+
+        // @returns the index of the currently selected tab starting with 0
+        index: function (tab)
         {
-            var length = getBrowser().mTabs.length;
-            for (var i = 0; i < length; i++)
+            if (tab)
             {
-                if (getBrowser().mTabs[i] == tab)
-                    return i;
-            }
-            return -1;
-        }
-
-        return getBrowser().tabContainer.selectedIndex;
-    }
-
-    this.count = function ()
-    {
-        return getBrowser().mTabs.length;
-    }
-
-    // TODO: implement filter
-    // @returns an array of tabs which match filter
-    this.get = function (filter)
-    {
-        var buffers = [];
-        var browsers = getBrowser().browsers;
-        for (var i in browsers)
-        {
-            var title = browsers[i].contentTitle || "(Untitled)";
-            var uri = browsers[i].currentURI.spec;
-            var number = i + 1;
-            buffers.push([number, title, uri]);
-        }
-        return buffers;
-    }
-
-    this.getTab = function (index)
-    {
-        if (index)
-            return getBrowser().mTabs[index];
-
-        return getBrowser().tabContainer.selectedItem;
-    }
-
-    /*  spec == "" moves the tab to the last position as per Vim
-     *  wrap causes the movement to wrap around the start and end of the tab list
-     *  NOTE: position is a 0 based index
-     *  FIXME: tabmove! N should probably produce an error
-     */
-    this.move = function (tab, spec, wrap)
-    {
-        if (spec === "")
-            spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
-
-        var index = indexFromSpec(spec, wrap);
-        getBrowser().moveTabTo(tab, index);
-    }
-
-    /* quit_on_last_tab = 1: quit without saving session
-     * quit_on_last_tab = 2: quit and save session
-     */
-    this.remove = function (tab, count, focus_left_tab, quit_on_last_tab)
-    {
-        function removeOrBlankTab (tab)
-        {
-            if (getBrowser().mTabs.length > 1)
-                getBrowser().removeTab(tab);
-            else
-            {
-                if (vimperator.buffer.URL != "about:blank" ||
-                    getWebNavigation().sessionHistory.count > 0)
+                var length = getBrowser().mTabs.length;
+                for (var i = 0; i < length; i++)
                 {
-                    vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
+                    if (getBrowser().mTabs[i] == tab)
+                        return i;
+                }
+                return -1;
+            }
+
+            return getBrowser().tabContainer.selectedIndex;
+        },
+
+        // TODO: implement filter
+        // @returns an array of tabs which match filter
+        get: function (filter)
+        {
+            var buffers = [];
+            var browsers = getBrowser().browsers;
+            for (var i in browsers)
+            {
+                var title = browsers[i].contentTitle || "(Untitled)";
+                var uri = browsers[i].currentURI.spec;
+                var number = i + 1;
+                buffers.push([number, title, uri]);
+            }
+            return buffers;
+        },
+
+        getTab: function (index)
+        {
+            if (index)
+                return getBrowser().mTabs[index];
+
+            return getBrowser().tabContainer.selectedItem;
+        },
+
+        // spec == "" moves the tab to the last position as per Vim
+        // wrap causes the movement to wrap around the start and end of the tab list
+        // NOTE: position is a 0 based index
+        // FIXME: tabmove! N should probably produce an error
+        move: function (tab, spec, wrap)
+        {
+            if (spec === "")
+                spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
+
+            var index = indexFromSpec(spec, wrap);
+            getBrowser().moveTabTo(tab, index);
+        },
+
+        // quitOnLastTab = 1: quit without saving session
+        // quitOnLastTab = 2: quit and save session
+        remove: function (tab, count, focusLeftTab, quitOnLastTab)
+        {
+            function removeOrBlankTab (tab)
+            {
+                if (getBrowser().mTabs.length > 1)
                     getBrowser().removeTab(tab);
-                }
                 else
-                    vimperator.beep();
+                {
+                    if (vimperator.buffer.URL != "about:blank" ||
+                        getWebNavigation().sessionHistory.count > 0)
+                    {
+                        vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
+                        getBrowser().removeTab(tab);
+                    }
+                    else
+                        vimperator.beep();
+                }
             }
-        }
 
-        if (count < 1)
-            count = 1;
+            if (count < 1)
+                count = 1;
 
-        if (quit_on_last_tab >= 1 && getBrowser().mTabs.length <= count)
-        {
-            if (vimperator.windows.length > 1)
-                window.close();
+            if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)
+            {
+                if (vimperator.windows.length > 1)
+                    window.close();
+                else
+                    vimperator.quit(quitOnLastTab == 2);
+
+                return;
+            }
+
+            var index = this.index(tab);
+            if (focusLeftTab)
+            {
+                var lastRemovedTab = 0;
+                for (var i = index; i > index - count && i >= 0; i--)
+                {
+                    removeOrBlankTab(this.getTab(i));
+                    lastRemovedTab = i > 0 ? i : 1;
+                }
+                getBrowser().mTabContainer.selectedIndex = lastRemovedTab - 1;
+            }
             else
-                vimperator.quit(quit_on_last_tab == 2);
-
-            return;
-        }
-
-        var index = this.index(tab);
-        if (focus_left_tab)
-        {
-            var last_removed_tab = 0;
-            for (var i = index; i > index - count && i >= 0; i--)
             {
-                removeOrBlankTab(this.getTab(i));
-                last_removed_tab = i > 0 ? i : 1;
+                var i = index + count - 1;
+                if (i >= this.count)
+                    i = this.count - 1;
+
+                for (; i >= index; i--)
+                    removeOrBlankTab(this.getTab(i));
             }
-            getBrowser().mTabContainer.selectedIndex = last_removed_tab - 1;
-        }
-        else
+        },
+
+        keepOnly: function (tab)
         {
-            var i = index + count - 1;
-            if (i >= this.count())
-                i = this.count() - 1;
+            getBrowser().removeAllTabsBut(tab);
+        },
 
-            for (; i >= index; i--)
-                removeOrBlankTab(this.getTab(i));
-        }
-    }
-
-    this.keepOnly = function (tab)
-    {
-        getBrowser().removeAllTabsBut(tab);
-    }
-
-    this.select = function (spec, wrap)
-    {
-        var index = indexFromSpec(spec, wrap);
-        if (index === false)
+        select: function (spec, wrap)
         {
-            vimperator.beep(); // XXX: move to ex-handling?
-            return false;
-        }
-        getBrowser().mTabContainer.selectedIndex = index;
-    }
-
-    // TODO: when restarting a session FF selects the first tab and then the
-    // tab that was selected when the session was created.  As a result the
-    // alternate after a restart is often incorrectly tab 1 when there
-    // shouldn't be one yet.
-    this.updateSelectionHistory = function ()
-    {
-        alternates = [this.getTab(), alternates[0]];
-        this.alternate = alternates[1];
-    }
-
-    // TODO: move to v.buffers
-    this.alternate = this.getTab();
-
-    this.reload = function (tab, bypass_cache)
-    {
-        if (bypass_cache)
-        {
-            const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-            const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
-            getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
-        }
-        else
-        {
-            getBrowser().reloadTab(tab);
-        }
-    }
-
-    this.reloadAll = function (bypass_cache)
-    {
-        if (bypass_cache)
-        {
-            for (var i = 0; i < getBrowser().mTabs.length; i++)
+            var index = indexFromSpec(spec, wrap);
+            if (index === false)
             {
-                try
+                vimperator.beep(); // XXX: move to ex-handling?
+                return false;
+            }
+            getBrowser().mTabContainer.selectedIndex = index;
+        },
+
+        // TODO: when restarting a session FF selects the first tab and then the
+        // tab that was selected when the session was created.  As a result the
+        // alternate after a restart is often incorrectly tab 1 when there
+        // shouldn't be one yet.
+        updateSelectionHistory: function ()
+        {
+            alternates = [this.getTab(), alternates[0]];
+        },
+
+        reload: function (tab, bypassCache)
+        {
+            if (bypassCache)
+            {
+                const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+                const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
+                getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
+            }
+            else
+            {
+                getBrowser().reloadTab(tab);
+            }
+        },
+
+        reloadAll: function (bypassCache)
+        {
+            if (bypassCache)
+            {
+                for (var i = 0; i < getBrowser().mTabs.length; i++)
                 {
-                    this.reload(getBrowser().mTabs[i], bypass_cache)
-                }
-                catch (e)
-                {
-                    // FIXME: can we do anything useful here without stopping the
-                    //        other tabs from reloading?
+                    try
+                    {
+                        this.reload(getBrowser().mTabs[i], bypassCache);
+                    }
+                    catch (e)
+                    {
+                        // FIXME: can we do anything useful here without stopping the
+                        //        other tabs from reloading?
+                    }
                 }
             }
+            else
+            {
+                getBrowser().reloadAllTabs();
+            }
         }
-        else
-        {
-            getBrowser().reloadAllTabs();
-        }
-    }
+
+    };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

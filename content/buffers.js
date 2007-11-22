@@ -31,24 +31,25 @@ vimperator.Buffer = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     // used for the "B" mapping to remember the last :buffer[!] command
     var lastBufferSwitchArgs = "";
     var lastBufferSwitchSpecial = true;
 
-    var zoom_manager = ZoomManager.prototype.getInstance();
+    var zoomManager = ZoomManager.prototype.getInstance();
     const ZOOM_INTERVAL = 25;
 
     // initialize the zoom levels
-    zoom_manager.zoomFactors = [zoom_manager.MIN];
-    for (var i = ZOOM_INTERVAL; i <= zoom_manager.MAX; i += ZOOM_INTERVAL)
-        zoom_manager.zoomFactors.push(i);
+    zoomManager.zoomFactors = [zoomManager.MIN];
+    for (var i = ZOOM_INTERVAL; i <= zoomManager.MAX; i += ZOOM_INTERVAL)
+        zoomManager.zoomFactors.push(i);
 
     function setZoom(value)
     {
         try
         {
-            zoom_manager.textZoom = value;
-            vimperator.echo("Text zoom: " + zoom_manager.textZoom + "%");
+            zoomManager.textZoom = value;
+            vimperator.echo("Text zoom: " + zoomManager.textZoom + "%");
             // TODO: shouldn't this just recalculate hint coords, rather than
             // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
             // on the recalculation side effect? -- djk
@@ -57,7 +58,7 @@ vimperator.Buffer = function () //{{{
         }
         catch (e) // Components.results.NS_ERROR_INVALID_ARG
         {
-            vimperator.echoerr("Zoom value out of range (" + zoom_manager.MIN + "-" + zoom_manager.MAX + ")");
+            vimperator.echoerr("Zoom value out of range (" + zoomManager.MIN + "-" + zoomManager.MAX + ")");
         }
     }
 
@@ -66,11 +67,11 @@ vimperator.Buffer = function () //{{{
     // get this added to ZoomManager
     function bumpZoomLevel(steps)
     {
-        var adjusted_zoom = zoom_manager.snap(zoom_manager.textZoom);
-        var current = zoom_manager.indexOf(adjusted_zoom);
+        var adjustedZoom = zoomManager.snap(zoomManager.textZoom);
+        var current = zoomManager.indexOf(adjustedZoom);
         var next = current + steps;
 
-        var start = 0, end = zoom_manager.zoomFactors.length - 1;
+        var start = 0, end = zoomManager.zoomFactors.length - 1;
 
         if ((current == start && steps < 0) || (current == end && steps > 0))
         {
@@ -83,7 +84,7 @@ vimperator.Buffer = function () //{{{
         else if (next > end)
             next = end;
 
-        setZoom(zoom_manager.zoomFactors[next]);
+        setZoom(zoomManager.zoomFactors[next]);
     }
 
     function checkScrollYBounds(win, direction)
@@ -116,581 +117,587 @@ vimperator.Buffer = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.__defineGetter__("URL", function ()
-    {
-        // TODO: .URL is not defined for XUL documents
-        //return window.content.document.URL;
-        return window.content.document.location.href;
-    });
+    return {
 
-    this.__defineGetter__("pageHeight", function ()
-    {
-        return window.content.innerHeight;
-    });
-
-    this.__defineGetter__("textZoom", function ()
-    {
-        return zoom_manager.textZoom;
-    });
-
-    this.__defineSetter__("textZoom", function (value)
-    {
-        setZoom(value);
-    });
-
-    this.__defineGetter__("title", function ()
-    {
-        return window.content.document.title;
-    });
-
-    // returns an XPathResult object
-    this.evaluateXPath = function (expression, doc, elem, ordered)
-    {
-        if (!doc)
-            doc = window.content.document;
-        if (!elem)
-            elem = doc;
-
-        var result = doc.evaluate(expression, elem,
-            function lookupNamespaceURI(prefix) {
-              switch (prefix) {
-                case "xhtml":
-                  return "http://www.w3.org/1999/xhtml";
-                default:
-                  return null;
-              }
-            },
-            ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-            null
-        );
-
-        return result;
-    };
-
-    this.list = function (fullmode)
-    {
-        if (fullmode)
+        get URL()
         {
-            // toggle the special buffer previw window
-            if (vimperator.bufferwindow.visible())
-            {
-                vimperator.bufferwindow.hide();
-            }
-            else
-            {
-                var items = vimperator.completion.get_buffer_completions("");
-                vimperator.bufferwindow.show(items);
-                vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-            }
-        }
-        else
+            // TODO: .URL is not defined for XUL documents
+            //return window.content.document.URL;
+            return window.content.document.location.href;
+        },
+
+        get pageHeight()
         {
-            // TODO: move this to vimperator.buffers.get()
-            var items = vimperator.completion.get_buffer_completions("");
-            var number, indicator, title, url;
+            return window.content.innerHeight;
+        },
 
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
-            for (var i = 0; i < items.length; i++)
-            {
-                if (i == vimperator.tabs.index())
-                   indicator = " <span style=\"color: blue\">%</span> ";
-                else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
-                   indicator = " <span style=\"color: blue\">#</span> ";
-                else
-                   indicator = "   ";
-
-                [number, title] = items[i][0].split(/:\s+/, 2);
-                url = items[i][1];
-                url = vimperator.util.escapeHTML(url);
-                title = vimperator.util.escapeHTML(title);
-
-                list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
-                        "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                        "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
-            }
-            list += "</table>";
-
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-        }
-    };
-
-    this.scrollBottom = function ()
-    {
-        scrollToPercentiles(-1, 100);
-    };
-
-    this.scrollColumns = function (cols)
-    {
-        var win = window.document.commandDispatcher.focusedWindow;
-        const COL_WIDTH = 20;
-
-        if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
-            vimperator.beep();
-
-        win.scrollBy(COL_WIDTH * cols, 0);
-    };
-
-    this.scrollEnd = function ()
-    {
-        scrollToPercentiles(100, -1);
-    };
-
-    this.scrollLines = function (lines)
-    {
-        var win = window.document.commandDispatcher.focusedWindow;
-        checkScrollYBounds(win, lines);
-        win.scrollByLines(lines);
-    };
-
-    this.scrollPages = function (pages)
-    {
-        var win = window.document.commandDispatcher.focusedWindow;
-        checkScrollYBounds(win, pages);
-        win.scrollByPages(pages);
-    };
-
-    this.scrollToPercentile = function (percentage)
-    {
-        scrollToPercentiles(-1, percentage);
-    };
-
-    this.scrollStart = function ()
-    {
-        scrollToPercentiles(0, -1);
-    };
-
-    this.scrollTop = function ()
-    {
-        scrollToPercentiles(-1, 0);
-    };
-
-    // TODO: allow callback for filtering out unwanted frames? User defined?
-    this.shiftFrameFocus = function (count, forward)
-    {
-        if (!window.content.document instanceof HTMLDocument)
-            return;
-
-        var frames = [];
-
-        // find all frames - depth-first search
-        (function (frame)
+        get textZoom()
         {
-            if (frame.document.body.localName.toLowerCase() == "body")
-                frames.push(frame);
-            for (var i = 0; i < frame.frames.length; i++)
-                arguments.callee(frame.frames[i])
-        })(window.content);
+            return zoomManager.textZoom;
+        },
 
-        if (frames.length == 0) // currently top is always included
-            return;
-
-        // remove all unfocusable frames
-        // TODO: find a better way to do this - walking the tree is too slow
-        var start = document.commandDispatcher.focusedWindow;
-        frames = frames.filter(function (frame) {
-                frame.focus();
-                if (document.commandDispatcher.focusedWindow == frame)
-                    return frame;
-        });
-        start.focus();
-
-        // find the currently focused frame index
-        // TODO: If the window is a frameset then the first _frame_ should be
-        //       focused.  Since this is not the current FF behaviour,
-        //       we initalize current to -1 so the first call takes us to the
-        //       first frame.
-        var current = -1;
-        for (var i = 0; i < frames.length; i++)
+        get textZoom(value)
         {
-            if (frames[i] == document.commandDispatcher.focusedWindow)
-            {
-                var current = i;
-                break;
-            }
-        }
+            setZoom(value);
+        },
 
-        // calculate the next frame to focus
-        var next = current;
-        if (forward)
+        get title()
         {
-            if (count > 1)
-                next = current + count;
-            else
-                next++;
+            return window.content.document.title;
+        },
 
-            if (next > frames.length - 1)
-            {
-                if (current == frames.length - 1)
-                    vimperator.beep(); // still allow the frame indicator to be activated
-
-                next = frames.length - 1;
-            }
-        }
-        else
+        // returns an XPathResult object
+        evaluateXPath: function (expression, doc, elem, ordered)
         {
-            if (count > 1)
-                next = current - count;
-            else
-                next--;
+            if (!doc)
+                doc = window.content.document;
+            if (!elem)
+                elem = doc;
 
-            if (next < 0)
-            {
-                if (current == 0)
-                    vimperator.beep(); // still allow the frame indicator to be activated
-
-                next = 0;
-            }
-        }
-
-        // focus next frame and scroll into view
-        frames[next].focus();
-        if (frames[next] != window.content)
-            frames[next].frameElement.scrollIntoView(false);
-
-        // add the frame indicator
-        // TODO: make this an XBL element rather than messing with the content
-        // document
-        var doc = frames[next].document;
-        var indicator = doc.createElement("div");
-        indicator.id = "vimperator-frame-indicator";
-        // NOTE: need to set a high z-index - it's a crapshoot!
-        var style = "background-color: red; opacity: 0.5; z-index: 999;" +
-                    "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
-        indicator.setAttribute("style", style);
-        doc.body.appendChild(indicator);
-
-        // remove the frame indicator
-        setTimeout(function () { doc.body.removeChild(indicator); }, 500);
-    };
-
-    // updates the buffer preview in place only if list is visible
-    this.updateBufferList = function ()
-    {
-        if (!vimperator.bufferwindow.visible())
-            return false;
-
-        var items = vimperator.completion.get_buffer_completions("");
-        vimperator.bufferwindow.show(items);
-        vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-    };
-
-    // XXX: should this be in v.buffers. or v.tabs.?
-    // "buffer" is a string which matches the URL or title of a buffer, if it
-    // is null, the last used string is used again
-    this.switchTo = function (buffer, allowNonUnique, count, reverse)
-    {
-        if (buffer != null)
-        {
-            // store this command, so it can be repeated with "B"
-            lastBufferSwitchArgs = buffer;
-            lastBufferSwitchSpecial = allowNonUnique;
-        }
-        else
-        {
-            buffer = lastBufferSwitchArgs;
-            if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
-                allowNonUnique = lastBufferSwitchSpecial;
-        }
-
-        if (!count || count < 1)
-            count = 1;
-        if (typeof reverse != "boolean")
-            reverse = false;
-
-        var match;
-        if (match = buffer.match(/^(\d+):?/))
-            return vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
-
-        var matches = [];
-        var lower_buffer = buffer.toLowerCase();
-        var first = vimperator.tabs.index() + (reverse ? 0 : 1);
-        for (var i = 0; i < getBrowser().browsers.length; i++)
-        {
-            var index = (i + first) % getBrowser().browsers.length;
-            var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
-            var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
-            if (url == buffer)
-                return vimperator.tabs.select(index, false);
-
-            if (url.indexOf(buffer) >= 0 || title.indexOf(lower_buffer) >= 0)
-                matches.push(index);
-        }
-        if (matches.length == 0)
-            vimperator.echoerr("E94: No matching buffer for " + buffer);
-        else if (matches.length > 1 && !allowNonUnique)
-            vimperator.echoerr("E93: More than one match for " + buffer);
-        else
-        {
-            if (reverse)
-            {
-                index = matches.length - count;
-                while (index < 0)
-                    index += matches.length;
-            }
-            else
-                index = (count - 1) % matches.length;
-
-            vimperator.tabs.select(matches[index], false);
-        }
-    };
-
-    this.zoomIn = function (steps)
-    {
-        bumpZoomLevel(steps);
-    };
-
-    this.zoomOut = function (steps)
-    {
-        bumpZoomLevel(-steps);
-    };
-
-    this.pageInfo = function (verbose)
-    {
-        const feedTypes = {
-            "application/rss+xml": "RSS",
-            "application/atom+xml": "Atom",
-            "text/xml": "XML",
-            "application/xml": "XML",
-            "application/rdf+xml": "XML"
-        };
-
-        function isValidFeed(aData, aPrincipal, aIsFeed)
-        {
-            if (!aData || !aPrincipal)
-                return false;
-
-            if (!aIsFeed)
-            {
-                var type = aData.type && aData.type.toLowerCase();
-                type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
-
-                aIsFeed = (type == "application/rss+xml" || type == "application/atom+xml");
-                if (!aIsFeed)
+            var result = doc.evaluate(expression, elem,
+                function lookupNamespaceURI(prefix)
                 {
-                    // really slimy: general XML types with magic letters in the title
-                    const titleRegex = /(^|\s)rss($|\s)/i;
-                    aIsFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
-                                type == "application/xml") && titleRegex.test(aData.title));
+                  switch (prefix)
+                  {
+                    case "xhtml":
+                      return "http://www.w3.org/1999/xhtml";
+                    default:
+                      return null;
+                  }
+                },
+                ordered ? XPathResult.ORDERED_NODE_SNAPSHOT_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+                null
+            );
+
+            return result;
+        },
+
+        list: function (fullmode)
+        {
+            if (fullmode)
+            {
+                // toggle the special buffer previw window
+                if (vimperator.bufferwindow.visible())
+                {
+                    vimperator.bufferwindow.hide();
+                }
+                else
+                {
+                    var items = vimperator.completion.buffer("");
+                    vimperator.bufferwindow.show(items);
+                    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+                }
+            }
+            else
+            {
+                // TODO: move this to vimperator.buffers.get()
+                var items = vimperator.completion.buffer("");
+                var number, indicator, title, url;
+
+                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (i == vimperator.tabs.index())
+                       indicator = " <span style=\"color: blue\">%</span> ";
+                    else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
+                       indicator = " <span style=\"color: blue\">#</span> ";
+                    else
+                       indicator = "   ";
+
+                    [number, title] = items[i][0].split(/:\s+/, 2);
+                    url = items[i][1];
+                    url = vimperator.util.escapeHTML(url);
+                    title = vimperator.util.escapeHTML(title);
+
+                    list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
+                            "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                            "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
+                }
+                list += "</table>";
+
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            }
+        },
+
+        scrollBottom: function ()
+        {
+            scrollToPercentiles(-1, 100);
+        },
+
+        scrollColumns: function (cols)
+        {
+            var win = window.document.commandDispatcher.focusedWindow;
+            const COL_WIDTH = 20;
+
+            if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
+                vimperator.beep();
+
+            win.scrollBy(COL_WIDTH * cols, 0);
+        },
+
+        scrollEnd: function ()
+        {
+            scrollToPercentiles(100, -1);
+        },
+
+        scrollLines: function (lines)
+        {
+            var win = window.document.commandDispatcher.focusedWindow;
+            checkScrollYBounds(win, lines);
+            win.scrollByLines(lines);
+        },
+
+        scrollPages: function (pages)
+        {
+            var win = window.document.commandDispatcher.focusedWindow;
+            checkScrollYBounds(win, pages);
+            win.scrollByPages(pages);
+        },
+
+        scrollToPercentile: function (percentage)
+        {
+            scrollToPercentiles(-1, percentage);
+        },
+
+        scrollStart: function ()
+        {
+            scrollToPercentiles(0, -1);
+        },
+
+        scrollTop: function ()
+        {
+            scrollToPercentiles(-1, 0);
+        },
+
+        // TODO: allow callback for filtering out unwanted frames? User defined?
+        shiftFrameFocus: function (count, forward)
+        {
+            if (!window.content.document instanceof HTMLDocument)
+                return;
+
+            var frames = [];
+
+            // find all frames - depth-first search
+            (function (frame)
+            {
+                if (frame.document.body.localName.toLowerCase() == "body")
+                    frames.push(frame);
+                for (var i = 0; i < frame.frames.length; i++)
+                    arguments.callee(frame.frames[i]);
+            })(window.content);
+
+            if (frames.length == 0) // currently top is always included
+                return;
+
+            // remove all unfocusable frames
+            // TODO: find a better way to do this - walking the tree is too slow
+            var start = document.commandDispatcher.focusedWindow;
+            frames = frames.filter(function (frame) {
+                    frame.focus();
+                    if (document.commandDispatcher.focusedWindow == frame)
+                        return frame;
+            });
+            start.focus();
+
+            // find the currently focused frame index
+            // TODO: If the window is a frameset then the first _frame_ should be
+            //       focused.  Since this is not the current FF behaviour,
+            //       we initalize current to -1 so the first call takes us to the
+            //       first frame.
+            var current = -1;
+            for (var i = 0; i < frames.length; i++)
+            {
+                if (frames[i] == document.commandDispatcher.focusedWindow)
+                {
+                    var current = i;
+                    break;
                 }
             }
 
-            if (aIsFeed)
+            // calculate the next frame to focus
+            var next = current;
+            if (forward)
+            {
+                if (count > 1)
+                    next = current + count;
+                else
+                    next++;
+
+                if (next > frames.length - 1)
+                {
+                    if (current == frames.length - 1)
+                        vimperator.beep(); // still allow the frame indicator to be activated
+
+                    next = frames.length - 1;
+                }
+            }
+            else
+            {
+                if (count > 1)
+                    next = current - count;
+                else
+                    next--;
+
+                if (next < 0)
+                {
+                    if (current == 0)
+                        vimperator.beep(); // still allow the frame indicator to be activated
+
+                    next = 0;
+                }
+            }
+
+            // focus next frame and scroll into view
+            frames[next].focus();
+            if (frames[next] != window.content)
+                frames[next].frameElement.scrollIntoView(false);
+
+            // add the frame indicator
+            // TODO: make this an XBL element rather than messing with the content
+            // document
+            var doc = frames[next].document;
+            var indicator = doc.createElement("div");
+            indicator.id = "vimperator-frame-indicator";
+            // NOTE: need to set a high z-index - it's a crapshoot!
+            var style = "background-color: red; opacity: 0.5; z-index: 999;" +
+                        "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
+            indicator.setAttribute("style", style);
+            doc.body.appendChild(indicator);
+
+            // remove the frame indicator
+            setTimeout(function () { doc.body.removeChild(indicator); }, 500);
+        },
+
+        // updates the buffer preview in place only if list is visible
+        updateBufferList: function ()
+        {
+            if (!vimperator.bufferwindow.visible())
+                return false;
+
+            var items = vimperator.completion.buffer("");
+            vimperator.bufferwindow.show(items);
+            vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+        },
+
+        // XXX: should this be in v.buffers. or v.tabs.?
+        // "buffer" is a string which matches the URL or title of a buffer, if it
+        // is null, the last used string is used again
+        switchTo: function (buffer, allowNonUnique, count, reverse)
+        {
+            if (buffer != null)
+            {
+                // store this command, so it can be repeated with "B"
+                lastBufferSwitchArgs = buffer;
+                lastBufferSwitchSpecial = allowNonUnique;
+            }
+            else
+            {
+                buffer = lastBufferSwitchArgs;
+                if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
+                    allowNonUnique = lastBufferSwitchSpecial;
+            }
+
+            if (!count || count < 1)
+                count = 1;
+            if (typeof reverse != "boolean")
+                reverse = false;
+
+            var match;
+            if (match = buffer.match(/^(\d+):?/))
+                return vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+
+            var matches = [];
+            var lowerBuffer = buffer.toLowerCase();
+            var first = vimperator.tabs.index() + (reverse ? 0 : 1);
+            for (var i = 0; i < getBrowser().browsers.length; i++)
+            {
+                var index = (i + first) % getBrowser().browsers.length;
+                var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+                var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
+                if (url == buffer)
+                    return vimperator.tabs.select(index, false);
+
+                if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
+                    matches.push(index);
+            }
+            if (matches.length == 0)
+                vimperator.echoerr("E94: No matching buffer for " + buffer);
+            else if (matches.length > 1 && !allowNonUnique)
+                vimperator.echoerr("E93: More than one match for " + buffer);
+            else
+            {
+                if (reverse)
+                {
+                    index = matches.length - count;
+                    while (index < 0)
+                        index += matches.length;
+                }
+                else
+                    index = (count - 1) % matches.length;
+
+                vimperator.tabs.select(matches[index], false);
+            }
+        },
+
+        zoomIn: function (steps)
+        {
+            bumpZoomLevel(steps);
+        },
+
+        zoomOut: function (steps)
+        {
+            bumpZoomLevel(-steps);
+        },
+
+        pageInfo: function (verbose)
+        {
+            const feedTypes = {
+                "application/rss+xml": "RSS",
+                "application/atom+xml": "Atom",
+                "text/xml": "XML",
+                "application/xml": "XML",
+                "application/rdf+xml": "XML"
+            };
+
+            function isValidFeed(aData, aPrincipal, aIsFeed)
+            {
+                if (!aData || !aPrincipal)
+                    return false;
+
+                if (!aIsFeed)
+                {
+                    var type = aData.type && aData.type.toLowerCase();
+                    type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
+
+                    aIsFeed = (type == "application/rss+xml" || type == "application/atom+xml");
+                    if (!aIsFeed)
+                    {
+                        // really slimy: general XML types with magic letters in the title
+                        const titleRegex = /(^|\s)rss($|\s)/i;
+                        aIsFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
+                                    type == "application/xml") && titleRegex.test(aData.title));
+                    }
+                }
+
+                if (aIsFeed)
+                {
+                    try
+                    {
+                        urlSecurityCheck(aData.href, aPrincipal,
+                                Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                    }
+                    catch (ex)
+                    {
+                        aIsFeed = false;
+                    }
+                }
+
+                if (type)
+                    aData.type = type;
+
+                return aIsFeed;
+            }
+
+            // TODO: could this be useful for other commands?
+            function createTable(data)
+            {
+                var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
+                          data[data.length - 1][0] + "</th></tr>";
+
+                if (data.length - 1)
+                {
+                    for (var i = 0; i < data.length - 1 ; i++)
+                        ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
+                }
+                else
+                {
+                    ret += "<tr><td colspan='2'>  (" + data[data.length - 1][1] + ")</td></tr>";
+                }
+
+                return ret + "</table>";
+            }
+
+            var pageGeneral = [];
+            var pageFeeds = [];
+            var pageMeta = [];
+
+            // get file size
+            const nsICacheService = Components.interfaces.nsICacheService;
+            const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
+            const cacheService = Components.classes["@mozilla.org/network/cache-service;1"].getService(nsICacheService);
+            var httpCacheSession = cacheService.createSession("HTTP", 0, true);
+            var ftpCacheSession = cacheService.createSession("FTP", 0, true);
+            httpCacheSession.doomEntriesIfExpired = false;
+            ftpCacheSession.doomEntriesIfExpired = false;
+            var cacheKey = window.content.document.location.toString().replace(/#.*$/, "");
+            try
+            {
+                var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
+            }
+            catch (ex)
             {
                 try
                 {
-                    urlSecurityCheck(aData.href, aPrincipal,
-                            Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                    cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
                 }
-                catch (ex)
-                {
-                    aIsFeed = false;
-                }
+                catch (ex2) { }
             }
 
-            if (type)
-                aData.type = type;
-
-            return aIsFeed;
-        }
-
-        // TODO: could this be useful for other commands?
-        function createTable(data)
-        {
-            var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
-                      data[data.length - 1][0] + "</th></tr>";
-
-            if (data.length - 1)
+            var pageSize = []; // [0] bytes; [1] kbytes
+            if (cacheEntryDescriptor)
             {
-                for (var i = 0; i < data.length - 1 ; i++)
-                    ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
-            }
-            else
-            {
-                ret += "<tr><td colspan='2'>  (" + data[data.length - 1][1] + ")</td></tr>";
+                pageSize[0] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+                pageSize[1] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+                if (pageSize[1] == pageSize[0])
+                    pageSize[1] = null; // don't output "xx Bytes" twice
             }
 
-            return ret + "</table>";
-        }
-
-        var pageGeneral = [];
-        var pageFeeds = [];
-        var pageMeta = [];
-
-        // get file size
-        const nsICacheService = Components.interfaces.nsICacheService;
-        const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
-        const cacheService = Components.classes["@mozilla.org/network/cache-service;1"].getService(nsICacheService);
-        var httpCacheSession = cacheService.createSession("HTTP", 0, true);
-        var ftpCacheSession = cacheService.createSession("FTP", 0, true);
-        httpCacheSession.doomEntriesIfExpired = false;
-        ftpCacheSession.doomEntriesIfExpired = false;
-        var cacheKey = window.content.document.location.toString().replace(/#.*$/, "");
-        try
-        {
-            var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
-        }
-        catch (ex)
-        {
-            try
-            {
-                cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
-            }
-            catch (ex2) { }
-        }
-
-        var pageSize = []; // [0] bytes; [1] kbytes
-        if (cacheEntryDescriptor)
-        {
-            pageSize[0] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
-            pageSize[1] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
-            if (pageSize[1] == pageSize[0])
-                pageSize[1] = null; // don't output "xx Bytes" twice
-        }
-
-        // put feeds rss into pageFeeds[]
-        var linkNodes = window.content.document.getElementsByTagName("link");
-        var length = linkNodes.length;
-        for (var i = 0; i < length; i++)
-        {
-            var link = linkNodes[i];
-            if (!link.href)
-                continue;
-
-            var rel = link.rel && link.rel.toLowerCase();
-            var rels = {};
-            if (rel)
-            {
-                for each (let relVal in rel.split(/\s+/))
-                    rels[relVal] = true;
-            }
-
-            if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
-            {
-                var feed = { title: link.title, href: link.href, type: link.type || "" };
-                if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
-                {
-                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
-                    pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + "  (" + type + ")"]);
-                }
-            }
-        }
-
-        var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
-        var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
-        // FIXME: probably unportable across differnet language versions
-        if (lastModVerbose == "Invalid Date")
-            lastModVerbose = lastMod = null;
-
-        // Ctrl-g single line output
-        if (!verbose)
-        {
-            var info = []; // tmp array for joining later
-            var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
-            var title = window.content.document.title || "[No Title]";
-
-            if (pageSize[0])
-                info.push(pageSize[1] || pageSize[0]);
-
-            if (lastMod)
-                info.push(lastMod);
-
-            var countFeeds = "";
-            if (pageFeeds.length)
-                countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds");
-
-            if (countFeeds)
-                info.push(countFeeds);
-
-            var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
-            vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
-            return;
-        }
-
-        // get general infos
-        pageGeneral.push(["Title", window.content.document.title]);
-        pageGeneral.push(["URL", vimperator.util.highlightURL(window.content.document.location.toString(), true)]);
-
-        var ref = "referrer" in window.content.document && window.content.document.referrer;
-        if (ref)
-            pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
-
-        if (pageSize[0])
-        {
-            if (pageSize[1])
-                pageGeneral.push(["File Size", pageSize[1] + " (" + pageSize[0] + ")"]);
-            else
-                pageGeneral.push(["File Size", pageSize[0]]);
-        }
-
-        pageGeneral.push(["Mime-Type", content.document.contentType]);
-        pageGeneral.push(["Encoding",  content.document.characterSet]);
-        pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
-        if (lastModVerbose)
-            pageGeneral.push(["Last Modified", lastModVerbose]);
-
-        // get meta tag data, sort and put into pageMeta[]
-        var metaNodes = window.content.document.getElementsByTagName("meta");
-        var length = metaNodes.length;
-        if (length)
-        {
-            var tmpSort = [];
-            var tmpDict = [];
-
+            // put feeds rss into pageFeeds[]
+            var linkNodes = window.content.document.getElementsByTagName("link");
+            var length = linkNodes.length;
             for (var i = 0; i < length; i++)
             {
-                var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// +
-                var tmpTagNr = tmpTag + "-" + i; // allows multiple (identical) meta names
-                tmpDict[tmpTagNr] = [tmpTag, metaNodes[i].content];
-                tmpSort.push(tmpTagNr); // array for sorting
+                var link = linkNodes[i];
+                if (!link.href)
+                    continue;
+
+                var rel = link.rel && link.rel.toLowerCase();
+                var rels = {};
+                if (rel)
+                {
+                    for each (let relVal in rel.split(/\s+/))
+                        rels[relVal] = true;
+                }
+
+                if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
+                {
+                    var feed = { title: link.title, href: link.href, type: link.type || "" };
+                    if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
+                    {
+                        var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + "  (" + type + ")"]);
+                    }
+                }
             }
 
-            // sort: ignore-case
-            tmpSort.sort(function (a,b){return a.toLowerCase() > b.toLowerCase() ? 1 : -1;});
-            for (var i=0; i < tmpSort.length; i++)
-                pageMeta.push([tmpDict[tmpSort[i]][0], vimperator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
-        }
+            var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
+            var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
+            // FIXME: probably unportable across differnet language versions
+            if (lastModVerbose == "Invalid Date")
+                lastModVerbose = lastMod = null;
 
-        pageMeta.push(["Meta Tags", ""]); // add extra text to the end
-        pageGeneral.push(["General Info", ""]);
-        pageFeeds.push(["Feeds", ""]);
-
-        var pageInfoText = "";
-        var option = vimperator.options["pageinfo"];
-        var br = "";
-
-        for (var z = 0; z < option.length; z++)
-        {
-            switch (option[z])
+            // Ctrl-g single line output
+            if (!verbose)
             {
-                case "g":
-                    if (pageGeneral.length > 1)
-                    {
-                        pageInfoText += br + createTable(pageGeneral);
-                        if (!br)
-                            br = "<br/>";
-                    }
-                    break;
-                case "f":
-                    if (pageFeeds.length > 1)
-                    {
-                        pageInfoText += br + createTable(pageFeeds);
-                        if (!br)
-                            br = "<br/>";
-                    }
-                    break;
-                case "m":
-                    if (pageMeta.length > 1)
-                    {
-                        pageInfoText += br + createTable(pageMeta);
-                        if (!br)
-                            br = "<br/>";
-                    }
-                    break;
+                var info = []; // tmp array for joining later
+                var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
+                var title = window.content.document.title || "[No Title]";
+
+                if (pageSize[0])
+                    info.push(pageSize[1] || pageSize[0]);
+
+                if (lastMod)
+                    info.push(lastMod);
+
+                var countFeeds = "";
+                if (pageFeeds.length)
+                    countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds");
+
+                if (countFeeds)
+                    info.push(countFeeds);
+
+                var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
+                vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
+                return;
             }
+
+            // get general infos
+            pageGeneral.push(["Title", window.content.document.title]);
+            pageGeneral.push(["URL", vimperator.util.highlightURL(window.content.document.location.toString(), true)]);
+
+            var ref = "referrer" in window.content.document && window.content.document.referrer;
+            if (ref)
+                pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
+
+            if (pageSize[0])
+            {
+                if (pageSize[1])
+                    pageGeneral.push(["File Size", pageSize[1] + " (" + pageSize[0] + ")"]);
+                else
+                    pageGeneral.push(["File Size", pageSize[0]]);
+            }
+
+            pageGeneral.push(["Mime-Type", content.document.contentType]);
+            pageGeneral.push(["Encoding",  content.document.characterSet]);
+            pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
+            if (lastModVerbose)
+                pageGeneral.push(["Last Modified", lastModVerbose]);
+
+            // get meta tag data, sort and put into pageMeta[]
+            var metaNodes = window.content.document.getElementsByTagName("meta");
+            var length = metaNodes.length;
+            if (length)
+            {
+                var tmpSort = [];
+                var tmpDict = [];
+
+                for (var i = 0; i < length; i++)
+                {
+                    var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// +
+                    var tmpTagNr = tmpTag + "-" + i; // allows multiple (identical) meta names
+                    tmpDict[tmpTagNr] = [tmpTag, metaNodes[i].content];
+                    tmpSort.push(tmpTagNr); // array for sorting
+                }
+
+                // sort: ignore-case
+                tmpSort.sort(function (a,b){return a.toLowerCase() > b.toLowerCase() ? 1 : -1;});
+                for (var i = 0; i < tmpSort.length; i++)
+                    pageMeta.push([tmpDict[tmpSort[i]][0], vimperator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
+            }
+
+            pageMeta.push(["Meta Tags", ""]); // add extra text to the end
+            pageGeneral.push(["General Info", ""]);
+            pageFeeds.push(["Feeds", ""]);
+
+            var pageInfoText = "";
+            var option = vimperator.options["pageinfo"];
+            var br = "";
+
+            for (var z = 0; z < option.length; z++)
+            {
+                switch (option[z])
+                {
+                    case "g":
+                        if (pageGeneral.length > 1)
+                        {
+                            pageInfoText += br + createTable(pageGeneral);
+                            if (!br)
+                                br = "<br/>";
+                        }
+                        break;
+                    case "f":
+                        if (pageFeeds.length > 1)
+                        {
+                            pageInfoText += br + createTable(pageFeeds);
+                            if (!br)
+                                br = "<br/>";
+                        }
+                        break;
+                    case "m":
+                        if (pageMeta.length > 1)
+                        {
+                            pageInfoText += br + createTable(pageMeta);
+                            if (!br)
+                                br = "<br/>";
+                        }
+                        break;
+                }
+            }
+            vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
         }
-        vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
+
     };
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

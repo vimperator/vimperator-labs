@@ -52,32 +52,32 @@ const vimperator = (function () //{{{
         EXTENDED_HINT:    1 << 18,
         ALWAYS_HINT:      1 << 19,
         MENU:             1 << 20 // a popupmenu is active
-    }
+    };
 
-    var mode_messages = {};
-    mode_messages[modes.NORMAL]          = "";
-    mode_messages[modes.INSERT]          = "INSERT";
-    mode_messages[modes.VISUAL]          = "VISUAL";
-    mode_messages[modes.HINTS]           = "HINTS";
-    mode_messages[modes.ESCAPE_ONE_KEY]  = "escape one key";
-    mode_messages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
-    mode_messages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
-    mode_messages[modes.QUICK_HINT]      = "quick";
-    mode_messages[modes.EXTENDED_HINT]   = "extended";
-    mode_messages[modes.ALWAYS_HINT]     = "always";
-    //mode_messages[modes.MENU]            = "menu"; // not a user visible mode
+    var modeMessages = {};
+    modeMessages[modes.NORMAL]          = "";
+    modeMessages[modes.INSERT]          = "INSERT";
+    modeMessages[modes.VISUAL]          = "VISUAL";
+    modeMessages[modes.HINTS]           = "HINTS";
+    modeMessages[modes.ESCAPE_ONE_KEY]  = "escape one key";
+    modeMessages[modes.ESCAPE_ALL_KEYS] = "escape all keys";
+    modeMessages[modes.ESCAPE_ONE_KEY | modes.ESCAPE_ALL_KEYS] = "pass one key";
+    modeMessages[modes.QUICK_HINT]      = "quick";
+    modeMessages[modes.EXTENDED_HINT]   = "extended";
+    modeMessages[modes.ALWAYS_HINT]     = "always";
+    //modeMessages[modes.MENU]            = "menu"; // not a user visible mode
 
     var mode = modes.NORMAL;
-    var extended_mode = modes.NONE;
+    var extendedMode = modes.NONE;
 
     var callbacks = [];
 
     // our services
-    var sound_service = Components.classes["@mozilla.org/sound;1"]
+    var soundService = Components.classes["@mozilla.org/sound;1"]
         .getService(Components.interfaces.nsISound);
-    var console_service = Components.classes["@mozilla.org/consoleservice;1"]
+    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
         .getService(Components.interfaces.nsIConsoleService);
-    var environment_service = Components.classes["@mozilla.org/process/environment;1"]
+    var environmentService = Components.classes["@mozilla.org/process/environment;1"]
         .getService(Components.interfaces.nsIEnvironment);
 
     function showMode()
@@ -85,23 +85,23 @@ const vimperator = (function () //{{{
         if (!vimperator.options["showmode"])
             return;
 
-        var str_mode = mode_messages[mode];
-        var str_extended = mode_messages[extended_mode];
-        if (!str_mode && !str_extended)
+        var strMode = modeMessages[mode];
+        var strExtended = modeMessages[extendedMode];
+        if (!strMode && !strExtended)
         {
             vimperator.echo("");
             return;
         }
 
-        if (str_mode && str_extended)
-            str_extended = " (" + str_extended + ")";
+        if (strMode && strExtended)
+            strExtended = " (" + strExtended + ")";
         else
         {
-            str_extended = "(" + str_extended + ")";
-            str_mode = "";
+            strExtended = "(" + strExtended + ")";
+            strMode = "";
         }
 
-        vimperator.echo("-- " + str_mode + str_extended + " --");
+        vimperator.echo("-- " + strMode + strExtended + " --");
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -154,7 +154,7 @@ const vimperator = (function () //{{{
 
         getMode: function ()
         {
-            return [mode, extended_mode];
+            return [mode, extendedMode];
         },
 
         // set current mode
@@ -165,10 +165,10 @@ const vimperator = (function () //{{{
             if (main)
             {
                 mode = main;
-                extended_mode = vimperator.modes.NONE;
+                extendedMode = vimperator.modes.NONE;
             }
             if (typeof extended === "number")
-                extended_mode = extended;
+                extendedMode = extended;
 
             if (!silent)
                 showMode();
@@ -178,7 +178,7 @@ const vimperator = (function () //{{{
         // extended mode
         hasMode: function (whichmode)
         {
-            return ((mode & whichmode) || (extended_mode & whichmode) > 0) ? true : false;
+            return ((mode & whichmode) || (extendedMode & whichmode) > 0) ? true : false;
         },
 
         addMode: function (main, extended)
@@ -186,7 +186,7 @@ const vimperator = (function () //{{{
             if (main)
                 mode |= main;
             if (extended)
-                extended_mode |= extended;
+                extendedMode |= extended;
 
             showMode();
         },
@@ -197,7 +197,7 @@ const vimperator = (function () //{{{
             if (main)
                 mode = (mode | main) ^ main;
             if (extended)
-                extended_mode = (extended_mode | extended) ^ extended;
+                extendedMode = (extendedMode | extended) ^ extended;
 
             showMode();
         },
@@ -217,13 +217,13 @@ const vimperator = (function () //{{{
                 vbell.style.left = box.x + "px";
                 vbell.style.top = box.y + "px";
 
-                vbell.hidden = false
+                vbell.hidden = false;
 
                 setTimeout(function () { vbell.hidden = true; }, 50); // may as well be 0 ;-)
             }
             else
             {
-                sound_service.beep();
+                soundService.beep();
             }
         },
 
@@ -409,7 +409,7 @@ const vimperator = (function () //{{{
             if (typeof msg == "object")
                 msg = this.objectToString(msg, false);
 
-            console_service.logStringMessage("vimperator: " + msg);
+            consoleService.logStringMessage("vimperator: " + msg);
         },
 
         // open one or more URLs
@@ -482,9 +482,9 @@ const vimperator = (function () //{{{
         },
 
         // quit vimperator, no matter how many tabs/windows are open
-        quit: function (save_session)
+        quit: function (saveSession)
         {
-            if (save_session)
+            if (saveSession)
                 vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
             else
                 vimperator.options.setFirefoxPref("browser.startup.page", 1); // start with default homepage session
@@ -532,7 +532,7 @@ const vimperator = (function () //{{{
             if (!args)
                 args = [];
 
-            if (typeof(blocking) != "boolean")
+            if (typeof blocking != "boolean")
                 blocking = false;
 
             try
@@ -541,7 +541,7 @@ const vimperator = (function () //{{{
             }
             catch (e)
             {
-                var dirs = environment_service.get("PATH").split(WINDOWS ? ";" : ":");
+                var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
                 for (var i = 0; i < dirs.length; i++)
                 {
                     var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
@@ -604,8 +604,8 @@ const vimperator = (function () //{{{
                 filein.remove(false);
 
             // if there is only one \n at the end, chop it off
-            if (output && output.indexOf("\n") == output.length-1)
-                output = output.substr(0, output.length-1);
+            if (output && output.indexOf("\n") == output.length - 1)
+                output = output.substr(0, output.length - 1);
 
             return output;
         },
@@ -628,16 +628,16 @@ const vimperator = (function () //{{{
                 else
                 {
                     var heredoc = "";
-                    var heredoc_end = null; // the string which ends the heredoc
+                    var heredocEnd = null; // the string which ends the heredoc
                     str.split("\n").forEach(function (line)
                     {
-                        if (heredoc_end) // we already are in a heredoc
+                        if (heredocEnd) // we already are in a heredoc
                         {
-                            if (heredoc_end.test(line))
+                            if (heredocEnd.test(line))
                             {
                                 eval(heredoc);
                                 heredoc = "";
-                                heredoc_end = null;
+                                heredocEnd = null;
                             }
                             else
                             {
@@ -654,7 +654,7 @@ const vimperator = (function () //{{{
                                 var matches = args.match(/(.*)<<\s*([^\s]+)$/);
                                 if (matches)
                                 {
-                                    heredoc_end = new RegExp("^" + matches[2] + "$", "m");
+                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
                                     if (matches[1])
                                         heredoc = matches[1] + "\n";
                                 }
@@ -688,51 +688,51 @@ const vimperator = (function () //{{{
 
             // these objects are created here only after the chrome is ready
             vimperator.log("Loading module options...", 3);
-            vimperator.options       = new vimperator.Options();
+            vimperator.options       = vimperator.Options();
             vimperator.log("Loading module events...", 3);
-            vimperator.events        = new vimperator.Events();
+            vimperator.events        = vimperator.Events();
             vimperator.log("Loading module commands...", 3);
-            vimperator.commands      = new vimperator.Commands();
+            vimperator.commands      = vimperator.Commands();
             vimperator.log("Loading module bookmarks...", 3);
-            vimperator.bookmarks     = new vimperator.Bookmarks();
+            vimperator.bookmarks     = vimperator.Bookmarks();
             vimperator.log("Loading module history...", 3);
-            vimperator.history       = new vimperator.History();
+            vimperator.history       = vimperator.History();
             vimperator.log("Loading module commandline...", 3);
-            vimperator.commandline   = new vimperator.CommandLine();
+            vimperator.commandline   = vimperator.CommandLine();
             vimperator.log("Loading module search...", 3);
-            vimperator.search        = new vimperator.Search();
+            vimperator.search        = vimperator.Search();
             vimperator.log("Loading module preview window...", 3);
-            vimperator.previewwindow = new vimperator.InformationList("vimperator-previewwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
             vimperator.log("Loading module buffer window...", 3);
-            vimperator.bufferwindow  = new vimperator.InformationList("vimperator-bufferwindow", { incremental_fill: false, max_items: 10 });
+            vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
             vimperator.log("Loading module mappings...", 3);
-            vimperator.mappings      = new vimperator.Mappings();
+            vimperator.mappings      = vimperator.Mappings();
             vimperator.log("Loading module statusline...", 3);
-            vimperator.statusline    = new vimperator.StatusLine();
+            vimperator.statusline    = vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);
-            vimperator.buffer        = new vimperator.Buffer();
+            vimperator.buffer        = vimperator.Buffer();
             vimperator.log("Loading module tabs...", 3);
-            vimperator.tabs          = new vimperator.Tabs();
+            vimperator.tabs          = vimperator.Tabs();
             vimperator.log("Loading module marks...", 3);
-            vimperator.marks         = new vimperator.Marks();
+            vimperator.marks         = vimperator.Marks();
             vimperator.log("Loading module quickmarks...", 3);
-            vimperator.quickmarks    = new vimperator.QuickMarks();
+            vimperator.quickmarks    = vimperator.QuickMarks();
             vimperator.log("Loading module hints...", 3);
-            vimperator.hints         = new vimperator.Hints();
+            vimperator.hints         = vimperator.Hints();
             vimperator.log("Loading module io...", 3);
-            vimperator.io            = new vimperator.IO();
+            vimperator.io            = vimperator.IO();
             vimperator.log("Loading module completion...", 3);
-            vimperator.completion    = new vimperator.Completion();
+            vimperator.completion    = vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
-            vimperator.echo    = function (str) { vimperator.commandline.echo(str); }
-            vimperator.echoerr = function (str) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG); }
+            vimperator.echo    = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
+            vimperator.echoerr = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
 
             vimperator.globalVariables = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); } );
-            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); } );
+            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); });
+            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); });
 
             // first time intro message
             if (vimperator.options.getPref("firsttime", true))
@@ -749,20 +749,20 @@ const vimperator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                var rc_file = vimperator.io.getRCFile();
+                var rcFile = vimperator.io.getRCFile();
 
-                if (rc_file)
-                    vimperator.source(rc_file.path, true);
+                if (rcFile)
+                    vimperator.source(rcFile.path, true);
                 else
                     vimperator.log("No user RC file found", 3);
 
                 // also source plugins in ~/.vimperator/plugin/
                 try
                 {
-                    var plugin_dir = vimperator.io.getPluginDir();
-                    if (plugin_dir)
+                    var pluginDir = vimperator.io.getPluginDir();
+                    if (pluginDir)
                     {
-                        var files = vimperator.io.readDirectory(plugin_dir.path);
+                        var files = vimperator.io.readDirectory(pluginDir.path);
                         vimperator.log("Sourcing plugin directory...", 3);
                         files.forEach(function (file) {
                             if (!file.isDirectory() && /\.js$/.test(file.path))
@@ -809,21 +809,22 @@ const vimperator = (function () //{{{
             var mainThread = threadManager.mainThread;
 
             var then = new Date().getTime(), now = then;
-            for (; now - then < ms; now = new Date().getTime()) {
+            for (; now - then < ms; now = new Date().getTime())
                 mainThread.processNextEvent(true);
-            }
         },
 
         get windows()
         {
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator);
             var wa = [];
             var enumerator = wm.getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())
                 wa.push(enumerator.getNext());
             return wa;
         }
-    } //}}}
+
+    }; //}}}
 })(); //}}}
 
 // called when the chrome is fully loaded and before the main window is shown

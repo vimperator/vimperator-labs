@@ -52,7 +52,7 @@ vimperator.help = function (section, easter) //{{{
         {
             // the usage information for the command
             ret += '<tr class="description"><td class="usage" valign="top">';
-            for (var j=0; j < command.usage.length; j++)
+            for (var j = 0; j < command.usage.length; j++)
             {
                 var usage = command.usage[j];
 
@@ -72,10 +72,10 @@ vimperator.help = function (section, easter) //{{{
             ret += '</td><td valign="top">';
 
             // the actual help text with the first line in bold
-            if (command.short_help)
+            if (command.shortHelp)
             {
                 ret += '<span class="shorthelp">';
-                ret += command.short_help; // the help description
+                ret += command.shortHelp; // the help description
                 ret += "</span><br/>";
                 if (func) // for options we print default values here, e.g.
                 {
@@ -93,11 +93,11 @@ vimperator.help = function (section, easter) //{{{
             // the tags which are printed on the top right
             ret += '</td><td class="taglist" valign="top">';
             var names = command.names;
-            for (var j=0; j < names.length; j++)
+            for (var j = 0; j < names.length; j++)
             {
-                var cmd_name = names[j];
-                cmd_name = vimperator.util.escapeHTML(cmd_name);
-                ret += '<code class="tag">' + beg + cmd_name + end + '</code><br/>';
+                var cmdName = names[j];
+                cmdName = vimperator.util.escapeHTML(cmdName);
+                ret += '<code class="tag">' + beg + cmdName + end + '</code><br/>';
             }
             ret += '</td></tr>';
 
@@ -114,17 +114,17 @@ vimperator.help = function (section, easter) //{{{
         ret = command.type + ' (default: ';
         if (command.type == "boolean")
         {
-            if (command.default_value == true)
+            if (command.defaultValue == true)
                 ret += "on";
             else
                 ret += "off";
         }
         else
         {
-            if (typeof command.default_value == "string" && command.default_value.length == 0)
+            if (typeof command.defaultValue == "string" && command.defaultValue.length == 0)
                 ret += "''";
             else
-                ret += command.default_value;
+                ret += command.defaultValue;
         }
 
         ret += ")<br/>";
@@ -286,6 +286,6 @@ vimperator.help = function (section, easter) //{{{
             window.content.scrollTo(0, pos[1]);
         }
     }, 0);
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

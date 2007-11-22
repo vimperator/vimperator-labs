@@ -74,7 +74,7 @@ vimperator.Events = function () //{{{
 
     /////////////////////////////////////////////////////////
     // track if a popup is open or the menubar is active
-    var active_menubar = false;
+    var activeMenubar = false;
     function enterPopupMode(event)
     {
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
@@ -85,17 +85,17 @@ vimperator.Events = function () //{{{
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
-        if (!gContextMenu && !active_menubar)
+        if (!gContextMenu && !activeMenubar)
             vimperator.removeMode(null, vimperator.modes.MENU);
     }
     function enterMenuMode()
     {
-        active_menubar = true;
-        vimperator.addMode(null, vimperator.modes.MENU)
+        activeMenubar = true;
+        vimperator.addMode(null, vimperator.modes.MENU);
     }
     function exitMenuMode()
     {
-        active_menubar = false;
+        activeMenubar = false;
         vimperator.removeMode(null, vimperator.modes.MENU);
     }
     window.addEventListener("popupshown", enterPopupMode, true);
@@ -182,7 +182,7 @@ vimperator.Events = function () //{{{
             var tagname = elt.localName.toLowerCase();
             var type = elt.type.toLowerCase();
 
-            if ( (tagname == "input" && (type != "image")) ||
+            if ((tagname == "input" && (type != "image")) ||
                     tagname == "textarea" ||
                     //            tagName == "SELECT" ||
                     //            tagName == "BUTTON" ||
@@ -234,571 +234,579 @@ vimperator.Events = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.destroy = function ()
-    {
-        // removeEventListeners() to avoid mem leaks
-        window.dump("TODO: remove all eventlisteners\n");
+    var eventManager = {
 
-        getBrowser().removeProgressListener(this.progressListener);
-
-        window.removeEventListener("popupshown", enterPopupMode, true);
-        window.removeEventListener("popuphidden", exitPopupMode, true);
-        window.removeEventListener("DOMMenuBarActive", enterMenuMode, true);
-        window.removeEventListener("DOMMenuBarInactive", exitMenuMode, true);
-
-        window.removeEventListener("keypress", this.onKeyPress, true);
-        window.removeEventListener("keydown", this.onKeyDown, true);
-    }
-
-    // This method pushes keys into the event queue from vimperator
-    // it is similar to vim's feedkeys() method, but cannot cope with
-    // 2 partially feeded strings, you have to feed one parsable string
-    //
-    // @param keys: a string like "2<C-f>" to pass
-    //              if you want < to be taken literally, prepend it with a \\
-    this.feedkeys = function (keys, noremap)
-    {
-        var doc = window.document;
-        var view = window.document.defaultView;
-        var escapeKey = false; // \ to escape some special keys
-
-        noremap = !!noremap;
-
-        for (var i = 0; i < keys.length; i++)
+        destroy: function ()
         {
-            var charCode = keys.charCodeAt(i);
-            var keyCode = 0;
-            var shift = false, ctrl = false, alt = false, meta = false;
-            //if (charCode == 92) // the '\' key FIXME: support the escape key
-            if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
-            {
-                var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
-                if (matches && matches[2])
-                {
-                    if (matches[1]) // check for modifiers
-                    {
-                        ctrl  = /[cC]-/.test(matches[1]);
-                        alt   = /[aA]-/.test(matches[1]);
-                        shift = /[sS]-/.test(matches[1]);
-                        meta  = /[mM]-/.test(matches[1]);
-                    }
-                    if (matches[2].length == 1)
-                    {
-                        if (!ctrl && !alt && !shift && !meta)
-                            return; // an invalid key like <a>
-                        charCode = matches[2].charCodeAt(0);
-                    }
-                    else if (matches[2].toLowerCase() == "space")
-                    {
-                        charCode = 32;
-                    }
-                    else if (keyCode = getKeyCode(matches[2]))
-                    {
-                        charCode = 0;
-                    }
-                    else //an invalid key like <A-xxx> was found, stop propagation here (like Vim)
-                    {
-                        return;
-                    }
+            // removeEventListeners() to avoid mem leaks
+            window.dump("TODO: remove all eventlisteners\n");
 
-                    i += matches[0].length + 1;
+            getBrowser().removeProgressListener(this.progressListener);
+
+            window.removeEventListener("popupshown", enterPopupMode, true);
+            window.removeEventListener("popuphidden", exitPopupMode, true);
+            window.removeEventListener("DOMMenuBarActive", enterMenuMode, true);
+            window.removeEventListener("DOMMenuBarInactive", exitMenuMode, true);
+
+            window.removeEventListener("keypress", this.onKeyPress, true);
+            window.removeEventListener("keydown", this.onKeyDown, true);
+        },
+
+        // This method pushes keys into the event queue from vimperator
+        // it is similar to vim's feedkeys() method, but cannot cope with
+        // 2 partially feeded strings, you have to feed one parsable string
+        //
+        // @param keys: a string like "2<C-f>" to pass
+        //              if you want < to be taken literally, prepend it with a \\
+        feedkeys: function (keys, noremap)
+        {
+            var doc = window.document;
+            var view = window.document.defaultView;
+            var escapeKey = false; // \ to escape some special keys
+
+            noremap = !!noremap;
+
+            for (var i = 0; i < keys.length; i++)
+            {
+                var charCode = keys.charCodeAt(i);
+                var keyCode = 0;
+                var shift = false, ctrl = false, alt = false, meta = false;
+                //if (charCode == 92) // the '\' key FIXME: support the escape key
+                if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
+                {
+                    var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
+                    if (matches && matches[2])
+                    {
+                        if (matches[1]) // check for modifiers
+                        {
+                            ctrl  = /[cC]-/.test(matches[1]);
+                            alt   = /[aA]-/.test(matches[1]);
+                            shift = /[sS]-/.test(matches[1]);
+                            meta  = /[mM]-/.test(matches[1]);
+                        }
+                        if (matches[2].length == 1)
+                        {
+                            if (!ctrl && !alt && !shift && !meta)
+                                return; // an invalid key like <a>
+                            charCode = matches[2].charCodeAt(0);
+                        }
+                        else if (matches[2].toLowerCase() == "space")
+                        {
+                            charCode = 32;
+                        }
+                        else if (keyCode = getKeyCode(matches[2]))
+                        {
+                            charCode = 0;
+                        }
+                        else //an invalid key like <A-xxx> was found, stop propagation here (like Vim)
+                        {
+                            return;
+                        }
+
+                        i += matches[0].length + 1;
+                    }
+                }
+
+                var elem = window.document.commandDispatcher.focusedElement;
+                if (!elem)
+                    elem = window.content;
+
+                var evt = doc.createEvent("KeyEvents");
+                evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
+                evt.noremap = noremap;
+                elem.dispatchEvent(evt);
+            }
+        },
+
+        // this function converts the given event to
+        // a keycode which can be used in mappings
+        // e.g. pressing ctrl+n would result in the string "<C-n>"
+        // null if unknown key
+        toString: function (event)
+        {
+            if (!event)
+                return;
+
+            var key = null;
+            var modifier = "";
+
+            if (event.ctrlKey)
+                modifier += "C-";
+            if (event.altKey)
+                modifier += "A-";
+            if (event.metaKey)
+                modifier += "M-";
+
+            if (event.type == "keypress")
+            {
+                if (event.charCode == 0)
+                {
+                    if (event.shiftKey)
+                        modifier += "S-";
+
+                    for (var i in keyTable)
+                    {
+                        if (keyTable[i][0] == event.keyCode)
+                        {
+                            key = keyTable[i][1][0];
+                            break;
+                        }
+                    }
+                }
+                // special handling of the Space key
+                else if (event.charCode == 32)
+                {
+                    if (event.shiftKey)
+                        modifier += "S-";
+                    key = "Space";
+                }
+                // a normal key like a, b, c, 0, etc.
+                else if (event.charCode > 0)
+                {
+                    key = String.fromCharCode(event.charCode);
+                    if (modifier.length == 0)
+                        return key;
                 }
             }
-
-            var elem = window.document.commandDispatcher.focusedElement;
-            if (!elem)
-                elem = window.content;
-
-            var evt = doc.createEvent("KeyEvents");
-            evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
-            evt.noremap = noremap;
-            elem.dispatchEvent(evt);
-        }
-    }
-
-    // this function converts the given event to
-    // a keycode which can be used in mappings
-    // e.g. pressing ctrl+n would result in the string "<C-n>"
-    // null if unknown key
-    this.toString = function (event) //{{{
-    {
-        if (!event)
-            return;
-
-        var key = null;
-        var modifier = "";
-
-        if (event.ctrlKey)
-            modifier += "C-";
-        if (event.altKey)
-            modifier += "A-";
-        if (event.metaKey)
-            modifier += "M-";
-
-        if (event.type == "keypress")
-        {
-            if (event.charCode == 0)
+            else if (event.type == "click" || event.type == "dblclick")
             {
                 if (event.shiftKey)
                     modifier += "S-";
+                if (event.type == "dblclick")
+                    modifier += "2-";
+                // TODO: triple and quadruple click
 
-                for (var i in keyTable)
+                switch (event.button)
                 {
-                    if (keyTable[i][0] == event.keyCode)
-                    {
-                        key = keyTable[i][1][0];
+                    case 0:
+                        key = "LeftMouse";
                         break;
-                    }
+                    case 1:
+                        key = "MiddleMouse";
+                        break;
+                    case 2:
+                        key = "RightMouse";
+                        break;
                 }
             }
-            // special handling of the Space key
-            else if (event.charCode == 32)
-            {
-                if (event.shiftKey)
-                    modifier += "S-";
-                key = "Space";
-            }
-            // a normal key like a, b, c, 0, etc.
-            else if (event.charCode > 0)
-            {
-                key = String.fromCharCode(event.charCode);
-                if (modifier.length == 0)
-                    return key;
-            }
-        }
-        else if (event.type == "click" || event.type == "dblclick")
+
+            if (key == null)
+                return null;
+
+            // a key like F1 is always enclosed in < and >
+            return "<" + modifier + key + ">";
+
+        },
+
+        isAcceptKey: function (key)
         {
-            if (event.shiftKey)
-                modifier += "S-";
-            if (event.type == "dblclick")
-                modifier += "2-";
-            // TODO: triple and quadruple click
+            return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
+        },
 
-            switch (event.button)
-            {
-                case 0:
-                    key = "LeftMouse";
-                    break;
-                case 1:
-                    key = "MiddleMouse";
-                    break;
-                case 2:
-                    key = "RightMouse";
-                    break;
-            }
-        }
-
-        if (key == null)
-            return null;
-
-        // a key like F1 is always enclosed in < and >
-        return "<" + modifier + key + ">";
-
-    } //}}}
-
-    this.isAcceptKey = function (key)
-    {
-        return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
-    }
-    this.isCancelKey = function (key)
-    {
-        return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
-    }
-
-    // global escape handler, is called in ALL modes
-    this.onEscape = function ()
-    {
-        if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+        isCancelKey: function (key)
         {
+            return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
+        },
+
+        // global escape handler, is called in ALL modes
+        onEscape: function ()
+        {
+            if (!vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+            {
+                if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+                {
+                    vimperator.removeMode(null, vimperator.modes.ESCAPE_ALL_KEYS);
+                    return;
+                }
+
+                vimperator.setMode(vimperator.modes.NORMAL);
+                vimperator.commandline.clear();
+                vimperator.hints.disableHahMode();
+                vimperator.statusline.updateUrl();
+                vimperator.focusContent();
+            }
+        },
+
+        // this keypress handler gets always called first, even if e.g.
+        // the commandline has focus
+        onKeyPress: function (event)
+        {
+            var key = vimperator.events.toString(event);
+            if (!key)
+                 return true;
+
+            var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
+
+            var win =  document.commandDispatcher.focusedWindow;
+            if (win && win.document.designMode == "on")
+                return true;
+
+            // menus have their own command handlers
+            if (vimperator.hasMode(vimperator.modes.MENU))
+                return true;
+
+            // XXX: for now only, later: input mappings if form element focused
+            if (isFormElemFocused())
+            {
+                if (key == "<S-Insert>")
+                {
+                    var elt = window.document.commandDispatcher.focusedElement;
+
+                    if (elt.setSelectionRange && readFromClipboard())
+                        // readFromClipboard would return 'undefined' if not checked
+                        // dunno about .setSelectionRange
+                    {
+                        var rangeStart = elt.selectionStart; // caret position
+                        var rangeEnd = elt.selectionEnd;
+                        var tempStr1 = elt.value.substring(0,rangeStart);
+                        var tempStr2 = readFromClipboard();
+                        var tempStr3 = elt.value.substring(rangeEnd);
+                        elt.value = tempStr1 + tempStr2  + tempStr3;
+                        elt.selectionStart = rangeStart + tempStr2.length;
+                        elt.selectionEnd = elt.selectionStart;
+                        event.preventDefault();
+                        // prevents additional firefox-clipboard pasting
+                    }
+                }
+                return false;
+            }
+
+            // handle Escape-one-key mode (Ctrl-v)
+            if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
+            {
+                vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
+                return true;
+            }
+            // handle Escape-all-keys mode (I)
             if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
             {
-                vimperator.removeMode(null, vimperator.modes.ESCAPE_ALL_KEYS);
-                return;
+                if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
+                    vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
+                else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
+                    ; // let flow continue to handle these keys
+                else
+                    return true;
             }
 
-            vimperator.setMode(vimperator.modes.NORMAL);
-            vimperator.commandline.clear();
-            vimperator.hints.disableHahMode();
-            vimperator.statusline.updateUrl();
-            vimperator.focusContent();
-        }
-    }
+            // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
+            if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+                        isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
+                    return true;
 
-    // this keypress handler gets always called first, even if e.g.
-    // the commandline has focus
-    this.onKeyPress = function (event)
-    {
-        var key = vimperator.events.toString(event);
-        if (!key)
-             return true;
-
-        var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
-
-        var win =  document.commandDispatcher.focusedWindow;
-        if (win && win.document.designMode == "on")
-            return true;
-
-        if (vimperator.hasMode(vimperator.modes.MENU))
-            return true;
-
-        // XXX: for now only, later: input mappings if form element focused
-        if (isFormElemFocused())
-        {
-            if (key == "<S-Insert>")
+            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
+                vimperator.hasMode(vimperator.modes.WRITE_MULTILINE))
             {
-                var elt = window.document.commandDispatcher.focusedElement;
-
-                if (elt.setSelectionRange && readFromClipboard())
-                    // readFromClipboard would return 'undefined' if not checked
-                    // dunno about .setSelectionRange
-                {
-                    var rangeStart = elt.selectionStart; // caret position
-                    var rangeEnd = elt.selectionEnd;
-                    var tempStr1 = elt.value.substring(0,rangeStart);
-                    var tempStr2 = readFromClipboard();
-                    var tempStr3 = elt.value.substring(rangeEnd);
-                    elt.value = tempStr1 + tempStr2  + tempStr3;
-                    elt.selectionStart = rangeStart + tempStr2.length;
-                    elt.selectionEnd = elt.selectionStart;
-                    event.preventDefault();
-                    // prevents additional firefox-clipboard pasting
-                }
-            }
-            return false;
-        }
-
-        // handle Escape-one-key mode (Ctrl-v)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) && !vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
-        {
-            vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY);
-            return true;
-        }
-        // handle Escape-all-keys mode (I)
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS))
-        {
-            if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY))
-                vimperator.removeMode(null, vimperator.modes.ESCAPE_ONE_KEY); // and then let flow continue
-            else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
-                ; // let flow continue to handle these keys
-            else
-                return true;
-        }
-
-        // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
-        if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
-                    isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
-                return true;
-
-        if (vimperator.hasMode(vimperator.modes.COMMAND_LINE) &&
-            vimperator.hasMode(vimperator.modes.WRITE_MULTILINE))
-        {
-            vimperator.commandline.onMultilineOutputEvent(event);
-            return false;
-        }
-
-        // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
-        // also fixes key navigation in combo boxes, etc.
-        if (vimperator.hasMode(vimperator.modes.NORMAL))
-        {
-            if (key == "<Tab>" || key == "<S-Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+                vimperator.commandline.onMultilineOutputEvent(event);
                 return false;
-        }
-
-
-    //  // FIXME: handle middle click in content area {{{
-    //  //     alert(event.target.id);
-    //  if (/*event.type == 'mousedown' && */event.button == 1 && event.target.id == 'content')
-    //  {
-    //      //echo("foo " + event.target.id);
-    //      //if (document.commandDispatcher.focusedElement == command_line.inputField)
-    //      {
-    //      //alert(command_line.value.substring(0, command_line.selectionStart));
-    //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
-    //                               readFromClipboard() +
-    //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
-    //         alert(command_line.value);
-    //      }
-    //      //else
-    // //       {
-    // //           openURLs(readFromClipboard());
-    // //       }
-    //      return true;
-    //  } }}}
-
-
-        // if Hit-a-hint mode is on, special handling of keys is required
-        // FIXME: total mess
-        if (vimperator.hasMode(vimperator.modes.HINTS))
-        {
-            // never propagate this key to firefox, when hints are visible
-            //event.preventDefault();
-            //event.stopPropagation();
-
-            var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
-            if (map)
-            {
-                if (map.always_active || vimperator.hints.currentState() == 1)
-                {
-                    map.execute(null, vimperator.input.count);
-                    if (map.cancel_mode) // stop processing this event
-                    {
-                        vimperator.hints.disableHahMode();
-                        vimperator.input.buffer = "";
-                        vimperator.statusline.updateInputBuffer("");
-                        return false;
-                    }
-                    else
-                    {
-                        // FIXME: make sure that YOU update the statusbar message yourself
-                        // first in g_hint_mappings when in this mode!
-                        vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-                        return false;
-                    }
-                }
             }
 
-            // no mapping found, beep()
-            if (vimperator.hints.currentState() == 1)
+            // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+            // also fixes key navigation in combo boxes, etc.
+            if (vimperator.hasMode(vimperator.modes.NORMAL))
             {
-                vimperator.beep();
-                vimperator.hints.disableHahMode();
-                vimperator.input.buffer = "";
+                if (key == "<Tab>" || key == "<S-Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+                    return false;
+            }
+
+
+        //  // FIXME: handle middle click in content area {{{
+        //  //     alert(event.target.id);
+        //  if (/*event.type == 'mousedown' && */event.button == 1 && event.target.id == 'content')
+        //  {
+        //      //echo("foo " + event.target.id);
+        //      //if (document.commandDispatcher.focusedElement == command_line.inputField)
+        //      {
+        //      //alert(command_line.value.substring(0, command_line.selectionStart));
+        //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
+        //                               readFromClipboard() +
+        //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
+        //         alert(command_line.value);
+        //      }
+        //      //else
+        // //       {
+        // //           openURLs(readFromClipboard());
+        // //       }
+        //      return true;
+        //  } }}}
+
+
+            // if Hit-a-hint mode is on, special handling of keys is required
+            // FIXME: total mess
+            if (vimperator.hasMode(vimperator.modes.HINTS))
+            {
+                // never propagate this key to firefox, when hints are visible
+                //event.preventDefault();
+                //event.stopPropagation();
+
+                var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
+                if (map)
+                {
+                    if (map.alwaysActive || vimperator.hints.currentState() == 1)
+                    {
+                        map.execute(null, vimperator.input.count);
+                        if (map.cancelMode) // stop processing this event
+                        {
+                            vimperator.hints.disableHahMode();
+                            vimperator.input.buffer = "";
+                            vimperator.statusline.updateInputBuffer("");
+                            return false;
+                        }
+                        else
+                        {
+                            // FIXME: make sure that YOU update the statusbar message yourself
+                            // first in g_hint_mappings when in this mode!
+                            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                            return false;
+                        }
+                    }
+                }
+
+                // no mapping found, beep()
+                if (vimperator.hints.currentState() == 1)
+                {
+                    vimperator.beep();
+                    vimperator.hints.disableHahMode();
+                    vimperator.input.buffer = "";
+                    vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
+                    return true;
+                }
+
+                // if we came here, let hit-a-hint process the key as it is part
+                // of a partial link
+                var res = vimperator.hints.processEvent(event);
+                if (res < 0) // error occured processing this key
+                {
+                    vimperator.beep();
+                    if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                        vimperator.hints.disableHahMode();
+                    else // ALWAYS mode
+                        vimperator.hints.resetHintedElements();
+                    vimperator.input.buffer = "";
+                }
+                else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
+                    vimperator.input.buffer += key;
+                else // this key completed a quick hint
+                {
+                    // if the hint is all in UPPERCASE, open it in new tab
+                    vimperator.input.buffer += key;
+                    if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
+                        vimperator.hints.openHints(true, false);
+                    else // open in current window
+                        vimperator.hints.openHints(false, false);
+
+                    if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
+                        vimperator.hints.disableHahMode();
+                    else // ALWAYS mode
+                        vimperator.hints.resetHintedElements();
+
+                    vimperator.input.buffer = "";
+                }
+
                 vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
                 return true;
             }
 
-            // if we came here, let hit-a-hint process the key as it is part
-            // of a partial link
-            var res = vimperator.hints.processEvent(event);
-            if (res < 0) // error occured processing this key
-            {
-                vimperator.beep();
-                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    vimperator.hints.disableHahMode();
-                else // ALWAYS mode
-                    vimperator.hints.resetHintedElements();
-                vimperator.input.buffer = "";
-            }
-            else if (res == 0 || vimperator.hasMode(vimperator.modes.EXTENDED_HINT)) // key processed, part of a larger hint
-                vimperator.input.buffer += key;
-            else // this key completed a quick hint
-            {
-                // if the hint is all in UPPERCASE, open it in new tab
-                vimperator.input.buffer += key;
-                if (/[A-Za-z]/.test(vimperator.input.buffer) && vimperator.input.buffer.toUpperCase() == vimperator.input.buffer)
-                    vimperator.hints.openHints(true, false);
-                else // open in current window
-                    vimperator.hints.openHints(false, false);
-
-                if (vimperator.hasMode(vimperator.modes.QUICK_HINT))
-                    vimperator.hints.disableHahMode();
-                else // ALWAYS mode
-                    vimperator.hints.resetHintedElements();
-
-                vimperator.input.buffer = "";
-            }
-
-            vimperator.statusline.updateInputBuffer(vimperator.input.buffer);
-            return true;
-        }
-
-        var count_str = vimperator.input.buffer.match(/^[0-9]*/)[0];
-        var candidate_command = (vimperator.input.buffer + key).replace(count_str, "");
-        var map;
-        if (event.noremap)
-            map = vimperator.mappings.getDefaultMap(vimperator.modes.NORMAL, candidate_command);
-        else
-            map = vimperator.mappings.get(vimperator.modes.NORMAL, candidate_command);
-
-        // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-        if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
-        {
-            // no count for insert mode mappings
-            if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                stop = false;
+            var countStr = vimperator.input.buffer.match(/^[0-9]*/)[0];
+            var candidateCommand = (vimperator.input.buffer + key).replace(countStr, "");
+            var map;
+            if (event.noremap)
+                map = vimperator.mappings.getDefaultMap(vimperator.modes.NORMAL, candidateCommand);
             else
-                vimperator.input.buffer += key;
-        }
-        else if (vimperator.input.pendingArgMap)
-        {
-            vimperator.input.buffer = "";
+                map = vimperator.mappings.get(vimperator.modes.NORMAL, candidateCommand);
 
-            if (key != "<Esc>" && key != "<C-[>")
-                vimperator.input.pendingArgMap.execute(null, vimperator.input.count, key);
-
-            vimperator.input.pendingArgMap = null;
-        }
-        else if (map)
-        {
-            vimperator.input.count = parseInt(count_str, 10);
-            if (isNaN(vimperator.input.count))
-                vimperator.input.count = -1;
-            if (map.flags & vimperator.Mappings.flags.ARGUMENT)
+            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+            if ((vimperator.input.buffer + key).match(/^[1-9][0-9]*$/))
             {
-                vimperator.input.pendingArgMap = map;
-                vimperator.input.buffer += key;
+                // no count for insert mode mappings
+                if (vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                    stop = false;
+                else
+                    vimperator.input.buffer += key;
             }
-            else if (vimperator.input.pendingMotionMap)
+            else if (vimperator.input.pendingArgMap)
             {
+                vimperator.input.buffer = "";
+
                 if (key != "<Esc>" && key != "<C-[>")
-                {
-                    vimperator.input.pendingMotionMap.execute(candidate_command, vimperator.input.count, null);
-                }
-                vimperator.input.pendingMotionMap = null;
-                vimperator.input.buffer = "";
+                    vimperator.input.pendingArgMap.execute(null, vimperator.input.count, key);
+
+                vimperator.input.pendingArgMap = null;
             }
-            // no count support for these commands yet
-            else if (map.flags & vimperator.Mappings.flags.MOTION)
+            else if (map)
             {
-                vimperator.input.pendingMotionMap = map;
-                vimperator.input.buffer = "";
+                vimperator.input.count = parseInt(countStr, 10);
+                if (isNaN(vimperator.input.count))
+                    vimperator.input.count = -1;
+                if (map.flags & vimperator.Mappings.flags.ARGUMENT)
+                {
+                    vimperator.input.pendingArgMap = map;
+                    vimperator.input.buffer += key;
+                }
+                else if (vimperator.input.pendingMotionMap)
+                {
+                    if (key != "<Esc>" && key != "<C-[>")
+                    {
+                        vimperator.input.pendingMotionMap.execute(candidateCommand, vimperator.input.count, null);
+                    }
+                    vimperator.input.pendingMotionMap = null;
+                    vimperator.input.buffer = "";
+                }
+                // no count support for these commands yet
+                else if (map.flags & vimperator.Mappings.flags.MOTION)
+                {
+                    vimperator.input.pendingMotionMap = map;
+                    vimperator.input.buffer = "";
+                }
+                else
+                {
+                    vimperator.input.buffer = "";
+                    map.execute(null, vimperator.input.count);
+                }
+            }
+            else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidateCommand).length > 0)
+            {
+                vimperator.input.buffer += key;
             }
             else
             {
                 vimperator.input.buffer = "";
-                map.execute(null, vimperator.input.count);
+                vimperator.input.pendingArgMap = null;
+                vimperator.input.pendingMotionMap = null;
+
+                // allow key to be passed to firefox if we can't handle it
+                stop = false;
+
+                // TODO: see if this check is needed or are all motion commands already mapped in these modes?
+                if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE))
+                    vimperator.beep();
             }
-        }
-        else if (vimperator.mappings.getCandidates(vimperator.modes.NORMAL, candidate_command).length > 0)
-        {
-            vimperator.input.buffer += key;
-        }
-        else
-        {
-            vimperator.input.buffer = "";
-            vimperator.input.pendingArgMap = null;
-            vimperator.input.pendingMotionMap = null;
 
-            // allow key to be passed to firefox if we can't handle it
-            stop = false;
+            if (stop)
+            {
+                event.preventDefault();
+                event.stopPropagation();
+            }
 
-            // TODO: see if this check is needed or are all motion commands already mapped in these modes?
-            if (!vimperator.hasMode(vimperator.modes.COMMAND_LINE))
-                vimperator.beep();
-        }
+            var motionMap = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
+            vimperator.statusline.updateInputBuffer(motionMap + vimperator.input.buffer);
+            return false;
+        },
 
-        if (stop)
+        // this is need for sites like msn.com which focus the input field on keydown
+        onKeyUpOrDown: function (event)
         {
-            event.preventDefault();
+            if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) || vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) || isFormElemFocused())
+                return true;
+
             event.stopPropagation();
+            return false;
+        },
+
+        progressListener: {
+            QueryInterface: function (aIID)
+            {
+                if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+                        aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
+                        aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                        aIID.equals(Components.interfaces.nsISupports))
+                    return this;
+                throw Components.results.NS_NOINTERFACE;
+            },
+
+            // XXX: function may later be needed to detect a canceled synchronous openURL()
+            onStateChange: function (webProgress, aRequest, flags, aStatus)
+            {
+                // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
+                // receive statechange events for loading images and other parts of the web page
+                if (flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
+                            Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+                {
+                    // This fires when the load event is initiated
+                    if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+                    {
+                        vimperator.statusline.updateProgress(0);
+                    }
+                    else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+                        ;// vimperator.statusline.updateUrl();
+                }
+            },
+            // for notifying the user about secure web pages
+            onSecurityChange: function (webProgress, aRequest, aState)
+            {
+                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+                if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
+                    vimperator.statusline.setClass("insecure");
+                else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
+                    vimperator.statusline.setClass("broken");
+                else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
+                    vimperator.statusline.setClass("secure");
+            },
+            onStatusChange: function (webProgress, request, status, message)
+            {
+                vimperator.statusline.updateUrl(message);
+            },
+            onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
+            {
+                vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+            },
+            // happens when the users switches tabs
+            onLocationChange: function ()
+            {
+                vimperator.statusline.updateUrl();
+                vimperator.statusline.updateProgress();
+
+                // if this is not delayed we get the position of the old buffer
+                setTimeout(function () { vimperator.statusline.updateBufferPosition(); }, 100);
+            },
+            // called at the very end of a page load
+            asyncUpdateUI: function ()
+            {
+                setTimeout(vimperator.statusline.updateUrl, 100);
+            },
+            setOverLink : function (link, b)
+            {
+                var ssli = vimperator.options["showstatuslinks"];
+                if (link && ssli)
+                {
+                    if (ssli == 1)
+                        vimperator.statusline.updateUrl("Link: " + link);
+                    else if (ssli == 2)
+                        vimperator.echo("Link: " + link, vimperator.commandline.DISALLOW_MULTILINE);
+                }
+
+                if (link == "")
+                {
+                    if (ssli == 1)
+                        vimperator.statusline.updateUrl();
+                    else if (ssli == 2)
+                        vimperator.setMode(); // trick to reshow the mode in the command line
+                }
+            },
+
+            // stub functions for the interfaces
+            setJSStatus: function (status) { ; },
+            setJSDefaultStatus: function (status) { ; },
+            setDefaultStatus: function (status) { ; },
+            onLinkIconAvailable: function () { ; }
         }
 
-        var motion_map = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
-        vimperator.statusline.updateInputBuffer(motion_map + vimperator.input.buffer);
-        return false;
-    }
-    window.addEventListener("keypress", this.onKeyPress, true);
-
-    // this is need for sites like msn.com which focus the input field on keydown
-    this.onKeyUpOrDown = function (event)
-    {
-        if (vimperator.hasMode(vimperator.modes.ESCAPE_ONE_KEY) || vimperator.hasMode(vimperator.modes.ESCAPE_ALL_KEYS) || isFormElemFocused())
-            return true;
-
-        event.stopPropagation();
-        return false;
-    }
-    window.addEventListener("keydown", this.onKeyUpOrDown, true);
-    window.addEventListener("keyup", this.onKeyUpOrDown, true);
-
-    this.progressListener =
-    {
-        QueryInterface: function (aIID)
-        {
-            if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                    aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
-                    aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                    aIID.equals(Components.interfaces.nsISupports))
-                return this;
-            throw Components.results.NS_NOINTERFACE;
-        },
-
-        // XXX: function may later be needed to detect a canceled synchronous openURL()
-        onStateChange: function (webProgress, aRequest, flags, aStatus)
-        {
-            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
-            // receive statechange events for loading images and other parts of the web page
-            if (flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
-                        Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
-            {
-                // This fires when the load event is initiated
-                if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
-                {
-                    vimperator.statusline.updateProgress(0);
-                }
-                else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-                    ;// vimperator.statusline.updateUrl();
-            }
-        },
-        // for notifying the user about secure web pages
-        onSecurityChange: function (webProgress, aRequest, aState)
-        {
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                vimperator.statusline.setClass("insecure");
-            else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                vimperator.statusline.setClass("broken");
-            else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
-                vimperator.statusline.setClass("secure");
-        },
-        onStatusChange: function (webProgress, request, status, message)
-        {
-            vimperator.statusline.updateUrl(message);
-        },
-        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
-        {
-            vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
-        },
-        // happens when the users switches tabs
-        onLocationChange: function ()
-        {
-            vimperator.statusline.updateUrl();
-            vimperator.statusline.updateProgress();
-
-            // if this is not delayed we get the position of the old buffer
-            setTimeout(function () { vimperator.statusline.updateBufferPosition(); }, 100);
-        },
-        // called at the very end of a page load
-        asyncUpdateUI: function ()
-        {
-            setTimeout(vimperator.statusline.updateUrl, 100);
-        },
-        setOverLink : function (link, b)
-        {
-            var ssli = vimperator.options["showstatuslinks"];
-            if (link && ssli)
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl("Link: " + link);
-                else if (ssli == 2)
-                    vimperator.echo("Link: " + link, vimperator.commandline.DISALLOW_MULTILINE);
-            }
-
-            if (link == "")
-            {
-                if (ssli == 1)
-                    vimperator.statusline.updateUrl();
-                else if (ssli == 2)
-                    vimperator.setMode(); // trick to reshow the mode in the command line
-            }
-        },
-
-        // stub functions for the interfaces
-        setJSStatus: function (status) { ; },
-        setJSDefaultStatus: function (status) { ; },
-        setDefaultStatus: function (status) { ; },
-        onLinkIconAvailable: function () { ; }
     };
 
-    window.XULBrowserWindow = this.progressListener;
+    window.XULBrowserWindow = eventManager.progressListener;
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIWebNavigation)
         .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
         .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
-    getBrowser().addProgressListener(this.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    getBrowser().addProgressListener(eventManager.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+
+    window.addEventListener("keypress", eventManager.onKeyPress,    true);
+    window.addEventListener("keydown",  eventManager.onKeyUpOrDown, true);
+    window.addEventListener("keyup",    eventManager.onKeyUpOrDown, true);
+
+    return eventManager;
     //}}}
-} //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -53,7 +53,7 @@
 	* added a visual bell and replaced 'beep' with 'visualbell'
 	* added vimperator logo (can be seen in the addons manager)
 	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
-	* many small bug fixes and enhancments
+	* many small bug fixes and enhancements
 
 2007-09-03:
 	* version 0.5.1

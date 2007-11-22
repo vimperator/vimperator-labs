@@ -39,27 +39,32 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // make sure you only create this object when the "vimperator" object is ready
 vimperator.Search = function () //{{{
 {
-    var self = this;                   // needed for callbacks since "this" is the "vimperator" object in a callback
-    var found = false;                 // true if the last search was successful
-    var backwards = false;             // currently searching backwards
-    var search_string = "";            // current search string (without modifiers)
-    var search_pattern = "";           // current search string (includes modifiers)
-    var last_search_pattern = "";      // the last searched pattern (includes modifiers)
-    var last_search_string = "";       // the last searched string (without modifiers)
-    var last_search_backwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
-    var case_sensitive = false;        // search string is case sensitive
-    var links_only = false;            // search is limited to link text only
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    // FIXME:
+    //var self = this;               // needed for callbacks since "this" is the "vimperator" object in a callback
+    var found = false;               // true if the last search was successful
+    var backwards = false;           // currently searching backwards
+    var searchString = "";           // current search string (without modifiers)
+    var searchPattern = "";          // current search string (includes modifiers)
+    var lastSearchPattern = "";      // the last searched pattern (includes modifiers)
+    var lastSearchString = "";       // the last searched string (without modifiers)
+    var lastSearchBackwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
+    var caseSensitive = false;       // search string is case sensitive
+    var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function (command) { self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function (command) { self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function () { self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function (command) { vimperator.search.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function (command) { vimperator.search.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function () { vimperator.search.searchCanceled(); });
     // TODO: allow advanced modes in register/triggerCallback
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function (command) { self.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function (command) { self.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function () { self.searchCanceled(); });
+    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function (command) { vimperator.search.searchKeyPressed(command); });
+    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function (command) { vimperator.search.searchSubmitted(command); });
+    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function () { vimperator.search.searchCanceled(); });
 
-    // set search_string, search_pattern, case_sensitive, links_only
+    // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
     {
         // strip off pattern terminator and offset
@@ -68,32 +73,32 @@ vimperator.Search = function () //{{{
         else
             pattern = pattern.replace(/\/.*/, "");
 
-        search_pattern = pattern;
+        searchPattern = pattern;
 
         // links only search - \l wins if both modifiers specified
         if (/\\l/.test(pattern))
-            links_only = false;
+            linksOnly = false;
         else if (/\L/.test(pattern))
-            links_only = true;
+            linksOnly = true;
         else if (vimperator.options["linksearch"])
-            links_only = true;
+            linksOnly = true;
         else
-            links_only = false;
+            linksOnly = false;
 
         // strip links-only modifiers
         pattern = pattern.replace(/(\\)?\\[lL]/g, function ($0, $1) { return $1 ? $0 : ""; });
 
         // case sensitivity - \c wins if both modifiers specified
         if (/\c/.test(pattern))
-            case_sensitive = false;
+            caseSensitive = false;
         else if (/\C/.test(pattern))
-            case_sensitive = true;
+            caseSensitive = true;
         else if (vimperator.options["ignorecase"] && vimperator.options["smartcase"] && /[A-Z]/.test(pattern))
-            case_sensitive = true;
+            caseSensitive = true;
         else if (vimperator.options["ignorecase"])
-            case_sensitive = false;
+            caseSensitive = false;
         else
-            case_sensitive = true;
+            caseSensitive = true;
 
         // strip case-sensitive modifiers
         pattern = pattern.replace(/(\\)?\\[cC]/g, function ($0, $1) { return $1 ? $0 : ""; });
@@ -101,171 +106,179 @@ vimperator.Search = function () //{{{
         // remove any modifer escape \
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
-        search_string = pattern;
+        searchString = pattern;
     }
 
-    // Called when the search dialog is asked for
-    // If you omit "mode", it will default to forward searching
-    this.openSearchDialog = function (mode)
-    {
-        if (mode == vimperator.modes.SEARCH_BACKWARD)
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    return {
+
+        // Called when the search dialog is asked for
+        // If you omit "mode", it will default to forward searching
+        openSearchDialog: function (mode)
         {
-            vimperator.commandline.open("?", "", vimperator.modes.SEARCH_BACKWARD);
-            backwards = true;
-        }
-        else
+            if (mode == vimperator.modes.SEARCH_BACKWARD)
+            {
+                vimperator.commandline.open("?", "", vimperator.modes.SEARCH_BACKWARD);
+                backwards = true;
+            }
+            else
+            {
+                vimperator.commandline.open("/", "", vimperator.modes.SEARCH_FORWARD);
+                backwards = false;
+            }
+
+            // TODO: focus the top of the currently visible screen
+        },
+
+        // Finds text in a page
+        // TODO: backwards seems impossible i fear :(
+        find: function (str, backwards)
         {
-            vimperator.commandline.open("/", "", vimperator.modes.SEARCH_FORWARD);
-            backwards = false;
-        }
+            var fastFind = getBrowser().fastFind;
 
-        // TODO: focus the top of the currently visible screen
-    }
+            processUserPattern(str);
 
-    // Finds text in a page
-    // TODO: backwards seems impossible i fear :(
-    this.find = function (str, backwards)
-    {
-        var fastFind = getBrowser().fastFind;
+            fastFind.caseSensitive = caseSensitive;
+            found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
-        processUserPattern(str);
+            if (!found)
+                setTimeout(function () { vimperator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
 
-        fastFind.caseSensitive = case_sensitive;
-        found = fastFind.find(search_string, links_only) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
+            return found;
+        },
 
-        if (!found)
-            setTimeout(function () { vimperator.echoerr("E486: Pattern not found: " + search_pattern); }, 0);
-
-        return found;
-    }
-
-    // Called when the current search needs to be repeated
-    this.findAgain = function (reverse)
-    {
-        // this hack is needed to make n/N work with the correct string, if
-        // we typed /foo<esc> after the original search.  Since searchString is
-        // readonly we have to call find() again to update it.
-        if (getBrowser().fastFind.searchString != last_search_string)
-            this.find(last_search_string, false);
-
-        var up = reverse ? !last_search_backwards : last_search_backwards;
-        var result;
-
-        if (up)
-            result = getBrowser().fastFind.findPrevious();
-        else
-            result = getBrowser().fastFind.findNext();
-
-        if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+        // Called when the current search needs to be repeated
+        findAgain: function (reverse)
         {
-            vimperator.echoerr("E486: Pattern not found: " + last_search_pattern);
-        }
-        else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
+            // this hack is needed to make n/N work with the correct string, if
+            // we typed /foo<esc> after the original search.  Since searchString is
+            // readonly we have to call find() again to update it.
+            if (getBrowser().fastFind.searchString != lastSearchString)
+                this.find(lastSearchString, false);
+
+            var up = reverse ? !lastSearchBackwards : lastSearchBackwards;
+            var result;
+
+            if (up)
+                result = getBrowser().fastFind.findPrevious();
+            else
+                result = getBrowser().fastFind.findNext();
+
+            if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+            {
+                vimperator.echoerr("E486: Pattern not found: " + lastSearchPattern);
+            }
+            else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
+            {
+                // hack needed, because wrapping causes a "scroll" event which clears
+                // our command line
+                setTimeout(function () {
+                    if (up)
+                        vimperator.commandline.echo("search hit TOP, continuing at BOTTOM", vimperator.commandline.HL_WARNING);
+                    else
+                        vimperator.commandline.echo("search hit BOTTOM, continuing at TOP", vimperator.commandline.HL_WARNING);
+                }, 0);
+            }
+            else
+            {
+                vimperator.echo((up ? "?" : "/") + lastSearchPattern);
+
+                if (vimperator.options["hlsearch"])
+                    this.highlight(lastSearchString);
+            }
+        },
+
+        // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
+        searchKeyPressed: function (command)
         {
-            // hack needed, because wrapping causes a "scroll" event which clears
-            // our command line
-            setTimeout(function () {
-                if (up)
-                    vimperator.commandline.echo("search hit TOP, continuing at BOTTOM", vimperator.commandline.HL_WARNING);
-                else
-                    vimperator.commandline.echo("search hit BOTTOM, continuing at TOP", vimperator.commandline.HL_WARNING);
-            }, 0);
-        }
-        else
+            if (vimperator.options["incsearch"])
+                this.find(command, backwards);
+        },
+
+        // Called when the enter key is pressed to trigger a search
+        // use forcedBackward if you call this function directly
+        searchSubmitted: function (command, forcedBackward)
         {
-            vimperator.echo((up ? "?" : "/") + last_search_pattern);
+            if (typeof forcedBackward === "boolean")
+                backwards = forcedBackward;
+
+            // use the last pattern if none specified
+            if (!command)
+                command = lastSearchPattern;
+
+            this.clear();
+            this.find(command, backwards);
+
+            lastSearchBackwards = backwards;
+            lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
+            lastSearchString = searchString;
+
+            // TODO: move to find() when reverse incremental searching is kludged in
+            // need to find again for reverse searching
+            if (backwards)
+                setTimeout(function () { vimperator.search.findAgain(false); }, 0);
 
             if (vimperator.options["hlsearch"])
-                this.highlight(last_search_string);
-        }
-    }
+                this.highlight(searchString);
 
-    // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
-    this.searchKeyPressed = function (command)
-    {
-        if (vimperator.options["incsearch"])
-            this.find(command, backwards);
-    }
+            vimperator.setMode(vimperator.modes.NORMAL);
+            vimperator.focusContent();
+        },
 
-    // Called when the enter key is pressed to trigger a search
-    // use forced_direction if you call this function directly
-    this.searchSubmitted = function (command, forced_backward)
-    {
-        if (typeof forced_backward === "boolean")
-            backwards = forced_backward;
-
-        // use the last pattern if none specified
-        if (!command)
-            command = last_search_pattern;
-
-        this.clear();
-        this.find(command, backwards);
-
-        last_search_backwards = backwards;
-        last_search_pattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
-        last_search_string = search_string;
-
-        // TODO: move to find() when reverse incremental searching is kludged in
-        // need to find again for reverse searching
-        if (backwards)
-            setTimeout(function () { self.findAgain(false); }, 0);
-
-        if (vimperator.options["hlsearch"])
-            this.highlight(search_string);
-
-        vimperator.setMode(vimperator.modes.NORMAL);
-        vimperator.focusContent();
-    }
-
-    // Called when the search is cancelled - for example if someone presses
-    // escape while typing a search
-    this.searchCanceled = function ()
-    {
-        //removeMode(MODE_SEARCH);
-        vimperator.setMode(vimperator.modes.NORMAL);
-        vimperator.focusContent();
-    }
-
-    this.highlight = function (text)
-    {
-        // already highlighted?
-        if (window.content.document.getElementById("__firefox-findbar-search-id"))
-            return;
-
-        if (!text)
-            text = last_search_string;
-
-        // NOTE: gFindBar.setCaseSensitivity() in FF2 does NOT set the
-        // accessibility.typeaheadfind.casesensitive pref as needed by
-        // highlightDoc()
-        gFindBar.mTypeAheadCaseSensitive = case_sensitive ? 1 : 0;
-        gFindBar.highlightDoc("white", "black", text);
-
-        // TODO: seems fast enough for now...just
-        // NOTE: FF2 highlighting spans all have the same id rather than a class attribute
-        (function (win)
+        // Called when the search is cancelled - for example if someone presses
+        // escape while typing a search
+        searchCanceled: function ()
         {
-            for (var i = 0; i < win.frames.length; i++)
-                arguments.callee(win.frames[i]);
-            var spans = vimperator.buffer.evaluateXPath("//span[@id='__firefox-findbar-search-id']", win.document);
-            for (var i = 0; i < spans.snapshotLength; i++)
-                spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
-        })(window.content);
+            //removeMode(MODE_SEARCH);
+            vimperator.setMode(vimperator.modes.NORMAL);
+            vimperator.focusContent();
+        },
 
-        // recreate selection since _highlightDoc collapses the selection backwards
-        getBrowser().fastFind.findNext();
+        highlight: function (text)
+        {
+            // already highlighted?
+            if (window.content.document.getElementById("__firefox-findbar-search-id"))
+                return;
 
-        // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [@type="simple"])
-    }
+            if (!text)
+                text = lastSearchString;
 
-    this.clear = function ()
-    {
-        gFindBar.highlightDoc();
-        // need to manually collapse the selection if the document is not
-        // highlighted
-        getBrowser().fastFind.collapseSelection();
-    }
+            // NOTE: gFindBar.setCaseSensitivity() in FF2 does NOT set the
+            // accessibility.typeaheadfind.casesensitive pref as needed by
+            // highlightDoc()
+            gFindBar.mTypeAheadCaseSensitive = caseSensitive ? 1 : 0;
+            gFindBar.highlightDoc("white", "black", text);
 
-} //}}}
+            // TODO: seems fast enough for now...just
+            // NOTE: FF2 highlighting spans all have the same id rather than a class attribute
+            (function (win)
+            {
+                for (var i = 0; i < win.frames.length; i++)
+                    arguments.callee(win.frames[i]);
+                var spans = vimperator.buffer.evaluateXPath("//span[@id='__firefox-findbar-search-id']", win.document);
+                for (var i = 0; i < spans.snapshotLength; i++)
+                    spans.snapshotItem(i).setAttribute("style", vimperator.options["hlsearchstyle"]);
+            })(window.content);
+
+            // recreate selection since _highlightDoc collapses the selection backwards
+            getBrowser().fastFind.findNext();
+
+            // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [@type="simple"])
+        },
+
+        clear: function ()
+        {
+            gFindBar.highlightDoc();
+            // need to manually collapse the selection if the document is not
+            // highlighted
+            getBrowser().fastFind.collapseSelection();
+        }
+
+    };
+    //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
