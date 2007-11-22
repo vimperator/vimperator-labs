@@ -145,7 +145,7 @@ vimperator.Search = function () //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                vimperator.echoerr("E486: Pattern not found: " + searchPattern);
+                setTimeout(function () { vimperator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
 
             return found;
         },
