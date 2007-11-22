@@ -1645,7 +1645,7 @@ vimperator.Commands = function () //{{{
         {
             usage: ["qma[rk] {a-zA-Z0-9} [url]"],
             shortHelp: "Mark a URL with a letter for quick access",
-            help: "You can also mark whole groups like this: <br/>"+
+            help: "You can also mark whole groups like this: <br/>" +
                   "<code class=\"command\">:qmark f http://forum1.com, http://forum2.com, imdb some artist</code>"
         }
     ));

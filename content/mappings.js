@@ -107,17 +107,19 @@ vimperator.Mappings = function () //{{{
         main[mode] = [];
         user[mode] = [];
     }
+    //vimperator.modes.forEach(function (mode) { main[mode] = user[mode] = []; });
 
     function addDefaultMap(map)
     {
-        for (var i = 0; i < map.modes.length; i++)
-        {
-            var mode = map.modes[i];
-            if (!main[mode])
-                main[mode] = [];
+        //for (var i = 0; i < map.modes.length; i++)
+        //{
+        //    var mode = map.modes[i];
+        //    //if (!main[mode])
+        //    //    main[mode] = [];
 
-            main[mode].push(map);
-        }
+        //    main[mode].push(map);
+        //}
+        map.modes.forEach(function (mode) { main[mode].push(map) });
     }
 
     function getMap(mode, cmd, stack)
@@ -1147,7 +1149,7 @@ vimperator.Mappings = function () //{{{
                   "<li><code class=\"mapping\">y</code> to yank its location</li>" +
                   "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
                   "</ul>" +
-                  "Additionally there are two <code class='argument'>{mode}</code>s, which will start an AlwaysHint mode:<br/>"+
+                  "Additionally there are two <code class='argument'>{mode}</code>s, which will start an AlwaysHint mode:<br/>" +
                   "<ul>" +
                   "<li><code class=\"mapping\">f</code> to open its location in the current tab</li>" +
                   "<li><code class=\"mapping\">F</code> to open its location in a new tab</li>" +

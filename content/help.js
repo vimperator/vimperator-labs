@@ -177,7 +177,7 @@ vimperator.help = function (section, easter) //{{{
         '<var>$VIMPERATOR_HOME</var> can be used to override the calculated <var>$HOME</var> directory.';
 
     var mappings = '<span style="float: right"><code class="tag">mappings</code></span><h2 id="mappings">Mappings</h2>' +
-        '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>'+
+        '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>' +
         '<table class="vimperator mappings">';
     mappings += makeHelpString(vimperator.mappings, "", "", null);
     mappings += '</table>';
