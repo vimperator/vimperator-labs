@@ -459,7 +459,7 @@ vimperator.Completion = function () //{{{
         {
             substrings = [];
             var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
-            var object = "window";
+            var objects = [];
             var filter = matches[3] || "";
             var start = matches[1].length - 1;
             if (matches[2])
@@ -491,32 +491,37 @@ vimperator.Completion = function () //{{{
                         break outer;
                 }
             }
-            object = matches[1].substr(start+1) || "window";
+
+            if (matches[1].substr(start+1))
+            {
+                objects.push(matches[1].substr(start+1));
+            }
+            else
+            {
+                objects.push("vimperator");
+                objects.push("window");
+            }
 
             var completions = [];
             try
             {
-                completions = eval(
-                    "var comp = [];" +
-                    "var type = '';" +
-                    "var value = '';" +
-                    "var obj = eval(" + object + ");" +
-                    "for (var i in obj) {" +
-                    "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
-                    "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
-                    "          value = obj[i];" +
-                    "          comp.push([[i], type + ': ' + value]); }" +
-                    // The problem with that is that you complete vimperator.
-                    // but can't press <Tab> to complete sub items
-                    // so it's better to complete vimperator and the user can do
-                    // .<tab> to get the sub items
-                    //"     else if (type == 'function') {" +
-                    //"          comp.push([[i+'('], type]); }" +
-                    //"     else if (type == 'object') {" +
-                    //"          comp.push([[i+'.'], type]); }" +
-                    "     else {" +
-                    "          comp.push([[i], type]); }" +
-                    "} comp;");
+                for (var o = 0; o < objects.length; o++)
+                {
+                    completions = completions.concat(eval(
+                        "var comp = [];" +
+                        "var type = '';" +
+                        "var value = '';" +
+                        "var obj = eval('with(vimperator){" + objects[o] + "}');" +
+                        "for (var i in obj) {" +
+                        "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
+                        "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
+                        "          value = obj[i];" +
+                        "          comp.push([[i], type + ': ' + value]); }" +
+                        "     else {" +
+                        "          comp.push([[i], type]); }" +
+                        "} comp;"
+                    ));
+                }
             }
             catch (e)
             {

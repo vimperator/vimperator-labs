@@ -499,7 +499,8 @@ vimperator.Commands = function () //{{{
         try
         {
             // TODO: move to vimperator.eval()?
-            arg = eval(arg);
+            // with (vimperator) means, vimperator is the default namespace "inside" eval
+            arg = eval("with(vimperator){" + arg + "}");
         }
         catch (e)
         {
@@ -666,7 +667,7 @@ vimperator.Commands = function () //{{{
                 {
                     try
                     {
-                        eval(args);
+                        eval("with(vimperator){" + args + "}");
                     }
                     catch (e)
                     {
@@ -1567,7 +1568,7 @@ vimperator.Commands = function () //{{{
                     else
                     {
                         while (i--)
-                            eval(args);
+                            eval("with(vimperator){" + args + "}");
                     }
 
                     if (special)
@@ -1613,7 +1614,7 @@ vimperator.Commands = function () //{{{
                     if (args && args[0] == ":")
                         vimperator.execute(args);
                     else
-                        eval(args);
+                        eval("with(vimperator){" + args + "}");
 
                     if (special)
                         return;
