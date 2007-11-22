@@ -264,7 +264,7 @@ vimperator.Completion = function () //{{{
             substrings = [];
             for (var command in vimperator.commands)
                 helpArray.push([command.longNames.map(function ($_) { return ":" + $_; }), command.shortHelp]);
-            options = this.options(filter, true);
+            options = this.option(filter, true);
             helpArray = helpArray.concat(options.map(function ($_) {
                 return [
                         $_[0].map(function ($_) { return "'" + $_ + "'"; }),
@@ -281,7 +281,7 @@ vimperator.Completion = function () //{{{
             return [0, buildLongestCommonSubstring(helpArray, filter)];
         },
 
-        commands: function (filter)
+        command: function (filter)
         {
             substrings = [];
             var completions = [];
@@ -298,7 +298,7 @@ vimperator.Completion = function () //{{{
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        options: function (filter, unfiltered)
+        option: function (filter, unfiltered)
         {
             substrings = [];
             var optionCompletions = [];
@@ -377,7 +377,7 @@ vimperator.Completion = function () //{{{
         },
 
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
-        buffers: function (filter)
+        buffer: function (filter)
         {
             substrings = [];
             var items = [];
@@ -642,7 +642,7 @@ vimperator.Completion = function () //{{{
             // then get completions of the command name
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
-                return [matches[1].length, this.commands(cmd)[1]];
+                return [matches[1].length, this.command(cmd)[1]];
                 
             // dynamically get completions as specified with the command's completer function
             var command = vimperator.commands.get(cmd);

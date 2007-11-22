@@ -653,7 +653,7 @@ vimperator.Commands = function () //{{{
                   "it is selected. With <code class=\"argument\">[!]</code> the next buffer matching the argument " +
                   "is selected, even if it cannot be identified uniquely.<br/>" +
                   "Use <code class=\"mapping\">b</code> as a shortcut to open this prompt.",
-            completer: function (filter) { return vimperator.completion.buffers(filter); }
+            completer: function (filter) { return vimperator.completion.buffer(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["dia[log]"],
@@ -1937,7 +1937,7 @@ vimperator.Commands = function () //{{{
                   "<code class=\"command\">:set option+={value}</code>, <code class=\"command\">:set option^={value}</code> and <code class=\"command\">:set option-={value}</code> " +
                   "adds/multiplies/subtracts <code class=\"argument\">{value}</code> from a number option and appends/prepends/removes <code class=\"argument\">{value}</code> from a string option.<br/>" +
                   "<code class=\"command\">:set all</code> shows the current value of all options and <code class=\"command\">:set all&amp;</code> resets all options to their default values.<br/>",
-            completer: function (filter) { return vimperator.completion.options(filter); }
+            completer: function (filter) { return vimperator.completion.option(filter); }
         }
     ));
     // TODO: sclose instead?
@@ -2036,7 +2036,7 @@ vimperator.Commands = function () //{{{
             help: "Works only for commands that support it, currently:" +
                   "<ul><li>:tab help</li>" +
                   "<li>:tab prefs[!]</li></ul>",
-            completer: function (filter) { return vimperator.completion.commands(filter); }
+            completer: function (filter) { return vimperator.completion.command(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["tabl[ast]"],
