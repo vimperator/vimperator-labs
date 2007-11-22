@@ -335,7 +335,7 @@ vimperator.Events = function () //{{{
         // a keycode which can be used in mappings
         // e.g. pressing ctrl+n would result in the string "<C-n>"
         // null if unknown key
-        toString: function (event) //{{{
+        toString: function (event)
         {
             if (!event)
                 return;
@@ -409,7 +409,7 @@ vimperator.Events = function () //{{{
             // a key like F1 is always enclosed in < and >
             return "<" + modifier + key + ">";
 
-        }, //}}}
+        },
 
         isAcceptKey: function (key)
         {

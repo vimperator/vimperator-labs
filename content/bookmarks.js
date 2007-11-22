@@ -773,7 +773,7 @@ vimperator.Marks = function () //{{{
                         "<td> "                        + marks[i][0]                              +  "</td>" +
                         "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
                         "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
-                        "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) +  "</td>" +
+                        "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) + "</td>" +
                         "</tr>";
             }
             list += "</table>";
@@ -890,6 +890,7 @@ vimperator.QuickMarks = function () //{{{
 
             vimperator.options.setPref("quickmarks", savedQuickMarks);
         }
+
     };
     //}}}
 }; //}}}

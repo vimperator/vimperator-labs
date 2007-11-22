@@ -27,7 +27,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.IO = function ()//{{{
+vimperator.IO = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -290,6 +290,6 @@ vimperator.IO = function ()//{{{
         }
     };
     //}}}
-};//}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

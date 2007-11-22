@@ -82,9 +82,9 @@ vimperator.Command = function (specs, action, extraInfo) //{{{
         if (extraInfo.usage)
             this.usage = extraInfo.usage;
 
-        this.help       = extraInfo.help || null;
+        this.help      = extraInfo.help || null;
         this.shortHelp = extraInfo.shortHelp || null;
-        this.completer  = extraInfo.completer || null;
+        this.completer = extraInfo.completer || null;
         this.args       = extraInfo.args || [];
     }
 
