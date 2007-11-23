@@ -16,7 +16,7 @@
 	* new :cd and :pwd commands
     * new :dialog command to open various firefox dialogs
 	* new a and A mappings to deal with bookmarks
-	* added ]n and ]p to navigate to the next/previous document based on
+	* added ]] and [[ to navigate to the next/previous document based on
 	  the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
 	* abbreviations for text fields (:abbr etc.) (thanks calmar)
 	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)

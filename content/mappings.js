@@ -422,7 +422,7 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]n"],
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]]"],
         function (count) { vimperator.buffer.followDocumentRelationship("next"); },
         {
             shortHelp: "go to 'next' or '>' if it exists.  Beep otherwise.",
@@ -430,7 +430,7 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["]p"],
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["[["],
         function (count) { vimperator.buffer.followDocumentRelationship("previous"); },
         {
             shortHelp: "go to 'prev', 'previous' or '<' if it exists.  Beep otherwise.",

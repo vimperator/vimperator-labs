@@ -18,4 +18,5 @@ Patches:
   * Nikolai Weibull ($VIMPERATOR_HOME)
   * Joseph Xu (supporting multiple top level windows better)
   * Raimon Grau Cuscó (document relationship navigation - ]n, ]p)
+  * Ryan Zheng (ctrl-x/a support)
 </pre>
