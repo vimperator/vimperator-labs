@@ -453,7 +453,7 @@ vimperator.Hints = function () //{{{
 
         get hintedElements() { return hintedElems; },
         get currentState() { return state; },
-        get setCurrentState(s) { state = s; },
+        set currentState(s) { state = s; },
 
         loadCoord: function (winId, i)
         {
@@ -609,7 +609,7 @@ vimperator.Hints = function () //{{{
         yankUrlHints: function ()
         {
             var loc = "";
-            var elems = this.hintedElements();
+            var elems = this.hintedElements;
             var tmp = "";
             for (var i = 0; i < elems.length; i++)
             {
@@ -632,7 +632,7 @@ vimperator.Hints = function () //{{{
         yankTextHints: function ()
         {
             var loc = "";
-            var elems = this.hintedElements();
+            var elems = this.hintedElements;
             var tmp = "";
             for (var i = 0; i < elems.length; i++)
             {
@@ -654,7 +654,7 @@ vimperator.Hints = function () //{{{
 
         saveHints: function (skipPrompt)
         {
-            var elems = this.hintedElements();
+            var elems = this.hintedElements;
 
             for (var i = 0; i < elems.length; i++)
             {

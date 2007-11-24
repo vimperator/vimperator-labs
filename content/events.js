@@ -541,7 +541,7 @@ vimperator.Events = function () //{{{
                 var map = vimperator.mappings.get(vimperator.modes.HINTS, key);
                 if (map)
                 {
-                    if (map.alwaysActive || vimperator.hints.currentState() == 1)
+                    if (map.alwaysActive || vimperator.hints.currentState == 1)
                     {
                         map.execute(null, vimperator.input.count);
                         if (map.cancelMode) // stop processing this event
@@ -562,7 +562,7 @@ vimperator.Events = function () //{{{
                 }
 
                 // no mapping found, beep()
-                if (vimperator.hints.currentState() == 1)
+                if (vimperator.hints.currentState == 1)
                 {
                     vimperator.beep();
                     vimperator.hints.disableHahMode();

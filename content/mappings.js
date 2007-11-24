@@ -1079,7 +1079,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map(vimperator.modes.HINTS, [","],
-        function () { vimperator.input.buffer += ","; vimperator.hints.setCurrentState(0); },
+        function () { vimperator.input.buffer += ","; vimperator.hints.currentState = 0; },
         {
             cancelMode: false,
             alwaysActive: true
