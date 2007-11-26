@@ -650,30 +650,6 @@ vimperator.Completion = function () //{{{
             {
                 matches = str.match(/^:*\d*\w+!?\s+/);
                 exLength = matches ? matches[0].length : 0;
-
-            //    // TODO: maybe we should move these checks to the complete functions
-            //    if (command.hasName("open") || command.hasName("tabopen") || command.hasName("winopen"))
-            //    {
-            //        var skip = args.match(/^(.*,\s+)(.*)/); // start after the last ", "
-            //        if (skip)
-            //        {
-            //            start += skip[1].length;
-            //            args = skip[2];
-            //        }
-            //    }
-            //    else if (command.hasName("echo") || command.hasName("echoerr") || command.hasName("javascript"))
-            //    {
-            //        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
-            //        if (skip)
-            //            start += skip[1].length;
-            //    }
-            //    else if (command.hasName("source"))
-            //    {
-            //        var skip = args.match(/^(.*?)(\w*)$/); // start at beginning of the last word
-            //        if (skip)
-            //            start += skip[1].length;
-            //    }
-
                 [start, completions] = command.completer.call(this, args);
             }
             return [exLength + start, completions];
