@@ -216,15 +216,10 @@ vimperator.Options = function () //{{{
 
     function setGuiOptions(value)
     {
-        // hide menubar
-        document.getElementById("toolbar-menubar").collapsed = value.indexOf("m") > -1 ? false : true;
-        document.getElementById("toolbar-menubar").hidden = value.indexOf("m") > -1 ? false : true;
-        // and main toolbar
-        document.getElementById("nav-bar").collapsed = value.indexOf("T") > -1 ? false : true;
-        document.getElementById("nav-bar").hidden = value.indexOf("T") > -1 ? false : true;
-        // and bookmarks toolbar
-        document.getElementById("PersonalToolbar").collapsed = value.indexOf("b") > -1 ? false : true;
-        document.getElementById("PersonalToolbar").hidden = value.indexOf("b") > -1 ? false : true;
+        // hide the menubar, toolbar and bookmarks toolbar
+        document.getElementById("toolbar-menubar").collapsed = !/m/.test(value);
+        document.getElementById("nav-bar").        collapsed = !/T/.test(value);
+        document.getElementById("PersonalToolbar").collapsed = !/b/.test(value);
 
         guioptionsDone = true;
     }
@@ -232,19 +227,11 @@ vimperator.Options = function () //{{{
     function setLastStatus(value)
     {
         if (value == 0)
-        {
             document.getElementById("status-bar").collapsed = true;
-            document.getElementById("status-bar").hidden = true;
-        }
         else if (value == 1)
-        {
             vimperator.echo("show status line only with > 1 window not implemented yet");
-        }
         else
-        {
             document.getElementById("status-bar").collapsed = false;
-            document.getElementById("status-bar").hidden = false;
-        }
 
         laststatusDone = true;
     }
