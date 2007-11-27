@@ -55,7 +55,7 @@ vimperator.Bookmarks = function () //{{{
         // update our bookmark cache
         bookmarks = []; // also clear our bookmark cache
         keywords  = [];
-        var root = bookmarksService.bookmarksRoot;
+        var root = bookmarksService.placesRoot;
 
         var folders = [root];
         var query = historyService.getNewQuery();
