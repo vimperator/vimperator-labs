@@ -124,7 +124,7 @@ vimperator.Bookmarks = function () //{{{
             try
             {
                 var uri = ioService.newURI(url, null, null);
-                var id = bookmarksService.insertBookmark(bookmarksService.bookmarksRoot, uri, -1, title);
+                var id = bookmarksService.insertBookmark(bookmarksService.placesRoot, uri, -1, title);
                 if (!id)
                     return false;
 
