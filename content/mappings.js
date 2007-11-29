@@ -192,7 +192,7 @@ vimperator.Mappings = function () //{{{
 
         hasMap: function (mode, cmd)
         {
-            return userMaps.some(function (map) { return map.hasName(cmd); });
+            return user[mode].some(function (map) { return map.hasName(cmd); });
         },
 
         add: function (map)
