@@ -154,6 +154,17 @@ vimperator.modes = (function () //{{{
         MENU:             1 << 18, // a popupmenu is active
         LINE:             1 << 19, // linewise visual mode
 
+        __iterator__: function ()
+        {
+            var modes = [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
+                         this.HINTS, this.COMMAND_LINE, this.CARET, this.TEXTAREA];
+
+            for (var i = 0; i < modes.length; i++)
+                yield modes[i];
+
+            throw StopIteration;
+        },
+
         reset: function (silent)
         {
             this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);

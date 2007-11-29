@@ -42,7 +42,9 @@ vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
         this.flags = extraInfo.flags || 0;
 
         if (extraInfo.usage)
+        {
             this.usage = extraInfo.usage;
+        }
         else
         {
             this.usage = this.names[0]; // only the first command name
@@ -57,7 +59,7 @@ vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
         this.shortHelp = extraInfo.shortHelp || null;
 
         this.rhs = extraInfo.rhs || null;
-        this.noremap = extraInfo.noremapping || null; // XXX: needed for mkv; providing feedkeys true/false still neded?
+        this.noremap = extraInfo.noremap || false; // XXX: needed for mkv; providing feedkeys true/false still neded?
 
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
@@ -66,30 +68,27 @@ vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
     }
 };
 
-vimperator.Map.prototype.hasName = function (name)
-{
-    for (var i = 0; i < this.names.length; i++)
+vimperator.Map.prototype = {
+
+    hasName: function (name)
     {
-        if (this.names[i] == name)
-            return true;
+        return this.names.some(function (e) { return e == name; });
+    },
+
+    execute: function (motion, count, argument)
+    {
+        var args = [];
+
+        if (this.flags & vimperator.Mappings.flags.MOTION)
+            args.push(motion);
+        if (this.flags & vimperator.Mappings.flags.COUNT)
+            args.push(count);
+        if (this.flags & vimperator.Mappings.flags.ARGUMENT)
+            args.push(argument);
+
+        return this.action.apply(this, args);
     }
 
-    return false;
-};
-
-// Since we will add many Map-objects, we add some functions as prototypes
-// this will ensure we only have one copy of each function, not one for each object
-vimperator.Map.prototype.execute = function (motion, count, argument)
-{
-    var args = [];
-    if (this.flags & vimperator.Mappings.flags.MOTION)
-        args.push(motion);
-    if (this.flags & vimperator.Mappings.flags.COUNT)
-        args.push(count);
-    if (this.flags & vimperator.Mappings.flags.ARGUMENT)
-        args.push(argument);
-
-    return this.action.apply(this, args);
 };
 //}}}
 
@@ -99,36 +98,23 @@ vimperator.Mappings = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var main = []; // array of default Map() objects
-    var user = []; // array of objects created by :map or :cmap
+    var main = []; // default mappings
+    var user = []; // user created mappings
 
-    for each (var mode in vimperator.modes)
+    for (var mode in vimperator.modes)
     {
         main[mode] = [];
         user[mode] = [];
     }
-    //vimperator.modes.forEach(function (mode) { main[mode] = user[mode] = []; });
 
     function addDefaultMap(map)
     {
-        //for (var i = 0; i < map.modes.length; i++)
-        //{
-        //    var mode = map.modes[i];
-        //    //if (!main[mode])
-        //    //    main[mode] = [];
-
-        //    main[mode].push(map);
-        //}
-        map.modes.forEach(function (mode) { main[mode].push(map) });
+        map.modes.forEach(function (mode) { main[mode].push(map); });
     }
 
     function getMap(mode, cmd, stack)
     {
-        //if (!stack || !stack[mode] || !stack[mode].length)
-        //    return null;
-
         var maps = stack[mode];
-        var names;
 
         for (var i = 0; i < maps.length; i++)
         {
@@ -166,9 +152,6 @@ vimperator.Mappings = function () //{{{
     {
         var mappings = stack[mode];
 
-        //// FIXME: do we want to document user commands by default?
-        //mappings = user[mode].concat(main[mode]);
-
         for (var i = 0; i < mappings.length; i++)
             yield mappings[i];
 
@@ -195,13 +178,13 @@ vimperator.Mappings = function () //{{{
             return mappingsIterator(vimperator.modes.NORMAL, main);
         },
 
-        // FIXME
-        getIterator: function (mode)
+        // FIXME:
+        getDefaultIterator: function (mode)
         {
             return mappingsIterator(mode, main);
         },
 
-        // FIXME
+        // FIXME:
         getUserIterator: function (mode)
         {
             return mappingsIterator(mode, user);
@@ -209,15 +192,7 @@ vimperator.Mappings = function () //{{{
 
         hasMap: function (mode, cmd)
         {
-            var userMaps = user[mode];
-
-            for (var i = 0; i < userMaps.length; i++)
-            {
-                if (userMaps[i].names.indexOf(cmd) != -1)
-                    return true;
-            }
-
-            return false;
+            return userMaps.some(function (map) { return map.hasName(cmd); });
         },
 
         add: function (map)
@@ -225,7 +200,7 @@ vimperator.Mappings = function () //{{{
             for (var i = 0; i < map.names.length; i++)
             {
                 // only store keysyms with uppercase modifier strings
-                map.names[i] = map.names[i].replace(/[casm]-/g, function ($0) { return $0.toUpperCase(); });
+                map.names[i] = map.names[i].replace(/[casm]-/g, function (name) { return name.toUpperCase(); });
                 for (var j = 0; j < map.modes.length; j++)
                     removeMap(map.modes[j], map.names[i]);
             }
@@ -246,16 +221,11 @@ vimperator.Mappings = function () //{{{
 
         get: function (mode, cmd)
         {
-            var map = getMap(mode, cmd, user);
-
-            if (!map)
-                map = getMap(mode, cmd, main);
-
-            return map;
+            return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
         // TODO: move default maps to their own v.normal namespace
-        getDefaultMap: function (mode, cmd)
+        getDefault: function (mode, cmd)
         {
             return getMap(mode, cmd, main);
         },
@@ -263,10 +233,8 @@ vimperator.Mappings = function () //{{{
         // returns an array of mappings with names which start with "cmd"
         getCandidates: function (mode, cmd)
         {
-            var mappings = [];
+            var mappings = user[mode].concat(main[mode]);
             var matches = [];
-
-            mappings = user[mode].concat(main[mode]);
 
             for (var i = 0; i < mappings.length; i++)
             {
@@ -275,7 +243,7 @@ vimperator.Mappings = function () //{{{
                 {
                     if (map.names[j].indexOf(cmd) == 0)
                     {
-                        // for < only return a candidate if it doesn't seem like a <c-x> mapping
+                        // for < only return a candidate if it doesn't look like a <c-x> mapping
                         if (cmd != "<" || !/^<.+>/.test(map.names[j]))
                             matches.push(map);
                     }
@@ -318,32 +286,34 @@ vimperator.Mappings = function () //{{{
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var anymode = [vimperator.modes.NORMAL,
-                   vimperator.modes.INSERT,
-                   vimperator.modes.VISUAL,
-                   vimperator.modes.HINTS,
-                   vimperator.modes.COMMAND_LINE,
-                   vimperator.modes.CARET,
-                   vimperator.modes.TEXTAREA];
-    var anyNoninsertMode = [vimperator.modes.NORMAL,
-                   vimperator.modes.VISUAL,
-                   vimperator.modes.HINTS,
-                   vimperator.modes.CARET,
-                   vimperator.modes.TEXTAREA];
+    var allModes = [vimperator.modes.NONE,
+                    vimperator.modes.NORMAL,
+                    vimperator.modes.INSERT,
+                    vimperator.modes.VISUAL,
+                    vimperator.modes.HINTS,
+                    vimperator.modes.COMMAND_LINE,
+                    vimperator.modes.CARET,
+                    vimperator.modes.TEXTAREA];
+
+    var noninsertModes = [vimperator.modes.NORMAL,
+                          vimperator.modes.VISUAL,
+                          vimperator.modes.HINTS,
+                          vimperator.modes.CARET,
+                          vimperator.modes.TEXTAREA];
 
     //
     // NORMAL mode
     // {{{
 
     // vimperator management
-    addDefaultMap(new vimperator.Map(anymode, ["<F1>"],
+    addDefaultMap(new vimperator.Map(allModes, ["<F1>"],
         function () { vimperator.help(null); },
         {
             shortHelp: "Open help window",
             help: "The default section is shown, if you need help for a specific topic, try <code class=\"command\">:help &lt;F1&gt;</code>."
         }
     ));
-    addDefaultMap(new vimperator.Map(anymode, ["<Esc>", "<C-[>"],
+    addDefaultMap(new vimperator.Map(allModes, ["<Esc>", "<C-[>"],
         vimperator.events.onEscape,
         {
             shortHelp: "Focus content",
@@ -351,7 +321,7 @@ vimperator.Mappings = function () //{{{
                   "Also focuses the web page, in case a form field has focus and eats our key presses."
         }
     ));
-    addDefaultMap(new vimperator.Map(anyNoninsertMode, [":"],
+    addDefaultMap(new vimperator.Map(noninsertModes, [":"],
         function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
         {
             shortHelp: "Start command line mode",
@@ -371,7 +341,7 @@ vimperator.Mappings = function () //{{{
             "If you want to select text in this mode, press <code class=\"mapping\">v</code> to start its Visual mode."
         }
     ));
-    addDefaultMap(new vimperator.Map(anymode, ["<C-q>"],
+    addDefaultMap(new vimperator.Map(allModes, ["<C-q>"],
         function () { vimperator.modes.passAllKeys = true; },
         {
             shortHelp: "Temporarily quit Vimperator mode",
@@ -381,7 +351,7 @@ vimperator.Mappings = function () //{{{
                   "in this mode to the web page, prepend it with <code class=\"mapping\">&lt;C-v&gt;</code>."
         }
     ));
-    addDefaultMap(new vimperator.Map(anymode, ["<C-v>"],
+    addDefaultMap(new vimperator.Map(allModes, ["<C-v>"],
         function () { vimperator.modes.passNextKey = true; },
         {
             shortHelp: "Pass through next key",
@@ -397,7 +367,7 @@ vimperator.Mappings = function () //{{{
             help: "Stops loading the current web page."
         }
     ));
-    addDefaultMap(new vimperator.Map(anymode, ["<Nop>"],
+    addDefaultMap(new vimperator.Map(allModes, ["<Nop>"],
         function () { return; },
         {
             shortHelp: "Do nothing",

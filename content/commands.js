@@ -1321,7 +1321,7 @@ vimperator.Commands = function () //{{{
             {
                 vimperator.mappings.add(new vimperator.Map([mode[index]], [lhs],
                     function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
-                    { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremapping: noremap}
+                    { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremap: noremap}
                 ));
             }
             else

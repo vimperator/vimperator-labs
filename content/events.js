@@ -39,19 +39,23 @@ vimperator.Events = function () //{{{
 
     // any tab related events
     var tabcontainer = getBrowser().tabContainer;
-    tabcontainer.addEventListener("TabMove",   function (event) {
+    tabcontainer.addEventListener("TabMove",   function (event)
+    {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabOpen",   function (event) {
+    tabcontainer.addEventListener("TabOpen",   function (event)
+    {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabClose",  function (event) {
+    tabcontainer.addEventListener("TabClose",  function (event)
+    {
         vimperator.statusline.updateTabCount();
         vimperator.buffer.updateBufferList();
     }, false);
-    tabcontainer.addEventListener("TabSelect", function (event) {
+    tabcontainer.addEventListener("TabSelect", function (event)
+    {
         if (vimperator.mode == vimperator.modes.HINTS)
             vimperator.modes.reset();
 
@@ -459,7 +463,8 @@ vimperator.Events = function () //{{{
                      vimperator.mode == vimperator.modes.VISUAL)
             {
                 this.wantsModeReset = true;
-                setTimeout(function () {
+                setTimeout(function ()
+                {
                         if (vimperator.events.wantsModeReset)
                             vimperator.modes.reset();
                 }, 10);
@@ -646,7 +651,7 @@ vimperator.Events = function () //{{{
             var candidateCommand = (vimperator.input.buffer + key).replace(countStr, "");
             var map;
             if (event.noremap)
-                map = vimperator.mappings.getDefaultMap(vimperator.mode, candidateCommand);
+                map = vimperator.mappings.getDefault(vimperator.mode, candidateCommand);
             else
                 map = vimperator.mappings.get(vimperator.mode, candidateCommand);
 
