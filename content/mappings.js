@@ -848,7 +848,7 @@ vimperator.Mappings = function () //{{{
         var regex = /(.*?)(-?\d+)(\D*)$/;
 
         var res = url.match(regex);
-        if(!res || !res[2]) // no number to increment
+        if (!res || !res[2]) // no number to increment
         {
             vimperator.beep();
             return;
@@ -865,7 +865,7 @@ vimperator.Mappings = function () //{{{
         vimperator.open(res[1] + newNum + res[3]);
     }
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-x>"],
-        function (count) { if(count < 1) count = 1; incrementURL(-count); },
+        function (count) { if (count < 1) count = 1; incrementURL(-count); },
         {
             shortHelp: "Decrement last number in URL",
             help: "Decrements the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",
@@ -873,7 +873,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-a>"],
-        function (count) { if(count < 1) count = 1; incrementURL(count); },
+        function (count) { if (count < 1) count = 1; incrementURL(count); },
         {
             shortHelp: "Increment last number in URL",
             help: "Increments the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",

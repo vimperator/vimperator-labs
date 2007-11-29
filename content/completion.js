@@ -643,7 +643,7 @@ vimperator.Completion = function () //{{{
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
                 return [matches[1].length, this.command(cmd)[1]];
-                
+
             // dynamically get completions as specified with the command's completer function
             var command = vimperator.commands.get(cmd);
             if (command && command.completer)

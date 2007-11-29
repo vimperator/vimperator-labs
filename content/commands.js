@@ -115,7 +115,7 @@ vimperator.Command.prototype = {
 
         for (var i = 0; i < this.specs.length; i++)
         {
-            if (this.specs[i] == name)                    // literal command name
+            if (this.specs[i] == name)                       // literal command name
             {
                 return true;
             }
@@ -179,79 +179,79 @@ vimperator.Commands = function () //{{{
             {
                 switch (str[i])
                 {
-                case "\"":
-                    if (inEscapeKey)
-                    {
-                        inEscapeKey = false;
-                        break;
-                    }
-                    if (!inSingleString)
-                    {
-                        inDoubleString = !inDoubleString;
-                        continue outer;
-                    }
-                    break;
-
-                case "'":
-                    if (inEscapeKey)
-                    {
-                        inEscapeKey = false;
-                        break;
-                    }
-                    if (!inDoubleString)
-                    {
-                        inSingleString = !inSingleString;
-                        continue outer;
-                    }
-                    break;
-
-                // \ is an escape key for non quoted or "-quoted strings
-                // for '-quoted strings it is taken literally, apart from \' and \\
-                case "\\":
-                    if (inEscapeKey)
-                    {
-                        inEscapeKey = false;
-                        break;
-                    }
-                    else
-                    {
-                        // only escape "\\" and "\ " in non quoted strings
-                        if (!inSingleString && !inDoubleString && str[i + 1] != "\\" && str[i + 1] != " ")
-                            continue outer;
-                        // only escape "\\" and "\'" in single quoted strings
-                        else if (inSingleString && str[i + 1] != "\\" && str[i + 1] != "'")
+                    case "\"":
+                        if (inEscapeKey)
+                        {
+                            inEscapeKey = false;
                             break;
+                        }
+                        if (!inSingleString)
+                        {
+                            inDoubleString = !inDoubleString;
+                            continue outer;
+                        }
+                        break;
+
+                    case "'":
+                        if (inEscapeKey)
+                        {
+                            inEscapeKey = false;
+                            break;
+                        }
+                        if (!inDoubleString)
+                        {
+                            inSingleString = !inSingleString;
+                            continue outer;
+                        }
+                        break;
+
+                    // \ is an escape key for non quoted or "-quoted strings
+                    // for '-quoted strings it is taken literally, apart from \' and \\
+                    case "\\":
+                        if (inEscapeKey)
+                        {
+                            inEscapeKey = false;
+                            break;
+                        }
                         else
                         {
-                            inEscapeKey = true;
-                            continue outer;
+                            // only escape "\\" and "\ " in non quoted strings
+                            if (!inSingleString && !inDoubleString && str[i + 1] != "\\" && str[i + 1] != " ")
+                                continue outer;
+                            // only escape "\\" and "\'" in single quoted strings
+                            else if (inSingleString && str[i + 1] != "\\" && str[i + 1] != "'")
+                                break;
+                            else
+                            {
+                                inEscapeKey = true;
+                                continue outer;
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                default:
-                    if (inSingleString)
-                    {
-                        inEscapeKey = false;
-                        break;
-                    }
-                    else if (inEscapeKey)
-                    {
-                        inEscapeKey = false;
-                        switch (str[i])
+                    default:
+                        if (inSingleString)
                         {
-                            case "n": arg += "\n"; continue outer;
-                            case "t": arg += "\t"; continue outer;
-                            default:
-                                break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                            inEscapeKey = false;
+                            break;
                         }
-                    }
-                    else if (!inDoubleString && /\s/.test(str[i]))
-                    {
-                        return [i, arg];
-                    }
-                    else // a normal charcter
-                        break;
+                        else if (inEscapeKey)
+                        {
+                            inEscapeKey = false;
+                            switch (str[i])
+                            {
+                                case "n": arg += "\n"; continue outer;
+                                case "t": arg += "\t"; continue outer;
+                                default:
+                                    break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                            }
+                        }
+                        else if (!inDoubleString && /\s/.test(str[i]))
+                        {
+                            return [i, arg];
+                        }
+                        else // a normal charcter
+                            break;
                 }
                 arg += str[i];
             }
@@ -696,7 +696,7 @@ vimperator.Commands = function () //{{{
                 default: vimperator.echoerr("Dialog '" + args + "' not available");
                 }
             }
-            catch(err)
+            catch (err)
             {
                 vimperator.echoerr("Error opening '" + args + "': " + err);
             }

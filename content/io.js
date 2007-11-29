@@ -174,7 +174,7 @@ vimperator.IO = function () //{{{
                 path = this.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
             else
                 path = path.replace(/^file:(\/\/)?/, "");
-            
+
             file.initWithPath(path);
             return file;
         },
