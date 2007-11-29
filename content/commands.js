@@ -90,40 +90,44 @@ vimperator.Command = function (specs, action, extraInfo) //{{{
 
 };
 
-vimperator.Command.prototype.execute = function (args, special, count, modifiers)
-{
-    return this.action.call(this, args, special, count, modifiers);
-};
+vimperator.Command.prototype = {
 
-// return true if the candidate name matches one of the command's aliases
-// (including all acceptable abbreviations)
-vimperator.Command.prototype.hasName = function (name)
-{
-    // match a candidate name against a command name abbreviation spec - returning
-    // true if the candidate matches unambiguously
-    function matchAbbreviation(name, format)
+    execute: function (args, special, count, modifiers)
     {
-        var minimum = format.indexOf("[");                    // minumum number of characters for a command name match
-        var fullname = format.replace(/\[(\w+)\]$/, "$1");    // full command name
-        if (fullname.indexOf(name) == 0 && name.length >= minimum)
-            return true;
-        else
-            return false;
-    }
+        return this.action.call(this, args, special, count, modifiers);
+    },
 
-    for (var i = 0; i < this.specs.length; i++)
+    // return true if the candidate name matches one of the command's aliases
+    // (including all acceptable abbreviations)
+    hasName: function (name)
     {
-        if (this.specs[i] == name)                    // literal command name
+        // match a candidate name against a command name abbreviation spec - returning
+        // true if the candidate matches unambiguously
+        function matchAbbreviation(name, format)
         {
-            return true;
-        }
-        else if (/^(\w+|!)\[\w+\]$/.test(this.specs[i])) // abbreviation spec
-        {
-            if (matchAbbreviation(name, this.specs[i]))
+            var minimum = format.indexOf("[");                    // minumum number of characters for a command name match
+            var fullname = format.replace(/\[(\w+)\]$/, "$1");    // full command name
+            if (fullname.indexOf(name) == 0 && name.length >= minimum)
                 return true;
+            else
+                return false;
         }
+
+        for (var i = 0; i < this.specs.length; i++)
+        {
+            if (this.specs[i] == name)                    // literal command name
+            {
+                return true;
+            }
+            else if (/^(\w+|!)\[\w+\]$/.test(this.specs[i])) // abbreviation spec
+            {
+                if (matchAbbreviation(name, this.specs[i]))
+                    return true;
+            }
+        }
+        return false;
     }
-    return false;
+
 };
 //}}}
 
