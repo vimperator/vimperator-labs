@@ -847,25 +847,25 @@ vimperator.Mappings = function () //{{{
         var url = vimperator.buffer.URL;
         var regex = /(.*?)(-?\d+)(\D*)$/;
 
-        var res = url.match(regex);
-        if (!res || !res[2]) // no number to increment
+        var matches = url.match(regex);
+        if (!matches || !matches[2]) // no number to increment
         {
             vimperator.beep();
             return;
         }
 
-        var newNum = parseInt(res[2], 10) + count + ""; // "" to make sure its a string
+        var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
         var nums = newNum.match(/^(-?)(\d+)$/);
-        var oldLength = res[2].replace(/-/, "").length, newLength = nums[2].length;
+        var oldLength = matches[2].replace(/-/, "").length, newLength = nums[2].length;
         newNum = nums[1] || "";
         for (let i = 0; i < oldLength - newLength; i++)
             newNum += "0"; // keep leading zeros
         newNum += nums[2];
 
-        vimperator.open(res[1] + newNum + res[3]);
+        vimperator.open(matches[1] + newNum + matches[3]);
     }
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-x>"],
-        function (count) { if (count < 1) count = 1; incrementURL(-count); },
+        function (count) { incrementURL(-(count > 1 ? count : 1)); },
         {
             shortHelp: "Decrement last number in URL",
             help: "Decrements the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",
@@ -873,7 +873,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-a>"],
-        function (count) { if (count < 1) count = 1; incrementURL(count); },
+        function (count) { incrementURL(count > 1 ? count : 1); },
         {
             shortHelp: "Increment last number in URL",
             help: "Increments the last number in URL by 1, or by <code class=\"argument\">count</code> if given.",
