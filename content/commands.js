@@ -696,9 +696,9 @@ vimperator.Commands = function () //{{{
                 default: vimperator.echoerr("Dialog '" + args + "' not available");
                 }
             }
-            catch (err)
+            catch (e)
             {
-                vimperator.echoerr("Error opening '" + args + "': " + err);
+                vimperator.echoerr("Error opening '" + args + "': " + e);
             }
         },
         {

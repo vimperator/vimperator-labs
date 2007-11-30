@@ -563,7 +563,7 @@ vimperator.Buffer = function () //{{{
                         urlSecurityCheck(data.href, principal,
                                 Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                     }
-                    catch (ex)
+                    catch (e)
                     {
                         isFeed = false;
                     }
@@ -611,13 +611,13 @@ vimperator.Buffer = function () //{{{
             {
                 var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
             }
-            catch (ex)
+            catch (e)
             {
                 try
                 {
                     cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
                 }
-                catch (ex2) { }
+                catch (e) { }
             }
 
             var pageSize = []; // [0] bytes; [1] kbytes

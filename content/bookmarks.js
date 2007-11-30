@@ -180,7 +180,10 @@ vimperator.Bookmarks = function () //{{{
                 var count = {};
                 bookmarksService.getBookmarkIdsForURI(uri, count);
             }
-            catch (e) { return false; }
+            catch (e)
+            {
+                return false;
+            }
 
             return count.value > 0;
         },
