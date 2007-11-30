@@ -525,6 +525,12 @@ vimperator.Options = function () //{{{
             defaultValue: DEFAULT_HINTTAGS
         }
     ));
+    optionManager.add(new vimperator.Option(["history", "hi"], "number",
+        {
+            shortHelp: "Number of Ex commands and search patterns to store in the commandline history",
+            defaultValue: 500
+        }
+    ));
     optionManager.add(new vimperator.Option(["hlsearch", "hls"], "boolean",
         {
             shortHelp: "Highlight previous search pattern matches",

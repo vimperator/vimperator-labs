@@ -45,15 +45,17 @@ vimperator.CommandLine = function () //{{{
 
     // TODO: clean this up when it's not 3am...
     var history = {
-        SIZE: 500,
+        get size() { return vimperator.options["history"]; },
 
-        get _mode() { return (vimperator.modes.extended == vimperator.modes.EX) ? "cmd" : "search"; },
+        get mode() { return (vimperator.modes.extended == vimperator.modes.EX) ? "cmd" : "search"; },
 
         cmd: null,    // ex command history
+
         search: null, // text search history
 
-        get: function () { return this[this._mode]; },
-        set: function (lines) { this[this._mode] = lines; },
+        get: function () { return this[this.mode]; },
+
+        set: function (lines) { this[this.mode] = lines; },
 
         load: function ()
         {
@@ -80,8 +82,8 @@ vimperator.CommandLine = function () //{{{
             });
 
             // add string to the command line history
-            if (lines.push(str) > this.SIZE) // remove the first 10% of the history
-                lines = lines.slice(this.SIZE / 10);
+            if (lines.push(str) > this.size) // remove the first 10% of the history
+                lines = lines.slice(this.size / 10);
 
             this.set(lines);
         }
