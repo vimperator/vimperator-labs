@@ -98,12 +98,7 @@ vimperator.Option = function (names, type, extraInfo) //{{{
 
     this.hasName = function (name)
     {
-        for (var i = 0; i < this.names.length; i++)
-        {
-            if (this.names[i] == name)
-                return true;
-        }
-        return false;
+        return this.names.some(function (e) { return e == name; });
     };
 
     this.isValidValue = function (value)
