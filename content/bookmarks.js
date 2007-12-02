@@ -55,12 +55,10 @@ vimperator.Bookmarks = function () //{{{
         // update our bookmark cache
         bookmarks = []; // also clear our bookmark cache
         keywords  = [];
-        var root = bookmarksService.placesRoot;
 
-        var folders = [root];
+        var folders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
         var query = historyService.getNewQuery();
         var options = historyService.getNewQueryOptions();
-//        query.searchTerms = "test";
         while (folders.length > 0)
         {
             //comment out the next line for now; the bug hasn't been fixed; final version should include the next line
