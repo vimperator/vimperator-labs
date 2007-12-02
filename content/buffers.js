@@ -43,7 +43,7 @@ vimperator.Buffer = function () //{{{
         if (value < 1 || value > 2000)
         {
             vimperator.echoerr("Zoom value out of range (1-2000%)");
-            return false;
+            return;
         }
 
         if (fullZoom)
@@ -449,7 +449,7 @@ vimperator.Buffer = function () //{{{
         updateBufferList: function ()
         {
             if (!vimperator.bufferwindow.visible())
-                return false;
+                return;
 
             var items = vimperator.completion.buffer("")[1];
             vimperator.bufferwindow.show(items);
@@ -481,7 +481,10 @@ vimperator.Buffer = function () //{{{
 
             var match;
             if (match = buffer.match(/^(\d+):?/))
-                return vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+            {
+                vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+                return;
+            }
 
             var matches = [];
             var lowerBuffer = buffer.toLowerCase();
@@ -492,7 +495,10 @@ vimperator.Buffer = function () //{{{
                 var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
                 var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
                 if (url == buffer)
-                    return vimperator.tabs.select(index, false);
+                {
+                    vimperator.tabs.select(index, false);
+                    return;
+                }
 
                 if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
                     matches.push(index);
