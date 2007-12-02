@@ -38,11 +38,11 @@ syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vi
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act complete cpt defsearch ds editor extendedhinttags eht focusedhintstyle fhs fullscreen fs
-	\ nofullscreen nofs guioptions go hintstyle hs hinttags ht hinttimeout hto hlsearch hls nohlsearch nohls hlsearchstyle
-	\ hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode
-	\ noim laststatus ls linksearch lks nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload nopreload
-	\ previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal
-	\ smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
+	\ nofullscreen nofs guioptions go hintstyle hs hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls
+	\ hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im
+	\ noinsertmode noim laststatus ls linksearch lks nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload
+	\ nopreload previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline
+	\ stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
 	\ wildmode wim wildoptions wop
 	\ contained
 

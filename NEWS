@@ -9,12 +9,14 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+	* new 'history' option for specifying the number of Ex commands and
+	  search patterns to store in the commandline history
 	* new ctrl-x and ctrl-a mappings to increment the last number in the URL
 	* new ~ mapping to open the home directory
 	* :open tries to open a relative filename now, if you do a :open foo.html
 	  or :open ../hello.txt;
 	* new :cd and :pwd commands
-    * new :dialog command to open various firefox dialogs
+	* new :dialog command to open various firefox dialogs
 	* new a and A mappings to deal with bookmarks
 	* added ]] and [[ to navigate to the next/previous document based on
 	  the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
