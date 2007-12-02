@@ -2050,11 +2050,24 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["tabm[ove]"],
-        function (args, special) { vimperator.tabs.move(getBrowser().mCurrentTab, args, special); },
+        function (args, special)
+        {
+            // FIXME: tabmove! N should probably produce an error
+            if (!/^([+-]?\d+|)$/.test(args))
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            if (!args)
+                args = "$"; // if not specified, move to the last tab
+
+            vimperator.tabs.move(getBrowser().mCurrentTab, args, special);
+        },
         {
             usage: ["tabm[ove] [N]", "tabm[ove][!] +N | -N"],
             shortHelp: "Move the current tab after tab N",
-            help: "When N is 0 the current tab is made the first one.  Without N the current tab is made the last one. " +
+            help: "When N is 0 the current tab is made the first one. Without N the current tab is made the last one. " +
                   "N can also be prefixed with '+' or '-' to indicate a relative movement. If <code class=\"command\">!</code> is specified the movement wraps around the start or end of the tab list."
         }
     ));

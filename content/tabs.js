@@ -56,25 +56,18 @@ vimperator.Tabs = function () //{{{
         if (typeof spec === "number")
             position = spec;
         else if (spec === "$")
-            return last;
-        else if (!/^([+-]?\d+|)$/.test(spec))
-        {
-            // TODO: move error reporting to ex-command?
-            vimperator.echoerr("E488: Trailing characters");
-            return false;
-        }
+            position = last;
+        else if (/^[+-]\d+$/.test(spec))
+            position += parseInt(spec, 10);
+        else if (/^\d+$/.test(spec))
+            position = parseInt(spec, 10);
         else
-        {
-            if (/^([+-]\d+)$/.test(spec)) // relative position +/-N
-                position += parseInt(spec, 10);
-            else                           // absolute position
-                position = parseInt(spec, 10);
-        }
+            return -1;
 
         if (position > last)
             position = wrap ? position % length : last;
         else if (position < 0)
-            position = wrap ? (position % length) + length: 0;
+            position = wrap ? (position % length) + length : 0;
 
         return position;
     }
@@ -132,15 +125,10 @@ vimperator.Tabs = function () //{{{
             return getBrowser().mTabContainer.selectedItem;
         },
 
-        // spec == "" moves the tab to the last position as per Vim
         // wrap causes the movement to wrap around the start and end of the tab list
         // NOTE: position is a 0 based index
-        // FIXME: tabmove! N should probably produce an error
         move: function (tab, spec, wrap)
         {
-            if (spec === "")
-                spec = "$"; // if not specified, move to the last tab -> XXX: move to ex handling?
-
             var index = indexFromSpec(spec, wrap);
             getBrowser().moveTabTo(tab, index);
         },
@@ -209,10 +197,11 @@ vimperator.Tabs = function () //{{{
         select: function (spec, wrap)
         {
             var index = indexFromSpec(spec, wrap);
-            if (index === false)
+            // FIXME:
+            if (index === -1)
             {
                 vimperator.beep(); // XXX: move to ex-handling?
-                return false;
+                return;
             }
             getBrowser().mTabContainer.selectedIndex = index;
         },
