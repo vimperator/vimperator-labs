@@ -149,7 +149,7 @@ vimperator.Bookmarks = function () //{{{
             return true;
         },
 
-        toggle: function(url)
+        toggle: function (url)
         {
             if (!url)
                 return;
@@ -170,7 +170,7 @@ vimperator.Bookmarks = function () //{{{
             }
         },
 
-        isBookmarked: function(url)
+        isBookmarked: function (url)
         {
             try
             {
