@@ -38,7 +38,7 @@ vimperator.Events = function () //{{{
     //document.getElementById("content").onclick = function (event) { alert("foo"); };
 
     // any tab related events
-    var tabcontainer = getBrowser().tabContainer;
+    var tabcontainer = getBrowser().mTabContainer;
     tabcontainer.addEventListener("TabMove",   function (event)
     {
         vimperator.statusline.updateTabCount();

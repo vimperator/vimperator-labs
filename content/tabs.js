@@ -46,7 +46,7 @@ vimperator.Tabs = function () //{{{
     // - "$" for the last tab
     function indexFromSpec(spec, wrap)
     {
-        var position = getBrowser().tabContainer.selectedIndex;
+        var position = getBrowser().mTabContainer.selectedIndex;
         var length   = getBrowser().mTabs.length;
         var last     = length - 1;
 
@@ -105,7 +105,7 @@ vimperator.Tabs = function () //{{{
                 return -1;
             }
 
-            return getBrowser().tabContainer.selectedIndex;
+            return getBrowser().mTabContainer.selectedIndex;
         },
 
         // TODO: implement filter
@@ -129,7 +129,7 @@ vimperator.Tabs = function () //{{{
             if (index)
                 return getBrowser().mTabs[index];
 
-            return getBrowser().tabContainer.selectedItem;
+            return getBrowser().mTabContainer.selectedItem;
         },
 
         // spec == "" moves the tab to the last position as per Vim
