@@ -425,7 +425,9 @@ vimperator.Mappings = function () //{{{
         function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); },
         {
             shortHelp: "Toggle bookmarked state of current URL",
-            help: "Add/remove a bookmark for the current location, depending if it already is bookmarked or not."
+            help: "Add/remove a bookmark for the current location, depending if it already is bookmarked or not. " +
+                  "In contrast to the <code class='command'>:bmark</code> command, the bookmark is just 'starred' " +
+                  "which means it is placed in the 'Unfiled Bookmarks Folder' instead of the bookmarks menu."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["b"],

@@ -110,7 +110,8 @@ vimperator.Bookmarks = function () //{{{
             return vimperator.completion.filterURLArray(bookmarks, filter, tags);
         },
 
-        add: function (title, url, keyword, tags)
+        // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
+        add: function (starOnly, title, url, keyword, tags)
         {
             if (!bookmarks)
                 load();
@@ -122,7 +123,10 @@ vimperator.Bookmarks = function () //{{{
             try
             {
                 var uri = ioService.newURI(url, null, null);
-                var id = bookmarksService.insertBookmark(bookmarksService.placesRoot, uri, -1, title);
+                var id = bookmarksService.insertBookmark(
+                         starOnly ? bookmarksService.unfiledBookmarksFolder : bookmarksService.bookmarksMenuFolder,
+                         uri, -1, title);
+
                 if (!id)
                     return false;
 
@@ -165,7 +169,7 @@ vimperator.Bookmarks = function () //{{{
                 var extra = "";
                 if (title != url)
                     extra = " (" + title + ")";
-                this.add(title, url);
+                this.add(true, title, url);
                 vimperator.commandline.echo("Added bookmark: " + url + extra, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
             }
         },

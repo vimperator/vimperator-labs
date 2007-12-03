@@ -602,7 +602,7 @@ vimperator.Commands = function () //{{{
             var keyword = getOption(res.opts, "-keyword", null);
             var tags = getOption(res.opts, "-tags", []);
 
-            if (vimperator.bookmarks.add(title, url, keyword, tags))
+            if (vimperator.bookmarks.add(false, title, url, keyword, tags))
             {
                 var extra = "";
                 if (title != url)
