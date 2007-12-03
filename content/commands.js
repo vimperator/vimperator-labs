@@ -1031,7 +1031,7 @@ vimperator.Commands = function () //{{{
                   "<li><code class=\"command\">:help 'complete'</code> for options (surrounded by ' and ')</li>" +
                   "<li><code class=\"command\">:help o</code> for mappings (no pre- or postfix)</li>" +
                   "</ul>" +
-                  "You can however use partial stings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
+                  "You can however use partial strings in the tab completion, so <code class=\"command\">:help he&lt;Tab&gt;</code> completes <code class=\"command\">:help :help</code>.",
             completer: function (filter) { return vimperator.completion.help(filter); }
         }
     ));
