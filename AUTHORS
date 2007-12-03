@@ -9,7 +9,7 @@ Developers:
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
  
-Patches:
+Patches (in no special order):
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:open ./.. support)
@@ -17,6 +17,6 @@ Patches:
   * Hannes Rist (:set titlestring support)
   * Nikolai Weibull ($VIMPERATOR_HOME)
   * Joseph Xu (supporting multiple top level windows better)
-  * Raimon Grau Cuscó (document relationship navigation - ]n, ]p)
+  * Raimon Grau Cuscó (document relationship navigation - ]], [[)
   * Ryan Zheng (ctrl-x/a support)
 </pre>
