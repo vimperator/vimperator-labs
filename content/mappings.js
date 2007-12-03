@@ -554,6 +554,14 @@ vimperator.Mappings = function () //{{{
             help: "Works like <code class=\"mapping\">P</code>, but inverts the <code class=\"option\">'activate'</code> option."
         }
     ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g0", "g^"],
+        function (count) { vimperator.tabs.select(0); },
+        { shortHelp: "Go to the first tab" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g$"],
+        function (count) { vimperator.tabs.select("$"); },
+        { shortHelp: "Go to the last tab" }
+    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
         function (count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
         {

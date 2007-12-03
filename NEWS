@@ -9,6 +9,7 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+	* new g0 and g$ mappings to go to the first/last tab
 	* new 'history' option for specifying the number of Ex commands and
 	  search patterns to store in the commandline history
 	* new ctrl-x and ctrl-a mappings to increment the last number in the URL
