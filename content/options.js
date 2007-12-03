@@ -594,7 +594,7 @@ vimperator.Options = function () //{{{
             shortHelp: "Patterns to use when guessing the 'next' page in a document sequence",
             help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
             "The patterns are case insensitive regular expressions.",
-            defaultValue: "\\bnext,^>$,^>>$,^>,>$"
+            defaultValue: "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$"
         }
     ));
     optionManager.add(new vimperator.Option(["pageinfo", "pa"], "charlist",
@@ -651,7 +651,7 @@ vimperator.Options = function () //{{{
             shortHelp: "Patterns to use when guessing the 'previous' page in a document sequence",
             help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
             "The patterns are case insensitive regular expressions.",
-            defaultValue: "\\bprev|previous\\b,^<$,^<<$,^<,<$"
+            defaultValue: "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$"
         }
     ));
     optionManager.add(new vimperator.Option(["scroll", "scr"], "number",
