@@ -38,6 +38,81 @@ vimperator.Buffer = function () //{{{
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
+    // TODO: rename
+    function followFrameRelationship(relationship, parsedFrame)
+    {
+        var regexps;
+        var relText;
+        var patternText;
+        var revString;
+        switch (relationship)
+        {
+            case "next":
+                regexps = vimperator.options["nextpattern"].split(",");
+                revString = "previous";
+                break;
+            case "previous":
+                // TODO: accept prev\%[ious]
+                regexps = vimperator.options["previouspattern"].split(",");
+                revString = "next";
+                break;
+            default:
+                vimperator.echoerr("Bad document relationship: " + relationship);
+        }
+
+        relText = new RegExp(relationship, "i");
+        revText = new RegExp(revString, "i");
+        var elems = parsedFrame.document.getElementsByTagName("link");
+        // links have higher priority than normal <a> hrefs
+        for (var i = 0; i < elems.length; i++)
+        {
+            if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+            {
+                    vimperator.open(elems[i].href);
+                    return true;
+            }
+        }
+
+        // no links? ok, look for hrefs
+        elems = parsedFrame.document.getElementsByTagName("a");
+        for (var i = 0; i < elems.length; i++)
+        {
+            if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+            {
+                vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                return true;
+            }
+        }
+
+        patternText = new RegExp(regexps[pattern], "i");
+        for (var pattern = 0; pattern < regexps.length; pattern++)
+        {
+            patternText = new RegExp(regexps[pattern], "i");
+            for (var i = 0; i < elems.length; i++)
+            {
+                if (patternText.test(elems[i].textContent))
+                {
+                    vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                    return true;
+                }
+                else
+                {
+                    // images with alt text being href
+                    var children = elems[i].childNodes;
+                    for (var j = 0; j < children.length; j++)
+                    {
+                        if (patternText.test(children[j].alt))
+                        {
+                            vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     function setZoom(value, fullZoom)
     {
         if (value < 1 || value > 2000)
@@ -785,63 +860,24 @@ vimperator.Buffer = function () //{{{
 
         followDocumentRelationship: function (relationship)
         {
-            var regexps;
-            var relText;
-            var patternText;
-            switch (relationship)
-            {
-                case "next":
-                    regexps = vimperator.options["nextpattern"].split(",");
-                    break;
-                case "previous":
-                    // TODO: accept prev\%[ious]
-                    regexps = vimperator.options["previouspattern"].split(",");
-                    break;
-                default:
-                    vimperator.echoerr("Bad document relationship: " + relationship);
-            }
+            var retVal;
 
-            relText = new RegExp(relationship, "i");
-            var elems = window.content.document.getElementsByTagName("link");
-            // links have higher priority than normal <a> hrefs
-            for (var i = 0; i < elems.length; i++)
+            if (window.content.frames.length != 0)
             {
-                if (relText.test(elems[i].rel))
+                for (var i = 0; i < window.content.frames.length; i++)
                 {
-                        vimperator.open(elems[i].href);
-                        return;
+                    retVal = followFrameRelationship(relationship, window.content.frames[i]);
+                    if (retVal)
+                        break;
                 }
             }
-
-            // no links? ok, look for hrefs
-            elems = window.content.document.getElementsByTagName("a");
-            for (var pattern = 0; pattern < regexps.length; pattern++)
+            else
             {
-                patternText = new RegExp(regexps[pattern], "i");
-                for (var i = 0; i < elems.length; i++)
-                {
-                    if (patternText.test(elems[i].text) || relText.test(elems[i].rel))
-                    {
-                        vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
-                        return;
-                    }
-                    else
-                    {
-                        // images with alt text being href
-                        var children = elems[i].childNodes;
-                        for (var j = 0; j < children.length; j++)
-                        {
-                            if (patternText.test(children[j].alt))
-                            {
-                                vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
-                                return;
-                            }
-                        }
-
-                    }
-                }
+                retVal = followFrameRelationship(relationship, window.content);
             }
-            vimperator.beep();
+
+            if (!retVal)
+                vimperator.beep();
         }
     };
     //}}}
