@@ -960,7 +960,7 @@ vimperator.Commands = function () //{{{
         {
             usage: ["exe[cute] {expr1} [ ... ]"],
             shortHelp: "Execute the string that results from the evaluation of {expr1} as an Ex command.",
-            help: "Example: <code class=\"command\">:execute echo test</code> shows a message with the text &#34;test&#34;.<br/>"
+            help: "Example: <code class=\"command\">:execute echo \"test\"</code> shows a message with the text &#34;test&#34;.<br/>"
         }
     ));
     commandManager.add(new vimperator.Command(["exu[sage]"],
@@ -2198,7 +2198,7 @@ vimperator.Commands = function () //{{{
                               "<table>" +
                               "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
                               "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
-                              "<tr><td>  Each time:</td><td align=\"right\"><span style=\"color: green\">" + each.toFixed(2) + "</span></td><td>" + eachUnits + "</td></tr>" +
+                              "<tr><td>  Average time:</td><td align=\"right\"><span style=\"color: green\">" + each.toFixed(2) + "</span></td><td>" + eachUnits + "</td></tr>" +
                               "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + totalUnits + "</td></tr>" +
                               "</table>";
 
