@@ -1086,9 +1086,9 @@ vimperator.Mappings = function () //{{{
             for (var i = 0; i < count; i++)
             {
                 if (isDirectory(url))
-                    url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/")
+                    url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/");
                 else
-                    url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/")
+                    url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/");
             }
             url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
 

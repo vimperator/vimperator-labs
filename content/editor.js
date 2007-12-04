@@ -375,7 +375,7 @@ vimperator.Editor = function () //{{{
     //            vimperator.echoerr("External editor returned with exit code " + retcode);
     //        }
     //        else
-            {
+    //        {
                 try
                 {
                     var val = vimperator.io.readFile(tmpfile);
@@ -386,7 +386,7 @@ vimperator.Editor = function () //{{{
                     tmpBg = "red";
                     vimperator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
                 }
-            }
+    //        }
 
             // blink the textbox after returning
             var timeout = 100;

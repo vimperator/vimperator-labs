@@ -1206,11 +1206,16 @@ vimperator.StatusLine = function () //{{{
 
             var bufferPositionStr = "";
             percent = Math.round(percent * 100);
-            if (percent < 0)          bufferPositionStr = "All";
-            else if (percent == 0)    bufferPositionStr = "Top";
-            else if (percent < 10)    bufferPositionStr = " " + percent + "%";
-            else if (percent >= 100)  bufferPositionStr = "Bot";
-            else                      bufferPositionStr = percent + "%";
+            if (percent < 0)
+                bufferPositionStr = "All";
+            else if (percent == 0)
+                bufferPositionStr = "Top";
+            else if (percent < 10)
+                bufferPositionStr = " " + percent + "%";
+            else if (percent >= 100)
+                bufferPositionStr = "Bot";
+            else
+                bufferPositionStr = percent + "%";
 
             bufferPositionWidget.value = bufferPositionStr;
         }

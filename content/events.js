@@ -425,8 +425,8 @@ vimperator.Events = function () //{{{
             return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
         },
 
-        getMapLeader: function () 
-        { 
+        getMapLeader: function ()
+        {
             var leaderRef = vimperator.variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
