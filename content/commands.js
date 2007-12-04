@@ -1586,7 +1586,7 @@ vimperator.Commands = function () //{{{
         function () { vimperator.buffer.pageInfo(true); },
         {
             shortHelp: "Show various page information",
-            help: "See :help 'pageinfo' for available options",
+            help: "See :help 'pageinfo' for available options"
         }
     ));
     commandManager.add(new vimperator.Command(["pc[lose]"],
