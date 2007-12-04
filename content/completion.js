@@ -219,8 +219,8 @@ vimperator.Completion = function () //{{{
 
         // TODO: support file:// and \ or / path separators on both platforms
         // TODO: sort directories first
-        // if "short" is true, only return names without any directory components
-        file: function (filter, short)
+        // if "tail" is true, only return names without any directory components
+        file: function (filter, tail)
         {
             // this is now also used as part of the url completion, so the
             // substrings shouldn't be cleared for that case
@@ -240,7 +240,7 @@ vimperator.Completion = function () //{{{
             {
                 files = vimperator.io.readDirectory(dir);
                 mapped = files.map(function (file) {
-                    return [[short ? file.leafName : (dir + file.leafName)], file.isDirectory() ? "Directory" : "File"];
+                    return [[tail ? file.leafName : (dir + file.leafName)], file.isDirectory() ? "Directory" : "File"];
                 });
             }
             catch (e)
@@ -248,7 +248,7 @@ vimperator.Completion = function () //{{{
                 return [];
             }
 
-            if (short)
+            if (tail)
                 return [dir.length, buildLongestStartingSubstring(mapped, compl)];
             else
                 return [0, buildLongestStartingSubstring(mapped, filter)];
