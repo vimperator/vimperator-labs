@@ -1129,9 +1129,10 @@ vimperator.Mappings = function () //{{{
         {
             shortHelp: "Start QuickHint mode",
             usage: ["f{hint}"],
-            help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a unique number (FIXME: numbers shown, but not usable yet).<br/>" +
+            help: "In QuickHint mode, every hintable item (according to the <code class=\"option\">'hinttags'</code> XPath query) is assigned a unique number.<br/>" +
                   "You can now either type this number or type any part of the URL which you want to follow, and it is followed as soon as it can be uniquely identified. " +
                   "Often it is can be useful to combine these techniques to narrow down results with some letters, and then typing a single digit to make the match unique.<br/>" +
+                  "Pressing &lt;leader&gt; (defaults to :let mapleader = \"\\\") toggles 'escape-mode', where numbers are treated as normal text.<br/>" +
                   "<code class=\"mapping\">&lt;Esc&gt;</code> stops this mode at any time."
         }
     ));

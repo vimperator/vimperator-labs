@@ -69,7 +69,7 @@ vimperator.Hints = function () //{{{
 
     function updateStatusline()
     {
-        vimperator.statusline.updateInputBuffer((escapeNumbers ? "\\ ": "") + // sign for escapeNumbers
+        vimperator.statusline.updateInputBuffer((escapeNumbers ? vimperator.events.getMapLeader() + " ": "") + // sign for escapeNumbers
                 (hintString ? "\"" + hintString + "\"" : "") +
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
@@ -591,7 +591,7 @@ vimperator.Hints = function () //{{{
                     hintNumber = 0;
                     break;
 
-               case "\\":
+               case vimperator.events.getMapLeader():
                    escapeNumbers = !escapeNumbers;
                    if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                        hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.

@@ -1314,12 +1314,7 @@ vimperator.Commands = function () //{{{
             var leaderRegexp = /<Leader>/i;
 
             if (leaderRegexp.test(lhs))
-            {
-                var leaderRef = vimperator.variableReference("mapleader");
-                var leader = leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
-
-                lhs = lhs.replace(leaderRegexp, leader);
-            }
+                lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
 
             if (rhs)
             {
@@ -1480,6 +1475,9 @@ vimperator.Commands = function () //{{{
             line += "\n\" Abbreviations\n";
             for (var abbrCmd in vimperator.editor.abbreviations)
                 line += abbrCmd;
+
+            // if (vimperator.events.getMapLeader() != "\\")
+            //    line += "\nlet mapleader = \"" + vimperator.events.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
             line += "\nsource! " + filename + ".local\n";
