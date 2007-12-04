@@ -84,7 +84,6 @@ vimperator.Buffer = function () //{{{
             }
         }
 
-        patternText = new RegExp(regexps[pattern], "i");
         for (var pattern = 0; pattern < regexps.length; pattern++)
         {
             patternText = new RegExp(regexps[pattern], "i");
