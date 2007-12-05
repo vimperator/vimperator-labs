@@ -1348,6 +1348,15 @@ vimperator.Commands = function () //{{{
                   "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
         }
     ));
+    commandManager.add(new vimperator.Command(["im[ap]"],
+        function (args) { map(args, [vimperator.modes.INSERT], false); },
+        {
+            usage: ["imap {lhs} {rhs}", "imap {lhs}", "imap"],
+            shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)",
+            help: "The <code class=\"argument\">{rhs}</code> is remapped, allowing for nested and recursive mappings.<br/>" +
+                  "Mappings are NOT saved during sessions, make sure you put them in your vimperatorrc file!"
+        }
+    ));
     commandManager.add(new vimperator.Command(["mapc[lear]"],
         function (args)
         {
@@ -1380,6 +1389,23 @@ vimperator.Commands = function () //{{{
             shortHelp: "Remove all mappings (in command-line mode)",
             help: "All user-defined mappings which were set by " +
                   "<code class=\"command\">:cmap</code> or <code class=\"command\">:cnoremap</code> are cleared."
+        }
+    ));
+    commandManager.add(new vimperator.Command(["imapc[lear]"],
+        function (args)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            vimperator.mappings.removeAll(vimperator.modes.INSERT);
+        },
+        {
+            shortHelp: "Remove all mappings (in insert mode)",
+            help: "All user-defined mappings which were set by " +
+                  "<code class=\"command\">:imap</code> or <code class=\"command\">:inoremap</code> are cleared."
         }
     ));
     commandManager.add(new vimperator.Command(["ma[rk]"],
@@ -1448,7 +1474,7 @@ vimperator.Commands = function () //{{{
             line += "\" Mappings\n";
 
             // TODO: write user maps for all modes when we have mode dependant map support
-            var mode = [[vimperator.modes.NORMAL, ""], [vimperator.modes.COMMAND_LINE, "c"]];
+            var mode = [[vimperator.modes.NORMAL, ""], [vimperator.modes.COMMAND_LINE, "c"], [vimperator.modes.INSERT, "i"]];
             for (var y = 0; y < mode.length; y++)
             {
                 for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
@@ -1537,6 +1563,14 @@ vimperator.Commands = function () //{{{
         {
             usage: ["cno[remap] {lhs} {rhs}", "cno[remap] {lhs}", "cno[remap]"],
             shortHelp: "Map the key sequence {lhs} to {rhs} (in command-line mode)",
+            help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
+        }
+    ));
+    commandManager.add(new vimperator.Command(["ino[remap]"],
+        function (args) { map(args, [vimperator.modes.INSERT], true); },
+        {
+            usage: ["ino[remap] {lhs} {rhs}", "ino[remap] {lhs}", "ino[remap]"],
+            shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)",
             help: "No remapping of the <code class=\"argument\">{rhs}</code> is performed."
         }
     ));
@@ -2378,6 +2412,28 @@ vimperator.Commands = function () //{{{
         {
             usage: ["cunm[ap] {lhs}"],
             shortHelp: "Remove the mapping of {lhs} (in command-line mode)",
+            help: ""
+        }
+    ));
+    commandManager.add(new vimperator.Command(["iunm[ap]"],
+        function (args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            var lhs = args;
+
+            if (vimperator.mappings.hasMap(vimperator.modes.INSERT, lhs))
+                vimperator.mappings.remove(vimperator.modes.INSERT, lhs);
+            else
+                vimperator.echoerr("E31: No such mapping");
+        },
+        {
+            usage: ["iunm[ap] {lhs}"],
+            shortHelp: "Remove the mapping of {lhs} (in insert mode)",
             help: ""
         }
     ));
