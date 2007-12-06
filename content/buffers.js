@@ -459,9 +459,9 @@ vimperator.Buffer = function () //{{{
                 "application/rdf+xml": "XML"
             };
 
-            function isValidFeed(data, principal, isFeed)
+            function isValidFeed(data, isFeed)
             {
-                if (!data || !principal)
+                if (!data)
                     return false;
 
                 if (!isFeed)
@@ -483,8 +483,8 @@ vimperator.Buffer = function () //{{{
                 {
                     try
                     {
-                        urlSecurityCheck(data.href, principal,
-                                Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                        urlSecurityCheck(data.href, getBrowser().currentURI.spec,
+                                         Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT_OR_DATA);
                     }
                     catch (ex)
                     {
@@ -572,7 +572,7 @@ vimperator.Buffer = function () //{{{
                 if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
                 {
                     var feed = { title: link.title, href: link.href, type: link.type || "" };
-                    if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
+                    if (isValidFeed(feed, rels.feed))
                     {
                         var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                         pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + " <span style='color: gray;'>(" + type + ")</span>"]);
