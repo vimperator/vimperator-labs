@@ -1307,8 +1307,7 @@ vimperator.Commands = function () //{{{
             return;
         }
 
-        var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-        var [lhs, rhs] = [matches[1], matches[2]];
+        var [lhs, rhs] = args.split(/\s+/, 2);
         var leaderRegexp = /<Leader>/i;
 
         if (leaderRegexp.test(lhs))
