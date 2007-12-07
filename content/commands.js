@@ -1301,32 +1301,31 @@ vimperator.Commands = function () //{{{
     // 2 args -> map arg1 to arg*
     function map(args, mode, noremap)
     {
-        for (var index = 0; index < mode.length; index++) // XXX: actually no multi-modes arrives here
+        if (!args)
         {
-            if (!args) // TODO: list: function -> allow multiple modes, if once necessary
-            {
-                vimperator.mappings.list(mode[index]);
-                return;
-            }
+            vimperator.mappings.list(mode);
+            return;
+        }
 
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-            var leaderRegexp = /<Leader>/i;
+        var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
+        var [lhs, rhs] = [matches[1], matches[2]];
+        var leaderRegexp = /<Leader>/i;
 
-            if (leaderRegexp.test(lhs))
-                lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
+        if (leaderRegexp.test(lhs))
+            lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
 
-            if (rhs)
+        if (!rhs) // list the mapping
+        {
+            vimperator.mappings.list(mode, lhs);
+        }
+        else
+        {
+            for (var index = 0; index < mode.length; index++)
             {
                 vimperator.mappings.add(new vimperator.Map([mode[index]], [lhs],
-                    function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
-                    { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremap: noremap}
-                ));
-            }
-            else
-            {
-                // FIXME: no filtering for now
-                vimperator.mappings.list(mode[index], lhs);
+                        function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                        { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremap: noremap}
+                    ));
             }
         }
     }
@@ -1349,7 +1348,7 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["im[ap]"],
-        function (args) { map(args, [vimperator.modes.INSERT], false); },
+        function (args) { map(args, [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], false); },
         {
             usage: ["imap {lhs} {rhs}", "imap {lhs}", "imap"],
             shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)",
@@ -1401,6 +1400,7 @@ vimperator.Commands = function () //{{{
             }
 
             vimperator.mappings.removeAll(vimperator.modes.INSERT);
+            vimperator.mappings.removeAll(vimperator.modes.TEXTAREA);
         },
         {
             shortHelp: "Remove all mappings (in insert mode)",
@@ -1474,14 +1474,13 @@ vimperator.Commands = function () //{{{
             line += "\" Mappings\n";
 
             // TODO: write user maps for all modes when we have mode dependant map support
-            var mode = [[vimperator.modes.NORMAL, ""], [vimperator.modes.COMMAND_LINE, "c"], [vimperator.modes.INSERT, "i"]];
+            var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"], 
+                         [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
             for (var y = 0; y < mode.length; y++)
             {
+                // names.length is about always 1 on user maps. if not, iterate here and 'fix' getUserIterator...
                 for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
-                {
-                    for (var i = 0; i < map.names.length; i++)
-                        line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[i] + " " + map.rhs + "\n";
-                }
+                        line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
             }
 
             line += "\n\" Options\n";
@@ -1567,7 +1566,7 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["ino[remap]"],
-        function (args) { map(args, [vimperator.modes.INSERT], true); },
+        function (args) { map(args, [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], true); },
         {
             usage: ["ino[remap] {lhs} {rhs}", "ino[remap] {lhs}", "ino[remap]"],
             shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)",
@@ -2425,10 +2424,19 @@ vimperator.Commands = function () //{{{
             }
 
             var lhs = args;
+            var flag = false;
 
             if (vimperator.mappings.hasMap(vimperator.modes.INSERT, lhs))
+            {
                 vimperator.mappings.remove(vimperator.modes.INSERT, lhs);
-            else
+                flag = true;
+            }
+            if (vimperator.mappings.hasMap(vimperator.modes.TEXTAREA, lhs))
+            {
+                vimperator.mappings.remove(vimperator.modes.TEXTAREA, lhs);
+                flag = true;
+            }
+            if (!flag)
                 vimperator.echoerr("E31: No such mapping");
         },
         {

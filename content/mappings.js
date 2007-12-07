@@ -148,13 +148,30 @@ vimperator.Mappings = function () //{{{
         }
     }
 
-    function mappingsIterator(mode, stack)
+    function mappingsIterator(modes, stack)
     {
-        var mappings = stack[mode];
+        var output;
+        var maps = stack[modes[0]];
 
-        for (var i = 0; i < mappings.length; i++)
-            yield mappings[i];
-
+        for (var i = 0; i < maps.length; i++)
+        {
+            output = true;
+            for (var index = 1; index < modes.length; index++) // check other modes
+            {
+                output = false; // toggle false, only true whan also found in this mode
+                for (var z = 0; z < user[modes[index]].length; z++) // maps
+                {
+                    // FIXME: when other than user maps, there might be more than one names[]? Not used so far it seems...
+                    if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
+                    {
+                        output = true;
+                        break; // found on this mode - check next mode, if there is one, where it could still fail...
+                    }
+                }
+            }
+            if (output)
+                yield maps[i];
+        }
         throw StopIteration;
     }
 
@@ -253,9 +270,11 @@ vimperator.Mappings = function () //{{{
             return matches;
         },
 
-        list: function (mode, filter)
+        list: function (modes, filter)
         {
-            var maps = user[mode];
+
+            var maps = user[modes[0]]; // duplicate (reference)
+            var output = [];
 
             if (!maps || maps.length == 0)
             {
@@ -263,15 +282,64 @@ vimperator.Mappings = function () //{{{
                 return;
             }
 
-            var list = "<table>";
-            for (var i = 0; i < maps.length; i++)
+            for (var i = 0; i < maps.length; i++) // check on maps items (first mode)
             {
+                output.push(true);
+                if (filter && maps[i].names[0] != filter) // XXX: may compare <C-... stuff lowercase?
+                {
+                    output[output.length - 1] = false;
+                    continue;
+                }
+                for (var index = 1; index < modes.length; index++) // modes
+                {
+                    output[output.length - 1] = false; // toggle false, only true whan also found in this mode
+                    for (var z = 0; z < user[modes[index]].length; z++) // maps
+                    {
+                        // XXX: on user maps, names.length is always 1? (per mode, and names = user-keybinding or so)
+                        if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
+                        {
+                            output[output.length - 1] = true;
+                            break; // found on this mode - ok, check next mode...
+                        }
+                    }
+                }
+            }
+
+            // anything found?
+            var flag = false;
+            for (var i = 0; i < output.length; i++)
+                if (output[i])
+                    flag = true;
+
+            if (!flag)
+            {
+                vimperator.echo("No mappings found");
+                return;
+            }
+
+            var modeSign = "";
+            for (var i = 0; i < modes.length; i++)
+            {
+                if (modes[i] == vimperator.modes.NORMAL) 
+                    modeSign += 'n';
+                if ((modes[i] == vimperator.modes.INSERT || modes[i] == vimperator.modes.TEXTAREA) && modeSign.indexOf("i") == -1) 
+                    modeSign += 'i';
+                if (modes[i] == vimperator.modes.COMMAND_LINE) 
+                    modeSign += 'c';
+            }
+
+            var list = "<table>";
+            for (i = 0; i < maps.length; i++)
+            {
+                if (!output[i])
+                    continue;
                 for (var j = 0; j < maps[i].names.length; j++)
                 {
                     list += "<tr>";
-                    list += "<td> " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
+                    list += "<td> " + modeSign + "   " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
                     if (maps[i].rhs)
-                        list += "<td> " + (maps[i].noremap ? "*" : " ") + "</td>" + "<td>" + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
+                        list += "<td> "+ (maps[i].noremap ? "*" : " ") + "</td>" 
+                                        + "<td>" + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
                     list += "</tr>";
                 }
             }
