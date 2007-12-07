@@ -168,6 +168,7 @@ vimperator.Mappings = function () //{{{
                         break; // found on this mode - check next mode, if there is one, where it could still fail...
                     }
                 }
+                break; // not found in this mode -> map wont' match all modes...
             }
             if (output)
                 yield maps[i];
@@ -302,6 +303,7 @@ vimperator.Mappings = function () //{{{
                             break; // found on this mode - ok, check next mode...
                         }
                     }
+                    break; // not found in this mode -> map wont' match all modes...
                 }
             }
 
