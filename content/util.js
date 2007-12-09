@@ -170,7 +170,7 @@ vimperator.util = { //{{{
     highlightURL: function (str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return "<a class='hl-URL' href='" + str + "'>" + vimperator.util.escapeHTML(str) + "</a>";
+            return "<a class='hl-URL' href='#'>" + vimperator.util.escapeHTML(str) + "</a>";
         else
             return str;
     },
