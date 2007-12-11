@@ -493,7 +493,8 @@ vimperator.Options = function () //{{{
                   "<li><b>m</b>: menubar</li>" +
                   "<li><b>T</b>: toolbar</li>" +
                   "<li><b>b</b>: bookmark bar</li>" +
-                  "</ul>",
+                  "</ul>" +
+                  "You can also hide the tab bar with <code class='command'>:set showtabline=0</code>.",
             setter: function (value) { setGuiOptions(value); },
             defaultValue: "",
             validator: function (value) { return !/[^mTb]/.test(value); }
