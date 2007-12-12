@@ -95,14 +95,27 @@ vimperator.IO = function () //{{{
 
         getCurrentDirectory: function ()
         {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                                  createInstance(Components.interfaces.nsILocalFile);
+
             var dirs = [cwd, "$PWD", "~"];
             for (var i = 0; i < dirs.length; i++)
             {
                 if (!dirs[i])
                     continue;
 
-                if (this.getFile(dirs[i]).exists())
-                    return this.expandPath(dirs[i]);
+                var fullname = this.expandPath(dirs[i]);
+                try
+                {
+                    file.initWithPath(fullname);
+                }
+                catch (e)
+                {
+                    continue;
+                }
+
+                if (file.exists() && file.isDirectory())
+                    return fullname;
             }
         },
 
