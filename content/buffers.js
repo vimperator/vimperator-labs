@@ -179,10 +179,28 @@ vimperator.Buffer = function () //{{{
             vimperator.beep();
     }
 
+    function findScrollableWindow()
+    {
+        var win = window.document.commandDispatcher.focusedWindow;
+        if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
+            return win;
+
+        win = window.content;
+        if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
+            return win;
+
+        for (var i = 0; i < win.frames.length; i++)
+            if (win.frames[i].scrollMaxX > 0 || win.frames[i].scrollMaxY > 0)
+                return win.frames[i];
+
+        return win;
+    }
+
+
     // both values are given in percent, -1 means no change
     function scrollToPercentiles(horizontal, vertical)
     {
-        var win = document.commandDispatcher.focusedWindow;
+        var win = findScrollableWindow();
         var h, v;
 
         if (horizontal < 0)
@@ -376,7 +394,7 @@ vimperator.Buffer = function () //{{{
 
         scrollColumns: function (cols)
         {
-            var win = window.document.commandDispatcher.focusedWindow;
+            var win = findScrollableWindow();
             const COL_WIDTH = 20;
 
             if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
@@ -392,16 +410,30 @@ vimperator.Buffer = function () //{{{
 
         scrollLines: function (lines)
         {
-            var win = window.document.commandDispatcher.focusedWindow;
+            var win = findScrollableWindow();
             checkScrollYBounds(win, lines);
             win.scrollByLines(lines);
         },
 
         scrollPages: function (pages)
         {
-            var win = window.document.commandDispatcher.focusedWindow;
+            var win = findScrollableWindow();
             checkScrollYBounds(win, pages);
             win.scrollByPages(pages);
+        },
+
+        scrollByScrollSize: function (count, direction)
+        {
+            if (count > 0)
+                vimperator.options["scroll"] = count;
+
+            var win = findScrollableWindow();
+            checkScrollYBounds(win, direction);
+
+            if (vimperator.options["scroll"] > 0)
+                this.scrollLines(vimperator.options["scroll"] * direction);
+            else // scroll half a page down in pixels
+                win.scrollBy(0, win.innerHeight / 2 * direction);
         },
 
         scrollToPercentile: function (percentage)

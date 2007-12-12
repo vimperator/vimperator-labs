@@ -1018,24 +1018,8 @@ vimperator.Mappings = function () //{{{
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
-    function scrollByScrollSize(count, direction)
-    {
-        if (count > 0)
-            vimperator.options["scroll"] = count;
-
-        if (vimperator.options["scroll"] > 0)
-        {
-            vimperator.buffer.scrollLines(vimperator.options["scroll"] * direction);
-        }
-        else
-        {
-            // scroll half a page down in pixels
-            var win = document.commandDispatcher.focusedWindow;
-            win.scrollBy(0, vimperator.buffer.pageHeight / 2 * direction);
-        }
-    }
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-d>"],
-        function (count) { scrollByScrollSize(count, 1); },
+        function (count) { vimperator.buffer.scrollByScrollSize(count, 1); },
         {
             shortHelp: "Scroll window downwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
@@ -1044,7 +1028,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-u>"],
-        function (count) { scrollByScrollSize(count, -1); },
+        function (count) { vimperator.buffer.scrollByScrollSize(count, -1); },
         {
             shortHelp: "Scroll window upwards in the buffer",
             help: "The number of lines is set by the <code class=\"option\">'scroll'</code> option which defaults to half a page. " +
