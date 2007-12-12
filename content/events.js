@@ -779,7 +779,8 @@ vimperator.Events = function () //{{{
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
                         vimperator.statusline.updateProgress(0);
-                        vimperator.modes.reset(false);
+                        setTimeout (function () { vimperator.modes.reset(false); },
+                            vimperator.mode == vimperator.modes.HINTS ? 500 : 0);
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                         ;// vimperator.statusline.updateUrl();

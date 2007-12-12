@@ -9,6 +9,7 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+	* scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
     * imap, inoremap, iunmap and imapclear added
 	* new g0 and g$ mappings to go to the first/last tab
 	* new 'history' option for specifying the number of Ex commands and

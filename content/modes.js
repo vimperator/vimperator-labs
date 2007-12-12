@@ -75,13 +75,13 @@ vimperator.modes = (function () //{{{
         }
     }
 
-    // XXX: Pay attention that you don't run into endless loops
+    // NOTE: Pay attention that you don't run into endless loops
     // Usually you should only indicate to leave a special mode linke HINTS
     // by calling vimperator.modes.reset() and adding the stuff which is needed
     // for its cleanup here
     function handleModeChange(oldMode, newMode)
     {
-        // TODO: fix v.log() to work verbosity level
+        // TODO: fix v.log() to work with verbosity level
         // vimperator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
 
         switch (oldMode)
@@ -117,7 +117,7 @@ vimperator.modes = (function () //{{{
 
         if (newMode == vimperator.modes.NORMAL)
         {
-            // XXX: why this code?
+            // disable caret mode when we want to switch to normal mode
             var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
             if (value)
                 vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
