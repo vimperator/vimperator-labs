@@ -763,7 +763,7 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.file(filter, true); }
         }
     ));
-    commandManager.add(new vimperator.Command(["pwd"],
+    commandManager.add(new vimperator.Command(["pw[d]"],
         function (args)
         {
             if (args)
@@ -772,10 +772,7 @@ vimperator.Commands = function () //{{{
                 vimperator.echo(vimperator.io.getCurrentDirectory());
         },
         {
-            usage: ["cd [-|path]"],
-            shortHelp: "Change the current directory",
-            help: "<code class='command'>:cd -</code> changes to the last directory.",
-            completer: function (filter) { return vimperator.completion.file(filter, true); }
+            shortHelp: "Print the current directory name"
         }
     ));
     commandManager.add(new vimperator.Command(["com[mand]"],
@@ -1308,7 +1305,7 @@ vimperator.Commands = function () //{{{
         }
 
         // ?:\s+ <- don't remember; (...)? optional = rhs
-        var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/); 
+        var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/);
         var leaderRegexp = /<Leader>/i;
 
         if (leaderRegexp.test(lhs))
@@ -1474,7 +1471,7 @@ vimperator.Commands = function () //{{{
             line += "\" Mappings\n";
 
             // TODO: write user maps for all modes when we have mode dependant map support
-            var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"], 
+            var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"],
                          [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
             for (var y = 0; y < mode.length; y++)
             {
