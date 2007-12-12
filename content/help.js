@@ -215,25 +215,30 @@ vimperator.help = function (section, easter) //{{{
         '\n</div>\n</body>\n</html>';
 
     var doc = window.content.document;
+    dump("before open\n");
 
     try
     {
-        doc.open();
+        alert(doc.open());
     }
     catch (e)
     {
-        // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
-        // when the url is "about:" or any other xhtml page the doc is not open
-        // then retry again in 250ms but just once
-        if (arguments[3] && arguments[3].recursive)
-            return false;
-
-        vimperator.open("about:blank");
-        setTimeout(function () { vimperator.help(section, false, null, { recursive: true }); }, 250);
+//    dump("catched open\n");
+//        // FIXME: what's this all about then, eh? Works the same for if it's removed. -- djk
+//        // when the url is "about:" or any other xhtml page the doc is not open
+//        // then retry again in 250ms but just once
+//        if (arguments[3] && arguments[3].recursive)
+//            return false;
+//
+//        vimperator.open("about:blank");
+//        setTimeout(function () { vimperator.help(section, false, null, { recursive: true }); }, 250);
         return;
     }
+    dump("before write\n");
     doc.write(fulldoc);
+    dump("after write\n");
     doc.close();
+    dump("closed doc\n");
 
 
     // TODO: change to getBoundingClientRect() for FF 3.0

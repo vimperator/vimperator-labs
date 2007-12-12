@@ -775,9 +775,11 @@ vimperator.Events = function () //{{{
                             Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
                 {
                     // This fires when the load event is initiated
+                    // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
                         vimperator.statusline.updateProgress(0);
+                        vimperator.modes.reset(false);
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                         ;// vimperator.statusline.updateUrl();
