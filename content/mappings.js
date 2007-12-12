@@ -193,16 +193,16 @@ vimperator.Mappings = function () //{{{
         // NOTE: just normal mode for now
         __iterator__: function ()
         {
-            return mappingsIterator(vimperator.modes.NORMAL, main);
+            return mappingsIterator([vimperator.modes.NORMAL], main);
         },
 
-        // FIXME:
+        // FIXME: unused? 
         getDefaultIterator: function (mode)
         {
             return mappingsIterator(mode, main);
         },
 
-        // FIXME:
+        // FIXME: unused? 
         getUserIterator: function (mode)
         {
             return mappingsIterator(mode, user);
