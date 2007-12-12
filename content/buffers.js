@@ -206,7 +206,6 @@ vimperator.Buffer = function () //{{{
 
         lastInputField: null, // used to keep track of the right field for "gi"
 
-
         get URL()
         {
             // TODO: .URL is not defined for XUL documents
