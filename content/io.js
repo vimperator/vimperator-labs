@@ -98,7 +98,7 @@ vimperator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
 
-            var dirs = [cwd, "$PWD", "~"];
+            var dirs = WINDOWS ? [cwd, "~"] : [cwd, "$PWD", "~"];
             for (var i = 0; i < dirs.length; i++)
             {
                 if (!dirs[i])
