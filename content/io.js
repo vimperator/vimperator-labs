@@ -98,7 +98,7 @@ vimperator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
 
-            var dirs = WINDOWS ? [cwd, "~"] : [cwd, "$PWD", "~"];
+            var dirs = [cwd, "$PWD", "~"];
             for (var i = 0; i < dirs.length; i++)
             {
                 if (!dirs[i])
@@ -117,6 +117,9 @@ vimperator.IO = function () //{{{
                 if (file.exists() && file.isDirectory())
                     return fullname;
             }
+
+            // just make sure we return something which always is a directory
+            return WINDOWS ? "C:\\" : "/";
         },
 
         setCurrentDirectory: function (newdir)
