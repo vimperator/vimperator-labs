@@ -251,7 +251,7 @@ vimperator.Events = function () //{{{
     var macros = {};
     var isRecording = false;
     var currentMacro; 
-    var playReg = ""; 
+    var lastMacro = ""; 
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -261,24 +261,24 @@ vimperator.Events = function () //{{{
 
         wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
 
-        startRecording: function (reg)
+        startRecording: function (macro)
         {
-            if (!/[a-zA-Z0-9]/.test(reg))
+            if (!/[a-zA-Z0-9]/.test(macro))
             {
                 vimperator.echoerr("Register must be [a-zA-z0-9]");
                 return false;
             }
             vimperator.modes.add(vimperator.modes.RECORDING); //TODO: does not work/show yet
 
-            if (/[A-Z]/.test(reg)) // uppercase (append)
+            if (/[A-Z]/.test(macro)) // uppercase (append)
             {
-                currentMacro = reg.toLowerCase();
+                currentMacro = macro.toLowerCase();
                 if (!macros[currentMacro])
                     macros[currentMacro] = ""; // initialise if it does not yet exist
             }
             else
             {
-                currentMacro = reg;
+                currentMacro = macro;
                 macros[currentMacro] = "";
             }
 
@@ -286,16 +286,16 @@ vimperator.Events = function () //{{{
             isRecording = true;
         },
 
-        playRegister: function (reg)
+        playMacro: function (macro)
         {
-            if (!/[a-zA-Z0-9]/.test(reg))
+            if (!/[a-zA-Z0-9]/.test(macro))
             {
                 vimperator.echoerr("Register must be [a-z0-9]");
                 return false;
             }
-            if (reg == "@") // use playReg if it's set
+            if (macro == "@") // use lastMacro if it's set
             {
-                if (!playReg)
+                if (!lastMacro)
                 {
                     vimperator.echoerr("E748: No previously used Register");
                     return false;
@@ -303,13 +303,13 @@ vimperator.Events = function () //{{{
             }
             else
             {
-                    playReg = reg.toLowerCase(); // XXX: sets last playerd reg, even if it does not yet exist
+                    lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
             }
 
-            if (macros[playReg])
-                vimperator.events.feedkeys(macros[playReg], true);  // true -> noremap
+            if (macros[lastMacro])
+                vimperator.events.feedkeys(macros[lastMacro], true);  // true -> noremap
             else
-                vimperator.echoerr("Register '" + playReg + " not set");
+                vimperator.echoerr("Register '" + lastMacro + " not set");
         },
 
         destroy: function ()
