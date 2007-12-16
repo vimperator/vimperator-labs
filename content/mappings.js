@@ -1294,14 +1294,16 @@ vimperator.Mappings = function () //{{{
         function (arg) { vimperator.events.startRecording(arg); },
         {
             shortHelp: "record a macro into a register",
-            help: "record a macro; [a-zA-Z0-9] are valid registers",
+            help: "Record typed characters into register {0-9a-zA-Z} (uppercase to append)." +
+                  "type 'q' to stop recording.",
+
             flags: vimperator.Mappings.flags.ARGUMENT
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["@"], 
-        function (arg) { vimperator.events.playMacro(arg); },
+        function (arg) { vimperator.events.playRegister(arg); },
         {
-            shortHelp: "play a macro",
+            shortHelp: "Execute the contents of register {0-9a-z}. @@ repeats the previous @{0-9a-z}",
             flags: vimperator.Mappings.flags.ARGUMENT
         }
     ));

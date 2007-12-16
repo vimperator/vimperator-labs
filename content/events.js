@@ -251,6 +251,7 @@ vimperator.Events = function () //{{{
     var macros = {};
     var isRecording = false;
     var currentMacro; 
+    var playReg = ""; 
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -262,19 +263,53 @@ vimperator.Events = function () //{{{
 
         startRecording: function (reg)
         {
-            isRecording = true;
-            vimperator.modes.add(vimperator.modes.RECORDING);
-            currentMacro = reg;
-            macros[currentMacro] = "";
+            if (!/[a-zA-Z0-9]/.test(reg))
+            {
+                vimperator.echoerr("Register must be [a-zA-z0-9]");
+                return false;
+            }
+            vimperator.modes.add(vimperator.modes.RECORDING); //TODO: does not work/show yet
+
+            if (/[A-Z]/.test(reg)) // uppercase (append)
+            {
+                currentMacro = reg.toLowerCase();
+                if (!macros[currentMacro])
+                    macros[currentMacro] = ""; // initialise if it does not yet exist
+            }
+            else
+            {
+                currentMacro = reg;
+                macros[currentMacro] = "";
+            }
+
             vimperator.echo("recording into register " + currentMacro + "...");
+            isRecording = true;
         },
 
-        playMacro: function (reg)
+        playRegister: function (reg)
         {
-            if (macros[reg])
-                vimperator.events.feedkeys(macros[reg], true);  // true -> noremap
+            if (!/[a-zA-Z0-9]/.test(reg))
+            {
+                vimperator.echoerr("Register must be [a-z0-9]");
+                return false;
+            }
+            if (reg == "@") // use playReg if it's set
+            {
+                if (!playReg)
+                {
+                    vimperator.echoerr("E748: No previously used Register");
+                    return false;
+                }
+            }
             else
-                vimperator.echoerr("Register '" + reg + " not set");
+            {
+                    playReg = reg.toLowerCase(); // XXX: sets last playerd reg, even if it does not yet exist
+            }
+
+            if (macros[playReg])
+                vimperator.events.feedkeys(macros[playReg], true);  // true -> noremap
+            else
+                vimperator.echoerr("Register '" + playReg + " not set");
         },
 
         destroy: function ()
