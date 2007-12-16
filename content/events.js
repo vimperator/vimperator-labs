@@ -288,7 +288,7 @@ vimperator.Events = function () //{{{
 
         playMacro: function (macro)
         {
-            if (!/[a-zA-Z0-9]/.test(macro))
+            if (!/[a-zA-Z0-9@]/.test(macro))
             {
                 vimperator.echoerr("Register must be [a-z0-9]");
                 return false;
