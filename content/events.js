@@ -245,6 +245,9 @@ vimperator.Events = function () //{{{
         }
     }
 
+    var inputBufferLength = 0; // counts the keys in v.input.buffer
+    var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
+
     var macros = {};
     var isRecording = false;
     var currentMacro; 
@@ -706,18 +709,22 @@ vimperator.Events = function () //{{{
                 if (vimperator.mode == vimperator.modes.INSERT || vimperator.mode == vimperator.modes.COMMAND_LINE)
                     stop = false;
                 else
+                {
                     vimperator.input.buffer += key;
+                    inputBufferLength++;
+                }
             }
             else if (vimperator.input.pendingArgMap)
             {
                 vimperator.input.buffer = "";
+                inputBufferLength = 0;
                 var tmp = vimperator.input.pendingArgMap; // must be set to null before .execute; if not
                 vimperator.input.pendingArgMap = null;    // v.inputpendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                     tmp.execute(null, vimperator.input.count, key);
 
             }
-            else if (map)
+            else if (map && !skipMap)
             {
                 vimperator.input.count = parseInt(countStr, 10);
                 if (isNaN(vimperator.input.count))
@@ -726,6 +733,7 @@ vimperator.Events = function () //{{{
                 {
                     vimperator.input.pendingArgMap = map;
                     vimperator.input.buffer += key;
+                    inputBufferLength++;
                 }
                 else if (vimperator.input.pendingMotionMap)
                 {
@@ -735,27 +743,41 @@ vimperator.Events = function () //{{{
                     }
                     vimperator.input.pendingMotionMap = null;
                     vimperator.input.buffer = "";
+                    inputBufferLength = 0;
                 }
                 // no count support for these commands yet
                 else if (map.flags & vimperator.Mappings.flags.MOTION)
                 {
                     vimperator.input.pendingMotionMap = map;
                     vimperator.input.buffer = "";
+                    inputBufferLength = 0;
                 }
                 else
                 {
                     vimperator.input.buffer = "";
+                    inputBufferLength = 0;
                     var ret = map.execute(null, vimperator.input.count);
                     if (map.flags & vimperator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
             }
-            else if (vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length > 0)
+            else if (vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length > 0 && !skipMap)
             {
                 vimperator.input.buffer += key;
+                inputBufferLength++;
             }
             else
             {
+                if (vimperator.input.buffer != "" && !skipMap) // no map found -> refeed stuff in v.input.buffer
+                {
+                    skipMap = true; // ignore maps while doing so
+                    vimperator.events.feedkeys(vimperator.input.buffer, true);
+                }
+                if (skipMap)
+                {
+                    if (--inputBufferLength == 0) // inputBufferLenght == 0. v.input.buffer refeeded...
+                        skipMap = false; // done...
+                }
                 vimperator.input.buffer = "";
                 vimperator.input.pendingArgMap = null;
                 vimperator.input.pendingMotionMap = null;
