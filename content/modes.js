@@ -56,6 +56,8 @@ vimperator.modes = (function () //{{{
                 ext = " (always)"; break;
             case vimperator.modes.MENU: // TODO: desirable?
                 ext = " (menu)"; break;
+            case vimperator.modes.RECORDING:
+                ext = " (recording)"; break;
         }
 
         switch (main)
@@ -153,6 +155,7 @@ vimperator.modes = (function () //{{{
         ALWAYS_HINT:      1 << 17,
         MENU:             1 << 18, // a popupmenu is active
         LINE:             1 << 19, // linewise visual mode
+        RECORDING:        1 << 20,
 
         __iterator__: function ()
         {

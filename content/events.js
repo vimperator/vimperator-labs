@@ -245,6 +245,10 @@ vimperator.Events = function () //{{{
         }
     }
 
+    var macros = {};
+    var isRecording = false;
+    var currentMacro; 
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -252,6 +256,23 @@ vimperator.Events = function () //{{{
     var eventManager = {
 
         wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
+
+        startRecording: function (reg)
+        {
+            isRecording = true;
+            vimperator.modes.add(vimperator.modes.RECORDING);
+            currentMacro = reg;
+            macros[currentMacro] = "";
+            vimperator.echo("recording into register " + currentMacro + "...");
+        },
+
+        playMacro: function (reg)
+        {
+            if (macros[reg])
+                vimperator.events.feedkeys(macros[reg], true);  // true -> noremap
+            else
+                vimperator.echoerr("Register '" + reg + " not set");
+        },
 
         destroy: function ()
         {
@@ -570,6 +591,23 @@ vimperator.Events = function () //{{{
             if (!key)
                  return true;
 
+            if (isRecording)
+            {
+                if (key == "q") // TODO: should not be hardcoded
+                {
+                    isRecording = false;
+                    vimperator.modes.remove(vimperator.modes.RECORDING);
+                    vimperator.echo("recorded " + currentMacro + " : " + macros[currentMacro]); // DEBUG:
+                    event.preventDefault(); // XXX: or howto stop that key beeing processed?
+                    event.stopPropagation();
+                    return true;
+                }
+                else if (!vimperator.mappings.hasMap(vimperator.mode, vimperator.input.buffer + key))
+                {
+                    macros[currentMacro] += key;
+                }
+            } 
+
             var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
             var win =  document.commandDispatcher.focusedWindow;
@@ -673,11 +711,11 @@ vimperator.Events = function () //{{{
             else if (vimperator.input.pendingArgMap)
             {
                 vimperator.input.buffer = "";
-
+                var tmp = vimperator.input.pendingArgMap; // must be set to null before .execute; if not
+                vimperator.input.pendingArgMap = null;    // v.inputpendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
-                    vimperator.input.pendingArgMap.execute(null, vimperator.input.count, key);
+                    tmp.execute(null, vimperator.input.count, key);
 
-                vimperator.input.pendingArgMap = null;
             }
             else if (map)
             {

@@ -1290,7 +1290,21 @@ vimperator.Mappings = function () //{{{
             help: "Repeat the last search 1 time (until count is supported) in the opposite direction."
         }
     ));
-
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["q"],
+        function (arg) { vimperator.events.startRecording(arg); },
+        {
+            shortHelp: "record a macro into a register",
+            help: "record a macro; [a-zA-Z0-9] are valid registers",
+            flags: vimperator.Mappings.flags.ARGUMENT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["@"], 
+        function (arg) { vimperator.events.playMacro(arg); },
+        {
+            shortHelp: "play a macro",
+            flags: vimperator.Mappings.flags.ARGUMENT
+        }
+    ));
     // }}}
     // HINTS mode
     // {{{
