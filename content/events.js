@@ -862,7 +862,7 @@ vimperator.Events = function () //{{{
             },
 
             // XXX: function may later be needed to detect a canceled synchronous openURL()
-            onStateChange: function (webProgress, aRequest, flags, aStatus)
+            onStateChange: function (webProgress, request, flags, status)
             {
                 // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
                 // receive statechange events for loading images and other parts of the web page
@@ -873,12 +873,16 @@ vimperator.Events = function () //{{{
                     // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
+                        vimperator.buffer.loaded = 0;
                         vimperator.statusline.updateProgress(0);
                         setTimeout (function () { vimperator.modes.reset(false); },
                             vimperator.mode == vimperator.modes.HINTS ? 500 : 0);
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-                        ;// vimperator.statusline.updateUrl();
+                    {
+                        vimperator.buffer.loaded = (status == 0 ? 1 : 2);
+                        vimperator.statusline.updateUrl();
+                    }
                 }
             },
             // for notifying the user about secure web pages

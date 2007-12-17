@@ -222,7 +222,31 @@ vimperator.Buffer = function () //{{{
 
     return {
 
-        lastInputField: null, // used to keep track of the right field for "gi"
+        // 0 if loading, 1 if loaded or 2 if load failed
+        get loaded()
+        {
+            if (typeof window.content.document.pageIsFullyLoaded != "undefined")
+                return window.content.document.pageIsFullyLoaded;
+            else
+                return 1; // in doubt return "loaded"
+        },
+        set loaded(value)
+        {
+            window.content.document.pageIsFullyLoaded = value;
+        },
+        
+        // used to keep track of the right field for "gi"
+        get lastInputField()
+        {
+            if (window.content.document.lastInputField)
+                return window.content.document.lastInputField;
+            else
+                return null;
+        },
+        set lastInputField(value)
+        {
+            window.content.document.lastInputField = value;
+        },
 
         get URL()
         {
