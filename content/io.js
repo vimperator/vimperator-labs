@@ -145,14 +145,14 @@ vimperator.IO = function () //{{{
             return this.getCurrentDirectory();
         },
 
-        getPluginDir: function ()
+        getSpecialDirectory: function (directory)
         {
             var pluginDir;
 
             if (WINDOWS)
-                pluginDir = "~/vimperator/plugin";
+                pluginDir = "~/vimperator/" + directory;
             else
-                pluginDir = "~/.vimperator/plugin";
+                pluginDir = "~/.vimperator/" + directory;
 
             pluginDir = this.getFile(this.expandPath(pluginDir));
 

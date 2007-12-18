@@ -398,6 +398,17 @@ vimperator.Mappings = function () //{{{
             help: "In command line mode, you can perform extended commands, which may require arguments."
         }
     ));
+
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET], ["<Tab>"],
+        function () { document.commandDispatcher.advanceFocus(); },
+        { shortHelp: "Advance keyboard focus" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET, vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
+        ["<S-Tab>"],
+        function () { document.commandDispatcher.rewindFocus(); },
+        { shortHelp: "Rewind keyboard focus" }
+    ));
+                    
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["i", "<Insert>"],
         function ()
         {
@@ -1923,9 +1934,13 @@ vimperator.Mappings = function () //{{{
         function () { vimperator.editor.editWithExternalEditor(); },
         { }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<Space>", "<Tab>", "<Return>"],
-        function () { return vimperator.editor.expandAbbreviation("i"); },
+    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<Space>", "<Return>"],
+    function () { return vimperator.editor.expandAbbreviation("i"); },
         { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<Tab>"],
+        function () { vimperator.editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); },
+        { }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
         ["<C-]>", "<C-5>"], function () { vimperator.editor.expandAbbreviation("i"); }, { }
@@ -1939,8 +1954,8 @@ vimperator.Mappings = function () //{{{
         function () { return vimperator.editor.expandAbbreviation("c"); },
         { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.COMMAND_LINE],
-        ["<C-]>", "<C-5>"], function () { vimperator.editor.expandAbbreviation("c"); }, { }
+    addDefaultMap(new vimperator.Map([vimperator.modes.COMMAND_LINE], ["<C-]>", "<C-5>"],
+        function () { vimperator.editor.expandAbbreviation("c"); }, { }
     ));
 
     //}}} }}}

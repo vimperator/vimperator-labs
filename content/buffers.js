@@ -228,7 +228,7 @@ vimperator.Buffer = function () //{{{
             if (typeof window.content.document.pageIsFullyLoaded != "undefined")
                 return window.content.document.pageIsFullyLoaded;
             else
-                return 1; // in doubt return "loaded"
+                return 0; // in doubt return "loading"
         },
         set loaded(value)
         {

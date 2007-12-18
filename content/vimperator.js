@@ -660,7 +660,7 @@ const vimperator = (function () //{{{
                 // also source plugins in ~/.vimperator/plugin/
                 try
                 {
-                    var pluginDir = vimperator.io.getPluginDir();
+                    var pluginDir = vimperator.io.getSpecialDirectory("plugin");
                     if (pluginDir)
                     {
                         var files = vimperator.io.readDirectory(pluginDir.path);

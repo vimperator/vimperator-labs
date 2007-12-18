@@ -37,43 +37,51 @@ vimperator.modes = (function () //{{{
 
     var passNextKey = false;
     var passAllKeys = false;
+    var isRecording = false;
+    var isReplaying = false; // playing a macro
 
     function getModeMessage()
     {
         if (passNextKey && !passAllKeys)
-            return "PASS THROUGH (next)";
+            return "-- PASS THROUGH (next) --";
         else if (passAllKeys && !passNextKey)
-            return "PASS THROUGH";
+            return "-- PASS THROUGH --";
 
         var ext = "";
-        switch (extended)
-        {
-            case vimperator.modes.QUICK_HINT:
-                ext = " (quick)"; break;
-            case vimperator.modes.EXTENDED_HINT:
-                ext = " (extended)"; break;
-            case vimperator.modes.ALWAYS_HINT:
-                ext = " (always)"; break;
-            case vimperator.modes.MENU: // TODO: desirable?
-                ext = " (menu)"; break;
-            case vimperator.modes.RECORDING:
-                ext = " (recording)"; break;
-        }
+        if (extended & vimperator.modes.QUICK_HINT)
+            ext += " (quick)";
+        if (extended & vimperator.modes.EXTENDED_HINT)
+            ext += " (extended)";
+        if (extended & vimperator.modes.ALWAYS_HINT)
+            ext += " (always)";
+        if (extended & vimperator.modes.INACTIVE_HINT)
+            ext += " (inactive)";
+        if (extended & vimperator.modes.MENU) // TODO: desirable?
+            ext += " (menu)";
+
+        ext += " --";
+
+        // when recording a macro
+        if (vimperator.modes.isRecording)
+            ext += "recording";
 
         switch (main)
         {
             case vimperator.modes.INSERT:
-                return "INSERT" + ext;
+                return "-- INSERT" + ext;
             case vimperator.modes.VISUAL:
-                return (extended & vimperator.modes.LINE) ? "VISUAL LINE" + ext : "VISUAL" + ext;
+                return (extended & vimperator.modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
             case vimperator.modes.HINTS:
-                return "HINTS" + ext;
+                return "-- HINTS" + ext;
             case vimperator.modes.CARET:
-                return "CARET" + ext;
+                return "-- CARET" + ext;
             case vimperator.modes.TEXTAREA:
-                return "TEXTAREA" + ext;
-            default:
-                return null;
+                return "-- TEXTAREA" + ext;
+            default: // NORMAL mode
+                if (vimperator.modes.isRecording)
+                    return "recording";
+                else
+                    return "";
         }
     }
 
@@ -85,6 +93,7 @@ vimperator.modes = (function () //{{{
     {
         // TODO: fix v.log() to work with verbosity level
         // vimperator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
@@ -153,9 +162,10 @@ vimperator.modes = (function () //{{{
         QUICK_HINT:       1 << 15,
         EXTENDED_HINT:    1 << 16,
         ALWAYS_HINT:      1 << 17,
-        MENU:             1 << 18, // a popupmenu is active
-        LINE:             1 << 19, // linewise visual mode
-        RECORDING:        1 << 20,
+        INACTIVE_HINT:    1 << 18, // a short time after following a hint, we do not accept any input
+        MENU:             1 << 19, // a popupmenu is active
+        LINE:             1 << 20, // linewise visual mode
+        RECORDING:        1 << 21,
 
         __iterator__: function ()
         {
@@ -168,6 +178,7 @@ vimperator.modes = (function () //{{{
             throw StopIteration;
         },
 
+        // keeps recording state
         reset: function (silent)
         {
             this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
@@ -182,11 +193,7 @@ vimperator.modes = (function () //{{{
             if (main == vimperator.modes.COMMAND_LINE)
                 return;
 
-            var msg = getModeMessage();
-            if (msg)
-                vimperator.commandline.echo("-- " + getModeMessage() + " --", vimperator.commandline.HL_MODEMSG, vimperator.commandline.DISALLOW_MULTILINE);
-            else
-                vimperator.commandline.echo("", null, vimperator.commandline.DISALLOW_MULTILINE);
+            vimperator.commandline.echo(getModeMessage(), vimperator.commandline.HL_MODEMSG, vimperator.commandline.DISALLOW_MULTILINE);
         },
 
         // helper function to set both modes in one go
@@ -228,6 +235,12 @@ vimperator.modes = (function () //{{{
 
         get passAllKeys() { return passAllKeys; },
         set passAllKeys(value) { passAllKeys = value; this.show(); },
+
+        get isRecording() { return isRecording; },
+        set isRecording(value) { isRecording = value; this.show(); },
+
+        get isReplaying() { return isReplaying; },
+        set isReplaying(value) { isReplaying = value; },
 
         get main()      { return main; },
         set main(value) {

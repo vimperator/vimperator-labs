@@ -32,10 +32,12 @@ vimperator.Events = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // this handler is for middle click only in the content
-    //window.addEventListener("mousedown", onVimperatorKeypress, true);
-    //content.mPanelContainer.addEventListener("mousedown", onVimperatorKeypress, true);
-    //document.getElementById("content").onclick = function (event) { alert("foo"); };
+    var inputBufferLength = 0; // counts the number of keys in v.input.buffer (can be different from v.input.buffer.length)
+    var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
+
+    var macros = {};
+    var currentMacro = ""; 
+    var lastMacro = ""; 
 
     // any tab related events
     var tabcontainer = getBrowser().mTabContainer;
@@ -79,6 +81,12 @@ vimperator.Events = function () //{{{
         vimperator.modes.show();
     }, null);
 
+//    getBrowser().addEventListener("submit", function (event)
+//    {
+//        // reset buffer loading state as early as possible, important for macros
+//        dump("submit\n");
+//        vimperator.buffer.loaded = 0;
+//    }, null);
 
     /////////////////////////////////////////////////////////
     // track if a popup is open or the menubar is active
@@ -228,30 +236,82 @@ vimperator.Events = function () //{{{
             var title = vimperator.buffer.title;
             vimperator.history.add(url, title);
 
+            // mark the buffer as loaded, we can't use vimperator.buffer.loaded
+            // since that always refers to the current buffer, while doc can be 
+            // any buffer, even in a background tab
+            doc.pageIsFullyLoaded = 1;
+
             // code which is only relevant if the page load is the current tab goes here:
-            //if (doc == getBrowser().selectedBrowser.contentDocument)
-            //{
-            //    // TODO: remember the last focused input widget, so we can go there with 'gi'
+            if (doc == getBrowser().selectedBrowser.contentDocument)
+            {
             //    // FIXME: this currently causes window map events which is _very_ annoying
             //    // we want to stay in command mode after a page has loaded
-            //    //setTimeout(vimperator.focusContent, 10);
-            //    // setTimeout(function () {
-            //    //     if (doc.commandDispatcher.focusedElement)
-            //    //         doc.commandDispatcher.focusedElement.blur();
-            //    //         alert(doc.commandDispatcher.focusedElement);
-            //    // }, 1000);
-
-            //}
+                setTimeout(function () {
+                    var focused = document.commandDispatcher.focusedElement;
+                    if (focused && focused.value.length == 0)
+                        focused.blur();
+                }, 100);
+            }
         }
     }
 
-    var inputBufferLength = 0; // counts the keys in v.input.buffer
-    var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
+    // return true when load successful, or false otherwise
+    function waitForPageLoaded()
+    {
+        dump("start waiting in loaded state: " + vimperator.buffer.loaded + "\n");
+        var mainThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).mainThread;
+        while (mainThread.hasPendingEvents()) // clear queue
+            mainThread.processNextEvent(true);
 
-    var macros = {};
-    var isRecording = false;
-    var currentMacro; 
-    var lastMacro = ""; 
+//        if (vimperator.buffer.loaded == 1)
+//            return true;
+
+        var ms = 10000; // maximum time to wait - TODO: add option
+        var then = new Date().getTime();
+        for (var now = then; now - then < ms; now = new Date().getTime())
+        {
+            mainThread.processNextEvent(true);
+            dump("waited: " + (now - then) + " ms\n");
+
+            if (vimperator.buffer.loaded > 0)
+                break;
+            else
+                vimperator.echo("Waiting for page to load...");
+        }
+        
+        // TODO: allow macros to be continued when page does not fully load with an option
+        var ret = (vimperator.buffer.loaded == 1); 
+        if (!ret)
+            vimperator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+        dump("done waiting: " + ret + "\n");
+
+        return ret;
+    }
+
+    // load all macros inside ~/.vimperator/macros/
+    // setTimeout needed since vimperator.io. is loaded after vimperator.events.
+    setTimeout (function() {
+        try
+        {
+            var files = vimperator.io.readDirectory(vimperator.io.getSpecialDirectory("macros"));
+            for (var i = 0; i < files.length; i++)
+            {
+                var file = files[i];
+                if (!file.exists() || file.isDirectory() || !file.isReadable())
+                continue;
+
+                var name = file.leafName.replace(/\.vimp$/i, "");
+                macros[name] = vimperator.io.readFile(file).split(/\n/)[0];
+                vimperator.log("Macro " + name + " added: " + macros[name], 8);
+            }
+        }
+        catch (e)
+        {
+            vimperator.log("macro directory not found or error reading macro file");
+        }
+    }, 100);            
+
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -260,57 +320,6 @@ vimperator.Events = function () //{{{
     var eventManager = {
 
         wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
-
-        startRecording: function (macro)
-        {
-            if (!/[a-zA-Z0-9]/.test(macro))
-            {
-                vimperator.echoerr("Register must be [a-zA-z0-9]");
-                return false;
-            }
-            vimperator.modes.add(vimperator.modes.RECORDING); //TODO: does not work/show yet
-
-            if (/[A-Z]/.test(macro)) // uppercase (append)
-            {
-                currentMacro = macro.toLowerCase();
-                if (!macros[currentMacro])
-                    macros[currentMacro] = ""; // initialise if it does not yet exist
-            }
-            else
-            {
-                currentMacro = macro;
-                macros[currentMacro] = "";
-            }
-
-            vimperator.echo("recording into register " + currentMacro + "...");
-            isRecording = true;
-        },
-
-        playMacro: function (macro)
-        {
-            if (!/[a-zA-Z0-9@]/.test(macro))
-            {
-                vimperator.echoerr("Register must be [a-z0-9]");
-                return false;
-            }
-            if (macro == "@") // use lastMacro if it's set
-            {
-                if (!lastMacro)
-                {
-                    vimperator.echoerr("E748: No previously used Register");
-                    return false;
-                }
-            }
-            else
-            {
-                    lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
-            }
-
-            if (macros[lastMacro])
-                vimperator.events.feedkeys(macros[lastMacro], true);  // true -> noremap
-            else
-                vimperator.echoerr("Register '" + lastMacro + " not set");
-        },
 
         destroy: function ()
         {
@@ -326,6 +335,61 @@ vimperator.Events = function () //{{{
 
             window.removeEventListener("keypress", this.onKeyPress, true);
             window.removeEventListener("keydown", this.onKeyDown, true);
+        },
+
+
+        startRecording: function (macro)
+        {
+            if (!/[a-zA-Z0-9]/.test(macro))
+            {
+                vimperator.echoerr("Register must be [a-zA-z0-9]");
+                return false;
+            }
+            vimperator.modes.isRecording = true;
+
+            if (/[A-Z]/.test(macro)) // uppercase (append)
+            {
+                currentMacro = macro.toLowerCase();
+                if (!macros[currentMacro])
+                    macros[currentMacro] = ""; // initialize if it does not yet exist
+            }
+            else
+            {
+                currentMacro = macro;
+                macros[currentMacro] = "";
+            }
+        },
+
+        playMacro: function (macro)
+        {
+            if (!/[a-zA-Z0-9@]/.test(macro))
+            {
+                vimperator.echoerr("Register must be [a-z0-9]");
+                return false;
+            }
+            if (macro == "@") // use lastMacro if it's set
+            {
+                if (!lastMacro)
+                {
+                    vimperator.echoerr("E748: No previously used register");
+                    return false;
+                }
+            }
+            else
+            {
+                lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
+            }
+
+            if (macros[lastMacro])
+            {
+                vimperator.modes.isReplaying = true;
+                BrowserStop(); // make sure the page is stopped before starting to play the macro
+                vimperator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
+                vimperator.events.feedkeys(macros[lastMacro], true);  // true -> noremap
+                vimperator.modes.isReplaying = false;
+            }
+            else
+                vimperator.echoerr("Register " + lastMacro + " not set");
         },
 
         // This method pushes keys into the event queue from vimperator
@@ -390,7 +454,12 @@ vimperator.Events = function () //{{{
                 var evt = doc.createEvent("KeyEvents");
                 evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                 evt.noremap = noremap;
-                elem.dispatchEvent(evt);
+                if (elem.dispatchEvent(evt)) // return true in onEvent to stop feeding keys
+                {
+                    dump("help in mode: " + vimperator.mode + " - " + vimperator.events.toString(evt) + "\n");
+                    vimperator.beep();
+                    return
+                }
             }
         },
 
@@ -527,12 +596,17 @@ vimperator.Events = function () //{{{
                      vimperator.mode == vimperator.modes.TEXTAREA ||
                      vimperator.mode == vimperator.modes.VISUAL)
             {
-                this.wantsModeReset = true;
-                setTimeout(function ()
-                {
-                        if (vimperator.events.wantsModeReset)
-                            vimperator.modes.reset();
-                }, 10);
+               // FIXME: currently this hack is disabled to make macros work
+               // this.wantsModeReset = true;
+               // setTimeout(function ()
+               // {
+               //     dump("cur: " + vimperator.mode + "\n");
+               //     if (vimperator.events.wantsModeReset)
+               //     {
+               //         vimperator.events.wantsModeReset = false;
+                        vimperator.modes.reset();
+               //     }
+               // }, 0);
             }
         },
 
@@ -628,19 +702,20 @@ vimperator.Events = function () //{{{
             var key = vimperator.events.toString(event);
             if (!key)
                  return true;
+            dump(key + " in mode: " + vimperator.mode + "\n");
 
-            if (isRecording)
+            if (vimperator.modes.isRecording)
             {
                 if (key == "q") // TODO: should not be hardcoded
                 {
-                    isRecording = false;
-                    vimperator.modes.remove(vimperator.modes.RECORDING);
-                    vimperator.echo("recorded " + currentMacro + " : " + macros[currentMacro]); // DEBUG:
-                    event.preventDefault(); // XXX: or howto stop that key beeing processed?
+                    vimperator.modes.isRecording = false;
+                    vimperator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 8);
+                    event.preventDefault(); // XXX: or howto stop that key being processed?
                     event.stopPropagation();
                     return true;
                 }
-                else if (!vimperator.mappings.hasMap(vimperator.mode, vimperator.input.buffer + key))
+                else if (!(vimperator.modes.extended & vimperator.modes.INACTIVE_HINT) &&
+                         !vimperator.mappings.hasMap(vimperator.mode, vimperator.input.buffer + key))
                 {
                     macros[currentMacro] += key;
                 }
@@ -648,19 +723,19 @@ vimperator.Events = function () //{{{
 
             var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
-            var win =  document.commandDispatcher.focusedWindow;
+            var win = document.commandDispatcher.focusedWindow;
             if (win && win.document.designMode == "on")
-                return true;
+                return false;
 
             // menus have their own command handlers
             if (vimperator.modes.extended & vimperator.modes.MENU)
-                return true;
+                return false;
 
             // handle Escape-one-key mode (Ctrl-v)
             if (vimperator.modes.passNextKey && !vimperator.modes.passAllKeys)
             {
                 vimperator.modes.passNextKey = false;
-                return true;
+                return false;
             }
             // handle Escape-all-keys mode (Ctrl-q)
             if (vimperator.modes.passAllKeys)
@@ -670,7 +745,7 @@ vimperator.Events = function () //{{{
                 else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                     ; // let flow continue to handle these keys to cancel escape-all-keys mode
                 else
-                    return true;
+                    return false;
             }
 
             // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
@@ -678,20 +753,38 @@ vimperator.Events = function () //{{{
                 !vimperator.mode == vimperator.modes.INSERT &&
                 !vimperator.mode == vimperator.modes.COMMAND_LINE &&
                         isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
-                    return true;
+                    return false;
 
+            // just forward event, without checking any mappings
             if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                (vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+                vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE)
             {
                 vimperator.commandline.onMultilineOutputEvent(event);
                 return false;
             }
 
             // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
-            // also fixes key navigation in combo boxes, etc.
-            if (vimperator.mode == vimperator.modes.NORMAL)
+            // also fixes key navigation in combo boxes, submitting forms, etc.
+            // FIXME: breaks iabbr for now --mst
+            if (vimperator.mode == vimperator.modes.NORMAL || vimperator.mode == vimperator.modes.INSERT)
             {
-                if (key == "<Tab>" || key == "<S-Tab>" || key == "<Return>" || key == "<Space>" || key == "<Up>" || key == "<Down>")
+                if (key == "<Return>")
+                {
+                    if (vimperator.modes.isReplaying)
+                    {
+                        // TODO: how to really submit the correct form?
+                        vimperator.modes.reset();
+                        content.document.forms[0].submit();
+                        waitForPageLoaded();
+                        dump("before return\n");
+                        event.stopPropagation();
+                        event.preventDefault();
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                else if (key == "<Space>" || key == "<Up>" || key == "<Down>")
                     return false;
             }
 
@@ -725,7 +818,7 @@ vimperator.Events = function () //{{{
                     vimperator.hints.onEvent(event);
                     event.preventDefault();
                     event.stopPropagation();
-                    return true;
+                    return false;
                 }
             }
 
@@ -756,7 +849,12 @@ vimperator.Events = function () //{{{
                 var tmp = vimperator.input.pendingArgMap; // must be set to null before .execute; if not
                 vimperator.input.pendingArgMap = null;    // v.inputpendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
+                {
+                    if (vimperator.modes.isReplaying && !waitForPageLoaded())
+                        return true;
+
                     tmp.execute(null, vimperator.input.count, key);
+                }
 
             }
             else if (map && !skipMap)
@@ -791,7 +889,11 @@ vimperator.Events = function () //{{{
                 {
                     vimperator.input.buffer = "";
                     inputBufferLength = 0;
-                    var ret = map.execute(null, vimperator.input.count);
+
+                    if (vimperator.modes.isReplaying && !waitForPageLoaded())
+                        return true;
+
+                    var ret = map.execute(null, vimperator.input.count); 
                     if (map.flags & vimperator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
@@ -801,7 +903,7 @@ vimperator.Events = function () //{{{
                 vimperator.input.buffer += key;
                 inputBufferLength++;
             }
-            else
+            else // if the key is neither a mapping nor the start of one
             {
                 if (vimperator.input.buffer != "" && !skipMap) // no map found -> refeed stuff in v.input.buffer
                 {
@@ -810,7 +912,7 @@ vimperator.Events = function () //{{{
                 }
                 if (skipMap)
                 {
-                    if (--inputBufferLength == 0) // inputBufferLenght == 0. v.input.buffer refeeded...
+                    if (--inputBufferLength == 0) // inputBufferLength == 0. v.input.buffer refeeded...
                         skipMap = false; // done...
                 }
                 vimperator.input.buffer = "";
@@ -822,10 +924,10 @@ vimperator.Events = function () //{{{
                     // allow key to be passed to firefox if we can't handle it
                     stop = false;
 
-                    // TODO: see if this check is needed or are all motion commands already mapped in these modes?
-                    if (vimperator.mode != vimperator.modes.INSERT &&
-                        vimperator.mode != vimperator.modes.COMMAND_LINE)
-                            vimperator.beep();
+                    if (vimperator.mode == vimperator.modes.COMMAND_LINE)
+                        vimperator.commandline.onEvent(event); // reroute event in command line mode
+                    else if (vimperator.mode != vimperator.modes.INSERT)
+                        vimperator.beep();
                 }
             }
 
@@ -873,6 +975,7 @@ vimperator.Events = function () //{{{
                     // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
+                        dump("start\n");
                         vimperator.buffer.loaded = 0;
                         vimperator.statusline.updateProgress(0);
                         setTimeout (function () { vimperator.modes.reset(false); },
@@ -880,6 +983,7 @@ vimperator.Events = function () //{{{
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                     {
+                        dump("stop\n");
                         vimperator.buffer.loaded = (status == 0 ? 1 : 2);
                         vimperator.statusline.updateUrl();
                     }

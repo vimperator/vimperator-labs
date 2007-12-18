@@ -396,6 +396,7 @@ vimperator.CommandLine = function () //{{{
                     return;
 
                 var key = vimperator.events.toString(event);
+                // dump("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
@@ -409,7 +410,6 @@ vimperator.CommandLine = function () //{{{
                     vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
                     return vimperator.triggerCallback("submit", mode, command);
                 }
-
 
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (key == "<Up>" || key == "<Down>")

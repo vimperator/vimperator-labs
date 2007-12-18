@@ -462,10 +462,21 @@ vimperator.Hints = function () //{{{
         }
         else
         {
-            setTimeout(function () {
+            if (timeout == 0 || vimperator.modes.isReplaying)
+            {
+                // force a possible mode change, based on wheter an input field has focus
+                vimperator.events.onFocusChange();
                 if (vimperator.mode == vimperator.modes.HINTS)
                     vimperator.modes.reset(false);
-            }, timeout);
+            }
+            else
+            {
+                vimperator.modes.add(vimperator.modes.INACTIVE_HINT);
+                setTimeout(function () {
+                    if (vimperator.mode == vimperator.modes.HINTS)
+                        vimperator.modes.reset(false);
+                }, timeout);
+            }
         }
 
         return true;

@@ -388,7 +388,7 @@ vimperator.Editor = function () //{{{
                 }
     //        }
 
-            // blink the textbox after returning
+            // blink the textbox after returning - TODO: could use setInterval
             var timeout = 100;
             textBox.style.backgroundColor = tmpBg;
             setTimeout(function () {
