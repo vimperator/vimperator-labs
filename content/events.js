@@ -271,7 +271,8 @@ vimperator.Events = function () //{{{
         for (var now = then; now - then < ms; now = new Date().getTime())
         {
             mainThread.processNextEvent(true);
-            dump("waited: " + (now - then) + " ms\n");
+            if ((now -then) % 1000 < 10)
+                dump("waited: " + (now - then) + " ms\n");
 
             if (vimperator.buffer.loaded > 0)
                 break;

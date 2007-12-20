@@ -283,6 +283,13 @@ vimperator.Buffer = function () //{{{
             return window.content.document.title;
         },
 
+        // quick function to get elements inside the document reliably
+        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quoted around myid)
+        element: function (args, index)
+        {
+            return vimperator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
+        },
+
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)
         {

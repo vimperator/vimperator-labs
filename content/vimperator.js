@@ -621,6 +621,7 @@ const vimperator = (function () //{{{
             vimperator.completion    = vimperator.Completion();
             vimperator.log("All modules loaded", 3);
 
+            // we define some shortcuts to functions which are used often
             vimperator.echo    = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
             vimperator.echoerr = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
 
