@@ -380,7 +380,7 @@ vimperator.Events = function () //{{{
             vimperator.history.add(url, title);
 
             vimperator.buffer.updateBufferList();
-            vimperator.autocommands.trigger("onPageLoad", url);
+            vimperator.autocommands.trigger("PageLoad", url);
 
             // mark the buffer as loaded, we can't use vimperator.buffer.loaded
             // since that always refers to the current buffer, while doc can be 

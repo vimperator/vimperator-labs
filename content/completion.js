@@ -133,7 +133,7 @@ vimperator.Completion = function () //{{{
         {
             substrings = [];
             var nodes = [
-                ["onPageLoad",       "when a page gets (re)loaded/opened"]
+                ["PageLoad",       "when a page gets (re)loaded/opened"]
             ];
 
             if (!filter)
