@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.AutoCommands = function()//{{{
+vimperator.AutoCommands = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -117,7 +117,7 @@ vimperator.AutoCommands = function()//{{{
                         {
                             if (flag == true)
                             {
-                                list += "<tr><td style='font-weight: bold;'  colspan='2'>" + 
+                                list += "<tr><td style='font-weight: bold;'  colspan='2'>" +
                                         vimperator.util.escapeHTML(item) + "</td></tr>";
                                 flag = false;
                             }
@@ -149,7 +149,7 @@ vimperator.AutoCommands = function()//{{{
                     if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
                         flag = false;
                 }
-                if (flag)    
+                if (flag)
                     autoCommands[eventsIter[i]].push([regex, cmds]);
             }
         },
@@ -167,7 +167,8 @@ vimperator.AutoCommands = function()//{{{
             }
         }
     };
-}//}}}
+    //}}}
+} //}}}
 
 vimperator.Events = function () //{{{
 {
@@ -179,8 +180,8 @@ vimperator.Events = function () //{{{
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
     var macros = {};
-    var currentMacro = ""; 
-    var lastMacro = ""; 
+    var currentMacro = "";
+    var lastMacro = "";
 
     // any tab related events
     var tabcontainer = getBrowser().mTabContainer;
@@ -383,7 +384,7 @@ vimperator.Events = function () //{{{
             vimperator.autocommands.trigger("PageLoad", url);
 
             // mark the buffer as loaded, we can't use vimperator.buffer.loaded
-            // since that always refers to the current buffer, while doc can be 
+            // since that always refers to the current buffer, while doc can be
             // any buffer, even in a background tab
             doc.pageIsFullyLoaded = 1;
 
@@ -425,9 +426,9 @@ vimperator.Events = function () //{{{
             else
                 vimperator.echo("Waiting for page to load...");
         }
-        
+
         // TODO: allow macros to be continued when page does not fully load with an option
-        var ret = (vimperator.buffer.loaded == 1); 
+        var ret = (vimperator.buffer.loaded == 1);
         if (!ret)
             vimperator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
         dump("done waiting: " + ret + "\n");
@@ -456,7 +457,7 @@ vimperator.Events = function () //{{{
         {
             vimperator.log("macro directory not found or error reading macro file");
         }
-    }, 100);            
+    }, 100);
 
 
 
@@ -866,7 +867,7 @@ vimperator.Events = function () //{{{
                 {
                     macros[currentMacro] += key;
                 }
-            } 
+            }
 
             var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
@@ -1040,7 +1041,7 @@ vimperator.Events = function () //{{{
                     if (vimperator.modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    var ret = map.execute(null, vimperator.input.count); 
+                    var ret = map.execute(null, vimperator.input.count);
                     if (map.flags & vimperator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
