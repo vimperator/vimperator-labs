@@ -1293,6 +1293,62 @@ vimperator.Commands = function () //{{{
         function (args) { vimperator.editor.removeAllAbbreviations("i"); },
         { shortHelp: "Remove all abbreviations for Insert mode" }
     ));
+    commandManager.add(new vimperator.Command(["au[tocmd]"],
+        function (args, special) 
+        {  
+            if (!args)
+            {
+                if (special) // :au!
+                    vimperator.autocommands.remove(null, null);
+                else // :au
+                    vimperator.autocommands.list(null, null);
+            } 
+            else
+            {
+                // (?:  ) means don't store; (....)? <-> exclamation marks makes the group optional
+                var [all, asterix, auEvent, regex, cmds] =  args.match(/^(\*)?(?:\s+)?(\S+)(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
+
+                if (cmds)
+                {
+                    vimperator.autocommands.add(auEvent, regex, cmds);
+                }
+                else if (regex) // e.g. no cmds provided
+                {
+                    if (special)
+                        vimperator.autocommands.remove(auEvent, regex);
+                    else
+                        vimperator.autocommands.list(auEvent, regex);
+                }
+                else if (auEvent)
+                {
+                    if (asterix)
+                        if (special)
+                            vimperator.autocommands.remove(null, auEvent); // ':au! * auEvent'
+                        else
+                            vimperator.autocommands.list(null, auEvent);
+                    else
+                        if (special)
+                            vimperator.autocommands.remove(auEvent, null);
+                        else
+                            vimperator.autocommands.list(auEvent, null);
+                }
+            }
+        },
+        {
+            shortHelp: "Execute commands automatically on events",
+            help: "<code class='command'>:au[tocmd]</code> <code class='argument'>{event} {pat} {cmd}</code><br/>" +
+                  "Add {cmd} to the list of commands Vimperator will execute on {event}<br/><br/>" +
+                  "<code class='command'>:autocmd[!]</code> <code class='argument'>{events} {pat}</code><br />" + 
+                  "list/remove autocommands filtered be {events} and {pat}<br/>" +
+                  "<code class='command'>:autocmd[!]</code> <code class='argument'>{events}</code><br />" + 
+                  "list/remove autocommands matching {events}<br/>" +  
+                  "<code class='command'>:autocmd[!]</code> * <code class='argument'>{pat}</code><br />" + 
+                  "list/remove autocommands matching {pat}<br/>" +  
+                  "<code class='command'>:autocmd[!]</code><br />" +
+                  "list/remove all autocommands",
+            completer: function (filter) { return vimperator.completion.autocommands(filter); } //TODO: improve
+        }
+    ));
     // 0 args -> list all maps
     // 1 arg  -> list the maps starting with args
     // 2 args -> map arg1 to arg*
@@ -1493,6 +1549,10 @@ vimperator.Commands = function () //{{{
                         line += "set " + option.name + "=" + option.value + "\n";
                 }
             }
+
+            line += "\n\" Auto-Commands\n";
+            for (var item in vimperator.autocommands)
+                line += "autocmd " + item + "\n";
 
             line += "\n\" Abbreviations\n";
             for (var abbrCmd in vimperator.editor.abbreviations)

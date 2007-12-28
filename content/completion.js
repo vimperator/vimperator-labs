@@ -129,7 +129,22 @@ vimperator.Completion = function () //{{{
             }
             return longest;
         },
+        autocommands: function (filter)
+        {
+            substrings = [];
+            var nodes = [
+                ["onPageLoad",       "when a page gets (re)loaded/opened"]
+            ];
 
+            if (!filter)
+                return [0, nodes];
+
+            var mapped = nodes.map(function (node) {
+                return [[node[0]], node[1]];
+            });
+
+            return [0, buildLongestCommonSubstring(mapped, filter)];
+        },
         dialog: function (filter)
         {
             substrings = [];

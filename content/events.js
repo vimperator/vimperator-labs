@@ -26,6 +26,149 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+vimperator.AutoCommands = function()//{{{
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var autoCommands = {};
+
+    function autoCommandsIterator()
+    {
+        for (var item in autoCommands)
+            for (var i = 0; i < autoCommands[item].length; i++)
+                yield  item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
+        throw StopIteration;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    //TODO: maybe this.function rather than v.autocommands.function...
+
+    return {
+
+        __iterator__: function ()
+        {
+            return autoCommandsIterator();
+        },
+
+        remove: function (auEvent, regex) // arguments are filters (NULL = all)
+        {
+            if (!auEvent && !regex)
+            {
+                autoCommands = {}; // delete all TODO: rather delete.. or something?
+            }
+            else if (!regex) // remove all on this auEvent
+            {
+                for (var item in autoCommands)
+                {
+                    if (item == auEvent)
+                        delete autoCommands[item];
+                }
+            }
+            else if (!auEvent) // delete all match's to this regex
+            {
+                for (var item in autoCommands)
+                {
+                    var i = 0;
+                    while (i < autoCommands[item].length)
+                    {
+                        if (regex == autoCommands[item][i][0])
+                        {
+                            autoCommands[item].splice(i, 1); // remove array
+                            // keep `i' since this is removed, so a possible next one is at this place now)
+                        }
+                        else
+                            i++;
+                    }
+                }
+            }
+            else // delete matching `auEvent && regex' items
+            {
+                for (var item in autoCommands)
+                {
+                    if (item == auEvent)
+                    {
+                        for (var i = 0; i < autoCommands[item].length; i++)
+                        {
+                            if (regex == autoCommands[item][i][0])
+                                autoCommands[item].splice(i, 1); // remove array
+                        }
+                    }
+                }
+            }
+        },
+
+        list: function (auEvent, regex) // arguments are filters (NULL = all)
+        {
+            var flag;
+            var list = "<table><tr><td style='font-weight: bold;'  colspan='2'>---- Auto-Commands ----</td></tr>";
+            for (var item in autoCommands)
+            {
+                flag = true;
+                if (!auEvent || item == auEvent) // filter event
+                {
+                    for (var i = 0; i < autoCommands[item].length; i++)
+                    {
+                        if (!regex || regex == autoCommands[item][i][0]) // filter regex
+                        {
+                            if (flag == true)
+                            {
+                                list += "<tr><td style='font-weight: bold;'  colspan='2'>" + 
+                                        vimperator.util.escapeHTML(item) + "</td></tr>";
+                                flag = false;
+                            }
+
+                            list += "<tr>";
+                            list += "<td> &nbsp; " + vimperator.util.escapeHTML(autoCommands[item][i][0]) + "</td>";
+                            list += "<td>" + vimperator.util.escapeHTML(autoCommands[item][i][1]) + "</td>";
+                            list += "</tr>";
+                        }
+                    }
+                }
+            }
+
+            list += "</table>";
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        },
+
+        add: function (auEvent, regex, cmds)
+        {
+            var eventsIter = auEvent.split(",");
+            for (var i = 0; i < eventsIter.length; i++)
+            {
+                if (!autoCommands[eventsIter[i]])
+                    autoCommands[eventsIter[i]] = [];
+
+                var flag = true;
+                for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
+                {
+                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
+                        flag = false;
+                }
+                if (flag)    
+                    autoCommands[eventsIter[i]].push([regex, cmds]);
+            }
+        },
+
+        trigger: function (auEvent, url)
+        {
+            if (autoCommands[auEvent])
+            {
+                for (var i = 0; i < autoCommands[auEvent].length; i++)
+                {
+                    var regex = new RegExp(autoCommands[auEvent][i][0]);
+                    if (regex.test(url))
+                        vimperator.execute(autoCommands[auEvent][i][1]);
+                }
+            }
+        }
+    };
+}//}}}
+
 vimperator.Events = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -229,12 +372,15 @@ vimperator.Events = function () //{{{
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
-            vimperator.buffer.updateBufferList();
 
-            //update history
             var url = vimperator.buffer.URL;
             var title = vimperator.buffer.title;
+
+            //update history
             vimperator.history.add(url, title);
+
+            vimperator.buffer.updateBufferList();
+            vimperator.autocommands.trigger("onPageLoad", url);
 
             // mark the buffer as loaded, we can't use vimperator.buffer.loaded
             // since that always refers to the current buffer, while doc can be 

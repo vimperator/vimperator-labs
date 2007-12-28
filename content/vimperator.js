@@ -615,6 +615,8 @@ const vimperator = (function () //{{{
             vimperator.quickmarks    = vimperator.QuickMarks();
             vimperator.log("Loading module hints...", 3);
             vimperator.hints         = vimperator.Hints();
+            vimperator.log("Loading module autocommands...", 3); //XXX: what the 3 there, I didn't check
+            vimperator.autocommands  = vimperator.AutoCommands();
             vimperator.log("Loading module io...", 3);
             vimperator.io            = vimperator.IO();
             vimperator.log("Loading module completion...", 3);
