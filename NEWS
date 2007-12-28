@@ -9,6 +9,7 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+    * :au[tocmd] executes commands on events (only 'onPageLoad' actually) on websites
 	* @@ to repeat last macro
 	* new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
 	* scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
