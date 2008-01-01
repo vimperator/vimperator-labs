@@ -136,7 +136,7 @@ vimperator.Buffer = function () //{{{
             return zoomManager.textZoom;
         },
 
-        get textZoom(value)
+        set textZoom(value)
         {
             setZoom(value);
         },
