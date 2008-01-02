@@ -305,6 +305,12 @@ vimperator.CommandLine = function () //{{{
         // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function (str, highlightGroup, flags)
         {
+            // if we are modifing the GUI while we are not in the main thread
+            // Firefox will hang up
+            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+            if (!threadManager.isMainThread)
+                return false;
+
             var focused = document.commandDispatcher.focusedElement;
             if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
                 return false;
