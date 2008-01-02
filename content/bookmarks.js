@@ -83,7 +83,8 @@ vimperator.Bookmarks = function () //{{{
                     if (kw)
                         keywords.push([kw, node.title, node.uri]);
 
-                    var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null));
+                    var count = {};
+                    var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null), count);
                     bookmarks.push([node.uri, node.title, kw, tags]);
                 }
             }

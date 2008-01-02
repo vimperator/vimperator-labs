@@ -604,7 +604,6 @@ vimperator.Events = function () //{{{
                 evt.noremap = noremap;
                 if (elem.dispatchEvent(evt)) // return true in onEvent to stop feeding keys
                 {
-                    dump("help in mode: " + vimperator.mode + " - " + vimperator.events.toString(evt) + "\n");
                     vimperator.beep();
                     return
                 }
@@ -850,7 +849,7 @@ vimperator.Events = function () //{{{
             var key = vimperator.events.toString(event);
             if (!key)
                  return true;
-            dump(key + " in mode: " + vimperator.mode + "\n");
+            // dump(key + " in mode: " + vimperator.mode + "\n");
 
             if (vimperator.modes.isRecording)
             {

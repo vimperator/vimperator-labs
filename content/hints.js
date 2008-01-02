@@ -690,7 +690,6 @@ vimperator.Hints = function () //{{{
                 processHints(followFirst);
             }
         }
-
     };
 
     // FIXME: add resize support
