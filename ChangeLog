@@ -1,3 +1,1050 @@
+2008-01-03 12:43  stubenschrott
+
+	* content/: commands.js, mappings.js: swapped meaning of gf and gF
+
+2008-01-03 12:39  stubenschrott
+
+	* AUTHORS, NEWS, TODO, content/commands.js, content/editor.js,
+	  content/hints.js, content/mappings.js: new gf gF and :viewsource
+	  commands (thanks dpb)
+
+2008-01-02 18:22  stubenschrott
+
+	* content/ui.js: simple fix, that we don't echo message while not
+	  in the main thread. This fixes :set editor=unknown_editor to not
+	  hang firefox
+
+2008-01-02 15:17  stubenschrott
+
+	* content/bookmarks.js, content/buffers.js, content/commands.js,
+	  content/completion.js, content/editor.js, content/events.js,
+	  content/find.js, content/help.css, content/help.js,
+	  content/hints.js, content/io.js, content/mappings.js,
+	  content/modes.js, content/options.js, content/tabs.js,
+	  content/ui.js, content/util.js, content/vimperator.js,
+	  content/vimperator.xul, skin/vimperator.css: updated copyright
+	  dates, thanks to dpb with: for i in `grep -r 2007 content skin |
+	  grep -v CVS | cut -d ':' -f 1`; do sed -i -e 's/2007/2008/' $i;
+	  done
+
+2008-01-02 13:52  stubenschrott
+
+	* content/: bookmarks.js, events.js, hints.js: fixed bookmarks to
+	  work with newer FF3 API
+
+2008-01-02 09:26  stubenschrott
+
+	* Donators: updated donators
+
+2008-01-01 01:20  dougkearns
+
+	* content/buffers.js: fix v.buffer.textZoom setter - accidently
+	  marked as getter
+
+2007-12-31 12:24  stubenschrott
+
+	* Donators: updated donators
+
+2007-12-28 05:53  dougkearns
+
+	* content/events.js: add missing closing fold marker
+
+2007-12-28 05:32  calmar
+
+	* content/: completion.js, events.js: PageLoad rather then
+	  onPageLoad
+
+2007-12-28 05:05  calmar
+
+	* NEWS: autocmd's added to NEWS
+
+2007-12-28 04:18  calmar
+
+	* content/: commands.js, completion.js, events.js, vimperator.js:
+	  autocommands (:au[tocmd]... ; onPageLoad event for now only.
+
+2007-12-26 13:25  dougkearns
+
+	* Makefile: bump version number
+
+2007-12-21 03:57  stubenschrott
+
+	* Donators: updated donators
+
+2007-12-20 16:19  stubenschrott
+
+	* content/: buffers.js, events.js, vimperator.js: new
+	  vimperator.buffer.element function to quickly retrieve a single
+	  element with XPath attributes
+
+2007-12-18 16:05  stubenschrott
+
+	* content/: buffers.js, editor.js, events.js, hints.js, io.js,
+	  mappings.js, modes.js, ui.js, vimperator.js, vimperator.xul: *
+	  Initial code for "waiting" macros. Still buggy/incomplete, but
+	  commiting, before merging other patches becomes even more
+	  tedious.  * Also a new attempt that pages don't have input focus
+	  after load, probably buggy as well
+
+2007-12-17 21:45  stubenschrott
+
+	* NEWS, TODO, content/buffers.js, content/events.js: lastInputField
+	  is now available after switching tabs, new v.buffer.loaded
+	  getter/setter
+
+2007-12-17 12:29  stubenschrott
+
+	* content/mappings.js: count support for @, and removed old unused
+	  hint mappings code
+
+2007-12-16 23:22  calmar
+
+	* content/events.js: @ added to allowed playMarco arguments
+
+2007-12-16 23:18  calmar
+
+	* content/: events.js, mappings.js: macro renamings
+
+2007-12-16 06:01  calmar
+
+	* content/: events.js, mappings.js: @@ and some checks added to
+	  macro/recording...
+
+2007-12-16 02:32  calmar
+
+	* content/events.js: when a map got not found, refeed the so far
+	  collected keys in v.input.buffer (and don't try to find maps
+	  while doing so, preventing an eternal loop)
+
+2007-12-16 01:45  calmar
+
+	* content/: events.js, mappings.js, modes.js: marco code, not fully
+	  functional yet
+
+2007-12-13 14:56  stubenschrott
+
+	* content/io.js: better fix for getcwd
+
+2007-12-13 14:50  stubenschrott
+
+	* content/io.js: another attempt to fix getcwd on windows
+
+2007-12-12 18:58  stubenschrott
+
+	* content/io.js: fixed getCurrentDirectory() to not call an
+	  infinite loop, makes :cd etc. work on windows hopefully
+
+2007-12-12 14:53  dougkearns
+
+	* content/commands.js: fix :pwd help and allow it to be called with
+	  the :pw abbreviation
+
+2007-12-12 07:00  stubenschrott
+
+	* NEWS, TODO, content/events.js, content/modes.js: fixed timeout
+	  when changing from HINTS mode
+
+2007-12-12 06:27  stubenschrott
+
+	* content/: buffers.js, mappings.js: advanced scrolling when focus
+	  is at a wrong element/frame
+
+2007-12-12 05:29  stubenschrott
+
+	* content/: buffers.js, help.js: removed accidental alert()
+
+2007-12-12 05:23  stubenschrott
+
+	* content/: events.js, help.js: reset mode on begin document load,
+	  this should fix the annoying -- INSERT -- problem
+
+2007-12-12 02:39  stubenschrott
+
+	* content/mappings.js: quick fix for :help not working, CRASHES
+	  firefox however when issuing :help when :help is already open. ->
+	  need to look into that later
+
+2007-12-11 14:54  stubenschrott
+
+	* Donators, content/options.js: added stal=0 reference to
+	  guioptions help
+
+2007-12-09 11:29  dougkearns
+
+	* content/: util.js: fix util.highlightURL to use the unnamed
+	  anchor for link href values to prevent :pageinfo links from being
+	  loaded in the MOW
+
+2007-12-07 16:33  calmar
+
+	* content/commands.js: rhs has to be optional or "just to let
+	  sleeping dogs lie"
+
+2007-12-07 15:17  calmar
+
+	* content/commands.js: using a regex again, but still
+	  easier/smarter than before, I think
+
+2007-12-07 14:37  calmar
+
+	* content/commands.js: using split instead of a regex to get lhs,
+	  rhs
+
+2007-12-07 13:47  calmar
+
+	* content/mappings.js: no need to check futher -> break;
+
+2007-12-07 05:22  calmar
+
+	* content/: commands.js, mappings.js: map multi-mode enhancement, i
+	  = Insert+Textarea
+
+2007-12-06 04:16  dougkearns
+
+	* content/buffers.js: use FF2 urlSecurityCheck so that :pageinfo
+	  lists feeds properly
+
+2007-12-06 00:47  stubenschrott
+
+	* Donators: updated donators
+
+2007-12-06 00:24  calmar
+
+	* NEWS: imap added to the NEWS file
+
+2007-12-05 15:50  calmar
+
+	* content/commands.js: :imap, :imapclear, :inoremap, :iunmap added
+
+2007-12-04 16:08  calmar
+
+	* content/buffers.js: unnecessary line removed
+
+2007-12-04 15:08  stubenschrott
+
+	* content/commands.js: small help fixes, thanks dpb!
+
+2007-12-04 09:23  dougkearns
+
+	* content/: editor.js, events.js, mappings.js, ui.js: minor
+	  formatting fixes
+
+2007-12-04 09:21  dougkearns
+
+	* content/completion.js: rename completion#files "short" parameter
+	  to "tail"
+
+2007-12-04 09:19  dougkearns
+
+	* content/commands.js: remove trailing comma from :paginfo
+	  instantiation
+
+2007-12-04 07:57  dougkearns
+
+	* content/buffers.js: add support for navigating the rev document
+	  relationship and for navigating document relationships on
+	  frameset pages (thanks kidd)
+
+2007-12-04 04:52  calmar
+
+	* content/: commands.js, events.js, hints.js, mappings.js: <leader>
+	  toggles the escape-numbers mode in hints
+
+2007-12-04 00:42  stubenschrott
+
+	* content/options.js: changed next/prevpatterns again
+
+2007-12-04 00:07  stubenschrott
+
+	* AUTHORS: changed AUTHORS file slightly
+
+2007-12-03 23:12  stubenschrott
+
+	* content/: bookmarks.js, commands.js, mappings.js: "A" adds the
+	  bookmark in the unfiled bookmarks folder now
+
+2007-12-03 08:13  dougkearns
+
+	* content/commands.js: fix typo in :help help string
+
+2007-12-03 07:03  stubenschrott
+
+	* Donators, NEWS, content/mappings.js: new g0/g$ mappings
+
+2007-12-02 12:12  dougkearns
+
+	* NEWS, vimperator.vim: update NEWS and vimperator.vim for new
+	  'history' option
+
+2007-12-02 10:07  dougkearns
+
+	* content/: commands.js, tabs.js: generate errors for Ex tab
+	  commands in the command rather than in v.tabs
+
+2007-12-02 09:59  dougkearns
+
+	* content/buffers.js: remove some unnecessary boolean 'error'
+	  return values
+
+2007-12-02 09:54  dougkearns
+
+	* content/bookmarks.js: whitespace fixes
+
+2007-12-02 09:53  dougkearns
+
+	* content/: events.js, tabs.js: use gBrowser#mTabContainer in
+	  preference to tabContainer
+
+2007-12-02 01:13  stubenschrott
+
+	* content/bookmarks.js: fixed some bookmarks of appearing twice
+
+2007-11-30 10:34  dougkearns
+
+	* content/options.js: simplify Option#hasName
+
+2007-11-30 10:22  dougkearns
+
+	* content/: options.js, ui.js: add initial implementation of the
+	  'history' option - no dynamic resizing yet
+
+2007-11-30 10:10  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js: normalise catch
+	  block parameter names
+
+2007-11-29 14:10  dougkearns
+
+	* content/mappings.js: fix typo in v.mappings.hasMap
+
+2007-11-29 13:44  dougkearns
+
+	* content/mappings.js: minor refactoring of incrementURL() and
+	  <C-x>/<C-a> mappings
+
+2007-11-29 13:39  dougkearns
+
+	* content/: commands.js, completion.js, io.js, mappings.js:
+	  whitespace fixes
+
+2007-11-29 12:27  dougkearns
+
+	* content/commands.js: assign an object literal to
+	  v.Command.prototype rather than using individual function
+	  assignments
+
+2007-11-29 12:20  dougkearns
+
+	* content/: commands.js, events.js, mappings.js, modes.js: begin
+	  cleaning up v.mappings and add a default iterator function to
+	  v.modes
+
+2007-11-27 14:58  stubenschrott
+
+	* content/bookmarks.js: also fix :bmark
+
+2007-11-27 13:35  stubenschrott
+
+	* content/bookmarks.js: fixed bookmarks with: bookmarksRoot ->
+	  placesRoot
+
+2007-11-27 06:14  dougkearns
+
+	* content/options.js: don't set the hidden property of gui
+	  components not in 'guioptions' - setting collapsed is sufficient
+
+2007-11-27 05:56  dougkearns
+
+	* content/test.js: remove mozunit.js
+
+2007-11-26 14:39  stubenschrott
+
+	* content/: completion.js, options.js: slightly changed next/prev
+	  patterns to allow things like "< Older", or "back <"
+
+2007-11-24 14:37  dougkearns
+
+	* content/: events.js, hints.js, mappings.js: fix
+	  v.hints.currentState and hintedElements properties being called
+	  as functions
+
+2007-11-23 03:05  stubenschrott
+
+	* AUTHORS, Donators, NEWS, content/mappings.js: changed ]n and ]p
+	  to ]] and [[
+
+2007-11-22 21:00  stubenschrott
+
+	* NEWS, TODO, install.rdf, content/io.js, content/mappings.js,
+	  content/util.js: * merged ctrl-x/a commands * fixes for file:/
+	  handling * fixed gu and gU
+
+2007-11-22 16:13  dougkearns
+
+	* content/: commands.js, completion.js, vimperator.js: vimperator
+	  is default namespace for scripts, :echo, :js and :time now, so if
+	  (options["visualbell"]) ... works there
+
+2007-11-22 16:10  dougkearns
+
+	* content/: commands.js, help.js, options.js: whitespace fixes
+
+2007-11-22 13:33  dougkearns
+
+	* content/find.js: move the find error message to the end of the
+	  event queue so it's not cleared prematurely
+
+2007-11-22 13:08  dougkearns
+
+	* content/: commands.js, help.js, mappings.js, options.js:
+	  whitespace fixes
+
+2007-11-22 13:02  dougkearns
+
+	* content/util.js: use regexps as args to replace in escapeHTML()
+	  as they appear to be about 10% faster
+
+2007-11-22 13:01  dougkearns
+
+	* content/: buffers.js, commands.js: merge improvements to
+	  :pageinfo
+
+2007-11-22 12:50  dougkearns
+
+	* content/: commands.js, hints.js: specify the radix arg to
+	  parseInt
+
+2007-11-22 12:46  dougkearns
+
+	* content/: bookmarks.js, commands.js, events.js, mappings.js,
+	  options.js, ui.js, vimperator.js: use RegExp#test in preference
+	  to String#match
+
+2007-11-22 12:30  dougkearns
+
+	* NEWS, content/bookmarks.js, content/buffers.js,
+	  content/commands.js, content/completion.js, content/events.js,
+	  content/find.js, content/help.js, content/hints.js,
+	  content/io.js, content/mappings.js, content/options.js,
+	  content/tabs.js, content/ui.js, content/util.js,
+	  content/vimperator.js: use the singleton construction idiom for
+	  all top level modules and convert all identifiers to camel case
+
+2007-11-22 06:38  dougkearns
+
+	* content/: buffers.js, commands.js, completion.js: use the
+	  singular form for completion methods
+
+2007-11-22 06:32  dougkearns
+
+	* content/: bookmarks.js, commands.js, events.js, io.js, modes.js,
+	  util.js: whitespace fixes
+
+2007-11-22 06:31  dougkearns
+
+	* content/find.js: fix the self reference in
+	  v.search.searchSubmitted
+
+2007-11-22 03:41  dougkearns
+
+	* content/vimperator.xul: use JavaScript 1.8
+
+2007-11-21 10:12  calmar
+
+	* content/: commands.js, completion.js, mappings.js: :cmap + 'nore'
+	  support; update on :dialog
+
+2007-11-20 14:04  stubenschrott
+
+	* content/bookmarks.js: moved updating of statusline from toggle->
+	  add/remove
+
+2007-11-20 13:57  stubenschrott
+
+	* content/: bookmarks.js, commands.js: Fixed :cd not changing to
+	  home dir
+
+2007-11-20 03:24  stubenschrott
+
+	* content/: bookmarks.js, buffers.js, ui.js: an experimental hearts
+	  symbol in the statusline for bookmarked pages. Needs a unicode
+	  font, so might be problematic
+
+2007-11-20 02:12  stubenschrott
+
+	* content/io.js: error message for non-existing :cd dir
+
+2007-11-20 01:40  stubenschrott
+
+	* NEWS, content/commands.js, content/completion.js, content/io.js,
+	  content/mappings.js, content/util.js: many bug fixes, :cd and
+	  :pwd commands, ~ mapping
+
+2007-11-19 23:46  stubenschrott
+
+	* content/: buffers.js, commands.js, completion.js, io.js: *
+	  io.getFile() works for relative filenames now * completion
+	  functions must return the start point now from which position of
+	  the "filter" string they return the results
+
+2007-11-19 19:42  stubenschrott
+
+	* content/options.js: changed default next/prev patterns slightly
+
+2007-11-19 08:27  dougkearns
+
+	* content/options.js: improve documentation for 'nextpattern' and
+	  'previouspattern'
+
+2007-11-19 08:13  dougkearns
+
+	* content/: buffers.js, commands.js, completion.js, editor.js,
+	  events.js, find.js, hints.js, io.js, modes.js, util.js,
+	  vimperator.js: normalize foldmarkers
+
+2007-11-19 07:44  dougkearns
+
+	* content/: buffers.js, commands.js, completion.js: normalize the
+	  completion module's method names
+
+2007-11-19 04:52  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  editor.js, events.js, find.js, help.js, hints.js, io.js,
+	  mappings.js, modes.js, options.js, tabs.js, ui.js, util.js,
+	  vimperator.js: use camel case for all indentifiers
+
+2007-11-19 00:48  dougkearns
+
+	* content/: buffers.js, mappings.js: follow next/previous document
+	  relationships specified with link elements (Raimon Grau Cuscó)
+
+2007-11-18 18:48  calmar
+
+	* NEWS: :dialog command added
+
+2007-11-18 15:09  calmar
+
+	* content/: commands.js, completion.js: :about command added
+
+2007-11-18 11:43  dougkearns
+
+	* content/: commands.js, events.js, mappings.js, options.js,
+	  vimperator.js: use the singleton construction idiom to create
+	  v.commands, v.events, v.mappings and v.options
+
+2007-11-18 05:14  stubenschrott
+
+	* content/mappings.js: added -title=... to a mapping
+
+2007-11-18 01:51  stubenschrott
+
+	* NEWS, content/bookmarks.js, content/commands.js,
+	  content/mappings.js: new a and A mappings
+
+2007-11-17 15:59  stubenschrott
+
+	* TODO: some new ideas in the TODO
+
+2007-11-17 15:22  stubenschrott
+
+	* AUTHORS: changed AUTHORS back to utf-8, even if mozdev does not
+	  work correctly with it.  Also moved Viktor to inactive developers
+	  for now.
+
+2007-11-17 13:48  dougkearns
+
+	* content/: hints.js, vimperator.js: use the singleton construction
+	  idiom to create vimperator.hints
+
+2007-11-17 13:42  dougkearns
+
+	* content/hints.js: remove redundant return statement
+
+2007-11-17 12:10  calmar
+
+	* content/completion.js: regexp catches also commands with \!
+
+2007-11-16 16:00  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, editor.js,
+	  help.js, hints.js, mappings.js, options.js, vimperator.js:
+	  declare some loop counters in followDocumentRelation and
+	  whitespace fixes
+
+2007-11-16 14:53  dougkearns
+
+	* content/: completion.js, util.js, vimperator.js: remove
+	  unnecessary parentheses from typeof args
+
+2007-11-16 14:22  dougkearns
+
+	* content/util.js: use regexps as args to replace in escapeHTML()
+	  as they appear to be about 10% faster
+
+2007-11-16 13:57  dougkearns
+
+	* content/buffers.js: remove the "a" prefix from the parameters of
+	  isValidFeed()
+
+2007-11-16 13:48  dougkearns
+
+	* content/: bookmarks.js, commands.js, events.js, mappings.js,
+	  options.js, tabs.js, ui.js, util.js, vimperator.js: use
+	  RegExp#test in preference to String#match
+
+2007-11-16 13:06  dougkearns
+
+	* vimperator.vim: add KeySym highlighting to RC file highlighter
+
+2007-11-16 13:02  dougkearns
+
+	* vimperator.vim: add KeySym highlighting to RC file highlighter
+
+2007-11-16 12:38  dougkearns
+
+	* content/commands.js: fix short version names for :abclear,
+	  :iabclear and :cabclear
+
+2007-11-16 06:27  dougkearns
+
+	* AUTHORS: update AUTHORS
+
+2007-11-15 04:34  dougkearns
+
+	* AUTHORS: fix kidd's name in AUTHORS
+
+2007-11-15 04:05  dougkearns
+
+	* content/buffers.js: use ignorecase when matching the
+	  'nextpattern' and 'previouspattern' regexps
+
+2007-11-15 03:43  dougkearns
+
+	* AUTHORS, NEWS, content/buffers.js, content/mappings.js,
+	  content/options.js: add ]n and ]p mappings for navigating
+	  document relationships defined by the 'nextpattern' and
+	  'previouspattern' options - thanks kidd
+
+2007-11-14 15:16  dougkearns
+
+	* TODO: update TODO
+
+2007-11-13 23:43  stubenschrott
+
+	* content/: commands.js, completion.js, vimperator.js: vimperator
+	  is default namespace for scripts, :echo, :js and :time now, so if
+	  (options["visualbell"]) ... works there
+
+2007-11-13 22:31  stubenschrott
+
+	* content/: buffers.js, hints.js, vimperator.js: made followLink()
+	  a function in vimperator.buffer. so also other modules can use it
+
+2007-11-13 13:54  mac
+
+	* content/buffers.js: Check for a 'bogus' date (Firefox return the
+	  year 1970)
+
+2007-11-13 07:00  dougkearns
+
+	* content/util.js: merge improvements in :echo object
+
+2007-11-13 06:58  dougkearns
+
+	* content/: buffers.js, util.js: merge :paginfo output refinements
+
+2007-11-13 06:45  dougkearns
+
+	* content/options.js: allow :set wildoptions=
+
+2007-11-12 19:19  stubenschrott
+
+	* content/buffers.js: tweaked pageinfo output slightly
+
+2007-11-12 13:29  dougkearns
+
+	* content/: buffers.js, commands.js, help.js, mappings.js, tabs.js,
+	  ui.js, vimperator.js: use the singleton construction idiom to
+	  create vimperator.tabs
+
+2007-11-12 13:05  stubenschrott
+
+	* content/: buffers.js, util.js: better byte formating
+
+2007-11-12 12:51  stubenschrott
+
+	* content/options.js: allow :set wildoptions=
+
+2007-11-11 18:09  stubenschrott
+
+	* content/buffers.js: shorter date for ctrl-g
+
+2007-11-11 11:03  dougkearns
+
+	* content/find.js: finish changing linksearch to work with \[lL]
+	  rather than \[uU] modifiers
+
+2007-11-11 04:27  dougkearns
+
+	* content/editor.js: rename the char parameter to ch for
+	  v.editor.findCharForward and v.editor.FindCharBackward as "char"
+	  is a reserved word
+
+2007-11-11 04:21  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  events.js, find.js, help.js, hints.js, io.js, mappings.js,
+	  options.js, tabs.js, test.js, ui.js, util.js, vimperator.js:
+	  whitespace formatting fixes
+
+2007-11-11 04:02  dougkearns
+
+	* content/commands.js: ignore mappings if :normal is called with
+	  the !
+
+2007-11-11 04:01  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  editor.js, events.js, find.js, help.js, hints.js, io.js,
+	  mappings.js, options.js, tabs.js, ui.js, util.js, vimperator.js:
+	  add more missing semicolons
+
+2007-11-11 04:01  dougkearns
+
+	* content/commands.js: make it clear that the arg is optional for
+	  :tabnext and :tabprevious
+
+2007-11-11 03:18  dougkearns
+
+	* content/: bookmarks.js, buffers.js, completion.js, editor.js,
+	  find.js, io.js, modes.js, ui.js, vimperator.js: use the
+	  'singleton' construction idiom rather than classical constructors
+	  for creating the bookmarks, history, commandline, search,
+	  previewwindow, bufferwindow, statusline, buffer, editor, marks
+	  and quickmarks objects
+
+2007-11-11 03:00  dougkearns
+
+	* content/find.js: finish changing linksearch to work with \[lL]
+	  rather than \[uU] modifiers
+
+2007-11-10 16:14  dougkearns
+
+	* content/commands.js: ignore mappings if :normal is called with
+	  the !
+
+2007-11-10 16:06  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  editor.js, events.js, find.js, help.js, hints.js, io.js,
+	  mappings.js, modes.js, options.js, tabs.js, ui.js, util.js,
+	  vimperator.js: whitespace formatting fixes
+
+2007-11-10 13:02  dougkearns
+
+	* content/commands.js: make it clear that the arg is optional for
+	  :tabnext and :tabprevious
+
+2007-11-09 15:09  stubenschrott
+
+	* content/hints.js: * initial frame support for hints, slightly
+	  buggy * numbers can now be escaped with \ to be treated as text
+	  (thanks calmar)
+
+2007-11-09 13:58  dougkearns
+
+	* content/: commands.js, events.js: merge improved :noremap
+
+2007-11-09 13:53  dougkearns
+
+	* content/commands.js: remove the warning in :noremap's help
+	  regarding its general bodginess
+
+2007-11-09 12:56  dougkearns
+
+	* content/buffers.js: don't attempt to add the frame indicator if
+	  v.buffer.shiftFrameFocus is called on a non-HTML document
+
+2007-11-09 12:48  dougkearns
+
+	* content/buffers.js: use the innerHeight property of window rather
+	  than mPanelContainer's box object for calculating
+	  v.buffer.pageHeight
+
+2007-11-09 12:46  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  events.js, find.js, help.js, hints.js, io.js, mappings.js,
+	  options.js, ui.js, util.js, vimperator.js: convert single quotes
+	  to double quotes
+
+2007-11-09 12:26  dougkearns
+
+	* content/options.js: return the boolean expression directly from
+	  option validators since nothing is done in the conditionals
+
+2007-11-09 12:23  dougkearns
+
+	* content/options.js: add a validator for the 'activate' option
+
+2007-11-09 12:21  dougkearns
+
+	* content/commands.js: simplify the implementation of :qmark
+
+2007-11-09 12:17  dougkearns
+
+	* content/: commands.js, options.js: allow ^= to be used for
+	  prepending values to string options and for multiplying number
+	  options
+
+2007-11-09 07:06  dougkearns
+
+	* vimperator.vim, vimperatorrc.example: update vimperator.vim and
+	  vimperatorrc.example
+
+2007-11-09 06:31  dougkearns
+
+	* mozunit.js: remove mozunit.js
+
+2007-11-09 06:30  dougkearns
+
+	* content/: hints.js, options.js, ui.js, vimperator.js: declare
+	  some accidentally global vars
+
+2007-11-09 06:15  dougkearns
+
+	* content/: commands.js, mappings.js, vimperator.js: fix some help
+	  typos
+
+2007-11-09 01:43  stubenschrott
+
+	* content/hints.js: removed useless 3rd paramter from setTimeout
+
+2007-11-09 01:41  stubenschrott
+
+	* content/hints.js: slight hint display improvment on illegal hint
+	  number
+
+2007-11-09 01:24  stubenschrott
+
+	* content/hints.js: no beep on f18<esc> with 'hto' > 0
+
+2007-11-09 01:19  stubenschrott
+
+	* content/: hints.js, options.js: added working hinttimeout option
+
+2007-11-08 18:37  stubenschrott
+
+	* content/buffers.js: changed date in pageinfo to locale date
+	  format
+
+2007-11-07 13:00  dougkearns
+
+	* content/: commands.js, util.js, vimperator.js: move
+	  String#toURLArray to v.util.stringToURLArray - think of the
+	  kittens!
+
+2007-11-07 12:53  dougkearns
+
+	* content/util.js: merge faster replace() based v.util.escapeHTML
+
+2007-11-07 12:51  dougkearns
+
+	* content/events.js: also prevent websites from catching keyup keys
+	  (fixes dict.leo.org)
+
+2007-11-07 12:38  dougkearns
+
+	* content/bookmarks.js: move concatenation operator to end of
+	  continued lines in v.marks.list
+
+2007-11-07 12:33  dougkearns
+
+	* content/events.js: remove empty statement
+
+2007-11-07 12:31  dougkearns
+
+	* content/: buffers.js, options.js, util.js: merge new support for
+	  feeds in :pageinfo
+
+2007-11-07 12:21  dougkearns
+
+	* content/bookmarks.js: remove redundant equality test for
+	  engine_name in v.bookmarks.getSearchURL
+
+2007-11-07 12:16  dougkearns
+
+	* content/: buffers.js, commands.js, tabs.js, ui.js, vimperator.js:
+	  always specify the radix arg when calling parseInt rather than
+	  rely on it 'guessing' correctly
+
+2007-11-07 11:24  dougkearns
+
+	* content/: commands.js, events.js: add support for arbitrary {rhs}
+	  key sequences and <Leader> to :noremap
+
+2007-11-07 04:08  dougkearns
+
+	* content/commands.js: allow number options to be set with octal
+	  and hex values
+
+2007-11-06 17:00  stubenschrott
+
+	* content/help.css: added black foreground color to help
+
+2007-11-06 13:10  dougkearns
+
+	* content/buffers.js: don't attempt to add the frame indicator if
+	  v.buffer.shiftFrameFocus is called on a non-HTML document
+
+2007-11-06 12:42  dougkearns
+
+	* content/buffers.js: use the innerHeight property of window rather
+	  than mPanelContainer's box object for calculating
+	  v.buffer.pageHeight
+
+2007-11-06 12:22  dougkearns
+
+	* content/: bookmarks.js, buffers.js, commands.js, completion.js,
+	  editor.js, events.js, find.js, help.js, hints.js, io.js,
+	  mappings.js, options.js, ui.js, util.js, vimperator.js: convert
+	  single quotes to double quotes
+
+2007-11-06 11:21  dougkearns
+
+	* content/options.js: return the boolean expression directly from
+	  option validators since nothing is done in the conditionals
+
+2007-11-06 10:45  dougkearns
+
+	* content/options.js: add a validator for the 'activate' option
+
+2007-11-06 10:24  dougkearns
+
+	* content/commands.js: simplify the implementation of :qmark
+
+2007-11-06 09:59  dougkearns
+
+	* content/: commands.js, options.js: allow ^= to be used for
+	  prepending values to string options and for multiplying number
+	  options
+
+2007-11-05 23:51  stubenschrott
+
+	* content/hints.js: fixed ;y and ;Y hints
+
+2007-11-05 23:48  stubenschrott
+
+	* Donators, content/buffers.js, content/commands.js,
+	  content/mappings.js, content/options.js, content/util.js: added
+	  feeds info to :pageinfo
+
+2007-11-04 13:55  stubenschrott
+
+	* content/hints.js: small hint tweak, thanks calmar
+
+2007-11-04 07:32  dougkearns
+
+	* vimperatorrc.example: update the example RC file's sample echo
+	  command as it now requires a quoted string arg
+
+2007-11-04 06:53  dougkearns
+
+	* vimperator.vim: update vimperator.vim
+
+2007-11-03 19:12  stubenschrott
+
+	* content/hints.js: fixed display of active hint
+
+2007-11-03 09:55  dougkearns
+
+	* mozunit.js: remove mozunit.js
+
+2007-11-03 09:51  dougkearns
+
+	* content/: hints.js, options.js, ui.js, vimperator.js: declare
+	  some accidentally global vars
+
+2007-11-02 23:19  stubenschrott
+
+	* content/: hints.js, vimperator.xul: removed a log message
+
+2007-11-02 22:57  stubenschrott
+
+	* content/options.js: now really remove that option
+
+2007-11-02 15:17  stubenschrott
+
+	* NEWS: removed maxhints option
+
+2007-11-02 15:15  stubenschrott
+
+	* content/hints.js: fixed combination of tab + numbers in hints
+
+2007-11-02 14:58  stubenschrott
+
+	* content/editor.js: updated abbreviations
+
+2007-11-02 11:05  dougkearns
+
+	* content/: commands.js, mappings.js, options.js: fix some help
+	  typos
+
+2007-11-02 09:34  dougkearns
+
+	* content/vimperator.js: update comment
+
+2007-11-02 09:30  dougkearns
+
+	* content/: commands.js, util.js, vimperator.js: move
+	  String#toURLArray to v.util.stringToURLArray - think of the
+	  kittens!
+
+2007-11-02 09:11  dougkearns
+
+	* content/util.js: specify the "g" flag to all replace calls in
+	  escapeHTML
+
+2007-11-02 02:07  stubenschrott
+
+	* content/events.js: also prevent websites from catching keyup keys
+	  (fixes dict.leo.org)
+
+2007-11-02 01:57  stubenschrott
+
+	* content/: commands.js, editor.js, vimperator.js: saving
+	  abbreviations with :mkvimperatorrc works; also added :source!
+	  ~/.vimperatorrc.local to :mkv
+
+2007-11-01 21:30  stubenschrott
+
+	* AUTHORS, NEWS, content/commands.js, content/editor.js,
+	  content/events.js, content/mappings.js, content/ui.js:
+	  abbreviations for textboxes (thanks calmar)
+
+2007-11-01 14:31  stubenschrott
+
+	* content/: buffers.js, hints.js, modes.js: speeded up hints
+	  display on large sites by factor 2
+
+2007-11-01 10:56  dougkearns
+
+	* content/: buffers.js, commands.js, completion.js, events.js,
+	  find.js, help.js, hints.js, io.js, mappings.js, options.js,
+	  tabs.js, ui.js, util.js, vimperator.js: merge those pesky missing
+	  semicolons
+
+2007-11-01 02:18  dougkearns
+
+	* content/bookmarks.js: remove redundant boolean equality test in
+	  v.bookmarks.add
+
+2007-10-31 17:31  stubenschrott
+
+	* ChangeLog, NEWS, content/hints.js, content/options.js: initial
+	  number support for hints, unpolished however
+
 2007-10-31 11:23  dougkearns
 
 	* content/: completion.js, events.js, find.js, help.js, hints.js,

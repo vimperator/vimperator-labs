@@ -1032,6 +1032,13 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.help(filter); }
         }
     ));
+    commandManager.add(new vimperator.Command(["H[elp]"],
+        function (args, special, count, modifiers) { vimperator.open("chrome://vimperator/locale/" + (args || "introduction") + ".html"); },
+        {
+            shortHelp: "Temporary function, will replace :help at some time",
+            completer: function (filter) { return [["introduction", ""], ["options", ""]]; }
+        }
+    ));
     commandManager.add(new vimperator.Command(["hist[ory]", "hs"],
         function (args, special) { vimperator.history.list(args, special); },
         {
@@ -2017,7 +2024,8 @@ vimperator.Commands = function () //{{{
         {
             usage: ["se[t][!]", "se[t] {option}?", "se[t] [no]{option}", "se[t] {option}[+-]={value}", "se[t] {option}! | inv{option}", "se[t] {option}&"],
             shortHelp: "Set an option",
-            help: "Permanently change an option.<br/>" +
+            help: "Temporarily change an option for the current session only. If you want " +
+                  "to change an option permanently, put it in your ~/.vimperatorrc configuration file.<br/>" +
                   "<code class=\"command\">:set</code> without an argument shows all Vimperator options which differ from their default values.<br/>" +
                   "<code class=\"command\">:set!</code> without an argument shows all about:config preferences which differ from their default values.<br/>" +
                   "There are three types of options: boolean, number and string. " +

@@ -23,6 +23,7 @@ FEATURES:
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 :set! should also set about:config options (with autocomplete)
+7 make a command to search within google search results (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 [d could go to the last domain in the history stack. so if i browse from
   google to another page and click 10 links there, [d would take me back to the google page
