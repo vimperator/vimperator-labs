@@ -2521,11 +2521,7 @@ vimperator.Commands = function () //{{{
         function (args, special)
         {
             var url = args || vimperator.buffer.URL;
-            if (special) // internal editor
-            {
-                vimperator.open("view-source:" + url)
-            }
-            else
+            if (special) // external editor
             {
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
@@ -2543,11 +2539,15 @@ vimperator.Commands = function () //{{{
                 args.push(url)
                 vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
             }
+            else
+            {
+                vimperator.open("view-source:" + url)
+            }
         },
         {
             usage: ["vie[wsource][!] [url]"],
             shortHelp: "View source code of current document",
-            help: "When ! is given, it is opened with the internal editor, otherwise with the external."
+            help: "When ! is given, it is opened with the external editor."
         }
     ));
     commandManager.add(new vimperator.Command(["viu[sage]"],

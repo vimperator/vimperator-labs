@@ -571,16 +571,16 @@ vimperator.Mappings = function () //{{{
         function () { vimperator.commands.viewsource(); },
         {
             shortHelp: "View source",
-            help: "Opens the source code of the current website with the external editor specified " +
-                  "by the <code class='option'>'editor'</code> option. For now the external editor " +
-                  "must be able to download and open files from a remote URL."
+            help: "Opens the source code of the current website with the internal editor in the current tab."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gF"],
         function () { vimperator.commands.viewsource(null, true); },
         {
-            shortHelp: "View source in current tab",
-            help: "Opens the source code of the current website with the internal editor."
+            shortHelp: "View source with an external editor",
+            help: "Opens the source code of the current website with the external editor specified " +
+                  "by the <code class='option'>'editor'</code> option. For now the external editor " +
+                  "must be able to download and open files from a remote URL."
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gh"],
