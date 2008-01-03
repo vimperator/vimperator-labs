@@ -2517,6 +2517,39 @@ vimperator.Commands = function () //{{{
             help: "You can show the Firefox version page with <code class=\"command\">:version!</code>."
         }
     ));
+    commandManager.add(new vimperator.Command(["vie[wsource]"],
+        function (args, special)
+        {
+            var url = args || vimperator.buffer.URL;
+            if (special) // internal editor
+            {
+                vimperator.open("view-source:" + url)
+            }
+            else
+            {
+                // TODO: make that a helper function
+                // TODO: save return value in v:shell_error
+                var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+                var editor = vimperator.options["editor"];
+                var args = editor.split(" "); // FIXME: too simple
+                if (args.length < 1)
+                {
+                    vimperator.open("view-source:" + url)
+                    vimperator.echoerr("no editor specified");
+                    return;
+                }
+
+                var prog = args.shift();
+                args.push(url)
+                vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
+            }
+        },
+        {
+            usage: ["vie[wsource][!] [url]"],
+            shortHelp: "View source code of current document",
+            help: "When ! is given, it is opened with the internal editor, otherwise with the external."
+        }
+    ));
     commandManager.add(new vimperator.Command(["viu[sage]"],
         function (args, special, count, modifiers) { vimperator.help("mappings", special, null, modifiers); },
         {

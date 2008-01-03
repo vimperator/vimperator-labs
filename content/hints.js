@@ -440,6 +440,8 @@ vimperator.Hints = function () //{{{
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
             case "t": openHint(vimperator.NEW_TAB); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
+            case "v": vimperator.commands.viewsource(loc); break;
+            case "V": vimperator.commands.viewsource(loc, true); break;
             case "w": openHint(vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
             case "y": yankHint(false); break;
@@ -491,7 +493,7 @@ vimperator.Hints = function () //{{{
         // TODO: implement framesets
         show: function (mode, minor, filter)
         {
-            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTwWyY]$/.test(minor))
+            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTvVwWyY]$/.test(minor))
             {
                 vimperator.beep();
                 return;

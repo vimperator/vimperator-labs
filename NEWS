@@ -1,5 +1,5 @@
 <pre>
-2007-xx-xx:
+2008-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
 	* IMPORTANT: options are no longer automatically stored - use the
@@ -9,12 +9,13 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
-    * :au[tocmd] executes commands on events (only 'onPageLoad' actually) on websites
+    * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
 	* @@ to repeat last macro
 	* new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
 	* scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
     * imap, inoremap, iunmap and imapclear added
 	* new g0 and g$ mappings to go to the first/last tab
+	* new gf and gF mappings and ;v and ;V hints mode to view the source code
 	* new 'history' option for specifying the number of Ex commands and
 	  search patterns to store in the commandline history
 	* new ctrl-x and ctrl-a mappings to increment the last number in the URL

@@ -10,6 +10,7 @@ Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
  
 Patches (in no special order):
+  * Daniel Bainton (:viewsource)
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:open ./.. support)

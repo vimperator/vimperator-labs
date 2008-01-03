@@ -329,8 +329,7 @@ vimperator.Editor = function () //{{{
         {
             var textBox = document.commandDispatcher.focusedElement;
             var editor = vimperator.options["editor"];
-            var args = [];
-            args = editor.split(" ");
+            var args = editor.split(" ");
             if (args.length < 1)
             {
                 vimperator.echoerr("no editor specified");

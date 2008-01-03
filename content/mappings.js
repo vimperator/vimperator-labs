@@ -567,6 +567,22 @@ vimperator.Mappings = function () //{{{
             help: "You can also use the hints to create the probably fastest file browser on earth."
         }
     ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gf"],
+        function () { vimperator.commands.viewsource(); },
+        {
+            shortHelp: "View source",
+            help: "Opens the source code of the current website with the external editor specified " +
+                  "by the <code class='option'>'editor'</code> option. For now the external editor " +
+                  "must be able to download and open files from a remote URL."
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gF"],
+        function () { vimperator.commands.viewsource(null, true); },
+        {
+            shortHelp: "View source in current tab",
+            help: "Opens the source code of the current website with the internal editor."
+        }
+    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gh"],
         BrowserHome,
         {
@@ -1244,6 +1260,7 @@ vimperator.Mappings = function () //{{{
                   "<li><code class=\"mapping\">t</code> to open its location in a new tab</li>" +
                   "<li><code class=\"mapping\">O</code> to open its location in an <code class=\"command\">:open</code> query</li>" +
                   "<li><code class=\"mapping\">T</code> to open its location in a <code class=\"command\">:tabopen</code> query</li>" +
+                  "<li><code class=\"mapping\">v</code> to view its destination source</li>" +
                   "<li><code class=\"mapping\">w</code> to open its destination in a new window</li>" +
                   "<li><code class=\"mapping\">W</code> to open its location in a <code class=\"command\">:winopen</code> query</li>" +
                   "<li><code class=\"mapping\">y</code> to yank its location</li>" +

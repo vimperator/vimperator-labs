@@ -30,7 +30,6 @@ FEATURES:
 6 use '' to jump between marks like vim
 6 pipe selected text/link/website to an external command
 6 macros (qq, @q, ...)
-6 gf = view source?
 6 :set wildoptions=auto mode, which would list completions on each keystroke (maybe performance problems)
 5 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
 5 Favicons in completion windows and some other places?
