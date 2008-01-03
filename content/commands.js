@@ -1557,9 +1557,10 @@ vimperator.Commands = function () //{{{
                 }
             }
 
-            line += "\n\" Auto-Commands\n";
-            for (var item in vimperator.autocommands)
-                line += "autocmd " + item + "\n";
+            // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
+            // line += "\n\" Auto-Commands\n";
+            // for (var item in vimperator.autocommands)
+            //     line += "autocmd " + item + "\n";
 
             line += "\n\" Abbreviations\n";
             for (var abbrCmd in vimperator.editor.abbreviations)
