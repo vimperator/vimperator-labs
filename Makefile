@@ -6,13 +6,14 @@ VERSION       = 0.6pre
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 
-JAR_TXT_FILES = ${shell find content skin	\
+JAR_TXT_FILES = ${shell find content skin locale	\
 			-type f			\
 			-a ! -path '*CVS*'	\
 			-a \(			\
 				-path '*.js'	\
 			     -o -path '*.css'	\
 			     -o -path '*.xul'	\
+			     -o -path '*.html'	\
 			   \)			\
 		}
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
