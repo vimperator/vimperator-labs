@@ -202,7 +202,7 @@ vimperator.Events = function () //{{{
     }, false);
     tabcontainer.addEventListener("TabSelect", function (event)
     {
-        if (vimperator.mode == vimperator.modes.HINTS)
+        if (vimperator.mode == vimperator.modes.HINTS || vimperator.mode == vimperator.modes.CUSTOM )
             vimperator.modes.reset();
 
         vimperator.commandline.clear();
@@ -796,6 +796,7 @@ vimperator.Events = function () //{{{
                 switch (vimperator.mode)
                 {
                     case vimperator.modes.HINTS:
+                    case vimperator.modes.CUSTOM:
                     case vimperator.modes.COMMAND_LINE:
                         vimperator.modes.reset();
                         break;
@@ -957,9 +958,17 @@ vimperator.Events = function () //{{{
         //  } }}}
 
 
-            // if Hit-a-hint mode is on, special handling of keys is required
             if (key != "<Esc>" && key != "<C-[>")
             {
+                // custom mode...
+                if (vimperator.mode == vimperator.modes.CUSTOM)
+                {
+                    vimperator.plugins.onEvent(event);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+                // if Hit-a-hint mode is on, special handling of keys is required
                 if (vimperator.mode == vimperator.modes.HINTS)
                 {
                     vimperator.hints.onEvent(event);
@@ -968,6 +977,16 @@ vimperator.Events = function () //{{{
                     return false;
                 }
             }
+
+            //FIXME (maybe): (is an ESC or C-] here): on HINTS mode, it enters
+            //into 'if (map && !skipMap) below. With that (or however) it
+            //triggers the onEscape part, where it resets mode. Here I just
+            //return true, with the effect that it also gets to there (for
+            //whatever reason).  if that happens to be correct, well..
+            //XXX: why not just do that as well for HINTS mode actually?
+           
+            if (vimperator.mode == vimperator.modes.CUSTOM)
+                return true;
 
             var countStr = vimperator.input.buffer.match(/^[0-9]*/)[0];
             var candidateCommand = (vimperator.input.buffer + key).replace(countStr, "");

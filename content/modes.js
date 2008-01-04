@@ -77,6 +77,8 @@ vimperator.modes = (function () //{{{
                 return "-- CARET" + ext;
             case vimperator.modes.TEXTAREA:
                 return "-- TEXTAREA" + ext;
+            case vimperator.modes.CUSTOM:
+                return "-- " + vimperator.plugins.mode + ext;
             default: // NORMAL mode
                 if (vimperator.modes.isRecording)
                     return "recording";
@@ -117,6 +119,10 @@ vimperator.modes = (function () //{{{
                     vimperator.editor.unselectText();
                 break;
 
+            case vimperator.modes.CUSTOM:
+                vimperator.plugins.stop();
+                break;
+
             case vimperator.modes.HINTS:
                 vimperator.hints.hide();
                 break;
@@ -153,6 +159,7 @@ vimperator.modes = (function () //{{{
         COMMAND_LINE:     1 << 4,
         CARET:            1 << 5, // text cursor is visible
         TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
+        CUSTOM:           1 << 7,
         // extended modes, can include multiple modes, and even main modes
         EX:               1 << 10,
         INPUT_MULTILINE:  1 << 11,
@@ -169,8 +176,8 @@ vimperator.modes = (function () //{{{
 
         __iterator__: function ()
         {
-            var modes = [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
-                         this.HINTS, this.COMMAND_LINE, this.CARET, this.TEXTAREA];
+            var modes = [this.NONE, this.NORMAL, this.INSERT, this.VISUAL, this.HINTS, 
+                         this.COMMAND_LINE, this.CARET, this.TEXTAREA, this.CUSTOM];
 
             for (var i = 0; i < modes.length; i++)
                 yield modes[i];
@@ -193,7 +200,16 @@ vimperator.modes = (function () //{{{
             if (main == vimperator.modes.COMMAND_LINE)
                 return;
 
-            vimperator.commandline.echo(getModeMessage(), vimperator.commandline.HL_MODEMSG, vimperator.commandline.DISALLOW_MULTILINE);
+            vimperator.commandline.echo(getModeMessage(), vimperator.commandline.HL_MODEMSG, 
+                                        vimperator.commandline.DISALLOW_MULTILINE);
+        },
+
+        setCustomMode: function (modestr, oneventfunc, stopfunc)
+        {
+            // TODO this.plugin[id]... ('id' maybe submode or what..)
+            vimperator.plugins.mode = modestr;
+            vimperator.plugins.onEvent = oneventfunc;
+            vimperator.plugins.stop = stopfunc;
         },
 
         // helper function to set both modes in one go

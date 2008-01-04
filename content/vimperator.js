@@ -629,6 +629,12 @@ const vimperator = (function () //{{{
 
             vimperator.globalVariables = {};
 
+            // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
+            // v.plugins.mode = <str> string to show on v.modes.CUSTOM
+            // v.plugins.stop = <func> hooked on a v.modes.reset() 
+            // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
+            vimperator.plugins = {};
+
             // TODO: move elsewhere
             vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); });
             vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); });
