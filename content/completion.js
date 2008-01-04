@@ -296,6 +296,39 @@ vimperator.Completion = function () //{{{
             return [0, buildLongestCommonSubstring(helpArray, filter)];
         },
 
+        // TODO: add cache?
+        Help: function (filter)
+        {
+            var res = [];
+            var files = ["introduction.xhtml", "options.xhtml"];
+            for (var file in files)
+            {
+                try
+                {
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.open("GET", "chrome://vimperator/locale/" + files[file], false);
+                    xmlhttp.send(null);
+                }
+                catch (e)
+                {
+                    vimperator.log("Error opening chrome://vimperator/locale/" + files[file], 1);
+                    continue;
+                }
+                var doc = xmlhttp.responseXML;
+                var elems = doc.getElementsByClassName("tag");
+                for (var i = 0; i < elems.length; i++)
+                    res.push([elems[i].textContent, files[file]]);
+            }
+
+            if (!filter)
+                return [0, res];
+
+            var mapped = res.map(function (node) {
+                return [[node[0]], node[1]];
+            });
+            return [0, buildLongestCommonSubstring(mapped, filter)];
+        },
+
         command: function (filter)
         {
             substrings = [];

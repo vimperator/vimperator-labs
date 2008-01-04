@@ -293,4 +293,39 @@ vimperator.help = function (section, easter) //{{{
     }, 0);
 }; //}}}
 
+
+// New style help
+vimperator.Help = function(section)
+{
+    function jumpToTag(file, tag)
+    {
+        vimperator.open("chrome://vimperator/locale/" + file);
+        setTimeout(function() {
+            var elem = vimperator.buffer.element('@class="tag" and text()="' + tag + '"');
+            if (elem)
+                window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+        }, 100);
+    }
+
+    var [, items] = vimperator.completion.Help();
+    var partialMatch = -1;
+    for (var i = 0; i < items.length; i++)
+    {
+        if (items[i][0] == section)
+        {
+            jumpToTag(items[i][1], items[i][0]);
+            return;
+        }
+        else if (partialMatch == -1 && items[i][0].indexOf(section) > -1)
+        {
+            partialMatch = i;
+        }
+    }
+
+    if (partialMatch > -1)
+        jumpToTag(items[partialMatch][1], items[partialMatch][0]);
+    else
+        vimperator.echoerr("E149: Sorry, no help for " + section);
+};
+
 // vim: set fdm=marker sw=4 ts=4 et:

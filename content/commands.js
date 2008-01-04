@@ -1033,10 +1033,10 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["H[elp]"],
-        function (args, special, count, modifiers) { vimperator.open("chrome://vimperator/locale/" + (args || "introduction") + ".html"); },
+        function (args, special, count, modifiers) { vimperator.Help((args || "introduction")); },
         {
             shortHelp: "Temporary function, will replace :help at some time",
-            completer: function (filter) { return [["introduction", ""], ["options", ""]]; }
+            completer: function (filter) { return vimperator.completion.Help(filter); }
         }
     ));
     commandManager.add(new vimperator.Command(["hist[ory]", "hs"],
