@@ -2,20 +2,18 @@
 2008-xx-xx:
 	* version 0.6
 	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
-	* IMPORTANT: options are no longer automatically stored - use the
-	  ~/.vimperatorrc file instead for persistent options
 	* IMPORTANT: Major hints rewrite
 	  read up the new help for the f, F and ; commands for details
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
 	* new :command to add user defined commands
-    * new setCustomMode for plugin writers
-    * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
+	* new setCustomMode for plugin writers
+	* :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
 	* @@ to repeat last macro
 	* new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
 	* scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
-    * imap, inoremap, iunmap and imapclear added
+	* imap, inoremap, iunmap and imapclear added
 	* new g0 and g$ mappings to go to the first/last tab
 	* new gf and gF mappings and ;v and ;V hints mode to view the source code
 	* new 'history' option for specifying the number of Ex commands and
@@ -45,6 +43,24 @@
 	* Escape finally clears any selection made in the document
 	* initial start of caret mode. Start with 'i', stop with Escape;
 	* many small bug fixes and enhancements
+
+2007-12-21:
+	* version 0.5.3
+	* IMPORTANT! options are no longer automatically stored - use the
+	  ~/.vimperatorrc file instead for persistent options
+	* :tabnext and :tabprevious now accept an argument
+	* the count to gT now specifies a relative tab motion like Vim
+	* new :pa[geinfo] command, and ctrl-g and g,ctrl-g mappings (thanks Marco Candrian)
+	* added new :mkvimperatorrc command
+	* remove :redraw and Ctrl-L commands as they rely on FF3 features
+	* :ls, :history and :bmarks output is now hyperlinked
+	* new gb and gB mappings to repeat the last :buffer[!] command,
+	* :q doesn't close the whole browser, if there are more than one windows
+	* new :winclose command
+	* b calls :buffer! now instead of :buffer
+	* [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
+	* :set showtabline now finally works as expected for all values
+	* many other small bug fixes
 
 2007-10-11:
 	* version 0.5.2
@@ -216,3 +232,4 @@
 	* version 0.2
 	* first public release
 </pre>
+<!-- vim: set sw=4 ts=4 et: -->
