@@ -722,14 +722,14 @@ vimperator.Commands = function () //{{{
                 case "pagesource": BrowserViewSourceOfDocument(content.document); break;
                 case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
                 case "preferences": openPreferences(); break;
-                    // XXX what are onEnter.. and onExit...?
+                // XXX what are onEnter.. and onExit...?
                 case "printpreview": PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); break;
                 case "print": PrintUtils.print(); break;
                 case "printsetup": PrintUtils.showPageSetup(); break;
                 case "saveframe": saveFrameDocument(); break;
                 case "savepage": saveDocument(window.content.document); break;
                 case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
-                    // TODO add viewPartialSource('selection'); ...
+                // TODO add viewPartialSource('selection'); ...
                 case "": vimperator.echoerr("E474: Invalid argument"); break;
                 default: vimperator.echoerr("Dialog '" + args + "' not available");
                 }
@@ -1745,7 +1745,7 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["pa[geinfo]"],
-        function () { vimperator.buffer.pageInfo(true); },
+        function () { vimperator.buffer.showPageInfo(true); },
         {
             shortHelp: "Show various page information",
             help: "See :help 'pageinfo' for available options"
@@ -1883,11 +1883,24 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["sav[eas]", "w[rite]"],
-        function () { saveDocument(window.content.document); },
+        function (args, special)
+        {
+            var file = vimperator.io.getFile(args || ""); 
+            // we always want to save that link relative to the current working directory
+            vimperator.options.setFirefoxPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+            //if (args)
+            //{
+            //    saveURL(vimperator.buffer.URL, args, null, true, special, // special == skipPrompt
+            //            makeURI(vimperator.buffer.URL, content.document.characterSet));
+            //}
+            //else
+            saveDocument(window.content.document, special);
+        },
         {
             shortHelp: "Save current web page to disk",
             help: "Opens the original Firefox \"Save page as...\" dialog.<br/>" +
-                  "There, you can save the current web page to disk with various options."
+                  "There, you can save the current web page to disk with various options. " +
+                  "Use ! to save the file with a default filename to the current working directory, skipping the Save as... prompt"
         }
     ));
     commandManager.add(new vimperator.Command(["se[t]"],

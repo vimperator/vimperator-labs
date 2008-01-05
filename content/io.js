@@ -54,6 +54,11 @@ vimperator.IO = function () //{{{
         MODE_SYNC: 0x40,
         MODE_EXCL: 0x80,
 
+        get directorySeperator()
+        {
+            return WINDOWS ? "\\" : "/";
+        },
+
         expandPath: function (path)
         {
             // TODO: proper pathname separator translation like Vim

@@ -74,93 +74,6 @@ vimperator.Hints = function () //{{{
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
 
-    // this function 'click' an element, which also works
-    // for javascript links
-    function openHint(elem, where)
-    {
-        var x = 1, y = 1;
-        var elemTagName = elem.localName.toLowerCase();
-        elem.focus();
-        if (elemTagName == "frame" || elemTagName == "iframe")
-            return false;
-
-        // for imagemap
-        if (elemTagName == "area")
-        {
-            var coords = elem.getAttribute("coords").split(",");
-            x = Number(coords[0]) + 1;
-            y = Number(coords[1]) + 1;
-        }
-
-        vimperator.buffer.followLink(elem, where, x, y);
-        return true;
-    }
-
-    function focusHint(elem)
-    {
-        var doc = window.content.document;
-        var elemTagName = elem.localName.toLowerCase();
-        if (elemTagName == "frame" || elemTagName == "iframe")
-        {
-            elem.contentWindow.focus();
-            return false;
-        }
-        else
-        {
-            elem.focus();
-        }
-
-        var evt = doc.createEvent("MouseEvents");
-        var x = 0;
-        var y = 0;
-        // for imagemap
-        if (elemTagName == "area")
-        {
-            var coords = elem.getAttribute("coords").split(",");
-            x = Number(coords[0]);
-            y = Number(coords[1]);
-        }
-
-        evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
-        elem.dispatchEvent(evt);
-    }
-
-    // TODO: print more useful information, just like the DOM inspector
-    function printHint(elem)
-    {
-        vimperator.echo("Element:<br/>" + vimperator.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
-    }
-
-    function yankHint(elem, text)
-    {
-        if (text)
-            var loc = elem.textContent || "";
-        else
-            var loc = elem.href || "";
-
-        vimperator.copyToClipboard(loc);
-        // TODO: echoed text disappears immediately
-        vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
-    }
-
-    // TODO: should use  the 'cwd', does it?
-    function saveHint(elem, skipPrompt)
-    {
-        var doc  = elem.ownerDocument;
-        var url = makeURLAbsolute(elem.baseURI, elem.href);
-        var text = elem.textContent;
-
-        try
-        {
-            urlSecurityCheck(url, doc.nodePrincipal);
-            saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
-        }
-        catch (e)
-        {
-            vimperator.echoerr(e);
-        }
-    }
-
     function generate(win)
     {
         var startDate = Date.now();
@@ -232,7 +145,7 @@ vimperator.Hints = function () //{{{
         for (var i = 0; i < win.frames.length; i++)
             generate(win.frames[i]);
 
-        vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms");
+        vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms for " + hints.length + " hints.");
         return true;
     }
 
@@ -427,20 +340,20 @@ vimperator.Hints = function () //{{{
         switch (submode)
         {
             // TODO: move/rename those helper functions to a better place
-            case ";": focusHint(elem); break;
-            case "?": printHint(elem); break;
-            case "a": saveHint(elem, false); break;
-            case "s": saveHint(elem, true); break;
-            case "o": openHint(elem, vimperator.CURRENT_TAB); break;
+            case ";": vimperator.buffer.focusElement(elem); break;
+            case "?": vimperator.buffer.showElementInfo(elem); break;
+            case "a": vimperator.buffer.saveLink(elem, false); break;
+            case "s": vimperator.buffer.saveLink(elem, true); break;
+            case "o": vimperator.buffer.followLink(elem, vimperator.CURRENT_TAB); break;
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
-            case "t": openHint(elem, vimperator.NEW_TAB); break;
+            case "t": vimperator.buffer.followLink(elem, vimperator.NEW_TAB); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
             case "v": vimperator.commands.viewsource(loc); break;
             case "V": vimperator.commands.viewsource(loc, true); break;
-            case "w": openHint(elem, vimperator.NEW_WINDOW);  break;
+            case "w": vimperator.buffer.followLink(elem, vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-            case "y": yankHint(elem, false); break;
-            case "Y": yankHint(elem, true); break;
+            case "y": vimperator.buffer.yankElementLocation(elem); break;
+            case "Y": vimperator.buffer.yankElementText(elem); break;
             default:
                 vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }

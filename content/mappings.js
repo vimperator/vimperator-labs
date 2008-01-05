@@ -1099,7 +1099,7 @@ vimperator.Mappings = function () //{{{
 
     // page info
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-g>"],
-        function (count) { vimperator.buffer.pageInfo(false); },
+        function (count) { vimperator.buffer.showPageInfo(false); },
         {
             shortHelp: "Print the current file name",
             help: "Also shows some additional file information like file size or the last modified date. " +
@@ -1108,7 +1108,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g<C-g>"],
-        function (count) { vimperator.buffer.pageInfo(true); },
+        function (count) { vimperator.buffer.showPageInfo(true); },
         {
             shortHelp: "Print file information",
             help: "Same as <code class='command'>:pa[geinfo]</code>."

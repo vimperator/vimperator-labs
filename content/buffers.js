@@ -283,13 +283,6 @@ vimperator.Buffer = function () //{{{
             return window.content.document.title;
         },
 
-        // quick function to get elements inside the document reliably
-        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quoted around myid)
-        element: function (args, index)
-        {
-            return vimperator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
-        },
-
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)
         {
@@ -316,14 +309,33 @@ vimperator.Buffer = function () //{{{
             return result;
         },
 
+        // quick function to get elements inside the document reliably
+        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quoted around myid)
+        getElement: function (args, index)
+        {
+            return vimperator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
+        },
+
         // artificially "clicks" a link in order to open it
-        followLink: function (elem, where, offsetX, offsetY)
+        followLink: function (elem, where)
         {
             var doc = window.content.document;
             var view = window.document.defaultView;
-            //var view = doc.defaultView;
-            offsetX = offsetX || 1;
-            offsetY = offsetY || 1;
+            var offsetX = 1;
+            var offsetY = 1;
+
+            var localName = elem.localName.toLowerCase();
+            if (localName == "frame" || localName == "iframe") // broken?
+            {
+                elem.contentWindow.focus();
+                return false;
+            }
+            else if (localName == "area") // for imagemap
+            {
+                var coords = elem.getAttribute("coords").split(",");
+                offsetX = Number(coords[0]) + 1;
+                offsetY = Number(coords[1]) + 1;
+            }
 
             var newTab = false, newWindow = false;
             switch (where)
@@ -339,13 +351,78 @@ vimperator.Buffer = function () //{{{
                     vimperator.log("Invalid where argument for followLink()");
             }
 
+            elem.focus();
+
             var evt = doc.createEvent("MouseEvents");
             evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
-
-            //var evt = doc.createEvent("MouseEvents");
             evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
+        },
+
+        // more advanced than a simple elem.focus() as it also works for iframes
+        // and image maps
+        // TODO: merge with followLink()?
+        focusElement: function (elem)
+        {
+            var doc = window.content.document;
+            var elemTagName = elem.localName.toLowerCase();
+            if (elemTagName == "frame" || elemTagName == "iframe")
+            {
+                elem.contentWindow.focus();
+                return false;
+            }
+            else
+            {
+                elem.focus();
+            }
+
+            var evt = doc.createEvent("MouseEvents");
+            var x = 0;
+            var y = 0;
+            // for imagemap
+            if (elemTagName == "area")
+            {
+                var coords = elem.getAttribute("coords").split(",");
+                x = Number(coords[0]);
+                y = Number(coords[1]);
+            }
+
+            evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+            elem.dispatchEvent(evt);
+        },
+
+        yankElementText: function (elem)
+        {
+            var text = elem.textContent || "";
+            vimperator.copyToClipboard(text);
+            vimperator.echo("Yanked " + text, vimperator.commandline.FORCE_SINGLELINE);
+        },
+
+        yankElementLocation: function (elem)
+        {
+            var loc = elem.href || "";
+            vimperator.copyToClipboard(loc);
+            vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
+        },
+
+        saveLink: function (elem, skipPrompt)
+        {
+            var doc  = elem.ownerDocument;
+            var url = makeURLAbsolute(elem.baseURI, elem.href);
+            var text = elem.textContent;
+
+            try
+            {
+                urlSecurityCheck(url, doc.nodePrincipal);
+                // we always want to save that link relative to the current working directory
+                vimperator.options.setFirefoxPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+                saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
+            }
+            catch (e)
+            {
+                vimperator.echoerr(e);
+            }
         },
 
         // in contrast to vim, returns the selection if one is made,
@@ -668,7 +745,14 @@ vimperator.Buffer = function () //{{{
             bumpZoomLevel(-steps, fullZoom);
         },
 
-        pageInfo: function (verbose)
+        // similar to pageInfo
+        // TODO: print more useful information, just like the DOM inspector
+        showElementInfo: function (elem)
+        {
+            vimperator.echo("Element:<br/>" + vimperator.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
+        },
+
+        showPageInfo: function (verbose)
         {
             const feedTypes = {
                 "application/rss+xml": "RSS",

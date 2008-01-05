@@ -301,7 +301,7 @@ vimperator.Help = function(section)
     {
         vimperator.open("chrome://vimperator/locale/" + file);
         setTimeout(function() {
-            var elem = vimperator.buffer.element('@class="tag" and text()="' + tag + '"');
+            var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
             if (elem)
                 window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
         }, 100);
