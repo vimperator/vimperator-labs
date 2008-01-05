@@ -9,6 +9,7 @@
 	  removed the following hint options: 'hintchars' 'maxhints'
 	  added the following hint options: 'hinttimeout'
 	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+	* new :command to add user defined commands
     * new setCustomMode for plugin writers
     * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
 	* @@ to repeat last macro

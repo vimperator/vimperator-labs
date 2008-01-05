@@ -86,6 +86,7 @@ vimperator.Command = function (specs, action, extraInfo) //{{{
         this.shortHelp = extraInfo.shortHelp || null;
         this.completer = extraInfo.completer || null;
         this.args       = extraInfo.args || [];
+        this.isUserCommand = extraInfo.isUserCommand || false;
     }
 
 };
@@ -443,6 +444,28 @@ vimperator.Commands = function () //{{{
         throw StopIteration;
     }
 
+    function getUserCommands(name)
+    {
+        var matches = [];
+        for (var i = 0; i < exCommands.length; i++)
+        {
+            if (exCommands[i].isUserCommand)
+            {
+                if (name)
+                {
+                    if (exCommands[i].name.match("^"+name))
+                        matches.push(exCommands[i]);
+                }
+                else
+                {
+                    matches.push(exCommands[i]);
+                }
+            }
+        }
+        return matches;
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -454,13 +477,28 @@ vimperator.Commands = function () //{{{
             return commandsIterator();
         },
 
-        add: function (command)
+        add: function (command, replace)
         {
+            for (var i = 0; i < exCommands.length; i++)
+            {
+                if (exCommands[i].name == command.name)
+                {
+                    if (!replace)
+                        return false;
+                    else
+                        break;
+                }
+            }
+
+            // add an alias, so that commands can be accessed with
+            // vimperator.commands.zoom("130")
             this[command.name] = function (args, special, count, modifiers)
             {
                 command.execute(args, special, count, modifiers);
             };
+
             exCommands.push(command);
+            return true;
         },
 
         get: function (name)
@@ -776,21 +814,47 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["com[mand]"],
-        function (args)
+        function (args, special)
         {
-            var res = parseArgs(args, this.args);
-            if (!res)
-                return;
+            if (args)
+            {
+                var res = args.match(/^(\w+)(?:\s+(.+))?$/);
+                if (!res)
+                {
+                    vimperator.echoerr("E182: Invalid command name");
+                    return false;
+                }
+                var [cmd, rep] = [res[1], res[2]]
+            }
 
-            vimperator.echo(vimperator.util.colorize(res.args));
+            if (rep)
+            {
+                if (!vimperator.commands.add(new vimperator.Command([cmd], function (args, special, count, modifiers) { eval(rep) }, { isUserCommand: rep } ), special))
+                    vimperator.echoerr("E174: Command already exists: add ! to replace it");
+            }
+            else
+            {
+                var cmdlist = getUserCommands(cmd);
+                if (cmdlist.length > 0)
+                {
+                    var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                              "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
+                    for (var i = 0; i < cmdlist.length; i++)
+                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + cmdlist[i].isUserCommand + "</td></tr>";
+                    str += "</table>"
+                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                }
+                else
+                    vimperator.echo("No user-defined commands found");
+            }
         },
         {
             usage: ["com[mand][!] [{attr}...] {cmd} {rep}"],
-            shortHelp: "Temporarily used for testing args parser",
-            help: "",
+            shortHelp: "Lists and defines commands",
+            help: "To be written - but it works similar to vim's :command" /*,
             args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
-                   [["-bar"],      OPTION_NOARG]]
+                   [["-bar"],      OPTION_NOARG]] */
         }
     ));
     commandManager.add(new vimperator.Command(["delm[arks]"],
