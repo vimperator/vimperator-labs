@@ -1,235 +1,236 @@
 <pre>
 2008-xx-xx:
-	* version 0.6
-	* THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
-	* IMPORTANT: Major hints rewrite
-	  read up the new help for the f, F and ; commands for details
-	  removed the following hint options: 'hintchars' 'maxhints'
-	  added the following hint options: 'hinttimeout'
-	* IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
-	* new :command to add user defined commands
-	* new setCustomMode for plugin writers
-	* :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
-	* @@ to repeat last macro
-	* new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
-	* scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
-	* imap, inoremap, iunmap and imapclear added
-	* new g0 and g$ mappings to go to the first/last tab
-	* new gf and gF mappings and ;v and ;V hints mode to view the source code
-	* new 'history' option for specifying the number of Ex commands and
-	  search patterns to store in the commandline history
-	* new ctrl-x and ctrl-a mappings to increment the last number in the URL
-	* new ~ mapping to open the home directory
-	* :open tries to open a relative filename now, if you do a :open foo.html
-	  or :open ../hello.txt;
-	* new :cd and :pwd commands
-	* new :dialog command to open various firefox dialogs
-	* new a and A mappings to deal with bookmarks
-	* added ]] and [[ to navigate to the next/previous document based on
-	  the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
-	* abbreviations for text fields (:abbr etc.) (thanks calmar)
-	* you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
-	* :open, :bmarks, etc. filter on space separated tokens now, so you can
-	  search with :open linux windows &lt;tab&gt; all your bookmarks/history
-	  which contain linux AND windows in the url or title
-	* tags and keyword support for :bmark
-	* added full zoom, and changed keybindings slightly for text zoom
-	* improvements for scrollable -- more -- prompt
-	* sites like msn.com or yahoo.com don't focus search field anymore on keydown
-	* new gi browser command to focus last used input box
-	* edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
-	* support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
-	* support for * and # mappings to search for the text selection or the text under the cursor
-	* Escape finally clears any selection made in the document
-	* initial start of caret mode. Start with 'i', stop with Escape;
-	* many small bug fixes and enhancements
+    * version 0.6
+    * THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
+    * IMPORTANT: Major hints rewrite
+      read up the new help for the f, F and ; commands for details
+      removed the following hint options: 'hintchars' 'maxhints'
+      added the following hint options: 'hinttimeout'
+    * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+    * new :command to add user defined commands
+    * new setCustomMode for plugin writers
+    * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
+    * @@ to repeat last macro
+    * new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
+    * scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
+    * imap, inoremap, iunmap and imapclear added
+    * new g0 and g$ mappings to go to the first/last tab
+    * new gf and gF mappings and ;v and ;V hints mode to view the source code
+    * new 'history' option for specifying the number of Ex commands and
+      search patterns to store in the commandline history
+    * new ctrl-x and ctrl-a mappings to increment the last number in the URL
+    * new ~ mapping to open the home directory
+    * :open tries to open a relative filename now, if you do a :open foo.html
+      or :open ../hello.txt;
+    * new :cd and :pwd commands
+    * new :dialog command to open various firefox dialogs
+    * new a and A mappings to deal with bookmarks
+    * added ]] and [[ to navigate to the next/previous document based on
+      the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
+    * abbreviations for text fields (:abbr etc.) (thanks calmar)
+    * you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
+    * :open, :bmarks, etc. filter on space separated tokens now, so you can
+      search with :open linux windows &lt;tab&gt; all your bookmarks/history
+      which contain linux AND windows in the url or title
+    * tags and keyword support for :bmark
+    * added full zoom, and changed keybindings slightly for text zoom
+    * improvements for scrollable -- more -- prompt
+    * sites like msn.com or yahoo.com don't focus search field anymore on keydown
+    * new gi browser command to focus last used (or the first as a fallback) input box
+    * edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
+    * support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
+    * support for * and # mappings to search for the text selection or the text under the cursor
+    * Escape finally clears any selection made in the document
+    * initial start of caret mode. Start with 'i', stop with Escape;
+    * many small bug fixes and enhancements
 
 2007-12-21:
-	* version 0.5.3
-	* IMPORTANT! options are no longer automatically stored - use the
-	  ~/.vimperatorrc file instead for persistent options
-	* :tabnext and :tabprevious now accept an argument
-	* the count to gT now specifies a relative tab motion like Vim
-	* new :pa[geinfo] command, and ctrl-g and g,ctrl-g mappings (thanks Marco Candrian)
-	* added new :mkvimperatorrc command
-	* remove :redraw and Ctrl-L commands as they rely on FF3 features
-	* :ls, :history and :bmarks output is now hyperlinked
-	* new gb and gB mappings to repeat the last :buffer[!] command,
-	* :q doesn't close the whole browser, if there are more than one windows
-	* new :winclose command
-	* b calls :buffer! now instead of :buffer
-	* [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
-	* :set showtabline now finally works as expected for all values
-	* many other small bug fixes
+    * version 0.5.3
+    * IMPORTANT! options are no longer automatically stored - use the
+      ~/.vimperatorrc file instead for persistent options
+    * :tabnext and :tabprevious now accept an argument
+    * the count to gT now specifies a relative tab motion like Vim
+    * new :pa[geinfo] command, and ctrl-g and g,ctrl-g mappings (thanks Marco Candrian)
+    * added new :mkvimperatorrc command
+    * remove :redraw and Ctrl-L commands as they rely on FF3 features
+    * :ls, :history and :bmarks output is now hyperlinked
+    * new gb and gB mappings to repeat the last :buffer[!] command,
+    * :q doesn't close the whole browser, if there are more than one windows
+    * new :winclose command
+    * b calls :buffer! now instead of :buffer
+    * [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
+    * :set showtabline now finally works as expected for all values
+    * many other small bug fixes
 
 2007-10-11:
-	* version 0.5.2
-	* changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
-	  options, use :prefs! to get the about:config window
-	* added "s" and "a" mappings to extended hints mode for saving hint targets
-	* "d", "D" and :bdelete support count now
-	* :back/:forward can use tabcompletion
-	* :undoall support, and tabcompletion for :undo <tab>
-	* new :redraw and Ctrl-L commands for forced redrawing of the screen
-	* added new 'laststatus' option and removed "s" value from 'guioptions'
-	* Tab-completion improvements for :javascript and :open
-	* IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
-	  but you can do things like :echo 3+2 or :echo window.document now
-	* statusline is now white on black with bold font by default (like in (g)vim)
-	  (change with userChrome.css if you don't like it until we have :colorscheme)
-	* :let mapleader=","  and <Leader> in :map support
-	* added new :let and :unlet commands
-	* :b2 now allowed, no space required before the 2 anymore
-	* :! to run commands through system()
-	* separated search and Ex command history
-	* added 'visualbellstyle' for styling/hiding the visual bell
-	* merge the existing status bar with the standard FF status bar so that
-	  security information and extension buttons are included
-	* :buffer partial_string works now as in vim, and with ! even better
-	* new :time command for profiling
-	* added new :sidebar and :sbclose commands
-	* added 'more' and standard more-prompt key mappings to control
-	  behaviour of the message list pager 
-	* added 'hlsearchstyle' option to allow for user CSS styling of the
-	  highlighted text strings when 'hlsearch' is set
-	* added 'linksearch' option to restrict page searches to link text - \L
-	  and \l can be used in the search pattern to override 'linksearch'
-	* vimperator trys to stay in command mode after loading pages instead
-	  of having a text field focused
-	* added a visual bell and replaced 'beep' with 'visualbell'
-	* added vimperator logo (can be seen in the addons manager)
-	* added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
-	* many small bug fixes and enhancments
+    * version 0.5.2
+    * changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
+      options, use :prefs! to get the about:config window
+    * added "s" and "a" mappings to extended hints mode for saving hint targets
+    * "d", "D" and :bdelete support count now
+    * :back/:forward can use tabcompletion
+    * :undoall support, and tabcompletion for :undo <tab>
+    * new :redraw and Ctrl-L commands for forced redrawing of the screen
+    * added new 'laststatus' option and removed "s" value from 'guioptions'
+    * Tab-completion improvements for :javascript and :open
+    * IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
+      but you can do things like :echo 3+2 or :echo window.document now
+    * statusline is now white on black with bold font by default (like in (g)vim)
+      (change with userChrome.css if you don't like it until we have :colorscheme)
+    * :let mapleader=","  and <Leader> in :map support
+    * added new :let and :unlet commands
+    * :b2 now allowed, no space required before the 2 anymore
+    * :! to run commands through system()
+    * separated search and Ex command history
+    * added 'visualbellstyle' for styling/hiding the visual bell
+    * merge the existing status bar with the standard FF status bar so that
+      security information and extension buttons are included
+    * :buffer partial_string works now as in vim, and with ! even better
+    * new :time command for profiling
+    * added new :sidebar and :sbclose commands
+    * added 'more' and standard more-prompt key mappings to control
+      behaviour of the message list pager 
+    * added 'hlsearchstyle' option to allow for user CSS styling of the
+      highlighted text strings when 'hlsearch' is set
+    * added 'linksearch' option to restrict page searches to link text - \L
+      and \l can be used in the search pattern to override 'linksearch'
+    * vimperator trys to stay in command mode after loading pages instead
+      of having a text field focused
+    * added a visual bell and replaced 'beep' with 'visualbell'
+    * added vimperator logo (can be seen in the addons manager)
+    * added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
+    * many small bug fixes and enhancments
 
 2007-09-03:
-	* version 0.5.1
-	* native / and ? search and n and N working again
-	* the URL in the status line can be selected with the mouse again
-	* the Windows default RC file is now ~/_vimperatorrc and the plugin
-	  directory is ~/vimperator/plugin
-	* commandline history now works properly on Windows
-	* filename completion now works on Windows
-	* the Bookmarks Toolbar Folder is now read when bookmarks are first
-	  loaded - it was skipped entirely in the past
-	* fixed search for :open (previously needed to do :o <tab> ONCE to
-	  initialize them)
-	* added :set {option}! support to toggle a boolean option's value
-	* added :set all and :set all& support to show the current value of all
-	  options and to reset all options to their default value
-	* :tabmove! wrapping works again
+    * version 0.5.1
+    * native / and ? search and n and N working again
+    * the URL in the status line can be selected with the mouse again
+    * the Windows default RC file is now ~/_vimperatorrc and the plugin
+      directory is ~/vimperator/plugin
+    * commandline history now works properly on Windows
+    * filename completion now works on Windows
+    * the Bookmarks Toolbar Folder is now read when bookmarks are first
+      loaded - it was skipped entirely in the past
+    * fixed search for :open (previously needed to do :o <tab> ONCE to
+      initialize them)
+    * added :set {option}! support to toggle a boolean option's value
+    * added :set all and :set all& support to show the current value of all
+      options and to reset all options to their default value
+    * :tabmove! wrapping works again
 
 2007-08-16:
-	* version 0.5
-	* :map support (also :noremap, :unmap)
-	* :bmarks and :history now use the multiline message window for output
-	* rename :bm, :bmadd, and :bmdel to :bmarks, :bmark, and :delbmarks respectively
-	* new :normal command
-	* the command line keeps focus now, even when clicking outside of it
-	* vimperator.events.feedkeys("2zi") support for scripts
-	* Ctrl-U/Ctrl-D for scrolling the window up/down and the associated
-	'scroll' option
-	* files in ~/.vimperator/plugin/ are auto-sourced
-	* :winopen support (multiple windows still very very experimental)
-	* 'activate' option implemented
-	* search engines which use POST instead of GET work now
-	* :javascript <<EOF uses a better multiline input widget now
-	* new :map, :noremap, :mapclear and :unmap commands
-	* :saveas finally works (by calmar)
-	* Shift-insert pastes the X11 selection content in text fields now
-	* Changed "|" to ", " as a url seperator in :open
-	* Ctrl-^ mapping for selecting the alternate tab/buffer
-	* QuickMarks support (new commands :qmark/:qmarks/:delqmarks and
-	  mappings go{a-z}, gn{a-z} and M{a-z}
-	* Multiline echo support
-	* Command line is now cleared on most redraws like in vim
-	* The RSS feed button in the address bar works again
-	* reload/stop buttons update enabled state again
-	* added local/url marks support (thanks Viktor Kojouharov)
-	* temporary shortcut Y to yank current selection (for non X11-users)
-	* Flashing frame with ]f now works as expected
-	* many help fixes (most of them by Doug Kearns)
-	* new :reloadall command
-	* :hardcopy works now and shows the printing dialog
-	* changed "R" to reload without cache instead of reload all due to popular request
-	* changed secure sites -> green, broken sites -> red in the statusbar
-	* Vimperator now sets the window title, so it's "vimperator.mozdev.org -
-	  Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
-	  Use :set titlestring=... to change it back (help from Hannes Rist)
-	* :tabmove command (by Doug Kearns)
-	* 'showstatuslinks' option to control where/if we show the destination of
-	a hovered link
-	* :version! shows firefox version page
-	* hovered links appear in the command line again, not statusbar
-	* :help now opens in the current tab even for xhtml pages like "about:"
-	* hints work on xhtml pages now (you need to reset the 'hinttags' and
-	  'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&)
-	* :set option& resets the option to the default value
-	* added :tabonly and :tabrewind and :tablast commands and some futher aliases :tabNext, etc. (by Doug Kearns)
-	* added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
-	* Added keyword support for bookmarks to the :[tab]open commands
-	* many small bug fixes and enhancements
+    * version 0.5
+    * :map support (also :noremap, :unmap)
+    * :bmarks and :history now use the multiline message window for output
+    * rename :bm, :bmadd, and :bmdel to :bmarks, :bmark, and :delbmarks respectively
+    * new :normal command
+    * the command line keeps focus now, even when clicking outside of it
+    * vimperator.events.feedkeys("2zi") support for scripts
+    * Ctrl-U/Ctrl-D for scrolling the window up/down and the associated
+    'scroll' option
+    * files in ~/.vimperator/plugin/ are auto-sourced
+    * :winopen support (multiple windows still very very experimental)
+    * 'activate' option implemented
+    * search engines which use POST instead of GET work now
+    * :javascript <<EOF uses a better multiline input widget now
+    * new :map, :noremap, :mapclear and :unmap commands
+    * :saveas finally works (by calmar)
+    * Shift-insert pastes the X11 selection content in text fields now
+    * Changed "|" to ", " as a url seperator in :open
+    * Ctrl-^ mapping for selecting the alternate tab/buffer
+    * QuickMarks support (new commands :qmark/:qmarks/:delqmarks and
+      mappings go{a-z}, gn{a-z} and M{a-z}
+    * Multiline echo support
+    * Command line is now cleared on most redraws like in vim
+    * The RSS feed button in the address bar works again
+    * reload/stop buttons update enabled state again
+    * added local/url marks support (thanks Viktor Kojouharov)
+    * temporary shortcut Y to yank current selection (for non X11-users)
+    * Flashing frame with ]f now works as expected
+    * many help fixes (most of them by Doug Kearns)
+    * new :reloadall command
+    * :hardcopy works now and shows the printing dialog
+    * changed "R" to reload without cache instead of reload all due to popular request
+    * changed secure sites -> green, broken sites -> red in the statusbar
+    * Vimperator now sets the window title, so it's "vimperator.mozdev.org -
+      Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
+      Use :set titlestring=... to change it back (help from Hannes Rist)
+    * :tabmove command (by Doug Kearns)
+    * 'showstatuslinks' option to control where/if we show the destination of
+    a hovered link
+    * :version! shows firefox version page
+    * hovered links appear in the command line again, not statusbar
+    * :help now opens in the current tab even for xhtml pages like "about:"
+    * hints work on xhtml pages now (you need to reset the 'hinttags' and
+      'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&)
+    * :set option& resets the option to the default value
+    * added :tabonly and :tabrewind and :tablast commands and some futher aliases :tabNext, etc. (by Doug Kearns)
+    * added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
+    * Added keyword support for bookmarks to the :[tab]open commands
+    * many small bug fixes and enhancements
 
 2007-05-02:
-	* version 0.4.1
-	* Fixed bug that :open google.com/mail opened ".com/mail" in google search
-	* made <tab> <up> <down> etc. perform the default action, so menus kinda
-	work, and it doesn't beep anymore on tab.
-	* added 'defsearch' setting for setting default search engine
+    * version 0.4.1
+    * Fixed bug that :open google.com/mail opened ".com/mail" in google search
+    * made <tab> <up> <down> etc. perform the default action, so menus kinda
+    work, and it doesn't beep anymore on tab.
+    * added 'defsearch' setting for setting default search engine
 
 2007-05-01:
-	* version 0.4
-	* extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
-	  TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
-	* support for internal search engines was dropped. Now we use Firefox search engines
-	* support for 'wildmode' completion setting with support for matching the
-	  longest common substring. Also new 'wildoptions' setting
-	* added 'f' to the 'complete' option to allow listing of filenames in :open prompt
-	* changed regexp search to normal text search for completion -> massive speedup, but limited functionality
-	* support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
-	  'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory
-	* Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
-	* changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
-	* :back! goes to beginning of history now
-	* diabled firefox 3.0 support for now, as there are just too many small
-	  bugs
-	* new Makefile instead of build.sh (only important for developers)
-	* newly designed help page
-	* :help section supported, :help :set will show help for the :set command
-	  (patch from Viktor Kojouharov)
-	* :source support, and auto-sourcing ~/.vimperatorrc on startup
-	* :javascript <<EOF support to execute multiline javascript code
-	  also changed :exec to behave more vim like
-	* fixed saving of session
-	* fixed hints display when zooming in/out of a web page
-	* added 'B' command for continous buffer display
-	* changed hintsize to 12px by default
-	* 'previewheight' setting to set the maximum size for the preview window
-	* showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
-	* gh goes home :) gH in a new tab
-	* :open! bypasses cache
-	* :buffer and :buffers support (patch from Lars Kindler)
-	* added :edit, :e and :tabedit aliases for :open, :tabopen
-	* settings can now be changed with += and -= like in vim (patch from Виктор Кожухаров)
-	* Support for space/shift-space/alt-left/alt-right keys without beeping
-	* :open without argument reloads current page, :tabopen opens an empty tab
-	* added 'n' and 'N' to repeat a search
-	* many small bug fixes
+    * version 0.4
+    * extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
+      TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
+    * support for internal search engines was dropped. Now we use Firefox search engines
+    * support for 'wildmode' completion setting with support for matching the
+      longest common substring. Also new 'wildoptions' setting
+    * added 'f' to the 'complete' option to allow listing of filenames in :open prompt
+    * changed regexp search to normal text search for completion -> massive speedup, but limited functionality
+    * support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
+      'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory
+    * Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
+    * changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
+    * :back! goes to beginning of history now
+    * diabled firefox 3.0 support for now, as there are just too many small
+      bugs
+    * new Makefile instead of build.sh (only important for developers)
+    * newly designed help page
+    * :help section supported, :help :set will show help for the :set command
+      (patch from Viktor Kojouharov)
+    * :source support, and auto-sourcing ~/.vimperatorrc on startup
+    * :javascript <<EOF support to execute multiline javascript code
+      also changed :exec to behave more vim like
+    * fixed saving of session
+    * fixed hints display when zooming in/out of a web page
+    * added 'B' command for continous buffer display
+    * changed hintsize to 12px by default
+    * 'previewheight' setting to set the maximum size for the preview window
+    * showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
+    * gh goes home :) gH in a new tab
+    * :open! bypasses cache
+    
+    * :buffer and :buffers support (patch from Lars Kindler)
+    * added :edit, :e and :tabedit aliases for :open, :tabopen
+    * settings can now be changed with += and -= like in vim (patch from Виктор Кожухаров)
+    * Support for space/shift-space/alt-left/alt-right keys without beeping
+    * :open without argument reloads current page, :tabopen opens an empty tab
+    * added 'n' and 'N' to repeat a search
+    * many small bug fixes
 
 17/04/2007:
-	* version 0.3
-	* added Ctrl-v support to pass one key to firefox (patch by Muthu Kannan)
-	* also 'I' will go to 'ignorekeys' mode until esc is pressed, presenting a workaround
-	  for many javascript form fields like GMail, until something better comes along.
-	* Vimperator can now be automatically updated in the :addons screen like other extensions
-	* fixed :tabnext/:tabprevious commands
-	* documented 's' and 'b' guioptions flag for statusbar/bookmark bar
-	* implemented the possibility to use CTRL-[ as an alternative to ESC, to leave the command line
-	* added Ctrl-Tab and Ctrl-Shift-Tab support for switching tabs without beeping
-	* ability to use shift and ctrl with special keys like F1 in mappings
-	* small documentation and other fixes
+    * version 0.3
+    * added Ctrl-v support to pass one key to firefox (patch by Muthu Kannan)
+    * also 'I' will go to 'ignorekeys' mode until esc is pressed, presenting a workaround
+      for many javascript form fields like GMail, until something better comes along.
+    * Vimperator can now be automatically updated in the :addons screen like other extensions
+    * fixed :tabnext/:tabprevious commands
+    * documented 's' and 'b' guioptions flag for statusbar/bookmark bar
+    * implemented the possibility to use CTRL-[ as an alternative to ESC, to leave the command line
+    * added Ctrl-Tab and Ctrl-Shift-Tab support for switching tabs without beeping
+    * ability to use shift and ctrl with special keys like F1 in mappings
+    * small documentation and other fixes
 
 11/04/2007:
-	* version 0.2
-	* first public release
+    * version 0.2
+    * first public release
 </pre>
 <!-- vim: set sw=4 ts=4 et: -->

@@ -608,8 +608,14 @@ vimperator.Mappings = function () //{{{
         {
             if (vimperator.buffer.lastInputField)
                 vimperator.buffer.lastInputField.focus();
-            else // TODO: Focus first input field on page, or beep if none found
-                vimperator.beep();
+            else
+            {
+                var first = vimperator.buffer.element("@type='text'"); // does not work for textareas yet
+                if (first)
+                    first.focus();
+                else
+                    vimperator.beep();
+            }
         },
         {
             shortHelp: "Focus last used input field"
