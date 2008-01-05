@@ -76,13 +76,9 @@ vimperator.Hints = function () //{{{
 
     // this function 'click' an element, which also works
     // for javascript links
-    function openHint(where)
+    function openHint(elem, where)
     {
-        if (validHints.length < 1)
-            return false;
-
         var x = 1, y = 1;
-        var elem = validHints[hintNumber - 1] || validHints[0];
         var elemTagName = elem.localName.toLowerCase();
         elem.focus();
         if (elemTagName == "frame" || elemTagName == "iframe")
@@ -100,12 +96,8 @@ vimperator.Hints = function () //{{{
         return true;
     }
 
-    function focusHint()
+    function focusHint(elem)
     {
-        if (validHints.length < 1)
-            return false;
-
-        var elem = validHints[hintNumber - 1] || validHints[0];
         var doc = window.content.document;
         var elemTagName = elem.localName.toLowerCase();
         if (elemTagName == "frame" || elemTagName == "iframe")
@@ -133,27 +125,27 @@ vimperator.Hints = function () //{{{
         elem.dispatchEvent(evt);
     }
 
-    function yankHint(text)
+    // TODO: print more useful information, just like the DOM inspector
+    function printHint(elem)
     {
-        if (validHints.length < 1)
-            return false;
+        vimperator.echo("Element:<br/>" + vimperator.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
+    }
 
-        var elem = validHints[hintNumber - 1] || validHints[0];
+    function yankHint(elem, text)
+    {
         if (text)
-            var loc = elem.textContent;
+            var loc = elem.textContent || "";
         else
-            var loc = elem.href;
+            var loc = elem.href || "";
 
         vimperator.copyToClipboard(loc);
+        // TODO: echoed text disappears immediately
         vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
     }
 
-    function saveHint(skipPrompt)
+    // TODO: should use  the 'cwd', does it?
+    function saveHint(elem, skipPrompt)
     {
-        if (validHints.length < 1)
-            return false;
-
-        var elem = validHints[hintNumber - 1] || validHints[0];
         var doc  = elem.ownerDocument;
         var url = makeURLAbsolute(elem.baseURI, elem.href);
         var text = elem.textContent;
@@ -429,23 +421,26 @@ vimperator.Hints = function () //{{{
                 return false;
         }
 
-        var activeNum = hintNumber || 1;
-        var loc = validHints[activeNum - 1].href || "";
+        var activeIndex = hintNumber - 1 || 0;
+        var elem = validHints[activeIndex];
+        var loc = elem.href || "";
         switch (submode)
         {
-            case ";": focusHint(); break;
-            case "a": saveHint(false); break;
-            case "s": saveHint(true); break;
-            case "o": openHint(vimperator.CURRENT_TAB); break;
+            // TODO: move/rename those helper functions to a better place
+            case ";": focusHint(elem); break;
+            case "?": printHint(elem); break;
+            case "a": saveHint(elem, false); break;
+            case "s": saveHint(elem, true); break;
+            case "o": openHint(elem, vimperator.CURRENT_TAB); break;
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
-            case "t": openHint(vimperator.NEW_TAB); break;
+            case "t": openHint(elem, vimperator.NEW_TAB); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
             case "v": vimperator.commands.viewsource(loc); break;
             case "V": vimperator.commands.viewsource(loc, true); break;
-            case "w": openHint(vimperator.NEW_WINDOW);  break;
+            case "w": openHint(elem, vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-            case "y": yankHint(false); break;
-            case "Y": yankHint(true); break;
+            case "y": yankHint(elem, false); break;
+            case "Y": yankHint(elem, true); break;
             default:
                 vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
@@ -493,7 +488,7 @@ vimperator.Hints = function () //{{{
         // TODO: implement framesets
         show: function (mode, minor, filter)
         {
-            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;asoOtTvVwWyY]$/.test(minor))
+            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;?asoOtTvVwWyY]$/.test(minor))
             {
                 vimperator.beep();
                 return;
