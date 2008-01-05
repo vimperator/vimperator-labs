@@ -392,20 +392,6 @@ vimperator.Buffer = function () //{{{
             elem.dispatchEvent(evt);
         },
 
-        yankElementText: function (elem)
-        {
-            var text = elem.textContent || "";
-            vimperator.copyToClipboard(text);
-            vimperator.echo("Yanked " + text, vimperator.commandline.FORCE_SINGLELINE);
-        },
-
-        yankElementLocation: function (elem)
-        {
-            var loc = elem.href || "";
-            vimperator.copyToClipboard(loc);
-            vimperator.echo("Yanked " + loc, vimperator.commandline.FORCE_SINGLELINE);
-        },
-
         saveLink: function (elem, skipPrompt)
         {
             var doc  = elem.ownerDocument;

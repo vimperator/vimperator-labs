@@ -95,7 +95,7 @@ vimperator.modes = (function () //{{{
     {
         // TODO: fix v.log() to work with verbosity level
         // vimperator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
-        dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
+        // dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {

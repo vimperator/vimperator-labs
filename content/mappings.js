@@ -838,12 +838,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["y"],
-        function ()
-        {
-            var url = vimperator.buffer.URL;
-            vimperator.copyToClipboard(url);
-            vimperator.echo("Yanked " + url, vimperator.commandline.FORCE_SINGLELINE);
-        },
+        function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); },
         {
             shortHelp: "Yank current location to the clipboard",
             help: "When running in X11 the location is also put into the selection, which can be pasted with the middle mouse button."
@@ -853,7 +848,10 @@ vimperator.Mappings = function () //{{{
         function ()
         {
             var sel = window.content.document.getSelection();
-            vimperator.copyToClipboard(sel);
+            if (sel)
+                vimperator.copyToClipboard(sel, true);
+            else
+                vimperator.beep();
         },
         {
             shortHelp: "Copy selected text",
