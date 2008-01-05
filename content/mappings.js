@@ -610,7 +610,9 @@ vimperator.Mappings = function () //{{{
                 vimperator.buffer.lastInputField.focus();
             else
             {
-                var first = vimperator.buffer.element("@type='text'"); // does not work for textareas yet
+                var first = vimperator.buffer.evaluateXPath(
+                    "//*[@type='text'] | //textarea | //xhtml:textarea").snapshotItem(0);
+
                 if (first)
                     first.focus();
                 else
