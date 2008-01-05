@@ -12,10 +12,8 @@ BUGS:
   same for http://forum.mootools.net/topic.php?id=3458
 
 FEATURES:
-9 :command for new commands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
-8 autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, PreLocationChange, PageLoaded, any more?)
-8 :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
+8 add more autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, LocationChanged, any more?)
 8 ;?<hint> will show information about <hint> like id, class, image filename, etc.
 8 there should be a listbox/combobox mode
 7 use ctrl-n/p in insert mode for word completion
@@ -23,17 +21,21 @@ FEATURES:
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
 7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
 7 :set! should also set about:config options (with autocomplete)
-7 make a command to search within google search results (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
-6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
-6 [d could go to the last domain in the history stack. so if i browse from
+7 [d could go to the last domain in the history stack. so if i browse from
   google to another page and click 10 links there, [d would take me back to the google page
+  opera's fast forward does something like this
+6 :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
+6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
 6 pipe selected text/link/website to an external command
-6 macros (qq, @q, ...)
 6 :set wildoptions=auto mode, which would list completions on each keystroke (maybe performance problems)
-5 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
+6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
 5 Favicons in completion windows and some other places?
+5 make a command to search within google search results
+  (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
+  maybe impossible, needs a per-site key from google
+4 Add -nargs, -complete, etc. to :command
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
@@ -43,6 +45,6 @@ RANDOM IDEAS:
 * numbered tabs
 * Would it be possible to add a setting "maxcompletionsshown" and 
   "maxpreviewwindowheight" or something like this?
-* hide scrollbars: http://rafb.net/p/YHRhEe47.html (window.content.document.body.style.overflow = "hidden")
+* hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
 
 </pre>
