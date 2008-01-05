@@ -334,7 +334,7 @@ vimperator.Hints = function () //{{{
                 return false;
         }
 
-        var activeIndex = hintNumber - 1 || 0;
+        var activeIndex = (hintNumber ? hintNumber - 1 : 0);
         var elem = validHints[activeIndex];
         var loc = elem.href || "";
         switch (submode)
@@ -357,6 +357,7 @@ vimperator.Hints = function () //{{{
             default:
                 vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
+        dump("3\n");
 
         var timeout = followFirst ? 0 : 500;
         removeHints(timeout);
