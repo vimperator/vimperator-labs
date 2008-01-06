@@ -59,6 +59,8 @@ Option            Description
 -R 'GROUP'        Disables access to 'GROUP'.
 ---------------------------------------------
 
+atag:anchor[]
+
 [[X1]]
 Sub-section with Anchor
 ~~~~~~~~~~~~~~~~~~~~~~~

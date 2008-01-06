@@ -992,14 +992,18 @@ vimperator.Buffer = function () //{{{
         followDocumentRelationship: function (relationship)
         {
             var retVal;
-
             if (window.content.frames.length != 0)
             {
-                for (var i = 0; i < window.content.frames.length; i++)
+                retVal = followFrameRelationship(relationship, window.content);
+                if (!retVal) 
                 {
-                    retVal = followFrameRelationship(relationship, window.content.frames[i]);
-                    if (retVal)
-                        break;
+                    // only loop through frames if the main content didnt match
+                    for (var i = 0; i < window.content.frames.length; i++)
+                    {
+                        retVal = followFrameRelationship(relationship, window.content.frames[i]);
+                        if (retVal)
+                            break;
+                    }
                 }
             }
             else
