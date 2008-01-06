@@ -6,6 +6,9 @@ VERSION       = 0.6pre
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 
+DOC_SRC_FILES = $(wildcard locale/*/*.txt)
+DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
+
 JAR_TXT_FILES = ${shell find content skin locale	\
 			-type f			\
 			-a ! -path '*CVS*'	\
@@ -22,7 +25,7 @@ JAR_BIN_FILES = ${shell find content skin	\
 			-a ! -path '*CVS*'	\
 			-a -path '*.png'	\
 		}
-JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES}
+JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES} ${DOC_FILES}
 JAR           = chrome/vimperator.jar
 
 XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS
@@ -42,6 +45,7 @@ BUILD_XPI_DIR = ${BUILD_DIR}/xpi
 BUILD_JAR_SUBDIRS = $(sort ${JAR_DIRS:%=${BUILD_JAR_DIR}/%})
 BUILD_XPI_SUBDIRS = $(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
 
+ASCIIDOC = asciidoc
 ZIP = zip
 SED = sed
 
@@ -70,7 +74,7 @@ CP_V=$(if ${V},-v)
 
 #### rules
 
-.PHONY: all help info needs_chrome_dir jar xpi install clean
+.PHONY: all help info needs_chrome_dir doc jar xpi install clean distclean
 all: help
 
 help:
@@ -78,17 +82,20 @@ help:
 	@echo
 	@echo "  make help      - display this help"
 	@echo "  make info      - show some info about the system"
+	@echo "  make doc       - build doc files"
 	@echo "  make jar       - build a JAR (${JAR})"
 	@echo "  make install   - install into your firefox dir (run info)"
 	@echo "  make xpi       - build an XPI (${XPI_NAME})"
 	@echo "  make release   - updates update.rdf (this is not for you)"
 	@echo "  make clean     - clean up"
+	@echo "  make distclean - clean up more"
 	@echo
 	@echo "running some commands with V=1 will show more build details"
 
 info:
 	@echo    "version             ${VERSION}"
 	@echo    "release file        ${XPI}"
+	@echo    "doc files           ${DOC_SRC_FILES}"
 	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
 	@test -d "${FIREFOX_DEFAULT}" || ( echo "E: didn't find your .mozilla/firefox/*.default/ dir" ; false )
 	@echo    "firefox default     ${FIREFOX_DEFAULT}"
@@ -105,6 +112,7 @@ needs_chrome_dir:
 	-${Q}mkdir -p "${INSTALL_CHROME}"
 	${Q}test -d "${INSTALL_CHROME}"
 
+doc: ${DOC_FILES}
 xpi: ${XPI}
 jar: ${JAR}
 
@@ -125,6 +133,10 @@ clean:
 	@echo "Cleanup..."
 	${Q}rm -f ${JAR} ${XPI}
 	${Q}find . -name '*~' -exec rm -f {} \;
+
+distclean: clean
+	@echo "More cleanup..."
+	${Q}rm -f ${DOC_FILES}
 	${Q}rm -rf ${BUILD_DIR}
 
 #### xpi
@@ -173,3 +185,10 @@ ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 	    done
 	${Q}( cd ${BUILD_JAR_DIR} && ${ZIP} -r ${TOP}/${JAR} ${JAR_FILES} )
 	@echo "SUCCESS: $@"
+
+#### doc
+
+${DOC_FILES}: %.html: %.txt Makefile
+	@echo "DOC $@"
+	${Q}${ASCIIDOC} --unsafe -a linkcss -o $@ $<
+

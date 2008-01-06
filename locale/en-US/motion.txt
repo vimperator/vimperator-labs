@@ -12,27 +12,29 @@ VIMperator :)*
 This is the optional preamble (an untitled section body). Useful for
 writing simple sectionless documents consisting only of a preamble.
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-<link rel="stylesheet" href="../content/help.css" type="text/css"/>
-<span style="float: right;">
-<code class="tag">asciidoc</code>
-<code class="tag">foo</code>
-<code class="tag">bar</code>
-</span>
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// <link rel="stylesheet" href="../content/help.css" type="text/css"/>
+// <span style="float: right;">
+// <code class="tag">asciidoc</code>
+// <code class="tag">foo</code>
+// <code class="tag">bar</code>
+// </span>
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-tags:foo[]
+atag:abstract[] tag:beginning[]
 
-anchor:abstract[abstract]
 Abstract
 --------
 The optional abstract (one or more paragraphs) goes here.
+You can also jump to xref:section[section].
 
 This document is an AsciiDoc article skeleton containing briefly
 annotated element placeholders plus a couple of example index entries
 and footnotes. The preface, appendix, bibliography, glossary and index
 section titles are significant ('specialsections').
 
+
+atag:section[]
 
 The First Section
 -----------------

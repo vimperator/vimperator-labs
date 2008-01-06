@@ -84,6 +84,7 @@ td.taglist code {
 code.tag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
+    padding-left: 5px;
 }
 tr.description {
     margin-bottom: 4px;
