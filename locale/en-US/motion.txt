@@ -12,15 +12,6 @@ VIMperator :)*
 This is the optional preamble (an untitled section body). Useful for
 writing simple sectionless documents consisting only of a preamble.
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// <link rel="stylesheet" href="../content/help.css" type="text/css"/>
-// <span style="float: right;">
-// <code class="tag">asciidoc</code>
-// <code class="tag">foo</code>
-// <code class="tag">bar</code>
-// </span>
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 atag:abstract[] tag:beginning[]
 anchor:foo[]
 
@@ -85,6 +76,8 @@ This is the maximum sub-section depth supported by the distributed
 AsciiDoc configuration.
 footnote:[A second example footnote.]
 
+
+atag:second[] atag:another[] atag:really[] atag:g<Ctrl-g>[]
 
 The Second Section
 ------------------

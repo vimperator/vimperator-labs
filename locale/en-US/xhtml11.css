@@ -266,3 +266,11 @@ div.table p.title
 @media print {
   div.navheader, div.navfooter { display: none; }
 }
+
+/* my additions */
+span.tag {
+    font-weight: bold;
+    color: rgb(255, 0, 255); /* magenta */
+    padding-left: 15px !important;
+	float: right;
+}
