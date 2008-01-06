@@ -202,9 +202,8 @@ vimperator.Events = function () //{{{
     }, false);
     tabcontainer.addEventListener("TabSelect", function (event)
     {
-        if (vimperator.mode == vimperator.modes.HINTS || vimperator.mode == vimperator.modes.CUSTOM )
-            vimperator.modes.reset();
-
+        // TODO: is all of that necessary?
+        vimperator.modes.reset();
         vimperator.commandline.clear();
         vimperator.modes.show();
         vimperator.statusline.updateTabCount();
