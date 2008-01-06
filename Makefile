@@ -188,7 +188,7 @@ ${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
 
 #### doc
 
-${DOC_FILES}: %.html: %.txt Makefile
+${DOC_FILES}: %.html: %.txt Makefile locale/en-US/asciidoc.conf
 	@echo "DOC $@"
 	${Q}${ASCIIDOC} --unsafe -a linkcss -o $@ $<
 

@@ -22,6 +22,7 @@ writing simple sectionless documents consisting only of a preamble.
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 atag:abstract[] tag:beginning[]
+anchor:foo[]
 
 Abstract
 --------
