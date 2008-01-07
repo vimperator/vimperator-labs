@@ -279,7 +279,7 @@ vimperator.Completion = function () //{{{
             substrings = [];
             for (var command in vimperator.commands)
                 helpArray.push([command.longNames.map(function ($_) { return ":" + $_; }), command.shortHelp]);
-            options = this.option(filter, true);
+            options = this.option(filter, false, true);
             helpArray = helpArray.concat(options.map(function ($_) {
                 return [
                         $_[0].map(function ($_) { return "'" + $_ + "'"; }),
@@ -346,7 +346,7 @@ vimperator.Completion = function () //{{{
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        option: function (filter, unfiltered)
+        option: function (filter, special, unfiltered)
         {
             substrings = [];
             var optionCompletions = [];
@@ -368,6 +368,9 @@ vimperator.Completion = function () //{{{
                 }
                 return options;
             }
+
+            if (special)
+                alert(":set! completion will complete about:config options");
 
             if (!filter)
             {
@@ -698,7 +701,7 @@ vimperator.Completion = function () //{{{
             {
                 matches = str.match(/^:*\d*\w+!?\s+/);
                 exLength = matches ? matches[0].length : 0;
-                [start, completions] = command.completer.call(this, args);
+                [start, completions] = command.completer.call(this, args, special);
             }
             return [exLength + start, completions];
         }
