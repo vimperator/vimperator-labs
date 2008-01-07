@@ -319,59 +319,64 @@ vimperator.Bookmarks = function () //{{{
                 return url; // can be null
         },
 
-        list: function (filter, tags, fullmode)
+        // if openItems is true, open the matching bookmarks items in tabs rather than display
+        list: function (filter, tags, openItems)
         {
-            if (fullmode)
+            var items = this.get(filter, tags, false);
+            if (items.length == 0)
             {
-                vimperator.open("chrome://browser/content/bookmarks/bookmarksPanel.xul", vimperator.NEW_TAB);
+                if (filter.length > 0 || tags.length > 0)
+                    vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
+                else
+                    vimperator.echoerr("No bookmarks set");
+
+                return;
             }
-            else
+
+            if (openItems)
             {
-                var items = this.get(filter, tags, false);
+                // FIXME: use yes/no question
+                if (items.length > 50)
+                    return vimperator.echoerr("For now, you can only open a hard limit of 50 items at once");
 
-                if (items.length == 0)
-                {
-                    if (filter.length > 0 || tags.length > 0)
-                        vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
-                    else
-                        vimperator.echoerr("No bookmarks set");
-
-                    return;
-                }
-
-                var title, url, tags, keyword, extra;
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
-                {
-                    title = vimperator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
-                    url = vimperator.util.escapeHTML(items[i][0]);
-                    keyword = items[i][2];
-                    tags = items[i][3].join(", ");
+                    vimperator.open(items[i][0], vimperator.NEW_TAB);
 
-                    extra = "";
-                    if (keyword)
-                    {
-                        extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
-                        if (tags)
-                            extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
-                        else
-                            extra += ")</span>";
-                    }
-                    else if (tags)
-                    {
-                        extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
-                    }
-
-
-                    list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
-                }
-                list += "</table>";
-
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                return;
             }
+
+            var title, url, tags, keyword, extra;
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+            for (var i = 0; i < items.length; i++)
+            {
+                title = vimperator.util.escapeHTML(items[i][1]);
+                if (title.length > 50)
+                    title = title.substr(0, 47) + "...";
+                url = vimperator.util.escapeHTML(items[i][0]);
+                keyword = items[i][2];
+                tags = items[i][3].join(", ");
+
+                extra = "";
+                if (keyword)
+                {
+                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
+                    if (tags)
+                        extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
+                    else
+                        extra += ")</span>";
+                }
+                else if (tags)
+                {
+                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
+                }
+
+
+                list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         }
 
     };
@@ -493,25 +498,33 @@ vimperator.History = function () //{{{
             getWebNavigation().gotoIndex(max);
         },
 
-        list: function (filter, fullmode)
+        // if openItems is true, open the matching history items in tabs rather than display
+        list: function (filter, openItems)
         {
-            if (fullmode)
+            var items = this.get(filter);
+            if (items.length == 0)
             {
-                vimperator.open("chrome://browser/content/history/history-panel.xul", vimperator.NEW_TAB);
+                if (filter.length > 0)
+                    vimperator.echoerr("E283: No history matching \"" + filter + "\"");
+                else
+                    vimperator.echoerr("No history set");
+
+                return;
+            }
+
+            if (openItems)
+            {
+                // FIXME: use yes/no question
+                if (items.length > 50)
+                    return vimperator.echoerr("For now, you can only open a hard limit of 50 items at once");
+
+                for (var i = 0; i < items.length; i++)
+                    vimperator.open(items[i][0], vimperator.NEW_TAB);
+
+                return;
             }
             else
             {
-                var items = this.get(filter);
-
-                if (items.length == 0)
-                {
-                    if (filter.length > 0)
-                        vimperator.echoerr("E283: No history matching \"" + filter + "\"");
-                    else
-                        vimperator.echoerr("No history set");
-
-                    return;
-                }
 
                 var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";

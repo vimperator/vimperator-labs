@@ -7,6 +7,8 @@
       removed the following hint options: 'hintchars' 'maxhints'
       added the following hint options: 'hinttimeout'
     * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
+    * IMPORTANT: :bmarks! and :history! open the matching items now in a tab, instead
+      of bringing up the bookmarks/history window
     * new :command to add user defined commands
     * new setCustomMode for plugin writers
     * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites

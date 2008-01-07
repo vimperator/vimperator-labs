@@ -675,10 +675,10 @@ vimperator.Commands = function () //{{{
             vimperator.bookmarks.list(res.args.join(" "), tags, special);
         },
         {
-            usage: ["bmarks [filter]", "bmarks!"],
-            shortHelp: "Show bookmarks",
+            usage: ["bmarks[!] [filter]"],
+            shortHelp: "List or open multiple bookmarks",
             help: "Open the message window at the bottom of the screen with all bookmarks which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:bmarks!</code> opens the default Firefox bookmarks window.<br/>" +
+                  "The special version <code class=\"command\">:bmarks!</code> works the same as <code class=\"command\">:bmarks</code> except it opens all the found bookmarks in new tabs.<br/>" +
                   "Filter can also contain the following options:<br/>" +
                   "-tags=comma,separated,tag,list<br/>",
             completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; },
@@ -1106,10 +1106,10 @@ vimperator.Commands = function () //{{{
     commandManager.add(new vimperator.Command(["hist[ory]", "hs"],
         function (args, special) { vimperator.history.list(args, special); },
         {
-            usage: ["hist[ory] [filter]", "history!"],
+            usage: ["hist[ory][!] [filter]"],
             shortHelp: "Show recently visited URLs",
             help: "Open the message window at the bottom of the screen with all history items which match <code class=\"argument\">[filter]</code> either in the title or URL.<br/>" +
-                  "The special version <code class=\"command\">:history!</code> opens the default Firefox history window.",
+                  "The special version <code class=\"command\">:history!</code> works the same as <code class=\"command\">:history</code> except it opens all the found items in new tabs.<br/>",
             completer: function (filter) { return [0, vimperator.history.get(filter)]; }
         }
     ));
