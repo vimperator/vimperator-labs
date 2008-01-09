@@ -844,7 +844,7 @@ vimperator.Mappings = function () //{{{
             help: "When running in X11 the location is also put into the selection, which can be pasted with the middle mouse button."
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["Y"],
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL], ["Y"],
         function ()
         {
             var sel = window.content.document.getSelection();
@@ -1676,7 +1676,13 @@ vimperator.Mappings = function () //{{{
                 vimperator.modes.set(vimperator.modes.TEXTAREA);
             }
             else
-                vimperator.beep(); // TODO: yanking is possible for caret mode
+            {
+                var sel = window.content.document.getSelection();
+                if (sel)
+                    vimperator.copyToClipboard(sel, true);
+                else
+                    vimperator.beep();
+            }
         },
         { }
     ));
