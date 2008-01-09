@@ -1070,8 +1070,11 @@ vimperator.Events = function () //{{{
             }
             else // if the key is neither a mapping nor the start of one
             {
-                if (vimperator.input.buffer != "" && !skipMap) // no map found -> refeed stuff in v.input.buffer
+                // the mode checking is necessary so that things like g<esc> do not beep
+                if (vimperator.input.buffer != "" && !skipMap && (vimperator.mode == vimperator.modes.INSERT ||
+                    vimperator.mode == vimperator.modes.COMMAND_LINE || vimperator.mode == vimperator.modes.TEXTAREA))
                 {
+                    // no map found -> refeed stuff in v.input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so
                     vimperator.events.feedkeys(vimperator.input.buffer, true);
                 }
@@ -1080,6 +1083,7 @@ vimperator.Events = function () //{{{
                     if (--inputBufferLength == 0) // inputBufferLength == 0. v.input.buffer refeeded...
                         skipMap = false; // done...
                 }
+
                 vimperator.input.buffer = "";
                 vimperator.input.pendingArgMap = null;
                 vimperator.input.pendingMotionMap = null;
