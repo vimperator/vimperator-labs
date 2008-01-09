@@ -1022,7 +1022,8 @@ vimperator.Events = function () //{{{
                 }
 
             }
-            else if (map && !skipMap)
+            // only follow a map if there isn't a longer possible mapping (allows you to do :map yy, when y is a mapping)
+            else if (map && !skipMap && vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length == 1)
             {
                 vimperator.input.count = parseInt(countStr, 10);
                 if (isNaN(vimperator.input.count))
