@@ -996,7 +996,7 @@ vimperator.Events = function () //{{{
                 map = vimperator.mappings.get(vimperator.mode, candidateCommand);
 
             var isUniqueMapping = vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).filter(
-                function(candidate) { return !candidate.noremap; }).length == 1;
+                function(candidate) { return !candidate.noremap; }).length < 2;
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
