@@ -59,7 +59,7 @@ vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
         this.shortHelp = extraInfo.shortHelp || null;
 
         this.rhs = extraInfo.rhs || null;
-        this.noremap = extraInfo.noremap || false; // XXX: needed for mkv; providing feedkeys true/false still neded?
+        this.noremap = extraInfo.noremap || false;
 
         // TODO: are these limited to HINTS mode?
         // Only set for hints maps
