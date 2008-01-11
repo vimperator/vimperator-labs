@@ -394,7 +394,7 @@ vimperator.Options = function () //{{{
                     defaultValue = loadPreference(name, null, defaultBranch);
 
                     if (defaultValue == null)
-                        defaultValue = "new preference";
+                        defaultValue = "no default";
                     else
                         defaultValue = "default: " + defaultValue;
 

@@ -391,7 +391,11 @@ vimperator.Completion = function () //{{{
                 }
 
                 for (var i = 0; i < prefArray.length; i++)
-                    optionCompletions.push([prefArray[i], vimperator.options.getFirefoxPref(prefArray[i])]);
+                    if (!filter)
+                        optionCompletions.push([prefArray[i], vimperator.options.getFirefoxPref(prefArray[i])]);
+                    else
+                        optionCompletions.push([[prefArray[i]], vimperator.options.getFirefoxPref(prefArray[i])]);
+                        
 
                 if (!filter)
                     return [0, optionCompletions];
