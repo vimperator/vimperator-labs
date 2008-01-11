@@ -713,7 +713,7 @@ vimperator.Commands = function () //{{{
                 case "cleardata": Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); break;
                 case "console": toJavaScriptConsole(); break;
                 case "customizetoolbar": BrowserCustomizeToolbar(); break;
-                case "dominspector": inspectDOMDocument(content.document); break; // XXX: orig: _content.document
+                case "dominspector": inspectDOMDocument(content.document); break;
                 case "downloads": toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); break;
                 case "history": openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); break;
                 case "import": BrowserImport(); break;
@@ -722,7 +722,6 @@ vimperator.Commands = function () //{{{
                 case "pagesource": BrowserViewSourceOfDocument(content.document); break;
                 case "places": PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); break;
                 case "preferences": openPreferences(); break;
-                // XXX what are onEnter.. and onExit...?
                 case "printpreview": PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); break;
                 case "print": PrintUtils.print(); break;
                 case "printsetup": PrintUtils.showPageSetup(); break;
