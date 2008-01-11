@@ -383,7 +383,7 @@ vimperator.Completion = function () //{{{
                         var name = prefArray[i];
                         if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
                         {
-                            var value = vimperator.options.getFirefoxPref(name);
+                            var value = vimperator.options.getFirefoxPref(name) + "";
                             return [filter.length + 1, [[value, ""]]];
                         }
                     }
