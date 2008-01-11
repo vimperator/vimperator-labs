@@ -1,16 +1,16 @@
 <pre>
-Main developer:
+Main developer/Project founder:
   * Martin Stubenschrott (stubenschrott@gmx.net)
 
 Developers:
   * Doug Kearns (dougkearns@gmail.com)
   * Marco Candrian (mac@calmar.ws)
+  * Daniel Bainton (dpb@driftaway.org)
 
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
  
 Patches (in no special order):
-  * Daniel Bainton (:viewsource, :command)
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)
   * Lee Hinman (:open ./.. support)
