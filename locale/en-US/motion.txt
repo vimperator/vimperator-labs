@@ -1,19 +1,9 @@
-// The Article Title
-// =================
-// Author's Name <authors@email.address>
-// v1.0, Dec 2003
-
 HEADER
 
-*First there was a Navigator, then there was an Explorer.
-Later it was time for a Konqueror. Now it's time for an Imperator, the
-VIMperator :)*
+This is the playground for testing asciidoc to make it finally
+usable for our help system.
 
-This is the optional preamble (an untitled section body). Useful for
-writing simple sectionless documents consisting only of a preamble.
-
-atag:abstract[] tag:beginning[]
-anchor:foo[]
+[[abstract]] |abstract|
 
 Abstract
 --------
@@ -25,8 +15,33 @@ annotated element placeholders plus a couple of example index entries
 and footnotes. The preface, appendix, bibliography, glossary and index
 section titles are significant ('specialsections').
 
+--------------------------------------
+foo bar#include <stdio.h>
 
-atag:section[]
+int main() {
+        printf("Hello World!\n");
+        exit(0);
+}
+--------------------------------------
+
+|scrollbind-relative| + 
+
+Each 'scrollbind' window keeps track of its "relative offset," which can be
+thought of as the difference between the current window's vertical scroll
+position and the other window's vertical scroll position.  When one of the
+'scrollbind' windows is asked to vertically scroll past the beginning or end
+limit of its text, the window no longer scrolls, but remembers how far past
+the limit it wishes to be.  The window keeps this information so that it can
+maintain the same relative offset, regardless of its being asked to scroll
+past its buffer's limits.
+
+|<Ctrl-f>|
+||<Ctrl-f>||
+||<PageDown>||
+2 ist ein sehr langer text den ich einfach mal weiterschreibe, bis er fertig ist
+
+
+[[section]] |test| |foo|
 
 The First Section
 -----------------
@@ -59,82 +74,11 @@ Option            Description
 -R 'GROUP'        Disables access to 'GROUP'.
 ---------------------------------------------
 
-atag:anchor[]
-
 [[X1]]
 Sub-section with Anchor
 ~~~~~~~~~~~~~~~~~~~~~~~
 Sub-section at level 2.
 
-A Nested Sub-section
-^^^^^^^^^^^^^^^^^^^^
-Sub-section at level 3.
 
-Yet another nested Sub-section
-++++++++++++++++++++++++++++++
-Sub-section at level 4.
-
-This is the maximum sub-section depth supported by the distributed
-AsciiDoc configuration.
-footnote:[A second example footnote.]
-
-
-atag:second[] atag:another[] atag:really[] atag:g<Ctrl-g>[]
-
-The Second Section
-------------------
-Article sections are at level 1 and can contain sub-sections nested up
-to four deep.
-
-An example link to anchor at start of the <<X1,first sub-section>>.
-indexterm:[Second example index entry]
-
-An example link to a bibliography entry <<taoup>>.
-
-Appendix A: Example Appendix
-----------------------------
-AsciiDoc article appendices are just just article sections with
-'specialsection' titles.
-
-Appendix Sub-section
-~~~~~~~~~~~~~~~~~~~~
-Appendix sub-section at level 2.
-
-
-
-Bibliography
-------------
-The bibliography list is an example of an AsciiDoc SimpleList, the
-AsciiDoc source list items are bulleted with a `+` character.
-
-+ [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
-  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
-+ [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
-  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
-  ISBN 1-56592-580-7.
-
-
-
-Glossary
---------
-Glossaries are optional. Glossaries entries are an example of AsciiDoc
-VariableList entries, the AsciiDoc source entry terms are terminated
-by the ":-" characters.
-
-A glossary term:-
-  The corresponding (indented) definition.
-
-A second glossary term:-
-  The corresponding (indented) definition.
-
-
-ifdef::backend-docbook[]
-Index
------
-////////////////////////////////////////////////////////////////
-The index is normally left completely empty, it's contents being
-generated automatically by the DocBook toolchain.
-////////////////////////////////////////////////////////////////
-endif::backend-docbook[]
 
 // vim: set syntax=asciidoc:

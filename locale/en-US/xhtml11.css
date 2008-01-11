@@ -14,9 +14,13 @@ body blockquote {
 }
 
 html body {
-  margin: 1em 5% 1em 5%;
+  /*margin: 1em 5% 1em 5%;*/
+  margin: auto;
+  padding-left: 25px;
+  padding-right: 25px;
   line-height: 1.2;
   font-family: -moz-fixed;
+  max-width: 800px;
 }
 
 body div {
@@ -37,7 +41,7 @@ div.list-of-figures p:first-child,
 div.list-of-tables p:first-child,
 div.example p.title
 {
-  margin-bottom: 0.2em;
+  margin-bottom: 0.1em;
 }
 
 body h1 {
@@ -47,7 +51,7 @@ body h1 {
 }
 
 body h2 {
-  margin: 0.5em 0 0 -4%;
+  /*margin: 0.5em 0 0 -4%;*/
   line-height: 1.3;
   border-bottom: 2px solid silver;
 }
@@ -271,6 +275,38 @@ div.table p.title
 span.tag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
-    padding-left: 15px !important;
-	float: right;
+    padding-left: 15px;
+    padding-top: 5px;
+    float: right;
+}
+div.key {
+    color: rgb(255, 0, 255); /* magenta */
+    min-width: 140px;
+    float: left;
+}
+span.warning {
+  font-weight: bold;
+  color: red;
+}
+fieldset.paypal {
+    border: none;
+}
+
+.argument {
+    color: #6A97D4;
+}
+
+.command {
+    font-weight: bold;
+    color: #632610;
+}
+
+.mapping {
+    font-weight: bold;
+    color: #102663;
+}
+
+.option {
+    font-weight: bold;
+    color: #106326;
 }

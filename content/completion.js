@@ -300,7 +300,7 @@ vimperator.Completion = function () //{{{
         Help: function (filter)
         {
             var res = [];
-            var files = ["introduction.xhtml", "options.xhtml", "motion.html"];
+            var files = ["intro.html", "options.xhtml", "motion.html"];
             for (var file in files)
             {
                 try
