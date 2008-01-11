@@ -121,9 +121,10 @@ vimperator.Options = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var firefoxPrefs = Components.classes["@mozilla.org/preferences-service;1"]
+    var firefoxBranch = Components.classes["@mozilla.org/preferences-service;1"]
         .getService(Components.interfaces.nsIPrefBranch);
-    var vimperatorPrefs = firefoxPrefs.getBranch("extensions.vimperator.");
+    var defaultBranch = firefoxBranch.getDefaultBranch("");
+    var vimperatorBranch = firefoxBranch.getBranch("extensions.vimperator.");
     var options = [];
 
     // save if we already changed a GUI related option, used for setInitialGUI
@@ -137,67 +138,67 @@ vimperator.Options = function () //{{{
         throw StopIteration;
     }
 
-    function storePreference(name, value, vimperatorBranch)
+    function storePreference(name, value, branch)
     {
-        var branch;
+        if (!branch)
+            branch = firefoxBranch;
 
-        if (vimperatorBranch)
-            branch = vimperatorPrefs;
-        else
-            branch = firefoxPrefs;
+        var type = branch.getPrefType(name);
 
         switch (typeof value)
         {
             case "string":
-                branch.setCharPref(name, value);
+                if (type == branch.PREF_INVALID || type == branch.PREF_STRING)
+                    branch.setCharPref(name, value);
+                else if (type == branch.PREF_INT)
+                    vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
+                else
+                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
-                branch.setIntPref(name, value);
+                if (type == branch.PREF_INVALID || type == branch.PREF_INT)
+                    branch.setIntPref(name, value);
+                else
+                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
-                branch.setBoolPref(name, value);
+                if (type == branch.PREF_INVALID || type == branch.PREF_BOOL)
+                    branch.setBoolPref(name, value);
+                else if (type == branch.PREF_INT)
+                    vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
+                else
+                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             default:
                 vimperator.echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
         }
     }
 
-    function loadPreference(name, forcedDefault, vimperatorBranch)
+    function loadPreference(name, forcedDefault, branch)
     {
         var defaultValue = null;
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like comp_history)
             defaultValue = forcedDefault;
 
-        if (vimperatorBranch)
-        {
-            branch = vimperatorPrefs;
+        if (!branch)
+            branch = firefoxBranch;
 
-            if (!forcedDefault)  // this argument sets defaults for non-user settable options (like comp_history)
-            {
-                for (var i = 0; i < options.length; i++)
-                {
-                    if (options[i].name == name) // only first name is searched
-                    {
-                        defaultValue = options[i].defaultValue;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            branch = firefoxPrefs;
-        }
+        var type = branch.getPrefType(name);
 
         try
         {
-            switch (typeof defaultValue)
+            switch (type)
             {
-                case "string":
-                    return branch.getCharPref(name);
-                case "number":
+                case branch.PREF_STRING:
+                    var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+                    // Try in case it's a localized string (will throw an exception if not)
+                    if (!branch.prefIsLocked(name) && !branch.prefHasUserValue(name) &&
+                      /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
+                        value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
+                    return value;
+                case branch.PREF_INT:
                     return branch.getIntPref(name);
-                case "boolean":
+                case branch.PREF_BOOL:
                     return branch.getBoolPref(name);
                 default:
                     return defaultValue;
@@ -369,6 +370,46 @@ vimperator.Options = function () //{{{
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         },
 
+        listFirefoxPrefs: function (onlyNondefault, filter)
+        {
+            if (!filter)
+                filter = "";
+            var prefArray = firefoxBranch.getChildList("", {value: 0});
+            prefArray.sort();
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Firefox Options ---</th></tr>";
+            var name, value;
+
+            for (var i = 0; i < prefArray.length; i++)
+            {
+                var userValue = firefoxBranch.prefHasUserValue(prefArray[i]);
+                if ((!onlyNondefault || userValue) && prefArray[i].indexOf(filter) >= 0)
+                {
+                    name = prefArray[i];
+                    value = this.getFirefoxPref(name);
+                    if (typeof value == "string")
+                        value = value.substr(0,100).replace(/\n/g, " ");
+
+                    value = vimperator.util.colorize(value, false);
+                    defaultValue = loadPreference(name, null, defaultBranch);
+
+                    if (defaultValue == null)
+                        defaultValue = "new preference";
+                    else
+                        defaultValue = "default: " + defaultValue;
+
+                    if (userValue)
+                    {
+                        list += "<tr><td>  <span style=\"font-weight: bold\">" + name + "</span>=" + value + "<span style=\"color: gray\">  (" + defaultValue + ")</span></td></tr>";
+                    }
+                    else
+                        list += "<tr><td>  " + name + "=" + value + "</td></tr>";
+                }
+            }
+            list += "</table>";
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        },
+
         // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
         setInitialGUI: function ()
         {
@@ -384,12 +425,12 @@ vimperator.Options = function () //{{{
         // be better placed in the 'core' vimperator namespace somewhere?
         setPref: function (name, value)
         {
-            return storePreference(name, value, true);
+            return storePreference(name, value, vimperatorBranch);
         },
 
         getPref: function (name, forcedDefault)
         {
-            return loadPreference(name, forcedDefault, true);
+            return loadPreference(name, forcedDefault, vimperatorBranch);
         },
 
         setFirefoxPref: function (name, value)
@@ -400,6 +441,18 @@ vimperator.Options = function () //{{{
         getFirefoxPref: function (name, forcedDefault)
         {
             return loadPreference(name, forcedDefault);
+        },
+
+        resetFirefoxPref: function (name)
+        {
+            return firefoxBranch.clearUserPref(name);
+        },
+        invertFirefoxBoolean: function (name)
+        {
+            if (firefoxBranch.getPrefType(name) == firefoxBranch.PREF_BOOL)
+                this.setFirefoxPref(name, !this.getFirefoxPref(name));
+            else
+                vimperator.echoerr("E488: Trailing characters: " + name + "!");
         }
 
     };

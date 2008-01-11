@@ -1909,7 +1909,56 @@ vimperator.Commands = function () //{{{
         {
             if (special)
             {
-                vimperator.echo("This WILL show all non-default about:config options");
+                var onlyNondefault = false;
+                if (!args)
+                {
+                    args = "all";
+                    onlyNondefault = true;
+                }
+                //                                1                    2       3  4       5
+                var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
+                var name = matches[1];
+                var reset = false;
+                var invertBoolean = false;
+
+                if (matches[2] == "&")
+                    reset = true;
+                else if (matches[2] == "!")
+                    invertBoolean = true;
+
+                if (name == "all" && reset)
+                    vimperator.echoerr("You can't reset all the firefox options, it could make your browser unusable.");
+                else if (name == "all")
+                    vimperator.options.listFirefoxPrefs(onlyNondefault, "");
+                else if (reset)
+                    vimperator.options.resetFirefoxPref(name);
+                else if (invertBoolean)
+                    vimperator.options.invertFirefoxBoolean(name);
+                else if (matches[3])
+                {
+                    var value = matches[5];
+                    switch (value)
+                    {
+                        case undefined:
+                            value = "";
+                            break;
+                        case "true":
+                            value = true;
+                            break;
+                        case "false":
+                            value = false;
+                            break;
+                        default:
+                            var valueInt = parseInt(value, 10);
+                            if (!isNaN(valueInt))
+                                value = valueInt;
+                    }
+                    vimperator.options.setFirefoxPref(name, value);
+                }
+                else
+                {
+                    vimperator.options.listFirefoxPrefs(onlyNondefault, name);
+                }
                 return;
             }
 

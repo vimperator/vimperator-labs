@@ -370,7 +370,34 @@ vimperator.Completion = function () //{{{
             }
 
             if (special)
-                alert(":set! completion will complete about:config options");
+            {
+                var firefoxBranch = Components.classes["@mozilla.org/preferences-service;1"]
+                    .getService(Components.interfaces.nsIPrefBranch);
+                var prefArray = firefoxBranch.getChildList("", {value: 0});
+                prefArray.sort();
+
+                if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
+                {
+                    for (var i = 0; i < prefArray.length; i++)
+                    {
+                        var name = prefArray[i];
+                        if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
+                        {
+                            var value = vimperator.options.getFirefoxPref(name);
+                            return [filter.length + 1, [[value, ""]]];
+                        }
+                    }
+                    return [0, []];
+                }
+
+                for (var i = 0; i < prefArray.length; i++)
+                    optionCompletions.push([prefArray[i], vimperator.options.getFirefoxPref(prefArray[i])]);
+
+                if (!filter)
+                    return [0, optionCompletions];
+
+                return [0, buildLongestCommonSubstring(optionCompletions, filter)];
+            }
 
             if (!filter)
             {
