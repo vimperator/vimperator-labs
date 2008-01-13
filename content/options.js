@@ -447,7 +447,9 @@ vimperator.Options = function () //{{{
         {
             return firefoxBranch.clearUserPref(name);
         },
-        invertFirefoxBoolean: function (name)
+
+        // this works only for booleans
+        invertFirefoxPref: function (name)
         {
             if (firefoxBranch.getPrefType(name) == firefoxBranch.PREF_BOOL)
                 this.setFirefoxPref(name, !this.getFirefoxPref(name));

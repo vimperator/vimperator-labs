@@ -1932,7 +1932,7 @@ vimperator.Commands = function () //{{{
                 else if (reset)
                     vimperator.options.resetFirefoxPref(name);
                 else if (invertBoolean)
-                    vimperator.options.invertFirefoxBoolean(name);
+                    vimperator.options.invertFirefoxPref(name);
                 else if (matches[3])
                 {
                     var value = matches[5];
