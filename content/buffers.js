@@ -660,7 +660,11 @@ vimperator.Buffer = function () //{{{
         // is null, the last used string is used again
         switchTo: function (buffer, allowNonUnique, count, reverse)
         {
-            if (buffer != null)
+            if (buffer == "")
+            {
+                return;
+            }
+            else if (buffer != null)
             {
                 // store this command, so it can be repeated with "B"
                 lastBufferSwitchArgs = buffer;
