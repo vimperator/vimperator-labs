@@ -701,6 +701,26 @@ vimperator.Commands = function () //{{{
     commandManager.add(new vimperator.Command(["dia[log]"],
         function (args, special)
         {
+            function viewPartialSource() 
+            {
+                // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
+                var focusedWindow = document.commandDispatcher.focusedWindow;
+                if (focusedWindow == window)
+                focusedWindow = content;
+
+                var docCharset = null;
+                if (focusedWindow)
+                docCharset = "charset=" + focusedWindow.document.characterSet;
+
+                var reference = null;
+                reference = focusedWindow.getSelection();
+
+                var docUrl = null;
+                window.openDialog("chrome://global/content/viewPartialSource.xul",
+                        "_blank", "scrollbars,resizable,chrome,dialog=no",
+                        docUrl, docCharset, reference, "selection");
+            }
+
             try
             {
                 switch (args)
@@ -728,7 +748,7 @@ vimperator.Commands = function () //{{{
                 case "saveframe": saveFrameDocument(); break;
                 case "savepage": saveDocument(window.content.document); break;
                 case "searchengines": openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); break;
-                // TODO add viewPartialSource('selection'); ...
+                case "selectionsource": viewPartialSource(); break;
                 case "": vimperator.echoerr("E474: Invalid argument"); break;
                 default: vimperator.echoerr("Dialog '" + args + "' not available");
                 }

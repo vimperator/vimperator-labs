@@ -171,7 +171,8 @@ vimperator.Completion = function () //{{{
                 ["print",            "Show print dialog"],
                 ["saveframe",        "Save frame to disk"],
                 ["savepage",         "Save page to disk"],
-                ["searchengines",    "Manage installed search engines"]
+                ["searchengines",    "Manage installed search engines"],
+                ["selectionsource",  "View selection source"]
             ];
 
             if (!filter)
