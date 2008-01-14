@@ -1436,7 +1436,7 @@ vimperator.Commands = function () //{{{
                   "list/remove autocommands matching {pat}<br/>" +  
                   "<code class='command'>:autocmd[!]</code><br />" +
                   "list/remove all autocommands",
-            completer: function (filter) { return vimperator.completion.autocommands(filter); } //TODO: improve
+            completer: function (filter) { return vimperator.completion.autocommands(filter); }
         }
     ));
     // 0 args -> list all maps
@@ -1616,7 +1616,6 @@ vimperator.Commands = function () //{{{
             var line = "\" " + vimperator.version + "\n";
             line += "\" Mappings\n";
 
-            // TODO: write user maps for all modes when we have mode dependant map support
             var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"],
                          [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
             for (var y = 0; y < mode.length; y++)

@@ -215,6 +215,7 @@ vimperator.Mappings = function () //{{{
 
         add: function (map)
         {
+            // a map can have multiple names (see default-map sections, there are many multiples)
             for (var i = 0; i < map.names.length; i++)
             {
                 // only store keysyms with uppercase modifier strings
@@ -223,6 +224,7 @@ vimperator.Mappings = function () //{{{
                     removeMap(map.modes[j], map.names[i]);
             }
 
+            // all maps got removed (matching names = lhs), and added newly here
             for (var k = 0; k < map.modes.length; k++)
                 user[map.modes[k]].push(map);
         },
@@ -274,7 +276,9 @@ vimperator.Mappings = function () //{{{
         list: function (modes, filter)
         {
 
-            var maps = user[modes[0]]; // duplicate (reference)
+            // modes means, a map must exist in both modes in order to get listed
+
+            var maps = user[modes[0]]; // duplicate (reference) (first mode where it must match)
             var output = [];
 
             if (!maps || maps.length == 0)
@@ -286,15 +290,15 @@ vimperator.Mappings = function () //{{{
             for (var i = 0; i < maps.length; i++) // check on maps items (first mode)
             {
                 output.push(true);
-                if (filter && maps[i].names[0] != filter) // XXX: may compare <C-... stuff lowercase?
+                if (filter && maps[i].names[0] != filter) // does it match the filter first of all?
                 {
                     output[output.length - 1] = false;
                     continue;
                 }
-                for (var index = 1; index < modes.length; index++) // modes
+                for (var index = 1; index < modes.length; index++) // check if found in the other modes (1(2nd)-last)
                 {
                     output[output.length - 1] = false; // toggle false, only true whan also found in this mode
-                    for (var z = 0; z < user[modes[index]].length; z++) // maps
+                    for (var z = 0; z < user[modes[index]].length; z++) // maps on the other modes
                     {
                         // XXX: on user maps, names.length is always 1? (per mode, and names = user-keybinding or so)
                         if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
