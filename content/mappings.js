@@ -161,7 +161,8 @@ vimperator.Mappings = function () //{{{
                 output = false; // toggle false, only true whan also found in this mode
                 for (var z = 0; z < user[modes[index]].length; z++) // maps
                 {
-                    // FIXME: when other than user maps, there might be more than one names[]? Not used so far it seems...
+                    // NOTE: when other than user maps, there might be more than only one names[x].
+                    //       since only user mappings gets queried here, only names[0] gets checked for equality.
                     if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
                     {
                         output = true;
@@ -277,7 +278,6 @@ vimperator.Mappings = function () //{{{
         {
 
             // modes means, a map must exist in both modes in order to get listed
-
             var maps = user[modes[0]]; // duplicate (reference) (first mode where it must match)
             var output = [];
 
@@ -300,7 +300,8 @@ vimperator.Mappings = function () //{{{
                     output[output.length - 1] = false; // toggle false, only true whan also found in this mode
                     for (var z = 0; z < user[modes[index]].length; z++) // maps on the other modes
                     {
-                        // XXX: on user maps, names.length is always 1? (per mode, and names = user-keybinding or so)
+                        // NOTE: when other than user maps, there might be more than only one names[x].
+                        //       since only user mappings gets queried here, only names[0] gets checked for equality.
                         if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
                         {
                             output[output.length - 1] = true;

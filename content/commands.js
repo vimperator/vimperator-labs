@@ -1620,7 +1620,7 @@ vimperator.Commands = function () //{{{
                          [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
             for (var y = 0; y < mode.length; y++)
             {
-                // names.length is about always 1 on user maps. if not, iterate here and 'fix' getUserIterator...
+                // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
                 for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
                         line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
             }
