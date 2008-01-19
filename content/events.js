@@ -857,7 +857,7 @@ vimperator.Events = function () //{{{
                 {
                     vimperator.modes.isRecording = false;
                     vimperator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 8);
-                    event.preventDefault(); // XXX: or howto stop that key being processed?
+                    event.preventDefault();
                     event.stopPropagation();
                     return true;
                 }
