@@ -541,13 +541,18 @@ vimperator.Events = function () //{{{
 
         getMacros: function (filter)
         {
-            var mfiltered = {};
+            if (!filter)
+                return macros;
+
+            var filtered = {};
+            var re = new RegExp(filter);
+
             for (var item in macros)
             {
-                if (filter == null || item.indexOf(filter) != -1)
-                    mfiltered[item] = macros[item];
+                if (item.match(re))
+                    filtered[item] = macros[item];
             }
-            return mfiltered; //XXX: returns a real copy, since this is only a 'var ..'?
+            return filtered; //XXX: returns a real copy, since this is only a 'var ..'?
         },
 
         // This method pushes keys into the event queue from vimperator

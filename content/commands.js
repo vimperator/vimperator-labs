@@ -1453,7 +1453,9 @@ vimperator.Commands = function () //{{{
             vimperator.echo(str, vimperator.commandline.FORCE_MULTILINE);
         },
         {
-            shortHelp: "List macros matching the argument; or all macros if no argument is given."
+            usage: ["mac[ros] [regex]"],
+            shortHelp: "List macros matching a regex",
+            help: "List recorded macros matching the optional regular expression. If no regex is given, list all."
         }
     ));
 
