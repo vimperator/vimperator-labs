@@ -1445,7 +1445,7 @@ vimperator.Commands = function () //{{{
             var str = "<table>";
             var macroRef = vimperator.events.getMacros(arg);
             for (var item in macroRef)
-               str += "<tr><td>\"" + item + " &nbsp; </td><td>" + 
+               str += "<tr><td> " + item + " &nbsp; </td><td>" + 
                       vimperator.util.escapeHTML(macroRef[item]) + "</td></tr>";
 
             str += "</table>";
