@@ -374,6 +374,8 @@ const vimperator = (function () //{{{
         // quit vimperator, no matter how many tabs/windows are open
         quit: function (saveSession)
         {
+            vimperator.autocommands.trigger("BrowserExit", "");
+
             if (saveSession)
                 vimperator.options.setFirefoxPref("browser.startup.page", 3); // start with saved session
             else
@@ -384,6 +386,8 @@ const vimperator = (function () //{{{
 
         restart: function ()
         {
+            vimperator.autocommands.trigger("BrowserRestart", "");
+
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
             // notify all windows that an application quit has been requested.

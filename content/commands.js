@@ -1439,6 +1439,24 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.autocommands(filter); }
         }
     ));
+    commandManager.add(new vimperator.Command(["mac[ros]"],
+        function (arg)
+        {
+            var str = "<table>";
+            var macroRef = vimperator.events.getMacros(arg);
+            for (var item in macroRef)
+               str += "<tr><td>\"" + item + " &nbsp; </td><td>" + 
+                      vimperator.util.escapeHTML(macroRef[item]) + "</td></tr>";
+
+            str += "</table>";
+
+            vimperator.echo(str, vimperator.commandline.FORCE_MULTILINE);
+        },
+        {
+            shortHelp: "List macros matching the argument; or all macros if no argument is given."
+        }
+    ));
+
     // 0 args -> list all maps
     // 1 arg  -> list the maps starting with args
     // 2 args -> map arg1 to arg*

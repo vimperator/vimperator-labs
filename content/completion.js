@@ -133,6 +133,8 @@ vimperator.Completion = function () //{{{
         {
             substrings = [];
             var nodes = [
+                ["BrowserExit",    "when firefox exits"],
+                ["BrowserRestart",  "when firefox restarts"],
                 ["PageLoad",       "when a page gets (re)loaded/opened"]
             ];
 

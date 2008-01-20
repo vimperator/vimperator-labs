@@ -539,6 +539,17 @@ vimperator.Events = function () //{{{
                 vimperator.echoerr("Register " + lastMacro + " not set");
         },
 
+        getMacros: function (filter)
+        {
+            var mfiltered = {};
+            for (var item in macros)
+            {
+                if (filter == null || item.indexOf(filter) != -1)
+                    mfiltered[item] = macros[item];
+            }
+            return mfiltered; //XXX: returns a real copy, since this is only a 'var ..'?
+        },
+
         // This method pushes keys into the event queue from vimperator
         // it is similar to vim's feedkeys() method, but cannot cope with
         // 2 partially feeded strings, you have to feed one parsable string
