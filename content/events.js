@@ -444,8 +444,9 @@ vimperator.Events = function () //{{{
             for (var i = 0; i < files.length; i++)
             {
                 var file = files[i];
-                if (!file.exists() || file.isDirectory() || !file.isReadable())
-                continue;
+                if (!file.exists() || file.isDirectory() ||
+                    !file.isReadable() || !/^[\w_-]+(\.vimp)?$/i.test(file.leafName))
+                        continue;
 
                 var name = file.leafName.replace(/\.vimp$/i, "");
                 macros[name] = vimperator.io.readFile(file).split(/\n/)[0];
@@ -1163,7 +1164,6 @@ vimperator.Events = function () //{{{
                     // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
-                        dump("start\n");
                         vimperator.buffer.loaded = 0;
                         vimperator.statusline.updateProgress(0);
                         setTimeout (function () { vimperator.modes.reset(false); },
@@ -1171,7 +1171,6 @@ vimperator.Events = function () //{{{
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                     {
-                        dump("stop\n");
                         vimperator.buffer.loaded = (status == 0 ? 1 : 2);
                         vimperator.statusline.updateUrl();
                     }
