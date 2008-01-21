@@ -50,23 +50,27 @@ section:Help{nbsp}topics[overview]
 
 section:Features[features]
 
-* Vim-like keybindings (h,j,k,l,gg,G,0,$,ZZ,<C-f>,etc.)
-* Ex-commands (:quit, :open www.foo.com, ...)
-* Tab completion available for all commands with support for 'longest' matching when set in [o]wildmode[o]
+* Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m],
+  [m]gg[m], [m]G[m], [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
+* Ex-commands ([c]:quit[c], [c]:open www.foo.com[c], ...)
+* Tab completion available for all commands with support for 'longest' matching when set in 'wildmode'
 * Hit-a-hint like navigation of links (start with [m]f[m] to follow a link)
 * Advanced completion of bookmark and history URLs (searching also in title, not only URL)
 * Vim-like statusline with a wget-like progress bar
-* Minimal GUI (easily hide useless menubar and toolbar with :set guioptions=)
-* Ability to :source javascript files, and to use a ~/.vimperatorrc file with syntax highlighting if you install scripts/vimperator.vim
-* Easy quick searches (:open foo will search foo in google, :open ebay terminator will search for terminator on ebay) with support for Firefox keyword bookmarks and search engines
-* Count supported for many commands (3<C-o> will go back 3 pages)
+* Minimal GUI (easily hide useless menubar and toolbar with [c]:set guioptions=[c])
+* Ability to [c]:source[c] javascript files, and to use a [a]~/.vimperatorrc[a] file
+  with syntax highlighting if you install scripts/vimperator.vim
+* Easy quick searches ([c]:open foo[c] will search foo in google,
+  [c]:open ebay terminator[c] will search for terminator on ebay)
+  with support for Firefox keyword bookmarks and search engines
+* Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
-* Marks support (ma to set mark 'a' on a webpage, 'a to go there)
-* QuickMarks support (quickly go to previously marked web pages with go\{a-zA-Z0-9\})
-* :map support (and feedkeys() for script writers)
-* :time support for profiling
-* Move the text cursor and select text with vim keys and a visual mode. (for now only for the browser, no text fields)
-* A comprehensive help file, explaining all commands, mappings and settings.
+* Marks support ([m]ma[m] to set mark a on a webpage, [m]'a[m] to go there)
+* QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
+* [c]:map[c] support (and feedkeys() for script writers)
+* [c]:time[c] support for profiling
+* Move the text cursor and select text with vim keys and a visual mode
+* A comprehensive help file, explaining all commands, mappings and options.
 
 section:Contact[contact]
 
