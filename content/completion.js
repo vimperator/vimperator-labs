@@ -186,7 +186,21 @@ vimperator.Completion = function () //{{{
 
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
+        macros: function (filter)
+        {
+            var macros = [];
+            var tmp = vimperator.events.getMacros();
+            for (var item in tmp)
+                macros.push([item, tmp[item]]);
 
+            if (!filter)
+                return [0, macros];
+
+            var mapped = macros.map(function (macro) {
+                return [[macro[0]], macro[1]];
+            });
+            return [0, buildLongestCommonSubstring(mapped, filter)];
+        },
         // filter a list of urls
         //
         // may consist of search engines, filenames, bookmarks and history,

@@ -509,7 +509,7 @@ vimperator.Events = function () //{{{
 
         playMacro: function (macro)
         {
-            if (!/[a-zA-Z0-9@]/.test(macro))
+            if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
                 vimperator.echoerr("Register must be [a-z0-9]");
                 return false;
@@ -524,7 +524,10 @@ vimperator.Events = function () //{{{
             }
             else
             {
-                lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
+                if (macro.length == 1)
+                    lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
+                else
+                    lastMacro = macro; // e.g. long names are case sensitive
             }
 
             if (macros[lastMacro])
@@ -532,7 +535,7 @@ vimperator.Events = function () //{{{
                 vimperator.modes.isReplaying = true;
                 BrowserStop(); // make sure the page is stopped before starting to play the macro
                 vimperator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                vimperator.events.feedkeys(macros[lastMacro], true);  // true -> noremap
+                vimperator.events.feedkeys(macros[lastMacro], true); // true -> noremap
                 vimperator.modes.isReplaying = false;
             }
             else

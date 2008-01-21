@@ -1439,7 +1439,7 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.autocommands(filter); }
         }
     ));
-    commandManager.add(new vimperator.Command(["mac[ros]"],
+    commandManager.add(new vimperator.Command(["macros"],
         function (arg)
         {
             var str = "<table>";
@@ -1470,6 +1470,21 @@ vimperator.Commands = function () //{{{
             usage: ["delmac[ros] [regex]"],
             shortHelp: "Delete macros matching a regex",
             help: "Delete recorded macros matching a regular expression."
+        }
+    ));
+    commandManager.add(new vimperator.Command(["mac[ro]"],
+        function (arg)
+        {
+            if (!arg)
+                vimperator.echoerr("E474: Invalid argument");
+            else
+                vimperator.events.playMacro(arg);
+        },
+        {
+            usage: ["delmac[ros] [regex]"],
+            shortHelp: "Delete macros matching a regex",
+            help: "Delete recorded macros matching a regular expression.",
+            completer: function (filter) { return vimperator.completion.macros(filter); }
         }
     ));
     // 0 args -> list all maps
