@@ -454,4 +454,6 @@ Currently only one word is allowed:
 sort   Always sorts completion list, overriding the 'complete' option.
 -----------------------------------------
 
+____
+
 // vim: set syntax=asciidoc:
