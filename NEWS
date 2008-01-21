@@ -9,7 +9,7 @@
     * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
     * IMPORTANT: :bmarks! and :history! open the matching items now in a tab, instead
       of bringing up the bookmarks/history window
-    * :macro for playing a recorded macro
+    * :play for playing a recorded macro
     * :[del]macros [regex] for listing/deleting recorded macros
     * :set! now lets you change about:config prefs similar to :set
     * new :command to add user defined commands

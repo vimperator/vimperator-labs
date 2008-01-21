@@ -1464,7 +1464,7 @@ vimperator.Commands = function () //{{{
             if (!arg)
                 vimperator.echoerr("E474: Invalid argument");
             else
-                vimperator.events.delMacros(arg);
+                vimperator.events.deleteMacros(arg);
         },
         {
             usage: ["delmac[ros] [regex]"],
@@ -1472,7 +1472,7 @@ vimperator.Commands = function () //{{{
             help: "Delete recorded macros matching a regular expression."
         }
     ));
-    commandManager.add(new vimperator.Command(["mac[ro]"],
+    commandManager.add(new vimperator.Command(["pl[ay]"],
         function (arg)
         {
             if (!arg)
@@ -1481,9 +1481,8 @@ vimperator.Commands = function () //{{{
                 vimperator.events.playMacro(arg);
         },
         {
-            usage: ["delmac[ros] [regex]"],
-            shortHelp: "Delete macros matching a regex",
-            help: "Delete recorded macros matching a regular expression.",
+            usage: ["pl[ay] <macro>"],
+            shortHelp: "Play a macro",
             completer: function (filter) { return vimperator.completion.macros(filter); }
         }
     ));

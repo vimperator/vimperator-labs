@@ -552,19 +552,19 @@ vimperator.Events = function () //{{{
 
             for (var item in macros)
             {
-                if (item.match(re))
+                if (re.test(item))
                     filtered[item] = macros[item];
             }
             return filtered; //XXX: returns a real copy, since this is only a 'var ..'?
         },
 
-        delMacros: function (filter)
+        deleteMacros: function (filter)
         {
             var re = new RegExp(filter);
 
             for (var item in macros)
             {
-                if (item.match(re))
+                if (re.test(item))
                     delete macros[item];
             }
         },
