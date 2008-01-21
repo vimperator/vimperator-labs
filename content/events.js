@@ -485,7 +485,6 @@ vimperator.Events = function () //{{{
             window.removeEventListener("keydown", this.onKeyDown, true);
         },
 
-
         startRecording: function (macro)
         {
             if (!/[a-zA-Z0-9]/.test(macro))
@@ -554,6 +553,17 @@ vimperator.Events = function () //{{{
                     filtered[item] = macros[item];
             }
             return filtered; //XXX: returns a real copy, since this is only a 'var ..'?
+        },
+
+        delMacros: function (filter)
+        {
+            var re = new RegExp(filter);
+
+            for (var item in macros)
+            {
+                if (item.match(re))
+                    delete macros[item];
+            }
         },
 
         // This method pushes keys into the event queue from vimperator

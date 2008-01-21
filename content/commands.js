@@ -1458,7 +1458,20 @@ vimperator.Commands = function () //{{{
             help: "List recorded macros matching the optional regular expression. If no regex is given, list all."
         }
     ));
-
+    commandManager.add(new vimperator.Command(["delmac[ros]"],
+        function (arg)
+        {
+            if (!arg)
+                vimperator.echoerr("E474: Invalid argument");
+            else
+                vimperator.events.delMacros(arg);
+        },
+        {
+            usage: ["delmac[ros] [regex]"],
+            shortHelp: "Delete macros matching a regex",
+            help: "Delete recorded macros matching a regular expression."
+        }
+    ));
     // 0 args -> list all maps
     // 1 arg  -> list the maps starting with args
     // 2 args -> map arg1 to arg*
