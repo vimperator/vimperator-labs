@@ -8,4 +8,40 @@ ____
 Redraws the screen. Useful to update the screen halfway executing a script or function.
 ____
 
+|:norm| |:normal|
+||:norm[al][!] {commands}|| +
+________________________________________________________________________________
+Execute Normal mode commands {commands}. This makes
+it possible to execute Normal mode commands typed on
+the command-line. {commands} is executed like it is
+typed. If the [!] is given, mappings will not be used.
+{commands} should be a complete command.
+{commands} cannot start with a space.  Put a 1 (one)
+before it, 1 space is one space.
+________________________________________________________________________________
+
+
+section:Online{nbsp}Help[online-help]
+
+|<F1>| |:help| |:h| |help|
+||:h[elp] {subject}|| +
+||<F1>||
+________________________________________________________________________________
+Open help window. 
+The default section is shown unless {subject} is specified.
+If you need help for a specific topic, try [c]:help overview[c].
+____________________________________________________________________________
+
+|:exu| |:exusage|
+||:exu[sage]||
+________________________________________________________________________________
+Show help on Ex commands.  Added to simulate the Nvi command.
+________________________________________________________________________________
+
+
+|:viu| |:viusage|
+||:viu[sage]||
+________________________________________________________________________________
+Show help on Normal mode commands.  Added to simulate the Nvi command.
+________________________________________________________________________________
 
