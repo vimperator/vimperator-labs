@@ -280,7 +280,7 @@ div.table p.title
 }
 
 /* my additions */
-span.tag {
+span.tag, span.hiddentag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
     padding-left: 15px;

@@ -21,6 +21,23 @@ help::help[various.html#:help].
     If you need help for a specific topic, try [c]:help overview[c].
     ____________________________________________________________________________
 
+is displayed as:
+
+++++++++++++++++++++++++++++++++++++++++
+<p><span class="hiddentag">&lt;F1&gt;</span> <span
+class="hiddentag">:help</span> <span class="hiddentag">:h</span> <span
+class="hiddentag">help</span>
+
+<div class="key">:h[elp] <span class="argument">&#123;subject&#125;</span></div><br />
+<div class="key">&lt;F1&gt;</div></p>
+<div class="quoteblock">
+<div class="quoteblock-content">
+<p>Open help window.
+The default section is shown unless <span class="argument">&#123;subject&#125;</span> is specified.
+If you need help for a specific topic, try <span class="command">:help overview</span>.</p>
+</div></div>
++++++++++++++++++++++++++++++++++++++++
+
 Some notes about the code above:
 
 - *$$|<F1>|$$* defines a _tag_. A tag is written at the right in magenta and let's
@@ -34,6 +51,8 @@ Some notes about the code above:
 - The actual help code for this command is embedded in at least 4 underscores
   (_). This generates a quoteblock and indents the text so it is more clear
   that it belongs to the command.
+- Wrap things in *$$[c]$$* and they are drawn like a :command. Also *$$[o]$$*
+  and *$$[m]$$* are available to show options and mappings.
 
 There are also some additional asciidoc commands specifically for writing
 vimperator documentation:
