@@ -49,6 +49,8 @@ section:Help{nbsp}topics[overview]
 - help:Browsing[browsing.html]: Explains most mappings and commands needed for
   a browsing session.
 - help:Options[options.html]: A description of all options.
+- help:Developer{nbsp}Information[developer.html]: How to write docs or
+  plugins.
 - help:Various[various.html]: Other help which didn't fit into a category.
 
 section:Features[features]
