@@ -84,13 +84,15 @@ section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
 ||:[count]ba[ck][!] [url]|| +
+||CTRL-o||
 ________________________________________________________________________________
 Go [count] pages back in the browser history.
 The special version [c]:back![c] goes to the beginning of the browser history.
 ________________________________________________________________________________
 
 |L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
-||:[count]fo[rward] [!] [url]|| +
+||:[count]fo[rward][!] [url]|| +
+||CTRL-i||
 ________________________________________________________________________________
 Go [count] pages back in the browser history.
 The special version [c]:forward![c] goes to the end of the browser history.

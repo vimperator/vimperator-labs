@@ -51,9 +51,11 @@ body h1 {
 }
 
 body h2 {
-  margin-top: 50px;
+  /* necessary, because we put h2 into tables */
+  margin-top: 20px !important;
+  margin-bottom: 0px !important;
   line-height: 1.3;
-  border-bottom: 1px solid silver;
+  /*border-bottom: 1px solid silver;*/
 }
 
 body h3 {
@@ -286,7 +288,8 @@ span.tag {
     float: right;
 }
 span.section {
-    padding-top: 35px !important; /* NOTE: needs change when you change <h2>'s margin */
+    /*margin-top: 20px !important; /* NOTE: needs change when you change <h2>'s margin */
+	margin-bottom: 0px;
 }
 
 div.key {
@@ -321,5 +324,5 @@ fieldset.paypal {
 }
 .quoteblock {
 	margin-left: 140px;
-	margin-bottom: 20px;
+	padding-bottom: 20px;
 }

@@ -81,7 +81,27 @@ exactly as they appear in the option.  Remove flags
 one by one to avoid problems.
 ____
 
-''''
+section:Setting{nbsp}Firefox{nbsp}options[firefox-options]
+
+Most Firefox options are not touched/overriden by Vimperator. In order to set
+any of these preferences use either of the following:
+
+|:prefs| |:preferences|
+||:pref[erences]||
+________________________________________________________________________________
+Show Browser Preferences +
+You can change the browser preferences from this dialog. Be aware that not
+all Firefox preferences work, because Vimperator overrides some key
+bindings and changes Firefox's GUI.
+________________________________________________________________________________
+
+|:prefs!| |:preferences!|
+||:pref[erences]!||
+________________________________________________________________________________
+Opens about:config in the current tab where you can change advanced Firefox
+preferences.
+________________________________________________________________________________
+
 
 section:List{nbsp}of{nbsp}options[list-options]
 
@@ -214,15 +234,18 @@ ____
 
 
 |\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'|
-||'hlsearch' 'hls'|| boolean (default: off)
+||'hlsearch' 'hls'|| boolean (default off)
 ____
 Highlight previous search pattern matches
 ____
 
 
 |\'hlss'| |\'hlsearchstyle'|
-||'hlsearchstyle' 'hlss'|| string (default: color: black; background-color: yellow; padding: 0; display: inline;)
+||'hlsearchstyle' 'hlss'||
 ____
+string (default: color: black; background-color: yellow; padding: 0; display:
+inline;) +
+
 CSS specification of highlighted search items
 ____
 
@@ -235,14 +258,14 @@ ____
 
 
 |\'nois'| |\'noincsearch'| |\'is'| |\'incsearch'|
-||'incsearch' 'is'|| boolean (default: on)
+||'incsearch' 'is'|| boolean (default on)
 ____
 Show where the search pattern matches as it is typed. +
 NOTE: Incremental searching currently only works in the forward direction.
 ____
 
 |\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'|
-||'insertmode' 'im'|| boolean (default: on)
+||'insertmode' 'im'|| boolean (default on)
 ____
 Use Insert mode as the default for text areas.
 Makes Vimperator work in a way that Insert mode is the default mode for text areas.
@@ -271,7 +294,7 @@ This includes (X)HTML elements with an "href" atrribute and XLink "simple" links
 ____
 
 |\'nomore'| |\'more'|
-||'more'|| boolean (default: on)
+||'more'|| boolean (default on)
 ____
 Pause the message list window when more than one screen of listings is displayed
 ____
