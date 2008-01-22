@@ -6,10 +6,10 @@ For every new feature, writing documentation is _mandatory_ for the patch to
 be accepted. The docs are written in
 http://www.methods.co.nz/asciidoc/userguide.html[asciidoc] version 8.x or
 newer. The are placed in the _src/locale/en-US/_ directory and compiled with
-{{make doc}}. Please refer to the asciidoc documentation above for details.
+_make doc_. Please refer to the asciidoc documentation above for details.
 Usually you can just write text as is, and mostly it will be interpreted
 correctly. The only difficult part is to write special sections like for
-help::help[various.html,:help].
+help::help[various.html#:help].
 
 
     |<F1>| |:help| |:h| |help|
@@ -40,6 +40,11 @@ vimperator documentation:
 
 - *$$section:Writing{nbsp}Documentation[writing-docs,documentation]$$* Creates
   a new section like _Writing Documentation_ in this help file with 2 tags.
-- *$$help:developer{nbsp}information[developer.html,documentation]$$* creates
+- *$$help:developer{nbsp}information[developer.html#documentation]$$* creates
   a link with text _developer information_ to the tag _documentation_ in
   the file _developer.html_.
+
+If you don't know in which file/section you should put some documentation, ask
+on the mailing list or on #vimperator. Usually help should be grouped together
+in logically connected subject areas like
+help:opening{nbsp}web{nbsp}pages[browsing.html#opening].
