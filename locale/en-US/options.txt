@@ -86,14 +86,17 @@ ____
 section:List{nbsp}of{nbsp}options[list-options]
 
 |\'act'| |\'activate'|
-||'activate' 'act'|| stringlist (default: homepage,quickmark,tabopen,paste)
+||'activate' 'act'|| stringlist (default: "homepage,quickmark,tabopen,paste")
 ____
 Define when tabs are automatically activated. Available items:
 
-* *homepage*: [m]gH[m] mapping
-* *quickmark*: [m]go[m] and [m]gn[m] mappings
-* *tabopen*: [c]:tabopen[!][c] command
-* *paste*: [m]P[m] and [m]gP[m] mappings
+`-----------`--------------------------------
+*homepage*  [m]gH[m] mapping
+*quickmark* [m]go[m] and [m]gn[m] mappings
+*tabopen*   [c]:tabopen[!][c] command
+*paste*     [m]P[m] and [m]gP[m] mappings
+---------------------------------------------
+
 ____
 
 |\'cpt'| |\'complete'|
@@ -101,10 +104,12 @@ ____
 ____
 Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 
-    * *s*: Search engines and keyword URLs
-    * *f*: Local files
-    * *b*: Bookmarks
-    * *h*: History
+`---`--------------------------------
+*s* Search engines and keyword URLs
+*f* Local files
+*b* Bookmarks
+*h* History
+-------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
 and then any available quick searches.  Add "sort" to the 'wildoptions' option
@@ -166,18 +171,20 @@ ____
 |\'go'| |\'guioptions'|
 ||'guioptions' 'go'|| charlist (default: "")
 ____
-Show or hide the menu, toolbar and scrollbars. Supported characters:
+Show or hide certain GUI elements like the menu or toolbar. Supported characters:
 
-* *m*: menubar
-* *T*: toolbar
-* *b*: bookmark bar
+`---`-----------
+*m* menubar
+*T* toolbar
+*b* bookmark bar
+----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].
 ____
 
 
 |\'hto'| |\'hinttimeout'|
-||'hinttimeout' 'hto'|| number (default: 0)
+||'hinttimeout' 'hto'|| number (default 0)
 ____
 Automatically follow non unique numerical hint after 'hinttimeout'
 milliseconds. +
@@ -247,9 +254,11 @@ ____
 ____
 Determines when the last window will have a status line. Possible values:
 
-* 0: never
-* 1: only if there are multiple windows
-* 2: always
+`---`---------------------------------
+*0* never
+*1* only if there are multiple windows
+*2* always
+--------------------------------------
 
 NOTE: laststatus=1 not implemented yet.
 ____
