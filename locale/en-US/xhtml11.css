@@ -51,7 +51,7 @@ body h1 {
 }
 
 body h2 {
-  margin-top: 30px;
+  margin-top: 50px;
   line-height: 1.3;
   border-bottom: 1px solid silver;
 }
@@ -286,13 +286,13 @@ span.tag {
     float: right;
 }
 span.section {
-    padding-top: 22px !important; /* NOTE: needs change when you change <h2>'s margin */
+    padding-top: 35px !important; /* NOTE: needs change when you change <h2>'s margin */
 }
 
 div.key {
     color: rgb(255, 0, 255); /* magenta */
     min-width: 120px; /* with 20px padding actually 140px */
-	padding-bottom: 1em;
+	/*padding-bottom: 5px;*/
 	padding-right: 20px;
     float: left;
 }
@@ -321,5 +321,5 @@ fieldset.paypal {
 }
 .quoteblock {
 	margin-left: 140px;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 }

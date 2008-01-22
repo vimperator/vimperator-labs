@@ -27,7 +27,7 @@ Number option: show value. +
 String option: show value.
 ____
 
-||:se[t] no{option}|| Toggle option: Reset, switch it off.
+||:se[t] no{option} +++<br/>+++ :se[t] {option}!|| Toggle option: Reset, switch it off.
 
 // :se[t] {option}!   or
 ||:se[t] inv{option}|| Toggle option: Invert value.
@@ -81,7 +81,7 @@ exactly as they appear in the option.  Remove flags
 one by one to avoid problems.
 ____
 
-
+''''
 
 section:List{nbsp}of{nbsp}options[list-options]
 

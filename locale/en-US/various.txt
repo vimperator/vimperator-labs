@@ -1,0 +1,11 @@
+HEADER
+
+section:Various{nbsp}Commands[various]
+
+|<C-l>| |CTRL-L| |:redr| |:redraw| +
+||:redr[aw]||
+____
+Redraws the screen. Useful to update the screen halfway executing a script or function.
+____
+
+

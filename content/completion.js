@@ -313,11 +313,10 @@ vimperator.Completion = function () //{{{
             return [0, buildLongestCommonSubstring(helpArray, filter)];
         },
 
-        // TODO: add cache?
         Help: function (filter)
         {
             var res = [];
-            var files = ["intro.html", "options.html", "motion.html", "starting.html"];
+            var files = ["intro.html", "options.html", "motion.html", "starting.html", "browsing.html", "various.html"];
             for (var file in files)
             {
                 try

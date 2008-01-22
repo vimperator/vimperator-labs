@@ -1,0 +1,97 @@
+HEADER
+
+|surfing| |browsing| +
+
+Vimperator overrides nearly all Firefox keys in order to make browing more
+pleasent for vim users. In the rare occurences where you want to pass a
+keystroke to the web page or to Firefox to retain its original meaning you
+have 2 possibilities:
+
+|pass-through| |<C-q>| |CTRL-Q| +
+||CTRL-Q||
+________________________________________________________________________________
+Disable all Vimperator keys except <Esc> and pass them to the next event handler.
+This is especially useful, if JavaScript controlled forms like the RichEdit
+form fields of GMail don't work anymore. To exit this mode, press <Esc>. If
+you also need to pass <Esc> in this mode to the web page, prepend it with
+help:CTRL-V[browsing.html,CTRL-V].
+________________________________________________________________________________
+
+|send-key| |<C-v>| |CTRL-V| +
+||CTRL-V||
+________________________________________________________________________________
+If you only need to pass a single key to a JavaScript form field or another
+extension prefix the key with <C-v>.
+Also works to unshadow Firefox shortcuts like <C-o> which are otherwise hidden
+in Vimperator.  When Vimperator mode is temporarily disabled with <C-q>, <C-v>
+will pass the next key to Vimperator instead of the web page.
+________________________________________________________________________________
+
+
+section:Opening{nbsp}web{nbsp}pages[opening]
+
+|o| |:o| |:open|
+||:o[pen] [arg1], [arg2], ...|| +
+||o||
+________________________________________________________________________________
+Open one or more URLs in the current tab.
+Multiple URLs can be separated with ", ".
+Note that the space after the comma is required.
+Each token is analyzed and in this order:
+
+1. Opened as a local file if it is an existing relative or absolute filename.
+   - [c]:open /etc/fstab[c] shows the file system table.
+   - [c]:open ../other/foo.html[c] in your home directory opens
+	 [a]/home/other/foo.html[a]
+2. Opened with the specified search engine if the token looks like a search
+   string and the first word is the name of a search engine ([c]:open wikipedia
+   linus torvalds[c] opens the wikipedia entry for linus torvalds). The short
+   name of a search engine is automatically guessed from its name. If you want
+   to set a custom name, you can change it with [c]:dialog searchengines[c].
+3. Opened with the default search engine or keyword (specified with the
+   'defsearch' option) if the first word is no search engine ([c]:open linus
+   torvalds[c] opens a Google search for linux torvalds).
+4. Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
+   www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
+   background tab).
+
+You can use :open -tags linux torvalds<Tab> to complete bookmarks with tag "linux" and which contain "torvalds". Note that -tags support is only available for tab completion, not for the actual command.
+The items which are completed on <Tab> are specified in the 'complete' option.
+Without argument, reloads the current page.
+Without argument but with !, reloads the current page skipping the cache.
+________________________________________________________________________________
+
+
+|t| |:t| |:tabopen|
+||:tabopen [arg1], [arg2], ...|| +
+||t||
+________________________________________________________________________________
+Just like help::open[browsing.html,:open], but opens the resulting web page(s)
+in a new tab. When used with [a]![a], the 'tabopen' value of the 'activate' option is negated.
+________________________________________________________________________________
+
+
+
+|w| |:w| |:winopen|
+||:winopen [arg1], [arg2], ...|| +
+________________________________________________________________________________
+Just like help::open[browsing.html,:open], but opens the resulting web page(s)
+in a new window.
+________________________________________________________________________________
+
+
+section:Navigating[navigating]
+
+|H| |<C-o>| |CTRL-O| |:ba| |:back|
+||:[count]ba[ck][!] [url]|| +
+________________________________________________________________________________
+Go [count] pages back in the browser history.
+The special version [c]:back![c] goes to the beginning of the browser history.
+________________________________________________________________________________
+
+|L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
+||:[count]fo[rward] [!] [url]|| +
+________________________________________________________________________________
+Go [count] pages back in the browser history.
+The special version [c]:forward![c] goes to the end of the browser history.
+________________________________________________________________________________
