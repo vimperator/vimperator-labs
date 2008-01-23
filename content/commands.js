@@ -1116,7 +1116,7 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["H[elp]"],
-        function (args, special, count, modifiers) { vimperator.Help((args || "introduction")); },
+        function (args, special, count, modifiers) { vimperator.Help((args || "intro")); },
         {
             shortHelp: "Temporary function, will replace :help at some time",
             completer: function (filter) { return vimperator.completion.Help(filter); }
