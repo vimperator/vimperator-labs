@@ -304,6 +304,8 @@ vimperator.Help = function(section)
             var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
             if (elem)
                 window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+            else
+                dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
         }, 200);
     }
 

@@ -1129,11 +1129,14 @@ vimperator.StatusLine = function () //{{{
             if (url == "about:blank")
             {
                 var title = vimperator.buffer.title;
-
-                if (title == "Vimperator Help")
-                    url = "[Help]";
-                else if (!title)
+                if (!title)
                     url = "[No Name]";
+            }
+            else
+            {
+                var matches = url.match(/^chrome:\/\/vimperator\/locale\/(\S+)$/)
+                if (matches && matches[1])
+                    url = matches[1] + " [Help]";
             }
 
             var sh = getWebNavigation().sessionHistory;

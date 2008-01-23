@@ -1099,10 +1099,10 @@ vimperator.Commands = function () //{{{
             help: "Open a GUI dialog where you can select the printer, number of copies, orientation, etc."
         }
     ));
-    commandManager.add(new vimperator.Command(["h[elp]"],
+    commandManager.add(new vimperator.Command(["H[elp]"],
         function (args, special, count, modifiers) { vimperator.help(args, special, null, modifiers); },
         {
-            usage: ["h[elp] {subject}"],
+            usage: ["H[elp] {subject}"],
             shortHelp: "Open the help window",
             help: "You can jump to the specified <code class=\"argument\">{subject}</code> with <code class=\"command\">:help {subject}</code>.<br/>" +
                   "Make sure you use the full Vim notation when jumping to <code class=\"argument\">{subject}</code>. This means:<br/>" +
@@ -1115,10 +1115,10 @@ vimperator.Commands = function () //{{{
             completer: function (filter) { return vimperator.completion.help(filter); }
         }
     ));
-    commandManager.add(new vimperator.Command(["H[elp]"],
+    commandManager.add(new vimperator.Command(["h[elp]"],
         function (args, special, count, modifiers) { vimperator.Help((args || "intro")); },
         {
-            shortHelp: "Temporary function, will replace :help at some time",
+            shortHelp: "Not all help converted to new format, use :Help if you don't find your information.",
             completer: function (filter) { return vimperator.completion.Help(filter); }
         }
     ));

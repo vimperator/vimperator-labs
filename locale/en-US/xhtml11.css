@@ -7,6 +7,11 @@ span.strong {
   font-weight: bold;
 }
 
+a {
+	color: #4A708B;
+	text-decoration: none;
+}
+
 body blockquote {
   margin-top: .75em;
   line-height: 1.5;
@@ -288,9 +293,9 @@ span.tag, span.hiddentag {
     padding-top: -5px;
     float: right;
 }
-span.section {
-    /*margin-top: 20px !important; /* NOTE: needs change when you change <h2>'s margin */
-	margin-bottom: 0px;
+/* inside a table cell means this tag is part of a section */
+td span.tag {
+	padding-top: 25px !important;
 }
 
 div.key {
