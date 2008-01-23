@@ -97,3 +97,24 @@ ________________________________________________________________________________
 Go [count] pages back in the browser history.
 The special version [c]:forward![c] goes to the end of the browser history.
 ________________________________________________________________________________
+
+
+|gu|
+||[count]gu||
+________________________________________________________________________________
+Go to [count]th parent directory. +
+
+[m]2gu[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
+_http://www.example.com/dir1/_.
+________________________________________________________________________________
+
+
+|gU|
+||gU||
+________________________________________________________________________________
+Go to the root of the website. +
+
+[m]gU[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
+_http://www.example.com/_.
+When browsing a local directory, it goes to the root directory.
+________________________________________________________________________________

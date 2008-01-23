@@ -1,0 +1,57 @@
+HEADER
+
+|different-marks| |marks| +
+
+Vimperator supports a number of different marks:
+
+- Bookmarks which allow you to mark a web page as one of your favorites for
+  easy access.
+- QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or group of
+  websites) which you really visit most often
+- Local marks to store the position with a webpage
+- History is also a special type of marks, as Vimperator automatically
+  remembers sites which you have visited in the past.
+
+section:Bookmarks[bookmarks]
+
+Bla bla...
+
+|a| |:bma| |:bmark|
+||:bm[ark] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+||a||
+____________________________________________________________________________
+Add a bookmark. +
+
+The following options are interpreted:
+
+- -title="custom title" (short option: -t)
+- -tags=comma,separated,tag,list (short option: -T)
+- -keyword=keyword (short option: -k)
+
+If you don't add a custom title, either the title of the web page or the URL
+is taken as the title. You can omit the optional [url] argument, so just do
+:bmark to bookmark the currently loaded web page with a default title and
+without any tags.
+____________________________________________________________________________
+
+
+TODO: Add more commands here (A, :bmarks, :delbmarks)
+
+
+section:History[history]
+
+TO BE WRITTEN...
+
+
+section:QuickMarks[quickmarks]
+
+TO BE WRITTEN...
+
+
+
+section:Local{nbsp}Marks[localmarks]
+
+Local marks are used to ...
+We differentiate between  two types ...
+
+TO BE WRITTEN...

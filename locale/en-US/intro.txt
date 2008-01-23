@@ -46,12 +46,13 @@ it, recommend it and like it :)
 section:Help{nbsp}topics[overview]
 
 - help:Initialization[starting.html]: How vimperator starts up, where it reads the config file...
-- help:Browsing[browsing.html]: Explains most mappings and commands needed for
-  a browsing session.
+- help:Browsing[browsing.html]: Basic mappings and commands needed for
+  a browsing session (how to open a web page or go back in history).
+- help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
 - help:Options[options.html]: A description of all options.
 - help:Developer{nbsp}Information[developer.html]: How to write docs or
   plugins.
-- help:Various[various.html]: Other help which didn't fit into a category.
+- help:Various[various.html]: Other help which didn't fit into any other category.
 
 section:Features[features]
 
