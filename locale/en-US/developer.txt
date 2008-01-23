@@ -11,15 +11,16 @@ Usually you can just write text as is, and mostly it will be interpreted
 correctly. The only difficult part is to write special sections like for
 help::help[various.html#:help].
 
-
-    |<F1>| |:help| |:h| |help|
-    ||:h[elp] {subject}|| +
-    ||<F1>||
-    ____________________________________________________________________________
-    Open help window. 
-    The default section is shown unless {subject} is specified.
-    If you need help for a specific topic, try [c]:help overview[c].
-    ____________________________________________________________________________
+----------------------------------------------------------------------------------
+|<F1>| |:help| |:h| |help|
+||:h[elp] {subject}|| +
+||<F1>||
+____________________________________________________________________________
+Open help window. 
+The default section is shown unless {subject} is specified.
+If you need help for a specific topic, try [c]:help overview[c].
+____________________________________________________________________________
+----------------------------------------------------------------------------------
 
 is displayed as:
 

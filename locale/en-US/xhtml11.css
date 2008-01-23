@@ -127,7 +127,7 @@ body h1, body h2, body h3, body h4, body h5, body h6 {
 
 body pre {
   margin: 0.5em 10% 0.5em 1em;
-  line-height: 1.0;
+  line-height: 1.2;
   color: navy;
 }
 
@@ -135,7 +135,8 @@ tt.literal, code.literal {
   color: navy;
 }
 
-.programlisting, .screen {
+
+.programlisting, .screen, .listingblock {
   border: 1px solid silver;
   background: #f4f4f4;
   margin: 0.5em 10% 0.5em 0;
