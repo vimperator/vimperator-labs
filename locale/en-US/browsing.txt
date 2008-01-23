@@ -118,3 +118,5 @@ Go to the root of the website. +
 _http://www.example.com/_.
 When browsing a local directory, it goes to the root directory.
 ________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

@@ -1,0 +1,10 @@
+HEADER
+
+|tabs| +
+
+Tabs are used to be able to view many web pages at the same time...
+
+TO BE WRITTEN...
+
+
+// vim: set syntax=asciidoc:

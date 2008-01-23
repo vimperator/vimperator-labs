@@ -48,11 +48,21 @@ section:Help{nbsp}topics[overview]
 - help:Initialization[starting.html]: How vimperator starts up, where it reads the config file...
 - help:Browsing[browsing.html]: Basic mappings and commands needed for
   a browsing session (how to open a web page or go back in history).
+- help:Motion{nbsp}commands[motion.html]: How to efficiently scroll in
+  Vimperator.
+- help:Tabs[tabs.html]: Manage your tabbed browsing session.
 - help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
+- help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
+  recurring workflows.
+- help:Autocommands[autocommands.html]: Automatically execute code on ceratain
+  events.
 - help:Options[options.html]: A description of all options.
 - help:Developer{nbsp}Information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other category.
+
+You can also jump directly to the help of a specific command with [c]:help
+o[c] or [c]:help :set[c].
 
 section:Features[features]
 
@@ -85,3 +95,5 @@ properly answer any questions. You can also join the #vimperator IRC channel
 on irc.freenode.net or check the Wiki for frequently asked questions. Make
 sure, you have read the TODO file first, as I am aware of many things which
 can be improved when I find time for it or get patches.
+
+// vim: set syntax=asciidoc:

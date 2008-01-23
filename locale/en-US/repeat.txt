@@ -1,0 +1,16 @@
+HEADER
+
+|repeat| +
+
+Vimperator can repeat a number of commands or record macros...
+
+section:Macros[macros]
+
+TO BE WRITTEN...
+
+
+More commands:
+
+:time
+
+// vim: set syntax=asciidoc:

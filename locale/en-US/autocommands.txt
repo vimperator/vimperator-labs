@@ -1,0 +1,9 @@
+HEADER
+
+|autocommands| +
+
+Autocommands are a way to execute code when certain events happen.
+
+TO BE WRITTEN.
+
+// vim: set syntax=asciidoc:

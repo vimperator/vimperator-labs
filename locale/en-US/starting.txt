@@ -24,3 +24,5 @@ The user's '$HOME'(~) directory is determined as follows:
 _$HOMEDRIVE$HOMEPATH_.
 
 _$VIMPERATOR_HOME_ can be used to override the calculated _$HOME_ directory.
+
+// vim: set syntax=asciidoc:

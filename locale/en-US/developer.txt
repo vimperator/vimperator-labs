@@ -68,3 +68,5 @@ If you don't know in which file/section you should put some documentation, ask
 on the mailing list or on #vimperator. Usually help should be grouped together
 in logically connected subject areas like
 help:opening{nbsp}web{nbsp}pages[browsing.html#opening].
+
+// vim: set syntax=asciidoc:
