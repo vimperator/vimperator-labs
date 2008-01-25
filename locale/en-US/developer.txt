@@ -4,12 +4,13 @@ section:Writing{nbsp}Documentation[writing-docs,documentation]
 
 For every new feature, writing documentation is _mandatory_ for the patch to
 be accepted. The docs are written in
-http://www.methods.co.nz/asciidoc/userguide.html[asciidoc] version 8.x or
+http://www.methods.co.nz/asciidoc/index.html[asciidoc] version 8.x or
 newer. The are placed in the _src/locale/en-US/_ directory and compiled with
-_make doc_. Please refer to the asciidoc documentation above for details.
-Usually you can just write text as is, and mostly it will be interpreted
-correctly. The only difficult part is to write special sections like for
-help::help[various.html#:help].
+_make doc_. Please refer to the
+http://www.methods.co.nz/asciidoc/userguide.html[asciidoc documentation] above
+for details.  Usually you can just write text as is, and mostly it will be
+interpreted correctly. The only difficult part is to write special sections
+like for help::help[various.html#:help].
 
 ----------------------------------------------------------------------------------
 |<F1>| |:help| |:h| |help|
@@ -44,7 +45,7 @@ Some notes about the code above:
 - *$$|<F1>|$$* defines a _tag_. A tag is written at the right in magenta and let's
   you jump to a topic with [c]:help <F1>[c]. Note that you must write it from
   right to left, so in the above example $$|help|$$ will be the most left tag,
-  and \|<F1>\| the most right one.
+  and $$|<F1>|$$ the most right one.
 - *$$||:h[elp] {subject}|| +$$* and *$$||<F1>||$$* define command or mapping
   names and are printed on the left side. Note the + at the end of one
   command, that indicates a new line. There is no general rule when a new line
@@ -54,6 +55,8 @@ Some notes about the code above:
   that it belongs to the command.
 - Wrap things in *$$[c]$$* and they are drawn like a :command. Also *$$[o]$$*
   and *$$[m]$$* are available to show options and mappings.
+- Any string within \{...\} and $$[arg]$$, $$[url]$$, $$[count]$$ and $$[!]$$ are
+  automatically drawn in a blue color.
 
 There are also some additional asciidoc commands specifically for writing
 vimperator documentation:
