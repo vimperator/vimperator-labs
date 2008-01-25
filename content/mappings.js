@@ -1274,7 +1274,7 @@ vimperator.Mappings = function () //{{{
                   "<li><code class=\"mapping\">v</code> to view its destination source</li>" +
                   "<li><code class=\"mapping\">w</code> to open its destination in a new window</li>" +
                   "<li><code class=\"mapping\">W</code> to open its location in a <code class=\"command\">:winopen</code> query</li>" +
-                  "<li><code class=\"mapping\">y</code> to yank its location</li>" +
+                  "<li><code class=\"mapping\">y</code> to yank its destination location</li>" +
                   "<li><code class=\"mapping\">Y</code> to yank its text description</li>" +
                   "</ul>" +
                   "Additionally there are two <code class='argument'>{mode}</code>s, which will start an AlwaysHint mode:<br/>" +

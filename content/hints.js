@@ -353,7 +353,7 @@ vimperator.Hints = function () //{{{
             case "V": vimperator.commands.viewsource(loc, true); break;
             case "w": vimperator.buffer.followLink(elem, vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-            case "y": setTimeout(function(){vimperator.copyToClipboard(vimperator.buffer.URL, true)}, timeout + 50); break;
+            case "y": setTimeout(function(){vimperator.copyToClipboard(loc, true)}, timeout + 50); break;
             case "Y": setTimeout(function(){vimperator.copyToClipboard(elem.textContent || "", true)}, timeout + 50); break;
             default:
                 vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
