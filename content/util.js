@@ -209,8 +209,7 @@ vimperator.util = { //{{{
     },
 
     // generates an Asciidoc help entry, "command" can also be a mapping
-    // TODO: must be refactored, once we get rid of command.usage
-    generateHelp: function (command)
+    generateHelp: function (command, extraHelp)
     {
         var start = "", end = "";
         if (command instanceof vimperator.Command)
@@ -233,27 +232,24 @@ vimperator.util = { //{{{
         ret += "\n"
 
         // the usage information for the command
-        for (var j = 0; j < command.usage.length; j++)
-        {
-            var usage = command.usage[j].replace(/{/, "\\\\{").replace(/}/, "\\\\}");
-            usage = usage.replace(/'/, "\\'").replace(/`/, "\\`");
-            ret += "||" + start + usage + end + "||";
-            if (command.usage[j].length > 15 || j < command.usage.length - 1)
-                ret += " +";
+        var usage = command.names[0];
+        if (command.specs) // for :commands
+            usage = command.specs[0];
 
-            ret += "\n";
-        }
-        ret += "________________________________________________________________________________\n"
+        usage = usage.replace(/{/, "\\\\{").replace(/}/, "\\\\}");
+        usage = usage.replace(/'/, "\\'").replace(/`/, "\\`");
+        ret += "||" + start + usage + end + "||";
+        if (usage.length > 15)
+            ret += " +";
+
+        ret += "\n________________________________________________________________________________\n"
 
         // the actual help text
         if (command.shortHelp)
         {
-            ret += command.shortHelp; // the help description
-            if (command.help)
-            {
-                //ret += ". +\n";
-                ret += ". " + command.help; // the help description
-            }
+            ret += command.shortHelp + "."; // the help description
+            if (extraHelp)
+                ret += " +\n" + extraHelp;
         }
         else
             ret += "Sorry, no help available";

@@ -35,15 +35,10 @@ vimperator.Option = function (names, type, extraInfo) //{{{
 
     this.name = names[0];
     this.names = names;
-    this.usage = this.names;
     this.type = type;
 
     if (extraInfo)
     {
-        if (extraInfo.usage)
-            this.usage = extraInfo.usage;
-
-        this.help = extraInfo.help || null;
         this.shortHelp = extraInfo.shortHelp || null;
 
         // "", 0 are valid default values
@@ -193,8 +188,8 @@ vimperator.Options = function () //{{{
                     var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
                     // Try in case it's a localized string (will throw an exception if not)
                     if (!branch.prefIsLocked(name) && !branch.prefHasUserValue(name) &&
-                      /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
-                        value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
+                        /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
+                            value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
                     return value;
                 case branch.PREF_INT:
                     return branch.getIntPref(name);
@@ -343,7 +338,6 @@ vimperator.Options = function () //{{{
 
         list: function (onlyNondefault)
         {
-            // TODO: columns like Vim?
             var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
             var name, value, def;
@@ -484,13 +478,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["activate", "act"], "stringlist",
         {
             shortHelp: "Define when tabs are automatically activated",
-            help: "Available items:<br/>" +
-                  "<ul>" +
-                  "<li><b>homepage</b>:  <code class=\"mapping\">gH</code> mapping</li>" +
-                  "<li><b>quickmark</b>: <code class=\"mapping\">go</code> and <code class=\"mapping\">gn</code> mappings</li>" +
-                  "<li><b>tabopen</b>:   <code class=\"command\">:tabopen[!]</code> command</li>" +
-                  "<li><b>paste</b>:     <code class=\"mapping\">P</code> and <code class=\"mapping\">gP</code> mappings</li>" +
-                  "</ul>",
             defaultValue: "homepage,quickmark,tabopen,paste",
             validator: function (value)
             {
@@ -501,15 +488,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["complete", "cpt"], "charlist",
         {
             shortHelp: "Items which are completed at the :[tab]open prompt",
-            help: "Available items:<br/>" +
-                  "<ul>" +
-                  "<li><b>s</b>: Search engines and keyword URLs</li>" +
-                  "<li><b>f</b>: Local files</li>" +
-                  "<li><b>b</b>: Bookmarks</li>" +
-                  "<li><b>h</b>: History</li>" +
-                  "</ul>" +
-                  "The order is important, so <code class=\"command\">:set complete=bs</code> would list bookmarks first, and then any available quick searches.<br/>" +
-                  "Add <code class=\"option\">'sort'</code> to the <code class=\"option\">'wildoptions'</code> option if you want all entries sorted.",
             defaultValue: "sfbh",
             validator: function (value) { return !/[^sfbh]/.test(value); }
         }
@@ -517,18 +495,12 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["defsearch", "ds"], "string",
         {
             shortHelp: "Set the default search engine",
-            help: "The default search engine is used in the <code class=\"command\">:[tab]open [arg]</code> command " +
-                  "if [arg] neither looks like a URL or like a specified search engine/keyword.",
             defaultValue: "google"
         }
     ));
     optionManager.add(new vimperator.Option(["editor"], "string",
         {
             shortHelp: "Set the external text editor",
-            help: "Sets the editor to run when <code class=\"mapping\">&lt;C-i&gt;</code> " +
-                  "is pressed in INSERT and TEXTAREA modes. Note that Vimperator will " +
-                  "not behave correctly if the editor forks its own process, such as with " +
-                  "gvim without the -f argument.",
             defaultValue: "gvim -f"
         }
     ));
@@ -556,13 +528,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["guioptions", "go"], "charlist",
         {
             shortHelp: "Show or hide the menu, toolbar and scrollbars",
-            help: "Supported characters:<br/>" +
-                  "<ul>" +
-                  "<li><b>m</b>: menubar</li>" +
-                  "<li><b>T</b>: toolbar</li>" +
-                  "<li><b>b</b>: bookmark bar</li>" +
-                  "</ul>" +
-                  "You can also hide the tab bar with <code class='command'>:set showtabline=0</code>.",
             setter: function (value) { setGuiOptions(value); },
             defaultValue: "",
             validator: function (value) { return !/[^mTb]/.test(value); }
@@ -571,7 +536,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["hinttimeout", "hto"], "number",
         {
             shortHelp: "Automatically follow non unique numerical hint after {arg} ms",
-            help: "Set to 0 (the default) to only follow numeric hints after pressing &lt;Return&gt; or when the hint is unique.",
             defaultValue: 0,
             validator: function (value) { return value >= 0; }
         }
@@ -617,29 +581,18 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["incsearch", "is"], "boolean",
         {
             shortHelp: "Show where the search pattern matches as it is typed",
-            help: "NOTE: Incremental searching currently only works in the forward direction.",
             defaultValue: true
         }
     ));
     optionManager.add(new vimperator.Option(["insertmode", "im"], "boolean",
         {
             shortHelp: "Use Insert mode as the default for text areas",
-            help: "Makes Vimperator work in a way that Insert mode is the default mode for text areas. " +
-                  "Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.",
             defaultValue: true
         }
     ));
     optionManager.add(new vimperator.Option(["laststatus", "ls"], "number",
         {
             shortHelp: "Show the status line",
-            help: "Determines when the last window will have a status line. " +
-                  "Possible values:<br/>" +
-                  "<ul>" +
-                  "<li><b>0</b>: never</li>" +
-                  "<li><b>1</b>: only if there are multiple windows</li>" +
-                  "<li><b>2</b>: always</li>" +
-                  "</ul>" +
-                  "NOTE: laststatus=1 not implemented yet.",
             defaultValue: 2,
             setter: function (value) { setLastStatus(value); },
             validator: function (value) { return (value >= 0 && value <= 2); }
@@ -648,7 +601,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["linksearch", "lks"], "boolean",
         {
             shortHelp: "Limit the search to hyperlink text",
-            help: "This includes (X)HTML elements with an \"href\" atrribute and XLink \"simple\" links.",
             defaultValue: false
         }
     ));
@@ -661,21 +613,12 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["nextpattern"], "stringlist",
         {
             shortHelp: "Patterns to use when guessing the 'next' page in a document sequence",
-            help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
-            "The patterns are case insensitive regular expressions.",
             defaultValue: "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$"
         }
     ));
     optionManager.add(new vimperator.Option(["pageinfo", "pa"], "charlist",
         {
             shortHelp: "Desired info on :pa[geinfo]",
-            help: "Available items:<br/>" +
-                  "<ul>" +
-                  "<li><b>g</b>: general info</li>" +
-                  "<li><b>f</b>: feeds</li>" +
-                  "<li><b>m</b>: meta tags</li>" +
-                  "</ul>" +
-                  "The order matters",
             defaultValue: "gfm",
             validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
         }
@@ -683,15 +626,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["popups", "pps"], "number",
         {
             shortHelp: "Where to show requested popup windows",
-            help: "Define where to show requested popup windows. Does not apply to windows which are opened by middle clicking a link, they always open in a new tab. " +
-                  "Possible values:<br/>" +
-                  "<ul>" +
-                  "<li><b>0</b>: Force to open in the current tab (NOTE: this can stop some web sites from working correctly!)</li>" +
-                  "<li><b>1</b>: Always open in a new tab</li>" +
-                  "<li><b>2</b>: Open in a new window if it has a specific requested size (default in Firefox)</li>" +
-                  "<li><b>3</b>: Always open in a new window</li>" +
-                  "</ul>" +
-                  "NOTE: This option does not change the popup blocker of Firefox in any way.",
             defaultValue: 1,
             setter: function (value) { setPopups(value); },
             validator: function (value) { return (value >= 0 && value <= 3); }
@@ -700,17 +634,12 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["preload"], "boolean",
         {
             shortHelp: "Speed up first time history/bookmark completion",
-            help: "History access can be quite slow for a large history. Vimperator maintains a cache to speed it up significantly on subsequent access.<br/>" +
-                  "In order to also speed up first time access, it is cached at startup, if this option is set (recommended).",
             defaultValue: true
         }
     ));
     optionManager.add(new vimperator.Option(["previewheight", "pvh"], "number",
         {
             shortHelp: "Default height for preview window",
-            help: "Value must be between 1 and 50. If the value is too high, completions may cover the command-line. " +
-                  "Close the preview window with <code class=\"command\">:pclose</code>.<br/>" +
-                  "NOTE: Option currently disabled",
             defaultValue: 10,
             validator: function (value) { return (value >= 1 && value <= 50); }
         }
@@ -718,17 +647,12 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["previouspattern"], "stringlist",
         {
             shortHelp: "Patterns to use when guessing the 'previous' page in a document sequence",
-            help: "Each pattern, in order, is matched against all links in the page with the first match being used.<br/>" +
-            "The patterns are case insensitive regular expressions.",
             defaultValue: "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$"
         }
     ));
     optionManager.add(new vimperator.Option(["scroll", "scr"], "number",
         {
             shortHelp: "Number of lines to scroll with <code class=\"mapping\">C-u</code> and <code class=\"mapping\">C-d</code> commands",
-            help: "The number of lines scrolled defaults to half the window size. " +
-                  "When a <code class=\"argument\">{count}</code> is specified to the <code class=\"mapping\">&lt;C-u&gt;</code> or <code class=\"mapping\">&lt;C-d&gt;</code> commands this is used to set the value of <code class=\"option\">'scroll'</code> and also used for the current command. " +
-                  "The value can be reset to half the window height with <code class=\"command\">:set scroll=0</code>.",
             defaultValue: 0,
             validator: function (value) { return value >= 0; }
         }
@@ -742,13 +666,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["showstatuslinks", "ssli"], "number",
         {
             shortHelp: "Show the destination of the link under the cursor in the status bar",
-            help: "Also links which are focused by keyboard commands like <code class=\"mapping\">&lt;Tab&gt;</code> are shown. " +
-                  "Possible values:<br/>" +
-                  "<ul>" +
-                  "<li><b>0</b>: Don't show link destination</li>" +
-                  "<li><b>1</b>: Show the link in the status line</li>" +
-                  "<li><b>2</b>: Show the link in the command line</li>" +
-                  "</ul>",
             defaultValue: 1,
             validator: function (value) { return (value >= 0 && value <= 2); }
         }
@@ -756,12 +673,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["showtabline", "stal"], "number",
         {
             shortHelp: "Control when to show the tab bar of opened web pages",
-            help: "Possible values:<br/>" +
-                  "<ul>" +
-                  "<li><b>0</b>: Never show tab bar</li>" +
-                  "<li><b>1</b>: Show tab bar only if more than one tab is open</li>" +
-                  "<li><b>2</b>: Always show tab bar</li>" +
-                  "</ul>",
             setter: function (value) { setShowTabline(value); },
             defaultValue: 2,
             validator: function (value) { return (value >= 0 && value <= 2); }
@@ -770,16 +681,12 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["smartcase", "scs"], "boolean",
         {
             shortHelp: "Override the 'ignorecase' option if the pattern contains uppercase characters",
-            help: "This is only used if the <code class=\"option\">'ignorecase'</code> option is set.",
             defaultValue: true
         }
     ));
     optionManager.add(new vimperator.Option(["titlestring"], "string",
         {
             shortHelp: "Change the title of the browser window",
-            help: "Vimperator changes the browser title from \"Title of web page - Mozilla Firefox\" to " +
-                  "\"Title of web page - Vimperator\".<br/>If you don't like that, you can restore it with: " +
-                  "<code class=\"command\">:set titlestring=Mozilla Firefox</code>.",
             setter: function (value) { setTitleString(value); },
             defaultValue: "Vimperator"
         }
@@ -787,7 +694,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["usermode", "um"], "boolean",
         {
             shortHelp: "Show current website with a minimal style sheet to make it easily accessible",
-            help: "Note that this is a local option for now, later it may be split into a global and <code class=\"command\">:setlocal</code> part",
             setter: function (value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
             getter: function () { return getMarkupDocumentViewer().authorStyleDisabled; },
             defaultValue: false
@@ -796,8 +702,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["verbose", "vbs"], "number",
         {
             shortHelp: "Define which type of messages are logged",
-            help: "When bigger than zero, Vimperator will give messages about what it is doing. They are printed to the error console which can be shown with <code class=\"command\">:javascript!</code>.<br/>" +
-                  "The highest value is 9, being the most verbose mode.",
             defaultValue: 0,
             validator: function (value) { return (value >= 0 && value <= 9); }
         }
@@ -812,20 +716,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["wildmode", "wim"], "stringlist",
         {
             shortHelp: "Define how command line completion works",
-            help: "It is a comma-separated list of parts, where each part specifies " +
-                  "what to do for each consecutive use of the completion key. The first part " +
-                  "specifies the behavior for the first use of the completion key, the second part " +
-                  "for the second use, etc.<br/>" +
-                  "These are the possible values for each part:<br/>" +
-                  "<table>" +
-                  "<tr><td><b>''</b></td><td>Complete only the first match</td></tr>" +
-                  "<tr><td><b>'full'</b></td><td>Complete the next full match. After the last, the original string is used.</td></tr>" +
-                  "<tr><td><b>'longest'</b></td><td>Complete till the longest common string.</td></tr>" +
-                  "<tr><td><b>'list'</b></td><td>When more than one match, list all matches.</td></tr>" +
-                  "<tr><td><b>'list:full'</b></td><td>When more than one match, list all matches and complete first match.</td></tr>" +
-                  "<tr><td><b>'list:longest'</b></td><td>When more than one match, list all matches and complete till the longest common string.</td></tr>" +
-                  "</table>" +
-                  "When there is only a single match, it is fully completed regardless of the case.",
             defaultValue: "list:full",
             validator: function (value)
             {
@@ -836,11 +726,6 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["wildoptions", "wop"], "stringlist",
         {
             shortHelp: "Change how command line completion is done",
-            help: "A list of words that change how command line completion is done.<br/>" +
-                  "Currently only one word is allowed:<br/>" +
-                  "<table>" +
-                  "<tr><td><b>sort</b></td><td>Always sorts completion list, overriding the <code class=\"option\">'complete'</code> option.</td></tr>" +
-                  "</table>",
             defaultValue: "",
             validator: function (value) { return /^(sort|)$/.test(value); }
         }

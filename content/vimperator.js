@@ -650,7 +650,7 @@ const vimperator = (function () //{{{
             if (vimperator.options.getPref("firsttime", true))
             {
                 setTimeout(function () {
-                    vimperator.help(null, null, null, { inTab: true });
+                    vimperator.commands.help();
                     vimperator.options.setPref("firsttime", false);
                 }, 1000);
             }

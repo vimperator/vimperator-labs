@@ -288,35 +288,12 @@ vimperator.Completion = function () //{{{
 
         help: function (filter)
         {
-            var helpArray = [[["introduction"], "Introductory text"],
-                             [["initialization"], "Initialization and startup"],
-                             [["mappings"], "Normal mode commands"],
-                             [["commands"], "Ex commands"],
-                             [["options"], "Configuration options"]]; // TODO: hardcoded until we have proper 'pages'
-            substrings = [];
-            for (var command in vimperator.commands)
-                helpArray.push([command.longNames.map(function ($_) { return ":" + $_; }), command.shortHelp]);
-            options = this.option(filter, false, true);
-            helpArray = helpArray.concat(options.map(function ($_) {
-                return [
-                        $_[0].map(function ($_) { return "'" + $_ + "'"; }),
-                        $_[1]
-                    ];
-            }));
-            for (var map in vimperator.mappings)
-                helpArray.push([map.names, map.shortHelp]);
-
-            // unfiltered, use the first command
-            if (!filter)
-                return [0, helpArray.map(function ($_) { return [$_[0][0], $_[1]]; })];
-
-            return [0, buildLongestCommonSubstring(helpArray, filter)];
-        },
-
-        Help: function (filter)
-        {
             var res = [];
-            var files = ["intro.html", "options.html", "motion.html", "starting.html", "browsing.html", "various.html", "developer.html"];
+            // they are sorted by relevance, not alphabetically
+            var files = ["intro.html", "starting.html", "browsing.html", "motion.html",
+                         "options.html", "tabs.html", "marks.html", "repeat.html",
+                         "autocommands.html", "developer.html", "various.html"];
+
             for (var file in files)
             {
                 try
