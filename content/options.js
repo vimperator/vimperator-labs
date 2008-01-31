@@ -210,12 +210,25 @@ vimperator.Options = function () //{{{
         }
     }
 
+    // show/hide the menubar, toolbar and bookmarks toolbar
     function setGuiOptions(value)
     {
-        // hide the menubar, toolbar and bookmarks toolbar
-        document.getElementById("toolbar-menubar").collapsed = !/m/.test(value);
-        document.getElementById("nav-bar").        collapsed = !/T/.test(value);
-        document.getElementById("PersonalToolbar").collapsed = !/b/.test(value);
+        // FIXME: when we release a vimperator with a Firefox3 requirement (no beta), remove the old ids
+        try
+        {
+            document.getElementById("toolbar-menubar").collapsed = !/m/.test(value);
+
+            // these the new ids for Firefox > 20080130
+            document.getElementById("navigation-toolbar").collapsed = !/T/.test(value);
+            document.getElementById("personal-toolbar").  collapsed = !/b/.test(value);
+        }
+        catch (e)
+        {
+            // these two ids are for Firefox <= 20080130
+            document.getElementById("nav-bar").        collapsed = !/T/.test(value);
+            document.getElementById("PersonalToolbar").collapsed = !/b/.test(value);
+            // vimperator.log("setGuiOptions raised an exception");
+        }
 
         guioptionsDone = true;
     }
