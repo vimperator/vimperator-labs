@@ -175,14 +175,6 @@ vimperator.util = { //{{{
         return urls;
     },
 
-    highlightURL: function (str, force)
-    {
-        if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return "<a class='hl-URL' href='#'>" + vimperator.util.escapeHTML(str) + "</a>";
-        else
-            return str;
-    },
-
     formatBytes: function (num, decimalPlaces, humanReadable)
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
@@ -214,6 +206,70 @@ vimperator.util = { //{{{
             strNum[0] += "." + strNum[1];
 
         return strNum[0] + " " + unitVal[unitIndex];
+    },
+
+    // generates an Asciidoc help entry, "command" can also be a mapping
+    // TODO: must be refactored, once we get rid of command.usage
+    generateHelp: function (command)
+    {
+        var start = "", end = "";
+        if (command instanceof vimperator.Command)
+            start = ":"
+        else if (command instanceof vimperator.Option)
+            start = end = "'"
+
+        var ret = "";
+        var longHelp = false;
+        if ((command.help && command.shortHelp) && (command.help.length + command.shortHelp.length) > 50)
+            longHelp = true;
+
+        // the tags which are printed on the top right
+        for (var j = command.names.length - 1; j >= 0; j--)
+            ret += "|" + start + command.names[j] + end + "| ";
+
+        if (longHelp)
+            ret += "+";
+
+        ret += "\n"
+
+        // the usage information for the command
+        for (var j = 0; j < command.usage.length; j++)
+        {
+            var usage = command.usage[j].replace(/{/, "\\\\{").replace(/}/, "\\\\}");
+            usage = usage.replace(/'/, "\\'").replace(/`/, "\\`");
+            ret += "||" + start + usage + end + "||";
+            if (command.usage[j].length > 15 || j < command.usage.length - 1)
+                ret += " +";
+
+            ret += "\n";
+        }
+        ret += "________________________________________________________________________________\n"
+
+        // the actual help text
+        if (command.shortHelp)
+        {
+            ret += command.shortHelp; // the help description
+            if (command.help)
+            {
+                //ret += ". +\n";
+                ret += ". " + command.help; // the help description
+            }
+        }
+        else
+            ret += "Sorry, no help available";
+
+        // add more space between entries
+        ret += "\n________________________________________________________________________________\n\n\n";
+
+        return ret;
+    },
+
+    highlightURL: function (str, force)
+    {
+        if (force || /^[a-zA-Z]+:\/\//.test(str))
+            return "<a class='hl-URL' href='#'>" + vimperator.util.escapeHTML(str) + "</a>";
+        else
+            return str;
     }
 
 }; //}}}

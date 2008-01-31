@@ -46,4 +46,1591 @@ Show help on Normal mode commands.  Added to simulate the Nvi command.
 ________________________________________________________________________________
 
 
+
+
+section:Uncategorized{nbsp}Help[uncategorized]
+
+
+|<C-[>| |<Esc>| +
+||<Esc>||
+________________________________________________________________________________
+Focus content. Exits any command line or hint mode and returns to browser
+mode. Also focuses the web page, in case a form field has focus and eats
+our key presses.
+________________________________________________________________________________
+
+
+|:|
+||:||
+________________________________________________________________________________
+Start command line mode. In command line mode, you can perform extended
+commands, which may require arguments.
+________________________________________________________________________________
+
+
+|<Tab>|
+||<Tab>||
+________________________________________________________________________________
+Advance keyboard focus to the next element.
+________________________________________________________________________________
+
+
+|<S-Tab>|
+||<S-Tab>||
+________________________________________________________________________________
+Rewind keyboard focus to the previous element.
+________________________________________________________________________________
+
+
+|<Insert>| |i| +
+||i||
+________________________________________________________________________________
+Start caret mode. This mode resembles the Vim normal mode where you see a text
+cursor and can move around. If you want to select text in this mode, press
+[m]v[m] to start its Visual mode.
+________________________________________________________________________________
+
+
+|<C-c>| 
+||<C-c>||
+________________________________________________________________________________
+Stop loading the current web page.
+________________________________________________________________________________
+
+
+|<Nop>| +
+||<Nop>||
+________________________________________________________________________________
+Do nothing. This command is useful for disabling a specific mapping. [c]:map
+<C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
+________________________________________________________________________________
+
+
+|]f| +
+||[count]]f||
+________________________________________________________________________________
+Focus next frame. Transfer keyboard focus to the [count]th next frame in
+order. The newly focused frame is briefly colored red. Does not wrap.
+________________________________________________________________________________
+
+
+|[f| +
+||[count][f||
+________________________________________________________________________________
+Focus previous frame. Transfer keyboard focus to the [count]th previous frame
+in order. The newly focused frame is briefly colored red. Does not wrap.
+________________________________________________________________________________
+
+
+|]]| +
+||[count]]]||
+________________________________________________________________________________
+Open link labeled with "next" or ">".  Useful when browsing forums or
+documentation. Change 'nextpattern' to modify its behavior. It follows
+relations between files too.
+________________________________________________________________________________
+
+
+|[[| +
+||[count][[||
+________________________________________________________________________________
+Open link labeled with "prev", "previous" or "<".  Useful when browsing forums
+or documentation. Change 'previouspattern' to modify its behavior. It follows
+relations between files too.
+________________________________________________________________________________
+
+
+|A| +
+||A||
+________________________________________________________________________________
+Toggle bookmarked state of current URL. Add/remove a bookmark for the current
+location, depending if it already is bookmarked or not. In contrast to the
+[c]:bmark[c] command, the bookmark is just _starred_ which means it is placed
+in the _Unfiled Bookmarks Folder_ instead of the bookmarks menu.
+________________________________________________________________________________
+
+
+|b| +
+||b||
+________________________________________________________________________________
+Open a prompt to switch buffers. Typing the corresponding number switches to
+this buffer.
+________________________________________________________________________________
+
+
+|B| +
+||B||
+________________________________________________________________________________
+Toggle buffer list. Toggles the display of the buffer list which shows all opened tabs. +
+Warning: This mapping may be removed/changed in future.
+________________________________________________________________________________
+
+
+|gb| +
+||[count]gb||
+________________________________________________________________________________
+Repeat last [c]:buffer[!][c] command. This is useful to quickly jump between
+buffers which have a similar URL or title.
+________________________________________________________________________________
+
+
+|gB| +
+||[count]gB||
+________________________________________________________________________________
+Repeat last [c]:buffer[!][c] command in reverse direction. Just like [m]gb[m]
+but in the other direction.
+________________________________________________________________________________
+
+
+|d| +
+||[count]d||
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [m]2d[m] removes the current
+and next tab and the one to the right is selected. Does not wrap if [count] is
+larger than available tabs to the right.
+________________________________________________________________________________
+
+
+|D| +
+||[count]D||
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [m]2D[m] removes the current
+and previous tab and the one to the left is selected. Does not wrap if [count]
+is larger than available tabs to the left.
+________________________________________________________________________________
+
+
+|\~| +
+||\~||
+________________________________________________________________________________
+Open home directory. You can also use the hints and have the probably fastest
+file browser on earth. :)
+________________________________________________________________________________
+
+
+|gf| +
+||gf||
+________________________________________________________________________________
+View source. Opens the source code of the current website with the internal
+editor in the current tab.
+________________________________________________________________________________
+
+
+|gF| +
+||gF||
+________________________________________________________________________________
+View source with an external editor. Opens the source code of the current
+website with the external editor specified by the 'editor' option. For now the
+external editor must be able to download and open files from a remote URL.
+________________________________________________________________________________
+
+
+|gh| 
+||gh||
+________________________________________________________________________________
+Go home. Opens the homepage in the current tab.
+________________________________________________________________________________
+
+
+|gH| +
+||gH||
+________________________________________________________________________________
+Go home in a new tab. Opens the homepage in a new tab. Whether the new tab is
+activated or not depends on the 'activate' option.
+________________________________________________________________________________
+
+
+|gi| 
+||gi||
+________________________________________________________________________________
+Focus last used input field. If there is no last input field, it focuses the
+first input field.
+________________________________________________________________________________
+
+
+|go| +
+||go\\{a-zA-Z0-9\\}||
+________________________________________________________________________________
+Jump to a QuickMark in the current tab. Open any QuickMark in the current tab.
+You can mark any URLs with [m]M{a-zA-Z0-9}[m]. These QuickMarks are persistent
+across browser sessions.
+________________________________________________________________________________
+
+
+|gn| +
+||gn\\{a-zA-Z0-9\\}||
+________________________________________________________________________________
+Jump to a QuickMark in a new tab. Works like [m]go{a-zA-Z0-9}[m] but opens the
+QuickMark in a new tab. Whether the new tab is activated or not depends on the
+'activate' option. +
+Mnemonic: Go in a new tab. [m]gt[m] would make more sense but is already
+taken.
+________________________________________________________________________________
+
+
+|gP| +
+||gP||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer.
+Works like [m]P[m], but inverts the 'activate' option.
+________________________________________________________________________________
+
+
+|g^| |g0| 
+||g0||
+________________________________________________________________________________
+Go to the first tab. TODO: Unify with :tabfirst.
+________________________________________________________________________________
+
+
+|g$| 
+||g$||
+________________________________________________________________________________
+Go to the last tab. TODO: Unify with :tablast.
+________________________________________________________________________________
+
+
+|<C-PageDown>| |<C-Tab>| |<C-n>| |gt| +
+||[count]gt||
+________________________________________________________________________________
+Go to the next tab. Cycles to the first tab, when the last is selected. +
+Count is supported: [m]3gt[m] goes to the third tab.
+________________________________________________________________________________
+
+
+|<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
+||[count]gT||
+________________________________________________________________________________
+Go {count} pages back. Wraps around from the first tab to the last tab. +
+Count is supported: [m]3gT[m] goes three tabs back.
+________________________________________________________________________________
+
+
+|<C-6>| |<C-^>| +
+||<C-^>||
+________________________________________________________________________________
+Select the alternate tab. The alternate tab is the last selected tab. This
+provides a quick method of toggling between two tabs.
+________________________________________________________________________________
+
+
+|m| +
+||m\\{a-zA-Z\\}||
+________________________________________________________________________________
+Set mark at the cursor position. Marks a-z are local to the buffer, whereas
+A-Z are valid between buffers.
+________________________________________________________________________________
+
+
+|\`| |\'| +
+||\'\\{a-zA-Z\\}||
+________________________________________________________________________________
+Jump to the mark in the current buffer. Marks a-z are local to the buffer,
+whereas A-Z are valid between buffers.
+________________________________________________________________________________
+
+
+|M| +
+||M\\{a-zA-Z0-9\\}||
+________________________________________________________________________________
+Add new QuickMark for current URL. You can go to a marked URL in the current
+tab with [m]go{a-zA-Z0-9}[m] or in a new tab with [m]gn{a-zA-Z0-9}[m]. These
+QuickMarks are persistent across browser sessions.
+________________________________________________________________________________
+
+
+|O| +
+||O||
+________________________________________________________________________________
+Open one or more URLs in the current tab, based on current location. Works
+like [m]o[m], but preselects current URL in the [c]:open[c] query.
+________________________________________________________________________________
+
+
+|T| +
+||T||
+________________________________________________________________________________
+Open one or more URLs in a new tab, based on current location. Works like [m]t[m], but preselects current URL in the [c]:tabopen[c] query.
+________________________________________________________________________________
+
+
+|<MiddleMouse>| |p| +
+||p||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in the current buffer. You can also just select (for non-X11 users: copy) some non-URL text, and search for it with the default search engine or keyword (specified by the 'defsearch' option) with [m]p[m].
+________________________________________________________________________________
+
+
+|P| +
+||P||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer. Works like [m]p[m], but opens a new tab. +
+Whether the new buffer is activated, depends on the 'activate' option.
+________________________________________________________________________________
+
+
+|r| 
+||r||
+________________________________________________________________________________
+Force reloading of the current page.
+________________________________________________________________________________
+
+
+|R|
+||R||
+________________________________________________________________________________
+Force reloading of the current page skipping the cache.
+________________________________________________________________________________
+
+
+|u| +
+||[count]u||
+________________________________________________________________________________
+Undo closing of a tab. If a count is given, don't close the last but the
+[count]th last tab.
+________________________________________________________________________________
+
+
+|y| +
+||y||
+________________________________________________________________________________
+Yank current location to the clipboard. When running in X11 the location is
+also put into the selection, which can be pasted with the middle mouse button.
+________________________________________________________________________________
+
+
+|Y|
+||Y||
+________________________________________________________________________________
+Copy currently selected text to the system clipboard.
+________________________________________________________________________________
+
+
+|+| |zi|
+||[count]zi||
+________________________________________________________________________________
+Enlarge text zoom of current web page. Mnemonic: zoom in
+________________________________________________________________________________
+
+
+|zm|
+||[count]zm||
+________________________________________________________________________________
+Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more
+________________________________________________________________________________
+
+
+|-| |zo| +
+||[count]zo||
+________________________________________________________________________________
+Reduce text zoom of current web page. Mnemonic: zoom out
+________________________________________________________________________________
+
+
+|zr|
+||[count]zr||
+________________________________________________________________________________
+Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce
+________________________________________________________________________________
+
+
+|zz|
+||[count]zz||
+________________________________________________________________________________
+Set text zoom value of current web page. Zoom value can be between 1 and
+2000%. If it is omitted, text zoom is reset to 100%.
+________________________________________________________________________________
+
+
+|zI|
+||[count]zI||
+________________________________________________________________________________
+Enlarge full zoom of current web page. Mnemonic: zoom in
+________________________________________________________________________________
+
+
+|zM|
+||[count]zM||
+________________________________________________________________________________
+Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more
+________________________________________________________________________________
+
+
+|zO|
+||[count]zO||
+________________________________________________________________________________
+Reduce full zoom of current web page. Mnemonic: zoom out
+________________________________________________________________________________
+
+
+|zR|
+||[count]zR||
+________________________________________________________________________________
+Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce
+________________________________________________________________________________
+
+
+|zZ|
+||[count]zZ||
+________________________________________________________________________________
+Set full zoom value of current web page. Zoom value can be between 1 and
+2000%. If it is omitted, full zoom is reset to 100%.
+________________________________________________________________________________
+
+
+|ZQ|
+||ZQ||
+________________________________________________________________________________
+Quit and don't save the session. Works like [c]:qall[c].
+________________________________________________________________________________
+
+
+|ZZ|
+||ZZ||
+________________________________________________________________________________
+Quit and save the session. Quit Vimperator, no matter how many tabs/windows
+are open. The session is stored. Works like [c]:xall[c].
+________________________________________________________________________________
+
+
+|<C-x>|
+||[count]<C-x>||
+________________________________________________________________________________
+Decrements the last number in URL by 1, or by count if given.
+________________________________________________________________________________
+
+
+|<C-a>|
+||[count]<C-a>||
+________________________________________________________________________________
+Increments the last number in URL by 1, or by count if given.
+________________________________________________________________________________
+
+
+|^| |0| +
+||0||
+________________________________________________________________________________
+Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] work exactly the same way.
+________________________________________________________________________________
+
+
+|$| 
+||$||
+________________________________________________________________________________
+Scroll to the absolute right of the document
+________________________________________________________________________________
+
+
+|<Home>| |gg| +
+||[count]gg||
+________________________________________________________________________________
+Goto the top of the document. When used with [count] like in [m]35gg[m], it
+scrolls to 35% of the document.
+________________________________________________________________________________
+
+
+|<End>| |G| +
+||[count]G||
+________________________________________________________________________________
+Goto the end of the document. When used with [count] like in [m]35G[m], it
+scrolls to 35% of the document.
+________________________________________________________________________________
+
+
+|<Left>| |h| +
+||[count]h||
+________________________________________________________________________________
+Scroll document to the left. Count is supported: [m]10h[m] will move 10 times as much to the left. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-e>| |<Down>| |j| +
+||[count]j||
+________________________________________________________________________________
+Scroll document down. Count is supported: [m]10j[m] will move 10 times as much down. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-y>| |<Up>| |k| +
+||[count]k||
+________________________________________________________________________________
+Scroll document up. Count is supported: [m]10k[m] will move 10 times as much up. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-d>| +
+||[count]<C-d>||
+________________________________________________________________________________
+Scroll window downwards in the buffer. The number of lines is set by the
+'scroll' option which defaults to half a page. If [count] is given 'scroll' is
+first set to this value.
+________________________________________________________________________________
+
+
+|<C-u>| +
+||[count]<C-u>||
+________________________________________________________________________________
+Scroll window upwards in the buffer. The number of lines is set by the
+'scroll' option which defaults to half a page. If [count] is given 'scroll' is
+first set to this value.
+________________________________________________________________________________
+
+
+|<Right>| |l| +
+||[count]l||
+________________________________________________________________________________
+Scroll document to the right. Count is supported: [m]10l[m] will move 10 times as much to the right. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<S-Space>| |<PageUp>| |<C-b>| +
+||[count]<C-b>||
+________________________________________________________________________________
+Scroll up a full page. Scroll window [count] pages Backwards (upwards) in the buffer.
+________________________________________________________________________________
+
+
+|<Space>| |<PageDown>| |<C-f>| +
+||[count]<C-f>||
+________________________________________________________________________________
+Scroll down a full page. Scroll window [count] pages Forwards (downwards) in the buffer.
+________________________________________________________________________________
+
+
+|<C-g>| +
+||[count]<C-g>||
+________________________________________________________________________________
+Print the current file name. Also shows some additional file information like
+file size or the last modified date. If {count} is given print the current
+file name with full path.
+________________________________________________________________________________
+
+
+|g<C-g>| +
+||g<C-g>||
+________________________________________________________________________________
+Print file information. Same as [c]:pa[geinfo][c].
+________________________________________________________________________________
+
+
+|<C-o>| +
+||[count]<C-o>||
+________________________________________________________________________________
+Go to an older position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<C-i>| +
+||[count]<C-i>||
+________________________________________________________________________________
+Go to a newer position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<M-Left>| |<A-Left>| |H| +
+||[count]H||
+________________________________________________________________________________
+Go back in the browser history. Count is supported: [m]3H[m] goes back 3 steps.
+________________________________________________________________________________
+
+
+|<M-Right>| |<A-Right>| |L| +
+||[count]L||
+________________________________________________________________________________
+Go forward in the browser history. Count is supported: [m]3L[m] goes forward 3 steps.
+________________________________________________________________________________
+
+
+|gu| +
+||[count]gu||
+________________________________________________________________________________
+Go to parent directory. Count is supported: [m]2gu[m] on
+_http://www.example.com/dir1/dir2/file.htm_ would open
+_http://www.example.com/dir1/_.
+________________________________________________________________________________
+
+
+|gU| +
+||gU||
+________________________________________________________________________________
+Go to the root of the website. [m]gU[m] on
+_http://www.example.com/dir1/dir2/file.htm_ opens
+_http://www.example.com/_. +
+When browsing a local directory, it goes to the root directory.
+________________________________________________________________________________
+
+
+|f| +
+||f\\{hint\\}||
+________________________________________________________________________________
+Start QuickHint mode. In QuickHint mode, every hintable item (according to the
+'hinttags' XPath query) is assigned a unique number.  You can now either type
+this number or type any part of the URL which you want to follow, and it is
+followed as soon as it can be uniquely identified. Often it is can be useful
+to combine these techniques to narrow down results with some letters, and then
+typing a single digit to make the match unique.  Pressing [m]<leader>[m]
+(defaults to :let mapleader = "\") toggles "escape-mode", where numbers are
+treated as normal text. +
+[m]<Esc>[m] stops this mode at any time.
+________________________________________________________________________________
+
+
+|F| +
+||F\\{hint\\}||
+________________________________________________________________________________
+Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
+(activated with [m]f[m]) but opens the link in a new tab.
+________________________________________________________________________________
+
+
+|;| +
+||;\\{mode\\}\\{hint\\}||
+________________________________________________________________________________
+Start an extended hint mode. ExtendedHint mode is useful, since in this mode
+you can yank link locations, open them in a new window or save images. If
+you want to yank the location of hint [a]24[a], press [m];y[m] to start
+this hint mode. Then press [a]24[a] to copy the hint location.
+
+{mode} can be either one of: +
+
+* [m];[m] to focus a link and hover it with the mouse
+* [m]a[m] to save its destination (prompting for save location)
+* [m]s[m] to save its destination
+* [m]o[m] to open its location in the current tab
+* [m]t[m] to open its location in a new tab
+* [m]O[m] to open its location in an [c]:open[c] query
+* [m]T[m] to open its location in a [c]:tabopen[c] query
+* [m]v[m] to view its destination source
+* [m]w[m] to open its destination in a new window
+* [m]W[m] to open its location in a [c]:winopen[c] query
+* [m]y[m] to yank its destination location
+* [m]Y[m] to yank its text description
+
+Additionally there are two {mode}s, which will start an AlwaysHint mode:
+
+* [m]f[m] to open its location in the current tab
+* [m]F[m] to open its location in a new tab
+
+These work like the [m]f[m] or [m]F[m] mappings but will keep you in
+AlwaysHint mode. This is useful if you want to open many links of one page
+without pressing [m]f[m] or [m]F[m] each time. Hintable elements for all
+extended hint modes can be set in the 'extendedhinttags' XPath string.
+________________________________________________________________________________
+
+
+|/| +
+||/\\{pattern\\}[/]<CR>|| +
+________________________________________________________________________________
+Search forward for the first occurrence of {pattern}.
+
+If "\c" appears anywhere in the pattern the whole pattern is handled as though
+'ignorecase' is on. "\C" forces case-sensitive matching for the whole pattern.  +
+If "\l" appears in the pattern only the text of links is searched for a
+match as though 'linksearch' is on. "\L" forces the entire page to be searched
+for a match.
+________________________________________________________________________________
+
+
+|?| +
+||?{pattern}[?]<CR>|| +
+________________________________________________________________________________
+Search backwards for {pattern}.
+
+{pattern} can use the same modifiers as for [m]/[m]. +
+NOTE: incremental searching currently only works in the forward direction.
+________________________________________________________________________________
+
+
+|n|
+||n||
+________________________________________________________________________________
+Find next. Repeat the last search 1 time (until count is supported).
+________________________________________________________________________________
+
+
+|N|
+||N||
+________________________________________________________________________________
+Find previous. Repeat the last search 1 time (until count is supported) in the
+opposite direction.
+________________________________________________________________________________
+
+
+|q| +
+||q {arg}||
+________________________________________________________________________________
+Record a keysequence into a macro. Available macros are {0-9a-zA-Z} (uppercase
+to append).type 'q' to stop recording.
+________________________________________________________________________________
+
+
+|@| 
+||[count]@ {arg}||
+________________________________________________________________________________
+Execute the contents of macro {0-9a-z}. @@ repeats the previous @{0-9a-z}
+________________________________________________________________________________
+
+
+|\*| 
+||\*||
+________________________________________________________________________________
+Search forward for the next word under the cursor.
+________________________________________________________________________________
+
+
+|\#| 
+||\#||
+________________________________________________________________________________
+Search backward for the previours word under the cursor.
+________________________________________________________________________________
+
+
+|:addo| |:addons| +
+||:addo[ns]||
+________________________________________________________________________________
+Show available Browser Extensions and Themes.
+You can add/remove/disable browser extensions from this dialog.
+Be aware that not all Firefox extensions work, because Vimperator overrides
+some key bindings and changes Firefox's GUI.
+________________________________________________________________________________
+
+
+|:ba| |:back|
+||:[count]ba[ck][!] [url]|| +
+________________________________________________________________________________
+Go back in the browser history. Count is supported, [c]:3back[c] goes back 3
+pages in the browser history. +
+The special version [c]:back![c] goes to the beginning of the browser history.
+________________________________________________________________________________
+
+
+|:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
+||:[count]bd[elete][!]|| +
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
+and the one to the right is selected. Do [c]:bdelete![c] to select the tab to
+the left after removing the current tab.
+________________________________________________________________________________
+
+
+|:beep| 
+||:beep||
+________________________________________________________________________________
+Play a system beep.
+________________________________________________________________________________
+
+
+|:bma| |:bmark|
+||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+________________________________________________________________________________
+Add a bookmark. If you don't add a custom title, either the title of the web page or the URL is taken as the title. +
+You can omit the optional [url] argument, so just do [c]:bmark[c] to bookmark the currently loaded web page with a default title and without any tags. +
+
+The following options are interpreted: +
+ -title="custom title" +
+ -tags=comma,separated,tag,list +
+ -keyword=keyword +
+________________________________________________________________________________
+
+
+|:bmarks|
+||:bmarks[!] [filter]|| +
+________________________________________________________________________________
+List or open multiple bookmarks. Open the message window at the bottom of the
+screen with all bookmarks which match [filter] either in the title or URL. +
+The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
+opens all the found bookmarks in new tabs.
+
+Filter can also contain the following options: +
+-tags=comma,separated,tag,list +
+________________________________________________________________________________
+
+
+|:b| |:buffer|
+||:b[uffer][!] {url|index}|| +
+________________________________________________________________________________
+Go to buffer from buffer list. Argument can be either the buffer index or the
+full URL.
+
+If argument is neither a full URL nor an index but uniquely identifies a
+buffer, it is selected. With [!] the next buffer matching the argument is
+selected, even if it cannot be identified uniquely. Use [m]b[m] as a
+shortcut to open this prompt.
+________________________________________________________________________________
+
+
+|:dia| |:dialog|
+||:dia[log] [firefox-dialog]|| +
+________________________________________________________________________________
+Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c] <tab>
+________________________________________________________________________________
+
+
+|:tabs| |:ls| |:files| |:buffers| +
+||:buffers[!]||
+________________________________________________________________________________
+Show a list of all buffers (=tabs). The special version [c]:buffers![c] opens
+the buffer list in a persistent preview window. Call the special version of
+this command again to close the window.
+________________________________________________________________________________
+
+
+|:delbm| |:delbmarks|
+||:delbm[arks] [url]|| +
+________________________________________________________________________________
+Delete a bookmark. Deletes *all* bookmarks which match the [url].
+If omitted, [url] defaults to the URL of the current buffer. Use [m]<Tab>[m]
+key on a string to complete the URL which you want to delete.
+
+The following options WILL be interpreted in the future:
+
+* [!] a special version to delete ALL bookmarks 
+________________________________________________________________________________
+
+
+|:chd| |:chdir| |:cd|
+||:cd [-|path]||
+________________________________________________________________________________
+Change the current directory. [c]:cd -[c] changes to the last directory.
+________________________________________________________________________________
+
+
+|:pw| |:pwd| 
+||:pw[d]||
+________________________________________________________________________________
+Print the current directory name.
+________________________________________________________________________________
+
+
+|:com| |:command|
+||:com[mand][!] [{attr}...] {cmd} {rep}|| +
+________________________________________________________________________________
+Lists and defines commands. To be written - but it works similar to vim's :command
+________________________________________________________________________________
+
+
+|:delm| |:delmarks|
+||:delm[arks] {marks}|| +
+||:delm[arks]!||
+________________________________________________________________________________
+Delete the specified marks. Marks are presented as a list.
+
+Examples:
+
+* [c]:delmarks Aa b p[c] deletes marks A, a, b and p +
+* [c]:delmarks b-p[c] deletes all marks in the range b to p +
+* [c]:delmarks![c] deletes all marks for the current buffer
+
+________________________________________________________________________________
+
+
+|:delqm| |:delqmarks|
+||:delqm[arks] {marks}|| +
+||:delqm[arks]!||
+________________________________________________________________________________
+Delete the specified QuickMarks. QuickMarks are presented as a list.
+
+Examples:
+
+* [c]:delqmarks Aa b p[c] deletes QuickMarks A, a, b and p +
+* [c]:delqmarks b-p[c] deletes all QuickMarks in the range b to p +
+* [c]:delqmarks![c] deletes all QuickMarks
+
+________________________________________________________________________________
+
+
+|:dl| |:downl| |:downloads| +
+||:downl[oads]||
+________________________________________________________________________________
+Show progress of current downloads. Open the original Firefox download dialog
+in a new tab. Here, downloads can be paused, canceled and resumed.
+________________________________________________________________________________
+
+
+|:ec| |:echo| +
+||:ec[ho] {expr}||
+________________________________________________________________________________
+Display a string at the bottom of the window. Useful for showing informational
+messages. Multiple lines can be separated by \n.
+{expr} can either be a quoted string, or any expression which can be fed to
+eval() like 4+5. You can also view the source code of objects and functions if
+the return value of {expr} is an object or function.
+________________________________________________________________________________
+
+
+|:echoe| |:echoerr|
+||:echoe[rr] {expr}|| +
+________________________________________________________________________________
+Display an error string at the bottom of the window. Just like [c]:ec[ho][c],
+but echoes the result highlighted in red. Useful for showing important
+messages.
+________________________________________________________________________________
+
+
+|:exe| |:execute|
+||:exe[cute] {expr1} [ ... ]|| +
+________________________________________________________________________________
+Execute the string that results from the evaluation of {expr1} as an Ex
+command.. Example: [c]:execute echo "test"[c] shows a message with the text
+"test".
+________________________________________________________________________________
+
+
+|:exu| |:exusage| 
+||:exu[sage]||
+________________________________________________________________________________
+Show help for Ex commands.
+________________________________________________________________________________
+
+
+|:fw| |:fo| |:forward|
+||:[count]fo[rward][!] [url]|| +
+________________________________________________________________________________
+Go forward in the browser history. Count is supported, [c]:3forward[c] goes
+forward 3 pages in the browser history. The special version [c]:forward![c]
+goes to the end of the browser history.
+________________________________________________________________________________
+
+
+|:ha| |:hardcopy| +
+||:ha[rdcopy]||
+________________________________________________________________________________
+Print current document. Open a GUI dialog where you can select the printer,
+number of copies, orientation, etc.
+________________________________________________________________________________
+
+
+|:h| |:help|
+||:h[elp] {subject}|| +
+________________________________________________________________________________
+Open the help window. You can jump to the specified {subject} with [c]:help
+{subject}[c]. You can use the full Vim notation when jumping to {subject}. This means:
+
+* [c]:help :help[c] for commands (: prefix)
+* [c]:help 'complete'[c] for options (surrounded by \' and \')
+* [c]:help o[c] for mappings (no pre- or postfix)
+
+You can also use partial strings in the tab completion, so [c]:help he<Tab>[c]
+completes [c]:help :help[c].
+________________________________________________________________________________
+
+
+
+|:hs| |:hist| |:history|
+||:hist[ory][!] [filter]|| +
+________________________________________________________________________________
+Show recently visited URLs. Open the message window at the bottom of the
+screen with all history items which match [filter] either in the title or URL.
+The special version [c]:history![c] works the same as [c]:history[c] except
+it opens all the found items in new tabs.
+________________________________________________________________________________
+
+
+|:js| |:javas| |:javascript|
+||:javas[cript] \\{cmd\\}|| +
+||:javascript <<\\{endpattern\\}\n\\{script\\}\n\\{endpattern\\}|| +
+||:javascript[!]||
+________________________________________________________________________________
+Run any JavaScript command through eval(). Acts as a JavaScript interpreter by
+passing the argument to <code>eval()</code>.
+[c]:javascript alert('Hello world')[c] shows a dialog box with the text "Hello world".
+[c]:javascript <<EOF[c] reads all the lines until a line starting with 'EOF'
+is found, and interpret them with the JavaScript _eval()_ function.
+
+The special version [c]:javascript![c] opens the JavaScript console of
+Firefox.
+
+Rudimentary [m]<Tab>[m] completion is available for [c]:javascript
+{cmd}<Tab>[c] (but not yet for the [c]:js <<EOF[c] multiline widget). Be aware
+that Vimperator needs to run {cmd} through eval() to get the completions,
+which could have unwanted side effects.
+________________________________________________________________________________
+
+// >> To make the syntax highlighting happy
+
+|:let|
+||:let {var-name} [+-.]= {expr1}|| +
+||:let {var-name}|| +
+||:let||
+________________________________________________________________________________
+Sets or lists a variable. Sets the variable {var-name} to the value of the
+expression {expr1}.If no expression is given, the value of the variable is
+displayed.Without arguments, displays a list of all variables.
+________________________________________________________________________________
+
+
+|:ab| |:abbreviate|
+||:ab[breviate] {lhs} {rhs}|| +
+||:ab[breviate] {lhs}|| +
+||:ab[breviate]||
+________________________________________________________________________________
+Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
+If only {lhs} given, list that particual abbreviation.
+List all abbreviations, if no arguments to are given.
+
+________________________________________________________________________________
+
+
+|:ca| |:cabbrev|
+||:ca[bbrev] {lhs} {rhs}|| +
+||:ca[bbrev] {lhs}|| +
+||:ca[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
+but for commandline mode only.
+________________________________________________________________________________
+
+
+|:ia| |:iabbrev|
+||:ia[bbrev] {lhs} {rhs}|| +
+||:ia[bbrev] {lhs}|| +
+||:ia[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c], but
+for Insert mode only.
+________________________________________________________________________________
+
+
+|:una| |:unabbreviate| 
+||:una[bbreviate] {lhs}||
+________________________________________________________________________________
+Remove an abbreviation.
+________________________________________________________________________________
+
+
+|:cuna| |:cunabbrev|
+||:cuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Command-line mode. Same as [c]:una[bbreviate][c],
+but for Command-line mode only.
+________________________________________________________________________________
+
+
+|:iuna| |:iunabbrev|
+||:iuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c], but for
+Insert mode only.
+________________________________________________________________________________
+
+
+|:abc| |:abclear| 
+||:abc[lear]||
+________________________________________________________________________________
+Remove all abbreviations.
+________________________________________________________________________________
+
+
+|:cabc| |:cabclear| 
+||:cabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Command-line mode.
+________________________________________________________________________________
+
+
+|:iabc| |:iabclear| 
+||:iabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Insert mode.
+________________________________________________________________________________
+
+
+|:au| |:autocmd| +
+||:au[tocmd]||
+________________________________________________________________________________
+Execute commands automatically on events. [c]:au[tocmd][c] {event} {pat}
+{cmd}.
+Add {cmd} to the list of commands Vimperator will execute on {event}:
+
+* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered be {events} and {pat}
+* [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
+* [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
+* [c]:autocmd[!][c]: list/remove all autocommands
+
+________________________________________________________________________________
+
+
+|:macros| +
+||:mac[ros] [regex]||
+________________________________________________________________________________
+List recorded macros matching the optional regular expression. If no regex is
+given, list all.
+________________________________________________________________________________
+
+
+|:delmac| |:delmacros|
+||:delmac[ros] [regex]|| +
+________________________________________________________________________________
+Delete recorded macros matching a regular expression.
+________________________________________________________________________________
+
+
+|:pl| |:play| 
+||:pl[ay] <macro>||
+________________________________________________________________________________
+Play a macro.
+________________________________________________________________________________
+
+
+|:map|
+||:map {lhs} {rhs}|| +
+||:map {lhs}|| +
+||:map||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
+nested and recursive mappings. Mappings are NOT saved during sessions, make
+sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:cm| |:cmap|
+||:cmap {lhs} {rhs}|| +
+||:cmap {lhs}|| +
+||:cmap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in command-line mode). The {rhs} is
+remapped, allowing for nested and recursive mappings. Mappings are NOT saved
+during sessions, make sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:im| |:imap|
+||:imap {lhs} {rhs}|| +
+||:imap {lhs}|| +
+||:imap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in insert mode). The {rhs} is remapped,
+allowing for nested and recursive mappings. Mappings are NOT saved during
+sessions, make sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:mapc| |:mapclear|
+||:mapc[lear]||
+________________________________________________________________________________
+Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
+[c]:noremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:cmapc| |:cmapclear|
+||:cmapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in command-line mode). All user-defined mappings which
+were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:imapc| |:imapclear| +
+||:imapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in insert mode). All user-defined mappings which were set
+by [c]:imap[c] or [c]:inoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:ma| |:mark| 
+||:ma[rk] {a-zA-Z}||
+________________________________________________________________________________
+Mark current location within the web page.
+________________________________________________________________________________
+
+
+|:marks| +
+||:marks [arg]||
+________________________________________________________________________________
+Show all location marks of current web page. If [arg] is specified then limit the list to those marks mentioned.
+________________________________________________________________________________
+
+
+|:mkv| |:mkvimperatorrc|
+||:mkv[imperatorrc] [file]|| +
+________________________________________________________________________________
+Write current key mappings and changed options to [file]. If no [file] is
+specified then _~/.vimperatorrc_ is written unless this file already exists. The
+special version will overwrite [file] if it exists.
+
+Warnging: this differs from Vim's behavior which defaults to writing the file
+in the current directory.
+________________________________________________________________________________
+
+
+|:noh| |:nohlsearch| +
+||:noh[lsearch]||
+________________________________________________________________________________
+Remove the search highlighting. The document highlighting is turned back on
+when another search command is used or the 'hlsearch' option is set.
+________________________________________________________________________________
+
+
+|:norm| |:normal| +
+||:norm[al][!] {commands}|| +
+________________________________________________________________________________
+Execute Normal mode commands. Example: [c]:normal 20j[c] scrolls 20 lines
+down. If the [!] is specified mappings will not be used.
+________________________________________________________________________________
+
+
+|:no| |:noremap| +
+||:no[remap] {lhs} {rhs}|| +
+||:no[remap] {lhs}|| +
+||:no[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. No remapping of the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:cno| |:cnoremap| +
+||:cno[remap] {lhs} {rhs}|| +
+||:cno[remap] {lhs}|| +
+||:cno[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in command-line mode). No remapping of
+the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:ino| |:inoremap| +
+||:ino[remap] {lhs} {rhs}|| +
+||:ino[remap] {lhs}|| +
+||:ino[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
+{rhs} is performed.
+________________________________________________________________________________
+
+
+|:pa| |:pageinfo|
+||:pa[geinfo]||
+________________________________________________________________________________
+Show various page information. See :help 'pageinfo' for available options.
+________________________________________________________________________________
+
+
+|:pc| |:pclose| 
+||:pc[lose]||
+________________________________________________________________________________
+Close preview window on bottom of screen.
+________________________________________________________________________________
+
+
+|:qma| |:qmark|
+||:qma[rk] {a-zA-Z0-9} [url]|| +
+________________________________________________________________________________
+Mark a URL with a letter for quick access. You can also mark whole groups like this:  +
+[c]:qmark f http://forum1.com, http://forum2.com, imdb some artist[c]
+________________________________________________________________________________
+
+
+|:qmarks|
+||:qmarks [arg]||
+________________________________________________________________________________
+Show all QuickMarks. If [arg] is specified then limit the list to those QuickMarks mentioned.
+________________________________________________________________________________
+
+
+|:q| |:quit| +
+||:q[uit]||
+________________________________________________________________________________
+Quit current tab. If this is the last tab in the window, close the window. If
+this was the last window, close Vimperator. When quitting Vimperator, the
+session is not stored.
+________________________________________________________________________________
+
+
+|:qa| |:qall| |:quita| |:quitall| +
+||:quita[ll]||
+________________________________________________________________________________
+Quit Vimperator. Quit Vimperator, no matter how many tabs/windows are open.
+The session is not stored.
+________________________________________________________________________________
+
+
+|:redr| |:redraw| +
+||:redr[aw]||
+________________________________________________________________________________
+Redraw the screen. Useful to update the screen halfway executing a script or
+function.
+________________________________________________________________________________
+
+
+|:re| |:reload| +
+||:re[load][!]||
+________________________________________________________________________________
+Reload current page. Forces reloading of the current page. If [c]![c] is
+given, skip the cache.
+________________________________________________________________________________
+
+
+|:reloada| |:reloadall| +
+||:reloada[ll][!]||
+________________________________________________________________________________
+Reload all pages. Forces reloading of all pages. If [c]![c] is given, skip the cache.
+________________________________________________________________________________
+
+
+|:res| |:restart| +
+||:res[tart]||
+________________________________________________________________________________
+Force the browser to restart. Useful when installing extensions.
+________________________________________________________________________________
+
+
+|:w| |:write| |:sav| |:saveas| +
+||:sav[eas]||
+________________________________________________________________________________
+Save current web page to disk. Opens the original Firefox "Save page as..."
+dialog.  There, you can save the current web page to disk with various
+options. Use [!] to save the file with a default filename to the current working
+directory, skipping the Save as... prompt
+________________________________________________________________________________
+
+
+|:sbcl| |:sbclose| 
+||:sbcl[ose]||
+________________________________________________________________________________
+Close the sidebar window.
+________________________________________________________________________________
+
+
+|:sbope| |:sbopen| |:sb| |:sbar| |:sideb| |:sidebar|
+||:sidebar {name}||
+________________________________________________________________________________
+Open the sidebar window. +
+{name} is any of the menu items listed under the standard Firefox
+View->Sidebar menu. Add-ons, Preferences and Downloads are also available in
+the sidebar.
+________________________________________________________________________________
+
+
+|:so| |:source|
+||:so[urce][!] {file}|| +
+________________________________________________________________________________
+Read Ex commands from {file}. You can either source files which mostly contain
+Ex commands like [c]map < gt[c] and put JavaScript code within a:
+
+--------------------------------------------------------------------------------
+js <<EOF
+hello = function () {
+  alert("Hello world");
+}
+EOF
+--------------------------------------------------------------------------------
+Or you can alternatively source a file which ends in _.js_, these files are
+automatically sourced as pure JavaScript files.
+
+Note: In both cases you must add functions to the global window object like
+shown above, functions written as:
+--------------------------------------------------------------------------------
+function hello2() {
+  alert("Hello world");
+}
+--------------------------------------------------------------------------------
+are only available within the scope of the script.
+
+The _.vimperatorrc_ file in your home directory and any files in
+_\~/.vimperator/plugin/_ are always sourced at startup.
+\~ is supported as a shortcut for the _$HOME_ directory.  If [!] is
+specified, errors are not printed.
+________________________________________________________________________________
+
+
+|:st| |:stop| 
+||:st[op]||
+________________________________________________________________________________
+Stop loading. Stop loading current web page.
+________________________________________________________________________________
+
+
+|:tab| +
+||:tab {cmd}||
+________________________________________________________________________________
+Execute {cmd} and tell it to output in a new tab. Works only for commands that
+support it, currently:
+
+* :tab help
+* :tab prefs[!]
+
+________________________________________________________________________________
+
+
+|:tabl| |:tablast| 
+||:tabl[ast]||
+________________________________________________________________________________
+Switch to the last tab.
+________________________________________________________________________________
+
+
+|:tabm| |:tabmove|
+||:tabm[ove] [N]|| +
+||:tabm[ove][!] +N | -N|| +
+________________________________________________________________________________
+Move the current tab after tab N. When N is 0 the current tab is made the
+first one. Without N the current tab is made the last one. N can also be
+prefixed with '+' or '-' to indicate a relative movement. If [!] is
+specified the movement wraps around the start or end of the tab list.
+________________________________________________________________________________
+
+
+|:tn| |:tnext| |:tabn| |:tabnext|
+||:tabn[ext] [count]|| +
+________________________________________________________________________________
+Switch to the next or [count]th tab. Cycles to the first tab when the last is
+selected and {count} is not specified.
+________________________________________________________________________________
+
+
+|:tabo| |:tabonly| 
+||:tabo[nly]||
+________________________________________________________________________________
+Close all other tabs.
+________________________________________________________________________________
+
+
+|:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
+||:tabp[revious] [count]|| +
+________________________________________________________________________________
+Switch to the previous tab or go [count] tabs back. Wraps around from the
+first tab to the last tab.
+________________________________________________________________________________
+
+
+|:tabfir| |:tabfirst| |:tabr| |:tabrewind| 
+||:tabr[ewind]|| +
+||:tabfir[st]||
+Switch to the first tab.
+________________________________________________________________________________
+________________________________________________________________________________
+
+
+|:time|
+||:{count} time[!] {code|:command}|| +
+________________________________________________________________________________
+Profile a piece of code or a command. Runs {code} {count} times (default 1)
+and returns the elapsed time. {code} is always passed to JavaScript's eval(),
+which might be slow, so take the results with a grain of salt.
+
+If {code} starts with a [c]:[c], it is executed as a Vimperator command.
+
+Use the special version with [!] if you just want to run any command multiple
+times without showing profiling statistics.
+________________________________________________________________________________
+
+
+|:u| |:undo|
+||:[count]u[ndo][!] [url]|| +
+________________________________________________________________________________
+Undo closing of a tab. If a count is given, don't close the last but the
+[count]th last tab. With [url] restores the tab matching the url.
+________________________________________________________________________________
+
+
+|:undoa| |:undoall| +
+||:undoa[ll]||
+________________________________________________________________________________
+Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
+after a browser restart.
+________________________________________________________________________________
+
+
+|:unl| |:unlet|
+||:unl[et][!] {name} ...|| +
+________________________________________________________________________________
+Deletes the variable {name}. Several variable names can be given.
+________________________________________________________________________________
+
+
+|:unm| |:unmap| 
+||:unm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs}.
+________________________________________________________________________________
+
+
+|:cunm| |:cunmap| 
+||:cunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in command-line mode).
+________________________________________________________________________________
+
+
+|:iunm| |:iunmap| 
+||:iunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in insert mode).
+________________________________________________________________________________
+
+
+|:ve| |:version| +
+||:ve[rsion][!]||
+________________________________________________________________________________
+Show version information. You can show the Firefox version page with
+[c]:version![c].
+________________________________________________________________________________
+
+
+|:vie| |:viewsource|
+||:vie[wsource][!] [url]|| +
+________________________________________________________________________________
+View source code of current document. When ! is given, it is opened with the
+external editor.
+________________________________________________________________________________
+
+
+|:viu| |:viusage| 
+||:viu[sage]||
+________________________________________________________________________________
+Show help for normal mode commands.
+________________________________________________________________________________
+
+
+|:wc| |:wclose| |:winc| |:winclose| 
+||:winc[ose] [url] [, url]|| +
+________________________________________________________________________________
+Close window.
+________________________________________________________________________________
+
+
+|:xa| |:xall| |:wq| |:wqa| |:wqall|
+||:wqa[ll]|| +
+||:xa[ll]||
+________________________________________________________________________________
+Save the session and quit. Quit Vimperator, no matter how many tabs/windows
+are open. The session is stored. [c]:wq[c] is different as in Vim, as it
+closes the window instead of just one tab by popular demand. Complain on the
+mailing list, if you want to change that.
+________________________________________________________________________________
+
+
+|:zo| |:zoom|
+||:zo[om][!] [value]|| +
+||:zo[om][!] +{value} | -{value}|| +
+________________________________________________________________________________
+Set zoom value of current web page. If {value} can be an absolute value
+between 1 and 2000% or a relative value if prefixed with '-' or '+'. If
+{value} is omitted, zoom is reset to 100%.
+
+Normally this command operates on the text zoom, if used with [!] it operates
+on full zoom.
+________________________________________________________________________________
+
+
+|:run| |:!| +
+||:!{cmd}||
+________________________________________________________________________________
+Run a command. Runs {cmd} through system() and displays its output. Any '!' in
+{cmd} is replaced with the previous external command. But not when there is a
+backslash before the '!', then that backslash is removed.
+
+Warning: Input redirection (< foo) not done, also do not run commands which
+require stdin or it will hang Firefox!
+________________________________________________________________________________
+
+
 // vim: set syntax=asciidoc:

@@ -4,13 +4,13 @@ HEADER
 
 Vimperator can repeat a number of commands or record macros...
 
-section:Macros[macros]
+section:Macros[+++macros+++]
 
 TO BE WRITTEN...
 
 
-More commands:
+section:Profiling[profiling]
 
-:time
+:time ...
 
 // vim: set syntax=asciidoc:

@@ -290,7 +290,7 @@ span.tag, span.hiddentag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
     padding-left: 15px;
-    padding-top: -5px;
+    /*padding-top: -5px;*/
     float: right;
 }
 /* inside a table cell means this tag is part of a section */
@@ -330,5 +330,5 @@ fieldset.paypal {
 }
 .quoteblock {
 	margin-left: 140px;
-	padding-bottom: 20px;
+	padding-bottom: 10px;
 }

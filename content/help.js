@@ -47,64 +47,9 @@ vimperator.help = function (section, easter) //{{{
     function makeHelpString(commands, beg, end, func)
     {
         var ret = "";
-        var separator = '<tr class="separator"><td colspan="3"><hr/></td></tr>\n';
         for (var command in commands)
-        {
-            // the usage information for the command
-            ret += '<tr class="description"><td class="usage" valign="top">';
-            for (var j=0; j < command.usage.length; j++)
-            {
-                var usage = command.usage[j];
+            ret += vimperator.util.generateHelp(command);
 
-                // keep <br/>
-                //usage = usage.replace(/<([^b][^r].*>)/g, "&lt;$1");
-                //usage = usage.replace(/[^b][^r][^\/]>/g, "&gt;");
-                usage = vimperator.util.escapeHTML(usage);
-                usage = usage.replace(/\\n/g, "<br/>");
-                // color [count], [!], {arg} and [arg] in the usage, not nice and error prone but the regexp work (for now)
-                usage = usage.replace(/({[^}]+})/g, "<span class=\"argument\">$1</span>");                    // required args
-                usage = usage.replace(/(^|[^A-Za-z])(\[[^!\]]+\])/g, "$1<span class=\"argument\">$2</span>"); // optional args
-                usage = usage.replace(/\[!\]/, "<span class=\"argument\">[!]</span>");                        // special
-                // and the 'option' in a different color
-                usage = usage.replace(/^'(\w+)'/gm, "'<span class=\"option\">$1</span>'");
-                ret += "<code>" + beg + usage + end + '</code><br/>';
-            }
-            ret += '</td><td valign="top">';
-
-            // the actual help text with the first line in bold
-            if (command.shortHelp)
-            {
-                ret += '<span class="shorthelp">';
-                ret += command.shortHelp; // the help description
-                ret += "</span><br/>";
-                if (func) // for options we print default values here, e.g.
-                {
-                    ret += func.call(this, command);
-                    ret += "<br/>";
-                }
-                if (command.help)
-                {
-                    ret += command.help; // the help description
-                    ret += "<br/>";
-                }
-            }
-            else
-                ret += "Sorry, no help available";
-            // the tags which are printed on the top right
-            ret += '</td><td class="taglist" valign="top">';
-            var names = command.names;
-            for (var j=0; j < names.length; j++)
-            {
-                var cmdName = names[j];
-                cmdName = vimperator.util.escapeHTML(cmdName);
-                ret += '<code class="tag">' + beg + cmdName + end + '</code><br/>';
-            }
-            ret += '</td></tr>';
-
-            // add more space between entries
-            ret += separator;
-        }
-        ret = ret.replace(new RegExp(separator + "$"), ""); // FIXME: far too tasty!
         return ret;
     }
 
@@ -179,15 +124,15 @@ vimperator.help = function (section, easter) //{{{
     var mappings = '<span style="float: right"><code class="tag">mappings</code></span><h2 id="mappings">Mappings</h2>' +
         '<p>The denotion of modifier keys is like in Vim, so C- means the Control key, M- the Meta key, A- the Alt key and S- the Shift key.</p>' +
         '<table class="vimperator mappings">';
-    mappings += makeHelpString(vimperator.mappings, "", "", null);
-    mappings += '</table>';
+    mappings = makeHelpString(vimperator.mappings, "", "", null);
+    //mappings += '</table>';
     if (section && section == "holy-grail")
         mappings += '<div><p id="holy-grail">You found it, Arthur!</p></div>\n';
 
     var commands = '<span style="float: right"><code class="tag">commands</code></span><h2 id="commands">Commands</h2>' +
         '<table class="vimperator commands">\n';
-    commands += makeHelpString(vimperator.commands, ":", "", null);
-    commands += '</table>';
+    commands = makeHelpString(vimperator.commands, ":", "", null);
+    //commands += '</table>';
     if (section && section == "42")
         commands += '<div><p id="42">What is the meaning of life, the universe and everything?<br/>' +
                     'Douglas Adams, the only person who knew what this question really was about is<br/>' +
@@ -213,6 +158,8 @@ vimperator.help = function (section, easter) //{{{
         commands +
         options +
         '\n</div>\n</body>\n</html>';
+
+    dump(mappings + commands + "\n\n\n");
 
     var doc = window.content.document;
     dump("before open\n");
