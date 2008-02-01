@@ -370,16 +370,12 @@ vimperator.Mappings = function () //{{{
 
     // vimperator management
     addDefaultMap(new vimperator.Map(allModes, ["<F1>"],
-        function () { vimperator.help(null); },
-        {
-            shortHelp: "Open help window"
-        }
+        function () { vimperator.commands.help(); },
+        { shortHelp: "Open help window" }
     ));
     addDefaultMap(new vimperator.Map(allModes, ["<Esc>", "<C-[>"],
         vimperator.events.onEscape,
-        {
-            shortHelp: "Focus content"
-        }
+        { shortHelp: "Focus content" }
     ));
     addDefaultMap(new vimperator.Map(noninsertModes, [":"],
         function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
