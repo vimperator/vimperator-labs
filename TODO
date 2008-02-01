@@ -28,6 +28,7 @@ FEATURES:
 7 [d could go to the last domain in the history stack. so if i browse from
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
+7 make an option to disable session saving by default when you close Firefox
 6 :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
