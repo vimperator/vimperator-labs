@@ -470,6 +470,31 @@ vimperator.Editor = function () //{{{
             }
         },
 
+        // System for adding abbreviations:
+        //
+        // filter == ! delete all, and set first (END)
+        //
+        // if filter == ! remove all and add it as only END
+        //
+        // variant 1: rhs matches anywere in loop
+        //
+        //          1 mod matches anywhere in loop
+        //                  a) simple replace and
+        //                      I)  (maybe there's another rhs that matches?  not possible)
+        //                          (when there's another item, it's opposite mod with different rhs)
+        //                          (so do nothing further but END)
+        //
+        //          2 mod does not match
+        //                  a) the opposite is there -> make a ! and put it as only and END
+        //                 (b) a ! is there. do nothing END)
+        //
+        // variant 2: rhs matches *no*were in loop and filter is c or i
+        //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
+        //
+        //          1 mod is ! split into two i + c END
+        //          1 not !: opposite mode (first), add/change 'second' and END
+        //          1 not !: same mode (first), overwrite first this END
+        //
         addAbbreviation: function (filter, lhs, rhs)
         {
             if (!abbrev[lhs])
@@ -525,33 +550,6 @@ vimperator.Editor = function () //{{{
                 abbrev[lhs][1] = [filter, rhs];
             else
                 abbrev[lhs][0] = [filter, rhs];
-
-            return;
-
-            // System above:
-            // filter == ! delete all, and set first (END)
-            //
-            // if filter == ! remove all and add it as only END
-            //
-            // variant 1: rhs matches anywere in loop
-            //
-            //          1 mod matches anywhere in loop
-            //                  a) simple replace and
-            //                      I)  (maybe there's another rhs that matches?  not possible)
-            //                          (when there's another item, it's opposite mod with different rhs)
-            //                          (so do nothing further but END)
-            //
-            //          2 mod does not match
-            //                  a) the opposite is there -> make a ! and put it as only and END
-            //                 (b) a ! is there. do nothing END)
-            //
-            // variant 2: rhs matches *no*were in loop and filter is c or i
-            //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
-            //
-            //          1 mod is ! split into two i + c END
-            //          1 not !: opposite mode (first), add/change 'second' and END
-            //          1 not !: same mode (first), overwrite first this END
-            //
         },
 
         removeAbbreviation: function (filter, lhs)
@@ -631,20 +629,20 @@ vimperator.Editor = function () //{{{
 
             for (var lhs in abbrev)
             {
-                    for (var i = 0; i < abbrev[lhs].length; i++)
+                for (var i = 0; i < abbrev[lhs].length; i++)
+                {
+                    if (lhs == foundWord && (abbrev[lhs][i][0] == filter || abbrev[lhs][i][0] == "!"))
                     {
-                        if (lhs == foundWord && (abbrev[lhs][i][0] == filter || abbrev[lhs][i][0] == "!"))
-                        {
-                            // if found, replace accordingly
-                            var len = foundWord.length;
-                            var abbrText = abbrev[lhs][i][1];
-                            text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
-                            textbox.value = text;
-                            textbox.selectionStart = currStart - len + abbrText.length;
-                            textbox.selectionEnd   = currEnd   - len + abbrText.length;
-                            break;
-                        }
+                        // if found, replace accordingly
+                        var len = foundWord.length;
+                        var abbrText = abbrev[lhs][i][1];
+                        text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
+                        textbox.value = text;
+                        textbox.selectionStart = currStart - len + abbrText.length;
+                        textbox.selectionEnd   = currEnd   - len + abbrText.length;
+                        break;
                     }
+                }
             }
             return true;
         }

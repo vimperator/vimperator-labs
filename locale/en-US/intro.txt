@@ -50,13 +50,13 @@ section:Help{nbsp}topics[overview]
   a browsing session (how to open a web page or go back in history).
 - help:Motion{nbsp}commands[motion.html]: How to efficiently scroll in
   Vimperator.
+- help:Options[options.html]: A description of all options.
 - help:Tabs[tabs.html]: Manage your tabbed browsing session.
 - help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
 - help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
   recurring workflows.
 - help:Autocommands[autocommands.html]: Automatically execute code on ceratain
   events.
-- help:Options[options.html]: A description of all options.
 - help:Developer{nbsp}Information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other category.

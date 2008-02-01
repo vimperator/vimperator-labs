@@ -32,14 +32,6 @@ const vimperator = (function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // our services
-    var soundService = Components.classes["@mozilla.org/sound;1"]
-        .getService(Components.interfaces.nsISound);
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-        .getService(Components.interfaces.nsIConsoleService);
-    var environmentService = Components.classes["@mozilla.org/process/environment;1"]
-        .getService(Components.interfaces.nsIEnvironment);
-
     var callbacks = [];
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -107,6 +99,8 @@ const vimperator = (function () //{{{
             }
             else
             {
+                var soundService = Components.classes["@mozilla.org/sound;1"].
+                                   getService(Components.interfaces.nsISound);
                 soundService.beep();
             }
         },
@@ -299,6 +293,8 @@ const vimperator = (function () //{{{
             if (typeof msg == "object")
                 msg = this.objectToString(msg, false);
 
+            var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
+                                 getService(Components.interfaces.nsIConsoleService);
             consoleService.logStringMessage("vimperator: " + msg);
         },
 
@@ -435,6 +431,9 @@ const vimperator = (function () //{{{
             }
             catch (e)
             {
+                var environmentService = Components.classes["@mozilla.org/process/environment;1"]
+                    .getService(Components.interfaces.nsIEnvironment);
+
                 var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
                 for (var i = 0; i < dirs.length; i++)
                 {
@@ -622,7 +621,7 @@ const vimperator = (function () //{{{
             vimperator.quickmarks    = vimperator.QuickMarks();
             vimperator.log("Loading module hints...", 3);
             vimperator.hints         = vimperator.Hints();
-            vimperator.log("Loading module autocommands...", 3); //XXX: what the 3 there, I didn't check
+            vimperator.log("Loading module autocommands...", 3);
             vimperator.autocommands  = vimperator.AutoCommands();
             vimperator.log("Loading module io...", 3);
             vimperator.io            = vimperator.IO();

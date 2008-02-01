@@ -55,11 +55,30 @@ vimperator.AutoCommands = function() //{{{
             return autoCommandsIterator();
         },
 
+        add: function (auEvent, regex, cmds)
+        {
+            var eventsIter = auEvent.split(",");
+            for (var i = 0; i < eventsIter.length; i++)
+            {
+                if (!autoCommands[eventsIter[i]])
+                    autoCommands[eventsIter[i]] = [];
+
+                var flag = true;
+                for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
+                {
+                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
+                        flag = false;
+                }
+                if (flag)
+                    autoCommands[eventsIter[i]].push([regex, cmds]);
+            }
+        },
+
         remove: function (auEvent, regex) // arguments are filters (NULL = all)
         {
             if (!auEvent && !regex)
             {
-                autoCommands = {}; // delete all TODO: rather delete.. or something?
+                autoCommands = {}; // delete all
             }
             else if (!regex) // remove all on this auEvent
             {
@@ -69,7 +88,7 @@ vimperator.AutoCommands = function() //{{{
                         delete autoCommands[item];
                 }
             }
-            else if (!auEvent) // delete all match's to this regex
+            else if (!auEvent) // delete all matches to this regex
             {
                 for (var item in autoCommands)
                 {
@@ -79,7 +98,7 @@ vimperator.AutoCommands = function() //{{{
                         if (regex == autoCommands[item][i][0])
                         {
                             autoCommands[item].splice(i, 1); // remove array
-                            // keep `i' since this is removed, so a possible next one is at this place now)
+                            // keep `i' since this is removed, so a possible next one is at this place now
                         }
                         else
                             i++;
@@ -135,25 +154,6 @@ vimperator.AutoCommands = function() //{{{
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         },
 
-        add: function (auEvent, regex, cmds)
-        {
-            var eventsIter = auEvent.split(",");
-            for (var i = 0; i < eventsIter.length; i++)
-            {
-                if (!autoCommands[eventsIter[i]])
-                    autoCommands[eventsIter[i]] = [];
-
-                var flag = true;
-                for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
-                {
-                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
-                        flag = false;
-                }
-                if (flag)
-                    autoCommands[eventsIter[i]].push([regex, cmds]);
-            }
-        },
-
         trigger: function (auEvent, url)
         {
             if (autoCommands[auEvent])
@@ -176,7 +176,7 @@ vimperator.Events = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var inputBufferLength = 0; // counts the number of keys in v.input.buffer (can be different from v.input.buffer.length)
+    var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
     var macros = {};
@@ -270,7 +270,7 @@ vimperator.Events = function () //{{{
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
     //       want to refer to within Vimperator's source code for
-    //       comparisons like if (key == "Esc") { ... }
+    //       comparisons like if (key == "<Esc>") { ... }
     var keyTable = [
         [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],
         [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
@@ -390,8 +390,8 @@ vimperator.Events = function () //{{{
             // code which is only relevant if the page load is the current tab goes here:
             if (doc == getBrowser().selectedBrowser.contentDocument)
             {
-            //    // FIXME: this currently causes window map events which is _very_ annoying
-            //    // we want to stay in command mode after a page has loaded
+                // we want to stay in command mode after a page has loaded
+                // XXX: Does this still causes window map events which is _very_ annoying
                 setTimeout(function () {
                     var focused = document.commandDispatcher.focusedElement;
                     if (focused && focused.value.length == 0)
@@ -412,12 +412,12 @@ vimperator.Events = function () //{{{
 //        if (vimperator.buffer.loaded == 1)
 //            return true;
 
-        var ms = 10000; // maximum time to wait - TODO: add option
+        var ms = 15000; // maximum time to wait - TODO: add option
         var then = new Date().getTime();
         for (var now = then; now - then < ms; now = new Date().getTime())
         {
             mainThread.processNextEvent(true);
-            if ((now -then) % 1000 < 10)
+            if ((now - then) % 1000 < 10)
                 dump("waited: " + (now - then) + " ms\n");
 
             if (vimperator.buffer.loaded > 0)
@@ -615,7 +615,7 @@ vimperator.Events = function () //{{{
                         {
                             charCode = 0;
                         }
-                        else //an invalid key like <A-xxx> was found, stop propagation here (like Vim)
+                        else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
                         {
                             return;
                         }
@@ -716,7 +716,6 @@ vimperator.Events = function () //{{{
 
             // a key like F1 is always enclosed in < and >
             return "<" + modifier + key + ">";
-
         },
 
         isAcceptKey: function (key)
@@ -797,18 +796,20 @@ vimperator.Events = function () //{{{
             {
                 if (couldCopy)
                 {
-                    if ((vimperator.mode == vimperator.modes.TEXTAREA || (vimperator.modes.extended & vimperator.modes.TEXTAREA))
+                    if ((vimperator.mode == vimperator.modes.TEXTAREA ||
+                         (vimperator.modes.extended & vimperator.modes.TEXTAREA))
                             && !vimperator.options["insertmode"])
                         vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
                     else if (vimperator.mode == vimperator.modes.CARET)
                         vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.CARET);
                 }
             }
-            //else
-            //{
-            //    if (!couldCopy && vimperator.modes.extended & vimperator.modes.CARET)
-            //        vimperator.mode = vimperator.modes.CARET;
-            //}
+            // XXX: disabled, as i think automatically starting visual caret mode does more harm than help
+            // else
+            // {
+            //     if (!couldCopy && vimperator.modes.extended & vimperator.modes.CARET)
+            //         vimperator.mode = vimperator.modes.CARET;
+            // }
         },
 
         // global escape handler, is called in ALL modes
@@ -824,10 +825,18 @@ vimperator.Events = function () //{{{
 
                 switch (vimperator.mode)
                 {
-                    case vimperator.modes.HINTS:
-                    case vimperator.modes.CUSTOM:
-                    case vimperator.modes.COMMAND_LINE:
+                    case vimperator.modes.NORMAL:
+                        // clear any selection made
+                        var selection = window.content.getSelection();
+                        try
+                        { // a simple if (selection) does not seem to work
+                            selection.collapseToStart();
+                        }
+                        catch (e) { }
+                        vimperator.commandline.clear();
+
                         vimperator.modes.reset();
+                        vimperator.focusContent(true);
                         break;
 
                     case vimperator.modes.VISUAL:
@@ -855,19 +864,9 @@ vimperator.Events = function () //{{{
                         }
                         break;
 
-
-                    default:
-                        // clear any selection made
-                        var selection = window.content.getSelection();
-                        try
-                        { // a simple if (selection) does not seem to work
-                            selection.collapseToStart();
-                        }
-                        catch (e) { }
-                        vimperator.commandline.clear();
-
+                    default: // HINTS, CUSTOM or COMMAND_LINE
                         vimperator.modes.reset();
-                        vimperator.focusContent(true);
+                        break;
                 }
             }
         },
@@ -925,16 +924,9 @@ vimperator.Events = function () //{{{
                     return false;
             }
 
-            // FIXME: proper way is to have a better onFocus handler which also handles events for the XUL
-            if (!vimperator.mode == vimperator.modes.TEXTAREA &&
-                !vimperator.mode == vimperator.modes.INSERT &&
-                !vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                        isFormElemFocused()) // non insert mode, but e.g. the location bar has focus
-                    return false;
-
-            // just forward event, without checking any mappings
+            // just forward event without checking any mappings when the MOW is open
             if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE)
+                (vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
             {
                 vimperator.commandline.onMultilineOutputEvent(event);
                 return false;
@@ -1007,12 +999,12 @@ vimperator.Events = function () //{{{
                 }
             }
 
-            //FIXME (maybe): (is an ESC or C-] here): on HINTS mode, it enters
-            //into 'if (map && !skipMap) below. With that (or however) it
-            //triggers the onEscape part, where it resets mode. Here I just
-            //return true, with the effect that it also gets to there (for
-            //whatever reason).  if that happens to be correct, well..
-            //XXX: why not just do that as well for HINTS mode actually?
+            // FIXME (maybe): (is an ESC or C-] here): on HINTS mode, it enters
+            // into 'if (map && !skipMap) below. With that (or however) it
+            // triggers the onEscape part, where it resets mode. Here I just
+            // return true, with the effect that it also gets to there (for
+            // whatever reason).  if that happens to be correct, well..
+            // XXX: why not just do that as well for HINTS mode actually?
            
             if (vimperator.mode == vimperator.modes.CUSTOM)
                 return true;
@@ -1045,7 +1037,7 @@ vimperator.Events = function () //{{{
                 vimperator.input.buffer = "";
                 inputBufferLength = 0;
                 var tmp = vimperator.input.pendingArgMap; // must be set to null before .execute; if not
-                vimperator.input.pendingArgMap = null;    // v.inputpendingArgMap is still 'true' also for new feeded keys
+                vimperator.input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
                     if (vimperator.modes.isReplaying && !waitForPageLoaded())
@@ -1267,7 +1259,9 @@ vimperator.Events = function () //{{{
 
             observe: function (aSubject, aTopic, aData)
             {
-                if (aTopic != "nsPref:changed") return;
+                if (aTopic != "nsPref:changed")
+                    return;
+
                 // aSubject is the nsIPrefBranch we're observing (after appropriate QI)
                 // aData is the name of the pref that's been changed (relative to aSubject)
                 switch (aData)

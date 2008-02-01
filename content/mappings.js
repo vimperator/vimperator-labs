@@ -90,6 +90,12 @@ vimperator.Mappings = function () //{{{
         map.modes.forEach(function (mode) { main[mode].push(map); });
     }
 
+    function addMap(map, userMap)
+    {
+        var where = userMap ? user : main;
+        map.modes.forEach(function (mode) { where[mode].push(map); });
+    }
+
     function getMap(mode, cmd, stack)
     {
         var maps = stack[mode];
@@ -192,9 +198,15 @@ vimperator.Mappings = function () //{{{
             return user[mode].some(function (map) { return map.hasName(cmd); });
         },
 
+        addDefault: function (modes, keys, description, action, extra)
+        {
+            addMap (new vimperator.Map([vimperator.modes.NORMAL], keys,
+                    action, { shortHelp: description }), false);
+        },
+
         add: function (map)
         {
-            // a map can have multiple names (see default-map sections, there are many multiples)
+            // a map can have multiple names
             for (var i = 0; i < map.names.length; i++)
             {
                 // only store keysyms with uppercase modifier strings
@@ -223,7 +235,6 @@ vimperator.Mappings = function () //{{{
             return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
-        // TODO: move default maps to their own v.normal namespace
         getDefault: function (mode, cmd)
         {
             return getMap(mode, cmd, main);

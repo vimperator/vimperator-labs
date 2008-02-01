@@ -38,80 +38,6 @@ vimperator.Buffer = function () //{{{
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
-    // TODO: rename
-    function followFrameRelationship(relationship, parsedFrame)
-    {
-        var regexps;
-        var relText;
-        var patternText;
-        var revString;
-        switch (relationship)
-        {
-            case "next":
-                regexps = vimperator.options["nextpattern"].split(",");
-                revString = "previous";
-                break;
-            case "previous":
-                // TODO: accept prev\%[ious]
-                regexps = vimperator.options["previouspattern"].split(",");
-                revString = "next";
-                break;
-            default:
-                vimperator.echoerr("Bad document relationship: " + relationship);
-        }
-
-        relText = new RegExp(relationship, "i");
-        revText = new RegExp(revString, "i");
-        var elems = parsedFrame.document.getElementsByTagName("link");
-        // links have higher priority than normal <a> hrefs
-        for (var i = 0; i < elems.length; i++)
-        {
-            if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-            {
-                    vimperator.open(elems[i].href);
-                    return true;
-            }
-        }
-
-        // no links? ok, look for hrefs
-        elems = parsedFrame.document.getElementsByTagName("a");
-        for (var i = 0; i < elems.length; i++)
-        {
-            if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-            {
-                vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
-                return true;
-            }
-        }
-
-        for (var pattern = 0; pattern < regexps.length; pattern++)
-        {
-            patternText = new RegExp(regexps[pattern], "i");
-            for (var i = 0; i < elems.length; i++)
-            {
-                if (patternText.test(elems[i].textContent))
-                {
-                    vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
-                    return true;
-                }
-                else
-                {
-                    // images with alt text being href
-                    var children = elems[i].childNodes;
-                    for (var j = 0; j < children.length; j++)
-                    {
-                        if (patternText.test(children[j].alt))
-                        {
-                            vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     function setZoom(value, fullZoom)
     {
         if (value < 1 || value > 2000)
@@ -216,6 +142,26 @@ vimperator.Buffer = function () //{{{
         win.scrollTo(h, v);
     }
 
+    vimperator.commands.add(new vimperator.Command(["test"],
+        function (args, special)
+        {
+            alert(args)
+        },
+        {
+            shortHelp: "Test command"
+        }
+    ));
+    vimperator.options.add(new vimperator.Option(["test"], "boolean",
+        {
+            shortHelp: "Test option",
+            defaultValue: false
+        }
+    ));
+    vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["w"], "Test",
+        function () { alert("test"); }
+    );
+
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -310,7 +256,7 @@ vimperator.Buffer = function () //{{{
         },
 
         // quick function to get elements inside the document reliably
-        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quoted around myid)
+        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
         getElement: function (args, index)
         {
             return vimperator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
@@ -434,11 +380,12 @@ vimperator.Buffer = function () //{{{
             return selection;
         },
 
+        // TODO: move to tabs.js
         list: function (fullmode)
         {
             if (fullmode)
             {
-                // toggle the special buffer previw window
+                // toggle the special buffer preview window
                 if (vimperator.bufferwindow.visible())
                 {
                     vimperator.bufferwindow.hide();
@@ -644,6 +591,7 @@ vimperator.Buffer = function () //{{{
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
         },
 
+        // XXX: probably remove this method/functionality
         // updates the buffer preview in place only if list is visible
         updateBufferList: function ()
         {
@@ -655,7 +603,7 @@ vimperator.Buffer = function () //{{{
             vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
         },
 
-        // XXX: should this be in v.buffers. or v.tabs.?
+        // TODO: move to v.tabs.?
         // "buffer" is a string which matches the URL or title of a buffer, if it
         // is null, the last used string is used again
         switchTo: function (buffer, allowNonUnique, count, reverse)
@@ -995,6 +943,79 @@ vimperator.Buffer = function () //{{{
 
         followDocumentRelationship: function (relationship)
         {
+            function followFrameRelationship(relationship, parsedFrame)
+            {
+                var regexps;
+                var relText;
+                var patternText;
+                var revString;
+                switch (relationship)
+                {
+                    case "next":
+                        regexps = vimperator.options["nextpattern"].split(",");
+                        revString = "previous";
+                        break;
+                    case "previous":
+                        // TODO: accept prev\%[ious]
+                        regexps = vimperator.options["previouspattern"].split(",");
+                        revString = "next";
+                        break;
+                    default:
+                        vimperator.echoerr("Bad document relationship: " + relationship);
+                }
+
+                relText = new RegExp(relationship, "i");
+                revText = new RegExp(revString, "i");
+                var elems = parsedFrame.document.getElementsByTagName("link");
+                // links have higher priority than normal <a> hrefs
+                for (var i = 0; i < elems.length; i++)
+                {
+                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+                    {
+                            vimperator.open(elems[i].href);
+                            return true;
+                    }
+                }
+
+                // no links? ok, look for hrefs
+                elems = parsedFrame.document.getElementsByTagName("a");
+                for (var i = 0; i < elems.length; i++)
+                {
+                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+                    {
+                        vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                        return true;
+                    }
+                }
+
+                for (var pattern = 0; pattern < regexps.length; pattern++)
+                {
+                    patternText = new RegExp(regexps[pattern], "i");
+                    for (var i = 0; i < elems.length; i++)
+                    {
+                        if (patternText.test(elems[i].textContent))
+                        {
+                            vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                            return true;
+                        }
+                        else
+                        {
+                            // images with alt text being href
+                            var children = elems[i].childNodes;
+                            for (var j = 0; j < children.length; j++)
+                            {
+                                if (patternText.test(children[j].alt))
+                                {
+                                    vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
             var retVal;
             if (window.content.frames.length != 0)
             {
