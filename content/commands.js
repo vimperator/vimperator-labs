@@ -2281,7 +2281,8 @@ vimperator.Commands = function () //{{{
 
             if (args)
             {
-                var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                         getService(Components.interfaces.nsISessionStore);
                 var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                 for (var i = 0; i < undoItems.length; i++)
                 {
@@ -2299,7 +2300,8 @@ vimperator.Commands = function () //{{{
             completer: function (filter)
             {
                 // get closed-tabs from nsSessionStore
-                var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                         getService(Components.interfaces.nsISessionStore);
                 var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                 var completions = [];
                 for (var i = 0; i < undoItems.length; i++)
@@ -2328,7 +2330,8 @@ vimperator.Commands = function () //{{{
                 return;
             }
 
-            var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+            var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                     getService(Components.interfaces.nsISessionStore);
             var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
             for (var i = 0; i < undoItems.length; i++)
                 undoCloseTab(); // doesn't work with i as the index to undoCloseTab

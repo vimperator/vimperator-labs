@@ -416,7 +416,8 @@ const vimperator = (function () //{{{
 
         run: function (program, args, blocking)
         {
-            var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                       createInstance(Components.interfaces.nsILocalFile);
             const WINDOWS = navigator.platform == "Win32";
 
             if (!args)
@@ -454,7 +455,8 @@ const vimperator = (function () //{{{
                 return -1;
             }
 
-            var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
+            var process = Components.classes["@mozilla.org/process/util;1"].
+                          createInstance(Components.interfaces.nsIProcess);
             process.init(file);
 
             var ec = process.run(blocking, args, args.length);
@@ -721,7 +723,8 @@ const vimperator = (function () //{{{
 
         sleep: function (ms)
         {
-            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+            var threadManager = Components.classes["@mozilla.org/thread-manager;1"].
+                                getService(Components.interfaces.nsIThreadManager);
             var mainThread = threadManager.mainThread;
 
             var then = new Date().getTime(), now = then;

@@ -405,7 +405,8 @@ vimperator.Events = function () //{{{
     function waitForPageLoaded()
     {
         dump("start waiting in loaded state: " + vimperator.buffer.loaded + "\n");
-        var mainThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).mainThread;
+        var mainThread = Components.classes["@mozilla.org/thread-manager;1"].
+                         getService(Components.interfaces.nsIThreadManager).mainThread;
         while (mainThread.hasPendingEvents()) // clear queue
             mainThread.processNextEvent(true);
 

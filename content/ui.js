@@ -307,7 +307,8 @@ vimperator.CommandLine = function () //{{{
         {
             // if we are modifing the GUI while we are not in the main thread
             // Firefox will hang up
-            var threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+            var threadManager = Components.classes["@mozilla.org/thread-manager;1"].
+                                getService(Components.interfaces.nsIThreadManager);
             if (!threadManager.isMainThread)
                 return false;
 
