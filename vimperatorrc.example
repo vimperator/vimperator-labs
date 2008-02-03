@@ -3,6 +3,10 @@
 " I don't like beeps
 set visualbell
 
+" autoignore mode on certain pages
+:autocmd PageLoad .* :js modes.passAllKeys = /gmail\.com/.test(buffer.URL)
+
+
 " embedded javascript is possible
 " You can even add new functions which are then available in the :js command
 javascript <<EOF
