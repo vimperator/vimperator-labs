@@ -4,7 +4,7 @@
 
     <Description about="urn:mozilla:install-manifest">
 	<em:id>vimperator@mozdev.org</em:id>
-	<em:name>Vimperator</em:name>
+	<em:name>Vimperator2</em:name>
 	<em:version>###VERSION###</em:version>
 	<em:description>Make Firefox behave like Vim</em:description>
 	<em:creator>Martin Stubenschrott</em:creator>

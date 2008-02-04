@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+
+<!-- ***** BEGIN LICENSE BLOCK ***** {{{
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+
+Alternatively, the contents of this file may be used under the terms of
+either the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the GPL or the LGPL are applicable instead
+of those above. If you wish to allow use of your version of this file only
+under the terms of either the GPL or the LGPL, and not to allow others to
+use your version of this file under the terms of the MPL, indicate your
+decision by deleting the provisions above and replace them with the notice
+and other provisions required by the GPL or the LGPL. If you do not delete
+the provisions above, a recipient may use your version of this file under
+the terms of any one of the MPL, the GPL or the LGPL.
+}}} ***** END LICENSE BLOCK ***** -->
+
+<!--?xml-stylesheet href="chrome://browser/skin/" type="text/css"?-->
+<?xml-stylesheet href="chrome://muttator/skin/vimperator.css" type="text/css"?>
+
+<overlay id="muttator"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="http://home.netscape.com/NC-rdf#"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript;version=1.8" src="vimperator.js"/>
+    <script type="application/x-javascript;version=1.8" src="bookmarks.js"/>
+    <script type="application/x-javascript;version=1.8" src="buffers.js"/>
+    <script type="application/x-javascript;version=1.8" src="commands.js"/>
+    <script type="application/x-javascript;version=1.8" src="completion.js"/>
+    <script type="application/x-javascript;version=1.8" src="editor.js"/>
+    <script type="application/x-javascript;version=1.8" src="events.js"/>
+    <script type="application/x-javascript;version=1.8" src="find.js"/>
+    <script type="application/x-javascript;version=1.8" src="help.js"/>
+    <script type="application/x-javascript;version=1.8" src="hints.js"/>
+    <script type="application/x-javascript;version=1.8" src="io.js"/>
+    <script type="application/x-javascript;version=1.8" src="mappings.js"/>
+    <script type="application/x-javascript;version=1.8" src="modes.js"/>
+    <script type="application/x-javascript;version=1.8" src="options.js"/>
+    <script type="application/x-javascript;version=1.8" src="tabs.js"/>
+    <script type="application/x-javascript;version=1.8" src="ui.js"/>
+    <script type="application/x-javascript;version=1.8" src="util.js"/>
+
+    <window id="messengerWindow">
+
+        <!--this notifies us also of focus events in the XUL
+            from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
+        <commandset id="onVimperatorFocus"
+            commandupdater="true"
+            events="focus"
+            oncommandupdate="vimperator.events.onFocusChange(event);"/>
+        <commandset id="onVimperatorSelect"
+            commandupdater="true"
+            events="select"
+            oncommandupdate="vimperator.events.onSelectionChange(event);"/>
+
+        <keyset id="mainKeyset">
+            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
+            <!-- other keys are handled inside vimperator.js event loop -->
+            <key id="key_open_vimbar" key=";" oncommand="alert(';')" modifiers=""/>
+        </keyset>
+
+        <statusbar id="status-bar" class="hl-StatusLine">
+            <hbox insertbefore="statusText" id="vimperator-statusline" flex="1" height="10" hidden="false" align="center">
+                <textbox class="plain" id="vimperator-statusline-field-url" readonly="false" flex="1" crop="end"/>
+                <label class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
+                <label class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
+            </hbox>
+            <!-- just hide them since other elements expect them -->
+            <statusbarpanel id="statusbar-display" hidden="true"/>
+            <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
+        </statusbar>
+
+        <vbox id="vimperator-container" hidden="false">
+            <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "vimperator.bufferwindow.onEvent(event);"
+                ondblclick="vimperator.bufferwindow.onEvent(event);"
+                onkeydown= "vimperator.bufferwindow.onEvent(event);">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "vimperator.previewwindow.onEvent(event);"
+                ondblclick="vimperator.previewwindow.onEvent(event);"
+                onkeydown= "vimperator.previewwindow.onEvent(event);">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
+
+            <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
+                <listcols>
+                    <listcol flex="1" width="50%"/>
+                    <listcol flex="1" width="50%"/>
+                </listcols>
+            </listbox>
+
+            <hbox insertafter="status-bar" id="vimperator-commandline" hidden="false" class="hl-Normal">
+                <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <textbox class="plain" id="vimperator-commandline-command" flex="1" type="timed" timeout="100"
+                    oninput="vimperator.commandline.onEvent(event);"
+                    onfocus="vimperator.commandline.onEvent(event);"
+                    onblur="vimperator.commandline.onEvent(event);"/>
+            </hbox>
+
+            <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
+                onkeypress="vimperator.commandline.onMultilineInputEvent(event);"
+                oninput="vimperator.commandline.onMultilineInputEvent(event);"
+                onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
+        </vbox>
+
+
+    <menupopup id="viewSidebarMenu">
+        <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
+        <menuitem observes="vimperator-viewConsoleSidebar" label="Console" accesskey="C"/>
+        <menuitem observes="vimperator-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
+        <menuitem observes="vimperator-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
+    </menupopup>
+
+    <broadcasterset id="mainBroadcasterSet">
+        <broadcaster id="vimperator-viewAddonsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
+            sidebartitle="Add-ons"
+            oncommand="toggleSidebar('vimperator-viewAddonsSidebar');"/>
+        <broadcaster id="vimperator-viewConsoleSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://global/content/console.xul"
+            sidebartitle="Console"
+            oncommand="toggleSidebar('vimperator-viewConsoleSidebar');"/>
+        <broadcaster id="vimperator-viewDownloadsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
+            sidebartitle="Downloads"
+            oncommand="toggleSidebar('vimperator-viewDownloadsSidebar');"/>
+        <broadcaster id="vimperator-viewPreferencesSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="about:config"
+            sidebartitle="Preferences"
+            oncommand="toggleSidebar('vimperator-viewPreferencesSidebar');"/>
+    </broadcasterset>
+
+    </window>
+
+</overlay>
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->
