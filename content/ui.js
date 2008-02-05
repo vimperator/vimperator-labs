@@ -59,14 +59,15 @@ vimperator.CommandLine = function () //{{{
 
         load: function ()
         {
-            this.cmd = vimperator.options.getPref("commandline_cmd_history", "").split("\n");
-            this.search = vimperator.options.getPref("commandline_search_history", "").split("\n");
+            // TODO: move to storage module
+            this.cmd = vimperator.options.getPref("extensions.vimperator.commandline_cmd_history", "").split("\n");
+            this.search = vimperator.options.getPref("extensions.vimperator.commandline_search_history", "").split("\n");
         },
 
         save: function ()
         {
-            vimperator.options.setPref("commandline_cmd_history", this.cmd.join("\n"));
-            vimperator.options.setPref("commandline_search_history", this.search.join("\n"));
+            vimperator.options.setPref("extensions.vimperator.commandline_cmd_history", this.cmd.join("\n"));
+            vimperator.options.setPref("extensions.vimperator.commandline_search_history", this.search.join("\n"));
         },
 
         add: function (str)

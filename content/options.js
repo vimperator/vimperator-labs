@@ -116,10 +116,10 @@ vimperator.Options = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var firefoxBranch = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch);
-    var defaultBranch = firefoxBranch.getDefaultBranch("");
-    var vimperatorBranch = firefoxBranch.getBranch("extensions.vimperator.");
+    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                     .getService(Components.interfaces.nsIPrefBranch);
+    var preferences = prefService.getDefaultBranch("");
+
     var options = [];
 
     // save if we already changed a GUI related option, used for setInitialGUI
@@ -133,33 +133,29 @@ vimperator.Options = function () //{{{
         throw StopIteration;
     }
 
-    function storePreference(name, value, branch)
+    function storePreference(name, value)
     {
-        if (!branch)
-            branch = firefoxBranch;
-
-        var type = branch.getPrefType(name);
-
+        var type = prefService.getPrefType(name);
         switch (typeof value)
         {
             case "string":
-                if (type == branch.PREF_INVALID || type == branch.PREF_STRING)
-                    branch.setCharPref(name, value);
-                else if (type == branch.PREF_INT)
+                if (type == prefService.PREF_INVALID || type == prefService.PREF_STRING)
+                    prefService.setCharPref(name, value);
+                else if (type == prefService.PREF_INT)
                     vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
-                if (type == branch.PREF_INVALID || type == branch.PREF_INT)
-                    branch.setIntPref(name, value);
+                if (type == prefService.PREF_INVALID || type == prefService.PREF_INT)
+                    prefService.setIntPref(name, value);
                 else
                     vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
-                if (type == branch.PREF_INVALID || type == branch.PREF_BOOL)
-                    branch.setBoolPref(name, value);
-                else if (type == branch.PREF_INT)
+                if (type == prefService.PREF_INVALID || type == prefService.PREF_BOOL)
+                    prefService.setBoolPref(name, value);
+                else if (type == prefService.PREF_INT)
                     vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
@@ -169,32 +165,28 @@ vimperator.Options = function () //{{{
         }
     }
 
-    function loadPreference(name, forcedDefault, branch)
+    function loadPreference(name, forcedDefault)
     {
         var defaultValue = null;
-        if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like comp_history)
+        if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
-        if (!branch)
-            branch = firefoxBranch;
-
-        var type = branch.getPrefType(name);
-
+        var type = prefService.getPrefType(name);
         try
         {
             switch (type)
             {
-                case branch.PREF_STRING:
-                    var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+                case prefService.PREF_STRING:
+                    var value = prefService.getComplexValue(name, Components.interfaces.nsISupportsString).data;
                     // Try in case it's a localized string (will throw an exception if not)
-                    if (!branch.prefIsLocked(name) && !branch.prefHasUserValue(name) &&
+                    if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
-                            value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
+                            value = prefService.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
                     return value;
-                case branch.PREF_INT:
-                    return branch.getIntPref(name);
-                case branch.PREF_BOOL:
-                    return branch.getBoolPref(name);
+                case prefService.PREF_INT:
+                    return prefService.getIntPref(name);
+                case prefService.PREF_BOOL:
+                    return prefService.getBoolPref(name);
                 default:
                     return defaultValue;
             }
@@ -336,7 +328,7 @@ vimperator.Options = function () //{{{
                 storePreference("dom.popup_allowed_events", popupAllowedEvents);
         },
 
-        list: function (onlyNondefault)
+        list: function (onlyNonDefault)
         {
             var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
@@ -348,7 +340,7 @@ vimperator.Options = function () //{{{
                 value = options[i].value;
                 def   = options[i].defaultValue;
 
-                if (onlyNondefault && value == def)
+                if (onlyNonDefault && value == def)
                     continue;
 
                 if (options[i].type == "boolean")
@@ -377,28 +369,30 @@ vimperator.Options = function () //{{{
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
         },
 
-        listFirefoxPrefs: function (onlyNondefault, filter)
+        listPrefs: function (onlyNonDefault, filter)
         {
             if (!filter)
                 filter = "";
-            var prefArray = firefoxBranch.getChildList("", {value: 0});
+
+            var prefArray = prefService.getChildList("", {value: 0});
             prefArray.sort();
             var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Firefox Options ---</th></tr>";
+                "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + vimperator.config.hostApplication +
+                " Options ---</th></tr>";
             var name, value;
 
             for (var i = 0; i < prefArray.length; i++)
             {
-                var userValue = firefoxBranch.prefHasUserValue(prefArray[i]);
-                if ((!onlyNondefault || userValue) && prefArray[i].indexOf(filter) >= 0)
+                var userValue = prefService.prefHasUserValue(prefArray[i]);
+                if ((!onlyNonDefault || userValue) && prefArray[i].indexOf(filter) >= 0)
                 {
                     name = prefArray[i];
-                    value = this.getFirefoxPref(name);
+                    value = this.getPref(name);
                     if (typeof value == "string")
                         value = value.substr(0,100).replace(/\n/g, " ");
 
                     value = vimperator.util.colorize(value, false);
-                    defaultValue = loadPreference(name, null, defaultBranch);
+                    defaultValue = loadPreference(name, null);
 
                     if (defaultValue == null)
                         defaultValue = "no default";
@@ -431,38 +425,27 @@ vimperator.Options = function () //{{{
                 this.get("showtabline").reset();
         },
 
-        // TODO: separate Preferences from Options? Would these utility functions
         // be better placed in the 'core' vimperator namespace somewhere?
         setPref: function (name, value)
-        {
-            return storePreference(name, value, vimperatorBranch);
-        },
-
-        getPref: function (name, forcedDefault)
-        {
-            return loadPreference(name, forcedDefault, vimperatorBranch);
-        },
-
-        setFirefoxPref: function (name, value)
         {
             return storePreference(name, value);
         },
 
-        getFirefoxPref: function (name, forcedDefault)
+        getPref: function (name, forcedDefault)
         {
             return loadPreference(name, forcedDefault);
         },
 
-        resetFirefoxPref: function (name)
+        resetPref: function (name)
         {
-            return firefoxBranch.clearUserPref(name);
+            return preferences.clearUserPref(name);
         },
 
         // this works only for booleans
-        invertFirefoxPref: function (name)
+        invertPref: function (name)
         {
-            if (firefoxBranch.getPrefType(name) == firefoxBranch.PREF_BOOL)
-                this.setFirefoxPref(name, !this.getFirefoxPref(name));
+            if (prefService.getPrefType(name) == prefService.PREF_BOOL)
+                this.setPref(name, !this.getPref(name));
             else
                 vimperator.echoerr("E488: Trailing characters: " + name + "!");
         }
@@ -712,7 +695,7 @@ vimperator.Options = function () //{{{
     optionManager.add(new vimperator.Option(["visualbell", "vb"], "boolean",
         {
             shortHelp: "Use visual bell instead of beeping on errors",
-            setter: function (value) { vimperator.options.setFirefoxPref("accessibility.typeaheadfind.enablesound", !value); },
+            setter: function (value) { vimperator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
             defaultValue: false
         }
     ));
@@ -737,9 +720,6 @@ vimperator.Options = function () //{{{
 
     // we start with an "empty" GUI so that no toolbars or tabbar is shown if the user
     // sets them to empty in the .vimperatorrc, which is sourced asynchronously
-    if (vimperator.config.name != "Vimperator")
-        alert("mooh");
-        else alert("maeh");
     if (vimperator.config.name != "Vimperator")
         return optionManager;
 

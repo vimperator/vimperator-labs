@@ -155,9 +155,9 @@ vimperator.IO = function () //{{{
             var pluginDir;
 
             if (WINDOWS)
-                pluginDir = "~/vimperator/" + directory;
+                pluginDir = "~/" + vimperator.config.name.toLowerCase() + "/" + directory;
             else
-                pluginDir = "~/.vimperator/" + directory;
+                pluginDir = "~/." + vimperator.config.name.toLowerCase() + "/" + directory;
 
             pluginDir = this.getFile(this.expandPath(pluginDir));
 
@@ -166,8 +166,8 @@ vimperator.IO = function () //{{{
 
         getRCFile: function ()
         {
-            var rcFile1 = this.getFile("~/.vimperatorrc");
-            var rcFile2 = this.getFile("~/_vimperatorrc");
+            var rcFile1 = this.getFile("~/." + vimperator.config.name.toLowerCase() + "rc");
+            var rcFile2 = this.getFile("~/_" + vimperator.config.name.toLowerCase() + "rc");
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1]

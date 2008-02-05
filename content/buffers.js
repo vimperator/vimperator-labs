@@ -348,7 +348,7 @@ vimperator.Buffer = function () //{{{
             {
                 urlSecurityCheck(url, doc.nodePrincipal);
                 // we always want to save that link relative to the current working directory
-                vimperator.options.setFirefoxPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+                vimperator.options.setPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
                 saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
             }
             catch (e)

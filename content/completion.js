@@ -364,9 +364,9 @@ vimperator.Completion = function () //{{{
 
             if (special)
             {
-                var firefoxBranch = Components.classes["@mozilla.org/preferences-service;1"]
+                var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefBranch);
-                var prefArray = firefoxBranch.getChildList("", {value: 0});
+                var prefArray = prefs.getChildList("", {value: 0});
                 prefArray.sort();
 
                 if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
@@ -376,7 +376,7 @@ vimperator.Completion = function () //{{{
                         var name = prefArray[i];
                         if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
                         {
-                            var value = vimperator.options.getFirefoxPref(name) + "";
+                            var value = vimperator.options.getPref(name) + "";
                             return [filter.length + 1, [[value, ""]]];
                         }
                     }
@@ -386,9 +386,9 @@ vimperator.Completion = function () //{{{
                 for (var i = 0; i < prefArray.length; i++)
                 {
                     if (!filter)
-                        optionCompletions.push([prefArray[i], vimperator.options.getFirefoxPref(prefArray[i])]);
+                        optionCompletions.push([prefArray[i], vimperator.options.getPref(prefArray[i])]);
                     else
-                        optionCompletions.push([[prefArray[i]], vimperator.options.getFirefoxPref(prefArray[i])]);
+                        optionCompletions.push([[prefArray[i]], vimperator.options.getPref(prefArray[i])]);
                 }
                         
 

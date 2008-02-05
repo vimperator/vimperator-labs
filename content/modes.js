@@ -135,9 +135,9 @@ vimperator.modes = (function () //{{{
         if (newMode == vimperator.modes.NORMAL)
         {
             // disable caret mode when we want to switch to normal mode
-            var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
+            var value = vimperator.options.getPref("accessibility.browsewithcaret", false);
             if (value)
-                vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
+                vimperator.options.setPref("accessibility.browsewithcaret", false);
 
             vimperator.statusline.updateUrl();
             vimperator.focusContent(false);

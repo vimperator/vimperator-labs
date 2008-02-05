@@ -853,7 +853,7 @@ vimperator.Events = function () //{{{
                     case vimperator.modes.CARET:
                         // setting this option will trigger an observer which will
                         // care about all other details like setting the NORMAL mode
-                        vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
+                        vimperator.options.setPref("accessibility.browsewithcaret", false);
                         break;
 
                     case vimperator.modes.INSERT:
@@ -1245,6 +1245,7 @@ vimperator.Events = function () //{{{
             onLinkIconAvailable: function () { ; }
         },
 
+        // TODO: move to options.js?
         prefObserver: {
             register: function ()
             {

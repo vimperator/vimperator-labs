@@ -1757,7 +1757,7 @@ vimperator.Commands = function () //{{{
         {
             var file = vimperator.io.getFile(args || ""); 
             // we always want to save that link relative to the current working directory
-            vimperator.options.setFirefoxPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+            vimperator.options.setPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
             //if (args)
             //{
             //    saveURL(vimperator.buffer.URL, args, null, true, special, // special == skipPrompt
@@ -1776,11 +1776,11 @@ vimperator.Commands = function () //{{{
         {
             if (special)
             {
-                var onlyNondefault = false;
+                var onlyNonDefault = false;
                 if (!args)
                 {
                     args = "all";
-                    onlyNondefault = true;
+                    onlyNonDefault = true;
                 }
                 //                                1                    2       3  4       5
                 var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
@@ -1796,11 +1796,11 @@ vimperator.Commands = function () //{{{
                 if (name == "all" && reset)
                     vimperator.echoerr("You can't reset all the firefox options, it could make your browser unusable.");
                 else if (name == "all")
-                    vimperator.options.listFirefoxPrefs(onlyNondefault, "");
+                    vimperator.options.listPrefs(onlyNonDefault, "");
                 else if (reset)
-                    vimperator.options.resetFirefoxPref(name);
+                    vimperator.options.resetPref(name);
                 else if (invertBoolean)
-                    vimperator.options.invertFirefoxPref(name);
+                    vimperator.options.invertPref(name);
                 else if (matches[3])
                 {
                     var value = matches[5];
@@ -1820,20 +1820,20 @@ vimperator.Commands = function () //{{{
                             if (!isNaN(valueInt))
                                 value = valueInt;
                     }
-                    vimperator.options.setFirefoxPref(name, value);
+                    vimperator.options.setPref(name, value);
                 }
                 else
                 {
-                    vimperator.options.listFirefoxPrefs(onlyNondefault, name);
+                    vimperator.options.listPrefs(onlyNonDefault, name);
                 }
                 return;
             }
 
-            var onlyNondefault = false; // used for :set to print non-default options
+            var onlyNonDefault = false; // used for :set to print non-default options
             if (!args)
             {
                 args = "all";
-                onlyNondefault = true;
+                onlyNonDefault = true;
             }
 
             //                               1        2       3       4  5       6
@@ -1898,7 +1898,7 @@ vimperator.Commands = function () //{{{
             {
                 if (all)
                 {
-                    vimperator.options.list(onlyNondefault);
+                    vimperator.options.list(onlyNonDefault);
                 }
                 else
                 {
