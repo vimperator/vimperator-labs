@@ -163,7 +163,8 @@ const vimperator = (function () //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
-            content.focus();
+            var elem = vimperator.config.mainWidget || content;
+            elem.focus();
         },
 
         // partial sixth level expression evaluation

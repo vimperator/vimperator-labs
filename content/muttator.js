@@ -29,5 +29,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.config = {
     name: "Muttator",
     hostApplication: "Thunderbird",
+
+	// this widget is focused when focusContent() is called
+	get mainWidget() { return GetThreadTree(); },
     dialogs: []
 }
+
+// vim: set fdm=marker sw=4 ts=4 et:

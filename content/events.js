@@ -392,7 +392,7 @@ vimperator.Events = function () //{{{
             doc.pageIsFullyLoaded = 1;
 
             // code which is only relevant if the page load is the current tab goes here:
-            if (doc == getBrowser().selectedBrowser.contentDocument)
+            if (!vimperator.tabs || doc == getBrowser().selectedBrowser.contentDocument)
             {
                 // we want to stay in command mode after a page has loaded
                 // XXX: Does this still causes window map events which is _very_ annoying
