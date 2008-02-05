@@ -258,11 +258,9 @@ vimperator.util = { //{{{
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine
             // or keyword bookmark
-            var matches;
-            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
+            if (vimperator.has("bookmarks") && (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url])))
             {
-                matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
-
+                var matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
                 var alias = matches[1];
                 var text = matches[2] || null;
 
@@ -274,7 +272,7 @@ vimperator.util = { //{{{
 
                 // check if the first word is a search engine
                 var searchURL = vimperator.bookmarks.getSearchURL(text, alias);
-                if (searchURL/* && searchURL.length >= 1*/)
+                if (searchURL)
                 {
                     urls[url] = searchURL;
                     continue;
@@ -282,7 +280,7 @@ vimperator.util = { //{{{
                 else // the first word was not a search engine, search for the whole string in the default engine
                 {
                     searchURL = vimperator.bookmarks.getSearchURL(urls[url], null);
-                    if (searchURL/* && searchURL.length >= 1*/)
+                    if (searchURL)
                     {
                         urls[url] = searchURL;
                         continue;

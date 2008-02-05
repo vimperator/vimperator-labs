@@ -1045,7 +1045,7 @@ vimperator.Commands = function () //{{{
         {
             function jumpToTag(file, tag)
             {
-                vimperator.open("chrome://vimperator/locale/" + file);
+                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + file);
                 setTimeout(function() {
                     var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
@@ -1057,7 +1057,7 @@ vimperator.Commands = function () //{{{
 
             if (!args)
             {
-                vimperator.open("chrome://vimperator/locale/intro.html");
+                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/intro.html");
                 return;
             }
 
