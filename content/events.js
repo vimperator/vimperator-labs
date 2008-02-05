@@ -380,7 +380,8 @@ vimperator.Events = function () //{{{
             var title = vimperator.buffer.title;
 
             //update history
-            vimperator.history.add(url, title);
+            if (vimperator.history)
+                vimperator.history.add(url, title);
 
             vimperator.buffer.updateBufferList();
             vimperator.autocommands.trigger("PageLoad", url);

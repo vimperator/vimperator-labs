@@ -409,7 +409,7 @@ vimperator.Mappings = function () //{{{
         { shortHelp: "Pass through next key" }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-c>"],
-        BrowserStop,
+        function() { BrowserStop(); },
         { shortHelp: "Stop loading" }
     ));
     addDefaultMap(new vimperator.Map(allModes, ["<Nop>"],
@@ -508,7 +508,7 @@ vimperator.Mappings = function () //{{{
         { shortHelp: "View source with an external editor" }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gh"],
-        BrowserHome,
+        function() { BrowserHome(); },
         { shortHelp: "Go home" }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gH"],

@@ -2089,7 +2089,7 @@ vimperator.Commands = function () //{{{
         }
     ));
     commandManager.add(new vimperator.Command(["st[op]"],
-        BrowserStop,
+        function() { BrowserStop(); },
         { shortHelp: "Stop loading" }
     ));
     commandManager.add(new vimperator.Command(["tab"],
