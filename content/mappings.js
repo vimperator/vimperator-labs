@@ -355,12 +355,14 @@ vimperator.Mappings = function () //{{{
                     vimperator.modes.VISUAL,
                     vimperator.modes.HINTS,
                     vimperator.modes.COMMAND_LINE,
+                    vimperator.modes.MESSAGE,
                     vimperator.modes.CARET,
                     vimperator.modes.TEXTAREA];
 
     var noninsertModes = [vimperator.modes.NORMAL,
                           vimperator.modes.VISUAL,
                           vimperator.modes.HINTS,
+                          vimperator.modes.MESSAGE,
                           vimperator.modes.CARET,
                           vimperator.modes.TEXTAREA];
 

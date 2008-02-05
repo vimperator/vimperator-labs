@@ -772,8 +772,17 @@ vimperator.Events = function () //{{{
                     vimperator.modes.main = vimperator.modes.TEXTAREA;
                 vimperator.buffer.lastInputField = elem;
             }
+            else if (vimperator.config.name == "Muttator" && (!elem || elem instanceof HTMLElement))
+            {
+                // we switch to -- MESSAGE -- mode for muttator, whenever no tree or an HTML element 
+                // which is NOT an input element is selected
+                vimperator.mode = vimperator.modes.MESSAGE;
+                return;
+            }
+
             else if (vimperator.mode == vimperator.modes.INSERT ||
                      vimperator.mode == vimperator.modes.TEXTAREA ||
+                //     vimperator.mode == vimperator.modes.MESSAGE ||
                      vimperator.mode == vimperator.modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work

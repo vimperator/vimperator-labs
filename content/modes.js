@@ -77,6 +77,8 @@ vimperator.modes = (function () //{{{
                 return "-- CARET" + ext;
             case vimperator.modes.TEXTAREA:
                 return "-- TEXTAREA" + ext;
+            case vimperator.modes.MESSAGE:
+                return "-- MESSAGE" + ext;
             case vimperator.modes.CUSTOM:
                 return "-- " + vimperator.plugins.mode + ext;
             default: // NORMAL mode
@@ -159,7 +161,8 @@ vimperator.modes = (function () //{{{
         COMMAND_LINE:     1 << 4,
         CARET:            1 << 5, // text cursor is visible
         TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
-        CUSTOM:           1 << 7,
+        MESSAGE:          1 << 7, // for now only used in Muttator when the message has focus
+        CUSTOM:           1 << 8,
         // extended modes, can include multiple modes, and even main modes
         EX:               1 << 10,
         INPUT_MULTILINE:  1 << 11,
@@ -177,7 +180,7 @@ vimperator.modes = (function () //{{{
         __iterator__: function ()
         {
             var modes = [this.NONE, this.NORMAL, this.INSERT, this.VISUAL, this.HINTS, 
-                         this.COMMAND_LINE, this.CARET, this.TEXTAREA, this.CUSTOM];
+                         this.COMMAND_LINE, this.CARET, this.TEXTAREA, this.MESSAGE, this.CUSTOM];
 
             for (var i = 0; i < modes.length; i++)
                 yield modes[i];
