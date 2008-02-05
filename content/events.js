@@ -392,13 +392,13 @@ vimperator.Events = function () //{{{
             doc.pageIsFullyLoaded = 1;
 
             // code which is only relevant if the page load is the current tab goes here:
-            if (!vimperator.tabs || doc == getBrowser().selectedBrowser.contentDocument)
+            if (doc == getBrowser().contentDocument)
             {
                 // we want to stay in command mode after a page has loaded
                 // XXX: Does this still causes window map events which is _very_ annoying
                 setTimeout(function () {
                     var focused = document.commandDispatcher.focusedElement;
-                    if (focused && focused.value.length == 0)
+                    if (focused && (typeof focused.value != "undefined") && focused.value.length == 0)
                         focused.blur();
                 }, 100);
             }
@@ -754,6 +754,8 @@ vimperator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
+            // dump(vimperator.util.objectToString(elem) + "\n");
+
             if (elem && elem instanceof HTMLInputElement &&
                     (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
             {
@@ -782,7 +784,7 @@ vimperator.Events = function () //{{{
 
             else if (vimperator.mode == vimperator.modes.INSERT ||
                      vimperator.mode == vimperator.modes.TEXTAREA ||
-                //     vimperator.mode == vimperator.modes.MESSAGE ||
+                     vimperator.mode == vimperator.modes.MESSAGE ||
                      vimperator.mode == vimperator.modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work

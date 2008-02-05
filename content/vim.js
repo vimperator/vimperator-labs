@@ -241,6 +241,13 @@ const vimperator = (function () //{{{
             }
         },
 
+        // return true, if this VIM-like extension has a certain feature
+        has: function (feature)
+        {
+            var features = vimperator.config.features || [];
+            return features.some (function(feat) { return feat == feature; });
+        },
+
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
         log: function (msg, level)
@@ -264,7 +271,7 @@ const vimperator = (function () //{{{
         // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
         // @returns true when load was initiated, or false on error
-        open: function (urls, where, callback)
+        open: function (urls, where)
         {
             // convert the string to an array of converted URLs
             // -> see vimperator.util.stringToURLArray for more details
@@ -274,7 +281,7 @@ const vimperator = (function () //{{{
             if (urls.length == 0)
                 return false;
 
-            if (!where)
+            if (!where || !vimperator.has("tabs"))
                 where = vimperator.CURRENT_TAB;
 
             var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];
@@ -285,7 +292,7 @@ const vimperator = (function () //{{{
             switch (where)
             {
                 case vimperator.CURRENT_TAB:
-                    window.loadURI(url, null, postdata); // getBrowser.loadURI() did not work with postdata in my quick experiments --mst
+                    getBrowser().loadURIWithFlags(url, null, null, null, postdata);
                     break;
 
                 case vimperator.NEW_TAB:
@@ -310,6 +317,10 @@ const vimperator = (function () //{{{
                     return false;
             }
 
+            // only load more than one url if we have tab support
+            if (!vimperator.has("tabs"))
+                return true;
+
             // all other URLs are always loaded in background
             for (var i = 1; i < urls.length; i++)
             {
@@ -317,8 +328,6 @@ const vimperator = (function () //{{{
                 postdata = typeof urls[i] == "string" ? null : urls[i][1];
                 whichwindow.getBrowser().addTab(url, null, null, postdata);
             }
-
-            // TODO: register callbacks
 
             return true;
         },
@@ -382,12 +391,12 @@ const vimperator = (function () //{{{
             vimperator.events        = vimperator.Events();
             vimperator.log("Loading module commands...", 3);
             vimperator.commands      = vimperator.Commands();
-            if (vimperator.Bookmarks)
+            if (vimperator.has("bookmarks"))
             {
                 vimperator.log("Loading module bookmarks...", 3);
                 vimperator.bookmarks     = vimperator.Bookmarks();
             }
-            if (vimperator.History)
+            if (vimperator.has("history"))
             {
                 vimperator.log("Loading module history...", 3);
                 vimperator.history       = vimperator.History();
@@ -408,23 +417,26 @@ const vimperator = (function () //{{{
             vimperator.buffer        = vimperator.Buffer();
             vimperator.log("Loading module editor...", 3);
             vimperator.editor        = vimperator.Editor();
-            if (vimperator.Tabs)
+            if (vimperator.has("tabs"))
             {
                 vimperator.log("Loading module tabs...", 3);
                 vimperator.tabs          = vimperator.Tabs();
             }
-            if (vimperator.Marks)
+            if (vimperator.has("marks"))
             {
                 vimperator.log("Loading module marks...", 3);
                 vimperator.marks         = vimperator.Marks();
             }
-            if (vimperator.QuickMarks)
+            if (vimperator.has("quickmarks"))
             {
                 vimperator.log("Loading module quickmarks...", 3);
                 vimperator.quickmarks    = vimperator.QuickMarks();
             }
-            vimperator.log("Loading module hints...", 3);
-            vimperator.hints         = vimperator.Hints();
+            if (vimperator.has("hints"))
+            {
+                vimperator.log("Loading module hints...", 3);
+                vimperator.hints         = vimperator.Hints();
+            }
             vimperator.log("Loading module autocommands...", 3);
             vimperator.autocommands  = vimperator.AutoCommands();
             vimperator.log("Loading module io...", 3);

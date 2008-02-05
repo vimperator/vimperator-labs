@@ -1202,6 +1202,12 @@ vimperator.StatusLine = function () //{{{
         // you can omit either of the 2 arguments
         updateTabCount: function (currentIndex, totalTabs)
         {
+            if (!vimperator.has("tabs"))
+            {
+                tabCountWidget = "";
+                return;
+            }
+
             if (!currentIndex || typeof currentIndex != "number")
                 currentIndex = vimperator.tabs.index() + 1;
             if (!totalTabs || typeof currentIndex != "number")

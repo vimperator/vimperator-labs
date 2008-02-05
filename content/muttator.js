@@ -32,7 +32,8 @@ vimperator.config = {
 
 	// this widget is focused when focusContent() is called
 	get mainWidget() { return GetThreadTree(); },
-    dialogs: []
+    dialogs: [],
+    features: ["mail", "hints"]
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

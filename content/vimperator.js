@@ -29,7 +29,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.config = {
     name: "Vimperator",
     hostApplication: "Firefox",
-    dialogs: []
+    dialogs: [],
+    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"]
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:
