@@ -926,7 +926,7 @@ vimperator.Commands = function () //{{{
         }
 
         if (typeof arg === "object")
-            arg = vimperator.objectToString(arg, color);
+            arg = vimperator.util.objectToString(arg, color);
         else if (typeof arg === "function")
             arg = vimperator.util.escapeHTML(arg.toString());
         else if (typeof arg === "number" || typeof arg === "boolean")
@@ -2081,7 +2081,7 @@ vimperator.Commands = function () //{{{
             //    return;
             //}
 
-            vimperator.source(args, special);
+            vimperator.io.source(args, special);
         },
         {
             shortHelp: "Read Ex commands from {file}",
@@ -2471,7 +2471,7 @@ vimperator.Commands = function () //{{{
 
                 var prog = args.shift();
                 args.push(url)
-                vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
+                vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
             }
             else
             {
@@ -2572,7 +2572,7 @@ vimperator.Commands = function () //{{{
             args = args.replace(/(^|[^\\])!/g, "$1" + lastRunCommand);
             lastRunCommand = args;
 
-            var output = vimperator.system(args);
+            var output = vimperator.io.system(args);
             if (output)
                 vimperator.echo(vimperator.util.escapeHTML(output));
         },

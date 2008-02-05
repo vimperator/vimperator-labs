@@ -308,6 +308,167 @@ vimperator.IO = function () //{{{
 
             ocstream.close();
             ofstream.close();
+        },
+
+        run: function (program, args, blocking)
+        {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                       createInstance(Components.interfaces.nsILocalFile);
+
+            if (!args)
+                args = [];
+
+            if (typeof blocking != "boolean")
+                blocking = false;
+
+            try
+            {
+                file.initWithPath(program);
+            }
+            catch (e)
+            {
+                var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+                for (var i = 0; i < dirs.length; i++)
+                {
+                    var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
+                    try
+                    {
+                        file.initWithPath(path);
+                        if (file.exists())
+                            break;
+                    }
+                    catch (e) { }
+                }
+            }
+
+            if (!file.exists())
+            {
+                vimperator.echoerr("command not found: " + program);
+                return -1;
+            }
+
+            var process = Components.classes["@mozilla.org/process/util;1"].
+                          createInstance(Components.interfaces.nsIProcess);
+            process.init(file);
+
+            var ec = process.run(blocking, args, args.length);
+            return ec;
+        },
+
+        // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
+        // is fixed, should use that instead of a tmpfile
+        // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
+        system: function (str, input)
+        {
+            var fileout = this.createTempFile();
+            if (!fileout)
+                return "";
+
+            if (WINDOWS)
+                var command = str + " > " + fileout.path;
+            else
+                var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
+
+            var filein = null;
+            if (input)
+            {
+                filein = this.createTempFile();
+                this.writeFile(filein, input);
+                command += " < \"" + filein.path.replace('"', '\\"') + "\"";
+            }
+
+            var res;
+            if (WINDOWS)
+                res = this.run("cmd.exe", ["/C", command], true);
+            else
+                res = this.run("sh", ["-c", command], true);
+
+            var output = this.readFile(fileout);
+            fileout.remove(false);
+            if (filein)
+                filein.remove(false);
+
+            // if there is only one \n at the end, chop it off
+            if (output && output.indexOf("\n") == output.length - 1)
+                output = output.substr(0, output.length - 1);
+
+            return output;
+        },
+
+        // files which end in .js are sourced as pure javascript files,
+        // no need (actually forbidden) to add: js <<EOF ... EOF around those files
+        source: function (filename, silent)
+        {
+            try
+            {
+                var file = this.getFile(filename);
+                if (!file.exists())
+                {
+                    if (!silent)
+                        vimperator.echoerr("E484: Can't open file " + filename);
+                    return false;
+                }
+                var str = this.readFile(filename);
+
+                // handle pure javascript files specially
+                if (/\.js$/.test(filename))
+                {
+                    eval("with(vimperator){" + str + "}");
+                }
+                else
+                {
+                    var heredoc = "";
+                    var heredocEnd = null; // the string which ends the heredoc
+                    str.split("\n").forEach(function (line)
+                    {
+                        if (heredocEnd) // we already are in a heredoc
+                        {
+                            if (heredocEnd.test(line))
+                            {
+                                eval("with(vimperator){" + heredoc + "}");
+                                heredoc = "";
+                                heredocEnd = null;
+                            }
+                            else
+                            {
+                                heredoc += line + "\n";
+                            }
+                        }
+                        else
+                        {
+                            // check for a heredoc
+                            var [count, cmd, special, args] = vimperator.commands.parseCommand(line);
+                            var command = vimperator.commands.get(cmd);
+                            if (command && command.name == "javascript")
+                            {
+                                var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                                if (matches)
+                                {
+                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
+                                    if (matches[1])
+                                        heredoc = matches[1] + "\n";
+                                }
+                                else
+                                {
+                                    command.execute(args, special, count);
+                                }
+                            }
+                            else
+                            {
+                                // execute a normal vimperator command
+                                vimperator.execute(line);
+                            }
+                        }
+                    });
+                }
+
+                vimperator.log("Sourced: " + filename, 3);
+            }
+            catch (e)
+            {
+                if (!silent)
+                    vimperator.echoerr(e);
+            }
         }
     };
     //}}}

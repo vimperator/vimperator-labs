@@ -687,7 +687,7 @@ vimperator.Buffer = function () //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            vimperator.echo("Element:<br/>" + vimperator.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
+            vimperator.echo("Element:<br/>" + vimperator.util.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)

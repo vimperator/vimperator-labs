@@ -28,17 +28,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 vimperator.util = { //{{{
 
-    escapeHTML: function (str)
-    {
-        // XXX: the following code is _much_ slower than a simple .replace()
-        // :history display went down from 2 to 1 second after changing
-        //
-        // var e = window.content.document.createElement("div");
-        // e.appendChild(window.content.document.createTextNode(str));
-        // return e.innerHTML;
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    },
-
     // TODO: use :highlight color groups
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
@@ -90,65 +79,15 @@ vimperator.util = { //{{{
         return "&lt;unknown type&gt;";
     },
 
-    // takes a string like 'google bla, www.osnews.com'
-    // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
-    stringToURLArray: function (str)
+    escapeHTML: function (str)
     {
-        var urls = str.split(/\s*\,\s+/);
-
-        begin: for (var url = 0; url < urls.length; url++)
-        {
-            // strip each 'URL' - makes things simpler later on
-            urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
-
-            // first check if it is an existing local file
-            var file = vimperator.io.getFile(urls[url]);
-            if (file.exists() && file.isReadable())
-            {
-                urls[url] = file.path;
-                continue;
-            }
-
-            // if the string doesn't look like a valid URL (i.e. contains a space
-            // or does not contain any of: .:/) try opening it with a search engine
-            // or keyword bookmark
-            var matches;
-            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
-            {
-                matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
-
-                var alias = matches[1];
-                var text = matches[2] || null;
-
-                // TODO: it would be clearer if the appropriate call to
-                // getSearchURL was made based on whether or not the first word was
-                // indeed an SE alias rather than seeing if getSearchURL can
-                // process the call usefully and trying again if it fails - much
-                // like the comments below ;-)
-
-                // check if the first word is a search engine
-                var searchURL = vimperator.bookmarks.getSearchURL(text, alias);
-                if (searchURL/* && searchURL.length >= 1*/)
-                {
-                    urls[url] = searchURL;
-                    continue;
-                }
-                else // the first word was not a search engine, search for the whole string in the default engine
-                {
-                    searchURL = vimperator.bookmarks.getSearchURL(urls[url], null);
-                    if (searchURL/* && searchURL.length >= 1*/)
-                    {
-                        urls[url] = searchURL;
-                        continue;
-                    }
-                }
-            }
-
-            // if we are here let Firefox handle the url and hope it does
-            // something useful with it :)
-        }
-
-        return urls;
+        // XXX: the following code is _much_ slower than a simple .replace()
+        // :history display went down from 2 to 1 second after changing
+        //
+        // var e = window.content.document.createElement("div");
+        // e.appendChild(window.content.document.createTextNode(str));
+        // return e.innerHTML;
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
     formatBytes: function (num, decimalPlaces, humanReadable)
@@ -242,8 +181,121 @@ vimperator.util = { //{{{
             return "<a class='hl-URL' href='#'>" + vimperator.util.escapeHTML(str) + "</a>";
         else
             return str;
-    }
+    },
 
+    // if color = true it uses HTML markup to color certain items
+    objectToString: function (object, color)
+    {
+        if (object === null)
+            return "null";
+
+        if (typeof object != "object")
+            return false;
+
+        var string = "";
+        var obj = "";
+        try
+        { // for window.JSON
+            obj = object.toString();
+        }
+        catch (e)
+        {
+            obj = "&lt;Object&gt;";
+        }
+
+        if (color)
+            string += "<span class=\"hl-Title\">" + obj + "</span>::\n";
+        else
+            string += obj + "::\n";
+
+        try // window.content often does not want to be queried with "var i in object"
+        {
+            for (var i in object)
+            {
+                var value;
+                try
+                {
+                    value = object[i];
+                }
+                catch (e)
+                {
+                    value = "&lt;no value&gt;";
+                }
+
+                if (color)
+                {
+                    value = this.colorize(value, true);
+                    string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
+                }
+                else
+                    string += i + ": " + value + "\n";
+            }
+        }
+        catch (e) { }
+
+        return string;
+    },
+
+    // takes a string like 'google bla, www.osnews.com'
+    // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
+    stringToURLArray: function (str)
+    {
+        var urls = str.split(/\s*\,\s+/);
+
+        begin: for (var url = 0; url < urls.length; url++)
+        {
+            // strip each 'URL' - makes things simpler later on
+            urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
+
+            // first check if it is an existing local file
+            var file = vimperator.io.getFile(urls[url]);
+            if (file.exists() && file.isReadable())
+            {
+                urls[url] = file.path;
+                continue;
+            }
+
+            // if the string doesn't look like a valid URL (i.e. contains a space
+            // or does not contain any of: .:/) try opening it with a search engine
+            // or keyword bookmark
+            var matches;
+            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
+            {
+                matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
+
+                var alias = matches[1];
+                var text = matches[2] || null;
+
+                // TODO: it would be clearer if the appropriate call to
+                // getSearchURL was made based on whether or not the first word was
+                // indeed an SE alias rather than seeing if getSearchURL can
+                // process the call usefully and trying again if it fails - much
+                // like the comments below ;-)
+
+                // check if the first word is a search engine
+                var searchURL = vimperator.bookmarks.getSearchURL(text, alias);
+                if (searchURL/* && searchURL.length >= 1*/)
+                {
+                    urls[url] = searchURL;
+                    continue;
+                }
+                else // the first word was not a search engine, search for the whole string in the default engine
+                {
+                    searchURL = vimperator.bookmarks.getSearchURL(urls[url], null);
+                    if (searchURL/* && searchURL.length >= 1*/)
+                    {
+                        urls[url] = searchURL;
+                        continue;
+                    }
+                }
+            }
+
+            // if we are here let Firefox handle the url and hope it does
+            // something useful with it :)
+        }
+
+        return urls;
+    }
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

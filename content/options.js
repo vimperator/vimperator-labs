@@ -420,6 +420,9 @@ vimperator.Options = function () //{{{
         // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
         setInitialGUI: function ()
         {
+            if (vimperator.config.name != "Vimperator")
+                return;
+
             if (!guioptionsDone)
                 this.get("guioptions").reset();
             if (!laststatusDone)
@@ -734,6 +737,12 @@ vimperator.Options = function () //{{{
 
     // we start with an "empty" GUI so that no toolbars or tabbar is shown if the user
     // sets them to empty in the .vimperatorrc, which is sourced asynchronously
+    if (vimperator.config.name != "Vimperator")
+        alert("mooh");
+        else alert("maeh");
+    if (vimperator.config.name != "Vimperator")
+        return optionManager;
+
     setShowTabline(0);
     setGuiOptions("");
     setLastStatus(0);

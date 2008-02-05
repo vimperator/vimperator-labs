@@ -364,7 +364,7 @@ vimperator.Editor = function () //{{{
             textBox.style.backgroundColor = "#bbbbbb";
             var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
             // TODO: save return value in v:shell_error
-            vimperator.callFunctionInThread(newThread, vimperator.run, [prog, args, true]);
+            vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
             textBox.removeAttribute("readonly");
 
 

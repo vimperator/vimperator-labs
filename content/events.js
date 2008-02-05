@@ -185,33 +185,36 @@ vimperator.Events = function () //{{{
 
     // any tab related events
     var tabcontainer = getBrowser().mTabContainer;
-    tabcontainer.addEventListener("TabMove",   function (event)
+    if (tabcontainer) // not every VIM-like extension has a tab container
     {
-        vimperator.statusline.updateTabCount();
-        vimperator.buffer.updateBufferList();
-    }, false);
-    tabcontainer.addEventListener("TabOpen",   function (event)
-    {
-        vimperator.statusline.updateTabCount();
-        vimperator.buffer.updateBufferList();
-    }, false);
-    tabcontainer.addEventListener("TabClose",  function (event)
-    {
-        vimperator.statusline.updateTabCount();
-        vimperator.buffer.updateBufferList();
-    }, false);
-    tabcontainer.addEventListener("TabSelect", function (event)
-    {
-        // TODO: is all of that necessary?
-        vimperator.modes.reset();
-        vimperator.commandline.clear();
-        vimperator.modes.show();
-        vimperator.statusline.updateTabCount();
-        vimperator.buffer.updateBufferList();
-        vimperator.tabs.updateSelectionHistory();
+        tabcontainer.addEventListener("TabMove",   function (event)
+        {
+            vimperator.statusline.updateTabCount();
+            vimperator.buffer.updateBufferList();
+        }, false);
+        tabcontainer.addEventListener("TabOpen",   function (event)
+        {
+            vimperator.statusline.updateTabCount();
+            vimperator.buffer.updateBufferList();
+        }, false);
+        tabcontainer.addEventListener("TabClose",  function (event)
+        {
+            vimperator.statusline.updateTabCount();
+            vimperator.buffer.updateBufferList();
+        }, false);
+        tabcontainer.addEventListener("TabSelect", function (event)
+        {
+            // TODO: is all of that necessary?
+            vimperator.modes.reset();
+            vimperator.commandline.clear();
+            vimperator.modes.show();
+            vimperator.statusline.updateTabCount();
+            vimperator.buffer.updateBufferList();
+            vimperator.tabs.updateSelectionHistory();
 
-        setTimeout(function () { vimperator.focusContent(true); }, 10); // just make sure, that no widget has focus
-    }, false);
+            setTimeout(function () { vimperator.focusContent(true); }, 10); // just make sure, that no widget has focus
+        }, false);
+    }
 
     // this adds an event which is is called on each page load, even if the
     // page is loaded in a background tab
