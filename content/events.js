@@ -1022,8 +1022,7 @@ vimperator.Events = function () //{{{
             else
                 map = vimperator.mappings.get(vimperator.mode, candidateCommand);
 
-            var isUniqueMapping = vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).filter(
-                function(candidate) { return !candidate.noremap; }).length < 2;
+            
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
@@ -1052,7 +1051,7 @@ vimperator.Events = function () //{{{
                 }
             }
             // only follow a map if there isn't a longer possible mapping (allows you to do :map yy, when y is a mapping)
-            else if (map && isUniqueMapping && !skipMap)
+            else if (map && !skipMap && vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length == 0)
             {
                 vimperator.input.count = parseInt(countStr, 10);
                 if (isNaN(vimperator.input.count))

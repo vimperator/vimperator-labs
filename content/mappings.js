@@ -240,7 +240,7 @@ vimperator.Mappings = function () //{{{
             return getMap(mode, cmd, main);
         },
 
-        // returns an array of mappings with names which start with "cmd"
+        // returns an array of mappings with names which START with "cmd" (but are NOT "cmd")
         getCandidates: function (mode, cmd)
         {
             var mappings = user[mode].concat(main[mode]);
@@ -251,7 +251,7 @@ vimperator.Mappings = function () //{{{
                 var map = mappings[i];
                 for (var j = 0; j < map.names.length; j++)
                 {
-                    if (map.names[j].indexOf(cmd) == 0)
+                    if (map.names[j].indexOf(cmd) == 0 && map.names[j].length > cmd.length)
                     {
                         // for < only return a candidate if it doesn't look like a <c-x> mapping
                         if (cmd != "<" || !/^<.+>/.test(map.names[j]))
