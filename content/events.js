@@ -1272,7 +1272,7 @@ vimperator.Events = function () //{{{
                 switch (aData)
                 {
                     case "accessibility.browsewithcaret":
-                        var value = vimperator.options.getFirefoxPref("accessibility.browsewithcaret", false);
+                        var value = vimperator.options.getPref("accessibility.browsewithcaret", false);
                         vimperator.mode = value ? vimperator.modes.CARET : vimperator.modes.NORMAL;
                         break;
                 }

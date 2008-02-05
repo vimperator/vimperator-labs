@@ -47,9 +47,9 @@ vimperator.Buffer = function () //{{{
         }
 
         if (fullZoom)
-            getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom = value / 100.0;
+            getBrowser().markupDocumentViewer.fullZoom = value / 100.0;
         else
-            getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom = value / 100.0;
+            getBrowser().markupDocumentViewer.textZoom = value / 100.0;
 
         vimperator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
 
@@ -63,9 +63,9 @@ vimperator.Buffer = function () //{{{
     function bumpZoomLevel(steps, fullZoom)
     {
         if (fullZoom)
-            var value = getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom * 100.0;
+            var value = getBrowser().markupDocumentViewer.fullZoom * 100.0;
         else
-            var value = getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom * 100.0;
+            var value = getBrowser().markupDocumentViewer.textZoom * 100.0;
 
         var index = -1;
         if (steps <= 0)
@@ -208,7 +208,7 @@ vimperator.Buffer = function () //{{{
 
         get textZoom()
         {
-            return getBrowser().mCurrentBrowser.markupDocumentViewer.textZoom * 100;
+            return getBrowser().markupDocumentViewer.textZoom * 100;
         },
         set textZoom(value)
         {
@@ -217,7 +217,7 @@ vimperator.Buffer = function () //{{{
 
         get fullZoom()
         {
-            return getBrowser().mCurrentBrowser.markupDocumentViewer.fullZoom * 100;
+            return getBrowser().markupDocumentViewer.fullZoom * 100;
         },
         set fullZoom(value)
         {
