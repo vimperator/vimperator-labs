@@ -27,13 +27,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 vimperator.config = {
+    /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird",
 
-	// this widget is focused when focusContent() is called
-	get mainWidget() { return GetThreadTree(); },
-    dialogs: [],
+    /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["mail", "hints"],
+	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
+    dialogs: [],
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] }
 }
 

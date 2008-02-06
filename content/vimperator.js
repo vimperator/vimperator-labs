@@ -27,10 +27,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 vimperator.config = {
+    /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
-    dialogs: [],
+
+    /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"],
+    dialogs: [],
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] }
 }
 

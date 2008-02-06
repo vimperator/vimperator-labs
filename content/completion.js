@@ -290,7 +290,7 @@ vimperator.Completion = function () //{{{
         {
             var res = [];
             // they are sorted by relevance, not alphabetically
-            var files = ["intro.html", "starting.html", "browsing.html", "motion.html",
+            var files = ["intro.html", "starting.html", "browsing.html", "buffer.html",
                          "options.html", "tabs.html", "marks.html", "repeat.html",
                          "autocommands.html", "developer.html", "various.html"];
 
@@ -299,12 +299,12 @@ vimperator.Completion = function () //{{{
                 try
                 {
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://vimperator/locale/" + files[file], false);
+                    xmlhttp.open("GET", "chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + files[file], false);
                     xmlhttp.send(null);
                 }
                 catch (e)
                 {
-                    vimperator.log("Error opening chrome://vimperator/locale/" + files[file], 1);
+                    vimperator.log("Error opening chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + files[file], 1);
                     continue;
                 }
                 var doc = xmlhttp.responseXML;

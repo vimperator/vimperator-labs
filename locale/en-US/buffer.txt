@@ -1,0 +1,18 @@
+HEADER
+
+|buffer| |document| +
+
+Vimperator holds exactly one buffer object for each tab. It is usually an
+(X)HTML document with advanced features.
+
+section:Motion{nbsp}Commands[motion,scrolling]
+
+List mappings how to scroll the window.
+
+section:Copying{nbsp}Text[copying,yanking]
+
+When running in X11 the text of the following commands is not only copyied to
+the clipboard, but also put into the X11 selection, which can be pasted with
+the middle mouse button:
+
+// vim: set syntax=asciidoc:

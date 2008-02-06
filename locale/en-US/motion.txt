@@ -1,7 +1,0 @@
-HEADER
-
-|motion|
-
-List mappings how to scroll the window.
-
-// vim: set syntax=asciidoc:

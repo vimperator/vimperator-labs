@@ -48,10 +48,10 @@ section:Help{nbsp}topics[overview]
 - help:Initialization[starting.html]: How vimperator starts up, where it reads the config file...
 - help:Browsing[browsing.html]: Basic mappings and commands needed for
   a browsing session (how to open a web page or go back in history).
-- help:Motion{nbsp}commands[motion.html]: How to efficiently scroll in
-  Vimperator.
-- help:Options[options.html]: A description of all options.
+- help:Buffer{nbsp}commands[buffer.html]: Operations on the current document like
+  scrolling or copying text.
 - help:Tabs[tabs.html]: Manage your tabbed browsing session.
+- help:Options[options.html]: A description of all options.
 - help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
 - help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
   recurring workflows.
