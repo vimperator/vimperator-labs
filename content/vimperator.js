@@ -30,7 +30,8 @@ vimperator.config = {
     name: "Vimperator",
     hostApplication: "Firefox",
     dialogs: [],
-    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"]
+    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"],
+    guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] }
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

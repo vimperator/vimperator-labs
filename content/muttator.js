@@ -33,7 +33,8 @@ vimperator.config = {
 	// this widget is focused when focusContent() is called
 	get mainWidget() { return GetThreadTree(); },
     dialogs: [],
-    features: ["mail", "hints"]
+    features: ["mail", "hints"],
+    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] }
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

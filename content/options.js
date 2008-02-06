@@ -200,22 +200,14 @@ vimperator.Options = function () //{{{
     // show/hide the menubar, toolbar and bookmarks toolbar
     function setGuiOptions(value)
     {
-        // FIXME: when we release a vimperator with a Firefox3 requirement (no beta), remove the old ids
+        var guioptions = vimperator.config.guioptions || {};
         try
         {
-            document.getElementById("toolbar-menubar").collapsed = !/m/.test(value);
-
-            // these the new ids for Firefox > 20080130
-            document.getElementById("navigation-toolbar").collapsed = !/T/.test(value);
-            document.getElementById("personal-toolbar").  collapsed = !/b/.test(value);
+            for (let option in guioptions)
+                guioptions[option].forEach( function(elem) {
+                    document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0); });
         }
-        catch (e)
-        {
-            // these two ids are for Firefox <= 20080130
-            document.getElementById("nav-bar").        collapsed = !/T/.test(value);
-            document.getElementById("PersonalToolbar").collapsed = !/b/.test(value);
-            // vimperator.log("setGuiOptions raised an exception");
-        }
+        catch (e) { }
 
         guioptionsDone = true;
     }
@@ -516,7 +508,14 @@ vimperator.Options = function () //{{{
             shortHelp: "Show or hide the menu, toolbar and scrollbars",
             setter: function (value) { setGuiOptions(value); },
             defaultValue: "",
-            validator: function (value) { return !/[^mTb]/.test(value); }
+            validator: function (value)
+            {
+                var regex = "[^";
+                for (let option in vimperator.config.guioptions)
+                    regex += option.toString();
+
+                return !(new RegExp(regex + "]").test(value));
+            }
         }
     ));
     optionManager.add(new vimperator.Option(["hinttimeout", "hto"], "number",
