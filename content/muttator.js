@@ -34,6 +34,7 @@ vimperator.config = {
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["mail", "hints"],
 	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
+	mainWindowID: "messengerWindow", // used for :set titlestring
     dialogs: [],
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] }
 }

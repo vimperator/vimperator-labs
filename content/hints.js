@@ -392,6 +392,35 @@ vimperator.Hints = function () //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    const DEFAULT_HINTTAGS = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
+                             "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
+                             "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
+                             "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
+
+    vimperator.options.add(["extendedhinttags", "eht"],
+        "XPath string of hintable elements activated by ';'",
+        "string", DEFAULT_HINTTAGS);
+    vimperator.options.add(["focusedhintstyle", "fhs"],
+        "CSS specification of focused hints",
+        "string", "z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
+    vimperator.options.add(["hintstyle", "hs"],
+        "CSS specification of unfocused hints",
+        "string", "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
+    vimperator.options.add(["hinttags", "ht"],
+        "XPath string of hintable elements activated by 'f' and 'F'",
+        "string", DEFAULT_HINTTAGS);
+    vimperator.options.add(["hinttimeout", "hto"],
+        "Automatically follow non unique numerical hint",
+        "number", 0,
+        {
+            validator: function (value) { return value >= 0; }
+        });
+
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

@@ -37,6 +37,7 @@ vimperator.Tabs = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    var alternates = [getBrowser().mCurrentTab, null];
 
     // @param spec can either be:
     // - an absolute integer
@@ -72,7 +73,65 @@ vimperator.Tabs = function () //{{{
         return position;
     }
 
-    var alternates = [getBrowser().mCurrentTab, null];
+    // hide tabs initially
+    getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.options.add(["activate", "act"],
+        "Define when tabs are automatically activated",
+        "stringlist", "homepage,quickmark,tabopen,paste",
+        {
+            validator: function (value)
+            {
+                return value.split(",").every(function (item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
+            }
+        });
+    vimperator.options.add(["popups", "pps"],
+        "Where to show requested popup windows",
+        "number", 1,
+        {
+            setter: function (value)
+            {
+                var values = [[0, 1], // always in current tab
+                              [0, 3], // in a new tab
+                              [2, 3], // in a new window if it has specified sizes
+                              [1, 2]];// always in new window
+                vimperator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
+                vimperator.options.setPref("browser.link.open_newwindow", values[value][1]);
+            },
+            validator: function (value) { return (value >= 0 && value <= 3); }
+        });
+    vimperator.options.add(["showtabline", "stal"], 
+        "Control when to show the tab bar of opened web pages",
+        "number", 2,
+        {
+            setter: function (value)
+            {
+                var tabs = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+                if (!tabs)
+                    return;
+
+                if (value == 0)
+                {
+                    tabs.collapsed = true;
+                }
+                else if (value == 1)
+                {
+                    vimperator.options.setPref("browser.tabs.autoHide", true);
+                    tabs.collapsed = false;
+                }
+                else
+                {
+                    vimperator.options.setPref("browser.tabs.autoHide", false);
+                    tabs.collapsed = false;
+                }
+            },
+            validator: function (value) { return (value >= 0 && value <= 2); }
+        });
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

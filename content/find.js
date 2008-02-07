@@ -110,6 +110,38 @@ vimperator.Search = function () //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.options.add(["hlsearch", "hls"],
+        "Highlight previous search pattern matches",
+        "boolean", "false",
+        {
+            setter: function (value)
+            {
+                if (value)
+                    vimperator.search.highlight();
+                else
+                    vimperator.search.clear();
+            }
+        });
+    vimperator.options.add(["hlsearchstyle", "hlss"],
+        "CSS specification of highlighted search items",
+        "string", "color: black; background-color: yellow; padding: 0; display: inline;");
+    vimperator.options.add(["ignorecase", "ic"],
+        "Ignore case in search patterns",
+        "boolean", true);
+    vimperator.options.add(["incsearch", "is"],
+        "Show where the search pattern matches as it is typed",
+        "boolean", true);
+    vimperator.options.add(["linksearch", "lks"],
+        "Limit the search to hyperlink text",
+        "boolean", false);
+    vimperator.options.add(["smartcase", "scs"], 
+        "Override the 'ignorecase' option if the pattern contains uppercase characters",
+        "boolean", true);
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -230,9 +262,13 @@ vimperator.Search = function () //{{{
             // TODO: code to reposition the document to the place before search started
         },
 
+        // FIXME: thunderbird incompatible
         // this is not dependent on the value of 'hlsearch'
         highlight: function (text)
         {
+            if (vimperator.config.name == "Muttator")
+                return;
+
             // already highlighted?
             if (window.content.document.getElementsByClassName("__mozilla-findbar-search").length > 0)
                 return;

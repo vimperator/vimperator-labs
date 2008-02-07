@@ -1061,8 +1061,11 @@ vimperator.Events = function () //{{{
                     tmp.execute(null, vimperator.input.count, key);
                 }
             }
-            // only follow a map if there isn't a longer possible mapping (allows you to do :map yy, when y is a mapping)
-            else if (map && !skipMap && vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length == 0)
+            // only follow a map if there isn't a longer possible mapping
+            // (allows you to do :map z yy, when zz is a longer mapping than z)
+            // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
+            else if (map && !skipMap && (map.rhs ||
+                     vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length == 0))
             {
                 vimperator.input.count = parseInt(countStr, 10);
                 if (isNaN(vimperator.input.count))
@@ -1161,6 +1164,7 @@ vimperator.Events = function () //{{{
             return false;
         },
 
+        // TODO: move to buffer.js?
         progressListener: {
             QueryInterface: function (aIID)
             {

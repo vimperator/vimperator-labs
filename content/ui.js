@@ -237,6 +237,41 @@ vimperator.CommandLine = function () //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.options.add(["history", "hi"],
+        "Number of Ex commands and search patterns to store in the commandline history",
+        "number", 500);
+    vimperator.options.add(["more"],
+        "Pause the message list window when more than one screen of listings is displayed",
+        "boolean", true);
+    vimperator.options.add(["complete", "cpt"],
+        "Items which are completed at the :[tab]open prompt",
+        "charlist", "sfbh",
+        {
+            validator: function (value) { return !/[^sfbh]/.test(value); }
+        });
+    vimperator.options.add(["showmode", "smd"], 
+        "Show the current mode in the command line",
+        "boolean", true);
+    vimperator.options.add(["wildmode", "wim"], 
+        "Define how command line completion works",
+        "stringlist", "list:full",
+        {
+            validator: function (value)
+            {
+                return value.split(",").every(function (item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
+            }
+        });
+    vimperator.options.add(["wildoptions", "wop"], 
+        "Change how command line completion is done",
+        "stringlist", "",
+        {
+            validator: function (value) { return /^(sort|)$/.test(value); }
+        });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -1071,6 +1106,7 @@ vimperator.StatusLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var statusBar = document.getElementById("status-bar");
+    statusBar.collapsed = true; // it is later restored unless the user sets laststatus=0
 
     // our status bar fields
     var statuslineWidget     = document.getElementById("vimperator-statusline");
@@ -1079,6 +1115,26 @@ vimperator.StatusLine = function () //{{{
     var progressWidget       = document.getElementById("vimperator-statusline-field-progress");
     var tabCountWidget       = document.getElementById("vimperator-statusline-field-tabcount");
     var bufferPositionWidget = document.getElementById("vimperator-statusline-field-bufferposition");
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.options.add(["laststatus", "ls"],
+        "Show the status line",
+        "number", 2,
+        {
+            setter: function (value)
+            {
+                if (value == 0)
+                    document.getElementById("status-bar").collapsed = true;
+                else if (value == 1)
+                    vimperator.echo("show status line only with > 1 window not implemented yet");
+                else
+                    document.getElementById("status-bar").collapsed = false;
+            },
+            validator: function (value) { return (value >= 0 && value <= 2); }
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

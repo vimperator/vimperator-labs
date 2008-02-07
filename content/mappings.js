@@ -376,7 +376,7 @@ vimperator.Mappings = function () //{{{
         { shortHelp: "Open help window" }
     ));
     addDefaultMap(new vimperator.Map(allModes, ["<Esc>", "<C-[>"],
-        vimperator.events.onEscape,
+        function () { vimperator.events.onEscape() },
         { shortHelp: "Focus content" }
     ));
     addDefaultMap(new vimperator.Map(noninsertModes, [":"],

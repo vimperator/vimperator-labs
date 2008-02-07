@@ -33,6 +33,93 @@ const vimperator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
     var callbacks = [];
 
+    // Only general options are added here, 
+    function addOptions()
+    {
+        vimperator.options.add(["guioptions", "go"],
+            "Show or hide certain GUI elements like the menu or toolbar",
+            "charlist", "",
+            {
+                setter: function (value)
+                {
+                    var guioptions = vimperator.config.guioptions || {};
+                    for (let option in guioptions)
+                    {
+                        guioptions[option].forEach( function(elem)
+                        {
+                            try
+                            {
+                                document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
+                            }
+                            catch (e) { }
+                        });
+                    }
+                },
+                validator: function (value)
+                {
+                    var regex = "[^";
+                    for (let option in vimperator.config.guioptions)
+                        regex += option.toString();
+
+                    return !(new RegExp(regex + "]").test(value));
+                }
+            });
+        vimperator.options.add(["titlestring"], // TODO: broken for Thunderbird
+            "Change the title of the window",
+            "string", "Vimperator",
+            {
+                setter: function (value)
+                {
+                    try
+                    {
+                        var id = vimperator.config.mainWindowID || "main-window";
+                        document.getElementById(id).setAttribute("titlemodifier", value);
+                        if (window.content.document.title.length > 0)
+                            document.title = window.content.document.title + " - " + value;
+                        else
+                            document.title = value;
+                    }
+                    catch (e)
+                    {
+                        vimperator.log("Couldn't set titlestring", 1);
+                    }
+                },
+            });
+        vimperator.options.add(["verbose", "vbs"], 
+            "Define which type of messages are logged",
+            "number", 0,
+            {
+                validator: function (value) { return (value >= 0 && value <= 9); }
+            });
+        vimperator.options.add(["visualbell", "vb"], 
+            "Use visual bell instead of beeping on errors",
+            "boolean", false,
+            {
+                setter: function (value) { vimperator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
+            });
+    }
+
+    // initially hide all GUI, it is later restored unless the user has :set go= or something
+    // similar in his config
+    function hideGUI()
+    {
+        var guioptions = vimperator.config.guioptions || {};
+        for (let option in guioptions)
+        {
+            guioptions[option].forEach( function(elem)
+            {
+                try
+                {
+                    document.getElementById(elem).collapsed = true;
+                }
+                catch (e) { }
+            });
+        }
+
+//        if (vimperator.has("tabs"))
+
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -47,12 +134,6 @@ const vimperator = (function () //{{{
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,
         NEW_WINDOW: 4,
-
-//        config: {
-//            name: "Vimperator",
-//            hostApplication: "Firefox",
-//            dialogs: []
-//        },
 
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
@@ -111,7 +192,7 @@ const vimperator = (function () //{{{
             }
         },
 
-        // XXX? move to vimperaotr.util?
+        // XXX? move to vimperator.util?
         copyToClipboard: function (str, verbose)
         {
             var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
@@ -386,11 +467,13 @@ const vimperator = (function () //{{{
 
             // these objects are created here only after the chrome is ready
             vimperator.log("Loading module options...", 3);
-            vimperator.options       = vimperator.Options();
-            vimperator.log("Loading module events...", 3);
-            vimperator.events        = vimperator.Events();
+            vimperator.options       = vimperator.Options(); addOptions();
             vimperator.log("Loading module commands...", 3);
             vimperator.commands      = vimperator.Commands();
+            vimperator.log("Loading module mappings...", 3);
+            vimperator.mappings      = vimperator.Mappings();
+            vimperator.log("Loading module events...", 3);
+            vimperator.events        = vimperator.Events();
             if (vimperator.has("bookmarks"))
             {
                 vimperator.log("Loading module bookmarks...", 3);
@@ -409,8 +492,6 @@ const vimperator = (function () //{{{
             vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
             vimperator.log("Loading module buffer window...", 3);
             vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
-            vimperator.log("Loading module mappings...", 3);
-            vimperator.mappings      = vimperator.Mappings();
             vimperator.log("Loading module statusline...", 3);
             vimperator.statusline    = vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);
@@ -462,20 +543,19 @@ const vimperator = (function () //{{{
             vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); });
 
             // first time intro message
-            if (vimperator.options.getPref("extensions.vimperator.firsttime", true))
+            if (vimperator.options.getPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", true))
             {
                 setTimeout(function () {
                     vimperator.commands.help();
-                    vimperator.options.setPref("extensions.vimperator.firsttime", false);
+                    vimperator.options.setPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", false);
                 }, 1000);
             }
 
-            // disable caret browsing initially
-            //vimperator.options.setFirefoxPref("accessibility.browsewithcaret", false);
-            //vimperator.focusContent();
-
             // always start in normal mode
             vimperator.modes.reset();
+
+            // TODO: we should have some class where all this guioptions stuff fits well
+            hideGUI();
 
             // finally, read a ~/.vimperatorrc
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
@@ -514,7 +594,11 @@ const vimperator = (function () //{{{
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
                 // set before by any rc file
-                vimperator.options.setInitialGUI();
+                for (let option in vimperator.options)
+                {
+                    if (option.setter && !option.hasChanged)
+                        option.reset();
+                }
             }, 0);
 
             vimperator.statusline.update();

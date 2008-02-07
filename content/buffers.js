@@ -151,16 +151,51 @@ vimperator.Buffer = function () //{{{
             shortHelp: "Test command"
         }
     ));
-    vimperator.options.add(new vimperator.Option(["test"], "boolean",
-        {
-            shortHelp: "Test option",
-            defaultValue: false
-        }
-    ));
     vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["w"], "Test",
         function () { alert("test"); }
     );
 
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.options.add(["fullscreen", "fs"], "Show the current window fullscreen", "boolean", false,
+        {
+            setter: function (value) { window.fullScreen = value; },
+            getter: function () { return window.fullScreen; }
+        });
+    vimperator.options.add(["nextpattern",],
+        "Patterns to use when guessing the 'next' page in a document sequence",
+        "stringlist", "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$");
+    vimperator.options.add(["previouspattern"],
+        "Patterns to use when guessing the 'previous' page in a document sequence",
+        "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
+    vimperator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
+        {
+            validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
+        });
+    vimperator.options.add(["scroll", "scr"],
+        "Number of lines to scroll with <C-u> and <C-d> commands",
+        "number", 0,
+        {
+            validator: function (value) { return value >= 0; }
+        }
+    );
+    vimperator.options.add(["showstatuslinks", "ssli"], 
+        "Show the destination of the link under the cursor in the status bar",
+        "number", 1,
+        {
+            validator: function (value) { return (value >= 0 && value <= 2); }
+        });
+
+    vimperator.options.add(["usermode", "um"], 
+        "Show current website with a minimal style sheet to make it easily accessible",
+        "boolean", false,
+        {
+            setter: function (value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
+            getter: function () { return getMarkupDocumentViewer().authorStyleDisabled; },
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
