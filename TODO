@@ -18,7 +18,7 @@ FEATURES:
 8 ;?<hint> should show more information
 8 there should be a listbox/combobox mode
 8 y and Y should be changed to: Y, yy and yl=yank location, ys=yank selection,
-  yd=yank domain name, yt=yank title, yw=yank current word (other things to yank?)
+  yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 8 all search commands should start searching from the top of the visible viewport 
 7 use ctrl-n/p in insert mode for word completion
 7 implement LocationList window, and get rid off/change PreviewWindow to be
