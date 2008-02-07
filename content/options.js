@@ -147,28 +147,29 @@ vimperator.Options = function () //{{{
         }
     }
 
-    function loadPreference(name, forcedDefault)
+    function loadPreference(name, forcedDefault, defaultBranch)
     {
         var defaultValue = null;
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
+        var branch = defaultBranch ? prefService.getDefaultBranch("") : prefService;
         var type = prefService.getPrefType(name);
         try
         {
             switch (type)
             {
                 case prefService.PREF_STRING:
-                    var value = prefService.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+                    var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
                     // Try in case it's a localized string (will throw an exception if not)
                     if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
-                            value = prefService.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
+                            value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
                     return value;
                 case prefService.PREF_INT:
-                    return prefService.getIntPref(name);
+                    return branch.getIntPref(name);
                 case prefService.PREF_BOOL:
-                    return prefService.getBoolPref(name);
+                    return branch.getBoolPref(name);
                 default:
                     return defaultValue;
             }
@@ -311,7 +312,7 @@ vimperator.Options = function () //{{{
             var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
                 "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + vimperator.config.hostApplication +
                 " Options ---</th></tr>";
-            var name, value;
+            var name, value, defaultValue;
 
             for (var i = 0; i < prefArray.length; i++)
             {
@@ -323,8 +324,8 @@ vimperator.Options = function () //{{{
                     if (typeof value == "string")
                         value = value.substr(0, 100).replace(/\n/g, " ");
 
-                    value = vimperator.util.colorize(value, false);
-                    defaultValue = loadPreference(name, null);
+                    value = vimperator.util.colorize(value, true);
+                    defaultValue = loadPreference(name, null, true);
 
                     if (defaultValue == null)
                         defaultValue = "no default";
