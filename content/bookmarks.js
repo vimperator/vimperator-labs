@@ -823,7 +823,7 @@ vimperator.QuickMarks = function () //{{{
 
     var qmarks = {};
     // TODO: move to a storage module
-    var savedMarks = vimperator.options.getPref("vimperator.extensions.quickmarks", "").split("\n");
+    var savedMarks = vimperator.options.getPref("extensions.vimperator.quickmarks", "").split("\n");
 
     // load the saved quickmarks -- TODO: change to sqlite
     for (var i = 0; i < savedMarks.length - 1; i += 2)
@@ -919,7 +919,7 @@ vimperator.QuickMarks = function () //{{{
                 savedQuickMarks += qmarks[i] + "\n";
             }
 
-            vimperator.options.setPref("vimperator.extensions.quickmarks", savedQuickMarks);
+            vimperator.options.setPref("extensions.vimperator.quickmarks", savedQuickMarks);
         }
 
     };
