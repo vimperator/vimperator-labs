@@ -6,30 +6,30 @@ BUGS:
 - add window resize support to hints
 - can't reverse tab through the vimperator toolbar
 - gu and gU doesn't work on Windows.
-- pvh option not working
 - searching backwards incrementally does not work i.e. with 'incsearch' set
 - http://msdn2.microsoft.com/en-us/library/ms535258.aspx does not scroll with j/k/etc.
   same for http://forum.mootools.net/topic.php?id=3458
 - insert abbreviations broken on <space>
+- :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 
 FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
-8 add more autocommands (BrowserStart, BrowserQuit, TabClose, TabOpen, TabChanged, LocationChanged, any more?)
-8 ;?<hint> will show information about <hint> like id, class, image filename, etc.
+8 add more autocommands (BrowserStart, TabClose, TabOpen, TabChanged, LocationChanged, any more?)
+8 ;?<hint> should show more information
 8 there should be a listbox/combobox mode
-8 y and Y should be changed to: yy and yl=yank location, ys=yank selection,
-  yd=yank domain name, yt=yank title, yw=yank current word,
-  yS=yank selection, if no selection then yank current word (other things to yank?)
+8 y and Y should be changed to: Y, yy and yl=yank location, ys=yank selection,
+  yd=yank domain name, yt=yank title, yw=yank current word (other things to yank?)
 8 all search commands should start searching from the top of the visible viewport 
 7 use ctrl-n/p in insert mode for word completion
-7 implement LocationList window, and get rid off/change PreviewWindow to be a real preview window being able to display html pages
+7 implement LocationList window, and get rid off/change PreviewWindow to be
+  a real preview window being able to display html pages
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
-7 whereever possible: get rid of dialogs and ask console-like dialog questions or write error prompts directly on the webpage or with :echo()
+7 whereever possible: get rid of dialogs and ask console-like dialog questions
+  or write error prompts directly on the webpage or with :echo()
 7 [d could go to the last domain in the history stack. so if i browse from
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
-6 :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
@@ -48,8 +48,6 @@ FEATURES:
 
 RANDOM IDEAS:
 * numbered tabs
-* Would it be possible to add a setting "maxcompletionsshown" and 
-  "maxpreviewwindowheight" or something like this?
 * hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
 
 </pre>
