@@ -750,11 +750,14 @@ vimperator.Events = function () //{{{
             if (vimperator.mode == vimperator.modes.COMMAND_LINE)
                 return;
 
+            var win  = window.document.commandDispatcher.focusedWindow;
             var elem = window.document.commandDispatcher.focusedElement;
             if (elem && elem.readOnly)
                 return;
 
-            // dump(vimperator.util.objectToString(elem) + "\n");
+            //dump("=+++++++++=\n" + vimperator.util.objectToString(event.target) + "\n")
+            //dump (elem + "\n");
+            //dump (win + "\n---\n");
 
             if (elem && elem instanceof HTMLInputElement &&
                     (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
@@ -762,8 +765,10 @@ vimperator.Events = function () //{{{
                 this.wantsModeReset = false;
                 vimperator.mode = vimperator.modes.INSERT;
                 vimperator.buffer.lastInputField = elem;
+                return;
             }
-            else if (elem && elem instanceof HTMLTextAreaElement)
+
+            if (elem && elem instanceof HTMLTextAreaElement)
             {
                 this.wantsModeReset = false;
                 if (vimperator.options["insertmode"])
@@ -773,19 +778,30 @@ vimperator.Events = function () //{{{
                 else
                     vimperator.modes.main = vimperator.modes.TEXTAREA;
                 vimperator.buffer.lastInputField = elem;
-            }
-            else if (vimperator.config.name == "Muttator" && (!elem || elem instanceof HTMLElement))
-            {
-                // we switch to -- MESSAGE -- mode for muttator, whenever no tree or an HTML element 
-                // which is NOT an input element is selected
-                vimperator.mode = vimperator.modes.MESSAGE;
                 return;
             }
 
-            else if (vimperator.mode == vimperator.modes.INSERT ||
-                     vimperator.mode == vimperator.modes.TEXTAREA ||
-                     vimperator.mode == vimperator.modes.MESSAGE ||
-                     vimperator.mode == vimperator.modes.VISUAL)
+            if (vimperator.config.name == "Muttator")// &&
+                //win && win.document && win.document instanceof HTMLDocument)
+            {
+                // we switch to -- MESSAGE -- mode for muttator, when an HTML document
+                // is selected but not when we just click a link
+                if (win && win.document && win.document instanceof HTMLDocument && !elem)// || !(elem instanceof HTMLAnchorElement))
+                {
+                    vimperator.mode = vimperator.modes.MESSAGE;
+                    return;
+                }
+                if (elem instanceof HTMLAnchorElement && vimperator.mode != vimperator.modes.MESSAGE)
+                {
+                    vimperator.focusContent();
+                    return;
+                }
+            }
+
+            if (vimperator.mode == vimperator.modes.INSERT ||
+                vimperator.mode == vimperator.modes.TEXTAREA ||
+                vimperator.mode == vimperator.modes.MESSAGE ||
+                vimperator.mode == vimperator.modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
