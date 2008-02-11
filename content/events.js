@@ -780,24 +780,16 @@ vimperator.Events = function () //{{{
                 return;
             }
 
-            if (vimperator.config.name == "Muttator")// &&
-                //win && win.document && win.document instanceof HTMLDocument)
+            if (vimperator.config.name == "Muttator")
             {
-                // we switch to -- MESSAGE -- mode for muttator, when an HTML document
-                // is selected but not when we just click a link
-                if (win && win.document && win.document instanceof HTMLDocument && (!elem || vimperator.mode == vimperator.modes.MESSAGE))
+                // we switch to -- MESSAGE -- mode for muttator, when an HTML document gets focus
+                if ((win && win.document && win.document instanceof HTMLDocument) ||
+                     elem instanceof HTMLAnchorElement)
                 {
                     if (vimperator.mode != vimperator.modes.MESSAGE)
                         vimperator.mode = vimperator.modes.MESSAGE;
                     return;
                 }
-                if (elem instanceof HTMLAnchorElement && vimperator.mode != vimperator.modes.MESSAGE)
-                {
-                    vimperator.focusContent();
-                    return;
-                }
-                else
-                    ;//dump("hu\n")
             }
 
             if (vimperator.mode == vimperator.modes.INSERT ||
