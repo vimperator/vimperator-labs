@@ -180,7 +180,8 @@ vimperator.CommandLine = function () //{{{
             multilineOutputWidget.collapsed = true;
         }
 
-        var fontSize = document.defaultView.getComputedStyle(document.getElementById("main-window"), null).getPropertyValue("font-size");
+        var id = vimperator.config.mainWindowID || "main-window";
+        var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
         multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
 
         multilineOutputWidget.contentDocument.body.innerHTML = output;
@@ -191,7 +192,8 @@ vimperator.CommandLine = function () //{{{
         stylesheet.setAttribute("href", "chrome://vimperator/skin/vimperator.css");
         multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
-        var availableHeight = getBrowser().mPanelContainer.boxObject.height;
+        var availableHeight = getBrowser().mPanelContainer != undefined ?
+            getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
         var contentHeight = multilineOutputWidget.contentDocument.height;
         var height = contentHeight < availableHeight ? contentHeight : availableHeight;
 

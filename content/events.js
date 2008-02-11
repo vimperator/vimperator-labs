@@ -755,9 +755,8 @@ vimperator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
-            //dump("=+++++++++=\n" + vimperator.util.objectToString(event.target) + "\n")
-            //dump (elem + "\n");
-            //dump (win + "\n---\n");
+            // dump("=+++++++++=\n" + vimperator.util.objectToString(event.target) + "\n")
+            // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
             if (elem && elem instanceof HTMLInputElement &&
                     (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
@@ -786,9 +785,10 @@ vimperator.Events = function () //{{{
             {
                 // we switch to -- MESSAGE -- mode for muttator, when an HTML document
                 // is selected but not when we just click a link
-                if (win && win.document && win.document instanceof HTMLDocument && !elem)// || !(elem instanceof HTMLAnchorElement))
+                if (win && win.document && win.document instanceof HTMLDocument && (!elem || vimperator.mode == vimperator.modes.MESSAGE))
                 {
-                    vimperator.mode = vimperator.modes.MESSAGE;
+                    if (vimperator.mode != vimperator.modes.MESSAGE)
+                        vimperator.mode = vimperator.modes.MESSAGE;
                     return;
                 }
                 if (elem instanceof HTMLAnchorElement && vimperator.mode != vimperator.modes.MESSAGE)
@@ -796,6 +796,8 @@ vimperator.Events = function () //{{{
                     vimperator.focusContent();
                     return;
                 }
+                else
+                    ;//dump("hu\n")
             }
 
             if (vimperator.mode == vimperator.modes.INSERT ||
@@ -967,7 +969,8 @@ vimperator.Events = function () //{{{
             // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if (vimperator.mode == vimperator.modes.NORMAL || vimperator.mode == vimperator.modes.INSERT)
+            if ((vimperator.config.name == "Vimperator" && vimperator.mode == vimperator.modes.NORMAL)
+                 || vimperator.mode == vimperator.modes.INSERT)
             {
                 if (key == "<Return>")
                 {

@@ -234,6 +234,7 @@ const vimperator = (function () //{{{
             command.execute(args, special, count, modifiers);
         },
 
+        // TODO: move to vimperator.buffer.focus()?
         // after pressing Escape, put focus on a non-input field of the browser document
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
@@ -498,6 +499,11 @@ const vimperator = (function () //{{{
             vimperator.buffer        = vimperator.Buffer();
             vimperator.log("Loading module editor...", 3);
             vimperator.editor        = vimperator.Editor();
+            if (vimperator.has("mail"))
+            {
+                vimperator.log("Loading module mail...", 3);
+                vimperator.mail          = vimperator.Mail();
+            }
             if (vimperator.has("tabs"))
             {
                 vimperator.log("Loading module tabs...", 3);

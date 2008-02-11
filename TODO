@@ -11,6 +11,7 @@ BUGS:
   same for http://forum.mootools.net/topic.php?id=3458
 - insert abbreviations broken on <space>
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
+- http://www.maximonline.com/jokes/ - the prev and next buttons on the image map are not hinted
 
 FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
@@ -20,6 +21,7 @@ FEATURES:
 8 y and Y should be changed to: Y, yy and yl=yank location, ys=yank selection,
   yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 8 all search commands should start searching from the top of the visible viewport 
+8 :bdelete full_url<cr> and :bdelete! filter<cr> should delete all tabs matching filter or full_url
 7 use ctrl-n/p in insert mode for word completion
 7 implement LocationList window, and get rid off/change PreviewWindow to be
   a real preview window being able to display html pages

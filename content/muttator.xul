@@ -40,7 +40,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.8" src="vim.js"/>
     <script type="application/x-javascript;version=1.8" src="muttator.js"/>
 
-    <!--script type="application/x-javascript;version=1.8" src="bookmarks.js"/-->
     <script type="application/x-javascript;version=1.8" src="buffers.js"/>
     <script type="application/x-javascript;version=1.8" src="commands.js"/>
     <script type="application/x-javascript;version=1.8" src="completion.js"/>
@@ -53,7 +52,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.8" src="mappings.js"/>
     <script type="application/x-javascript;version=1.8" src="modes.js"/>
     <script type="application/x-javascript;version=1.8" src="options.js"/>
-    <!--script type="application/x-javascript;version=1.8" src="tabs.js"/-->
+    <script type="application/x-javascript;version=1.8" src="mail.js"/>
     <script type="application/x-javascript;version=1.8" src="ui.js"/>
     <script type="application/x-javascript;version=1.8" src="util.js"/>
 
@@ -74,7 +73,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
             <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
             <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
             <!-- other keys are handled inside vimperator.js event loop -->
-            <key id="key_open_vimbar" key=";" oncommand="alert(';')" modifiers=""/>
         </keyset>
 
         <statusbar id="status-bar" class="hl-StatusLine">
