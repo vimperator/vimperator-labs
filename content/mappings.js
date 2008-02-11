@@ -200,7 +200,7 @@ vimperator.Mappings = function () //{{{
 
         addDefault: function (modes, keys, description, action, extra)
         {
-            addMap (new vimperator.Map([vimperator.modes.NORMAL], keys,
+            addMap (new vimperator.Map(modes, keys,
                     action, { shortHelp: description }), false);
         },
 
