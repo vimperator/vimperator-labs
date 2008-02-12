@@ -179,8 +179,7 @@ vimperator.modes = (function () //{{{
 
         __iterator__: function ()
         {
-            var modes = [this.NONE, this.NORMAL, this.INSERT, this.VISUAL, this.HINTS, 
-                         this.COMMAND_LINE, this.CARET, this.TEXTAREA, this.MESSAGE, this.CUSTOM];
+            var modes = this.all;
 
             for (var i = 0; i < modes.length; i++)
                 yield modes[i];
@@ -188,12 +187,11 @@ vimperator.modes = (function () //{{{
             throw StopIteration;
         },
 
-        // keeps recording state
-        reset: function (silent)
-        {
-            this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
-        },
+        get all() { return [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
+                            this.HINTS, this.COMMAND_LINE, this.CARET,
+                            this.TEXTAREA, this.MESSAGE, this.CUSTOM]; },
 
+        // show the current mode string in the command line
         show: function ()
         {
             if (!vimperator.options["showmode"])
@@ -207,12 +205,11 @@ vimperator.modes = (function () //{{{
                                         vimperator.commandline.DISALLOW_MULTILINE);
         },
 
-        setCustomMode: function (modestr, oneventfunc, stopfunc)
+        // add/remove always work on the extended mode only
+        add: function (mode)
         {
-            // TODO this.plugin[id]... ('id' maybe submode or what..)
-            vimperator.plugins.mode = modestr;
-            vimperator.plugins.onEvent = oneventfunc;
-            vimperator.plugins.stop = stopfunc;
+            extended |= mode;
+            this.show();
         },
 
         // helper function to set both modes in one go
@@ -237,12 +234,20 @@ vimperator.modes = (function () //{{{
                 this.show();
         },
 
-        // add/remove always work on the extended mode only
-        add: function (mode)
+        setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
-            extended |= mode;
-            this.show();
+            // TODO this.plugin[id]... ('id' maybe submode or what..)
+            vimperator.plugins.mode = modestr;
+            vimperator.plugins.onEvent = oneventfunc;
+            vimperator.plugins.stop = stopfunc;
         },
+
+        // keeps recording state
+        reset: function (silent)
+        {
+            this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
+        },
+
         remove: function (mode)
         {
             extended = (extended | mode) ^ mode;

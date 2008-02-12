@@ -198,6 +198,7 @@ vimperator.Mappings = function () //{{{
             return user[mode].some(function (map) { return map.hasName(cmd); });
         },
 
+        // TODO: rename to add, and change add to addUser(Map)
         addDefault: function (modes, keys, description, action, extra)
         {
             addMap (new vimperator.Map(modes, keys,
@@ -349,37 +350,21 @@ vimperator.Mappings = function () //{{{
     ////////////////////// DEFAULT MAPPINGS ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var allModes = [vimperator.modes.NONE,
-                    vimperator.modes.NORMAL,
-                    vimperator.modes.INSERT,
-                    vimperator.modes.VISUAL,
-                    vimperator.modes.HINTS,
-                    vimperator.modes.COMMAND_LINE,
-                    vimperator.modes.MESSAGE,
-                    vimperator.modes.CARET,
-                    vimperator.modes.TEXTAREA];
-
-    var noninsertModes = [vimperator.modes.NORMAL,
-                          vimperator.modes.VISUAL,
-                          vimperator.modes.HINTS,
-                          vimperator.modes.MESSAGE,
-                          vimperator.modes.CARET,
-                          vimperator.modes.TEXTAREA];
-
     //
     // NORMAL mode
     // {{{
 
     // vimperator management
-    addDefaultMap(new vimperator.Map(allModes, ["<F1>"],
+    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<F1>"],
         function () { vimperator.commands.help(); },
         { shortHelp: "Open help window" }
     ));
-    addDefaultMap(new vimperator.Map(allModes, ["<Esc>", "<C-[>"],
+    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<Esc>", "<C-[>"],
         function () { vimperator.events.onEscape() },
         { shortHelp: "Focus content" }
     ));
-    addDefaultMap(new vimperator.Map(noninsertModes, [":"],
+    // add the ":" mapping in all but insert mode mappings
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.HINTS, vimperator.modes.MESSAGE, vimperator.modes.CARET, vimperator.modes.TEXTAREA], [":"],
         function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
         { shortHelp: "Start command line mode" }
     ));
@@ -402,11 +387,11 @@ vimperator.Mappings = function () //{{{
         },
         { shortHelp: "Start caret mode" }
     ));
-    addDefaultMap(new vimperator.Map(allModes, ["<C-q>"],
+    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<C-q>"],
         function () { vimperator.modes.passAllKeys = true; },
         { shortHelp: "Temporarily quit Vimperator mode" }
     ));
-    addDefaultMap(new vimperator.Map(allModes, ["<C-v>"],
+    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<C-v>"],
         function () { vimperator.modes.passNextKey = true; },
         { shortHelp: "Pass through next key" }
     ));
@@ -414,7 +399,7 @@ vimperator.Mappings = function () //{{{
         function() { BrowserStop(); },
         { shortHelp: "Stop loading" }
     ));
-    addDefaultMap(new vimperator.Map(allModes, ["<Nop>"],
+    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<Nop>"],
         function () { return; },
         { shortHelp: "Do nothing" }
     ));
