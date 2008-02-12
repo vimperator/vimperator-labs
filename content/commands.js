@@ -687,13 +687,6 @@ vimperator.Commands = function () //{{{
             args: [[["-tags", "-T"],     OPTION_LIST]]
         }
     ));
-    commandManager.addUserCommand(new vimperator.Command(["b[uffer]"],
-        function (args, special) { vimperator.buffer.switchTo(args, special); },
-        {
-            shortHelp: "Go to buffer from buffer list",
-            completer: function (filter) { return vimperator.completion.buffer(filter); }
-        }
-    ));
     commandManager.addUserCommand(new vimperator.Command(["dia[log]"],
         function (args, special)
         {

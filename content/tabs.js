@@ -39,6 +39,10 @@ vimperator.Tabs = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
     var alternates = [getBrowser().mCurrentTab, null];
 
+    // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
+    var lastBufferSwitchArgs = "";
+    var lastBufferSwitchSpecial = true;
+
     // @param spec can either be:
     // - an absolute integer
     // - "" for the current tab
@@ -155,12 +159,12 @@ vimperator.Tabs = function () //{{{
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["gb"],
         "Repeat last :buffer[!] command",
-        function (count) { vimperator.buffer.switchTo(null, null, count, false); },
+        function (count) { vimperator.tabs.switchTo(null, null, count, false); },
         { flags: vimperator.Mappings.flags.COUNT });
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["gB"],
         "Repeat last :buffer[!] command in reverse direction",
-        function (count) { vimperator.buffer.switchTo(null, null, count, true); },
+        function (count) { vimperator.tabs.switchTo(null, null, count, true); },
         { flags: vimperator.Mappings.flags.COUNT });
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["g0", "g^"],
@@ -218,6 +222,11 @@ vimperator.Tabs = function () //{{{
         {
             vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         });
+
+    vimperator.commands.add(["b[uffer]"],
+        "Switch to a buffer",
+        function (args, special) { vimperator.tabs.switchTo(args, special); },
+        { completer: function (filter) { return vimperator.completion.buffer(filter); } });
 
     vimperator.commands.add(["buffers", "files", "ls", "tabs"],
         "Show a list of all buffers",
@@ -518,15 +527,6 @@ vimperator.Tabs = function () //{{{
             getBrowser().mTabContainer.selectedIndex = index;
         },
 
-        // TODO: when restarting a session FF selects the first tab and then the
-        // tab that was selected when the session was created.  As a result the
-        // alternate after a restart is often incorrectly tab 1 when there
-        // shouldn't be one yet.
-        updateSelectionHistory: function ()
-        {
-            alternates = [this.getTab(), alternates[0]];
-        },
-
         reload: function (tab, bypassCache)
         {
             if (bypassCache)
@@ -562,8 +562,85 @@ vimperator.Tabs = function () //{{{
             {
                 getBrowser().reloadAllTabs();
             }
-        }
+        },
 
+        // "buffer" is a string which matches the URL or title of a buffer, if it
+        // is null, the last used string is used again
+        switchTo: function(buffer, allowNonUnique, count, reverse)
+        {
+            if (buffer == "")
+            {
+                return;
+            }
+            else if (buffer != null)
+            {
+                // store this command, so it can be repeated with "B"
+                lastBufferSwitchArgs = buffer;
+                lastBufferSwitchSpecial = allowNonUnique;
+            }
+            else
+            {
+                buffer = lastBufferSwitchArgs;
+                if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
+                    allowNonUnique = lastBufferSwitchSpecial;
+            }
+
+            if (!count || count < 1)
+                count = 1;
+            if (typeof reverse != "boolean")
+                reverse = false;
+
+            var match;
+            if (match = buffer.match(/^(\d+):?/))
+            {
+                vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+                return;
+            }
+
+            var matches = [];
+            var lowerBuffer = buffer.toLowerCase();
+            var first = vimperator.tabs.index() + (reverse ? 0 : 1);
+            for (var i = 0; i < getBrowser().browsers.length; i++)
+            {
+                var index = (i + first) % getBrowser().browsers.length;
+                var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+                var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
+                if (url == buffer)
+                {
+                    vimperator.tabs.select(index, false);
+                    return;
+                }
+
+                if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
+                    matches.push(index);
+            }
+            if (matches.length == 0)
+                vimperator.echoerr("E94: No matching buffer for " + buffer);
+            else if (matches.length > 1 && !allowNonUnique)
+                vimperator.echoerr("E93: More than one match for " + buffer);
+            else
+            {
+                if (reverse)
+                {
+                    index = matches.length - count;
+                    while (index < 0)
+                        index += matches.length;
+                }
+                else
+                    index = (count - 1) % matches.length;
+
+                vimperator.tabs.select(matches[index], false);
+            }
+        },
+
+        // TODO: when restarting a session FF selects the first tab and then the
+        // tab that was selected when the session was created.  As a result the
+        // alternate after a restart is often incorrectly tab 1 when there
+        // shouldn't be one yet.
+        updateSelectionHistory: function ()
+        {
+            alternates = [this.getTab(), alternates[0]];
+        }
     };
     //}}}
 }; //}}}
