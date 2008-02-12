@@ -48,17 +48,17 @@ vimperator.Mail = function ()
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["<Return>", "<Space>"],
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["<Return>", "<Space>"],
         "Focus message",
         function () { content.focus(); }
     );
 
     // FIXME:the following mappings do not yet work!
-    vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["r"],
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["r"],
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); }
     );
-    vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["d", "<Del>"],
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["d", "<Del>"],
         "Move mail to Trash folder",
         function () { goDoCommand("cmd_delete"); }
     );

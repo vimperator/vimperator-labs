@@ -142,7 +142,7 @@ vimperator.Buffer = function () //{{{
         win.scrollTo(h, v);
     }
 
-    vimperator.commands.add(new vimperator.Command(["test"],
+    vimperator.commands.addUserCommand(new vimperator.Command(["test"],
         function (args, special)
         {
             alert(args)
@@ -151,7 +151,7 @@ vimperator.Buffer = function () //{{{
             shortHelp: "Test command"
         }
     ));
-    vimperator.mappings.addDefault([vimperator.modes.NORMAL], ["w"], "Test",
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["w"], "Test",
         function () { alert("test"); }
     );
 

@@ -9,6 +9,8 @@
     * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
     * IMPORTANT: :bmarks! and :history! open the matching items now in a tab, instead
       of bringing up the bookmarks/history window
+    * IMPORTANT: "B" mapping now works just like :buffers, old bufferwindow will be removed
+      at some time. Use B5gt to jump to the 5th tab.
     * :play for playing a recorded macro
     * :[del]macros [regex] for listing/deleting recorded macros
     * :set! now lets you change about:config prefs similar to :set

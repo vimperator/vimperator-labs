@@ -132,6 +132,259 @@ vimperator.Tabs = function () //{{{
             validator: function (value) { return (value >= 0 && value <= 2); }
         });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["b"],
+        "Open a prompt to switch buffers",
+        function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["B"],
+        "Show buffer list",
+        function () { vimperator.buffer.list(false); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["d"],
+        "Delete current buffer",
+        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["D"],
+        "Delete current buffer, focus tab to the left",
+        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["gb"],
+        "Repeat last :buffer[!] command",
+        function (count) { vimperator.buffer.switchTo(null, null, count, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["gB"],
+        "Repeat last :buffer[!] command in reverse direction",
+        function (count) { vimperator.buffer.switchTo(null, null, count, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["g0", "g^"],
+        "Go to the first tab",
+        function (count) { vimperator.tabs.select(0); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["g$"],
+        "Go to the last tab",
+        function (count) { vimperator.tabs.select("$"); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
+        "Go to the next tab",
+        function (count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
+       "Go to previous tab",
+        function (count) { vimperator.tabs.select("-" + (count < 1 ? 1 : count), true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["u"],
+        "Undo closing of a tab",
+        function (count) { vimperator.commands.undo("", false, count); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-^>", "<C-6>"],
+        "Select the alternate tab",
+        function ()
+        {
+            if (vimperator.tabs.alternate == null || vimperator.tabs.getTab() == vimperator.tabs.alternate)
+            {
+                vimperator.echoerr("E23: No alternate page");
+                return;
+            }
+
+            // NOTE: this currently relies on v.tabs.index() returning the
+            // currently selected tab index when passed null
+            var index = vimperator.tabs.index(vimperator.tabs.alternate);
+
+            // TODO: since a tab close is more like a bdelete for us we
+            // should probably reopen the closed tab when a 'deleted'
+            // alternate is selected
+            if (index == -1)
+                vimperator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+            else
+                vimperator.tabs.select(index);
+        });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    vimperator.commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
+        "Delete current buffer",
+        function (args, special, count)
+        {
+            vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+        });
+
+    vimperator.commands.add(["buffers", "files", "ls", "tabs"],
+        "Show a list of all buffers",
+        function (args, special)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            vimperator.buffer.list(special);
+        });
+
+    vimperator.commands.add(["tab"],
+        "Execute a command and tell it to output in a new tab",
+        function (args) { vimperator.execute(args, { inTab: true }); },
+        { completer: function (filter) { return vimperator.completion.command(filter); } });
+
+    vimperator.commands.add(["tabl[ast]"],
+        "Switch to the last tab",
+        function () { vimperator.tabs.select("$", false); });
+
+    vimperator.commands.add(["tabm[ove]"],
+        "Move the current tab after tab N",
+        function (args, special)
+        {
+            // FIXME: tabmove! N should probably produce an error
+            if (!/^([+-]?\d+|)$/.test(args))
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            if (!args)
+                args = "$"; // if not specified, move to the last tab
+
+            vimperator.tabs.move(getBrowser().mCurrentTab, args, special);
+        });
+
+    // TODO: count support
+    vimperator.commands.add(["tabn[ext]", "tn[ext]"],
+        "Switch to the next or [count]th tab",
+        function (args)
+        {
+            if (!args)
+            {
+                vimperator.tabs.select("+1", true);
+            }
+            else if (/^\d+$/.test(args))
+            {
+                var index = parseInt(args, 10) - 1;
+                if (index < vimperator.tabs.count)
+                    vimperator.tabs.select(index, true);
+                else
+                    vimperator.beep();
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+            }
+        });
+
+
+    vimperator.commands.add(["tabo[nly]"],
+        "Close all other tabs",
+        function () { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); });
+
+    vimperator.commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
+        "Open one or more URLs in a new tab",
+        function (args, special)
+        {
+            var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
+            if (/\btabopen\b/.test(vimperator.options["activate"]))
+                where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
+
+            if (args)
+                vimperator.open(args, where);
+            else
+                vimperator.open("about:blank", where);
+        },
+        { completer: function (filter) { return vimperator.completion.url(filter); } });
+
+    // TODO: count support
+    vimperator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
+        "Switch to the previous tab or go [count] tabs back",
+        function (args)
+        {
+            if (!args)
+                vimperator.tabs.select("-1", true);
+            else if (/^\d+$/.test(args))
+                vimperator.tabs.select("-" + args, true); // FIXME: urgh!
+            else
+                vimperator.echoerr("E488: Trailing characters");
+        });
+
+    vimperator.commands.add(["tabr[ewind]", "tabfir[st]"],
+        "Switch to the first tab",
+        function () { vimperator.tabs.select(0, false); });
+
+    // TODO: extract common functionality of "undoall"
+    vimperator.commands.add(["u[ndo]"],
+        "Undo closing of a tab",
+        function (args, special, count)
+        {
+            if (count < 1)
+                count = 1;
+
+            if (args)
+            {
+                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                         getService(Components.interfaces.nsISessionStore);
+                var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                for (var i = 0; i < undoItems.length; i++)
+                {
+                    if (undoItems[i].state.entries[0].url == args)
+                    {
+                        count = i + 1;
+                        break;
+                    }
+                }
+            }
+            undoCloseTab(count - 1);
+        },
+        {
+            completer: function (filter)
+            {
+                // get closed-tabs from nsSessionStore
+                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                         getService(Components.interfaces.nsISessionStore);
+                var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                var completions = [];
+                for (var i = 0; i < undoItems.length; i++)
+                {
+                    // undoItems[i].image is also available if needed for favicons
+                    var url = undoItems[i].state.entries[0].url;
+                    var title = undoItems[i].title;
+                    if (vimperator.completion.match([url, title], filter, false))
+                        completions.push([url, title]);
+                }
+                return [0, completions];
+            }
+        });
+
+    vimperator.commands.add(["undoa[ll]"],
+        "Undo closing of all closed tabs",
+        function (args, special, count)
+        {
+            if (count > -1)
+            {
+                vimperator.echoerr("E481: No range allowed");
+                return;
+            }
+            if (special)
+            {
+                vimperator.echoerr("E477: No ! allowed");
+                return;
+            }
+
+            var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                     getService(Components.interfaces.nsISessionStore);
+            var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+            for (var i = 0; i < undoItems.length; i++)
+                undoCloseTab(); // doesn't work with i as the index to undoCloseTab
+        });
+
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -213,7 +466,7 @@ vimperator.Tabs = function () //{{{
                 }
             }
 
-            if (count < 1)
+            if (typeof count != "number" || count < 1)
                 count = 1;
 
             if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)

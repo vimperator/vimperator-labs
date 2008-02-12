@@ -182,7 +182,7 @@ vimperator.Mappings = function () //{{{
         },
 
         // FIXME: unused? 
-        getDefaultIterator: function (mode)
+        /*getDefaultIterator: function (mode)
         {
             return mappingsIterator(mode, main);
         },
@@ -191,21 +191,16 @@ vimperator.Mappings = function () //{{{
         getUserIterator: function (mode)
         {
             return mappingsIterator(mode, user);
-        },
+        },*/
 
-        hasMap: function (mode, cmd)
-        {
-            return user[mode].some(function (map) { return map.hasName(cmd); });
-        },
-
-        // TODO: rename to add, and change add to addUser(Map)
-        addDefault: function (modes, keys, description, action, extra)
+        add: function (modes, keys, description, action, extra)
         {
             addMap (new vimperator.Map(modes, keys,
-                    action, { shortHelp: description }), false);
+                    action, { shortHelp: description, flags: (extra && extra.flags) ? extra.flags : 0 }), false);
         },
 
-        add: function (map)
+        // TODO: change map to "easier" arguments
+        addUserMap: function (map)
         {
             // a map can have multiple names
             for (var i = 0; i < map.names.length; i++)
@@ -219,16 +214,6 @@ vimperator.Mappings = function () //{{{
             // all maps got removed (matching names = lhs), and added newly here
             for (var k = 0; k < map.modes.length; k++)
                 user[map.modes[k]].push(map);
-        },
-
-        remove: function (mode, cmd)
-        {
-            removeMap(mode, cmd);
-        },
-
-        removeAll: function (mode)
-        {
-            user[mode] = [];
         },
 
         get: function (mode, cmd)
@@ -262,6 +247,22 @@ vimperator.Mappings = function () //{{{
             }
 
             return matches;
+        },
+
+        // returns whether the user added a custom user map 
+        hasMap: function (mode, cmd)
+        {
+            return user[mode].some(function (map) { return map.hasName(cmd); });
+        },
+
+        remove: function (mode, cmd)
+        {
+            removeMap(mode, cmd);
+        },
+
+        removeAll: function (mode)
+        {
+            user[mode] = [];
         },
 
         list: function (modes, filter)
@@ -446,42 +447,6 @@ vimperator.Mappings = function () //{{{
         function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); },
         { shortHelp: "Toggle bookmarked state of current URL" }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["b"],
-        function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); },
-        { shortHelp: "Open a prompt to switch buffers" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["B"],
-        function () { vimperator.buffer.list(true); },
-        { shortHelp: "Toggle buffer list" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gb"],
-        function (count) { vimperator.buffer.switchTo(null, null, count, false); },
-        {
-            shortHelp: "Repeat last :buffer[!] command",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gB"],
-        function (count) { vimperator.buffer.switchTo(null, null, count, true); },
-        {
-            shortHelp: "Repeat last :buffer[!] command in reverse direction",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["d"],
-        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
-        {
-            shortHelp: "Delete current buffer (=tab)",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["D"],
-        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
-        {
-            shortHelp: "Delete current buffer (=tab)",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["~"],
         function () { vimperator.open("~"); },
         { shortHelp: "Open home directory" }
@@ -553,51 +518,6 @@ vimperator.Mappings = function () //{{{
         },
         { shortHelp: "Open (put) a URL based on the current clipboard contents in a new buffer" }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g0", "g^"],
-        function (count) { vimperator.tabs.select(0); },
-        { shortHelp: "Go to the first tab" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["g$"],
-        function (count) { vimperator.tabs.select("$"); },
-        { shortHelp: "Go to the last tab" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
-        function (count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
-        {
-            shortHelp: "Go to the next tab",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
-        function (count) { vimperator.tabs.select("-" + (count < 1 ? 1 : count), true); },
-        {
-            shortHelp: "Go {count} pages back",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-^>", "<C-6>"],
-        function ()
-        {
-            if (vimperator.tabs.alternate == null || vimperator.tabs.getTab() == vimperator.tabs.alternate)
-            {
-                vimperator.echoerr("E23: No alternate page");
-                return;
-            }
-
-            // NOTE: this currently relies on v.tabs.index() returning the
-            // currently selected tab index when passed null
-            var index = vimperator.tabs.index(vimperator.tabs.alternate);
-
-            // TODO: since a tab close is more like a bdelete for us we
-            // should probably reopen the closed tab when a 'deleted'
-            // alternate is selected
-            if (index == -1)
-                vimperator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-            else
-                vimperator.tabs.select(index);
-        },
-        { shortHelp: "Select the alternate tab" }
-    ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["m"],
         function (arg)
         {
@@ -659,10 +579,9 @@ vimperator.Mappings = function () //{{{
         { shortHelp: "Open (put) a URL based on the current clipboard contents in a new buffer" }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-l>"],
-        function (count) { vimperator.commands.redraw(); },
+        function () { vimperator.commands.redraw(); },
         {
-            shortHelp: "Redraw the screen",
-            flags: vimperator.Mappings.flags.COUNT
+            shortHelp: "Redraw the screen"
         }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["r"],
@@ -680,13 +599,6 @@ vimperator.Mappings = function () //{{{
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["T"],
         function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
         { shortHelp: "Open one or more URLs in a new tab, based on current location" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["u"],
-        function (count) { vimperator.commands.undo("", false, count); },
-        {
-            shortHelp: "Undo closing of a tab",
-            flags: vimperator.Mappings.flags.COUNT
-        }
     ));
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["y"],
         function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); },
