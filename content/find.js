@@ -142,6 +142,41 @@ vimperator.Search = function () //{{{
         "boolean", true);
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["/"],
+        "Search forward for a pattern",
+        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["?"],
+        "Search backwards for a pattern",
+        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["n"],
+        "Find next",
+        function () { vimperator.search.findAgain(false); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL], ["N"],
+        "Find previous",
+        function () { vimperator.search.findAgain(true); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["*"],
+        "Find word under cursor",
+        function ()
+        {
+            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), false);
+            vimperator.search.findAgain();
+        });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["#"],
+        "Find word under cursor backwards",
+        function ()
+        {
+            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), true);
+            vimperator.search.findAgain();
+        });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

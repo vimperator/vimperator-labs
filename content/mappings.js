@@ -938,23 +938,7 @@ vimperator.Mappings = function () //{{{
         }
     ));
 
-    // search management
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["/"],
-        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); },
-        { shortHelp: "Search forward for a pattern" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["?"],
-        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); },
-        { shortHelp: "Search backwards for a pattern" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["n"],
-        function () { vimperator.search.findAgain(false); },
-        { shortHelp: "Find next" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["N"],
-        function () { vimperator.search.findAgain(true); },
-        { shortHelp: "Find previous" }
-    ));
+    // macros
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["q"],
         function (arg) { vimperator.events.startRecording(arg); },
         {
@@ -1083,23 +1067,6 @@ vimperator.Mappings = function () //{{{
         { }
     ));
 
-
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["*"],
-        function (count)
-        {
-            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), false);
-            vimperator.search.findAgain();
-        },
-        { }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["#"],
-        function (count)
-        {
-            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), true);
-            vimperator.search.findAgain();
-        },
-        { }
-    ));
 
     // }}}
     // VISUAL mode
