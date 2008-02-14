@@ -496,13 +496,13 @@ const vimperator = (function () //{{{
             vimperator.log("Loading module statusline...", 3);
             vimperator.statusline    = vimperator.StatusLine();
             vimperator.log("Loading module buffer...", 3);
-            vimperator.buffer        = vimperator.Buffer();
+            vimperator.buffer        = vimperator.Buffer(vimperator.config.browserModes || [vimperator.modes.NORMAL]);
             vimperator.log("Loading module editor...", 3);
             vimperator.editor        = vimperator.Editor();
             if (vimperator.has("mail"))
             {
                 vimperator.log("Loading module mail...", 3);
-                vimperator.mail          = vimperator.Mail();
+                vimperator.mail          = vimperator.Mail(vimperator.config.mailModes || [vimperator.modes.NORMAL]);
             }
             if (vimperator.has("tabs"))
             {

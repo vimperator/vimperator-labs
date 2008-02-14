@@ -26,12 +26,12 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Mail = function ()
+vimperator.Mail = function (validModes)
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
+    var modes = validModes || [vimperator.modes.NORMAL];
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -48,20 +48,33 @@ vimperator.Mail = function ()
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["<Return>", "<Space>"],
+    vimperator.mappings.add(modes, ["<Return>", "i"],
         "Focus message",
-        function () { content.focus(); }
-    );
+        function () { content.focus(); });
 
-    // FIXME:the following mappings do not yet work!
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["r"],
-        "Reply to sender",
-        function () { goDoCommand("cmd_reply"); }
-    );
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["d", "<Del>"],
+    vimperator.mappings.add(modes, ["d", "<Del>"],
         "Move mail to Trash folder",
-        function () { goDoCommand("cmd_delete"); }
-    );
+        function () { goDoCommand("cmd_delete"); });
+
+    vimperator.mappings.add(modes, ["j", "<Right>"],
+        "Select next message",
+        function () { goDoCommand("cmd_nextMsg"); });
+
+    vimperator.mappings.add(modes, ["J", "<Tab>"],
+        "Select next unread message",
+        function () { goDoCommand("cmd_nextUnreadMsg"); });
+
+    vimperator.mappings.add(modes, ["k", "<Left>"],
+        "Select previous message",
+        function () { goDoCommand("cmd_previousMsg"); });
+
+    vimperator.mappings.add(modes, ["K"],
+        "Select previous unread message",
+        function () { goDoCommand("cmd_previousUnreadMsg"); });
+
+    vimperator.mappings.add(modes, ["r"],
+        "Reply to sender",
+        function () { goDoCommand("cmd_reply"); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

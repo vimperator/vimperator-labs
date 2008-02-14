@@ -26,11 +26,12 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Buffer = function () //{{{
+vimperator.Buffer = function (browserModes) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    var modes = browserModes || [vimperator.modes.NORMAL];
 
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
@@ -139,19 +140,6 @@ vimperator.Buffer = function () //{{{
         win.scrollTo(h, v);
     }
 
-    vimperator.commands.addUserCommand(new vimperator.Command(["test"],
-        function (args, special)
-        {
-            alert(args)
-        },
-        {
-            shortHelp: "Test command"
-        }
-    ));
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["w"], "Test",
-        function () { alert("test"); }
-    );
-
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -193,6 +181,42 @@ vimperator.Buffer = function () //{{{
             setter: function (value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
             getter: function () { return getMarkupDocumentViewer().authorStyleDisabled; },
         });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+        
+    vimperator.mappings.add(modes, ["i", "<Insert>"],
+        "Start caret mode",
+        function ()
+        {
+            // setting this option triggers an observer which takes care of the mode setting
+            vimperator.options.setPref("accessibility.browsewithcaret", true);
+        });
+
+    vimperator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
+        "Scroll document down",
+        function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["k", "<Up>", "<C-y>"],
+        "Scroll document up",
+        function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+        
+    vimperator.commands.addUserCommand(new vimperator.Command(["test"],
+        function (args, special)
+        {
+            alert(args)
+        },
+        {
+            shortHelp: "Test command"
+        }
+    ));
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

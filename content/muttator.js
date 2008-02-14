@@ -29,9 +29,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.config = {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
-    hostApplication: "Thunderbird",
+    hostApplication: "Thunderbird", // TODO: can this be found out otherwise?
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
+    get browserModes() { return [vimperator.modes.MESSAGE]; },
     features: ["mail", "hints"],
 	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
 	mainWindowID: "messengerWindow", // used for :set titlestring

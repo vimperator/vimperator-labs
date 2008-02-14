@@ -379,15 +379,6 @@ vimperator.Mappings = function () //{{{
         { shortHelp: "Rewind keyboard focus" }
     ));
                     
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["i", "<Insert>"],
-        function ()
-        {
-            // setting this option triggers an observer
-            // which takes care of the mode setting
-            vimperator.options.setPref("accessibility.browsewithcaret", true);
-        },
-        { shortHelp: "Start caret mode" }
-    ));
     addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<C-q>"],
         function () { vimperator.modes.passAllKeys = true; },
         { shortHelp: "Temporarily quit Vimperator mode" }
@@ -759,20 +750,6 @@ vimperator.Mappings = function () //{{{
         function (count) { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
         {
             shortHelp: "Scroll document to the left",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["j", "<Down>", "<C-e>"],
-        function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
-        {
-            shortHelp: "Scroll document down",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["k", "<Up>", "<C-y>"],
-        function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
-        {
-            shortHelp: "Scroll document up",
             flags: vimperator.Mappings.flags.COUNT
         }
     ));
