@@ -464,7 +464,55 @@ vimperator.Events = function () //{{{
         }
     }, 100);
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
+    vimperator.mappings.add(vimperator.modes.all,
+        ["<Esc>", "<C-[>"], "Focus content",
+        function () { vimperator.events.onEscape(); });
+
+    // add the ":" mapping in all but insert mode mappings
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.HINTS, vimperator.modes.MESSAGE, vimperator.modes.CARET, vimperator.modes.TEXTAREA],
+        [":"], "Enter command line mode",
+        function () { vimperator.commandline.open(":", "", vimperator.modes.EX); });
+
+    // focus events
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET],
+        ["<Tab>"], "Advance keyboard focus",
+        function () { document.commandDispatcher.advanceFocus(); });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET, vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
+        ["<S-Tab>"], "Rewind keyboard focus",
+        function () { document.commandDispatcher.rewindFocus(); });
+                    
+    vimperator.mappings.add(vimperator.modes.all,
+        ["<C-q>"], "Temporarily quit Vimperator mode",
+        function () { vimperator.modes.passAllKeys = true; });
+
+    vimperator.mappings.add(vimperator.modes.all,
+        ["<C-v>"], "Pass through next key",
+        function () { vimperator.modes.passNextKey = true; });
+
+    vimperator.mappings.add(vimperator.modes.all,
+        ["<Nop>"], "Do nothing",
+        function () { return; });
+
+    // macros
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.MESSAGE],
+        ["q"], "Record a key sequence into a macro",
+        function (arg) { vimperator.events.startRecording(arg); },
+        { flags: vimperator.Mappings.flags.ARGUMENT });
+
+    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.MESSAGE],
+        ["@"], "Play a macro",
+        function (count, arg)
+        {
+            if (count < 1) count = 1;
+            while (count--)
+                vimperator.events.playMacro(arg);
+        },
+        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

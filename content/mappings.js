@@ -355,47 +355,8 @@ vimperator.Mappings = function () //{{{
     // NORMAL mode
     // {{{
 
-    // vimperator management
-    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<F1>"],
-        function () { vimperator.commands.help(); },
-        { shortHelp: "Open help window" }
-    ));
-    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<Esc>", "<C-[>"],
-        function () { vimperator.events.onEscape() },
-        { shortHelp: "Focus content" }
-    ));
-    // add the ":" mapping in all but insert mode mappings
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.HINTS, vimperator.modes.MESSAGE, vimperator.modes.CARET, vimperator.modes.TEXTAREA], [":"],
-        function () { vimperator.commandline.open(":", "", vimperator.modes.EX); },
-        { shortHelp: "Start command line mode" }
-    ));
 
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET], ["<Tab>"],
-        function () { document.commandDispatcher.advanceFocus(); },
-        { shortHelp: "Advance keyboard focus" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET, vimperator.modes.INSERT, vimperator.modes.TEXTAREA], ["<S-Tab>"],
-        function () { document.commandDispatcher.rewindFocus(); },
-        { shortHelp: "Rewind keyboard focus" }
-    ));
-                    
-    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<C-q>"],
-        function () { vimperator.modes.passAllKeys = true; },
-        { shortHelp: "Temporarily quit Vimperator mode" }
-    ));
-    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<C-v>"],
-        function () { vimperator.modes.passNextKey = true; },
-        { shortHelp: "Pass through next key" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-c>"],
-        function() { BrowserStop(); },
-        { shortHelp: "Stop loading" }
-    ));
-    addDefaultMap(new vimperator.Map(vimperator.modes.all, ["<Nop>"],
-        function () { return; },
-        { shortHelp: "Do nothing" }
-    ));
-
+    // move to bookmarks.js:
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["a"],
         function ()
         {
@@ -410,6 +371,8 @@ vimperator.Mappings = function () //{{{
         function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); },
         { shortHelp: "Toggle bookmarked state of current URL" }
     ));
+
+    // move to vimperator.js:
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["~"],
         function () { vimperator.open("~"); },
         { shortHelp: "Open home directory" }
@@ -427,171 +390,6 @@ vimperator.Mappings = function () //{{{
         },
         { shortHelp: "Go home in a new tab" }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["go"],
-        function (arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB); },
-        {
-            shortHelp: "Jump to a QuickMark in the current tab",
-            flags: vimperator.Mappings.flags.ARGUMENT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gn"],
-        function (arg)
-        {
-            vimperator.quickmarks.jumpTo(arg,
-                /\bquickmark\b/.test(vimperator.options["activate"]) ?
-                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
-        },
-        {
-            shortHelp: "Jump to a QuickMark in a new tab",
-            flags: vimperator.Mappings.flags.ARGUMENT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["m"],
-        function (arg)
-        {
-            if (/[^a-zA-Z]/.test(arg))
-            {
-                vimperator.beep();
-                return;
-            }
-
-            vimperator.marks.add(arg);
-        },
-        {
-            shortHelp: "Set mark at the cursor position",
-            flags: vimperator.Mappings.flags.ARGUMENT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["M"],
-        function (arg)
-        {
-            if (/[^a-zA-Z0-9]/.test(arg))
-            {
-                vimperator.beep();
-                return;
-            }
-
-            vimperator.quickmarks.add(arg, vimperator.buffer.URL);
-        },
-        {
-            shortHelp: "Add new QuickMark for current URL",
-            flags: vimperator.Mappings.flags.ARGUMENT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["o"],
-        function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); },
-        { shortHelp: "Open one or more URLs in the current tab" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["O"],
-        function () { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); },
-        { shortHelp: "Open one or more URLs in the current tab, based on current location" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-l>"],
-        function () { vimperator.commands.redraw(); },
-        {
-            shortHelp: "Redraw the screen"
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["t"],
-        function () { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); },
-        { shortHelp: "Open one or more URLs in a new tab" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["T"],
-        function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
-        { shortHelp: "Open one or more URLs in a new tab, based on current location" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["y"],
-        function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); },
-        { shortHelp: "Yank current location to the clipboard" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL], ["Y"],
-        function ()
-        {
-            var sel = window.content.document.getSelection();
-            if (sel)
-                vimperator.copyToClipboard(sel, true);
-            else
-                vimperator.beep();
-        },
-        { shortHelp: "Copy selected text" }
-    ));
-
-
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["ZQ"],
-        function () { vimperator.quit(false); },
-        { shortHelp: "Quit and don't save the session" }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["ZZ"],
-        function () { vimperator.quit(true); },
-        { shortHelp: "Quit and save the session" }
-    ));
-    function incrementURL(count)
-    {
-        var url = vimperator.buffer.URL;
-        var regex = /(.*?)(-?\d+)(\D*)$/;
-
-        var matches = url.match(regex);
-        if (!matches || !matches[2]) // no number to increment
-        {
-            vimperator.beep();
-            return;
-        }
-
-        var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
-        var nums = newNum.match(/^(-?)(\d+)$/);
-        var oldLength = matches[2].replace(/-/, "").length, newLength = nums[2].length;
-        newNum = nums[1] || "";
-        for (let i = 0; i < oldLength - newLength; i++)
-            newNum += "0"; // keep leading zeros
-        newNum += nums[2];
-
-        vimperator.open(matches[1] + newNum + matches[3]);
-    }
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-x>"],
-        function (count) { incrementURL(-(count > 1 ? count : 1)); },
-        {
-            shortHelp: "Decrement last number in URL",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-a>"],
-        function (count) { incrementURL(count > 1 ? count : 1); },
-        {
-            shortHelp: "Increment last number in URL",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-
-    // history manipulation and jumplist, move to bookmarks.js?
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-o>"],
-        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
-        {
-            shortHelp: "Go to an older position in the jump list",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-i>"],
-        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        {
-            shortHelp: "Go to a newer position in the jump list",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["H", "<A-Left>", "<M-Left>"],
-        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
-        {
-            shortHelp: "Go back in the browser history",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["L", "<A-Right>", "<M-Right>"],
-        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        {
-            shortHelp: "Go forward in the browser history",
-            flags: vimperator.Mappings.flags.COUNT
-        }
-    ));
-    // move to vimperator.js?
     addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gu"],
         function (count)
         {
@@ -651,24 +449,124 @@ vimperator.Mappings = function () //{{{
     ));
 
 
-    // macros, move to events.js
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["q"],
-        function (arg) { vimperator.events.startRecording(arg); },
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["o"],
+        function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); },
+        { shortHelp: "Open one or more URLs in the current tab" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["O"],
+        function () { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); },
+        { shortHelp: "Open one or more URLs in the current tab, based on current location" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-l>"],
+        function () { vimperator.commands.redraw(); },
+        { shortHelp: "Redraw the screen" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["t"],
+        function () { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); },
+        { shortHelp: "Open one or more URLs in a new tab" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["T"],
+        function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); },
+        { shortHelp: "Open one or more URLs in a new tab, based on current location" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["y"],
+        function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); },
+        { shortHelp: "Yank current location to the clipboard" }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL, vimperator.modes.VISUAL], ["Y"],
+        function ()
         {
-            shortHelp: "Record a keysequence into a macro",
+            var sel = window.content.document.getSelection();
+            if (sel)
+                vimperator.copyToClipboard(sel, true);
+            else
+                vimperator.beep();
+        },
+        { shortHelp: "Copy selected text" }
+    ));
+
+    // move to quickmarks:
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["go"],
+        function (arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB); },
+        {
+            shortHelp: "Jump to a QuickMark in the current tab",
             flags: vimperator.Mappings.flags.ARGUMENT
         }
     ));
-    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["@"], 
-        function (count, arg)
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["gn"],
+        function (arg)
         {
-            if (count < 1) count = 1;
-            while (count--)
-                vimperator.events.playMacro(arg);
+            vimperator.quickmarks.jumpTo(arg,
+                /\bquickmark\b/.test(vimperator.options["activate"]) ?
+                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         },
         {
-            shortHelp: "Play a macro",
-            flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT
+            shortHelp: "Jump to a QuickMark in a new tab",
+            flags: vimperator.Mappings.flags.ARGUMENT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["M"],
+        function (arg)
+        {
+            if (/[^a-zA-Z0-9]/.test(arg))
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.quickmarks.add(arg, vimperator.buffer.URL);
+        },
+        {
+            shortHelp: "Add new QuickMark for current URL",
+            flags: vimperator.Mappings.flags.ARGUMENT
+        }
+    ));
+
+    // move to v.Marks:
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["m"],
+        function (arg)
+        {
+            if (/[^a-zA-Z]/.test(arg))
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.marks.add(arg);
+        },
+        {
+            shortHelp: "Set mark at the cursor position",
+            flags: vimperator.Mappings.flags.ARGUMENT
+        }
+    ));
+
+    // history manipulation and jumplist, move to bookmarks.js
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-o>"],
+        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
+        {
+            shortHelp: "Go to an older position in the jump list",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["<C-i>"],
+        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
+        {
+            shortHelp: "Go to a newer position in the jump list",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["H", "<A-Left>", "<M-Left>"],
+        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
+        {
+            shortHelp: "Go back in the browser history",
+            flags: vimperator.Mappings.flags.COUNT
+        }
+    ));
+    addDefaultMap(new vimperator.Map([vimperator.modes.NORMAL], ["L", "<A-Right>", "<M-Right>"],
+        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
+        {
+            shortHelp: "Go forward in the browser history",
+            flags: vimperator.Mappings.flags.COUNT
         }
     ));
 

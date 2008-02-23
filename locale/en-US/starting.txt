@@ -20,8 +20,8 @@ The plugin directory is named:
 The user's '$HOME'(~) directory is determined as follows:
 
 * Unix and Mac - _$HOME_ is used.
-* Windows - if _$HOME_ is set then this is used, otherwise _$USERPROFILE_ or finally
-_$HOMEDRIVE$HOMEPATH_.
+* Windows - if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
+_%HOMEDRIVE%%HOMEPATH%_.
 
 _$VIMPERATOR_HOME_ can be used to override the calculated _$HOME_ directory.
 

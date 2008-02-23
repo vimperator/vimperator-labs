@@ -194,6 +194,10 @@ vimperator.Buffer = function (browserModes) //{{{
             vimperator.options.setPref("accessibility.browsewithcaret", true);
         });
 
+    vimperator.mappings.add(modes, ["<C-c>"],
+        "Stop loading",
+        function() { BrowserStop(); });
+
     // scrolling
     vimperator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
         "Scroll document down",

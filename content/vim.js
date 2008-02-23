@@ -33,7 +33,7 @@ const vimperator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
     var callbacks = [];
 
-    // Only general options are added here, 
+    // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
         vimperator.options.add(["guioptions", "go"],
@@ -97,6 +97,21 @@ const vimperator = (function () //{{{
             {
                 setter: function (value) { vimperator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
             });
+    }
+
+    function addMappings()
+    {
+        vimperator.mappings.add(vimperator.modes.all, ["<F1>"],
+            "Open help window",
+            function () { vimperator.commands.help(); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["ZQ"],
+            "Quit and don't save the session",
+            function () { vimperator.quit(false); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["ZZ"],
+            "Quit and save the session",
+            function () { vimperator.quit(true); });
     }
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
@@ -461,76 +476,44 @@ const vimperator = (function () //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+        // this function is called, when the chrome is ready
         startup: function ()
         {
-            window.dump("Vimperator startup\n");
-            vimperator.log("Initializing vimperator object...", 1);
+            function log(module) { vimperator.log("Loading module " + module + "...", 3); };
 
-            // these objects are created here only after the chrome is ready
-            vimperator.log("Loading module options...", 3);
-            vimperator.options       = vimperator.Options(); addOptions();
-            vimperator.log("Loading module commands...", 3);
-            vimperator.commands      = vimperator.Commands();
-            vimperator.log("Loading module mappings...", 3);
-            vimperator.mappings      = vimperator.Mappings();
-            vimperator.log("Loading module events...", 3);
-            vimperator.events        = vimperator.Events();
-            if (vimperator.has("bookmarks"))
-            {
-                vimperator.log("Loading module bookmarks...", 3);
-                vimperator.bookmarks     = vimperator.Bookmarks();
-            }
-            if (vimperator.has("history"))
-            {
-                vimperator.log("Loading module history...", 3);
-                vimperator.history       = vimperator.History();
-            }
-            vimperator.log("Loading module commandline...", 3);
-            vimperator.commandline   = vimperator.CommandLine();
-            vimperator.log("Loading module search...", 3);
-            vimperator.search        = vimperator.Search();
-            vimperator.log("Loading module preview window...", 3);
-            vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
-            vimperator.log("Loading module buffer window...", 3);
-            vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
-            vimperator.log("Loading module statusline...", 3);
-            vimperator.statusline    = vimperator.StatusLine();
-            vimperator.log("Loading module buffer...", 3);
-            vimperator.buffer        = vimperator.Buffer(vimperator.config.browserModes || [vimperator.modes.NORMAL]);
-            vimperator.log("Loading module editor...", 3);
-            vimperator.editor        = vimperator.Editor();
-            if (vimperator.has("mail"))
-            {
-                vimperator.log("Loading module mail...", 3);
-                vimperator.mail          = vimperator.Mail(vimperator.config.mailModes || [vimperator.modes.NORMAL]);
-            }
-            if (vimperator.has("tabs"))
-            {
-                vimperator.log("Loading module tabs...", 3);
-                vimperator.tabs          = vimperator.Tabs();
-            }
-            if (vimperator.has("marks"))
-            {
-                vimperator.log("Loading module marks...", 3);
-                vimperator.marks         = vimperator.Marks();
-            }
-            if (vimperator.has("quickmarks"))
-            {
-                vimperator.log("Loading module quickmarks...", 3);
-                vimperator.quickmarks    = vimperator.QuickMarks();
-            }
-            if (vimperator.has("hints"))
-            {
-                vimperator.log("Loading module hints...", 3);
-                vimperator.hints         = vimperator.Hints();
-            }
-            vimperator.log("Loading module autocommands...", 3);
-            vimperator.autocommands  = vimperator.AutoCommands();
-            vimperator.log("Loading module io...", 3);
-            vimperator.io            = vimperator.IO();
-            vimperator.log("Loading module completion...", 3);
-            vimperator.completion    = vimperator.Completion();
+            vimperator.log("Initializing vimperator object...", 1);
+            log("options");        vimperator.options  = vimperator.Options();  addOptions();
+            log("commands");       vimperator.commands = vimperator.Commands();
+            log("mappings");       vimperator.mappings = vimperator.Mappings(); addMappings();
+            log("events");         vimperator.events   = vimperator.Events();
+            log("commandline");    vimperator.commandline   = vimperator.CommandLine();
+            log("search");         vimperator.search        = vimperator.Search();
+            log("preview window"); vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
+            log("buffer window");  vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
+            log("statusline");     vimperator.statusline    = vimperator.StatusLine();
+            log("buffer");         vimperator.buffer        = vimperator.Buffer(vimperator.config.browserModes || [vimperator.modes.NORMAL]);
+            log("editor");         vimperator.editor        = vimperator.Editor();
+            log("autocommands");   vimperator.autocommands  = vimperator.AutoCommands();
+            log("io");             vimperator.io            = vimperator.IO();
+            log("completion");     vimperator.completion    = vimperator.Completion();
+
+            // optional modules
+            if (vimperator.has("bookmarks"))  { log("bookmarks");  vimperator.bookmarks  = vimperator.Bookmarks(); }
+            if (vimperator.has("history"))    { log("history");    vimperator.history    = vimperator.History(); }
+            if (vimperator.has("mail"))       { log("mail");       vimperator.mail       = vimperator.Mail(vimperator.config.mailModes || [vimperator.modes.NORMAL]); }
+            if (vimperator.has("tabs"))       { log("tabs");       vimperator.tabs       = vimperator.Tabs(); }
+            if (vimperator.has("marks"))      { log("marks");      vimperator.marks      = vimperator.Marks(); }
+            if (vimperator.has("quickmarks")) { log("quickmarks"); vimperator.quickmarks = vimperator.QuickMarks(); }
+            if (vimperator.has("hints"))      { log("hints");      vimperator.hints      = vimperator.Hints(); }
+
             vimperator.log("All modules loaded", 3);
+
+            // This adds options/mappings/commands which are only valid in this particular extension
+            if (vimperator.config.init)
+            {
+                vimperator.config.init();
+                // vimperator.log("Loaded additional mappings, etc. for " + vimperator.config.name, 3);
+            }
 
             // we define some shortcuts to functions which are used often
             vimperator.echo    = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
@@ -613,8 +596,6 @@ const vimperator = (function () //{{{
 
         shutdown: function ()
         {
-            window.dump("Vimperator shutdown\n");
-
             // save our preferences
             vimperator.commandline.destroy();
             vimperator.quickmarks.destroy();

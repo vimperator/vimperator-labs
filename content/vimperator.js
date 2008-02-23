@@ -34,7 +34,43 @@ vimperator.config = {
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"],
     dialogs: [],
-    guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] }
+    guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
+
+    init: function()
+    {
+        function incrementURL(count)
+        {
+            var url = vimperator.buffer.URL;
+            var regex = /(.*?)(-?\d+)(\D*)$/;
+
+            var matches = url.match(regex);
+            if (!matches || !matches[2]) // no number to increment
+            {
+                vimperator.beep();
+                return;
+            }
+
+            var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
+            var nums = newNum.match(/^(-?)(\d+)$/);
+            var oldLength = matches[2].replace(/-/, "").length, newLength = nums[2].length;
+            newNum = nums[1] || "";
+            for (let i = 0; i < oldLength - newLength; i++)
+                newNum += "0"; // keep leading zeros
+            newNum += nums[2];
+
+            vimperator.open(matches[1] + newNum + matches[3]);
+        }
+
+        vimperator.mappings.add([vimperator.modes.NORMAL],
+            ["<C-a>"], "Increment last number in URL",
+            function (count) { incrementURL(count > 1 ? count : 1); },
+            { flags: vimperator.Mappings.flags.COUNT });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL],
+            ["<C-x>"], "Decrement last number in URL",
+            function (count) { incrementURL(-(count > 1 ? count : 1)); },
+            { flags: vimperator.Mappings.flags.COUNT });
+    }
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:
