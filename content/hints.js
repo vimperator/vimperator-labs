@@ -31,6 +31,7 @@ vimperator.Hints = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
 
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
@@ -418,6 +419,31 @@ vimperator.Hints = function () //{{{
         {
             validator: function (value) { return value >= 0; }
         });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+        
+    vimperator.mappings.add(modes, ["f"],
+        "Start QuickHint mode",
+        function () { vimperator.hints.show(vimperator.modes.QUICK_HINT); });
+
+    vimperator.mappings.add(modes, ["F"],
+        "Start QuickHint mode, but open link in a new tab",
+        function () { vimperator.hints.show(vimperator.modes.QUICK_HINT, "t"); });
+
+    vimperator.mappings.add(modes, [";"],
+        "Start an extended hint mode",
+        function (arg)
+        {
+            if (arg == "f")
+                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "o");
+            else if (arg == "F")
+                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "t");
+            else
+                vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg);
+        },
+        { flags: vimperator.Mappings.flags.ARGUMENT });
 
 
     /////////////////////////////////////////////////////////////////////////////}}}

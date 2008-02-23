@@ -194,6 +194,7 @@ vimperator.Buffer = function (browserModes) //{{{
             vimperator.options.setPref("accessibility.browsewithcaret", true);
         });
 
+    // scrolling
     vimperator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
         "Scroll document down",
         function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
@@ -203,6 +204,197 @@ vimperator.Buffer = function (browserModes) //{{{
         "Scroll document up",
         function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["h", "<Left>"],
+        "Scroll document to the left",
+        function (count) { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["l", "<Right>"],
+        "Scroll document to the right",
+        function (count) { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["0", "^"],
+        "Scroll to the absolute left of the document",
+        function () { vimperator.buffer.scrollStart(); });
+
+    vimperator.mappings.add(modes, ["$"],
+        "Scroll to the absolute right of the document",
+        function () { vimperator.buffer.scrollEnd(); });
+
+    vimperator.mappings.add(modes, ["gg", "<Home>"],
+        "Goto the top of the document",
+        function (count) { vimperator.buffer.scrollToPercentile(count >  0 ? count : 0); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["G", "<End>"],
+        "Goto the end of the document",
+        function (count) { vimperator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["<C-d>"],
+        "Scroll window downwards in the buffer",
+        function (count) { vimperator.buffer.scrollByScrollSize(count, 1); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["<C-u>"],
+        "Scroll window upwards in the buffer",
+        function (count) { vimperator.buffer.scrollByScrollSize(count, -1); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["<C-b>", "<PageUp>", "<S-Space>"],
+        "Scroll up a full page",
+        function (count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["<C-f>", "<PageDown>", "<Space>"],
+        "Scroll down a full page",
+        function (count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["]f"],
+        "Focus next frame",
+        function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["[f"],
+        "Focus previous frame",
+        function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["]]"],
+        "Follow a link labeled to 'next' or '>' if it exists",
+        function (count) { vimperator.buffer.followDocumentRelationship("next"); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["[["],
+        "Follow a link labeled to 'prev', 'previous' or '<' if it exists",
+        function (count) { vimperator.buffer.followDocumentRelationship("previous"); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["gf"],
+        "View source",
+        function () { vimperator.commands.viewsource(); });
+
+    vimperator.mappings.add(modes, ["gF"],
+        "View source with an external editor",
+        function () { vimperator.commands.viewsource(null, true); });
+
+    vimperator.mappings.add(modes, ["gi"],
+        "Focus last used input field",
+        function ()
+        {
+            if (vimperator.buffer.lastInputField)
+                vimperator.buffer.lastInputField.focus();
+            else
+            {
+                var first = vimperator.buffer.evaluateXPath(
+                    "//*[@type='text'] | //textarea | //xhtml:textarea").snapshotItem(0);
+
+                if (first)
+                    first.focus();
+                else
+                    vimperator.beep();
+            }
+        });
+
+    vimperator.mappings.add(modes, ["gP"],
+        "Open (put) a URL based on the current clipboard contents in a new buffer",
+        function ()
+        {
+            vimperator.open(readFromClipboard(),
+                /\bpaste\b/.test(vimperator.options["activate"]) ?
+                vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
+        });
+
+    vimperator.mappings.add(modes, ["'", "`"],
+        "Jump to the mark in the current buffer",
+        function (arg) { vimperator.marks.jumpTo(arg); },
+        { flags: vimperator.Mappings.flags.ARGUMENT });
+
+    vimperator.mappings.add(modes, ["p", "<MiddleMouse>"],
+        "Open (put) a URL based on the current clipboard contents in the current buffer",
+        function () { vimperator.open(readFromClipboard()); });
+
+    vimperator.mappings.add(modes, ["P"],
+        "Open (put) a URL based on the current clipboard contents in a new buffer",
+        function ()
+        {
+            vimperator.open(readFromClipboard(),
+                /\bpaste\b/.test(vimperator.options["activate"]) ?
+                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+        });
+
+    // reload
+    vimperator.mappings.add(modes, ["r"],
+        "Reload current page",
+        function () { vimperator.tabs.reload(getBrowser().mCurrentTab, false); });
+
+    vimperator.mappings.add(modes, ["R"],
+        "Reload while skipping the cache",
+        function () { vimperator.tabs.reload(getBrowser().mCurrentTab, true); });
+
+    // zoom
+    vimperator.mappings.add(modes, ["zi", "+"],
+        "Enlarge text zoom of current web page",
+        function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zm"],
+        "Enlarge text zoom of current web page by a larger amount",
+        function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zo", "-"],
+        "Reduce text zoom of current web page",
+        function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zr"],
+        "Reduce text zoom of current web page by a larger amount",
+        function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zz"],
+        "Set text zoom value of current web page",
+        function (count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zI"],
+        "Enlarge full zoom of current web page",
+        function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zM"],
+        "Enlarge full zoom of current web page by a larger amount",
+        function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zO"],
+        "Reduce full zoom of current web page",
+        function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zR"],
+        "Reduce full zoom of current web page by a larger amount",
+        function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["zZ"],
+        "Set full zoom value of current web page",
+        function (count) { vimperator.buffer.fullZoom = count > 1 ? count : 100; },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    // page info
+    vimperator.mappings.add(modes, ["<C-g>"],
+        "Print the current file name",
+        function (count) { vimperator.buffer.showPageInfo(false); },
+        { flags: vimperator.Mappings.flags.COUNT });
+
+    vimperator.mappings.add(modes, ["g<C-g>"],
+        "Print file information",
+        function (count) { vimperator.buffer.showPageInfo(true); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
