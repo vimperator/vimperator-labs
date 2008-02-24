@@ -335,7 +335,7 @@ vimperator.Buffer = function () //{{{
         function () { vimperator.tabs.reload(getBrowser().mCurrentTab, true); });
 
     // yanking
-    vimperator.options.add(modes, ["Y"],
+    vimperator.mappings.add(modes, ["Y"],
         "Copy selected text",
         function ()
         {
@@ -406,6 +406,8 @@ vimperator.Buffer = function () //{{{
     vimperator.mappings.add(modes, ["g<C-g>"],
         "Print file information",
         function (count) { vimperator.buffer.showPageInfo(true); });
+
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
