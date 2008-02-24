@@ -32,12 +32,20 @@ vimperator.config = {
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise?
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
+    features: ["hints", "mail", "marks"],
     get browserModes() { return [vimperator.modes.MESSAGE]; },
-    features: ["mail", "hints"],
 	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
 	mainWindowID: "messengerWindow", // used for :set titlestring
     dialogs: [],
-    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] }
+    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
+
+    init: function()
+    {
+        vimperator.mappings.add([vimperator.modes.NORMAL],
+            ["o"], "Open one or more URLs",
+            function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); });
+
+    }
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:

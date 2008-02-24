@@ -62,6 +62,27 @@ vimperator.config = {
         }
 
         vimperator.mappings.add([vimperator.modes.NORMAL],
+            ["y"], "Yank current location to the clipboard",
+            function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); });
+
+        // opening websites
+        vimperator.mappings.add([vimperator.modes.NORMAL],
+            ["o"], "Open one or more URLs",
+            function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["O"],
+            "Open one or more URLs, based on current location",
+            function () { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["t"],
+            "Open one or more URLs in a new tab",
+            function () { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["T"],
+            "Open one or more URLs in a new tab, based on current location",
+            function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(count > 1 ? count : 1); },
             { flags: vimperator.Mappings.flags.COUNT });
@@ -70,6 +91,82 @@ vimperator.config = {
             ["<C-x>"], "Decrement last number in URL",
             function (count) { incrementURL(-(count > 1 ? count : 1)); },
             { flags: vimperator.Mappings.flags.COUNT });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["~"],
+            "Open home directory",
+            function () { vimperator.open("~"); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["gh"],
+            "Open homepage",
+            function() { BrowserHome(); });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["gH"],
+            "Open homepage in a new tab",
+            function ()
+            {
+                var homepages = gHomeButton.getHomePage();
+                vimperator.open(homepages, /\bhomepage\b/.test(vimperator.options["activate"]) ?
+                        vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+            });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["gu"],
+            "Go to parent directory",
+            function (count)
+            {
+                function isDirectory(url)
+                {
+                    if (/^file:\/|^\//.test(url))
+                    {
+                        //var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
+                        var file = vimperator.io.getFile(url);
+                        if (!file.exists() || !file.isDirectory())
+                            return false;
+                        else
+                            return true;
+                    }
+
+                    // for all other locations just check if the URL ends with /
+                    return /\/$/.test(url);
+                }
+
+                if (count < 1)
+                    count = 1;
+
+                var url = vimperator.buffer.URL;
+                for (var i = 0; i < count; i++)
+                {
+                    if (isDirectory(url))
+                        url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/");
+                    else
+                        url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/");
+                }
+                url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
+
+                if (url == vimperator.buffer.URL)
+                {
+                    vimperator.beep();
+                    return;
+                }
+                vimperator.open(url);
+            },
+            { flags: vimperator.Mappings.flags.COUNT });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["gU"],
+            "Go to the root of the website",
+            function ()
+            {
+                var uri = content.document.location;
+                if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
+                {
+                    vimperator.beep();
+                    return;
+                }
+                vimperator.open(uri.protocol + "//" + (uri.host || "") + "/");
+            });
+
+        vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-l>"],
+            "Redraw the screen",
+            function () { vimperator.commands.redraw(); });
     }
 }
 

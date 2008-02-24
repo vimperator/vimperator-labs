@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-// do NOT create instances of this class yourself, use the helper method
+// Do NOT create instances of this class yourself, use the helper method
 // vimperator.options.add() instead
 vimperator.Option = function (names, description, type, defaultValue, getter, setter, validator, completer)
 {
@@ -101,8 +101,6 @@ vimperator.Option = function (names, description, type, defaultValue, getter, se
     };
 
 }; //}}}
-
-
 
 
 vimperator.Options = function () //{{{
@@ -285,21 +283,6 @@ vimperator.Options = function () //{{{
             list += "</table>";
 
             vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-        },
-
-        // TODO: move to vim.js?
-        // this hack is only needed, because we need to do asynchronous loading of the .vimperatorrc
-        setInitialGUI: function ()
-        {
-            if (vimperator.config.name != "Vimperator")
-                return;
-
-            if (!guioptionsDone)
-                this.get("guioptions").reset();
-            if (!laststatusDone)
-                this.get("laststatus").reset();
-            if (!showtablineDone)
-                this.get("showtabline").reset();
         },
 
         listPrefs: function (onlyNonDefault, filter)

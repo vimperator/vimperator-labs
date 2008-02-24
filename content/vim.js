@@ -491,7 +491,7 @@ const vimperator = (function () //{{{
             log("preview window"); vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
             log("buffer window");  vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
             log("statusline");     vimperator.statusline    = vimperator.StatusLine();
-            log("buffer");         vimperator.buffer        = vimperator.Buffer(vimperator.config.browserModes || [vimperator.modes.NORMAL]);
+            log("buffer");         vimperator.buffer        = vimperator.Buffer();
             log("editor");         vimperator.editor        = vimperator.Editor();
             log("autocommands");   vimperator.autocommands  = vimperator.AutoCommands();
             log("io");             vimperator.io            = vimperator.IO();
@@ -500,7 +500,7 @@ const vimperator = (function () //{{{
             // optional modules
             if (vimperator.has("bookmarks"))  { log("bookmarks");  vimperator.bookmarks  = vimperator.Bookmarks(); }
             if (vimperator.has("history"))    { log("history");    vimperator.history    = vimperator.History(); }
-            if (vimperator.has("mail"))       { log("mail");       vimperator.mail       = vimperator.Mail(vimperator.config.mailModes || [vimperator.modes.NORMAL]); }
+            if (vimperator.has("mail"))       { log("mail");       vimperator.mail       = vimperator.Mail(); }
             if (vimperator.has("tabs"))       { log("tabs");       vimperator.tabs       = vimperator.Tabs(); }
             if (vimperator.has("marks"))      { log("marks");      vimperator.marks      = vimperator.Marks(); }
             if (vimperator.has("quickmarks")) { log("quickmarks"); vimperator.quickmarks = vimperator.QuickMarks(); }

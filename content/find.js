@@ -144,23 +144,25 @@ vimperator.Search = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["/"],
-        "Search forward for a pattern",
+    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+        
+    vimperator.mappings.add(modes,
+        ["/"], "Search forward for a pattern",
         function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["?"],
-        "Search backwards for a pattern",
+    vimperator.mappings.add(modes,
+        ["?"], "Search backwards for a pattern",
         function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["n"],
-        "Find next",
+    vimperator.mappings.add(modes,
+        ["n"], "Find next",
         function () { vimperator.search.findAgain(false); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["N"],
-        "Find previous",
+    vimperator.mappings.add(modes,
+        ["N"], "Find previous",
         function () { vimperator.search.findAgain(true); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["*"],
+    vimperator.mappings.add(modes.concat([vimperator.modes.CARET, vimperator.modes.TEXTAREA]), ["*"],
         "Find word under cursor",
         function ()
         {
@@ -168,7 +170,7 @@ vimperator.Search = function () //{{{
             vimperator.search.findAgain();
         });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.CARET, vimperator.modes.TEXTAREA], ["#"],
+    vimperator.mappings.add(modes.concat([vimperator.modes.CARET, vimperator.modes.TEXTAREA]), ["#"],
         "Find word under cursor backwards",
         function ()
         {

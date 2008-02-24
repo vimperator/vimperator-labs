@@ -26,12 +26,11 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Buffer = function (browserModes) //{{{
+vimperator.Buffer = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    var modes = browserModes || [vimperator.modes.NORMAL];
 
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
@@ -185,6 +184,7 @@ vimperator.Buffer = function (browserModes) //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
         
     vimperator.mappings.add(modes, ["i", "<Insert>"],
         "Start caret mode",
@@ -312,11 +312,6 @@ vimperator.Buffer = function (browserModes) //{{{
                 vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
         });
 
-    vimperator.mappings.add(modes, ["'", "`"],
-        "Jump to the mark in the current buffer",
-        function (arg) { vimperator.marks.jumpTo(arg); },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
-
     vimperator.mappings.add(modes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
         function () { vimperator.open(readFromClipboard()); });
@@ -330,7 +325,7 @@ vimperator.Buffer = function (browserModes) //{{{
                 vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
         });
 
-    // reload
+    // reloading
     vimperator.mappings.add(modes, ["r"],
         "Reload current page",
         function () { vimperator.tabs.reload(getBrowser().mCurrentTab, false); });
@@ -339,7 +334,19 @@ vimperator.Buffer = function (browserModes) //{{{
         "Reload while skipping the cache",
         function () { vimperator.tabs.reload(getBrowser().mCurrentTab, true); });
 
-    // zoom
+    // yanking
+    vimperator.options.add(modes, ["Y"],
+        "Copy selected text",
+        function ()
+        {
+            var sel = window.content.document.getSelection();
+            if (sel)
+                vimperator.copyToClipboard(sel, true);
+            else
+                vimperator.beep();
+        });
+
+    // zooming
     vimperator.mappings.add(modes, ["zi", "+"],
         "Enlarge text zoom of current web page",
         function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, false); },
@@ -1224,5 +1231,292 @@ vimperator.Buffer = function (browserModes) //{{{
     };
     //}}}
 }; //}}}
+
+
+
+vimperator.Marks = function () //{{{
+{
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var localMarks = {};
+    var urlMarks = {};
+    var pendingJumps = [];
+    var appContent = document.getElementById("appcontent");
+
+    if (appContent)
+        appContent.addEventListener("load", onPageLoad, true);
+
+    function onPageLoad(event)
+    {
+        var win = event.originalTarget.defaultView;
+        for (var i = 0, length = pendingJumps.length; i < length; i++)
+        {
+            var mark = pendingJumps[i];
+            if (win.location.href == mark.location)
+            {
+                win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
+                pendingJumps.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    function removeLocalMark(mark)
+    {
+        if (mark in localMarks)
+        {
+            var win = window.content;
+            for (var i = 0; i < localMarks[mark].length; i++)
+            {
+                if (localMarks[mark][i].location == win.location.href)
+                {
+                    vimperator.log("Deleting local mark: " + mark + " | " + localMarks[mark][i].location + " | (" + localMarks[mark][i].position.x + ", " + localMarks[mark][i].position.y + ") | tab: " + vimperator.tabs.index(localMarks[mark][i].tab), 5);
+                    localMarks[mark].splice(i, 1);
+                    if (localMarks[mark].length == 0)
+                        delete localMarks[mark];
+                    break;
+                }
+            }
+        }
+    }
+
+    function removeURLMark(mark)
+    {
+        if (mark in urlMarks)
+        {
+            vimperator.log("Deleting URL mark: " + mark + " | " + urlMarks[mark].location + " | (" + urlMarks[mark].position.x + ", " + urlMarks[mark].position.y + ") | tab: " + vimperator.tabs.index(urlMarks[mark].tab), 5);
+            delete urlMarks[mark];
+        }
+    }
+
+    function isLocalMark(mark)
+    {
+        return /^[a-z]$/.test(mark);
+    }
+
+    function isURLMark(mark)
+    {
+        return /^[A-Z0-9]$/.test(mark);
+    }
+
+    function getSortedMarks()
+    {
+        // local marks
+        var lmarks = [];
+
+        for (var mark in localMarks)
+        {
+            for (var i = 0; i < localMarks[mark].length; i++)
+            {
+                if (localMarks[mark][i].location == window.content.location.href)
+                    lmarks.push([mark, localMarks[mark][i]]);
+            }
+        }
+        lmarks.sort();
+
+        // URL marks
+        var umarks = [];
+
+        for (var mark in urlMarks)
+            umarks.push([mark, urlMarks[mark]]);
+        // FIXME: why does umarks.sort() cause a "Component is not available =
+        // NS_ERROR_NOT_AVAILABLE" exception when used here?
+        umarks.sort(function (a, b) {
+            if (a[0] < b[0])
+                return -1;
+            else if (a[0] > b[0])
+                return 1;
+            else
+                return 0;
+        });
+
+        return lmarks.concat(umarks);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+
+    vimperator.mappings.add(modes,
+        ["m"], "Set mark at the cursor position",
+        function (arg)
+        {
+            if (/[^a-zA-Z]/.test(arg))
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.marks.add(arg);
+        },
+        { flags: vimperator.Mappings.flags.ARGUMENT });
+
+    vimperator.mappings.add(modes,
+        ["'", "`"], "Jump to the mark in the current buffer",
+        function (arg) { vimperator.marks.jumpTo(arg); },
+        { flags: vimperator.Mappings.flags.ARGUMENT });
+
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    return {
+
+        // TODO: add support for frameset pages
+        add: function (mark)
+        {
+            var win = window.content;
+
+            if (win.document.body.localName.toLowerCase() == "frameset")
+            {
+                vimperator.echoerr("marks support for frameset pages not implemented yet");
+                return;
+            }
+
+            var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
+            var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
+            var position = { x: x, y: y };
+
+            if (isURLMark(mark))
+            {
+                vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
+                urlMarks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
+            }
+            else if (isLocalMark(mark))
+            {
+                // remove any previous mark of the same name for this location
+                removeLocalMark(mark);
+                if (!localMarks[mark])
+                    localMarks[mark] = [];
+                vimperator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
+                localMarks[mark].push({ location: win.location.href, position: position });
+            }
+        },
+
+        remove: function (filter, special)
+        {
+            if (special)
+            {
+                // :delmarks! only deletes a-z marks
+                for (var mark in localMarks)
+                    removeLocalMark(mark);
+            }
+            else
+            {
+                var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
+                for (var mark in urlMarks)
+                {
+                    if (pattern.test(mark))
+                        removeURLMark(mark);
+                }
+                for (var mark in localMarks)
+                {
+                    if (pattern.test(mark))
+                        removeLocalMark(mark);
+                }
+            }
+        },
+
+        jumpTo: function (mark)
+        {
+            var ok = false;
+
+            if (isURLMark(mark))
+            {
+                var slice = urlMarks[mark];
+                if (slice && slice.tab && slice.tab.linkedBrowser)
+                {
+                    if (!slice.tab.parentNode)
+                    {
+                        pendingJumps.push(slice);
+                        // NOTE: this obviously won't work on generated pages using
+                        // non-unique URLs, like Vimperator's help :(
+                        vimperator.open(slice.location, vimperator.NEW_TAB);
+                        return;
+                    }
+                    var index = vimperator.tabs.index(slice.tab);
+                    if (index != -1)
+                    {
+                        vimperator.tabs.select(index);
+                        var win = slice.tab.linkedBrowser.contentWindow;
+                        if (win.location.href != slice.location)
+                        {
+                            pendingJumps.push(slice);
+                            win.location.href = slice.location;
+                            return;
+                        }
+                        vimperator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + vimperator.tabs.index(slice.tab), 5);
+                        win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                        ok = true;
+                    }
+                }
+            }
+            else if (isLocalMark(mark))
+            {
+                var win = window.content;
+                var slice = localMarks[mark] || [];
+
+                for (var i = 0; i < slice.length; i++)
+                {
+                    if (win.location.href == slice[i].location)
+                    {
+                        vimperator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
+                        win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
+                        ok = true;
+                    }
+                }
+            }
+
+            if (!ok)
+                vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
+        },
+
+        list: function (filter)
+        {
+            var marks = getSortedMarks();
+
+            if (marks.length == 0)
+            {
+                vimperator.echoerr("No marks set");
+                return;
+            }
+
+            if (filter.length > 0)
+            {
+                marks = marks.filter(function (mark) {
+                        if (filter.indexOf(mark[0]) > -1)
+                            return mark;
+                });
+                if (marks.length == 0)
+                {
+                    vimperator.echoerr("E283: No marks matching \"" + filter + "\"");
+                    return;
+                }
+            }
+
+            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                       "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+            for (var i = 0; i < marks.length; i++)
+            {
+                list += "<tr>" +
+                        "<td> "                        + marks[i][0]                              +  "</td>" +
+                        "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
+                        "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
+                        "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) + "</td>" +
+                        "</tr>";
+            }
+            list += "</table>";
+
+            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+        }
+
+    };
+    //}}}
+}; //}}}
+
 
 // vim: set fdm=marker sw=4 ts=4 et:
