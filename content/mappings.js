@@ -181,6 +181,12 @@ vimperator.Mappings = function () //{{{
             return mappingsIterator([vimperator.modes.NORMAL], main);
         },
 
+        // used by :mkvimperatorrc to save mappings
+        getUserIterator: function (mode)
+        {
+            return mappingsIterator(mode, user);
+        },
+
         add: function (modes, keys, description, action, extra)
         {
             addMap (new vimperator.Map(modes, keys,
