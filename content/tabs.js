@@ -26,12 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-/**
- * provides functions for working with tabs
- * XXX: ATTENTION: We are planning to move to the FUEL API once we switch to
- * Firefox 3.0, then this class should go away and their tab methods should be used
- * @deprecated
- */
 vimperator.Tabs = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +133,7 @@ vimperator.Tabs = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     vimperator.mappings.add([vimperator.modes.NORMAL], ["b"],
         "Open a prompt to switch buffers",
         function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); });
@@ -213,9 +208,11 @@ vimperator.Tabs = function () //{{{
                 vimperator.tabs.select(index);
         });
 
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     vimperator.commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         "Delete current buffer",
         function (args, special, count)
@@ -392,7 +389,6 @@ vimperator.Tabs = function () //{{{
             for (var i = 0; i < undoItems.length; i++)
                 undoCloseTab(); // doesn't work with i as the index to undoCloseTab
         });
-
 
 
     /////////////////////////////////////////////////////////////////////////////}}}

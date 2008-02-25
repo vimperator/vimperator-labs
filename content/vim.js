@@ -114,6 +114,11 @@ const vimperator = (function () //{{{
             function () { vimperator.quit(true); });
     }
 
+    function addCommands()
+    {
+
+    }
+
     // initially hide all GUI, it is later restored unless the user has :set go= or something
     // similar in his config
     function hideGUI()

@@ -408,20 +408,109 @@ vimperator.Buffer = function () //{{{
         function (count) { vimperator.buffer.showPageInfo(true); });
 
 
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-        
-    vimperator.commands.addUserCommand(new vimperator.Command(["test"],
+    
+    vimperator.commands.add(["ha[rdcopy]"],
+        "Print current document",
+        function () { getBrowser().contentWindow.print(); });
+
+    vimperator.commands.add(["pa[geinfo]"],
+        "Show various page information",
+        function () { vimperator.buffer.showPageInfo(true); });
+
+    vimperator.commands.add(["re[load]"],
+        "Reload current page",
+        function (args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); });
+
+    vimperator.commands.add(["sav[eas]", "w[rite]"],
+        "Save current document to disk",
         function (args, special)
         {
-            alert(args)
-        },
+            var file = vimperator.io.getFile(args || ""); 
+            // we always want to save that link relative to the current working directory
+            vimperator.options.setPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+            //if (args)
+            //{
+            //    saveURL(vimperator.buffer.URL, args, null, true, special, // special == skipPrompt
+            //            makeURI(vimperator.buffer.URL, content.document.characterSet));
+            //}
+            //else
+            saveDocument(window.content.document, special);
+        });
+
+    vimperator.commands.add(["st[op]"],
+        "Stop loading",
+        function() { BrowserStop(); });
+
+    vimperator.commands.add(["vie[wsource]"],
+        "View source code of current document",
+        function (args, special)
         {
-            shortHelp: "Test command"
-        }
-    ));
+            var url = args || vimperator.buffer.URL;
+            if (special) // external editor
+            {
+                // TODO: make that a helper function
+                // TODO: save return value in v:shell_error
+                var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+                var editor = vimperator.options["editor"];
+                var args = editor.split(" "); // FIXME: too simple
+                if (args.length < 1)
+                {
+                    vimperator.open("view-source:" + url)
+                    vimperator.echoerr("no editor specified");
+                    return;
+                }
+
+                var prog = args.shift();
+                args.push(url)
+                vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
+            }
+            else
+            {
+                vimperator.open("view-source:" + url)
+            }
+        });
+
+    vimperator.commands.add(["zo[om]"],
+        "Set zoom value of current web page",
+        function (args, special)
+        {
+            var level;
+
+            if (!args)
+            {
+                level = 100;
+            }
+            else if (/^\d+$/.test(args))
+            {
+                level = parseInt(args, 10);
+            }
+            else if (/^[+-]\d+$/.test(args))
+            {
+                if (special)
+                    level = vimperator.buffer.fullZoom + parseInt(args, 10);
+                else
+                    level = vimperator.buffer.textZoom + parseInt(args, 10);
+
+                // relative args shouldn't take us out of range
+                if (level < 1)
+                    level = 1;
+                if (level > 2000)
+                    level = 2000;
+            }
+            else
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            if (special)
+                vimperator.buffer.fullZoom = level;
+            else
+                vimperator.buffer.textZoom = level;
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -1340,6 +1429,7 @@ vimperator.Marks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+    
     var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
 
     vimperator.mappings.add(modes,
@@ -1361,6 +1451,92 @@ vimperator.Marks = function () //{{{
         function (arg) { vimperator.marks.jumpTo(arg); },
         { flags: vimperator.Mappings.flags.ARGUMENT });
 
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.commands.add(["delm[arks]"],
+        "Delete the specified marks",
+        function (args, special)
+        {
+            if (!special && !args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (special && args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+            var matches;
+            if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
+            {
+                // NOTE: this currently differs from Vim's behavior which
+                // deletes any valid marks in the arg list, up to the first
+                // invalid arg, as well as giving the error message.
+                vimperator.echoerr("E475: Invalid argument: " + matches[0]);
+                return;
+            }
+            // check for illegal ranges - only allow a-z A-Z 0-9
+            if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))
+            {
+                for (var i = 0; i < matches.length; i++)
+                {
+                    var start = matches[i][0];
+                    var end   = matches[i][2];
+                    if (/[a-z]/.test(start) != /[a-z]/.test(end) ||
+                        /[A-Z]/.test(start) != /[A-Z]/.test(end) ||
+                        /[0-9]/.test(start) != /[0-9]/.test(end) ||
+                        start > end)
+                    {
+                        vimperator.echoerr("E475: Invalid argument: " + args.match(new RegExp(matches[i] + ".*"))[0]);
+                        return;
+                    }
+                }
+            }
+
+            vimperator.marks.remove(args, special);
+        });
+
+    vimperator.commands.add(["ma[rk]"],
+        "Mark current location within the web page",
+        function (args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (args.length > 1)
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+            if (!/[a-zA-Z]/.test(args))
+            {
+                vimperator.echoerr("E191: Argument must be a letter or forward/backward quote");
+                return;
+            }
+
+            vimperator.marks.add(args);
+        });
+
+    vimperator.commands.add(["marks"],
+        "Show all location marks of current web page",
+        function (args)
+        {
+            // ignore invalid mark characters unless there are no valid mark chars
+            if (args && !/[a-zA-Z]/.test(args))
+            {
+                vimperator.echoerr("E283: No marks matching \"" + args + "\"");
+                return;
+            }
+
+            var filter = args.replace(/[^a-zA-Z]/g, "");
+            vimperator.marks.list(filter);
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

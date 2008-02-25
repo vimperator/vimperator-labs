@@ -108,6 +108,7 @@ vimperator.Bookmarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
     
     vimperator.mappings.add(modes, ["a"],
@@ -124,6 +125,71 @@ vimperator.Bookmarks = function () //{{{
         "Toggle bookmarked state of current URL",
         function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.commands.add(["bma[rk]"],
+        "Add a bookmark",
+        function (args)
+        {
+            var res = vimperator.commands.parseArgs(args, this.args);
+            if (!res)
+                return;
+
+            var url = res.args.length == 0 ? vimperator.buffer.URL : res.args[0];
+            var title = vimperator.commands.getOption(res.opts, "-title", res.args.length == 0 ? vimperator.buffer.title : null);
+            if (!title)
+                title = url;
+            var keyword = vimperator.commands.getOption(res.opts, "-keyword", null);
+            var tags = vimperator.commands.getOption(res.opts, "-tags", []);
+
+            if (vimperator.bookmarks.add(false, title, url, keyword, tags))
+            {
+                var extra = "";
+                if (title != url)
+                    extra = " (" + title + ")";
+                vimperator.echo("Added bookmark: " + url + extra, vimperator.commandline.FORCE_SINGLELINE);
+            }
+            else
+                vimperator.echoerr("Exxx: Could not add bookmark `" + title + "'", vimperator.commandline.FORCE_SINGLELINE);
+        },
+        {
+            args: [[["-title", "-t"],    vimperator.commands.OPTION_STRING],
+                   [["-tags", "-T"],     vimperator.commands.OPTION_LIST],
+                   [["-keyword", "-k"],  vimperator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
+        });
+
+    vimperator.commands.add(["bmarks"],
+        "List or open multiple bookmarks",
+        function (args, special)
+        {
+            var res = vimperator.commands.parseArgs(args, this.args);
+            if (!res)
+                return;
+
+            var tags = vimperator.commands.getOption(res.opts, "-tags", []);
+            vimperator.bookmarks.list(res.args.join(" "), tags, special);
+        },
+        {
+            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; },
+            args: [[["-tags", "-T"], vimperator.commands.OPTION_LIST]]
+        });
+
+    vimperator.commands.add(["delbm[arks]"],
+        "Delete a bookmark",
+        function (args, special)
+        {
+            var url = args;
+            if (!url)
+                url = vimperator.buffer.URL;
+
+            var deletedCount = vimperator.bookmarks.remove(url);
+            vimperator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", vimperator.commandline.FORCE_SINGLELINE);
+        },
+        {
+            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; }
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -460,6 +526,7 @@ vimperator.History = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
 
     vimperator.mappings.add(modes,
@@ -482,6 +549,94 @@ vimperator.History = function () //{{{
         function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
         { flags: vimperator.Mappings.flags.COUNT });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.commands.add(["ba[ck]"],
+        "Go back in the browser history",
+        function (args, special, count)
+        {
+            if (special)
+                vimperator.history.goToStart();
+            else
+            {
+                if (args)
+                {
+                    var sh = getWebNavigation().sessionHistory;
+                    for (var i = sh.index - 1; i >= 0; i--)
+                    {
+                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        {
+                            getWebNavigation().gotoIndex(i);
+                            return;
+                        }
+                    }
+                }
+                vimperator.history.stepTo(count > 0 ? -1 * count : -1);
+            }
+        },
+        {
+            completer: function (filter)
+            {
+                var sh = getWebNavigation().sessionHistory;
+                var completions = [];
+                for (var i = sh.index - 1; i >= 0; i--)
+                {
+                    var entry = sh.getEntryAtIndex(i, false);
+                    var url = entry.URI.spec;
+                    var title = entry.title;
+                    if (vimperator.completion.match([url, title], filter, false))
+                        completions.push([url, title]);
+                }
+                return [0, completions];
+            }
+        });
+
+    vimperator.commands.add(["fo[rward]", "fw"],
+        "Go forward in the browser history",
+        function (args, special, count)
+        {
+            if (special)
+                vimperator.history.goToEnd();
+            else
+            {
+                if (args)
+                {
+                    var sh = getWebNavigation().sessionHistory;
+                    for (var i = sh.index + 1; i < sh.count; i++)
+                    {
+                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        {
+                            getWebNavigation().gotoIndex(i);
+                            return;
+                        }
+                    }
+                }
+                vimperator.history.stepTo(count > 0 ? count : 1);
+            }
+        },
+        {
+            completer: function (filter)
+            {
+                var sh = getWebNavigation().sessionHistory;
+                var completions = [];
+                for (var i = sh.index + 1; i < sh.count; i++)
+                {
+                    var entry = sh.getEntryAtIndex(i, false);
+                    var url = entry.URI.spec;
+                    var title = entry.title;
+                    if (vimperator.completion.match([url, title], filter, false))
+                        completions.push([url, title]);
+                }
+                return [0, completions];
+            }
+        });
+
+    vimperator.commands.add(["hist[ory]", "hs"],
+        "Show recently visited URLs",
+        function (args, special) { vimperator.history.list(args, special); },
+        { completer: function (filter) { return [0, vimperator.history.get(filter)]; } });
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -651,6 +806,65 @@ vimperator.QuickMarks = function () //{{{
         },
         { flags: vimperator.Mappings.flags.ARGUMENT });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    
+    vimperator.commands.add(["delqm[arks]"],
+        "Delete the specified QuickMarks",
+        function (args, special)
+        {
+            // TODO: finish arg parsing - we really need a proper way to do this. :)
+            if (!special && !args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+            if (special && args)
+            {
+                vimperator.echoerr("E474: Invalid argument");
+                return;
+            }
+
+            if (special)
+                vimperator.quickmarks.removeAll();
+            else
+                vimperator.quickmarks.remove(args);
+        });
+
+    vimperator.commands.add(["qma[rk]"],
+        "Mark a URL with a letter for quick access",
+        function (args)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+
+            var matches = args.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
+            if (!matches)
+                vimperator.echoerr("E488: Trailing characters");
+            else if (!matches[2])
+                vimperator.quickmarks.add(matches[1], vimperator.buffer.URL);
+            else
+                vimperator.quickmarks.add(matches[1], matches[2]);
+        });
+
+    vimperator.commands.add(["qmarks"],
+        "Show all QuickMarks",
+        function (args)
+        {
+            // ignore invalid mark characters unless there are no valid mark chars
+            if (args && !/[a-zA-Z0-9]/.test(args))
+            {
+                vimperator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
+                return;
+            }
+
+            var filter = args.replace(/[^a-zA-Z0-9]/g, "");
+            vimperator.quickmarks.list(filter);
+        });
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{

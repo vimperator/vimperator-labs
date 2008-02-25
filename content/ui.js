@@ -238,6 +238,36 @@ vimperator.CommandLine = function () //{{{
         multilineInputWidget.setAttribute("rows", lines.toString());
     }
 
+    // used for the :echo[err] commands
+    function echoArgumentToString(arg, useColor)
+    {
+        if (!arg)
+            return "";
+
+        try
+        {
+            // TODO: move to vimperator.eval()?
+            // with (vimperator) means, vimperator is the default namespace "inside" eval
+            arg = eval("with(vimperator){" + arg + "}");
+        }
+        catch (e)
+        {
+            vimperator.echoerr(e.toString());
+            return null;
+        }
+
+        if (typeof arg === "object")
+            arg = vimperator.util.objectToString(arg, useColor);
+        else if (typeof arg === "function")
+            arg = vimperator.util.escapeHTML(arg.toString());
+        else if (typeof arg === "number" || typeof arg === "boolean")
+            arg = "" + arg;
+        else if (typeof arg === "undefined")
+            arg = "undefined";
+
+        return arg;
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -287,6 +317,29 @@ vimperator.CommandLine = function () //{{{
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
         function () { vimperator.editor.expandAbbreviation("c"); });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    
+    vimperator.commands.add(["ec[ho]"],
+        "Display a string at the bottom of the window",
+        function (args)
+        {
+            var res = echoArgumentToString(args, true);
+            if (res != null)
+                vimperator.echo(res);
+        },
+        { completer: function (filter) { return vimperator.completion.javascript(filter); } });
+
+    vimperator.commands.add(["echoe[rr]"],
+        "Display an error string at the bottom of the window",
+        function (args)
+        {
+            var res = echoArgumentToString(args, false);
+            if (res != null)
+                vimperator.echoerr(res);
+        },
+        { completer: function (filter) { return vimperator.completion.javascript(filter); } });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

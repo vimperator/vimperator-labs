@@ -32,7 +32,7 @@ vimperator.config = {
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
-    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs"],
+    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs", "windows"],
     dialogs: [],
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
@@ -61,6 +61,10 @@ vimperator.config = {
             vimperator.open(matches[1] + newNum + matches[3]);
         }
 
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// MAPPINGS ////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+    
         vimperator.mappings.add([vimperator.modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
             function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); });
@@ -167,6 +171,69 @@ vimperator.config = {
         vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
             function () { vimperator.commands.redraw(); });
+
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// COMMANDS ////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
+        vimperator.commands.add(["downl[oads]", "dl"],
+            "Show progress of current downloads",
+            function () { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); });
+
+        vimperator.commands.add(["redr[aw]"],
+            "Redraw the screen",
+            function ()
+            {
+                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+                                getInterface(Components.interfaces.nsIDOMWindowUtils);
+                wu.redraw();
+            });
+
+        // TODO: move sidebar commands to ui.js?
+        vimperator.commands.add(["sbcl[ose]"],
+            "Close the sidebar window",
+            function (args)
+            {
+                if (args)
+                {
+                    vimperator.echoerr("E488: Trailing characters");
+                    return;
+                }
+
+                if (document.getElementById("sidebar-box").hidden == false)
+                    toggleSidebar();
+            });
+
+        vimperator.commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
+            "Open the sidebar window",
+            function (args)
+            {
+                if (!args)
+                {
+                    vimperator.echoerr("E471: Argument required");
+                    return;
+                }
+
+                // do nothing if the requested sidebar is already open
+                if (document.getElementById("sidebar-title").value == args)
+                {
+                    document.getElementById("sidebar-box").contentWindow.focus();
+                    return;
+                }
+
+                var menu = document.getElementById("viewSidebarMenu");
+
+                for (var i = 0; i < menu.childNodes.length; i++)
+                {
+                    if (menu.childNodes[i].label == args)
+                    {
+                        eval(menu.childNodes[i].getAttribute("oncommand"));
+                        break;
+                    }
+                }
+            },
+            { completer: function (filter) { return vimperator.completion.sidebar(filter); } });
+
     }
 }
 
