@@ -254,6 +254,135 @@ const vimperator = (function () //{{{
             {
                 completer: function (filter) { return vimperator.completion.javascript(filter); }
             });
+
+        vimperator.commands.add(["norm[al]"],
+            "Execute Normal mode commands",
+            function (args, special)
+            {
+                if (!args)
+                {
+                    vimperator.echoerr("E471: Argument required");
+                    return;
+                }
+
+                vimperator.events.feedkeys(args, special);
+            });
+
+        vimperator.commands.add(["res[tart]"],
+            "Force " + vimperator.config.appName + " to restart",
+            function () { vimperator.restart(); });
+
+        vimperator.commands.add(["time"],
+            "Profile a piece of code or run a command multiple times",
+            function (args, special, count)
+            {
+                try
+                {
+                    if (count > 1)
+                    {
+                        var i = count;
+                        var beforeTime = Date.now();
+
+                        if (args && args[0] == ":")
+                        {
+                            while (i--)
+                                vimperator.execute(args);
+                        }
+                        else
+                        {
+                            while (i--)
+                                eval("with(vimperator){" + args + "}");
+                        }
+
+                        if (special)
+                            return;
+
+                        var afterTime = Date.now();
+
+                        if ((afterTime - beforeTime) / count >= 100)
+                        {
+                            var each = ((afterTime - beforeTime) / 1000.0 / count);
+                            var eachUnits = "sec";
+                        }
+                        else
+                        {
+                            var each = ((afterTime - beforeTime) / count);
+                            var eachUnits = "msec";
+                        }
+
+                        if (afterTime - beforeTime >= 100)
+                        {
+                            var total = ((afterTime - beforeTime) / 1000.0);
+                            var totalUnits = "sec";
+                        }
+                        else
+                        {
+                            var total = (afterTime - beforeTime);
+                            var totalUnits = "msec";
+                        }
+
+                        var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                                  "<table>" +
+                                  "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
+                                  "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
+                                  "<tr><td>  Average time:</td><td align=\"right\"><span style=\"color: green\">" + each.toFixed(2) + "</span></td><td>" + eachUnits + "</td></tr>" +
+                                  "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + totalUnits + "</td></tr>" +
+                                  "</table>";
+
+                        vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                    }
+                    else
+                    {
+                        var beforeTime = Date.now();
+                        if (args && args[0] == ":")
+                            vimperator.execute(args);
+                        else
+                            eval("with(vimperator){" + args + "}");
+
+                        if (special)
+                            return;
+
+                        var afterTime = Date.now();
+
+                        if (afterTime - beforeTime >= 100)
+                            vimperator.echo("Total time: " + ((afterTime - beforeTime) / 1000.0).toFixed(2) + " sec");
+                        else
+                            vimperator.echo("Total time: " + (afterTime - beforeTime) + " msec");
+                    }
+                }
+                catch (e)
+                {
+                    vimperator.echoerr(e);
+                }
+            });
+
+        vimperator.commands.add(["ve[rsion]"],
+            "Show version information",
+            function (args, special)
+            {
+                if (special)
+                    vimperator.open("about:");
+                else
+                    vimperator.echo(":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "\n" +
+                                    vimperator.config.appName + " " + vimperator.version +
+                                    " running on:\n" + navigator.userAgent);
+            });
+
+        vimperator.commands.add(["viu[sage]"],
+            "List all mappings with a short description",
+            function (args, special, count, modifiers)
+            {
+                var usage = "<table>";
+                for (let mapping in vimperator.mappings)
+                {
+                    usage += "<tr><td style='color: magenta; padding-right: 20px'> " +
+                             vimperator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
+                             vimperator.util.escapeHTML(mapping.shortHelp || "") + "</td></tr>";
+                }
+                usage += "</table>";
+
+                vimperator.echo(usage, vimperator.commandline.FORCE_MULTILINE);
+            });
     }
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something

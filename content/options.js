@@ -200,6 +200,96 @@ vimperator.Options = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    vimperator.commands.add(["let"],
+        "Set or list a variable",
+        function (args)
+        {
+            if (!args)
+            {
+                var str = "";
+                for (var i in vimperator.globalVariables)
+                {
+                    var value = vimperator.globalVariables[i];
+                    if (typeof value == "number")
+                        var prefix = "#";
+                    else if (typeof value == "function")
+                        var prefix = "*";
+                    else
+                        var prefix = "";
+
+                    str += "<tr><td style=\"width: 200px;\">" + i + "</td><td>" + prefix + value + "</td>\n";
+                }
+                if (str)
+                    vimperator.echo("<table>" + str + "</table>", vimperator.commandline.FORCE_MULTILINE);
+                else
+                    vimperator.echo("No variables found");
+                return;
+            }
+
+            var matches;
+            // 1 - type, 2 - name, 3 - +-., 4 - expr
+            if (matches = args.match(/([$@&])?([\w:]+)\s*([+-.])?=\s*(.+)/))
+            {
+                if (!matches[1])
+                {
+                    var reference = vimperator.variableReference(matches[2]);
+                    if (!reference[0] && matches[3])
+                    {
+                        vimperator.echoerr("E121: Undefined variable: " + matches[2]);
+                        return;
+                    }
+
+                    var expr = vimperator.eval(matches[4]);
+                    if (typeof expr === undefined)
+                    {
+                        vimperator.echoerr("E15: Invalid expression: " + matches[4]);
+                        return;
+                    }
+                    else
+                    {
+                        if (!reference[0])
+                        {
+                            if (reference[2] == "g")
+                                reference[0] = vimperator.globalVariables;
+                            else
+                                return; // for now
+                        }
+
+                        if (matches[3])
+                        {
+                            if (matches[3] == "+")
+                                reference[0][reference[1]] += expr;
+                            else if (matches[3] == "-")
+                                reference[0][reference[1]] -= expr;
+                            else if (matches[3] == ".")
+                                reference[0][reference[1]] += expr.toString();
+                        }
+                        else
+                            reference[0][reference[1]] = expr;
+                    }
+                }
+            }
+            // 1 - name
+            else if (matches = args.match(/^\s*([\w:]+)\s*$/))
+            {
+                var reference = vimperator.variableReference(matches[1]);
+                if (!reference[0])
+                {
+                    vimperator.echoerr("E121: Undefined variable: " + matches[1]);
+                    return;
+                }
+
+                var value = reference[0][reference[1]];
+                if (typeof value == "number")
+                    var prefix = "#";
+                else if (typeof value == "function")
+                    var prefix = "*";
+                else
+                    var prefix = "";
+                vimperator.echo(reference[1] + "\t\t" + prefix + value);
+            }
+        });
+
     vimperator.commands.add(["pref[erences]", "prefs"],
         "Show " + vimperator.config.appName + " Preferences",
         function (args, special, count, modifiers)
@@ -474,6 +564,33 @@ vimperator.Options = function () //{{{
         },
         {
             completer: function (filter, special) { return vimperator.completion.option(filter, special); }
+        });
+
+    vimperator.commands.add(["unl[et]"],
+        "Delete a variable",
+        function (args, special)
+        {
+            if (!args)
+            {
+                vimperator.echoerr("E471: Argument required");
+                return;
+            }
+
+            var names = args.split(/ /);
+            if (typeof names == "string") names = [names];
+            var length = names.length;
+            for (var i = 0, name = names[i]; i < length; name = names[++i])
+            {
+                var reference = vimperator.variableReference(name);
+                if (!reference[0])
+                {
+                    if (!special)
+                        vimperator.echoerr("E108: No such variable: " + name);
+                    return;
+                }
+
+                delete reference[0][reference[1]];
+            }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

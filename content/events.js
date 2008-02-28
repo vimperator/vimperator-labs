@@ -43,6 +43,56 @@ vimperator.AutoCommands = function() //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    vimperator.commands.add(["au[tocmd]"],
+        "Execute commands automatically on events",
+        function (args, special) 
+        {  
+            if (!args)
+            {
+                if (special) // :au!
+                    vimperator.autocommands.remove(null, null);
+                else // :au
+                    vimperator.autocommands.list(null, null);
+            } 
+            else
+            {
+                // (?:  ) means don't store; (....)? <-> exclamation marks makes the group optional
+                var [all, asterix, auEvent, regex, cmds] =  args.match(/^(\*)?(?:\s+)?(\S+)(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
+
+                if (cmds)
+                {
+                    vimperator.autocommands.add(auEvent, regex, cmds);
+                }
+                else if (regex) // e.g. no cmds provided
+                {
+                    if (special)
+                        vimperator.autocommands.remove(auEvent, regex);
+                    else
+                        vimperator.autocommands.list(auEvent, regex);
+                }
+                else if (auEvent)
+                {
+                    if (asterix)
+                        if (special)
+                            vimperator.autocommands.remove(null, auEvent); // ':au! * auEvent'
+                        else
+                            vimperator.autocommands.list(null, auEvent);
+                    else
+                        if (special)
+                            vimperator.autocommands.remove(auEvent, null);
+                        else
+                            vimperator.autocommands.list(auEvent, null);
+                }
+            }
+        },
+        {
+            completer: function (filter) { return vimperator.completion.autocommands(filter); }
+        });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -513,6 +563,48 @@ vimperator.Events = function () //{{{
                 vimperator.events.playMacro(arg);
         },
         { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    
+    vimperator.commands.add(["delmac[ros]"],
+        "Delete macros",
+        function (arg)
+        {
+            if (!arg)
+                vimperator.echoerr("E474: Invalid argument");
+            else
+                vimperator.events.deleteMacros(arg);
+        });
+
+    vimperator.commands.add(["macros"],
+        "List all macros",
+        function (arg)
+        {
+            var str = "<table>";
+            var macroRef = vimperator.events.getMacros(arg);
+            for (var item in macroRef)
+               str += "<tr><td> " + item + " &nbsp; </td><td>" + 
+                      vimperator.util.escapeHTML(macroRef[item]) + "</td></tr>";
+
+            str += "</table>";
+
+            vimperator.echo(str, vimperator.commandline.FORCE_MULTILINE);
+        });
+
+    vimperator.commands.add(["pl[ay]"],
+        "Replay a recorded macro",
+        function (arg)
+        {
+            if (!arg)
+                vimperator.echoerr("E474: Invalid argument");
+            else
+                vimperator.events.playMacro(arg);
+        },
+        {
+            completer: function (filter) { return vimperator.completion.macros(filter); }
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

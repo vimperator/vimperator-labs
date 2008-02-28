@@ -238,6 +238,10 @@ vimperator.Tabs = function () //{{{
             vimperator.buffer.list(special);
         });
 
+    vimperator.commands.add(["reloada[ll]"],
+        "Reload all tab pages",
+        function (args, special) { vimperator.tabs.reloadAll(special); });
+
     vimperator.commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
         function (args) { vimperator.execute(args, { inTab: true }); },
