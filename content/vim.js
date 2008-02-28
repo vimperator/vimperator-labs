@@ -116,7 +116,144 @@ const vimperator = (function () //{{{
 
     function addCommands()
     {
+        vimperator.commands.add(["addo[ns]"],
+            "Manage available Extensions and Themes",
+            function () { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); });
 
+        vimperator.commands.add(["beep"],
+            "Play a system beep",
+            function () { vimperator.beep(); });
+
+        vimperator.commands.add(["dia[log]"],
+            "Open a " + vimperator.config.appName + " dialog",
+            function (args, special)
+            {
+                try
+                {
+                    var dialogs = vimperator.config.dialogs || [];
+                    for (let i = 0; i < dialogs.length; i++)
+                    {
+                        if (dialogs[i][0] == args)
+                            return dialogs[i][2]();
+                    }
+                    vimperator.echoerr(args ? "Dialog \"" + args + "\" not available" : "E474: Invalid argument");
+                }
+                catch (e)
+                {
+                    vimperator.echoerr("Error opening '" + args + "': " + e);
+                }
+            },
+            {
+                completer: function (filter) { return vimperator.completion.dialog(filter); }
+            });
+
+        vimperator.commands.add(["exe[cute]"],
+            "Execute the argument as an Ex command",
+            function (args) { vimperator.execute(args); });
+
+        vimperator.commands.add(["exu[sage]"],
+            "List all Ex commands with a short description",
+            function ()
+            {
+                var usage = "<table>";
+                for (let command in vimperator.commands)
+                {
+                    usage += "<tr><td style='color: magenta; padding-right: 20px'> :" +
+                             vimperator.util.escapeHTML(command.name) + "</td><td>" +
+                             vimperator.util.escapeHTML(command.shortHelp) + "</td></tr>";
+                }
+                usage += "</table>";
+
+                vimperator.echo(usage, vimperator.commandline.FORCE_MULTILINE);
+            });
+
+        vimperator.commands.add(["h[elp]"],
+            "Display help",
+            function (args, special, count, modifiers)
+            {
+                function jumpToTag(file, tag)
+                {
+                    vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + file);
+                    setTimeout(function() {
+                        var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
+                        if (elem)
+                            window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+                        else
+                            dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
+                    }, 200);
+                }
+
+                if (!args)
+                {
+                    vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/intro.html");
+                    return;
+                }
+
+                var [, items] = vimperator.completion.help(args);
+                var partialMatch = -1;
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i][0] == args)
+                    {
+                        jumpToTag(items[i][1], items[i][0]);
+                        return;
+                    }
+                    else if (partialMatch == -1 && items[i][0].indexOf(args) > -1)
+                    {
+                        partialMatch = i;
+                    }
+                }
+
+                if (partialMatch > -1)
+                    jumpToTag(items[partialMatch][1], items[partialMatch][0]);
+                else
+                    vimperator.echoerr("E149: Sorry, no help for " + args);
+            },
+            {
+                completer: function (filter) { return vimperator.completion.help(filter); }
+            });
+
+        vimperator.commands.add(["javas[cript]", "js"],
+            "Run a JavaScript command through eval()",
+            function (args, special)
+            {
+                if (special) // open javascript console
+                    vimperator.open("chrome://global/content/console.xul", vimperator.NEW_TAB);
+                else
+                {
+                    // check for a heredoc
+                    var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                    if (matches && matches[2])
+                    {
+                        vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                            function (code)
+                            {
+                                try
+                                {
+                                    eval(matches[1] + "\n" + code);
+                                }
+                                catch (e)
+                                {
+                                    vimperator.echoerr(e.name + ": " + e.message);
+                                }
+                            });
+                    }
+                    else // single line javascript code
+                    {
+                        try
+                        {
+                            eval("with(vimperator){" + args + "}");
+                        }
+                        catch (e)
+                        {
+                            vimperator.echoerr(e.name + ": " + e.message);
+                        }
+                    }
+                }
+            },
+            {
+                completer: function (filter) { return vimperator.completion.javascript(filter); }
+            });
     }
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
@@ -487,8 +624,9 @@ const vimperator = (function () //{{{
             function log(module) { vimperator.log("Loading module " + module + "...", 3); };
 
             vimperator.log("Initializing vimperator object...", 1);
+            // commands must always be the first module to be initialized
+            log("commands");       vimperator.commands = vimperator.Commands(); addCommands();
             log("options");        vimperator.options  = vimperator.Options();  addOptions();
-            log("commands");       vimperator.commands = vimperator.Commands();
             log("mappings");       vimperator.mappings = vimperator.Mappings(); addMappings();
             log("events");         vimperator.events   = vimperator.Events();
             log("commandline");    vimperator.commandline   = vimperator.CommandLine();

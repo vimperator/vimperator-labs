@@ -22,6 +22,8 @@ FEATURES:
   yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 8 all search commands should start searching from the top of the visible viewport 
 8 :bdelete full_url<cr> and :bdelete! filter<cr> should delete all tabs matching filter or full_url
+7 adaptive learning for tab-completions
+  (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
 7 implement LocationList window, and get rid off/change PreviewWindow to be
   a real preview window being able to display html pages

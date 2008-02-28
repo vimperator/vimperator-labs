@@ -1318,6 +1318,26 @@ vimperator.Buffer = function () //{{{
 
             if (!retVal)
                 vimperator.beep();
+        },
+
+        viewSelectionSource: function() 
+        {
+            // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
+            var focusedWindow = document.commandDispatcher.focusedWindow;
+            if (focusedWindow == window)
+                focusedWindow = content;
+
+            var docCharset = null;
+            if (focusedWindow)
+                docCharset = "charset=" + focusedWindow.document.characterSet;
+
+            var reference = null;
+            reference = focusedWindow.getSelection();
+
+            var docUrl = null;
+            window.openDialog("chrome://global/content/viewPartialSource.xul",
+                    "_blank", "scrollbars,resizable,chrome,dialog=no",
+                    docUrl, docCharset, reference, "selection");
         }
     };
     //}}}

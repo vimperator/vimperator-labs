@@ -38,6 +38,137 @@ vimperator.IO = function () //{{{
 
     const WINDOWS = navigator.platform == "Win32";
     var cwd = null, oldcwd = null;
+    var extname = vimperator.config.name.toLowerCase(); // "vimperator" or "muttator"
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+        
+    vimperator.commands.add(["cd", "chd[ir]"],
+        "Change the current directory",
+        function (args)
+        {
+            if (!args)
+                args = "~";
+
+            if (vimperator.io.setCurrentDirectory(args))
+                vimperator.echo(vimperator.io.getCurrentDirectory());
+        },
+        {
+            completer: function (filter) { return vimperator.completion.file(filter, true); }
+        });
+
+    vimperator.commands.add(["pw[d]"],
+        "Print the current directory name",
+        function (args)
+        {
+            if (args)
+                vimperator.echoerr("E488: Trailing characters");
+            else
+                vimperator.echo(vimperator.io.getCurrentDirectory());
+        });
+
+    // mkv[imperatorrc] or mkm[uttatorrc]
+    vimperator.commands.add(["mk" + extname.substr(0,1) + "[" + extname.substr(1) + "rc]"],
+        "Write current key mappings and changed options to the config file",
+        function (args, special)
+        {
+            // TODO: "E172: Only one file name allowed"
+            var filename;
+            if (args)
+                filename = args;
+            else
+            {
+                filename = (navigator.platform == "Win32") ? "~/_" : "~/.";
+                filename += extname+ "rc";
+            }
+
+            var file = vimperator.io.getFile(filename);
+            if (file.exists() && !special)
+            {
+                vimperator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+                return;
+            }
+
+            var line = "\" " + vimperator.version + "\n";
+            line += "\" Mappings\n";
+
+            var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"],
+                         [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
+            for (var y = 0; y < mode.length; y++)
+            {
+                // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
+                for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
+                        line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
+            }
+
+            line += "\n\" Options\n";
+            for (var option in vimperator.options)
+            {
+                // TODO: options should be queried for this info
+                // TODO: string/list options might need escaping in future
+                if (!/fullscreen|usermode/.test(option.name) && option.value != option.defaultValue)
+                {
+                    if (option.type == "boolean")
+                        line += "set " + (option.value ? option.name : "no" + option.name) + "\n";
+                    else
+                        line += "set " + option.name + "=" + option.value + "\n";
+                }
+            }
+
+            // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
+            // line += "\n\" Auto-Commands\n";
+            // for (var item in vimperator.autocommands)
+            //     line += "autocmd " + item + "\n";
+
+            line += "\n\" Abbreviations\n";
+            for (var abbrCmd in vimperator.editor.abbreviations)
+                line += abbrCmd;
+
+            // if (vimperator.events.getMapLeader() != "\\")
+            //    line += "\nlet mapleader = \"" + vimperator.events.getMapLeader() + "\"\n";
+
+            // source a user .vimperatorrc file
+            line += "\nsource! " + filename + ".local\n";
+            line += "\n\" vim: set ft=vimperator:";
+
+            vimperator.io.writeFile(file, line);
+        });
+    
+    vimperator.commands.add(["so[urce]"],
+        "Read Ex commands from a file",
+        function (args, special)
+        {
+            // FIXME: implement proper filename quoting
+            //if (/[^\\]\s/.test(args))
+            //{
+            //    vimperator.echoerr("E172: Only one file name allowed");
+            //    return;
+            //}
+
+            vimperator.io.source(args, special);
+        },
+        {
+            completer: function (filter) { return vimperator.completion.file(filter, true); }
+        });
+
+    vimperator.commands.add(["!", "run"],
+        "Run a command",
+        function (args, special)
+        {
+            // :!! needs to be treated specially as the command parser sets the
+            // special flag but removes the ! from args
+            if (special)
+                args = "!" + (args || "");
+
+            // TODO: better escaping of ! to also substitute \\! correctly
+            args = args.replace(/(^|[^\\])!/g, "$1" + lastRunCommand);
+            lastRunCommand = args;
+
+            var output = vimperator.io.system(args);
+            if (output)
+                vimperator.echo(vimperator.util.escapeHTML(output));
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

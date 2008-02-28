@@ -150,32 +150,7 @@ vimperator.Completion = function () //{{{
         dialog: function (filter)
         {
             substrings = [];
-            var nodes = [
-                ["about",            "About Firefox"],
-                ["addbookmark",      "Add bookmarks for the current page"],
-                ["addons",           "Manage Add-ons"],
-                ["bookmarks",        "List your bookmarks"],
-                ["checkupdates",     "Check for updates"],
-                ["cleardata",        "Clear private data"],
-                ["console",          "JavaScript console"],
-                ["customizetoolbar", "Customize the Toolbar"],
-                ["dominspector",     "DOM Inspector"],
-                ["downloads",        "Manage Downloads"],
-                ["history",          "List your history"],
-                ["import",           "Import Preferences, Bookmarks, History, etc. from other browsers"],
-                ["openfile",         "Open the file selector dialog"],
-                ["pageinfo",         "Show information about the current page"],
-                ["pagesource",       "View page source"],
-                ["places",           "Places Organizer: Manage your bookmarks and history"],
-                ["preferences",      "Show Firefox preferences dialog"],
-                ["printpreview",     "Preview the page before printing"],
-                ["printsetup",       "Setup the page size and orientation before printing"],
-                ["print",            "Show print dialog"],
-                ["saveframe",        "Save frame to disk"],
-                ["savepage",         "Save page to disk"],
-                ["searchengines",    "Manage installed search engines"],
-                ["selectionsource",  "View selection source"]
-            ];
+            var nodes = vimperator.config.dialogs || [];
 
             if (!filter)
                 return [0, nodes];
@@ -186,6 +161,7 @@ vimperator.Completion = function () //{{{
 
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
+
         macros: function (filter)
         {
             var macros = [];
