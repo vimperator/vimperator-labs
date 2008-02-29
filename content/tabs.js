@@ -87,6 +87,7 @@ vimperator.Tabs = function () //{{{
                 return value.split(",").every(function (item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
             }
         });
+
     vimperator.options.add(["popups", "pps"],
         "Where to show requested popup windows",
         "number", 1,
@@ -102,6 +103,7 @@ vimperator.Tabs = function () //{{{
             },
             validator: function (value) { return (value >= 0 && value <= 3); }
         });
+
     vimperator.options.add(["showtabline", "stal"], 
         "Control when to show the tab bar of opened web pages",
         "number", 2,
@@ -140,7 +142,7 @@ vimperator.Tabs = function () //{{{
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["B"],
         "Show buffer list",
-        function () { vimperator.buffer.list(false); });
+        function () { vimperator.tabs.list(false); });
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["d"],
         "Delete current buffer",
@@ -235,7 +237,7 @@ vimperator.Tabs = function () //{{{
                 return;
             }
 
-            vimperator.buffer.list(special);
+            vimperator.tabs.list(special);
         });
 
     vimperator.commands.add(["quita[ll]", "qa[ll]"],
@@ -454,6 +456,53 @@ vimperator.Tabs = function () //{{{
                 return getBrowser().mTabs[index];
 
             return getBrowser().mTabContainer.selectedItem;
+        },
+
+        list: function (fullmode)
+        {
+            if (fullmode)
+            {
+                // toggle the special buffer preview window
+                if (vimperator.bufferwindow.visible())
+                {
+                    vimperator.bufferwindow.hide();
+                }
+                else
+                {
+                    var items = vimperator.completion.buffer("")[1];
+                    vimperator.bufferwindow.show(items);
+                    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+                }
+            }
+            else
+            {
+                // TODO: move this to vimperator.buffers.get()
+                var items = vimperator.completion.buffer("")[1];
+                var number, indicator, title, url;
+
+                var list = ":" + (vimperator.util.escapeHTML(vimperator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (i == vimperator.tabs.index())
+                       indicator = " <span style=\"color: blue\">%</span> ";
+                    else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
+                       indicator = " <span style=\"color: blue\">#</span> ";
+                    else
+                       indicator = "   ";
+
+                    [number, title] = items[i][0].split(/:\s+/, 2);
+                    url = items[i][1];
+                    url = vimperator.util.escapeHTML(url);
+                    title = vimperator.util.escapeHTML(title);
+
+                    list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
+                            "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                            "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
+                }
+                list += "</table>";
+
+                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            }
         },
 
         // wrap causes the movement to wrap around the start and end of the tab list

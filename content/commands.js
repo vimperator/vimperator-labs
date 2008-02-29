@@ -127,7 +127,6 @@ vimperator.Commands = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var exCommands = [];
-    var lastRunCommand = ""; // updated whenever the users runs a command with :!
 
     // in '-quoted strings, only ' and \ itself are escaped
     // in "-quoted strings, also ", \n and \t are translated

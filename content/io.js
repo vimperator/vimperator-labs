@@ -39,6 +39,7 @@ vimperator.IO = function () //{{{
     const WINDOWS = navigator.platform == "Win32";
     var cwd = null, oldcwd = null;
     var extname = vimperator.config.name.toLowerCase(); // "vimperator" or "muttator"
+    var lastRunCommand = ""; // updated whenever the users runs a command with :!
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -174,7 +175,7 @@ vimperator.IO = function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    return {
+    var ioManager = {
 
         MODE_RDONLY: 0x01,
         MODE_WRONLY: 0x02,
@@ -240,7 +241,7 @@ vimperator.IO = function () //{{{
                 if (!dirs[i])
                     continue;
 
-                var fullname = this.expandPath(dirs[i]);
+                var fullname = ioManager.expandPath(dirs[i]);
                 try
                 {
                     file.initWithPath(fullname);
@@ -269,8 +270,8 @@ vimperator.IO = function () //{{{
             }
             else
             {
-                newdir = this.expandPath(newdir);
-                var file = this.getFile(newdir);
+                newdir = ioManager.expandPath(newdir);
+                var file = ioManager.getFile(newdir);
                 if (!file.exists() || !file.isDirectory())
                 {
                     vimperator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
@@ -278,7 +279,7 @@ vimperator.IO = function () //{{{
                 }
                 [cwd, oldcwd] = [newdir, cwd];
             }
-            return this.getCurrentDirectory();
+            return ioManager.getCurrentDirectory();
         },
 
         getSpecialDirectory: function (directory)
@@ -290,15 +291,15 @@ vimperator.IO = function () //{{{
             else
                 pluginDir = "~/." + vimperator.config.name.toLowerCase() + "/" + directory;
 
-            pluginDir = this.getFile(this.expandPath(pluginDir));
+            pluginDir = ioManager.getFile(ioManager.expandPath(pluginDir));
 
             return pluginDir.exists() && pluginDir.isDirectory() ? pluginDir : null;
         },
 
         getRCFile: function ()
         {
-            var rcFile1 = this.getFile("~/." + vimperator.config.name.toLowerCase() + "rc");
-            var rcFile2 = this.getFile("~/_" + vimperator.config.name.toLowerCase() + "rc");
+            var rcFile1 = ioManager.getFile("~/." + vimperator.config.name.toLowerCase() + "rc");
+            var rcFile2 = ioManager.getFile("~/_" + vimperator.config.name.toLowerCase() + "rc");
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1]
@@ -321,9 +322,9 @@ vimperator.IO = function () //{{{
                                   createInstance(Components.interfaces.nsILocalFile);
 
             // convert relative to absolute pathname
-            path = this.expandPath(path);
+            path = ioManager.expandPath(path);
             if (!/^(file:|[a-zA-Z]:|\/)/.test(path)) // starts not with either /, C: or file:
-                path = this.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
+                path = ioManager.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
             else
                 path = path.replace(/^file:(\/\/)?/, "");
 
@@ -359,7 +360,7 @@ vimperator.IO = function () //{{{
         readDirectory: function (file)
         {
             if (typeof file == "string")
-                file = this.getFile(file);
+                file = ioManager.getFile(file);
             else if (!(file instanceof Components.interfaces.nsILocalFile))
                 throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
@@ -390,7 +391,7 @@ vimperator.IO = function () //{{{
 
             var charset = "UTF-8";
             if (typeof file == "string")
-                file = this.getFile(file);
+                file = ioManager.getFile(file);
             else if (!(file instanceof Components.interfaces.nsILocalFile))
                 throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
@@ -421,14 +422,14 @@ vimperator.IO = function () //{{{
 
             var charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
             if (typeof file == "string")
-                file = this.getFile(file);
+                file = ioManager.getFile(file);
             else if (!(file instanceof Components.interfaces.nsILocalFile))
                 throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (mode == ">>")
-                mode = this.MODE_WRONLY | this.MODE_CREATE | this.MODE_APPEND;
+                mode = ioManager.MODE_WRONLY | ioManager.MODE_CREATE | ioManager.MODE_APPEND;
             else if (!mode || mode == ">")
-                mode = this.MODE_WRONLY | this.MODE_CREATE | this.MODE_TRUNCATE;
+                mode = ioManager.MODE_WRONLY | ioManager.MODE_CREATE | ioManager.MODE_TRUNCATE;
 
             if (!perms)
                 perms = 0644;
@@ -491,7 +492,7 @@ vimperator.IO = function () //{{{
         // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
         system: function (str, input)
         {
-            var fileout = this.createTempFile();
+            var fileout = ioManager.createTempFile();
             if (!fileout)
                 return "";
 
@@ -503,18 +504,18 @@ vimperator.IO = function () //{{{
             var filein = null;
             if (input)
             {
-                filein = this.createTempFile();
-                this.writeFile(filein, input);
+                filein = ioManager.createTempFile();
+                ioManager.writeFile(filein, input);
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
             }
 
             var res;
             if (WINDOWS)
-                res = this.run("cmd.exe", ["/C", command], true);
+                res = ioManager.run("cmd.exe", ["/C", command], true);
             else
-                res = this.run("sh", ["-c", command], true);
+                res = ioManager.run("sh", ["-c", command], true);
 
-            var output = this.readFile(fileout);
+            var output = ioManager.readFile(fileout);
             fileout.remove(false);
             if (filein)
                 filein.remove(false);
@@ -532,14 +533,14 @@ vimperator.IO = function () //{{{
         {
             try
             {
-                var file = this.getFile(filename);
+                var file = ioManager.getFile(filename);
                 if (!file.exists())
                 {
                     if (!silent)
                         vimperator.echoerr("E484: Can't open file " + filename);
                     return false;
                 }
-                var str = this.readFile(filename);
+                var str = ioManager.readFile(filename);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -602,6 +603,7 @@ vimperator.IO = function () //{{{
             }
         }
     };
+    return ioManager;
     //}}}
 }; //}}}
 

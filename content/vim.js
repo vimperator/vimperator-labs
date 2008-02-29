@@ -930,7 +930,7 @@ const vimperator = (function () //{{{
 
                     run: function ()
                     {
-                        func.apply(window, args);
+                        func(args);
                     }
                 };
             }

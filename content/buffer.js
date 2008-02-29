@@ -150,16 +150,20 @@ vimperator.Buffer = function () //{{{
             setter: function (value) { window.fullScreen = value; },
             getter: function () { return window.fullScreen; }
         });
+
     vimperator.options.add(["nextpattern",],
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$");
+
     vimperator.options.add(["previouspattern"],
         "Patterns to use when guessing the 'previous' page in a document sequence",
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
+
     vimperator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
             validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
         });
+
     vimperator.options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
         "number", 0,
@@ -167,6 +171,7 @@ vimperator.Buffer = function () //{{{
             validator: function (value) { return value >= 0; }
         }
     );
+
     vimperator.options.add(["showstatuslinks", "ssli"], 
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
@@ -185,6 +190,7 @@ vimperator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
         
     vimperator.mappings.add(modes, ["i", "<Insert>"],
@@ -337,10 +343,10 @@ vimperator.Buffer = function () //{{{
 
     // yanking
     vimperator.mappings.add(modes, ["Y"],
-        "Copy selected text",
+        "Copy selected text or current word",
         function ()
         {
-            var sel = window.content.document.getSelection();
+            var sel = vimperator.buffer.getCurrentWord();
             if (sel)
                 vimperator.copyToClipboard(sel, true);
             else
@@ -704,54 +710,6 @@ vimperator.Buffer = function () //{{{
             }
 
             return selection;
-        },
-
-        // TODO: move to tabs.js
-        list: function (fullmode)
-        {
-            if (fullmode)
-            {
-                // toggle the special buffer preview window
-                if (vimperator.bufferwindow.visible())
-                {
-                    vimperator.bufferwindow.hide();
-                }
-                else
-                {
-                    var items = vimperator.completion.buffer("")[1];
-                    vimperator.bufferwindow.show(items);
-                    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-                }
-            }
-            else
-            {
-                // TODO: move this to vimperator.buffers.get()
-                var items = vimperator.completion.buffer("")[1];
-                var number, indicator, title, url;
-
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" + "<table>";
-                for (var i = 0; i < items.length; i++)
-                {
-                    if (i == vimperator.tabs.index())
-                       indicator = " <span style=\"color: blue\">%</span> ";
-                    else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
-                       indicator = " <span style=\"color: blue\">#</span> ";
-                    else
-                       indicator = "   ";
-
-                    [number, title] = items[i][0].split(/:\s+/, 2);
-                    url = items[i][1];
-                    url = vimperator.util.escapeHTML(url);
-                    title = vimperator.util.escapeHTML(title);
-
-                    list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
-                            "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                            "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
-                }
-                list += "</table>";
-
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
-            }
         },
 
         scrollBottom: function ()

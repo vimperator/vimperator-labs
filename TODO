@@ -18,8 +18,6 @@ FEATURES:
 8 add more autocommands (BrowserStart, TabClose, TabOpen, TabChanged, LocationChanged, any more?)
 8 ;?<hint> should show more information
 8 there should be a listbox/combobox mode
-8 y and Y should be changed to: Y, yy and yl=yank location, ys=yank selection,
-  yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 8 all search commands should start searching from the top of the visible viewport 
 8 :bdelete full_url<cr> and :bdelete! filter<cr> should delete all tabs matching filter or full_url
 7 adaptive learning for tab-completions
@@ -44,6 +42,8 @@ FEATURES:
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
+4 y and Y could maybe changed to, but probably not: Y, yy and yl=yank location, ys=yank selection,
+  yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 4 Add -nargs, -complete, etc. to :command
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
@@ -53,5 +53,4 @@ FEATURES:
 RANDOM IDEAS:
 * numbered tabs
 * hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
-
 </pre>

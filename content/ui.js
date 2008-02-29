@@ -275,18 +275,22 @@ vimperator.CommandLine = function () //{{{
     vimperator.options.add(["history", "hi"],
         "Number of Ex commands and search patterns to store in the commandline history",
         "number", 500);
+
     vimperator.options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
         "boolean", true);
+
     vimperator.options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
             validator: function (value) { return !/[^sfbh]/.test(value); }
         });
+
     vimperator.options.add(["showmode", "smd"], 
         "Show the current mode in the command line",
         "boolean", true);
+
     vimperator.options.add(["wildmode", "wim"], 
         "Define how command line completion works",
         "stringlist", "list:full",
@@ -296,6 +300,7 @@ vimperator.CommandLine = function () //{{{
                 return value.split(",").every(function (item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
             }
         });
+
     vimperator.options.add(["wildoptions", "wop"], 
         "Change how command line completion is done",
         "stringlist", "",
@@ -306,6 +311,7 @@ vimperator.CommandLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = [vimperator.modes.COMMAND_LINE];
     
     vimperator.mappings.add(modes,
