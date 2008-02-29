@@ -402,11 +402,13 @@ vimperator.Mappings = function () //{{{
             for (var i = 0; i < modes.length; i++)
             {
                 if (modes[i] == vimperator.modes.NORMAL) 
-                    modeSign += 'n';
+                    modeSign += "n";
                 if ((modes[i] == vimperator.modes.INSERT || modes[i] == vimperator.modes.TEXTAREA) && modeSign.indexOf("i") == -1) 
-                    modeSign += 'i';
+                    modeSign += "i";
                 if (modes[i] == vimperator.modes.COMMAND_LINE) 
-                    modeSign += 'c';
+                    modeSign += "c";
+                if (modes[i] == vimperator.modes.MESSAGRE) 
+                    modeSign += "m";
             }
 
             var list = "<table>";
