@@ -103,7 +103,7 @@ const vimperator = (function () //{{{
     {
         vimperator.mappings.add(vimperator.modes.all, ["<F1>"],
             "Open help window",
-            function () { vimperator.commands.help(); });
+            function () { vimperator.help(); });
 
         vimperator.mappings.add([vimperator.modes.NORMAL], ["ZQ"],
             "Quit and don't save the session",
@@ -160,7 +160,7 @@ const vimperator = (function () //{{{
                 {
                     usage += "<tr><td style='color: magenta; padding-right: 20px'> :" +
                              vimperator.util.escapeHTML(command.name) + "</td><td>" +
-                             vimperator.util.escapeHTML(command.shortHelp) + "</td></tr>";
+                             vimperator.util.escapeHTML(command.description) + "</td></tr>";
                 }
                 usage += "</table>";
 
@@ -169,46 +169,7 @@ const vimperator = (function () //{{{
 
         vimperator.commands.add(["h[elp]"],
             "Display help",
-            function (args, special, count, modifiers)
-            {
-                function jumpToTag(file, tag)
-                {
-                    vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + file);
-                    setTimeout(function() {
-                        var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
-                        if (elem)
-                            window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
-                        else
-                            dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
-                    }, 200);
-                }
-
-                if (!args)
-                {
-                    vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/intro.html");
-                    return;
-                }
-
-                var [, items] = vimperator.completion.help(args);
-                var partialMatch = -1;
-                for (var i = 0; i < items.length; i++)
-                {
-                    if (items[i][0] == args)
-                    {
-                        jumpToTag(items[i][1], items[i][0]);
-                        return;
-                    }
-                    else if (partialMatch == -1 && items[i][0].indexOf(args) > -1)
-                    {
-                        partialMatch = i;
-                    }
-                }
-
-                if (partialMatch > -1)
-                    jumpToTag(items[partialMatch][1], items[partialMatch][0]);
-                else
-                    vimperator.echoerr("E149: Sorry, no help for " + args);
-            },
+            function (args) { vimperator.help(args); },
             {
                 completer: function (filter) { return vimperator.completion.help(filter); }
             });
@@ -266,6 +227,16 @@ const vimperator = (function () //{{{
                 }
 
                 vimperator.events.feedkeys(args, special);
+            });
+
+        vimperator.commands.add(["q[uit]"],
+            vimperator.has("tabs") ? "Quit current tab" : "Quit application",
+            function ()
+            {
+                if (vimperator.has("tabs"))
+                    vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
+                else
+                    vimperator.quit(false);
             });
 
         vimperator.commands.add(["res[tart]"],
@@ -364,7 +335,7 @@ const vimperator = (function () //{{{
                     vimperator.open("about:");
                 else
                     vimperator.echo(":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "\n" +
-                                    vimperator.config.appName + " " + vimperator.version +
+                                    vimperator.config.hostApplication + " " + vimperator.version +
                                     " running on:\n" + navigator.userAgent);
             });
 
@@ -377,7 +348,7 @@ const vimperator = (function () //{{{
                 {
                     usage += "<tr><td style='color: magenta; padding-right: 20px'> " +
                              vimperator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
-                             vimperator.util.escapeHTML(mapping.shortHelp || "") + "</td></tr>";
+                             vimperator.util.escapeHTML(mapping.description) + "</td></tr>";
                 }
                 usage += "</table>";
 
@@ -616,6 +587,47 @@ const vimperator = (function () //{{{
             return features.some (function(feat) { return feat == feature; });
         },
 
+        help: function(topic)
+        {
+            function jumpToTag(file, tag)
+            {
+                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + file);
+                setTimeout(function() {
+                    var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
+                    if (elem)
+                        window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+                    else
+                        dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
+                }, 200);
+            }
+
+            if (!topic)
+            {
+                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/intro.html");
+                return;
+            }
+
+            var [, items] = vimperator.completion.help(topic);
+            var partialMatch = -1;
+            for (var i = 0; i < items.length; i++)
+            {
+                if (items[i][0] == topic)
+                {
+                    jumpToTag(items[i][1], items[i][0]);
+                    return;
+                }
+                else if (partialMatch == -1 && items[i][0].indexOf(topic) > -1)
+                {
+                    partialMatch = i;
+                }
+            }
+
+            if (partialMatch > -1)
+                jumpToTag(items[partialMatch][1], items[partialMatch][0]);
+            else
+                vimperator.echoerr("E149: Sorry, no help for " + topic);
+        },
+
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
         log: function (msg, level)
@@ -807,7 +819,7 @@ const vimperator = (function () //{{{
             if (vimperator.options.getPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", true))
             {
                 setTimeout(function () {
-                    vimperator.commands.help();
+                    vimperator.help();
                     vimperator.options.setPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", false);
                 }, 1000);
             }

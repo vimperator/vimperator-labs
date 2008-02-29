@@ -134,7 +134,7 @@ vimperator.util = { //{{{
 
         var ret = "";
         var longHelp = false;
-        if ((command.help && command.shortHelp) && (command.help.length + command.shortHelp.length) > 50)
+        if ((command.help && command.description) && (command.help.length + command.description.length) > 50)
             longHelp = true;
 
         // the tags which are printed on the top right
@@ -162,7 +162,7 @@ vimperator.util = { //{{{
         // the actual help text
         if (command.shortHelp)
         {
-            ret += command.shortHelp + "."; // the help description
+            ret += command.description + "."; // the help description
             if (extraHelp)
                 ret += " +\n" + extraHelp;
         }

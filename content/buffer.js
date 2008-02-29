@@ -140,6 +140,7 @@ vimperator.Buffer = function () //{{{
     }
 
 
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -279,11 +280,11 @@ vimperator.Buffer = function () //{{{
 
     vimperator.mappings.add(modes, ["gf"],
         "View source",
-        function () { vimperator.commands.viewsource(); });
+        function () { vimperator.buffer.viewSource(null, false); });
 
     vimperator.mappings.add(modes, ["gF"],
         "View source with an external editor",
-        function () { vimperator.commands.viewsource(null, true); });
+        function () { vimperator.buffer.viewSource(null, true); });
 
     vimperator.mappings.add(modes, ["gi"],
         "Focus last used input field",
@@ -446,32 +447,7 @@ vimperator.Buffer = function () //{{{
 
     vimperator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special)
-        {
-            var url = args || vimperator.buffer.URL;
-            if (special) // external editor
-            {
-                // TODO: make that a helper function
-                // TODO: save return value in v:shell_error
-                var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
-                var editor = vimperator.options["editor"];
-                var args = editor.split(" "); // FIXME: too simple
-                if (args.length < 1)
-                {
-                    vimperator.open("view-source:" + url)
-                    vimperator.echoerr("no editor specified");
-                    return;
-                }
-
-                var prog = args.shift();
-                args.push(url)
-                vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
-            }
-            else
-            {
-                vimperator.open("view-source:" + url)
-            }
-        });
+        function (args, special) { vimperator.buffer.viewSource(args, special) });
 
     vimperator.commands.add(["zo[om]"],
         "Set zoom value of current web page",
@@ -1320,7 +1296,7 @@ vimperator.Buffer = function () //{{{
                 vimperator.beep();
         },
 
-        viewSelectionSource: function() 
+        viewSelectionSource: function () 
         {
             // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
             var focusedWindow = document.commandDispatcher.focusedWindow;
@@ -1338,6 +1314,33 @@ vimperator.Buffer = function () //{{{
             window.openDialog("chrome://global/content/viewPartialSource.xul",
                     "_blank", "scrollbars,resizable,chrome,dialog=no",
                     docUrl, docCharset, reference, "selection");
+        },
+
+        // url is optional
+        viewSource: function (url, useExternalEditor)
+        {
+            var url = url || vimperator.buffer.URL;
+            if (useExternalEditor)
+            {
+                // TODO: make that a helper function
+                // TODO: save return value in v:shell_error
+                var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+                var editor = vimperator.options["editor"];
+                var args = editor.split(" "); // FIXME: too simple
+                if (args.length < 1)
+                {
+                    vimperator.echoerr("no editor specified");
+                    return;
+                }
+
+                var prog = args.shift();
+                args.push(url)
+                vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
+            }
+            else
+            {
+                vimperator.open("view-source:" + url)
+            }
         }
     };
     //}}}

@@ -305,12 +305,12 @@ vimperator.Completion = function () //{{{
             if (!filter)
             {
                 for (var command in vimperator.commands)
-                    completions.push([command.name, command.shortHelp]);
+                    completions.push([command.name, command.description]);
                 return [0, completions];
             }
 
             for (var command in vimperator.commands)
-                completions.push([command.longNames, command.shortHelp]);
+                completions.push([command.longNames, command.description]);
 
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
@@ -333,7 +333,7 @@ vimperator.Completion = function () //{{{
                 {
                     if (prefix && option.type != "boolean")
                         continue;
-                    options.push([option.names, option.shortHelp]);
+                    options.push([option.names, option.description]);
                 }
                 return options;
             }
@@ -381,7 +381,7 @@ vimperator.Completion = function () //{{{
                 {
                     if (prefix && option.type != "boolean")
                         continue;
-                    options.push([prefix + option.name, option.shortHelp]);
+                    options.push([prefix + option.name, option.description]);
                 }
                 return [0, options];
             }
@@ -421,7 +421,7 @@ vimperator.Completion = function () //{{{
                             return option.names[j].indexOf($_) == 0;
                         });
                     }
-                    optionCompletions.push([prefix + option.names[j], option.shortHelp]);
+                    optionCompletions.push([prefix + option.names[j], option.description]);
                     break;
                 }
             }

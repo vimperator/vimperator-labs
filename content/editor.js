@@ -148,6 +148,39 @@ vimperator.Editor = function () //{{{
             { flags: vimperator.Mappings.flags.MOTION | vimperator.Mappings.flags.COUNT });
     }
 
+    // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
+    function addAbbreviationCommands(char, modeDescription)
+    {
+        var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
+        var mode = char || "!";
+
+        vimperator.commands.add([char ? char + "a[bbrev]" : "ab[breviate]"],
+            "Abbreviate a key sequence" + modeDescription,
+            function (args)
+            {
+                if (!args)
+                {
+                    vimperator.editor.listAbbreviations(mode, "");
+                    return;
+                }
+
+                var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
+                var [lhs, rhs] = [matches[1], matches[2]];
+                if (rhs)
+                    vimperator.editor.addAbbreviation(mode, lhs, rhs);
+                else
+                    vimperator.editor.listAbbreviations(mode, lhs);
+            });
+
+        vimperator.commands.add([char ? char + "una[bbrev]" : "una[bbreviate]"],
+            "Remove an abbreviation" + modeDescription,
+            function (args) { vimperator.editor.removeAbbreviation(mode, args); });
+
+        vimperator.commands.add([char + "abc[lear]"],
+            "Remove all abbreviations" + modeDescription,
+            function (args) { vimperator.editor.removeAllAbbreviations(mode); });
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -163,6 +196,7 @@ vimperator.Editor = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = [vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE];
 
     /*             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA */
@@ -399,6 +433,14 @@ vimperator.Editor = function () //{{{
                 vimperator.editor.moveToPosition(pos + 1, false, vimperator.mode == vimperator.modes.VISUAL);
         },
         { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT});
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+    
+    addAbbreviationCommands("", "");
+    addAbbreviationCommands("i", "insert");
+    addAbbreviationCommands("c", "command line");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

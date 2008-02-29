@@ -182,7 +182,7 @@ vimperator.Tabs = function () //{{{
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["u"],
         "Undo closing of a tab",
-        function (count) { vimperator.commands.undo("", false, count); },
+        function (count) { vimperator.commands.get("undo").execute("", false, count); },
         { flags: vimperator.Mappings.flags.COUNT });
 
     vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-^>", "<C-6>"],
@@ -237,6 +237,10 @@ vimperator.Tabs = function () //{{{
 
             vimperator.buffer.list(special);
         });
+
+    vimperator.commands.add(["quita[ll]", "qa[ll]"],
+        "Quit " + vimperator.config.appName,
+        function () { vimperator.quit(false); });
 
     vimperator.commands.add(["reloada[ll]"],
         "Reload all tab pages",
@@ -394,6 +398,12 @@ vimperator.Tabs = function () //{{{
                 undoCloseTab(); // doesn't work with i as the index to undoCloseTab
         });
 
+    if (vimperator.has("session"))
+    {
+        vimperator.commands.add(["wqa[ll]", "wq", "xa[ll]"],
+            "Save the session and quit",
+            function () { vimperator.quit(true); });
+    }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

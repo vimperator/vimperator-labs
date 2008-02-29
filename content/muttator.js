@@ -33,10 +33,12 @@ vimperator.config = {
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["hints", "mail", "marks"],
+    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
+
     get browserModes() { return [vimperator.modes.MESSAGE]; },
 	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
 	mainWindowID: "messengerWindow", // used for :set titlestring
-    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
+
     dialogs: [
         /*["about",            "About Firefox", 
             function() { openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
@@ -83,9 +85,8 @@ vimperator.config = {
     init: function()
     {
         vimperator.mappings.add([vimperator.modes.NORMAL],
-            ["o"], "Open one or more URLs",
+            ["o"], "Open a message",
             function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); });
-
     }
 }
 

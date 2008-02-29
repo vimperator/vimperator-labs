@@ -26,24 +26,25 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Map = function (modes, cmds, action, extraInfo) //{{{
+// Do NOT create instances of this class yourself, use the helper method
+// vimperator.mappings.add() instead
+vimperator.Map = function (modes, cmds, description, action, extraInfo) //{{{
 {
     if (!modes || (!cmds || !cmds.length) || !action)
         return null;
 
+    if (!extraInfo)
+        extraInfo = {};
+
     this.modes = modes;
-    this.names = cmds;
+    // only store keysyms with uppercase modifier strings
+    this.names = cmds.map(function (cmd) { return cmd.replace(/[casm]-/g, function (name) { return name.toUpperCase(); });});
     this.action = action;
 
-    if (extraInfo)
-    {
-        this.flags = extraInfo.flags || 0;
-
-        this.shortHelp = extraInfo.shortHelp || "";
-
-        this.rhs = extraInfo.rhs || null;
-        this.noremap = extraInfo.noremap || false;
-    }
+    this.flags = extraInfo.flags || 0;
+    this.description = extraInfo.description || "";
+    this.rhs = extraInfo.rhs || null;
+    this.noremap = extraInfo.noremap || false;
 };
 
 vimperator.Map.prototype = {
@@ -83,11 +84,6 @@ vimperator.Mappings = function () //{{{
     {
         main[mode] = [];
         user[mode] = [];
-    }
-
-    function addDefaultMap(map)
-    {
-        map.modes.forEach(function (mode) { main[mode].push(map); });
     }
 
     function addMap(map, userMap)
@@ -161,6 +157,104 @@ vimperator.Mappings = function () //{{{
         throw StopIteration;
     }
 
+    function addMapCommands(char, modes, modeDescription)
+    {
+        // 0 args -> list all maps
+        // 1 arg  -> list the maps starting with args
+        // 2 args -> map arg1 to arg*
+        function map(args, mode, noremap)
+        {
+            if (!args)
+            {
+                vimperator.mappings.list(mode);
+                return;
+            }
+
+            // ?:\s+ <- don't remember; (...)? optional = rhs
+            var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/);
+            var leaderRegexp = /<Leader>/i;
+
+            if (leaderRegexp.test(lhs))
+                lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
+
+            if (!rhs) // list the mapping
+            {
+                vimperator.mappings.list(mode, lhs);
+            }
+            else
+            {
+                for (var index = 0; index < mode.length; index++)
+                {
+                    vimperator.mappings.addUserMap([mode[index]], [lhs],
+                            "User defined mapping",
+                            function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                            {
+                                flags: vimperator.Mappings.flags.COUNT,
+                                rhs: rhs,
+                                noremap: noremap
+                            });
+                }
+            }
+        }
+
+        var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
+
+        vimperator.commands.add([char ? char + "m[ap]" : "map"],
+            "Map a key sequence" + modeDescription,
+            function (args) { map(args, modes, false); });
+
+        vimperator.commands.add([char + "no[remap]"],
+            "Map a key sequence without remapping keys" + modeDescription,
+            function (args) { map(args, modes, true); });
+
+        vimperator.commands.add([char + "mapc[lear]"],
+            "Remove all mappings" + modeDescription,
+            function (args)
+            {
+                if (args)
+                {
+                    vimperator.echoerr("E474: Invalid argument");
+                    return;
+                }
+
+                for (let i = 0; i < modes.length; i++)
+                    vimperator.mappings.removeAll(modes[i]);
+            });
+
+        vimperator.commands.add([char + "unm[ap]"],
+            "Remove a mapping" + modeDescription,
+            function (args)
+            {
+                if (!args)
+                {
+                    vimperator.echoerr("E474: Invalid argument");
+                    return;
+                }
+
+                var flag = false;
+                for (let i = 0; i < modes.length; i++)
+                {
+                    if (vimperator.mappings.hasMap(modes[i], args))
+                    {
+                        vimperator.mappings.remove(modes[i], args);
+                        flag = true;
+                    }
+                }
+                if (!flag)
+                    vimperator.echoerr("E31: No such mapping");
+            });
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    addMapCommands("",  [vimperator.modes.NORMAL], "");
+    addMapCommands("c", [vimperator.modes.COMMAND_LINE], "command line");
+    addMapCommands("i", [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "insert");
+    if (vimperator.has("mail"))
+        addMapCommands("m", [vimperator.modes.MESSAGE], "message");
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -189,25 +283,21 @@ vimperator.Mappings = function () //{{{
 
         add: function (modes, keys, description, action, extra)
         {
-            addMap (new vimperator.Map(modes, keys,
-                    action, { shortHelp: description, flags: (extra && extra.flags) ? extra.flags : 0 }), false);
+            addMap (new vimperator.Map(modes, keys, description, action, extra), false);
         },
 
-        // TODO: change map to "easier" arguments
-        addUserMap: function (map)
+        addUserMap: function (modes, keys, description, action, extra)
         {
-            // a map can have multiple names
+            var map = new vimperator.Map(modes, keys, description || "User defined mapping", action, extra);
+
+            // remove all old mappings to this key sequence
             for (var i = 0; i < map.names.length; i++)
             {
-                // only store keysyms with uppercase modifier strings
-                map.names[i] = map.names[i].replace(/[casm]-/g, function (name) { return name.toUpperCase(); });
                 for (var j = 0; j < map.modes.length; j++)
                     removeMap(map.modes[j], map.names[i]);
             }
 
-            // all maps got removed (matching names = lhs), and added newly here
-            for (var k = 0; k < map.modes.length; k++)
-                user[map.modes[k]].push(map);
+            addMap (map, true);
         },
 
         get: function (mode, cmd)

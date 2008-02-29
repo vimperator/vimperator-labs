@@ -26,10 +26,15 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Command = function (specs, action, extraInfo) //{{{
+// Do NOT create instances of this class yourself, use the helper method
+// vimperator.commands.add() instead
+vimperator.Command = function (specs, description, action, extraInfo) //{{{
 {
     if (!specs || !action)
         return null;
+
+    if (!extraInfo)
+        extraInfo = {};
 
     // convert command name abbreviation specs of the form
     // 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
@@ -59,28 +64,19 @@ vimperator.Command = function (specs, action, extraInfo) //{{{
         return { names: names, longNames: longNames, shortNames: shortNames };
     };
 
-    this.specs = specs;
     var expandedSpecs = parseSpecs(specs);
+    this.specs      = specs;
     this.shortNames = expandedSpecs.shortNames;
-    this.longNames = expandedSpecs.longNames;
+    this.longNames  = expandedSpecs.longNames;
 
     // return the primary command name (the long name of the first spec listed)
-    this.name = this.longNames[0];
-
-    // return all command name aliases
-    this.names = expandedSpecs.names;
-
-    this.action = action;
-
-    if (extraInfo)
-    {
-        this.help      = extraInfo.help || null;
-        this.shortHelp = extraInfo.shortHelp || null;
-        this.completer = extraInfo.completer || null;
-        this.args       = extraInfo.args || [];
-        this.isUserCommand = extraInfo.isUserCommand || false;
-    }
-
+    this.name          = this.longNames[0];
+    this.names         = expandedSpecs.names; // return all command name aliases
+    this.description   = extraInfo.description || "";
+    this.action        = action;
+    this.completer     = extraInfo.completer || null;
+    this.args          = extraInfo.args || [];
+    this.isUserCommand = extraInfo.isUserCommand || false;
 };
 
 vimperator.Command.prototype = {
@@ -475,15 +471,9 @@ vimperator.Commands = function () //{{{
             return commandsIterator();
         },
 
-        // FIXME 
-        // TODO: should commands added this way replace existing commands?
         add: function (names, description, action, extra)
         {
-            var extra = extra || {};
-            if (!extra.shortHelp)
-                extra.shortHelp = description;
-
-            var command = new vimperator.Command(names, action, extra);
+            var command = new vimperator.Command(names, description, action, extra);
             if (!command)
                 return false;
 
@@ -491,28 +481,26 @@ vimperator.Commands = function () //{{{
             {
                 if (exCommands[i].name == command.name)
                 {
-                    //if (!replace)
-                        return false; // never replace for now
-                    //else
-                    //    break;
+                    // never replace for now
+                    vimperator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 2);
+                    return false;
                 }
             }
-
-
-            // add an alias, so that commands can be accessed with
-            // vimperator.commands.zoom("130")
-            this[command.name] = function (args, special, count, modifiers)
-            {
-                command.execute(args, special, count, modifiers);
-            };
 
             exCommands.push(command);
             return true;
         },
 
-        // TODO: will change it's interface/semantics later!
-        addUserCommand: function (command, replace)
+        addUserCommand: function (names, description, action, extra, replace)
         {
+            var extra = extra || {};
+            extra.isUserCommand = true;
+            description = description || "User defined command";
+
+            var command = new vimperator.Command(names, description, action, extra);
+            if (!command)
+                return false;
+
             for (var i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].name == command.name)
@@ -523,13 +511,6 @@ vimperator.Commands = function () //{{{
                         break;
                 }
             }
-
-            // add an alias, so that commands can be accessed with
-            // vimperator.commands.zoom("130")
-            this[command.name] = function (args, special, count, modifiers)
-            {
-                command.execute(args, special, count, modifiers);
-            };
 
             exCommands.push(command);
             return true;
@@ -591,24 +572,11 @@ vimperator.Commands = function () //{{{
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// DEFAULT COMMANDS ////////////////////////////////////////
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // move to vim.js:
-
-    commandManager.addUserCommand(new vimperator.Command(["q[uit]"],
-        function () { vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1); },
-        { shortHelp: "Quit current tab" }
-    ));
-    // TODO: check for "tabs" feature
-    commandManager.addUserCommand(new vimperator.Command(["quita[ll]", "qa[ll]"],
-        function () { vimperator.quit(false); },
-        { shortHelp: "Quit Vimperator", }
-    ));
-
-
-    // TODO: move where? (commands.js would be fine, but timing issue)
-    commandManager.addUserCommand(new vimperator.Command(["com[mand]"],
+    commandManager.add(["com[mand]"],
+        "List and define commands",
         function (args, special)
         {
             if (args)
@@ -624,8 +592,13 @@ vimperator.Commands = function () //{{{
 
             if (rep)
             {
-                if (!vimperator.commands.addUserCommand(new vimperator.Command([cmd], function (args, special, count, modifiers) { eval(rep) }, { isUserCommand: rep } ), special))
+                if (!vimperator.commands.addUserCommand([cmd],
+                        "User defined command",
+                        function (args, special, count, modifiers) { eval(rep) }),
+                        special);
+                {
                     vimperator.echoerr("E174: Command already exists: add ! to replace it");
+                }
             }
             else
             {
@@ -644,323 +617,16 @@ vimperator.Commands = function () //{{{
             }
         },
         {
-            shortHelp: "Lists and defines commands" /*,
-            args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
+            /*args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
-        }
-    ));
+        });
 
-    // TODO: part of vimperator.js or vim.js?
-    commandManager.addUserCommand(new vimperator.Command(["o[pen]", "e[dit]"],
-        function (args, special)
-        {
-            if (args)
-            {
-                vimperator.open(args);
-            }
-            else
-            {
-                if (special)
-                    BrowserReloadSkipCache();
-                else
-                    BrowserReload();
-            }
-        },
-        {
-            shortHelp: "Open one or more URLs in the current tab",
-            completer: function (filter) { return vimperator.completion.url(filter); }
-        }
-    ));
+    // TODO: remove preview window, or change it at least
+    commandManager.add(["pc[lose]"],
+        "Close preview window on bottom of screen",
+        function () { vimperator.previewwindow.hide(); });
 
-    // move to editor.js: - TODO: unify 
-    commandManager.addUserCommand(new vimperator.Command(["ab[breviate]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.editor.listAbbreviations("!", "");
-                return;
-            }
-
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-            if (rhs)
-                vimperator.editor.addAbbreviation("!", lhs, rhs);
-            else
-                vimperator.editor.listAbbreviations("!", lhs);
-        },
-        {
-            shortHelp: "Abbreviate a key sequence"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["ca[bbrev]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.editor.listAbbreviations("c", "");
-                return;
-            }
-
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-            if (rhs)
-                vimperator.editor.addAbbreviation("c", lhs, rhs);
-            else
-                vimperator.editor.listAbbreviations("c", lhs);
-        },
-        {
-            shortHelp: "Abbreviate a key sequence for Command-line mode"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["ia[bbrev]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.editor.listAbbreviations("i", "");
-                return;
-            }
-
-            var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
-            var [lhs, rhs] = [matches[1], matches[2]];
-            if (rhs)
-                vimperator.editor.addAbbreviation("i", lhs, rhs);
-            else
-                vimperator.editor.listAbbreviations("i", lhs);
-        },
-        { shortHelp: "Abbreviate a key sequence for Insert mode" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["una[bbreviate]"],
-        function (args) { vimperator.editor.removeAbbreviation("!", args); },
-        { shortHelp: "Remove an abbreviation" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["cuna[bbrev]"],
-        function (args) { vimperator.editor.removeAbbreviation("c", args); },
-        { shortHelp: "Remove an abbreviation for Command-line mode" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["iuna[bbrev]"],
-        function (args) { vimperator.editor.removeAbbreviation("i", args); },
-        { shortHelp: "Remove an abbreviation for Insert mode" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["abc[lear]"],
-        function (args) { vimperator.editor.removeAllAbbreviations("!"); },
-        { shortHelp: "Remove all abbreviations" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["cabc[lear]"],
-        function (args) { vimperator.editor.removeAllAbbreviations("c"); },
-        { shortHelp: "Remove all abbreviations for Command-line mode" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["iabc[lear]"],
-        function (args) { vimperator.editor.removeAllAbbreviations("i"); },
-        { shortHelp: "Remove all abbreviations for Insert mode" }
-    ));
-
-    // TODO: add helper method: addMappingCommand
-    // 0 args -> list all maps
-    // 1 arg  -> list the maps starting with args
-    // 2 args -> map arg1 to arg*
-    function map(args, mode, noremap)
-    {
-        if (!args)
-        {
-            vimperator.mappings.list(mode);
-            return;
-        }
-
-        // ?:\s+ <- don't remember; (...)? optional = rhs
-        var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/);
-        var leaderRegexp = /<Leader>/i;
-
-        if (leaderRegexp.test(lhs))
-            lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
-
-        if (!rhs) // list the mapping
-        {
-            vimperator.mappings.list(mode, lhs);
-        }
-        else
-        {
-            for (var index = 0; index < mode.length; index++)
-            {
-                vimperator.mappings.addUserMap(new vimperator.Map([mode[index]], [lhs],
-                        function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
-                        { flags: vimperator.Mappings.flags.COUNT, rhs: rhs, noremap: noremap}
-                    ));
-            }
-        }
-    }
-    commandManager.addUserCommand(new vimperator.Command(["map"],
-        function (args) { map(args, [vimperator.modes.NORMAL], false); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs}" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["cm[ap]"],
-        function (args) { map(args, [vimperator.modes.COMMAND_LINE], false); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs} (in command-line mode)" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["im[ap]"],
-        function (args) { map(args, [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], false); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["mapc[lear]"],
-        function (args)
-        {
-            if (args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            vimperator.mappings.removeAll(vimperator.modes.NORMAL);
-        },
-        {
-            shortHelp: "Remove all mappings"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["cmapc[lear]"],
-        function (args)
-        {
-            if (args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            vimperator.mappings.removeAll(vimperator.modes.COMMAND_LINE);
-        },
-        {
-            shortHelp: "Remove all mappings (in command-line mode)"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["imapc[lear]"],
-        function (args)
-        {
-            if (args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            vimperator.mappings.removeAll(vimperator.modes.INSERT);
-            vimperator.mappings.removeAll(vimperator.modes.TEXTAREA);
-        },
-        {
-            shortHelp: "Remove all mappings (in insert mode)"
-        }
-    ));
-    // TODO: remove duplication in :map
-    commandManager.addUserCommand(new vimperator.Command(["no[remap]"],
-        function (args) { map(args, [vimperator.modes.NORMAL], true); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs}" }
-    ));
-    // XXX: TODO: remove duplication in :cmap
-    commandManager.addUserCommand(new vimperator.Command(["cno[remap]"],
-        function (args) { map(args, [vimperator.modes.COMMAND_LINE], true); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs} (in command-line mode)" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["ino[remap]"],
-        function (args) { map(args, [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], true); },
-        { shortHelp: "Map the key sequence {lhs} to {rhs} (in insert mode)" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["unm[ap]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            var lhs = args;
-
-            if (vimperator.mappings.hasMap(vimperator.modes.NORMAL, lhs))
-                vimperator.mappings.remove(vimperator.modes.NORMAL, lhs);
-            else
-                vimperator.echoerr("E31: No such mapping");
-        },
-        {
-            shortHelp: "Remove the mapping of {lhs}"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["cunm[ap]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            var lhs = args;
-
-            if (vimperator.mappings.hasMap(vimperator.modes.COMMAND_LINE, lhs))
-                vimperator.mappings.remove(vimperator.modes.COMMAND_LINE, lhs);
-            else
-                vimperator.echoerr("E31: No such mapping");
-        },
-        {
-            shortHelp: "Remove the mapping of {lhs} (in command-line mode)"
-        }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["iunm[ap]"],
-        function (args)
-        {
-            if (!args)
-            {
-                vimperator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            var lhs = args;
-            var flag = false;
-
-            if (vimperator.mappings.hasMap(vimperator.modes.INSERT, lhs))
-            {
-                vimperator.mappings.remove(vimperator.modes.INSERT, lhs);
-                flag = true;
-            }
-            if (vimperator.mappings.hasMap(vimperator.modes.TEXTAREA, lhs))
-            {
-                vimperator.mappings.remove(vimperator.modes.TEXTAREA, lhs);
-                flag = true;
-            }
-            if (!flag)
-                vimperator.echoerr("E31: No such mapping");
-        },
-        {
-            shortHelp: "Remove the mapping of {lhs} (in insert mode)"
-        }
-    ));
-
-    // TODO: remove/change preview window
-    commandManager.addUserCommand(new vimperator.Command(["pc[lose]"],
-        function () { vimperator.previewwindow.hide(); },
-        { shortHelp: "Close preview window on bottom of screen" }
-    ));
-
-    // TODO: check for v.has("windows")
-    commandManager.addUserCommand(new vimperator.Command(["winc[lose]", "wc[lose]"],
-        function (args) { window.close(); },
-        { shortHelp: "Close window" }
-    ));
-    commandManager.addUserCommand(new vimperator.Command(["wino[pen]", "wo[pen]", "wine[dit]"],
-        function (args)
-        {
-            if (args)
-                vimperator.open(args, vimperator.NEW_WINDOW);
-            else
-                vimperator.open("about:blank", vimperator.NEW_WINDOW);
-        },
-        {
-            shortHelp: "Open one or more URLs in a new window"
-        }
-    ));
-    // TODO: check for v.has("session")?
-    commandManager.addUserCommand(new vimperator.Command(["wqa[ll]", "wq", "xa[ll]"],
-        function () { vimperator.quit(true); },
-        { shortHelp: "Save the session and quit" }
-    ));
     //}}}
 
     return commandManager;

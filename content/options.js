@@ -38,7 +38,7 @@ vimperator.Option = function (names, description, type, defaultValue, getter, se
     this.name = names[0];
     this.names = names;
     this.type = type;
-    this.shortHelp = description || "";
+    this.description = description || "";
 
     // "", 0 are valid default values
     this.defaultValue = (defaultValue === undefined) ? null : defaultValue;

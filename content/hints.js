@@ -350,8 +350,8 @@ vimperator.Hints = function () //{{{
             case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
             case "t": vimperator.buffer.followLink(elem, vimperator.NEW_TAB); break;
             case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
-            case "v": vimperator.commands.viewsource(loc); break;
-            case "V": vimperator.commands.viewsource(loc, true); break;
+            case "v": vimperator.buffer.viewSource(loc, false); break;
+            case "V": vimperator.buffer.viewSource(loc, true); break;
             case "w": vimperator.buffer.followLink(elem, vimperator.NEW_WINDOW);  break;
             case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
             case "y": setTimeout(function(){vimperator.copyToClipboard(loc, true)}, timeout + 50); break;

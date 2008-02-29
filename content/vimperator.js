@@ -32,8 +32,9 @@ vimperator.config = {
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
-    features: ["bookmarks", "history", "marks", "quickmarks", "hints", "tabs", "windows"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
+
     dialogs: [
         ["about",            "About Firefox", 
             function() { openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
@@ -229,6 +230,26 @@ vimperator.config = {
             "Show progress of current downloads",
             function () { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); });
 
+        vimperator.commands.add(["o[pen]", "e[dit]"],
+            "Open one or more URLs in the current tab",
+            function (args, special)
+            {
+                if (args)
+                {
+                    vimperator.open(args);
+                }
+                else
+                {
+                    if (special)
+                        BrowserReloadSkipCache();
+                    else
+                        BrowserReload();
+                }
+            },
+            {
+                completer: function (filter) { return vimperator.completion.url(filter); }
+            });
+
         vimperator.commands.add(["redr[aw]"],
             "Redraw the screen",
             function ()
@@ -281,8 +302,26 @@ vimperator.config = {
                     }
                 }
             },
-            { completer: function (filter) { return vimperator.completion.sidebar(filter); } });
+            {
+                completer: function (filter) { return vimperator.completion.sidebar(filter); }
+            });
 
+        vimperator.commands.add(["winc[lose]", "wc[lose]"],
+            "Close window",
+            function (args) { window.close(); });
+
+        vimperator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
+            "Open one or more URLs in a new window",
+            function (args)
+            {
+                if (args)
+                    vimperator.open(args, vimperator.NEW_WINDOW);
+                else
+                    vimperator.open("about:blank", vimperator.NEW_WINDOW);
+            },
+            {
+                completer: function (filter) { return vimperator.completion.url(filter); }
+            });
     }
 }
 
