@@ -727,6 +727,7 @@ vimperator.CommandLine = function () //{{{
             if (event.type == "keypress")
             {
                 var key = vimperator.events.toString(event);
+                vimperator.log(multilineInputWidget.value);
                 if (vimperator.events.isAcceptKey(key))
                 {
                     var text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
@@ -753,6 +754,7 @@ vimperator.CommandLine = function () //{{{
             {
                 autosizeMultilineInputWidget();
             }
+            return true;
         },
 
         // FIXME: if 'more' is set and the MOW is not scrollable we should still

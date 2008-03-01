@@ -1185,7 +1185,6 @@ vimperator.Events = function () //{{{
                 map = vimperator.mappings.get(vimperator.mode, candidateCommand);
 
             
-
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
             {
@@ -1288,7 +1287,10 @@ vimperator.Events = function () //{{{
                     stop = false;
 
                     if (vimperator.mode == vimperator.modes.COMMAND_LINE)
-                        vimperator.commandline.onEvent(event); // reroute event in command line mode
+                    {
+                        if (!(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE))
+                            vimperator.commandline.onEvent(event); // reroute event in command line mode
+                    }
                     else if (vimperator.mode != vimperator.modes.INSERT)
                         vimperator.beep();
                 }
