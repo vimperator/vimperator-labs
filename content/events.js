@@ -1095,6 +1095,8 @@ vimperator.Events = function () //{{{
                 (vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
             {
                 vimperator.commandline.onMultilineOutputEvent(event);
+                event.preventDefault();
+                event.stopPropagation();
                 return false;
             }
 
@@ -1123,7 +1125,6 @@ vimperator.Events = function () //{{{
                 else if (key == "<Space>" || key == "<Up>" || key == "<Down>")
                     return false;
             }
-
 
         //  // FIXME: handle middle click in content area {{{
         //  //     alert(event.target.id);
