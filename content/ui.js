@@ -189,11 +189,13 @@ vimperator.CommandLine = function () //{{{
 
         var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
         stylesheet.setAttribute("rel", "Stylesheet");
-        stylesheet.setAttribute("href", "chrome://vimperator/skin/vimperator.css");
+        stylesheet.setAttribute("href", "chrome://" + vimperator.config.name.toLowerCase() + "/skin/vimperator.css");
         multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
         var availableHeight = getBrowser().mPanelContainer != undefined ?
             getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
+        if (!availableHeight)
+            availableHeight = 250;
         var contentHeight = multilineOutputWidget.contentDocument.height;
         var height = contentHeight < availableHeight ? contentHeight : availableHeight;
 
@@ -515,7 +517,7 @@ vimperator.CommandLine = function () //{{{
                     return;
 
                 var key = vimperator.events.toString(event);
-                // dump("command line handling key: " + key + "\n");
+                //vimperator.log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
@@ -728,7 +730,6 @@ vimperator.CommandLine = function () //{{{
             if (event.type == "keypress")
             {
                 var key = vimperator.events.toString(event);
-                vimperator.log(multilineInputWidget.value);
                 if (vimperator.events.isAcceptKey(key))
                 {
                     var text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
@@ -778,7 +779,8 @@ vimperator.CommandLine = function () //{{{
             switch (key)
             {
                 case "<Esc>":
-                    return; // handled globally in events.js:onEscape()
+                    closeWindow = true;
+                    break; // handled globally in events.js:onEscape()
 
                 case ":":
                     vimperator.commandline.open(":", "", vimperator.modes.EX);

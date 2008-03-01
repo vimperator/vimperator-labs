@@ -291,7 +291,7 @@ vimperator.Options = function () //{{{
         });
 
     vimperator.commands.add(["pref[erences]", "prefs"],
-        "Show " + vimperator.config.appName + " Preferences",
+        "Show " + vimperator.config.hostApplication + " Preferences",
         function (args, special, count, modifiers)
         {
             if (!args)
