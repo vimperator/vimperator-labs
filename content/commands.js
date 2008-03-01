@@ -72,7 +72,7 @@ vimperator.Command = function (specs, description, action, extraInfo) //{{{
     // return the primary command name (the long name of the first spec listed)
     this.name          = this.longNames[0];
     this.names         = expandedSpecs.names; // return all command name aliases
-    this.description   = extraInfo.description || "";
+    this.description   = description || "";
     this.action        = action;
     this.completer     = extraInfo.completer || null;
     this.args          = extraInfo.args || [];
@@ -414,14 +414,6 @@ vimperator.Commands = function () //{{{
         return def;
     }
 
-    function commandsIterator()
-    {
-        for (var i = 0; i < exCommands.length; i++)
-            yield exCommands[i];
-
-        throw StopIteration;
-    }
-
     function getUserCommands(name)
     {
         var matches = [];
@@ -467,7 +459,11 @@ vimperator.Commands = function () //{{{
 
         __iterator__: function ()
         {
-            return commandsIterator();
+            var sorted = exCommands.sort(function (cmd1, cmd2) { return cmd1.name > cmd2.name; });
+            for (var i = 0; i < sorted.length; i++)
+                yield sorted[i];
+
+            throw StopIteration;
         },
 
         add: function (names, description, action, extra)

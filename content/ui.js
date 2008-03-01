@@ -669,7 +669,6 @@ vimperator.CommandLine = function () //{{{
                         completionlist.selectItem(completionIndex);
                     }
 
-
                     if (completionIndex == -1 && !longest) // wrapped around matches, reset command line
                     {
                         if (full && completions.length > 1)
@@ -679,12 +678,14 @@ vimperator.CommandLine = function () //{{{
                     }
                     else
                     {
+                        var compl = null;
                         if (longest && completions.length > 1)
-                            var compl = vimperator.completion.getLongestSubstring();
+                            compl = vimperator.completion.getLongestSubstring();
                         else if (full)
-                            var compl = completions[completionIndex][0];
+                            compl = completions[completionIndex][0];
                         else if (completions.length == 1)
-                            var compl = completions[0][0];
+                            compl = completions[0][0];
+
                         if (compl)
                         {
                             setCommand(command.substring(0, completionStartIndex) + compl + completionPostfix);

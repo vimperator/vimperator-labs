@@ -302,6 +302,7 @@ vimperator.Completion = function () //{{{
         {
             substrings = [];
             var completions = [];
+
             if (!filter)
             {
                 for (var command in vimperator.commands)

@@ -42,7 +42,7 @@ vimperator.Map = function (modes, cmds, description, action, extraInfo) //{{{
     this.action = action;
 
     this.flags = extraInfo.flags || 0;
-    this.description = extraInfo.description || "";
+    this.description = description || "";
     this.rhs = extraInfo.rhs || null;
     this.noremap = extraInfo.noremap || false;
 };
