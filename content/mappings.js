@@ -302,11 +302,13 @@ vimperator.Mappings = function () //{{{
 
         get: function (mode, cmd)
         {
+            mode = mode || vimperator.modes.NORMAL;
             return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
         getDefault: function (mode, cmd)
         {
+            mode = mode || vimperator.modes.NORMAL;
             return getMap(mode, cmd, main);
         },
 

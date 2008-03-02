@@ -160,7 +160,7 @@ vimperator.util = { //{{{
         ret += "\n________________________________________________________________________________\n"
 
         // the actual help text
-        if (command.shortHelp)
+        if (command.description)
         {
             ret += command.description + "."; // the help description
             if (extraHelp)
