@@ -169,12 +169,12 @@ vimperator.Mail = function ()
 
 
 
-    vimperator.mappings.add(modes, ["<C-o>"],
+    vimperator.mappings.add(modes, ["<C-i>"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.forward, true); },
         { flags: vimperator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-i>"],
+    vimperator.mappings.add(modes, ["<C-o>"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.back, true); },
         { flags: vimperator.Mappings.flags.COUNT });
