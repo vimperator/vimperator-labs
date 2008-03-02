@@ -141,7 +141,11 @@ vimperator.Mail = function ()
 
     vimperator.mappings.add(modes, ["gm"],
         "Get new messages",
-        function () { goDoCommand("cmd_getNewMessages"); });
+        function () { vimperator.mail.getNewMessages(); });
+
+    vimperator.mappings.add(modes, ["gM"],
+        "Get new messages for current account only",
+        function () { vimperator.mail.getNewMessages(true); });
 
     vimperator.mappings.add([vimperator.modes.NORMAL],
         ["c"], "Change folders",
@@ -200,11 +204,24 @@ vimperator.Mail = function ()
             args = args || "Inbox";
             count = count > 0 ? (count - 1) : 0;
 
-            var folder = vimperator.mail.getFolders(args)[count];
+            var folder = vimperator.mail.getFolders(args, true, true)[count];
             if (!folder)
                 vimperator.echoerr("Folder \"" + args + "\" does not exist");
             else
                 SelectFolder(folder.URI);
+        });
+
+    vimperator.commands.add(["get[messages]"],
+        "Check for new messages",
+        function (args, special)
+        {
+            if (args)
+            {
+                vimperator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            vimperator.mail.getNewMessages(!special);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -213,41 +230,61 @@ vimperator.Mail = function ()
 
     return {
 
-        getFolders: function(filter)
+        get currentAccount() { return this.currentFolder.rootFolder; },
+
+        get currentFolder() {
+            var tree = GetFolderTree();
+            return GetFolderResource(tree, tree.currentIndex).
+                   QueryInterface(Components.interfaces.nsIMsgFolder);
+        },
+
+        getFolders: function(filter, includeServers, includeMsgFolders)
         {
             var folders = [];
             if (!filter)
                 filter = "";
 
+            if (typeof includeServers == undefined)
+                includeServers = false;
+            if (typeof includeMsgFolders == undefined)
+                includeMsgFolders = true;
+
             var tree = GetFolderTree();
             for (let i = 0; i < tree.view.rowCount; i++)
             {
                 var resource = GetFolderResource(tree, i).QueryInterface(Components.interfaces.nsIMsgFolder);
-                if (/*!resource.isServer && */resource.prettiestName.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+                if ((resource.isServer && !includeServers) || (!resource.isServer && !includeMsgFolders))
+                    continue;
+
+                if (resource.prettiestName.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
                     folders.push(resource);
             }
             return folders;
         },
 
-        // XXX: probably refactored with another method
-        getTotalUnread: function()
+        getNewMessages: function(currentAccountOnly)
         {
-            var folders = this.getFolders();
+            var accounts = currentAccountOnly ? [this.currentAccount]
+                                              : this.getFolders("", true, false);
 
-            var unread = 0, flagged = 0;
-            for (var i = 0; i < folders.length; i++)
+            accounts.forEach( function(account) { account.getNewMessages(msgWindow, null); });
+        },
+
+        getStatistics: function(currentAccountOnly)
+        {
+            var accounts = currentAccountOnly ? [this.currentAccount]
+                                              : this.getFolders("", true, false);
+
+            var unreadCount = 0, totalCount = 0, newCount = 0;;
+            for (var i = 0; i < accounts.length; i++)
             {
-                var msgs = folders[i].getMessages(msgWindow);
-                while (msgs.hasMoreElements())
-                {
-                    var msg = msgs.getNext().QueryInterface(Components.interfaces.nsIMsgDBHdr);
-                    if (!msg.isRead)
-                        unread++;
-                    if (msg.isFlagged)
-                        flagged++;
-                }
+                var account = accounts[i];
+                unreadCount += account.getNumUnread(true); // true == deep (includes subfolders)
+                totalCount  += account.getTotalMessages(true);
+                newCount    += account.getNumUnread(true);
             }
-            return unread;
+
+            return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount }
         },
 
         selectMessage: function(validatorFunc, canWrap, reverse, count)
