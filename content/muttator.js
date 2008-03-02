@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 vimperator.config = {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
-    hostApplication: "Thunderbird", // TODO: can this be found out otherwise?
+    hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["hints", "mail", "marks"],

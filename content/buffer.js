@@ -449,7 +449,7 @@ vimperator.Buffer = function () //{{{
 
     vimperator.commands.add(["st[op]"],
         "Stop loading",
-        function() { BrowserStop(); });
+        function () { BrowserStop(); });
 
     vimperator.commands.add(["vie[wsource]"],
         "View source code of current document",
