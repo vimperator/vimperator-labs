@@ -335,7 +335,7 @@ const vimperator = (function () //{{{
                     vimperator.open("about:");
                 else
                     vimperator.echo(":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "\n" +
-                                    vimperator.config.hostApplication + " " + vimperator.version +
+                                    vimperator.config.name + " " + vimperator.version +
                                     " running on:\n" + navigator.userAgent);
             });
 
