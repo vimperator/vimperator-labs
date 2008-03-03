@@ -514,7 +514,7 @@ vimperator.CommandLine = function () //{{{
             else if (event.type == "keypress")
             {
                 if (!currentExtendedMode)
-                    return;
+                    return true;
 
                 var key = vimperator.events.toString(event);
                 //vimperator.log("command line handling key: " + key + "\n");
@@ -561,7 +561,7 @@ vimperator.CommandLine = function () //{{{
                         {
                             setCommand(historyStart);
                             vimperator.triggerCallback("change", currentExtendedMode, this.getCommand());
-                            return;
+                            break;
                         }
 
                         // cannot go past history start/end
@@ -571,7 +571,7 @@ vimperator.CommandLine = function () //{{{
                             vimperator.beep();
                             break;
                         }
-                        if (historyIndex >= lines.length + 1)
+                        else if (historyIndex >= lines.length + 1)
                         {
                             historyIndex = lines.length;
                             vimperator.beep();
@@ -582,7 +582,7 @@ vimperator.CommandLine = function () //{{{
                         {
                             setCommand(lines[historyIndex]);
                             vimperator.triggerCallback("change", currentExtendedMode, this.getCommand());
-                            return;
+                            break;
                         }
                     }
                 }
@@ -624,10 +624,8 @@ vimperator.CommandLine = function () //{{{
                     if (completions.length == 0)
                     {
                         vimperator.beep();
-                        // prevent tab from moving to the next field
-                        event.preventDefault();
-                        event.stopPropagation();
-                        return;
+                        // prevent tab from moving to the next field:
+                        return false;
                     }
 
                     var wim = vimperator.options["wildmode"].split(/,/);
@@ -722,6 +720,7 @@ vimperator.CommandLine = function () //{{{
                     // reset the tab completion
                     completionIndex = historyIndex = UNINITIALIZED;
                 }
+                return true; // allow this event to be handled by Firefox
             }
         },
 

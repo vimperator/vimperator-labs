@@ -1290,7 +1290,7 @@ vimperator.Events = function () //{{{
                     if (vimperator.mode == vimperator.modes.COMMAND_LINE)
                     {
                         if (!(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE))
-                            vimperator.commandline.onEvent(event); // reroute event in command line mode
+                            stop = !vimperator.commandline.onEvent(event); // reroute event in command line mode
                     }
                     else if (vimperator.mode != vimperator.modes.INSERT)
                         vimperator.beep();
