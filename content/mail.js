@@ -193,6 +193,64 @@ vimperator.Mail = function ()
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.lastMessage, false); },
         { flags: vimperator.Mappings.flags.COUNT });
 
+    // tagging messages
+    vimperator.mappings.add(modes, ["tr"],
+        "Toggle selected messages read",
+        function ()
+        {
+            if (!GetSelectedMessages())
+            {
+                vimperator.beep();
+                return;
+            }
+
+            MsgMarkMsgAsRead();
+        });
+    vimperator.mappings.add(modes, ["tR"],
+        "Tag thread as read",
+        function ()
+        {
+            // TODO: ensure thread or beep
+
+            MsgMarkThreadAsRead();
+        });
+
+
+    vimperator.mappings.add(modes, ["ts"],
+        "Toggle selected messages starred",
+        function ()
+        {
+            if (!GetSelectedMessages())
+            {
+                vimperator.beep();
+                return;
+            }
+
+            MsgMarkMsgAsFlagged();
+        });
+
+    vimperator.mappings.add(modes, ["T"],
+        "Mark current folder as read",
+        function ()
+        {
+            if (vimperator.mail.currentFolder.isServer)
+            {
+                vimperator.beep();
+                return;
+            }
+
+            vimperator.mail.currentFolder.markAllMessagesRead();
+        });
+
+    vimperator.mappings.add(modes, ["<C-t>"],
+        "Mark all messages as read",
+        function ()
+        {
+            vimperator.mail.getFolders("", false).forEach(function(folder) {
+                folder.markAllMessagesRead();
+            });
+        });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -244,9 +302,9 @@ vimperator.Mail = function ()
             if (!filter)
                 filter = "";
 
-            if (typeof includeServers == undefined)
+            if (typeof includeServers == "undefined")
                 includeServers = false;
-            if (typeof includeMsgFolders == undefined)
+            if (typeof includeMsgFolders == "undefined")
                 includeMsgFolders = true;
 
             var tree = GetFolderTree();
