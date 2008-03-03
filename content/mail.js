@@ -378,7 +378,7 @@ vimperator.Mail = function ()
             {
                 selectMessageReverse = reverse;
 
-                var folders = this.getFolders();
+                var folders = this.getFolders("", true, true);
                 var ci = GetFolderTree().currentIndex;
                 for (var i = 1; i <= folders.length; i++)
                 {

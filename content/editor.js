@@ -268,6 +268,11 @@ vimperator.Editor = function () //{{{
         ["<C-i>"], "Edit text field with an external editor",
         function () { vimperator.editor.editWithExternalEditor(); });
 
+    // FIXME: <esc> does not work correctly
+    vimperator.mappings.add([vimperator.modes.INSERT],
+        ["<C-t>"], "Edit text field in vi mode",
+        function () { vimperator.mode = vimperator.modes.TEXTAREA; });
+
     vimperator.mappings.add([vimperator.modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
         function () { return vimperator.editor.expandAbbreviation("i"); },
