@@ -105,9 +105,12 @@ const vimperator = (function () //{{{
             "Open help window",
             function () { vimperator.help(); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["ZQ"],
-            "Quit and don't save the session",
-            function () { vimperator.quit(false); });
+        if (vimperator.has("session"))
+        {
+            vimperator.mappings.add([vimperator.modes.NORMAL], ["ZQ"],
+                "Quit and don't save the session",
+                function () { vimperator.quit(false); });
+        }
 
         vimperator.mappings.add([vimperator.modes.NORMAL], ["ZZ"],
             "Quit and save the session",
