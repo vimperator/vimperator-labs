@@ -768,6 +768,11 @@ vimperator.Events = function () //{{{
                         i += matches[0].length + 1;
                     }
                 }
+                else // a simple key
+                {
+                    // FIXME: does not work for non A-Z keys like Ö,Ä,...
+                    shift = (keys[i] >= "A" && keys[i] <= "Z");
+                }
 
                 var elem = window.document.commandDispatcher.focusedElement;
                 if (!elem)
@@ -779,7 +784,12 @@ vimperator.Events = function () //{{{
                 if (elem.dispatchEvent(evt)) // return true in onEvent to stop feeding keys
                 {
                     vimperator.beep();
-                    return
+                    return;
+                }
+                else
+                {
+                    evt.preventDefault();
+                    evt.stopPropagation();
                 }
             }
         },
