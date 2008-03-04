@@ -786,11 +786,6 @@ vimperator.Events = function () //{{{
                     vimperator.beep();
                     return;
                 }
-                else
-                {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                }
             }
         },
 

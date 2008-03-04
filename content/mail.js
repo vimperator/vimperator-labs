@@ -151,13 +151,13 @@ vimperator.Mail = function ()
         ["c"], "Change folders",
         function () { vimperator.commandline.open(":", "goto ", vimperator.modes.EX); });
 
-    vimperator.mappings.add(modes, ["]f"],
-        "Select next flagged message",
+    vimperator.mappings.add(modes, ["]s"],
+        "Select next starred message",
         function (count) { vimperator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, false, count); },
         { flags: vimperator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["[f"],
-        "Select previous flagged message",
+    vimperator.mappings.add(modes, ["[s"],
+        "Select previous starred message",
         function (count) { vimperator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, count); },
         { flags: vimperator.Mappings.flags.COUNT });
 
