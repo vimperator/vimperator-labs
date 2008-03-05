@@ -97,9 +97,23 @@ vimperator.Mail = function ()
 //    vimperator.options.add(["editor"],
 //        "Set the external text editor",
 //        "string", "gvim -f");
-//    vimperator.options.add(["insertmode", "im"],
-//        "Use Insert mode as the default for text areas",
-//        "boolean", true);
+
+    vimperator.options.add(["layout"],
+        "Set the layout of the mail window",
+        "string", "inherit",
+        {
+            validator: function (value) { return /^(classic|wide|vertical|inherit)$/.test(value); },
+            setter:    function (value)
+            {
+                switch (value)
+                {
+                    case "classic":  ChangeMailLayout(0); break;
+                    case "wide":     ChangeMailLayout(1); break;
+                    case "vertical": ChangeMailLayout(2); break;
+                    // case "inherit" just does nothing
+                }
+            }
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////

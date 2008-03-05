@@ -132,46 +132,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 oninput="vimperator.commandline.onMultilineInputEvent(event);"
                 onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
         </vbox>
-
-
-    <menupopup id="viewSidebarMenu">
-        <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
-        <menuitem observes="vimperator-viewConsoleSidebar" label="Console" accesskey="C"/>
-        <menuitem observes="vimperator-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
-        <menuitem observes="vimperator-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
-    </menupopup>
-
-    <broadcasterset id="mainBroadcasterSet">
-        <broadcaster id="vimperator-viewAddonsSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
-            sidebartitle="Add-ons"
-            oncommand="toggleSidebar('vimperator-viewAddonsSidebar');"/>
-        <broadcaster id="vimperator-viewConsoleSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://global/content/console.xul"
-            sidebartitle="Console"
-            oncommand="toggleSidebar('vimperator-viewConsoleSidebar');"/>
-        <broadcaster id="vimperator-viewDownloadsSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
-            sidebartitle="Downloads"
-            oncommand="toggleSidebar('vimperator-viewDownloadsSidebar');"/>
-        <broadcaster id="vimperator-viewPreferencesSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="about:config"
-            sidebartitle="Preferences"
-            oncommand="toggleSidebar('vimperator-viewPreferencesSidebar');"/>
-    </broadcasterset>
-
     </window>
 
 </overlay>
