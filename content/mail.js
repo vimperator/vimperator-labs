@@ -356,6 +356,7 @@ vimperator.Mail = function ()
             // first try to find in current folder
             if (gDBView)
             {
+                //var curIndex = 
                 // FIXME: doesn't work with collapsed threads
                 for (var i = gDBView.selection.currentIndex + (reverse ? -1 : 1);
                      (reverse ? ( i >= 0) : (i < gDBView.rowCount)); reverse ? i-- : i++)
@@ -390,10 +391,22 @@ vimperator.Mail = function ()
                     if (folder.isServer)
                         continue;
 
+
                     selectMessageCount = count;
                     selectMessageKeys = [];
 
-                    var msgs = folder.getMessages(msgWindow);
+                    // sometimes folder.getMessages can fail with an exception
+                    // TODO: find out why, and solve the problem
+                    try
+                    {
+                        var msgs = folder.getMessages(msgWindow);
+                    }
+                    catch (e)
+                    {
+                        dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
+                        continue;
+                    }
+
                     while (msgs.hasMoreElements())
                     {
                         var msg = msgs.getNext().QueryInterface(Components.interfaces.nsIMsgDBHdr);

@@ -928,8 +928,8 @@ vimperator.Events = function () //{{{
             if (vimperator.config.name == "Muttator")
             {
                 // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
-                //if ((win && win.document && win.document instanceof HTMLDocument) ||
-                if ((win && win == window.content) || elem instanceof HTMLAnchorElement)
+                if ((win && win.document && win.document instanceof HTMLDocument)
+                    || elem instanceof HTMLAnchorElement)
                 {
                     if (vimperator.mode != vimperator.modes.MESSAGE)
                         vimperator.mode = vimperator.modes.MESSAGE;
