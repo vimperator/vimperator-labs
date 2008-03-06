@@ -94,7 +94,7 @@ ________________________________________________________________________________
 ||:[count]fo[rward][!] [url]|| +
 ||CTRL-i||
 ________________________________________________________________________________
-Go [count] pages back in the browser history.
+Go [count] pages forward in the browser history.
 The special version [c]:forward![c] goes to the end of the browser history.
 ________________________________________________________________________________
 
