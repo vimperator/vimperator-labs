@@ -146,6 +146,7 @@ vimperator.Search = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    modes = modes.concat([vimperator.modes.CARET]);
         
     vimperator.mappings.add(modes,
         ["/"], "Search forward for a pattern",
