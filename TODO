@@ -11,6 +11,7 @@ BUGS:
   same for http://forum.mootools.net/topic.php?id=3458
 - insert abbreviations broken on <space>
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
+- :sidebar History is broken
 - http://www.maximonline.com/jokes/ - the prev and next buttons on the image map are not hinted
 
 FEATURES:

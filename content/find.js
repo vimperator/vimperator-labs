@@ -125,18 +125,23 @@ vimperator.Search = function () //{{{
                     vimperator.search.clear();
             }
         });
+
     vimperator.options.add(["hlsearchstyle", "hlss"],
         "CSS specification of highlighted search items",
         "string", "color: black; background-color: yellow; padding: 0; display: inline;");
+
     vimperator.options.add(["ignorecase", "ic"],
         "Ignore case in search patterns",
         "boolean", true);
+
     vimperator.options.add(["incsearch", "is"],
         "Show where the search pattern matches as it is typed",
         "boolean", true);
+
     vimperator.options.add(["linksearch", "lks"],
         "Limit the search to hyperlink text",
         "boolean", false);
+
     vimperator.options.add(["smartcase", "scs"], 
         "Override the 'ignorecase' option if the pattern contains uppercase characters",
         "boolean", true);
