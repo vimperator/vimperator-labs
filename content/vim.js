@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-const vimperator = (function () //{{{
+const liberator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -36,13 +36,13 @@ const vimperator = (function () //{{{
     // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
-        vimperator.options.add(["guioptions", "go"],
+        liberator.options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
             "charlist", "",
             {
                 setter: function (value)
                 {
-                    var guioptions = vimperator.config.guioptions || {};
+                    var guioptions = liberator.config.guioptions || {};
                     for (let option in guioptions)
                     {
                         guioptions[option].forEach( function(elem)
@@ -58,13 +58,13 @@ const vimperator = (function () //{{{
                 validator: function (value)
                 {
                     var regex = "[^";
-                    for (let option in vimperator.config.guioptions)
+                    for (let option in liberator.config.guioptions)
                         regex += option.toString();
 
                     return !(new RegExp(regex + "]").test(value));
                 }
             });
-        vimperator.options.add(["titlestring"], // TODO: broken for Thunderbird
+        liberator.options.add(["titlestring"], // TODO: broken for Thunderbird
             "Change the title of the window",
             "string", "Vimperator",
             {
@@ -72,7 +72,7 @@ const vimperator = (function () //{{{
                 {
                     try
                     {
-                        var id = vimperator.config.mainWindowID || "main-window";
+                        var id = liberator.config.mainWindowID || "main-window";
                         document.getElementById(id).setAttribute("titlemodifier", value);
                         if (window.content.document.title.length > 0)
                             document.title = window.content.document.title + " - " + value;
@@ -81,115 +81,115 @@ const vimperator = (function () //{{{
                     }
                     catch (e)
                     {
-                        vimperator.log("Couldn't set titlestring", 1);
+                        liberator.log("Couldn't set titlestring", 1);
                     }
                 },
             });
-        vimperator.options.add(["verbose", "vbs"], 
+        liberator.options.add(["verbose", "vbs"], 
             "Define which type of messages are logged",
             "number", 0,
             {
                 validator: function (value) { return (value >= 0 && value <= 9); }
             });
-        vimperator.options.add(["visualbell", "vb"], 
+        liberator.options.add(["visualbell", "vb"], 
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
-                setter: function (value) { vimperator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
+                setter: function (value) { liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
             });
     }
 
     function addMappings()
     {
-        vimperator.mappings.add(vimperator.modes.all, ["<F1>"],
+        liberator.mappings.add(liberator.modes.all, ["<F1>"],
             "Open help window",
-            function () { vimperator.help(); });
+            function () { liberator.help(); });
 
-        if (vimperator.has("session"))
+        if (liberator.has("session"))
         {
-            vimperator.mappings.add([vimperator.modes.NORMAL], ["ZQ"],
+            liberator.mappings.add([liberator.modes.NORMAL], ["ZQ"],
                 "Quit and don't save the session",
-                function () { vimperator.quit(false); });
+                function () { liberator.quit(false); });
         }
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["ZZ"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["ZZ"],
             "Quit and save the session",
-            function () { vimperator.quit(true); });
+            function () { liberator.quit(true); });
     }
 
     function addCommands()
     {
-        vimperator.commands.add(["addo[ns]"],
+        liberator.commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
-            function () { vimperator.open("chrome://mozapps/content/extensions/extensions.xul", vimperator.NEW_TAB); });
+            function () { liberator.open("chrome://mozapps/content/extensions/extensions.xul", liberator.NEW_TAB); });
 
-        vimperator.commands.add(["beep"],
+        liberator.commands.add(["beep"],
             "Play a system beep",
-            function () { vimperator.beep(); });
+            function () { liberator.beep(); });
 
-        vimperator.commands.add(["dia[log]"],
-            "Open a " + vimperator.config.appName + " dialog",
+        liberator.commands.add(["dia[log]"],
+            "Open a " + liberator.config.appName + " dialog",
             function (args, special)
             {
                 try
                 {
-                    var dialogs = vimperator.config.dialogs || [];
+                    var dialogs = liberator.config.dialogs || [];
                     for (let i = 0; i < dialogs.length; i++)
                     {
                         if (dialogs[i][0] == args)
                             return dialogs[i][2]();
                     }
-                    vimperator.echoerr(args ? "Dialog \"" + args + "\" not available" : "E474: Invalid argument");
+                    liberator.echoerr(args ? "Dialog \"" + args + "\" not available" : "E474: Invalid argument");
                 }
                 catch (e)
                 {
-                    vimperator.echoerr("Error opening '" + args + "': " + e);
+                    liberator.echoerr("Error opening '" + args + "': " + e);
                 }
             },
             {
-                completer: function (filter) { return vimperator.completion.dialog(filter); }
+                completer: function (filter) { return liberator.completion.dialog(filter); }
             });
 
-        vimperator.commands.add(["exe[cute]"],
+        liberator.commands.add(["exe[cute]"],
             "Execute the argument as an Ex command",
-            function (args) { vimperator.execute(args); });
+            function (args) { liberator.execute(args); });
 
-        vimperator.commands.add(["exu[sage]"],
+        liberator.commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
             function ()
             {
                 var usage = "<table>";
-                for (let command in vimperator.commands)
+                for (let command in liberator.commands)
                 {
                     usage += "<tr><td style='color: magenta; padding-right: 20px'> :" +
-                             vimperator.util.escapeHTML(command.name) + "</td><td>" +
-                             vimperator.util.escapeHTML(command.description) + "</td></tr>";
+                             liberator.util.escapeHTML(command.name) + "</td><td>" +
+                             liberator.util.escapeHTML(command.description) + "</td></tr>";
                 }
                 usage += "</table>";
 
-                vimperator.echo(usage, vimperator.commandline.FORCE_MULTILINE);
+                liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
             });
 
-        vimperator.commands.add(["h[elp]"],
+        liberator.commands.add(["h[elp]"],
             "Display help",
-            function (args) { vimperator.help(args); },
+            function (args) { liberator.help(args); },
             {
-                completer: function (filter) { return vimperator.completion.help(filter); }
+                completer: function (filter) { return liberator.completion.help(filter); }
             });
 
-        vimperator.commands.add(["javas[cript]", "js"],
+        liberator.commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
             function (args, special)
             {
                 if (special) // open javascript console
-                    vimperator.open("chrome://global/content/console.xul", vimperator.NEW_TAB);
+                    liberator.open("chrome://global/content/console.xul", liberator.NEW_TAB);
                 else
                 {
                     // check for a heredoc
                     var matches = args.match(/(.*)<<\s*([^\s]+)$/);
                     if (matches && matches[2])
                     {
-                        vimperator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                        liberator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
                             function (code)
                             {
                                 try
@@ -198,7 +198,7 @@ const vimperator = (function () //{{{
                                 }
                                 catch (e)
                                 {
-                                    vimperator.echoerr(e.name + ": " + e.message);
+                                    liberator.echoerr(e.name + ": " + e.message);
                                 }
                             });
                     }
@@ -206,47 +206,47 @@ const vimperator = (function () //{{{
                     {
                         try
                         {
-                            eval("with(vimperator){" + args + "}");
+                            eval("with(liberator){" + args + "}");
                         }
                         catch (e)
                         {
-                            vimperator.echoerr(e.name + ": " + e.message);
+                            liberator.echoerr(e.name + ": " + e.message);
                         }
                     }
                 }
             },
             {
-                completer: function (filter) { return vimperator.completion.javascript(filter); }
+                completer: function (filter) { return liberator.completion.javascript(filter); }
             });
 
-        vimperator.commands.add(["norm[al]"],
+        liberator.commands.add(["norm[al]"],
             "Execute Normal mode commands",
             function (args, special)
             {
                 if (!args)
                 {
-                    vimperator.echoerr("E471: Argument required");
+                    liberator.echoerr("E471: Argument required");
                     return;
                 }
 
-                vimperator.events.feedkeys(args, special);
+                liberator.events.feedkeys(args, special);
             });
 
-        vimperator.commands.add(["q[uit]"],
-            vimperator.has("tabs") ? "Quit current tab" : "Quit application",
+        liberator.commands.add(["q[uit]"],
+            liberator.has("tabs") ? "Quit current tab" : "Quit application",
             function ()
             {
-                if (vimperator.has("tabs"))
-                    vimperator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
+                if (liberator.has("tabs"))
+                    liberator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
-                    vimperator.quit(false);
+                    liberator.quit(false);
             });
 
-        vimperator.commands.add(["res[tart]"],
-            "Force " + vimperator.config.appName + " to restart",
-            function () { vimperator.restart(); });
+        liberator.commands.add(["res[tart]"],
+            "Force " + liberator.config.appName + " to restart",
+            function () { liberator.restart(); });
 
-        vimperator.commands.add(["time"],
+        liberator.commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
             function (args, special, count)
             {
@@ -260,12 +260,12 @@ const vimperator = (function () //{{{
                         if (args && args[0] == ":")
                         {
                             while (i--)
-                                vimperator.execute(args);
+                                liberator.execute(args);
                         }
                         else
                         {
                             while (i--)
-                                eval("with(vimperator){" + args + "}");
+                                eval("with(liberator){" + args + "}");
                         }
 
                         if (special)
@@ -295,7 +295,7 @@ const vimperator = (function () //{{{
                             var totalUnits = "msec";
                         }
 
-                        var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                        var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                                   "<table>" +
                                   "<tr align=\"left\" class=\"hl-Title\"><th colspan=\"3\">Code execution summary</th></tr>" +
                                   "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
@@ -303,15 +303,15 @@ const vimperator = (function () //{{{
                                   "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + totalUnits + "</td></tr>" +
                                   "</table>";
 
-                        vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                        liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                     }
                     else
                     {
                         var beforeTime = Date.now();
                         if (args && args[0] == ":")
-                            vimperator.execute(args);
+                            liberator.execute(args);
                         else
-                            eval("with(vimperator){" + args + "}");
+                            eval("with(liberator){" + args + "}");
 
                         if (special)
                             return;
@@ -319,43 +319,43 @@ const vimperator = (function () //{{{
                         var afterTime = Date.now();
 
                         if (afterTime - beforeTime >= 100)
-                            vimperator.echo("Total time: " + ((afterTime - beforeTime) / 1000.0).toFixed(2) + " sec");
+                            liberator.echo("Total time: " + ((afterTime - beforeTime) / 1000.0).toFixed(2) + " sec");
                         else
-                            vimperator.echo("Total time: " + (afterTime - beforeTime) + " msec");
+                            liberator.echo("Total time: " + (afterTime - beforeTime) + " msec");
                     }
                 }
                 catch (e)
                 {
-                    vimperator.echoerr(e);
+                    liberator.echoerr(e);
                 }
             });
 
-        vimperator.commands.add(["ve[rsion]"],
+        liberator.commands.add(["ve[rsion]"],
             "Show version information",
             function (args, special)
             {
                 if (special)
-                    vimperator.open("about:");
+                    liberator.open("about:");
                 else
-                    vimperator.echo(":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "\n" +
-                                    vimperator.config.name + " " + vimperator.version +
+                    liberator.echo(":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "\n" +
+                                    liberator.config.name + " " + liberator.version +
                                     " running on:\n" + navigator.userAgent);
             });
 
-        vimperator.commands.add(["viu[sage]"],
+        liberator.commands.add(["viu[sage]"],
             "List all mappings with a short description",
             function (args, special, count, modifiers)
             {
                 var usage = "<table>";
-                for (let mapping in vimperator.mappings)
+                for (let mapping in liberator.mappings)
                 {
                     usage += "<tr><td style='color: magenta; padding-right: 20px'> " +
-                             vimperator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
-                             vimperator.util.escapeHTML(mapping.description) + "</td></tr>";
+                             liberator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
+                             liberator.util.escapeHTML(mapping.description) + "</td></tr>";
                 }
                 usage += "</table>";
 
-                vimperator.echo(usage, vimperator.commandline.FORCE_MULTILINE);
+                liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
             });
     }
 
@@ -363,7 +363,7 @@ const vimperator = (function () //{{{
     // similar in his config
     function hideGUI()
     {
-        var guioptions = vimperator.config.guioptions || {};
+        var guioptions = liberator.config.guioptions || {};
         for (let option in guioptions)
         {
             guioptions[option].forEach( function(elem)
@@ -376,7 +376,7 @@ const vimperator = (function () //{{{
             });
         }
 
-//        if (vimperator.has("tabs"))
+//        if (liberator.has("tabs"))
 
     }
 
@@ -386,8 +386,8 @@ const vimperator = (function () //{{{
 
     return {
 
-        get mode()      { return vimperator.modes.main; },
-        set mode(value) { vimperator.modes.main = value; },
+        get mode()      { return liberator.modes.main; },
+        set mode(value) { liberator.modes.main = value; },
 
         // Global constants
         CURRENT_TAB: 1,
@@ -432,10 +432,10 @@ const vimperator = (function () //{{{
 
         beep: function ()
         {
-            if (vimperator.options["visualbell"])
+            if (liberator.options["visualbell"])
             {
                 // flash the visual bell
-                var popup = document.getElementById("vimperator-visualbell");
+                var popup = document.getElementById("liberator-visualbell");
                 var win = getBrowser().mPanelContainer;
                 var box = document.getBoxObjectFor(win);
 
@@ -452,7 +452,7 @@ const vimperator = (function () //{{{
             }
         },
 
-        // XXX? move to vimperator.util?
+        // XXX? move to liberator.util?
         copyToClipboard: function (str, verbose)
         {
             var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
@@ -460,7 +460,7 @@ const vimperator = (function () //{{{
             clipboardHelper.copyString(str);
 
             if (verbose)
-                vimperator.echo("Yanked " + str, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.echo("Yanked " + str, liberator.commandline.FORCE_SINGLELINE);
         },
 
         // Execute an ex command like str=":zoom 300"
@@ -473,20 +473,20 @@ const vimperator = (function () //{{{
             if (!modifiers)
                 modifiers = {};
 
-            var [count, cmd, special, args] = vimperator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
-            var command = vimperator.commands.get(cmd);
+            var [count, cmd, special, args] = liberator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
+            var command = liberator.commands.get(cmd);
 
             if (command === null)
             {
-                vimperator.echoerr("E492: Not an editor command: " + str);
-                vimperator.focusContent();
+                liberator.echoerr("E492: Not an editor command: " + str);
+                liberator.focusContent();
                 return;
             }
 
             // TODO: need to perform this test? -- djk
             if (command.action === null)
             {
-                vimperator.echoerr("E666: Internal error: command.action === null");
+                liberator.echoerr("E666: Internal error: command.action === null");
                 return;
             }
 
@@ -494,7 +494,7 @@ const vimperator = (function () //{{{
             command.execute(args, special, count, modifiers);
         },
 
-        // TODO: move to vimperator.buffer.focus()?
+        // TODO: move to liberator.buffer.focus()?
         // after pressing Escape, put focus on a non-input field of the browser document
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
@@ -505,7 +505,7 @@ const vimperator = (function () //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
-            var elem = vimperator.config.mainWidget || content;
+            var elem = liberator.config.mainWidget || content;
             if (elem != document.commandDispatcher.focusedElement)
                 elem.focus();
         },
@@ -586,7 +586,7 @@ const vimperator = (function () //{{{
         // return true, if this VIM-like extension has a certain feature
         has: function (feature)
         {
-            var features = vimperator.config.features || [];
+            var features = liberator.config.features || [];
             return features.some (function(feat) { return feat == feature; });
         },
 
@@ -594,9 +594,9 @@ const vimperator = (function () //{{{
         {
             function jumpToTag(file, tag)
             {
-                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + file);
+                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file);
                 setTimeout(function() {
-                    var elem = vimperator.buffer.getElement('@class="tag" and text()="' + tag + '"');
+                    var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
@@ -606,11 +606,11 @@ const vimperator = (function () //{{{
 
             if (!topic)
             {
-                vimperator.open("chrome://" + vimperator.config.name.toLowerCase() + "/locale/intro.html");
+                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/intro.html");
                 return;
             }
 
-            var [, items] = vimperator.completion.help(topic);
+            var [, items] = liberator.completion.help(topic);
             var partialMatch = -1;
             for (var i = 0; i < items.length; i++)
             {
@@ -628,16 +628,16 @@ const vimperator = (function () //{{{
             if (partialMatch > -1)
                 jumpToTag(items[partialMatch][1], items[partialMatch][0]);
             else
-                vimperator.echoerr("E149: Sorry, no help for " + topic);
+                liberator.echoerr("E149: Sorry, no help for " + topic);
         },
 
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
         log: function (msg, level)
         {
-            //if (vimperator.options.getPref("verbose") >= level) // FIXME: hangs vimperator, probably timing issue --mst
+            //if (liberator.options.getPref("verbose") >= level) // FIXME: hangs liberator, probably timing issue --mst
             if (typeof msg == "object")
-                msg = vimperator.util.objectToString(msg, false);
+                msg = liberator.util.objectToString(msg, false);
 
             var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
                                  getService(Components.interfaces.nsIConsoleService);
@@ -657,15 +657,15 @@ const vimperator = (function () //{{{
         open: function (urls, where)
         {
             // convert the string to an array of converted URLs
-            // -> see vimperator.util.stringToURLArray for more details
+            // -> see liberator.util.stringToURLArray for more details
             if (typeof urls == "string")
-                urls = vimperator.util.stringToURLArray(urls);
+                urls = liberator.util.stringToURLArray(urls);
 
             if (urls.length == 0)
                 return false;
 
-            if (!where || !vimperator.has("tabs"))
-                where = vimperator.CURRENT_TAB;
+            if (!where || !liberator.has("tabs"))
+                where = liberator.CURRENT_TAB;
 
             var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];
             var postdata = typeof urls[0] == "string" ? null : urls[0][1];
@@ -674,20 +674,20 @@ const vimperator = (function () //{{{
             // decide where to load the first url
             switch (where)
             {
-                case vimperator.CURRENT_TAB:
+                case liberator.CURRENT_TAB:
                     getBrowser().loadURIWithFlags(url, null, null, null, postdata);
                     break;
 
-                case vimperator.NEW_TAB:
+                case liberator.NEW_TAB:
                     var firsttab = getBrowser().addTab(url, null, null, postdata);
                     getBrowser().selectedTab = firsttab;
                     break;
 
-                case vimperator.NEW_BACKGROUND_TAB:
+                case liberator.NEW_BACKGROUND_TAB:
                     getBrowser().addTab(url, null, null, postdata);
                     break;
 
-                case vimperator.NEW_WINDOW:
+                case liberator.NEW_WINDOW:
                     window.open();
                     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                .getService(Components.interfaces.nsIWindowMediator);
@@ -696,12 +696,12 @@ const vimperator = (function () //{{{
                     break;
 
                 default:
-                    vimperator.echoerr("Exxx: Invalid 'where' directive in vimperator.open(...)");
+                    liberator.echoerr("Exxx: Invalid 'where' directive in liberator.open(...)");
                     return false;
             }
 
             // only load more than one url if we have tab support
-            if (!vimperator.has("tabs"))
+            if (!liberator.has("tabs"))
                 return true;
 
             // all other URLs are always loaded in background
@@ -715,22 +715,22 @@ const vimperator = (function () //{{{
             return true;
         },
 
-        // quit vimperator, no matter how many tabs/windows are open
+        // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession)
         {
-            vimperator.autocommands.trigger("BrowserExit", "");
+            liberator.autocommands.trigger("BrowserExit", "");
 
             if (saveSession)
-                vimperator.options.setPref("browser.startup.page", 3); // start with saved session
+                liberator.options.setPref("browser.startup.page", 3); // start with saved session
             else
-                vimperator.options.setPref("browser.startup.page", 1); // start with default homepage session
+                liberator.options.setPref("browser.startup.page", 1); // start with default homepage session
 
             goQuitApplication();
         },
 
         restart: function ()
         {
-            vimperator.autocommands.trigger("BrowserRestart", "");
+            liberator.autocommands.trigger("BrowserRestart", "");
 
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
@@ -765,70 +765,70 @@ const vimperator = (function () //{{{
         // this function is called, when the chrome is ready
         startup: function ()
         {
-            function log(module) { vimperator.log("Loading module " + module + "...", 3); };
+            function log(module) { liberator.log("Loading module " + module + "...", 3); };
 
-            vimperator.log("Initializing vimperator object...", 1);
+            liberator.log("Initializing vimperator object...", 1);
             // commands must always be the first module to be initialized
-            log("commands");       vimperator.commands = vimperator.Commands(); addCommands();
-            log("options");        vimperator.options  = vimperator.Options();  addOptions();
-            log("mappings");       vimperator.mappings = vimperator.Mappings(); addMappings();
-            log("events");         vimperator.events   = vimperator.Events();
-            log("commandline");    vimperator.commandline   = vimperator.CommandLine();
-            log("search");         vimperator.search        = vimperator.Search();
-            log("preview window"); vimperator.previewwindow = vimperator.InformationList("vimperator-previewwindow", { incrementalFill: false, maxItems: 10 });
-            log("buffer window");  vimperator.bufferwindow  = vimperator.InformationList("vimperator-bufferwindow", { incrementalFill: false, maxItems: 10 });
-            log("statusline");     vimperator.statusline    = vimperator.StatusLine();
-            log("buffer");         vimperator.buffer        = vimperator.Buffer();
-            log("editor");         vimperator.editor        = vimperator.Editor();
-            log("autocommands");   vimperator.autocommands  = vimperator.AutoCommands();
-            log("io");             vimperator.io            = vimperator.IO();
-            log("completion");     vimperator.completion    = vimperator.Completion();
+            log("commands");       liberator.commands = liberator.Commands(); addCommands();
+            log("options");        liberator.options  = liberator.Options();  addOptions();
+            log("mappings");       liberator.mappings = liberator.Mappings(); addMappings();
+            log("events");         liberator.events   = liberator.Events();
+            log("commandline");    liberator.commandline   = liberator.CommandLine();
+            log("search");         liberator.search        = liberator.Search();
+            log("preview window"); liberator.previewwindow = liberator.InformationList("liberator-previewwindow", { incrementalFill: false, maxItems: 10 });
+            log("buffer window");  liberator.bufferwindow  = liberator.InformationList("liberator-bufferwindow", { incrementalFill: false, maxItems: 10 });
+            log("statusline");     liberator.statusline    = liberator.StatusLine();
+            log("buffer");         liberator.buffer        = liberator.Buffer();
+            log("editor");         liberator.editor        = liberator.Editor();
+            log("autocommands");   liberator.autocommands  = liberator.AutoCommands();
+            log("io");             liberator.io            = liberator.IO();
+            log("completion");     liberator.completion    = liberator.Completion();
 
             // optional modules
-            if (vimperator.has("bookmarks"))  { log("bookmarks");  vimperator.bookmarks  = vimperator.Bookmarks(); }
-            if (vimperator.has("history"))    { log("history");    vimperator.history    = vimperator.History(); }
-            if (vimperator.has("mail"))       { log("mail");       vimperator.mail       = vimperator.Mail(); }
-            if (vimperator.has("tabs"))       { log("tabs");       vimperator.tabs       = vimperator.Tabs(); }
-            if (vimperator.has("marks"))      { log("marks");      vimperator.marks      = vimperator.Marks(); }
-            if (vimperator.has("quickmarks")) { log("quickmarks"); vimperator.quickmarks = vimperator.QuickMarks(); }
-            if (vimperator.has("hints"))      { log("hints");      vimperator.hints      = vimperator.Hints(); }
+            if (liberator.has("bookmarks"))  { log("bookmarks");  liberator.bookmarks  = liberator.Bookmarks(); }
+            if (liberator.has("history"))    { log("history");    liberator.history    = liberator.History(); }
+            if (liberator.has("mail"))       { log("mail");       liberator.mail       = liberator.Mail(); }
+            if (liberator.has("tabs"))       { log("tabs");       liberator.tabs       = liberator.Tabs(); }
+            if (liberator.has("marks"))      { log("marks");      liberator.marks      = liberator.Marks(); }
+            if (liberator.has("quickmarks")) { log("quickmarks"); liberator.quickmarks = liberator.QuickMarks(); }
+            if (liberator.has("hints"))      { log("hints");      liberator.hints      = liberator.Hints(); }
 
-            vimperator.log("All modules loaded", 3);
+            liberator.log("All modules loaded", 3);
 
             // This adds options/mappings/commands which are only valid in this particular extension
-            if (vimperator.config.init)
+            if (liberator.config.init)
             {
-                vimperator.config.init();
-                // vimperator.log("Loaded additional mappings, etc. for " + vimperator.config.name, 3);
+                liberator.config.init();
+                // liberator.log("Loaded additional mappings, etc. for " + liberator.config.name, 3);
             }
 
             // we define some shortcuts to functions which are used often
-            vimperator.echo    = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, flags); };
-            vimperator.echoerr = function (str, flags) { vimperator.commandline.echo(str, vimperator.commandline.HL_ERRORMSG, flags); };
+            liberator.echo    = function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags); };
+            liberator.echoerr = function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags); };
 
-            vimperator.globalVariables = {};
+            liberator.globalVariables = {};
 
             // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
             // v.plugins.mode = <str> string to show on v.modes.CUSTOM
             // v.plugins.stop = <func> hooked on a v.modes.reset() 
             // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
-            vimperator.plugins = {};
+            liberator.plugins = {};
 
             // TODO: move elsewhere
-            vimperator.registerCallback("submit", vimperator.modes.EX, function (command) { vimperator.execute(command); });
-            vimperator.registerCallback("complete", vimperator.modes.EX, function (str) { return vimperator.completion.exTabCompletion(str); });
+            liberator.registerCallback("submit", liberator.modes.EX, function (command) { liberator.execute(command); });
+            liberator.registerCallback("complete", liberator.modes.EX, function (str) { return liberator.completion.exTabCompletion(str); });
 
             // first time intro message
-            if (vimperator.options.getPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", true))
+            if (liberator.options.getPref("extensions." + liberator.config.name.toLowerCase() + ".firsttime", true))
             {
                 setTimeout(function () {
-                    vimperator.help();
-                    vimperator.options.setPref("extensions." + vimperator.config.name.toLowerCase() + ".firsttime", false);
+                    liberator.help();
+                    liberator.options.setPref("extensions." + liberator.config.name.toLowerCase() + ".firsttime", false);
                 }, 1000);
             }
 
             // always start in normal mode
-            vimperator.modes.reset();
+            liberator.modes.reset();
 
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
@@ -837,59 +837,59 @@ const vimperator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                var rcFile = vimperator.io.getRCFile();
+                var rcFile = liberator.io.getRCFile();
                 if (rcFile)
-                    vimperator.io.source(rcFile.path, true);
+                    liberator.io.source(rcFile.path, true);
                 else
-                    vimperator.log("No user RC file found", 3);
+                    liberator.log("No user RC file found", 3);
 
                 // also source plugins in ~/.vimperator/plugin/
                 try
                 {
-                    var pluginDir = vimperator.io.getSpecialDirectory("plugin");
+                    var pluginDir = liberator.io.getSpecialDirectory("plugin");
                     if (pluginDir)
                     {
-                        var files = vimperator.io.readDirectory(pluginDir.path);
-                        vimperator.log("Sourcing plugin directory...", 3);
+                        var files = liberator.io.readDirectory(pluginDir.path);
+                        liberator.log("Sourcing plugin directory...", 3);
                         files.forEach(function (file) {
                             if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
-                                vimperator.io.source(file.path, false);
+                                liberator.io.source(file.path, false);
                         });
                     }
                     else
                     {
-                        vimperator.log("No user plugin directory found", 3);
+                        liberator.log("No user plugin directory found", 3);
                     }
                 }
                 catch (e)
                 {
                     // thrown if directory does not exist
-                    //vimperator.log("Error sourcing plugin directory: " + e);
+                    //liberator.log("Error sourcing plugin directory: " + e);
                 }
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
                 // set before by any rc file
-                for (let option in vimperator.options)
+                for (let option in liberator.options)
                 {
                     if (option.setter && !option.hasChanged)
                         option.reset();
                 }
             }, 0);
 
-            vimperator.statusline.update();
-            vimperator.log("Vimperator fully initialized", 1);
+            liberator.statusline.update();
+            liberator.log("Vimperator fully initialized", 1);
         },
 
         shutdown: function ()
         {
             // save our preferences
-            vimperator.commandline.destroy();
-            vimperator.quickmarks.destroy();
-            vimperator.options.destroy();
-            vimperator.events.destroy();
+            liberator.commandline.destroy();
+            liberator.quickmarks.destroy();
+            liberator.options.destroy();
+            liberator.events.destroy();
 
-            window.dump("All vimperator modules destroyed\n");
+            window.dump("All liberator modules destroyed\n");
         },
 
         sleep: function (ms)
@@ -949,7 +949,7 @@ const vimperator = (function () //{{{
 })(); //}}}
 
 // called when the chrome is fully loaded and before the main window is shown
-window.addEventListener("load",   vimperator.startup,  false);
-window.addEventListener("unload", vimperator.shutdown, false);
+window.addEventListener("load",   liberator.startup,  false);
+window.addEventListener("unload", liberator.shutdown, false);
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Tabs = function () //{{{
+liberator.Tabs = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -78,7 +78,7 @@ vimperator.Tabs = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["activate", "act"],
+    liberator.options.add(["activate", "act"],
         "Define when tabs are automatically activated",
         "stringlist", "homepage,quickmark,tabopen,paste",
         {
@@ -88,7 +88,7 @@ vimperator.Tabs = function () //{{{
             }
         });
 
-    vimperator.options.add(["popups", "pps"],
+    liberator.options.add(["popups", "pps"],
         "Where to show requested popup windows",
         "number", 1,
         {
@@ -98,13 +98,13 @@ vimperator.Tabs = function () //{{{
                               [0, 3], // in a new tab
                               [2, 3], // in a new window if it has specified sizes
                               [1, 2]];// always in new window
-                vimperator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
-                vimperator.options.setPref("browser.link.open_newwindow", values[value][1]);
+                liberator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
+                liberator.options.setPref("browser.link.open_newwindow", values[value][1]);
             },
             validator: function (value) { return (value >= 0 && value <= 3); }
         });
 
-    vimperator.options.add(["showtabline", "stal"], 
+    liberator.options.add(["showtabline", "stal"], 
         "Control when to show the tab bar of opened web pages",
         "number", 2,
         {
@@ -120,12 +120,12 @@ vimperator.Tabs = function () //{{{
                 }
                 else if (value == 1)
                 {
-                    vimperator.options.setPref("browser.tabs.autoHide", true);
+                    liberator.options.setPref("browser.tabs.autoHide", true);
                     tabs.collapsed = false;
                 }
                 else
                 {
-                    vimperator.options.setPref("browser.tabs.autoHide", false);
+                    liberator.options.setPref("browser.tabs.autoHide", false);
                     tabs.collapsed = false;
                 }
             },
@@ -136,78 +136,78 @@ vimperator.Tabs = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["b"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["b"],
         "Open a prompt to switch buffers",
-        function () { vimperator.commandline.open(":", "buffer! ", vimperator.modes.EX); });
+        function () { liberator.commandline.open(":", "buffer! ", liberator.modes.EX); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["B"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["B"],
         "Show buffer list",
-        function () { vimperator.tabs.list(false); });
+        function () { liberator.tabs.list(false); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["d"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["d"],
         "Delete current buffer",
-        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["D"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["D"],
         "Delete current buffer, focus tab to the left",
-        function (count) { vimperator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["gb"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["gb"],
         "Repeat last :buffer[!] command",
-        function (count) { vimperator.tabs.switchTo(null, null, count, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.switchTo(null, null, count, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["gB"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["gB"],
         "Repeat last :buffer[!] command in reverse direction",
-        function (count) { vimperator.tabs.switchTo(null, null, count, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.switchTo(null, null, count, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["g0", "g^"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["g0", "g^"],
         "Go to the first tab",
-        function (count) { vimperator.tabs.select(0); });
+        function (count) { liberator.tabs.select(0); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["g$"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["g$"],
         "Go to the last tab",
-        function (count) { vimperator.tabs.select("$"); });
+        function (count) { liberator.tabs.select("$"); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
         "Go to the next tab",
-        function (count) { vimperator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
        "Go to previous tab",
-        function (count) { vimperator.tabs.select("-" + (count < 1 ? 1 : count), true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.tabs.select("-" + (count < 1 ? 1 : count), true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["u"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["u"],
         "Undo closing of a tab",
-        function (count) { vimperator.commands.get("undo").execute("", false, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.commands.get("undo").execute("", false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-^>", "<C-6>"],
+    liberator.mappings.add([liberator.modes.NORMAL], ["<C-^>", "<C-6>"],
         "Select the alternate tab",
         function ()
         {
-            if (vimperator.tabs.alternate == null || vimperator.tabs.getTab() == vimperator.tabs.alternate)
+            if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
             {
-                vimperator.echoerr("E23: No alternate page");
+                liberator.echoerr("E23: No alternate page");
                 return;
             }
 
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null
-            var index = vimperator.tabs.index(vimperator.tabs.alternate);
+            var index = liberator.tabs.index(liberator.tabs.alternate);
 
             // TODO: since a tab close is more like a bdelete for us we
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
             if (index == -1)
-                vimperator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+                liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
             else
-                vimperator.tabs.select(index);
+                liberator.tabs.select(index);
         });
 
 
@@ -215,127 +215,127 @@ vimperator.Tabs = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
+    liberator.commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         "Delete current buffer",
         function (args, special, count)
         {
-            vimperator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+            liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         });
 
-    vimperator.commands.add(["b[uffer]"],
+    liberator.commands.add(["b[uffer]"],
         "Switch to a buffer",
-        function (args, special) { vimperator.tabs.switchTo(args, special); },
-        { completer: function (filter) { return vimperator.completion.buffer(filter); } });
+        function (args, special) { liberator.tabs.switchTo(args, special); },
+        { completer: function (filter) { return liberator.completion.buffer(filter); } });
 
-    vimperator.commands.add(["buffers", "files", "ls", "tabs"],
+    liberator.commands.add(["buffers", "files", "ls", "tabs"],
         "Show a list of all buffers",
         function (args, special)
         {
             if (args)
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
 
-            vimperator.tabs.list(special);
+            liberator.tabs.list(special);
         });
 
-    vimperator.commands.add(["quita[ll]", "qa[ll]"],
-        "Quit " + vimperator.config.appName,
-        function () { vimperator.quit(false); });
+    liberator.commands.add(["quita[ll]", "qa[ll]"],
+        "Quit " + liberator.config.appName,
+        function () { liberator.quit(false); });
 
-    vimperator.commands.add(["reloada[ll]"],
+    liberator.commands.add(["reloada[ll]"],
         "Reload all tab pages",
-        function (args, special) { vimperator.tabs.reloadAll(special); });
+        function (args, special) { liberator.tabs.reloadAll(special); });
 
-    vimperator.commands.add(["tab"],
+    liberator.commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
-        function (args) { vimperator.execute(args, { inTab: true }); },
-        { completer: function (filter) { return vimperator.completion.command(filter); } });
+        function (args) { liberator.execute(args, { inTab: true }); },
+        { completer: function (filter) { return liberator.completion.command(filter); } });
 
-    vimperator.commands.add(["tabl[ast]"],
+    liberator.commands.add(["tabl[ast]"],
         "Switch to the last tab",
-        function () { vimperator.tabs.select("$", false); });
+        function () { liberator.tabs.select("$", false); });
 
-    vimperator.commands.add(["tabm[ove]"],
+    liberator.commands.add(["tabm[ove]"],
         "Move the current tab after tab N",
         function (args, special)
         {
             // FIXME: tabmove! N should probably produce an error
             if (!/^([+-]?\d+|)$/.test(args))
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
 
             if (!args)
                 args = "$"; // if not specified, move to the last tab
 
-            vimperator.tabs.move(getBrowser().mCurrentTab, args, special);
+            liberator.tabs.move(getBrowser().mCurrentTab, args, special);
         });
 
     // TODO: count support
-    vimperator.commands.add(["tabn[ext]", "tn[ext]"],
+    liberator.commands.add(["tabn[ext]", "tn[ext]"],
         "Switch to the next or [count]th tab",
         function (args)
         {
             if (!args)
             {
-                vimperator.tabs.select("+1", true);
+                liberator.tabs.select("+1", true);
             }
             else if (/^\d+$/.test(args))
             {
                 var index = parseInt(args, 10) - 1;
-                if (index < vimperator.tabs.count)
-                    vimperator.tabs.select(index, true);
+                if (index < liberator.tabs.count)
+                    liberator.tabs.select(index, true);
                 else
-                    vimperator.beep();
+                    liberator.beep();
             }
             else
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
             }
         });
 
 
-    vimperator.commands.add(["tabo[nly]"],
+    liberator.commands.add(["tabo[nly]"],
         "Close all other tabs",
-        function () { vimperator.tabs.keepOnly(getBrowser().mCurrentTab); });
+        function () { liberator.tabs.keepOnly(getBrowser().mCurrentTab); });
 
-    vimperator.commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
+    liberator.commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
         "Open one or more URLs in a new tab",
         function (args, special)
         {
-            var where = special ? vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
-            if (/\btabopen\b/.test(vimperator.options["activate"]))
-                where = special ? vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB;
+            var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
+            if (/\btabopen\b/.test(liberator.options["activate"]))
+                where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
 
             if (args)
-                vimperator.open(args, where);
+                liberator.open(args, where);
             else
-                vimperator.open("about:blank", where);
+                liberator.open("about:blank", where);
         },
-        { completer: function (filter) { return vimperator.completion.url(filter); } });
+        { completer: function (filter) { return liberator.completion.url(filter); } });
 
     // TODO: count support
-    vimperator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
+    liberator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
         "Switch to the previous tab or go [count] tabs back",
         function (args)
         {
             if (!args)
-                vimperator.tabs.select("-1", true);
+                liberator.tabs.select("-1", true);
             else if (/^\d+$/.test(args))
-                vimperator.tabs.select("-" + args, true); // FIXME: urgh!
+                liberator.tabs.select("-" + args, true); // FIXME: urgh!
             else
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
         });
 
-    vimperator.commands.add(["tabr[ewind]", "tabfir[st]"],
+    liberator.commands.add(["tabr[ewind]", "tabfir[st]"],
         "Switch to the first tab",
-        function () { vimperator.tabs.select(0, false); });
+        function () { liberator.tabs.select(0, false); });
 
     // TODO: extract common functionality of "undoall"
-    vimperator.commands.add(["u[ndo]"],
+    liberator.commands.add(["u[ndo]"],
         "Undo closing of a tab",
         function (args, special, count)
         {
@@ -371,25 +371,25 @@ vimperator.Tabs = function () //{{{
                     // undoItems[i].image is also available if needed for favicons
                     var url = undoItems[i].state.entries[0].url;
                     var title = undoItems[i].title;
-                    if (vimperator.completion.match([url, title], filter, false))
+                    if (liberator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return [0, completions];
             }
         });
 
-    vimperator.commands.add(["undoa[ll]"],
+    liberator.commands.add(["undoa[ll]"],
         "Undo closing of all closed tabs",
         function (args, special, count)
         {
             if (count > -1)
             {
-                vimperator.echoerr("E481: No range allowed");
+                liberator.echoerr("E481: No range allowed");
                 return;
             }
             if (special)
             {
-                vimperator.echoerr("E477: No ! allowed");
+                liberator.echoerr("E477: No ! allowed");
                 return;
             }
 
@@ -400,11 +400,11 @@ vimperator.Tabs = function () //{{{
                 undoCloseTab(); // doesn't work with i as the index to undoCloseTab
         });
 
-    if (vimperator.has("session"))
+    if (liberator.has("session"))
     {
-        vimperator.commands.add(["wqa[ll]", "wq", "xa[ll]"],
+        liberator.commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
-            function () { vimperator.quit(true); });
+            function () { liberator.quit(true); });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -463,37 +463,37 @@ vimperator.Tabs = function () //{{{
             if (fullmode)
             {
                 // toggle the special buffer preview window
-                if (vimperator.bufferwindow.visible())
+                if (liberator.bufferwindow.visible())
                 {
-                    vimperator.bufferwindow.hide();
+                    liberator.bufferwindow.hide();
                 }
                 else
                 {
-                    var items = vimperator.completion.buffer("")[1];
-                    vimperator.bufferwindow.show(items);
-                    vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+                    var items = liberator.completion.buffer("")[1];
+                    liberator.bufferwindow.show(items);
+                    liberator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
                 }
             }
             else
             {
-                // TODO: move this to vimperator.buffers.get()
-                var items = vimperator.completion.buffer("")[1];
+                // TODO: move this to liberator.buffers.get()
+                var items = liberator.completion.buffer("")[1];
                 var number, indicator, title, url;
 
-                var list = ":" + (vimperator.util.escapeHTML(vimperator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
+                var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    if (i == vimperator.tabs.index())
+                    if (i == liberator.tabs.index())
                        indicator = " <span style=\"color: blue\">%</span> ";
-                    else if (i == vimperator.tabs.index(vimperator.tabs.alternate))
+                    else if (i == liberator.tabs.index(liberator.tabs.alternate))
                        indicator = " <span style=\"color: blue\">#</span> ";
                     else
                        indicator = "   ";
 
                     [number, title] = items[i][0].split(/:\s+/, 2);
                     url = items[i][1];
-                    url = vimperator.util.escapeHTML(url);
-                    title = vimperator.util.escapeHTML(title);
+                    url = liberator.util.escapeHTML(url);
+                    title = liberator.util.escapeHTML(title);
 
                     list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
                             "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
@@ -501,7 +501,7 @@ vimperator.Tabs = function () //{{{
                 }
                 list += "</table>";
 
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         },
 
@@ -523,14 +523,14 @@ vimperator.Tabs = function () //{{{
                     getBrowser().removeTab(tab);
                 else
                 {
-                    if (vimperator.buffer.URL != "about:blank" ||
+                    if (liberator.buffer.URL != "about:blank" ||
                         getWebNavigation().sessionHistory.count > 0)
                     {
-                        vimperator.open("about:blank", vimperator.NEW_BACKGROUND_TAB);
+                        liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
                         getBrowser().removeTab(tab);
                     }
                     else
-                        vimperator.beep();
+                        liberator.beep();
                 }
             }
 
@@ -539,10 +539,10 @@ vimperator.Tabs = function () //{{{
 
             if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)
             {
-                if (vimperator.windows.length > 1)
+                if (liberator.windows.length > 1)
                     window.close();
                 else
-                    vimperator.quit(quitOnLastTab == 2);
+                    liberator.quit(quitOnLastTab == 2);
 
                 return;
             }
@@ -580,7 +580,7 @@ vimperator.Tabs = function () //{{{
             // FIXME:
             if (index === -1)
             {
-                vimperator.beep(); // XXX: move to ex-handling?
+                liberator.beep(); // XXX: move to ex-handling?
                 return;
             }
             getBrowser().mTabContainer.selectedIndex = index;
@@ -652,13 +652,13 @@ vimperator.Tabs = function () //{{{
             var match;
             if (match = buffer.match(/^(\d+):?/))
             {
-                vimperator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+                liberator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
                 return;
             }
 
             var matches = [];
             var lowerBuffer = buffer.toLowerCase();
-            var first = vimperator.tabs.index() + (reverse ? 0 : 1);
+            var first = liberator.tabs.index() + (reverse ? 0 : 1);
             for (var i = 0; i < getBrowser().browsers.length; i++)
             {
                 var index = (i + first) % getBrowser().browsers.length;
@@ -666,7 +666,7 @@ vimperator.Tabs = function () //{{{
                 var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
                 if (url == buffer)
                 {
-                    vimperator.tabs.select(index, false);
+                    liberator.tabs.select(index, false);
                     return;
                 }
 
@@ -674,9 +674,9 @@ vimperator.Tabs = function () //{{{
                     matches.push(index);
             }
             if (matches.length == 0)
-                vimperator.echoerr("E94: No matching buffer for " + buffer);
+                liberator.echoerr("E94: No matching buffer for " + buffer);
             else if (matches.length > 1 && !allowNonUnique)
-                vimperator.echoerr("E93: More than one match for " + buffer);
+                liberator.echoerr("E93: More than one match for " + buffer);
             else
             {
                 if (reverse)
@@ -688,7 +688,7 @@ vimperator.Tabs = function () //{{{
                 else
                     index = (count - 1) % matches.length;
 
-                vimperator.tabs.select(matches[index], false);
+                liberator.tabs.select(matches[index], false);
             }
         },
 

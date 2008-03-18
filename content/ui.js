@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * it consists of a prompt and command field
  * be sure to only create objects of this class when the chrome is ready
  */
-vimperator.CommandLine = function () //{{{
+liberator.CommandLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -40,14 +40,14 @@ vimperator.CommandLine = function () //{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
 
-    var completionlist = new vimperator.InformationList("vimperator-completion", { minItems: 2, maxItems: 10 });
+    var completionlist = new liberator.InformationList("liberator-completion", { minItems: 2, maxItems: 10 });
     var completions = [];
 
     // TODO: clean this up when it's not 3am...
     var history = {
-        get size() { return vimperator.options["history"]; },
+        get size() { return liberator.options["history"]; },
 
-        get mode() { return (vimperator.modes.extended == vimperator.modes.EX) ? "cmd" : "search"; },
+        get mode() { return (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search"; },
 
         cmd: null,    // ex command history
 
@@ -60,14 +60,14 @@ vimperator.CommandLine = function () //{{{
         load: function ()
         {
             // TODO: move to storage module
-            this.cmd = vimperator.options.getPref("extensions.vimperator.commandline_cmd_history", "").split("\n");
-            this.search = vimperator.options.getPref("extensions.vimperator.commandline_search_history", "").split("\n");
+            this.cmd = liberator.options.getPref("extensions.vimperator.commandline_cmd_history", "").split("\n");
+            this.search = liberator.options.getPref("extensions.vimperator.commandline_search_history", "").split("\n");
         },
 
         save: function ()
         {
-            vimperator.options.setPref("extensions.vimperator.commandline_cmd_history", this.cmd.join("\n"));
-            vimperator.options.setPref("extensions.vimperator.commandline_search_history", this.search.join("\n"));
+            liberator.options.setPref("extensions.vimperator.commandline_cmd_history", this.cmd.join("\n"));
+            liberator.options.setPref("extensions.vimperator.commandline_search_history", this.search.join("\n"));
         },
 
         add: function (str)
@@ -103,19 +103,19 @@ vimperator.CommandLine = function () //{{{
     var completionIndex = UNINITIALIZED;
 
     // the containing box for the promptWidget and commandWidget
-    var commandlineWidget = document.getElementById("vimperator-commandline");
+    var commandlineWidget = document.getElementById("liberator-commandline");
     // the prompt for the current command, for example : or /. Can be blank
-    var promptWidget = document.getElementById("vimperator-commandline-prompt");
+    var promptWidget = document.getElementById("liberator-commandline-prompt");
     // the command bar which contains the current command
-    var commandWidget = document.getElementById("vimperator-commandline-command");
+    var commandWidget = document.getElementById("liberator-commandline-command");
 
     // the widget used for multiline output
-    var multilineOutputWidget = document.getElementById("vimperator-multiline-output");
+    var multilineOutputWidget = document.getElementById("liberator-multiline-output");
     multilineOutputWidget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multilineOutputWidget.contentDocument.body.innerHTML = "";
 
     // the widget used for multiline intput
-    var multilineInputWidget = document.getElementById("vimperator-multiline-input");
+    var multilineInputWidget = document.getElementById("liberator-multiline-input");
 
     // we need to save the mode which were in before opening the command line
     // this is then used if we focus the command line again without the "official"
@@ -180,16 +180,16 @@ vimperator.CommandLine = function () //{{{
             multilineOutputWidget.collapsed = true;
         }
 
-        var id = vimperator.config.mainWindowID || "main-window";
+        var id = liberator.config.mainWindowID || "main-window";
         var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
         multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
 
         multilineOutputWidget.contentDocument.body.innerHTML = output;
-        multilineOutputWidget.contentDocument.body.id = "vimperator-multiline-output-content";
+        multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
 
         var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
         stylesheet.setAttribute("rel", "Stylesheet");
-        stylesheet.setAttribute("href", "chrome://" + vimperator.config.name.toLowerCase() + "/skin/vimperator.css");
+        stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
         multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
         var availableHeight = getBrowser().mPanelContainer != undefined ?
@@ -202,26 +202,26 @@ vimperator.CommandLine = function () //{{{
         multilineOutputWidget.height = height + "px";
         multilineOutputWidget.collapsed = false;
 
-        if (vimperator.options["more"] && multilineOutputWidget.contentWindow.scrollMaxY > 0)
+        if (liberator.options["more"] && multilineOutputWidget.contentWindow.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
             var elements = multilineOutputWidget.contentDocument.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
 
             if (multilineOutputWidget.contentWindow.scrollY >= multilineOutputWidget.contentWindow.scrollMaxY)
-                setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
             else
-                setLine("-- More --", vimperator.commandline.HL_QUESTION);
+                setLine("-- More --", liberator.commandline.HL_QUESTION);
         }
         else
         {
             multilineOutputWidget.contentWindow.scrollTo(0, contentHeight);
-            setLine("Press ENTER or type command to continue", vimperator.commandline.HL_QUESTION);
+            setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
         }
 
         multilineOutputWidget.contentWindow.focus();
 
-        vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.OUTPUT_MULTILINE);
+        liberator.modes.set(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
     }
 
     function autosizeMultilineInputWidget()
@@ -248,20 +248,20 @@ vimperator.CommandLine = function () //{{{
 
         try
         {
-            // TODO: move to vimperator.eval()?
-            // with (vimperator) means, vimperator is the default namespace "inside" eval
-            arg = eval("with(vimperator){" + arg + "}");
+            // TODO: move to liberator.eval()?
+            // with (liberator) means, liberator is the default namespace "inside" eval
+            arg = eval("with(liberator){" + arg + "}");
         }
         catch (e)
         {
-            vimperator.echoerr(e.toString());
+            liberator.echoerr(e.toString());
             return null;
         }
 
         if (typeof arg === "object")
-            arg = vimperator.util.objectToString(arg, useColor);
+            arg = liberator.util.objectToString(arg, useColor);
         else if (typeof arg === "function")
-            arg = vimperator.util.escapeHTML(arg.toString());
+            arg = liberator.util.escapeHTML(arg.toString());
         else if (typeof arg === "number" || typeof arg === "boolean")
             arg = "" + arg;
         else if (typeof arg === "undefined")
@@ -274,26 +274,26 @@ vimperator.CommandLine = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["history", "hi"],
+    liberator.options.add(["history", "hi"],
         "Number of Ex commands and search patterns to store in the commandline history",
         "number", 500);
 
-    vimperator.options.add(["more"],
+    liberator.options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
         "boolean", true);
 
-    vimperator.options.add(["complete", "cpt"],
+    liberator.options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
             validator: function (value) { return !/[^sfbh]/.test(value); }
         });
 
-    vimperator.options.add(["showmode", "smd"], 
+    liberator.options.add(["showmode", "smd"], 
         "Show the current mode in the command line",
         "boolean", true);
 
-    vimperator.options.add(["wildmode", "wim"], 
+    liberator.options.add(["wildmode", "wim"], 
         "Define how command line completion works",
         "stringlist", "list:full",
         {
@@ -303,7 +303,7 @@ vimperator.CommandLine = function () //{{{
             }
         });
 
-    vimperator.options.add(["wildoptions", "wop"], 
+    liberator.options.add(["wildoptions", "wop"], 
         "Change how command line completion is done",
         "stringlist", "",
         {
@@ -314,40 +314,40 @@ vimperator.CommandLine = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = [vimperator.modes.COMMAND_LINE];
+    var modes = [liberator.modes.COMMAND_LINE];
     
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<Space>"], "Expand command line abbreviation",
-        function () { return vimperator.editor.expandAbbreviation("c"); },
-        { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING });
+        function () { return liberator.editor.expandAbbreviation("c"); },
+        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
-        function () { vimperator.editor.expandAbbreviation("c"); });
+        function () { liberator.editor.expandAbbreviation("c"); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.commands.add(["ec[ho]"],
+    liberator.commands.add(["ec[ho]"],
         "Display a string at the bottom of the window",
         function (args)
         {
             var res = echoArgumentToString(args, true);
             if (res != null)
-                vimperator.echo(res);
+                liberator.echo(res);
         },
-        { completer: function (filter) { return vimperator.completion.javascript(filter); } });
+        { completer: function (filter) { return liberator.completion.javascript(filter); } });
 
-    vimperator.commands.add(["echoe[rr]"],
+    liberator.commands.add(["echoe[rr]"],
         "Display an error string at the bottom of the window",
         function (args)
         {
             var res = echoArgumentToString(args, false);
             if (res != null)
-                vimperator.echoerr(res);
+                liberator.echoerr(res);
         },
-        { completer: function (filter) { return vimperator.completion.javascript(filter); } });
+        { completer: function (filter) { return liberator.completion.javascript(filter); } });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -387,9 +387,9 @@ vimperator.CommandLine = function () //{{{
             completionIndex = UNINITIALIZED;
 
             // save the mode, because we need to restore it
-            oldMode = vimperator.mode;
-            oldExtendedMode = vimperator.mode.extended;
-            vimperator.modes.set(vimperator.modes.COMMAND_LINE, currentExtendedMode);
+            oldMode = liberator.mode;
+            oldExtendedMode = liberator.mode.extended;
+            liberator.modes.set(liberator.modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
             setPrompt(currentPrompt);
             setCommand(currentCommand);
@@ -400,9 +400,9 @@ vimperator.CommandLine = function () //{{{
         // normally used when pressing esc, does not execute a command
         close: function ()
         {
-            var res = vimperator.triggerCallback("cancel", currentExtendedMode);
+            var res = liberator.triggerCallback("cancel", currentExtendedMode);
             history.add(this.getCommand());
-            vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
+            liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
             this.clear();
         },
 
@@ -416,7 +416,7 @@ vimperator.CommandLine = function () //{{{
         },
 
         // TODO: add :messages entry
-        // vimperator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
+        // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function (str, highlightGroup, flags)
         {
             // if we are modifing the GUI while we are not in the main thread
@@ -456,7 +456,7 @@ vimperator.CommandLine = function () //{{{
         },
 
         // this will prompt the user for a string
-        // vimperator.commandline.input("(s)ave or (o)pen the file?")
+        // liberator.commandline.input("(s)ave or (o)pen the file?")
         input: function (str)
         {
             // TODO: unfinished, need to find out how/if we can block the execution of code
@@ -471,9 +471,9 @@ vimperator.CommandLine = function () //{{{
         inputMultiline: function (untilRegexp, callbackFunc)
         {
             // save the mode, because we need to restore it
-            oldMode = vimperator.mode;
-            oldExtendedMode = vimperator.mode.extended;
-            vimperator.modes.set(vimperator.modes.COMMAND_LINE, vimperator.modes.INPUT_MULTILINE);
+            oldMode = liberator.mode;
+            oldExtendedMode = liberator.mode.extended;
+            liberator.modes.set(liberator.modes.COMMAND_LINE, liberator.modes.INPUT_MULTILINE);
 
             // save the arguments, they are needed in the event handler onEvent
             multilineRegexp = untilRegexp;
@@ -496,9 +496,9 @@ vimperator.CommandLine = function () //{{{
             {
                 // prevent losing focus, there should be a better way, but it just didn't work otherwise
                 setTimeout(function () {
-                    if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                        !(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE) &&
-                        !(vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+                    if (liberator.mode == liberator.modes.COMMAND_LINE &&
+                        !(liberator.modes.extended & liberator.modes.INPUT_MULTILINE) &&
+                        !(liberator.modes.extended & liberator.modes.OUTPUT_MULTILINE))
                                 commandWidget.inputField.focus();
                 }, 0);
             }
@@ -509,27 +509,27 @@ vimperator.CommandLine = function () //{{{
             }
             else if (event.type == "input")
             {
-                vimperator.triggerCallback("change", currentExtendedMode, command);
+                liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
                 if (!currentExtendedMode)
                     return true;
 
-                var key = vimperator.events.toString(event);
-                //vimperator.log("command line handling key: " + key + "\n");
+                var key = liberator.events.toString(event);
+                //liberator.log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
-                if (vimperator.events.isAcceptKey(key))
+                if (liberator.events.isAcceptKey(key))
                 {
                     var mode = currentExtendedMode; // save it here, as setMode() resets it
                     history.add(command);
-                    vimperator.modes.reset(true); //FIXME: use mode stack
+                    liberator.modes.reset(true); //FIXME: use mode stack
                     completionlist.hide();
-                    vimperator.focusContent(false);
-                    vimperator.statusline.updateProgress(""); // we may have a "match x of y" visible
-                    return vimperator.triggerCallback("submit", mode, command);
+                    liberator.focusContent(false);
+                    liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
+                    return liberator.triggerCallback("submit", mode, command);
                 }
 
                 // user pressed UP or DOWN arrow to cycle history completion
@@ -560,7 +560,7 @@ vimperator.CommandLine = function () //{{{
                         if (historyIndex == lines.length)
                         {
                             setCommand(historyStart);
-                            vimperator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                            liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
                             break;
                         }
 
@@ -568,20 +568,20 @@ vimperator.CommandLine = function () //{{{
                         if (historyIndex <= -1)
                         {
                             historyIndex = 0;
-                            vimperator.beep();
+                            liberator.beep();
                             break;
                         }
                         else if (historyIndex >= lines.length + 1)
                         {
                             historyIndex = lines.length;
-                            vimperator.beep();
+                            liberator.beep();
                             break;
                         }
 
                         if (lines[historyIndex].indexOf(historyStart) == 0)
                         {
                             setCommand(lines[historyIndex]);
-                            vimperator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                            liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
                             break;
                         }
                     }
@@ -603,12 +603,12 @@ vimperator.CommandLine = function () //{{{
 
                         completionPrefix = command.substring(0, commandWidget.selectionStart);
                         completionPostfix = command.substring(commandWidget.selectionStart);
-                        var res = vimperator.triggerCallback("complete", currentExtendedMode, completionPrefix);
+                        var res = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
                         if (res)
                             [completionStartIndex, completions] = res;
 
                         // sort the completion list
-                        if (/\bsort\b/.test(vimperator.options["wildoptions"]))
+                        if (/\bsort\b/.test(liberator.options["wildoptions"]))
                         {
                             completions.sort(function (a, b) {
                                     if (a[0] < b[0])
@@ -623,12 +623,12 @@ vimperator.CommandLine = function () //{{{
 
                     if (completions.length == 0)
                     {
-                        vimperator.beep();
+                        liberator.beep();
                         // prevent tab from moving to the next field:
                         return false;
                     }
 
-                    var wim = vimperator.options["wildmode"].split(/,/);
+                    var wim = liberator.options["wildmode"].split(/,/);
                     var hasList = false;
                     var longest = false;
                     var full = false;
@@ -664,7 +664,7 @@ vimperator.CommandLine = function () //{{{
                                 completionIndex = -1;
                         }
 
-                        vimperator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+                        liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
                         // if the list is hidden, this function does nothing
                         completionlist.selectItem(completionIndex);
                     }
@@ -680,7 +680,7 @@ vimperator.CommandLine = function () //{{{
                     {
                         var compl = null;
                         if (longest && completions.length > 1)
-                            compl = vimperator.completion.getLongestSubstring();
+                            compl = liberator.completion.getLongestSubstring();
                         else if (full)
                             compl = completions[completionIndex][0];
                         else if (completions.length == 1)
@@ -711,8 +711,8 @@ vimperator.CommandLine = function () //{{{
                     // and blur the command line if there is no text left
                     if (command.length == 0)
                     {
-                        vimperator.triggerCallback("cancel", currentExtendedMode);
-                        vimperator.modes.reset(); // FIXME: use mode stack
+                        liberator.triggerCallback("cancel", currentExtendedMode);
+                        liberator.modes.reset(); // FIXME: use mode stack
                     }
                 }
                 else // any other key
@@ -728,27 +728,27 @@ vimperator.CommandLine = function () //{{{
         {
             if (event.type == "keypress")
             {
-                var key = vimperator.events.toString(event);
-                if (vimperator.events.isAcceptKey(key))
+                var key = liberator.events.toString(event);
+                if (liberator.events.isAcceptKey(key))
                 {
                     var text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
                     if (text.match(multilineRegexp))
                     {
                         text = text.replace(multilineRegexp, "");
-                        vimperator.modes.set(oldMode, oldExtendedMode);
+                        liberator.modes.set(oldMode, oldExtendedMode);
                         multilineInputWidget.collapsed = true;
                         multilineCallback.call(this, text);
                     }
                 }
-                else if (vimperator.events.isCancelKey(key))
+                else if (liberator.events.isCancelKey(key))
                 {
-                    vimperator.modes.set(oldMode, oldExtendedMode);
+                    liberator.modes.set(oldMode, oldExtendedMode);
                     multilineInputWidget.collapsed = true;
                 }
             }
             else if (event.type == "blur")
             {
-                if (vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE)
+                if (liberator.modes.extended & liberator.modes.INPUT_MULTILINE)
                     setTimeout(function () { multilineInputWidget.inputField.focus(); }, 0);
             }
             else if (event.type == "input")
@@ -773,7 +773,7 @@ vimperator.CommandLine = function () //{{{
 
             function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
 
-            var key = vimperator.events.toString(event);
+            var key = liberator.events.toString(event);
 
             switch (key)
             {
@@ -782,13 +782,13 @@ vimperator.CommandLine = function () //{{{
                     break; // handled globally in events.js:onEscape()
 
                 case ":":
-                    vimperator.commandline.open(":", "", vimperator.modes.EX);
+                    liberator.commandline.open(":", "", liberator.modes.EX);
                     return;
 
                 // down a line
                 case "j":
                 case "<Down>":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollByLines(1);
                     else
                         passEvent = true;
@@ -797,7 +797,7 @@ vimperator.CommandLine = function () //{{{
                 case "<C-j>":
                 case "<C-m>":
                 case "<Return>":
-                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    if (liberator.options["more"] && isScrollable() && !atEnd())
                         win.scrollByLines(1);
                     else
                         closeWindow = true; // don't propagate the event for accept keys
@@ -807,9 +807,9 @@ vimperator.CommandLine = function () //{{{
                 case "k":
                 case "<Up>":
                 case "<BS>":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollByLines(-1);
-                    else if (vimperator.options["more"] && !isScrollable())
+                    else if (liberator.options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
@@ -817,7 +817,7 @@ vimperator.CommandLine = function () //{{{
 
                 // half page down
                 case "d":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollBy(0, win.innerHeight / 2);
                     else
                         passEvent = true;
@@ -826,22 +826,22 @@ vimperator.CommandLine = function () //{{{
                 case "<LeftMouse>":
                     if (event.originalTarget.className == "hl-URL buffer-list")
                     {
-                        vimperator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                        liberator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
                         closeWindow = true;
                         break;
                     }
                     else if (event.originalTarget.localName.toLowerCase() == "a")
                     {
-                        vimperator.open(event.originalTarget.textContent);
+                        liberator.open(event.originalTarget.textContent);
                         break;
                     }
                 case "<A-LeftMouse>": // for those not owning a 3-button mouse
                 case "<MiddleMouse>":
                     if (event.originalTarget.localName.toLowerCase() == "a")
                     {
-                        var where = /\btabopen\b/.test(vimperator.options["activate"]) ?
-                                    vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB;
-                        vimperator.open(event.originalTarget.textContent, where);
+                        var where = /\btabopen\b/.test(liberator.options["activate"]) ?
+                                    liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
+                        liberator.open(event.originalTarget.textContent, where);
                     }
                     break;
 
@@ -860,7 +860,7 @@ vimperator.CommandLine = function () //{{{
 
                 // page down
                 case "f":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollByPages(1);
                     else
                         passEvent = true;
@@ -868,7 +868,7 @@ vimperator.CommandLine = function () //{{{
 
                 case "<Space>":
                 case "<PageDown>":
-                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    if (liberator.options["more"] && isScrollable() && !atEnd())
                         win.scrollByPages(1);
                     else
                         passEvent = true;
@@ -877,7 +877,7 @@ vimperator.CommandLine = function () //{{{
                 // half page up
                 case "u":
                     // if (more and scrollable)
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollBy(0, -(win.innerHeight / 2));
                     else
                         passEvent = true;
@@ -885,16 +885,16 @@ vimperator.CommandLine = function () //{{{
 
                 // page up
                 case "b":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollByPages(-1);
-                    else if (vimperator.options["more"] && !isScrollable())
+                    else if (liberator.options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
                     break;
 
                 case "<PageUp>":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollByPages(-1);
                     else
                         passEvent = true;
@@ -902,9 +902,9 @@ vimperator.CommandLine = function () //{{{
 
                 // top of page
                 case "g":
-                    if (vimperator.options["more"] && isScrollable())
+                    if (liberator.options["more"] && isScrollable())
                         win.scrollTo(0, 0);
-                    else if (vimperator.options["more"] && !isScrollable())
+                    else if (liberator.options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
@@ -912,7 +912,7 @@ vimperator.CommandLine = function () //{{{
 
                 // bottom of page
                 case "G":
-                    if (vimperator.options["more"] && isScrollable() && !atEnd())
+                    if (liberator.options["more"] && isScrollable() && !atEnd())
                         win.scrollTo(0, win.scrollMaxY);
                     else
                         passEvent = true;
@@ -920,7 +920,7 @@ vimperator.CommandLine = function () //{{{
 
                 // copy text to clipboard
                 case "<C-y>":
-                    vimperator.copyToClipboard(win.getSelection());
+                    liberator.copyToClipboard(win.getSelection());
                     break;
 
                 // close the window
@@ -930,7 +930,7 @@ vimperator.CommandLine = function () //{{{
 
                 // unmapped key
                 default:
-                    if (!vimperator.options["more"] || !isScrollable() || atEnd() || vimperator.events.isCancelKey(key))
+                    if (!liberator.options["more"] || !isScrollable() || atEnd() || liberator.events.isCancelKey(key))
                         passEvent = true;
                     else
                         showMoreHelpPrompt = true;
@@ -939,17 +939,17 @@ vimperator.CommandLine = function () //{{{
             if (passEvent || closeWindow)
             {
                 // FIXME: use mode stack
-                vimperator.modes.reset();
+                liberator.modes.reset();
                 this.clear();
 
                 if (passEvent)
-                    vimperator.events.onKeyPress(event);
+                    liberator.events.onKeyPress(event);
             }
             else // set update the prompt string
             {
                 if (showMoreHelpPrompt)
                     setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
-                else if (showMorePrompt || (vimperator.options["more"] && isScrollable() && !atEnd()))
+                else if (showMorePrompt || (liberator.options["more"] && isScrollable() && !atEnd()))
                     setLine("-- More --", this.HL_MOREMSG);
                 else
                     setLine("Press ENTER or type command to continue", this.HL_QUESTION);
@@ -972,7 +972,7 @@ vimperator.CommandLine = function () //{{{
  * @param id: the id of the the XUL widget which we want to fill
  * @param options: an optional hash which modifies the behavior of the list
  */
-vimperator.InformationList = function (id, options) //{{{
+liberator.InformationList = function (id, options) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1076,7 +1076,7 @@ vimperator.InformationList = function (id, options) //{{{
          */
         show: function (compl)
         {
-            //maxItems = vimperator.options["previewheight"];
+            //maxItems = liberator.options["previewheight"];
 
             if (compl)
             {
@@ -1168,9 +1168,9 @@ vimperator.InformationList = function (id, options) //{{{
             var index = (widget.selectedIndex * 2) + 0;
             var val = listcells[index].getAttribute("label");
             if (val && event.button == 0 && event.type == "dblclick") // left double click
-                vimperator.open(val);
+                liberator.open(val);
             else if (val && event.button == 1) // middle click
-                vimperator.open(val, vimperator.NEW_TAB);
+                liberator.open(val, liberator.NEW_TAB);
             else
                 return false;
         }
@@ -1179,7 +1179,7 @@ vimperator.InformationList = function (id, options) //{{{
     //}}}
 }; //}}}
 
-vimperator.StatusLine = function () //{{{
+liberator.StatusLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1189,18 +1189,18 @@ vimperator.StatusLine = function () //{{{
     statusBar.collapsed = true; // it is later restored unless the user sets laststatus=0
 
     // our status bar fields
-    var statuslineWidget     = document.getElementById("vimperator-statusline");
-    var urlWidget            = document.getElementById("vimperator-statusline-field-url");
-    var inputBufferWidget    = document.getElementById("vimperator-statusline-field-inputbuffer");
-    var progressWidget       = document.getElementById("vimperator-statusline-field-progress");
-    var tabCountWidget       = document.getElementById("vimperator-statusline-field-tabcount");
-    var bufferPositionWidget = document.getElementById("vimperator-statusline-field-bufferposition");
+    var statuslineWidget     = document.getElementById("liberator-statusline");
+    var urlWidget            = document.getElementById("liberator-statusline-field-url");
+    var inputBufferWidget    = document.getElementById("liberator-statusline-field-inputbuffer");
+    var progressWidget       = document.getElementById("liberator-statusline-field-progress");
+    var tabCountWidget       = document.getElementById("liberator-statusline-field-tabcount");
+    var bufferPositionWidget = document.getElementById("liberator-statusline-field-bufferposition");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["laststatus", "ls"],
+    liberator.options.add(["laststatus", "ls"],
         "Show the status line",
         "number", 2,
         {
@@ -1209,7 +1209,7 @@ vimperator.StatusLine = function () //{{{
                 if (value == 0)
                     document.getElementById("status-bar").collapsed = true;
                 else if (value == 1)
-                    vimperator.echo("show status line only with > 1 window not implemented yet");
+                    liberator.echo("show status line only with > 1 window not implemented yet");
                 else
                     document.getElementById("status-bar").collapsed = false;
             },
@@ -1261,12 +1261,12 @@ vimperator.StatusLine = function () //{{{
                 return;
             }
 
-            url = vimperator.buffer.URL;
+            url = liberator.buffer.URL;
 
             // make it even more vim-like
             if (url == "about:blank")
             {
-                var title = vimperator.buffer.title;
+                var title = liberator.buffer.title;
                 if (!title)
                     url = "[No Name]";
             }
@@ -1278,7 +1278,7 @@ vimperator.StatusLine = function () //{{{
             }
 
             // when session information is available, add [+] when we can go backwards
-            if (vimperator.config.name == "Vimperator")
+            if (liberator.config.name == "Vimperator")
             {
                 var sh = getWebNavigation().sessionHistory;
                 var modified = "";
@@ -1286,7 +1286,7 @@ vimperator.StatusLine = function () //{{{
                     modified += "+";
                 if (sh.index < sh.count -1)
                     modified += "-";
-                if (vimperator.bookmarks.isBookmarked(url))
+                if (liberator.bookmarks.isBookmarked(url))
                     modified += "\u2764"; // a heart symbol: ❤
                     //modified += "\u2665"; // a heart symbol: ♥
 
@@ -1338,16 +1338,16 @@ vimperator.StatusLine = function () //{{{
         // you can omit either of the 2 arguments
         updateTabCount: function (currentIndex, totalTabs)
         {
-            if (!vimperator.has("tabs"))
+            if (!liberator.has("tabs"))
             {
                 tabCountWidget = "";
                 return;
             }
 
             if (!currentIndex || typeof currentIndex != "number")
-                currentIndex = vimperator.tabs.index() + 1;
+                currentIndex = liberator.tabs.index() + 1;
             if (!totalTabs || typeof currentIndex != "number")
-                totalTabs = vimperator.tabs.count;
+                totalTabs = liberator.tabs.count;
 
             tabCountWidget.value = "[" + currentIndex + "/" + totalTabs + "]";
         },

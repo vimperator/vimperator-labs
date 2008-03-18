@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.config = {
+liberator.config = {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
@@ -83,20 +83,20 @@ vimperator.config = {
         ["searchengines",    "Manage installed search engines",
             function() { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function() { vimperator.buffer.viewSelectionSource(); }]
+            function() { liberator.buffer.viewSelectionSource(); }]
     ],
 
     init: function()
     {
         function incrementURL(count)
         {
-            var url = vimperator.buffer.URL;
+            var url = liberator.buffer.URL;
             var regex = /(.*?)(-?\d+)(\D*)$/;
 
             var matches = url.match(regex);
             if (!matches || !matches[2]) // no number to increment
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
@@ -108,62 +108,62 @@ vimperator.config = {
                 newNum += "0"; // keep leading zeros
             newNum += nums[2];
 
-            vimperator.open(matches[1] + newNum + matches[3]);
+            liberator.open(matches[1] + newNum + matches[3]);
         }
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
     
-        vimperator.mappings.add([vimperator.modes.NORMAL],
+        liberator.mappings.add([liberator.modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { vimperator.copyToClipboard(vimperator.buffer.URL, true); });
+            function () { liberator.copyToClipboard(liberator.buffer.URL, true); });
 
         // opening websites
-        vimperator.mappings.add([vimperator.modes.NORMAL],
+        liberator.mappings.add([liberator.modes.NORMAL],
             ["o"], "Open one or more URLs",
-            function () { vimperator.commandline.open(":", "open ", vimperator.modes.EX); });
+            function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["O"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["O"],
             "Open one or more URLs, based on current location",
-            function () { vimperator.commandline.open(":", "open " + vimperator.buffer.URL, vimperator.modes.EX); });
+            function () { liberator.commandline.open(":", "open " + liberator.buffer.URL, liberator.modes.EX); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["t"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
-            function () { vimperator.commandline.open(":", "tabopen ", vimperator.modes.EX); });
+            function () { liberator.commandline.open(":", "tabopen ", liberator.modes.EX); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["T"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
-            function () { vimperator.commandline.open(":", "tabopen " + vimperator.buffer.URL, vimperator.modes.EX); });
+            function () { liberator.commandline.open(":", "tabopen " + liberator.buffer.URL, liberator.modes.EX); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL],
+        liberator.mappings.add([liberator.modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(count > 1 ? count : 1); },
-            { flags: vimperator.Mappings.flags.COUNT });
+            { flags: liberator.Mappings.flags.COUNT });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL],
+        liberator.mappings.add([liberator.modes.NORMAL],
             ["<C-x>"], "Decrement last number in URL",
             function (count) { incrementURL(-(count > 1 ? count : 1)); },
-            { flags: vimperator.Mappings.flags.COUNT });
+            { flags: liberator.Mappings.flags.COUNT });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["~"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["~"],
             "Open home directory",
-            function () { vimperator.open("~"); });
+            function () { liberator.open("~"); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["gh"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["gh"],
             "Open homepage",
             function() { BrowserHome(); });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["gH"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["gH"],
             "Open homepage in a new tab",
             function ()
             {
                 var homepages = gHomeButton.getHomePage();
-                vimperator.open(homepages, /\bhomepage\b/.test(vimperator.options["activate"]) ?
-                        vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+                liberator.open(homepages, /\bhomepage\b/.test(liberator.options["activate"]) ?
+                        liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
             });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["gu"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["gu"],
             "Go to parent directory",
             function (count)
             {
@@ -172,7 +172,7 @@ vimperator.config = {
                     if (/^file:\/|^\//.test(url))
                     {
                         //var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-                        var file = vimperator.io.getFile(url);
+                        var file = liberator.io.getFile(url);
                         if (!file.exists() || !file.isDirectory())
                             return false;
                         else
@@ -186,7 +186,7 @@ vimperator.config = {
                 if (count < 1)
                     count = 1;
 
-                var url = vimperator.buffer.URL;
+                var url = liberator.buffer.URL;
                 for (var i = 0; i < count; i++)
                 {
                     if (isDirectory(url))
@@ -196,47 +196,47 @@ vimperator.config = {
                 }
                 url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
 
-                if (url == vimperator.buffer.URL)
+                if (url == liberator.buffer.URL)
                 {
-                    vimperator.beep();
+                    liberator.beep();
                     return;
                 }
-                vimperator.open(url);
+                liberator.open(url);
             },
-            { flags: vimperator.Mappings.flags.COUNT });
+            { flags: liberator.Mappings.flags.COUNT });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["gU"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["gU"],
             "Go to the root of the website",
             function ()
             {
                 var uri = content.document.location;
                 if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
                 {
-                    vimperator.beep();
+                    liberator.beep();
                     return;
                 }
-                vimperator.open(uri.protocol + "//" + (uri.host || "") + "/");
+                liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
             });
 
-        vimperator.mappings.add([vimperator.modes.NORMAL], ["<C-l>"],
+        liberator.mappings.add([liberator.modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { vimperator.commands.redraw(); });
+            function () { liberator.commands.redraw(); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        vimperator.commands.add(["downl[oads]", "dl"],
+        liberator.commands.add(["downl[oads]", "dl"],
             "Show progress of current downloads",
-            function () { vimperator.open("chrome://mozapps/content/downloads/downloads.xul", vimperator.NEW_TAB); });
+            function () { liberator.open("chrome://mozapps/content/downloads/downloads.xul", liberator.NEW_TAB); });
 
-        vimperator.commands.add(["o[pen]", "e[dit]"],
+        liberator.commands.add(["o[pen]", "e[dit]"],
             "Open one or more URLs in the current tab",
             function (args, special)
             {
                 if (args)
                 {
-                    vimperator.open(args);
+                    liberator.open(args);
                 }
                 else
                 {
@@ -247,10 +247,10 @@ vimperator.config = {
                 }
             },
             {
-                completer: function (filter) { return vimperator.completion.url(filter); }
+                completer: function (filter) { return liberator.completion.url(filter); }
             });
 
-        vimperator.commands.add(["redr[aw]"],
+        liberator.commands.add(["redr[aw]"],
             "Redraw the screen",
             function ()
             {
@@ -260,13 +260,13 @@ vimperator.config = {
             });
 
         // TODO: move sidebar commands to ui.js?
-        vimperator.commands.add(["sbcl[ose]"],
+        liberator.commands.add(["sbcl[ose]"],
             "Close the sidebar window",
             function (args)
             {
                 if (args)
                 {
-                    vimperator.echoerr("E488: Trailing characters");
+                    liberator.echoerr("E488: Trailing characters");
                     return;
                 }
 
@@ -274,13 +274,13 @@ vimperator.config = {
                     toggleSidebar();
             });
 
-        vimperator.commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
+        liberator.commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
             "Open the sidebar window",
             function (args)
             {
                 if (!args)
                 {
-                    vimperator.echoerr("E471: Argument required");
+                    liberator.echoerr("E471: Argument required");
                     return;
                 }
 
@@ -303,24 +303,24 @@ vimperator.config = {
                 }
             },
             {
-                completer: function (filter) { return vimperator.completion.sidebar(filter); }
+                completer: function (filter) { return liberator.completion.sidebar(filter); }
             });
 
-        vimperator.commands.add(["winc[lose]", "wc[lose]"],
+        liberator.commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
             function (args) { window.close(); });
 
-        vimperator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
+        liberator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
             "Open one or more URLs in a new window",
             function (args)
             {
                 if (args)
-                    vimperator.open(args, vimperator.NEW_WINDOW);
+                    liberator.open(args, liberator.NEW_WINDOW);
                 else
-                    vimperator.open("about:blank", vimperator.NEW_WINDOW);
+                    liberator.open("about:blank", liberator.NEW_WINDOW);
             },
             {
-                completer: function (filter) { return vimperator.completion.url(filter); }
+                completer: function (filter) { return liberator.completion.url(filter); }
             });
     }
 }

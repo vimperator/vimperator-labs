@@ -26,12 +26,12 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Hints = function () //{{{
+liberator.Hints = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
@@ -53,7 +53,7 @@ vimperator.Hints = function () //{{{
     // reset all important variables
     function reset()
     {
-        vimperator.statusline.updateInputBuffer("");
+        liberator.statusline.updateInputBuffer("");
         hintString = "";
         hintNumber = 0;
         usedTabKey = false;
@@ -70,7 +70,7 @@ vimperator.Hints = function () //{{{
 
     function updateStatusline()
     {
-        vimperator.statusline.updateInputBuffer((escapeNumbers ? vimperator.events.getMapLeader() + " ": "") + // sign for escapeNumbers
+        liberator.statusline.updateInputBuffer((escapeNumbers ? liberator.events.getMapLeader() + " ": "") + // sign for escapeNumbers
                 (hintString ? "\"" + hintString + "\"" : "") +
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
@@ -98,11 +98,11 @@ vimperator.Hints = function () //{{{
         baseNodeAbsolute.style.padding = "0px 1px 0px 0px";
         baseNodeAbsolute.style.zIndex = "10000001";
         baseNodeAbsolute.style.display = "none";
-        baseNodeAbsolute.className = "vimperator-hint";
+        baseNodeAbsolute.className = "liberator-hint";
 
         var elem, tagname, text, span, rect;
-        var res = vimperator.buffer.evaluateXPath(vimperator.options["hinttags"], doc, null, true);
-        vimperator.log("evaluated XPath after: " + (Date.now() - startDate) + "ms");
+        var res = liberator.buffer.evaluateXPath(liberator.options["hinttags"], doc, null, true);
+        liberator.log("evaluated XPath after: " + (Date.now() - startDate) + "ms");
 
         var fragment = doc.createDocumentFragment();
         var start = hints.length;
@@ -146,7 +146,7 @@ vimperator.Hints = function () //{{{
         for (var i = 0; i < win.frames.length; i++)
             generate(win.frames[i]);
 
-        vimperator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms for " + hints.length + " hints.");
+        liberator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms for " + hints.length + " hints.");
         return true;
     }
 
@@ -169,7 +169,7 @@ vimperator.Hints = function () //{{{
         var height = win.innerHeight;
         var width  = win.innerWidth;
 
-        vimperator.log("Show hints matching: " + hintString, 7);
+        liberator.log("Show hints matching: " + hintString, 7);
 
         var elem, tagname, text, rect, span, imgspan;
         var hintnum = 1;
@@ -224,7 +224,7 @@ vimperator.Hints = function () //{{{
                         imgspan.style.top = (rect.top + scrollY) + "px";
                         imgspan.style.width = (rect.right - rect.left) + "px";
                         imgspan.style.height = (rect.bottom - rect.top) + "px";
-                        imgspan.className = "vimperator-hint";
+                        imgspan.className = "liberator-hint";
                         hints[i][3] = imgspan;
                         doc.body.appendChild(imgspan);
                     }
@@ -241,7 +241,7 @@ vimperator.Hints = function () //{{{
             }
         }
 
-        vimperator.log("showHints() completed after: " + (Date.now() - startDate) + "ms");
+        liberator.log("showHints() completed after: " + (Date.now() - startDate) + "ms");
         return true;
     }
 
@@ -311,7 +311,7 @@ vimperator.Hints = function () //{{{
             }
         }
 
-        vimperator.log("removeHints() done");
+        liberator.log("removeHints() done");
         reset();
     }
 
@@ -319,7 +319,7 @@ vimperator.Hints = function () //{{{
     {
         if (validHints.length == 0)
         {
-            vimperator.beep();
+            liberator.beep();
             return false;
         }
 
@@ -342,49 +342,49 @@ vimperator.Hints = function () //{{{
         switch (submode)
         {
             // TODO: move/rename those helper functions to a better place
-            case ";": vimperator.buffer.focusElement(elem); break;
-            case "?": vimperator.buffer.showElementInfo(elem); break;
-            case "a": vimperator.buffer.saveLink(elem, false); break;
-            case "s": vimperator.buffer.saveLink(elem, true); break;
-            case "o": vimperator.buffer.followLink(elem, vimperator.CURRENT_TAB); break;
-            case "O": vimperator.commandline.open(":", "open " + loc, vimperator.modes.EX); break;
-            case "t": vimperator.buffer.followLink(elem, vimperator.NEW_TAB); break;
-            case "T": vimperator.commandline.open(":", "tabopen " + loc, vimperator.modes.EX); break;
-            case "v": vimperator.buffer.viewSource(loc, false); break;
-            case "V": vimperator.buffer.viewSource(loc, true); break;
-            case "w": vimperator.buffer.followLink(elem, vimperator.NEW_WINDOW);  break;
-            case "W": vimperator.commandline.open(":", "winopen " + loc, vimperator.modes.EX); break;
-            case "y": setTimeout(function(){vimperator.copyToClipboard(loc, true)}, timeout + 50); break;
-            case "Y": setTimeout(function(){vimperator.copyToClipboard(elem.textContent || "", true)}, timeout + 50); break;
+            case ";": liberator.buffer.focusElement(elem); break;
+            case "?": liberator.buffer.showElementInfo(elem); break;
+            case "a": liberator.buffer.saveLink(elem, false); break;
+            case "s": liberator.buffer.saveLink(elem, true); break;
+            case "o": liberator.buffer.followLink(elem, liberator.CURRENT_TAB); break;
+            case "O": liberator.commandline.open(":", "open " + loc, liberator.modes.EX); break;
+            case "t": liberator.buffer.followLink(elem, liberator.NEW_TAB); break;
+            case "T": liberator.commandline.open(":", "tabopen " + loc, liberator.modes.EX); break;
+            case "v": liberator.buffer.viewSource(loc, false); break;
+            case "V": liberator.buffer.viewSource(loc, true); break;
+            case "w": liberator.buffer.followLink(elem, liberator.NEW_WINDOW);  break;
+            case "W": liberator.commandline.open(":", "winopen " + loc, liberator.modes.EX); break;
+            case "y": setTimeout(function(){liberator.copyToClipboard(loc, true)}, timeout + 50); break;
+            case "Y": setTimeout(function(){liberator.copyToClipboard(elem.textContent || "", true)}, timeout + 50); break;
             default:
-                vimperator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
+                liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
         removeHints(timeout);
 
-        if (vimperator.modes.extended & vimperator.modes.ALWAYS_HINT)
+        if (liberator.modes.extended & liberator.modes.ALWAYS_HINT)
         {
             setTimeout(function () {
                 canUpdate = true;
                 hintString = "";
                 hintNumber = 0;
-                vimperator.statusline.updateInputBuffer("");
+                liberator.statusline.updateInputBuffer("");
             }, timeout);
         }
         else
         {
-            if (timeout == 0 || vimperator.modes.isReplaying)
+            if (timeout == 0 || liberator.modes.isReplaying)
             {
                 // force a possible mode change, based on wheter an input field has focus
-                vimperator.events.onFocusChange();
-                if (vimperator.mode == vimperator.modes.HINTS)
-                    vimperator.modes.reset(false);
+                liberator.events.onFocusChange();
+                if (liberator.mode == liberator.modes.HINTS)
+                    liberator.modes.reset(false);
             }
             else
             {
-                vimperator.modes.add(vimperator.modes.INACTIVE_HINT);
+                liberator.modes.add(liberator.modes.INACTIVE_HINT);
                 setTimeout(function () {
-                    if (vimperator.mode == vimperator.modes.HINTS)
-                        vimperator.modes.reset(false);
+                    if (liberator.mode == liberator.modes.HINTS)
+                        liberator.modes.reset(false);
                 }, timeout);
             }
         }
@@ -401,19 +401,19 @@ vimperator.Hints = function () //{{{
                              "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
 
-    vimperator.options.add(["extendedhinttags", "eht"],
+    liberator.options.add(["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
         "string", DEFAULT_HINTTAGS);
-    vimperator.options.add(["focusedhintstyle", "fhs"],
+    liberator.options.add(["focusedhintstyle", "fhs"],
         "CSS specification of focused hints",
         "string", "z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
-    vimperator.options.add(["hintstyle", "hs"],
+    liberator.options.add(["hintstyle", "hs"],
         "CSS specification of unfocused hints",
         "string", "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
-    vimperator.options.add(["hinttags", "ht"],
+    liberator.options.add(["hinttags", "ht"],
         "XPath string of hintable elements activated by 'f' and 'F'",
         "string", DEFAULT_HINTTAGS);
-    vimperator.options.add(["hinttimeout", "hto"],
+    liberator.options.add(["hinttimeout", "hto"],
         "Automatically follow non unique numerical hint",
         "number", 0,
         {
@@ -424,26 +424,26 @@ vimperator.Hints = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
         
-    vimperator.mappings.add(modes, ["f"],
+    liberator.mappings.add(modes, ["f"],
         "Start QuickHint mode",
-        function () { vimperator.hints.show(vimperator.modes.QUICK_HINT); });
+        function () { liberator.hints.show(liberator.modes.QUICK_HINT); });
 
-    vimperator.mappings.add(modes, ["F"],
+    liberator.mappings.add(modes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { vimperator.hints.show(vimperator.modes.QUICK_HINT, "t"); });
+        function () { liberator.hints.show(liberator.modes.QUICK_HINT, "t"); });
 
-    vimperator.mappings.add(modes, [";"],
+    liberator.mappings.add(modes, [";"],
         "Start an extended hint mode",
         function (arg)
         {
             if (arg == "f")
-                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "o");
+                liberator.hints.show(liberator.modes.ALWAYS_HINT, "o");
             else if (arg == "F")
-                vimperator.hints.show(vimperator.modes.ALWAYS_HINT, "t");
+                liberator.hints.show(liberator.modes.ALWAYS_HINT, "t");
             else
-                vimperator.hints.show(vimperator.modes.EXTENDED_HINT, arg);
+                liberator.hints.show(liberator.modes.EXTENDED_HINT, arg);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -455,13 +455,13 @@ vimperator.Hints = function () //{{{
         // TODO: implement framesets
         show: function (mode, minor, filter)
         {
-            if (mode == vimperator.modes.EXTENDED_HINT && !/^[;?asoOtTvVwWyY]$/.test(minor))
+            if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtTvVwWyY]$/.test(minor))
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
-            vimperator.modes.set(vimperator.modes.HINTS, mode);
+            liberator.modes.set(liberator.modes.HINTS, mode);
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
             hintNumber = 0;
@@ -479,8 +479,8 @@ vimperator.Hints = function () //{{{
 
             if (validHints.length == 0)
             {
-                vimperator.beep();
-                vimperator.modes.reset();
+                liberator.beep();
+                liberator.modes.reset();
                 return false;
             }
             else if (validHints.length == 1)
@@ -499,7 +499,7 @@ vimperator.Hints = function () //{{{
 
         onEvent: function (event)
         {
-            var key = vimperator.events.toString(event);
+            var key = liberator.events.toString(event);
             var followFirst = false;
 
             // clear any timeout which might be active after pressing a number
@@ -555,7 +555,7 @@ vimperator.Hints = function () //{{{
                     {
                         usedTabKey = false;
                         hintNumber = 0;
-                        vimperator.beep();
+                        liberator.beep();
                         return;
                     }
                     break;
@@ -566,7 +566,7 @@ vimperator.Hints = function () //{{{
                     hintNumber = 0;
                     break;
 
-               case vimperator.events.getMapLeader():
+               case liberator.events.getMapLeader():
                    escapeNumbers = !escapeNumbers;
                    if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                        hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
@@ -575,18 +575,18 @@ vimperator.Hints = function () //{{{
                    return;
 
                 default:
-                    // pass any special or ctrl- etc. prefixed key back to the main vimperator loop
+                    // pass any special or ctrl- etc. prefixed key back to the main liberator loop
                     if (/^<./.test(key) || key == ":")
                     {
                         var map = null;
-                        if ((map = vimperator.mappings.get(vimperator.modes.NORMAL, key)) ||
-                            (map = vimperator.mappings.get(vimperator.modes.HINTS, key)))
+                        if ((map = liberator.mappings.get(liberator.modes.NORMAL, key)) ||
+                            (map = liberator.mappings.get(liberator.modes.HINTS, key)))
                         {
                             map.execute(null, -1);
                             return;
                         }
 
-                        vimperator.beep();
+                        liberator.beep();
                         return;
                     }
 
@@ -615,7 +615,7 @@ vimperator.Hints = function () //{{{
 
                         if (hintNumber == 0 || hintNumber > validHints.length)
                         {
-                            vimperator.beep();
+                            liberator.beep();
                             return;
                         }
 
@@ -623,7 +623,7 @@ vimperator.Hints = function () //{{{
                         // the hint after a timeout, as the user might have wanted to follow link 34
                         if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
                         {
-                            var timeout = vimperator.options["hinttimeout"];
+                            var timeout = liberator.options["hinttimeout"];
                             if (timeout > 0)
                                 activeTimeout = setTimeout(function () { processHints(true); }, timeout);
 

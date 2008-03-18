@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
-vimperator.Editor = function () //{{{
+liberator.Editor = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -56,15 +56,15 @@ vimperator.Editor = function () //{{{
 
     function selectPreviousLine()
     {
-        vimperator.editor.executeCommand("cmd_selectLinePrevious");
-        if ((vimperator.modes.extended & vimperator.modes.LINE) && !vimperator.editor.selectedText())
-            vimperator.editor.executeCommand("cmd_selectLinePrevious");
+        liberator.editor.executeCommand("cmd_selectLinePrevious");
+        if ((liberator.modes.extended & liberator.modes.LINE) && !liberator.editor.selectedText())
+            liberator.editor.executeCommand("cmd_selectLinePrevious");
     }
     function selectNextLine()
     {
-        vimperator.editor.executeCommand("cmd_selectLineNext");
-        if ((vimperator.modes.extended & vimperator.modes.LINE) && !vimperator.editor.selectedText())
-            vimperator.editor.executeCommand("cmd_selectLineNext");
+        liberator.editor.executeCommand("cmd_selectLineNext");
+        if ((liberator.modes.extended & liberator.modes.LINE) && !liberator.editor.selectedText())
+            liberator.editor.executeCommand("cmd_selectLineNext");
     }
 
     // add mappings for commands like h,j,k,l,etc. in CARET, VISUAL and TEXTAREA mode
@@ -72,9 +72,9 @@ vimperator.Editor = function () //{{{
     {
         var extraInfo = {};
         if (hasCount)
-            extraInfo.flags = vimperator.Mappings.flags.COUNT;
+            extraInfo.flags = liberator.Mappings.flags.COUNT;
 
-        vimperator.mappings.add([vimperator.modes.CARET], keys, "",
+        liberator.mappings.add([liberator.modes.CARET], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1)
@@ -90,7 +90,7 @@ vimperator.Editor = function () //{{{
             },
             extraInfo);
 
-        vimperator.mappings.add([vimperator.modes.VISUAL], keys, "",
+        liberator.mappings.add([liberator.modes.VISUAL], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1 || !hasCount)
@@ -103,12 +103,12 @@ vimperator.Editor = function () //{{{
 
                 while (count--)
                 {
-                    if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
+                    if (liberator.modes.extended & liberator.modes.TEXTAREA)
                     {
                         if (typeof visualTextareaCommand == "function")
                             visualTextareaCommand();
                         else
-                            vimperator.editor.executeCommand(visualTextareaCommand);
+                            liberator.editor.executeCommand(visualTextareaCommand);
                     }
                     else
                         controller[caretModeMethod](caretModeArg, true);
@@ -116,13 +116,13 @@ vimperator.Editor = function () //{{{
             },
             extraInfo);
 
-        vimperator.mappings.add([vimperator.modes.TEXTAREA], keys, "",
+        liberator.mappings.add([liberator.modes.TEXTAREA], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1)
                     count = 1;
 
-                vimperator.editor.executeCommand(textareaCommand, count);
+                liberator.editor.executeCommand(textareaCommand, count);
             },
             extraInfo);
     }
@@ -130,22 +130,22 @@ vimperator.Editor = function () //{{{
     // add mappings for commands like i,a,s,c,etc. in TEXTAREA mode
     function addBeginInsertModeMap(keys, commands)
     {
-        vimperator.mappings.add([vimperator.modes.TEXTAREA], keys, "",
+        liberator.mappings.add([liberator.modes.TEXTAREA], keys, "",
             function (count)
             {
                 for (let c = 0; c < commands.length; c++)
-                    vimperator.editor.executeCommand(commands[c], 1);
+                    liberator.editor.executeCommand(commands[c], 1);
 
-                vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
             });
     }
 
     function addMotionMap(key)
     {
-        vimperator.mappings.add([vimperator.modes.TEXTAREA], [key],
+        liberator.mappings.add([liberator.modes.TEXTAREA], [key],
             "Motion command",
-            function (motion, count) { vimperator.editor.executeCommandWithMotion(key, motion, count); },
-            { flags: vimperator.Mappings.flags.MOTION | vimperator.Mappings.flags.COUNT });
+            function (motion, count) { liberator.editor.executeCommandWithMotion(key, motion, count); },
+            { flags: liberator.Mappings.flags.MOTION | liberator.Mappings.flags.COUNT });
     }
 
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
@@ -154,42 +154,42 @@ vimperator.Editor = function () //{{{
         var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
         var mode = char || "!";
 
-        vimperator.commands.add([char ? char + "a[bbrev]" : "ab[breviate]"],
+        liberator.commands.add([char ? char + "a[bbrev]" : "ab[breviate]"],
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
                 if (!args)
                 {
-                    vimperator.editor.listAbbreviations(mode, "");
+                    liberator.editor.listAbbreviations(mode, "");
                     return;
                 }
 
                 var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
                 var [lhs, rhs] = [matches[1], matches[2]];
                 if (rhs)
-                    vimperator.editor.addAbbreviation(mode, lhs, rhs);
+                    liberator.editor.addAbbreviation(mode, lhs, rhs);
                 else
-                    vimperator.editor.listAbbreviations(mode, lhs);
+                    liberator.editor.listAbbreviations(mode, lhs);
             });
 
-        vimperator.commands.add([char ? char + "una[bbrev]" : "una[bbreviate]"],
+        liberator.commands.add([char ? char + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) { vimperator.editor.removeAbbreviation(mode, args); });
+            function (args) { liberator.editor.removeAbbreviation(mode, args); });
 
-        vimperator.commands.add([char + "abc[lear]"],
+        liberator.commands.add([char + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
-            function (args) { vimperator.editor.removeAllAbbreviations(mode); });
+            function (args) { liberator.editor.removeAllAbbreviations(mode); });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.options.add(["editor"],
+    liberator.options.add(["editor"],
         "Set the external text editor",
         "string", "gvim -f");
 
-    vimperator.options.add(["insertmode", "im"],
+    liberator.options.add(["insertmode", "im"],
         "Use Insert mode as the default for text areas",
         "boolean", true);
 
@@ -197,7 +197,7 @@ vimperator.Editor = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = [vimperator.modes.INSERT, vimperator.modes.COMMAND_LINE];
+    var modes = [liberator.modes.INSERT, liberator.modes.COMMAND_LINE];
 
     /*             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA */
     addMovementMap(["k", "<Up>"],                true,  "lineMove", false,      "cmd_linePrevious", selectPreviousLine);
@@ -226,218 +226,218 @@ vimperator.Editor = function () //{{{
     addMotionMap("y"); // yank
 
     // insert mode mappings
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-w>"], "Delete previous word",
-        function () { vimperator.editor.executeCommand("cmd_deleteWordBackward", 1); });
+        function () { liberator.editor.executeCommand("cmd_deleteWordBackward", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-u>"], "Delete until beginning of current line",
         function ()
         {
             // broken in FF3, deletes the whole line:
-            // vimperator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
-            vimperator.editor.executeCommand("cmd_selectBeginLine", 1);
-            vimperator.editor.executeCommand("cmd_delete", 1);
+            // liberator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
+            liberator.editor.executeCommand("cmd_selectBeginLine", 1);
+            liberator.editor.executeCommand("cmd_delete", 1);
         });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-k>"], "Delete until end of current line",
-        function () { vimperator.editor.executeCommand("cmd_deleteToEndOfLine", 1); });
+        function () { liberator.editor.executeCommand("cmd_deleteToEndOfLine", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-a>", "<Home>"], "Move cursor to beginning of current line",
-        function () { vimperator.editor.executeCommand("cmd_beginLine", 1); });
+        function () { liberator.editor.executeCommand("cmd_beginLine", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-e>", "<End>"], "Move cursor to end of current line",
-        function () { vimperator.editor.executeCommand("cmd_endLine", 1); });
+        function () { liberator.editor.executeCommand("cmd_endLine", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-h>"], "Delete character to the left",
-        function () { vimperator.editor.executeCommand("cmd_deleteCharBackward", 1); });
+        function () { liberator.editor.executeCommand("cmd_deleteCharBackward", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-d>"], "Delete character to the right",
-        function () { vimperator.editor.executeCommand("cmd_deleteCharForward", 1); });
+        function () { liberator.editor.executeCommand("cmd_deleteCharForward", 1); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<S-Insert>"], "Insert clipboard/selection",
-        function () { vimperator.editor.pasteClipboard(); });
+        function () { liberator.editor.pasteClipboard(); });
 
-    vimperator.mappings.add([vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.INSERT, liberator.modes.TEXTAREA],
         ["<C-i>"], "Edit text field with an external editor",
-        function () { vimperator.editor.editWithExternalEditor(); });
+        function () { liberator.editor.editWithExternalEditor(); });
 
     // FIXME: <esc> does not work correctly
-    vimperator.mappings.add([vimperator.modes.INSERT],
+    liberator.mappings.add([liberator.modes.INSERT],
         ["<C-t>"], "Edit text field in vi mode",
-        function () { vimperator.mode = vimperator.modes.TEXTAREA; });
+        function () { liberator.mode = liberator.modes.TEXTAREA; });
 
-    vimperator.mappings.add([vimperator.modes.INSERT],
+    liberator.mappings.add([liberator.modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
-        function () { return vimperator.editor.expandAbbreviation("i"); },
-        { flags: vimperator.Mappings.flags.ALLOW_EVENT_ROUTING });
+        function () { return liberator.editor.expandAbbreviation("i"); },
+        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
-    vimperator.mappings.add([vimperator.modes.INSERT],
+    liberator.mappings.add([liberator.modes.INSERT],
         ["<Tab>"], "Expand insert mode abbreviation",
-        function () { vimperator.editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); });
+        function () { liberator.editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); });
 
-    vimperator.mappings.add([vimperator.modes.INSERT],
+    liberator.mappings.add([liberator.modes.INSERT],
         ["<C-]>", "<C-5>"], "Expand insert mode abbreviation",
-        function () { vimperator.editor.expandAbbreviation("i"); });
+        function () { liberator.editor.expandAbbreviation("i"); });
 
     // textarea mode
-    vimperator.mappings.add([vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["u"], "Undo",
         function (count)
         {
-            vimperator.editor.executeCommand("cmd_undo", count);
-            vimperator.mode = vimperator.modes.TEXTAREA;
+            liberator.editor.executeCommand("cmd_undo", count);
+            liberator.mode = liberator.modes.TEXTAREA;
         },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["<C-r>"], "Redo",
         function (count)
         {
-            vimperator.editor.executeCommand("cmd_redo", count);
-            vimperator.mode = vimperator.modes.TEXTAREA;
+            liberator.editor.executeCommand("cmd_redo", count);
+            liberator.mode = liberator.modes.TEXTAREA;
         },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["o"], "Open line below current",
         function (count)
         {
-            vimperator.editor.executeCommand("cmd_endLine", 1);
-            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
-            vimperator.events.feedkeys("<Return>");
+            liberator.editor.executeCommand("cmd_endLine", 1);
+            liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+            liberator.events.feedkeys("<Return>");
         });
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["O"], "Open line above current",
         function (count)
         {
-            vimperator.editor.executeCommand("cmd_beginLine", 1);
-            vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
-            vimperator.events.feedkeys("<Return>");
-            vimperator.editor.executeCommand("cmd_linePrevious", 1);
+            liberator.editor.executeCommand("cmd_beginLine", 1);
+            liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+            liberator.events.feedkeys("<Return>");
+            liberator.editor.executeCommand("cmd_linePrevious", 1);
         });
 
     // visual mode
-    vimperator.mappings.add([vimperator.modes.CARET, vimperator.modes.TEXTAREA, vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.CARET, liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["v"], "Start visual mode",
-        function (count) { vimperator.modes.set(vimperator.modes.VISUAL, vimperator.mode); });
+        function (count) { liberator.modes.set(liberator.modes.VISUAL, liberator.mode); });
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["V"], "Start visual line mode",
         function (count)
         {
-            vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA | vimperator.modes.LINE);
-            vimperator.editor.executeCommand("cmd_beginLine", 1);
-            vimperator.editor.executeCommand("cmd_selectLineNext", 1);
+            liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA | liberator.modes.LINE);
+            liberator.editor.executeCommand("cmd_beginLine", 1);
+            liberator.editor.executeCommand("cmd_selectLineNext", 1);
         });
 
-    vimperator.mappings.add([vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.VISUAL],
         ["c", "s"], "Change selected text",
         function (count)
         {
-            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
+            if (liberator.modes.extended & liberator.modes.TEXTAREA)
             {
-                vimperator.editor.executeCommand("cmd_cut");
-                vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                liberator.editor.executeCommand("cmd_cut");
+                liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
             }
             else
-                vimperator.beep();
+                liberator.beep();
         });
 
-    vimperator.mappings.add([vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.VISUAL],
         ["d"], "Delete selected text",
         function (count)
         {
-            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
+            if (liberator.modes.extended & liberator.modes.TEXTAREA)
             {
-                vimperator.editor.executeCommand("cmd_cut");
-                vimperator.modes.set(vimperator.modes.TEXTAREA);
+                liberator.editor.executeCommand("cmd_cut");
+                liberator.modes.set(liberator.modes.TEXTAREA);
             }
             else
-                vimperator.beep();
+                liberator.beep();
         });
 
-    vimperator.mappings.add([vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.VISUAL],
         ["y"], "Yank selected text",
         function (count)
         {
-            if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
+            if (liberator.modes.extended & liberator.modes.TEXTAREA)
             {
-                vimperator.editor.executeCommand("cmd_copy");
-                vimperator.modes.set(vimperator.modes.TEXTAREA);
+                liberator.editor.executeCommand("cmd_copy");
+                liberator.modes.set(liberator.modes.TEXTAREA);
             }
             else
             {
                 var sel = window.content.document.getSelection();
                 if (sel)
-                    vimperator.copyToClipboard(sel, true);
+                    liberator.copyToClipboard(sel, true);
                 else
-                    vimperator.beep();
+                    liberator.beep();
             }
         });
 
-    vimperator.mappings.add([vimperator.modes.VISUAL, vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.VISUAL, liberator.modes.TEXTAREA],
         ["p"], "Paste clipboard contents",
         function (count)
         {
-            if (!(vimperator.modes.extended & vimperator.modes.CARET))
+            if (!(liberator.modes.extended & liberator.modes.CARET))
             {
                 if (!count) count = 1;
                 while (count--)
-                    vimperator.editor.executeCommand("cmd_paste");
-                vimperator.mode = vimperator.modes.TEXTAREA;
+                    liberator.editor.executeCommand("cmd_paste");
+                liberator.mode = liberator.modes.TEXTAREA;
             }
             else
-                vimperator.beep();
+                liberator.beep();
         });
 
     // finding characters
-    vimperator.mappings.add([vimperator.modes.TEXTAREA, vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["f"], "Move to a character on the current line after the cursor",
         function (count, arg)
         {
-            var pos = vimperator.editor.findCharForward(arg, count);
+            var pos = liberator.editor.findCharForward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos, true, vimperator.mode == vimperator.modes.VISUAL);
+                liberator.editor.moveToPosition(pos, true, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA, vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["F"], "Move to a charater on the current line before the cursor",
         function (count, arg)
         {
-            var pos = vimperator.editor.findCharBackward(arg, count);
+            var pos = liberator.editor.findCharBackward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos, false, vimperator.mode == vimperator.modes.VISUAL);
+                liberator.editor.moveToPosition(pos, false, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA, vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["t"], "Move before a character on the current line",
         function (count, arg)
         {
-            var pos = vimperator.editor.findCharForward(arg, count);
+            var pos = liberator.editor.findCharForward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos - 1, true, vimperator.mode == vimperator.modes.VISUAL);
+                liberator.editor.moveToPosition(pos - 1, true, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
 
-    vimperator.mappings.add([vimperator.modes.TEXTAREA, vimperator.modes.VISUAL],
+    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["T"], "Move before a character on the current line, backwards",
         function (count, arg)
         {
-            var pos = vimperator.editor.findCharBackward(arg, count);
+            var pos = liberator.editor.findCharBackward(arg, count);
             if (pos >= 0)
-                vimperator.editor.moveToPosition(pos + 1, false, vimperator.mode == vimperator.modes.VISUAL);
+                liberator.editor.moveToPosition(pos + 1, false, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -514,7 +514,7 @@ vimperator.Editor = function () //{{{
             var controller = getController();
             if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
             {
-                vimperator.beep();
+                liberator.beep();
                 return false;
             }
 
@@ -535,7 +535,7 @@ vimperator.Editor = function () //{{{
                 catch (e)
                 {
                     if (!didCommand)
-                        vimperator.beep();
+                        liberator.beep();
                     return false;
                 }
             }
@@ -556,7 +556,7 @@ vimperator.Editor = function () //{{{
                 count--;
             }
 
-            vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+            liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
 
             switch (motion)
             {
@@ -601,7 +601,7 @@ vimperator.Editor = function () //{{{
                     break;
 
                 default:
-                    vimperator.beep();
+                    liberator.beep();
                     return false;
             }
 
@@ -610,11 +610,11 @@ vimperator.Editor = function () //{{{
                 case "d":
                     this.executeCommand("cmd_delete", 1);
                     // need to reset the mode as the visual selection changes it
-                    vimperator.modes.main = vimperator.modes.TEXTAREA;
+                    liberator.modes.main = liberator.modes.TEXTAREA;
                     break;
                 case "c":
                     this.executeCommand("cmd_delete", 1);
-                    vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                    liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
                     break;
                 case "y":
                     this.executeCommand("cmd_copy", 1);
@@ -622,7 +622,7 @@ vimperator.Editor = function () //{{{
                     break;
 
                 default:
-                    vimperator.beep();
+                    liberator.beep();
                     return false;
             }
             return true;
@@ -687,7 +687,7 @@ vimperator.Editor = function () //{{{
                     return i + 1; // always position the cursor after the char
             }
 
-            vimperator.beep();
+            liberator.beep();
             return -1;
         },
 
@@ -714,37 +714,37 @@ vimperator.Editor = function () //{{{
                     return i;
             }
 
-            vimperator.beep();
+            liberator.beep();
             return -1;
         },
 
         editWithExternalEditor: function ()
         {
             var textBox = document.commandDispatcher.focusedElement;
-            var editor = vimperator.options["editor"];
+            var editor = liberator.options["editor"];
             var args = editor.split(" ");
             if (args.length < 1)
             {
-                vimperator.echoerr("no editor specified");
+                liberator.echoerr("no editor specified");
                 return;
             }
 
             try
             {
-                var tmpfile = vimperator.io.createTempFile();
+                var tmpfile = liberator.io.createTempFile();
             }
             catch (e)
             {
-                vimperator.echoerr("Could not create temporary file: " + e.message);
+                liberator.echoerr("Could not create temporary file: " + e.message);
                 return;
             }
             try
             {
-                vimperator.io.writeFile(tmpfile, textBox.value);
+                liberator.io.writeFile(tmpfile, textBox.value);
             }
             catch (e)
             {
-                vimperator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
+                liberator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
                 return;
             }
 
@@ -757,26 +757,26 @@ vimperator.Editor = function () //{{{
             textBox.style.backgroundColor = "#bbbbbb";
             var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
             // TODO: save return value in v:shell_error
-            vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
+            liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
             textBox.removeAttribute("readonly");
 
 
     //        if (v:shell_error != 0)
     //        {
     //            tmpBg = "red";
-    //            vimperator.echoerr("External editor returned with exit code " + retcode);
+    //            liberator.echoerr("External editor returned with exit code " + retcode);
     //        }
     //        else
     //        {
                 try
                 {
-                    var val = vimperator.io.readFile(tmpfile);
+                    var val = liberator.io.readFile(tmpfile);
                     textBox.value = val;
                 }
                 catch (e)
                 {
                     tmpBg = "red";
-                    vimperator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
+                    liberator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
                 }
     //        }
 
@@ -823,11 +823,11 @@ vimperator.Editor = function () //{{{
                     for (var i = 0; i < abbrev[lhs].length; i++)
                     {
                         if (abbrev[lhs][i][0] == filter)
-                            vimperator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
+                            liberator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
                         return true;
                     }
                 }
-                vimperator.echoerr("No abbreviations found");
+                liberator.echoerr("No abbreviations found");
                 return false;
             }
             else // list all (for that filter {i,c,!})
@@ -846,8 +846,8 @@ vimperator.Editor = function () //{{{
 
                             list += "<tr>";
                             list += "<td> " + abbrev[tmplhs][i][0] + "</td>";
-                            list += "<td> " + vimperator.util.escapeHTML(tmplhs) + "</td>";
-                            list += "<td> " + vimperator.util.escapeHTML(abbrev[tmplhs][i][1]) + "</td>";
+                            list += "<td> " + liberator.util.escapeHTML(tmplhs) + "</td>";
+                            list += "<td> " + liberator.util.escapeHTML(abbrev[tmplhs][i][1]) + "</td>";
                             list += "</tr>";
                         }
                     }
@@ -855,11 +855,11 @@ vimperator.Editor = function () //{{{
 
                 if (!flagFound)
                 {
-                    vimperator.echoerr("No abbreviations found");
+                    liberator.echoerr("No abbreviations found");
                     return;
                 }
                 list += "</table>";
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         },
 
@@ -949,7 +949,7 @@ vimperator.Editor = function () //{{{
         {
             if (!lhs)
             {
-                vimperator.echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return false;
             }
 
@@ -987,7 +987,7 @@ vimperator.Editor = function () //{{{
                 }
             }
 
-            vimperator.echoerr("E24: No such abbreviation");
+            liberator.echoerr("E24: No such abbreviation");
             return false;
         },
 

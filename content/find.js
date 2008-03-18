@@ -36,15 +36,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : changing any search settings should also update the search state including highlighting
 //     : incremental searches shouldn't permanently update search modifiers
 
-// make sure you only create this object when the "vimperator" object is ready
-vimperator.Search = function () //{{{
+// make sure you only create this object when the "liberator" object is ready
+liberator.Search = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // FIXME:
-    //var self = this;               // needed for callbacks since "this" is the "vimperator" object in a callback
+    //var self = this;               // needed for callbacks since "this" is the "liberator" object in a callback
     var found = false;               // true if the last search was successful
     var backwards = false;           // currently searching backwards
     var searchString = "";           // current search string (without modifiers)
@@ -56,13 +56,13 @@ vimperator.Search = function () //{{{
     var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_FORWARD, function (command) { vimperator.search.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_FORWARD, function (command) { vimperator.search.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_FORWARD, function () { vimperator.search.searchCanceled(); });
+    liberator.registerCallback("change", liberator.modes.SEARCH_FORWARD, function (command) { liberator.search.searchKeyPressed(command); });
+    liberator.registerCallback("submit", liberator.modes.SEARCH_FORWARD, function (command) { liberator.search.searchSubmitted(command); });
+    liberator.registerCallback("cancel", liberator.modes.SEARCH_FORWARD, function () { liberator.search.searchCanceled(); });
     // TODO: allow advanced modes in register/triggerCallback
-    vimperator.registerCallback("change", vimperator.modes.SEARCH_BACKWARD, function (command) { vimperator.search.searchKeyPressed(command); });
-    vimperator.registerCallback("submit", vimperator.modes.SEARCH_BACKWARD, function (command) { vimperator.search.searchSubmitted(command); });
-    vimperator.registerCallback("cancel", vimperator.modes.SEARCH_BACKWARD, function () { vimperator.search.searchCanceled(); });
+    liberator.registerCallback("change", liberator.modes.SEARCH_BACKWARD, function (command) { liberator.search.searchKeyPressed(command); });
+    liberator.registerCallback("submit", liberator.modes.SEARCH_BACKWARD, function (command) { liberator.search.searchSubmitted(command); });
+    liberator.registerCallback("cancel", liberator.modes.SEARCH_BACKWARD, function () { liberator.search.searchCanceled(); });
 
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
@@ -80,7 +80,7 @@ vimperator.Search = function () //{{{
             linksOnly = false;
         else if (/\L/.test(pattern))
             linksOnly = true;
-        else if (vimperator.options["linksearch"])
+        else if (liberator.options["linksearch"])
             linksOnly = true;
         else
             linksOnly = false;
@@ -93,9 +93,9 @@ vimperator.Search = function () //{{{
             caseSensitive = false;
         else if (/\C/.test(pattern))
             caseSensitive = true;
-        else if (vimperator.options["ignorecase"] && vimperator.options["smartcase"] && /[A-Z]/.test(pattern))
+        else if (liberator.options["ignorecase"] && liberator.options["smartcase"] && /[A-Z]/.test(pattern))
             caseSensitive = true;
-        else if (vimperator.options["ignorecase"])
+        else if (liberator.options["ignorecase"])
             caseSensitive = false;
         else
             caseSensitive = true;
@@ -113,36 +113,36 @@ vimperator.Search = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["hlsearch", "hls"],
+    liberator.options.add(["hlsearch", "hls"],
         "Highlight previous search pattern matches",
         "boolean", "false",
         {
             setter: function (value)
             {
                 if (value)
-                    vimperator.search.highlight();
+                    liberator.search.highlight();
                 else
-                    vimperator.search.clear();
+                    liberator.search.clear();
             }
         });
 
-    vimperator.options.add(["hlsearchstyle", "hlss"],
+    liberator.options.add(["hlsearchstyle", "hlss"],
         "CSS specification of highlighted search items",
         "string", "color: black; background-color: yellow; padding: 0; display: inline;");
 
-    vimperator.options.add(["ignorecase", "ic"],
+    liberator.options.add(["ignorecase", "ic"],
         "Ignore case in search patterns",
         "boolean", true);
 
-    vimperator.options.add(["incsearch", "is"],
+    liberator.options.add(["incsearch", "is"],
         "Show where the search pattern matches as it is typed",
         "boolean", true);
 
-    vimperator.options.add(["linksearch", "lks"],
+    liberator.options.add(["linksearch", "lks"],
         "Limit the search to hyperlink text",
         "boolean", false);
 
-    vimperator.options.add(["smartcase", "scs"], 
+    liberator.options.add(["smartcase", "scs"], 
         "Override the 'ignorecase' option if the pattern contains uppercase characters",
         "boolean", true);
 
@@ -150,48 +150,48 @@ vimperator.Search = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
-    modes = modes.concat([vimperator.modes.CARET]);
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
+    modes = modes.concat([liberator.modes.CARET]);
         
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["/"], "Search forward for a pattern",
-        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_FORWARD); });
+        function () { liberator.search.openSearchDialog(liberator.modes.SEARCH_FORWARD); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["?"], "Search backwards for a pattern",
-        function () { vimperator.search.openSearchDialog(vimperator.modes.SEARCH_BACKWARD); });
+        function () { liberator.search.openSearchDialog(liberator.modes.SEARCH_BACKWARD); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["n"], "Find next",
-        function () { vimperator.search.findAgain(false); });
+        function () { liberator.search.findAgain(false); });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["N"], "Find previous",
-        function () { vimperator.search.findAgain(true); });
+        function () { liberator.search.findAgain(true); });
 
-    vimperator.mappings.add(modes.concat([vimperator.modes.CARET, vimperator.modes.TEXTAREA]), ["*"],
+    liberator.mappings.add(modes.concat([liberator.modes.CARET, liberator.modes.TEXTAREA]), ["*"],
         "Find word under cursor",
         function ()
         {
-            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), false);
-            vimperator.search.findAgain();
+            liberator.search.searchSubmitted(liberator.buffer.getCurrentWord(), false);
+            liberator.search.findAgain();
         });
 
-    vimperator.mappings.add(modes.concat([vimperator.modes.CARET, vimperator.modes.TEXTAREA]), ["#"],
+    liberator.mappings.add(modes.concat([liberator.modes.CARET, liberator.modes.TEXTAREA]), ["#"],
         "Find word under cursor backwards",
         function ()
         {
-            vimperator.search.searchSubmitted(vimperator.buffer.getCurrentWord(), true);
-            vimperator.search.findAgain();
+            liberator.search.searchSubmitted(liberator.buffer.getCurrentWord(), true);
+            liberator.search.findAgain();
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.commands.add(["noh[lsearch]"],
+    liberator.commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
-        function (args) { vimperator.search.clear(); });
+        function (args) { liberator.search.clear(); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -203,14 +203,14 @@ vimperator.Search = function () //{{{
         // If you omit "mode", it will default to forward searching
         openSearchDialog: function (mode)
         {
-            if (mode == vimperator.modes.SEARCH_BACKWARD)
+            if (mode == liberator.modes.SEARCH_BACKWARD)
             {
-                vimperator.commandline.open("?", "", vimperator.modes.SEARCH_BACKWARD);
+                liberator.commandline.open("?", "", liberator.modes.SEARCH_BACKWARD);
                 backwards = true;
             }
             else
             {
-                vimperator.commandline.open("/", "", vimperator.modes.SEARCH_FORWARD);
+                liberator.commandline.open("/", "", liberator.modes.SEARCH_FORWARD);
                 backwards = false;
             }
 
@@ -229,7 +229,7 @@ vimperator.Search = function () //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                setTimeout(function () { vimperator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
+                setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
 
             return found;
         },
@@ -248,7 +248,7 @@ vimperator.Search = function () //{{{
 
             if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
             {
-                vimperator.echoerr("E486: Pattern not found: " + lastSearchPattern);
+                liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
             }
             else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
             {
@@ -256,16 +256,16 @@ vimperator.Search = function () //{{{
                 // our command line
                 setTimeout(function () {
                     if (up)
-                        vimperator.commandline.echo("search hit TOP, continuing at BOTTOM", vimperator.commandline.HL_WARNING);
+                        liberator.commandline.echo("search hit TOP, continuing at BOTTOM", liberator.commandline.HL_WARNING);
                     else
-                        vimperator.commandline.echo("search hit BOTTOM, continuing at TOP", vimperator.commandline.HL_WARNING);
+                        liberator.commandline.echo("search hit BOTTOM, continuing at TOP", liberator.commandline.HL_WARNING);
                 }, 0);
             }
             else
             {
-                vimperator.echo((up ? "?" : "/") + lastSearchPattern, null, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.echo((up ? "?" : "/") + lastSearchPattern, null, liberator.commandline.FORCE_SINGLELINE);
 
-                if (vimperator.options["hlsearch"])
+                if (liberator.options["hlsearch"])
                     this.highlight(lastSearchString);
             }
         },
@@ -273,7 +273,7 @@ vimperator.Search = function () //{{{
         // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
         searchKeyPressed: function (command)
         {
-            if (vimperator.options["incsearch"])
+            if (liberator.options["incsearch"])
                 this.find(command, backwards);
         },
 
@@ -298,12 +298,12 @@ vimperator.Search = function () //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () { vimperator.search.findAgain(false); }, 0);
+                setTimeout(function () { liberator.search.findAgain(false); }, 0);
 
-            if (vimperator.options["hlsearch"])
+            if (liberator.options["hlsearch"])
                 this.highlight(searchString);
 
-            vimperator.modes.reset();
+            liberator.modes.reset();
         },
 
         // Called when the search is canceled - for example if someone presses
@@ -318,7 +318,7 @@ vimperator.Search = function () //{{{
         // this is not dependent on the value of 'hlsearch'
         highlight: function (text)
         {
-            if (vimperator.config.name == "Muttator")
+            if (liberator.config.name == "Muttator")
                 return;
 
             // already highlighted?
@@ -338,7 +338,7 @@ vimperator.Search = function () //{{{
                     arguments.callee(win.frames[i]);
                 var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search");
                 for (var i = 0; i < spans.length; i++)
-                    spans[i].setAttribute("style", vimperator.options["hlsearchstyle"]);
+                    spans[i].setAttribute("style", liberator.options["hlsearchstyle"]);
             })(window.content);
 
             // recreate selection since _highlightDoc collapses the selection backwards

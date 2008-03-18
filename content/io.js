@@ -27,7 +27,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.IO = function () //{{{
+liberator.IO = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -38,39 +38,39 @@ vimperator.IO = function () //{{{
 
     const WINDOWS = navigator.platform == "Win32";
     var cwd = null, oldcwd = null;
-    var extname = vimperator.config.name.toLowerCase(); // "vimperator" or "muttator"
+    var extname = liberator.config.name.toLowerCase(); // "vimperator" or "muttator"
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
         
-    vimperator.commands.add(["cd", "chd[ir]"],
+    liberator.commands.add(["cd", "chd[ir]"],
         "Change the current directory",
         function (args)
         {
             if (!args)
                 args = "~";
 
-            if (vimperator.io.setCurrentDirectory(args))
-                vimperator.echo(vimperator.io.getCurrentDirectory());
+            if (liberator.io.setCurrentDirectory(args))
+                liberator.echo(liberator.io.getCurrentDirectory());
         },
         {
-            completer: function (filter) { return vimperator.completion.file(filter, true); }
+            completer: function (filter) { return liberator.completion.file(filter, true); }
         });
 
-    vimperator.commands.add(["pw[d]"],
+    liberator.commands.add(["pw[d]"],
         "Print the current directory name",
         function (args)
         {
             if (args)
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
             else
-                vimperator.echo(vimperator.io.getCurrentDirectory());
+                liberator.echo(liberator.io.getCurrentDirectory());
         });
 
     // mkv[imperatorrc] or mkm[uttatorrc]
-    vimperator.commands.add(["mk" + extname.substr(0,1) + "[" + extname.substr(1) + "rc]"],
+    liberator.commands.add(["mk" + extname.substr(0,1) + "[" + extname.substr(1) + "rc]"],
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
@@ -84,27 +84,27 @@ vimperator.IO = function () //{{{
                 filename += extname+ "rc";
             }
 
-            var file = vimperator.io.getFile(filename);
+            var file = liberator.io.getFile(filename);
             if (file.exists() && !special)
             {
-                vimperator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
             }
 
-            var line = "\" " + vimperator.version + "\n";
+            var line = "\" " + liberator.version + "\n";
             line += "\" Mappings\n";
 
-            var mode = [[[vimperator.modes.NORMAL], ""], [[vimperator.modes.COMMAND_LINE], "c"],
-                         [[vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "i"]];
+            var mode = [[[liberator.modes.NORMAL], ""], [[liberator.modes.COMMAND_LINE], "c"],
+                         [[liberator.modes.INSERT, liberator.modes.TEXTAREA], "i"]];
             for (var y = 0; y < mode.length; y++)
             {
                 // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
-                for (var map in vimperator.mappings.getUserIterator(mode[y][0]))
+                for (var map in liberator.mappings.getUserIterator(mode[y][0]))
                         line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
             }
 
             line += "\n\" Options\n";
-            for (var option in vimperator.options)
+            for (var option in liberator.options)
             {
                 // TODO: options should be queried for this info
                 // TODO: string/list options might need escaping in future
@@ -119,41 +119,41 @@ vimperator.IO = function () //{{{
 
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
             // line += "\n\" Auto-Commands\n";
-            // for (var item in vimperator.autocommands)
+            // for (var item in liberator.autocommands)
             //     line += "autocmd " + item + "\n";
 
             line += "\n\" Abbreviations\n";
-            for (var abbrCmd in vimperator.editor.abbreviations)
+            for (var abbrCmd in liberator.editor.abbreviations)
                 line += abbrCmd;
 
-            // if (vimperator.events.getMapLeader() != "\\")
-            //    line += "\nlet mapleader = \"" + vimperator.events.getMapLeader() + "\"\n";
+            // if (liberator.events.getMapLeader() != "\\")
+            //    line += "\nlet mapleader = \"" + liberator.events.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
             line += "\nsource! " + filename + ".local\n";
             line += "\n\" vim: set ft=vimperator:";
 
-            vimperator.io.writeFile(file, line);
+            liberator.io.writeFile(file, line);
         });
     
-    vimperator.commands.add(["so[urce]"],
+    liberator.commands.add(["so[urce]"],
         "Read Ex commands from a file",
         function (args, special)
         {
             // FIXME: implement proper filename quoting
             //if (/[^\\]\s/.test(args))
             //{
-            //    vimperator.echoerr("E172: Only one file name allowed");
+            //    liberator.echoerr("E172: Only one file name allowed");
             //    return;
             //}
 
-            vimperator.io.source(args, special);
+            liberator.io.source(args, special);
         },
         {
-            completer: function (filter) { return vimperator.completion.file(filter, true); }
+            completer: function (filter) { return liberator.completion.file(filter, true); }
         });
 
-    vimperator.commands.add(["!", "run"],
+    liberator.commands.add(["!", "run"],
         "Run a command",
         function (args, special)
         {
@@ -166,9 +166,9 @@ vimperator.IO = function () //{{{
             args = args.replace(/(^|[^\\])!/g, "$1" + lastRunCommand);
             lastRunCommand = args;
 
-            var output = vimperator.io.system(args);
+            var output = liberator.io.system(args);
             if (output)
-                vimperator.echo(vimperator.util.escapeHTML(output));
+                liberator.echo(liberator.util.escapeHTML(output));
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -274,7 +274,7 @@ vimperator.IO = function () //{{{
                 var file = ioManager.getFile(newdir);
                 if (!file.exists() || !file.isDirectory())
                 {
-                    vimperator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
+                    liberator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
                     return null;
                 }
                 [cwd, oldcwd] = [newdir, cwd];
@@ -287,9 +287,9 @@ vimperator.IO = function () //{{{
             var pluginDir;
 
             if (WINDOWS)
-                pluginDir = "~/" + vimperator.config.name.toLowerCase() + "/" + directory;
+                pluginDir = "~/" + liberator.config.name.toLowerCase() + "/" + directory;
             else
-                pluginDir = "~/." + vimperator.config.name.toLowerCase() + "/" + directory;
+                pluginDir = "~/." + liberator.config.name.toLowerCase() + "/" + directory;
 
             pluginDir = ioManager.getFile(ioManager.expandPath(pluginDir));
 
@@ -298,8 +298,8 @@ vimperator.IO = function () //{{{
 
         getRCFile: function ()
         {
-            var rcFile1 = ioManager.getFile("~/." + vimperator.config.name.toLowerCase() + "rc");
-            var rcFile2 = ioManager.getFile("~/_" + vimperator.config.name.toLowerCase() + "rc");
+            var rcFile1 = ioManager.getFile("~/." + liberator.config.name.toLowerCase() + "rc");
+            var rcFile2 = ioManager.getFile("~/_" + liberator.config.name.toLowerCase() + "rc");
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1]
@@ -475,7 +475,7 @@ vimperator.IO = function () //{{{
 
             if (!file.exists())
             {
-                vimperator.echoerr("command not found: " + program);
+                liberator.echoerr("command not found: " + program);
                 return -1;
             }
 
@@ -537,7 +537,7 @@ vimperator.IO = function () //{{{
                 if (!file.exists())
                 {
                     if (!silent)
-                        vimperator.echoerr("E484: Can't open file " + filename);
+                        liberator.echoerr("E484: Can't open file " + filename);
                     return false;
                 }
                 var str = ioManager.readFile(filename);
@@ -545,7 +545,7 @@ vimperator.IO = function () //{{{
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    eval("with(vimperator){" + str + "}");
+                    eval("with(liberator){" + str + "}");
                 }
                 else
                 {
@@ -557,7 +557,7 @@ vimperator.IO = function () //{{{
                         {
                             if (heredocEnd.test(line))
                             {
-                                eval("with(vimperator){" + heredoc + "}");
+                                eval("with(liberator){" + heredoc + "}");
                                 heredoc = "";
                                 heredocEnd = null;
                             }
@@ -569,8 +569,8 @@ vimperator.IO = function () //{{{
                         else
                         {
                             // check for a heredoc
-                            var [count, cmd, special, args] = vimperator.commands.parseCommand(line);
-                            var command = vimperator.commands.get(cmd);
+                            var [count, cmd, special, args] = liberator.commands.parseCommand(line);
+                            var command = liberator.commands.get(cmd);
                             if (command && command.name == "javascript")
                             {
                                 var matches = args.match(/(.*)<<\s*([^\s]+)$/);
@@ -587,19 +587,19 @@ vimperator.IO = function () //{{{
                             }
                             else
                             {
-                                // execute a normal vimperator command
-                                vimperator.execute(line);
+                                // execute a normal liberator command
+                                liberator.execute(line);
                             }
                         }
                     });
                 }
 
-                vimperator.log("Sourced: " + filename, 3);
+                liberator.log("Sourced: " + filename, 3);
             }
             catch (e)
             {
                 if (!silent)
-                    vimperator.echoerr(e);
+                    liberator.echoerr(e);
             }
         }
     };

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.util = { //{{{
+liberator.util = { //{{{
 
     // TODO: use :highlight color groups
     // if "processStrings" is true, any passed strings will be surrounded by " and
@@ -45,7 +45,7 @@ vimperator.util = { //{{{
             else if (type == "string")
             {
                 if (processStrings)
-                    arg = '"' + vimperator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
+                    arg = '"' + liberator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
 
                 return "<span style=\"color: green;\">" + arg + "</span>";
             }
@@ -66,7 +66,7 @@ vimperator.util = { //{{{
 
                 var str = arg.toString();
                 if (typeof str == "string")  // can be "undefined"
-                    return vimperator.util.escapeHTML(str);
+                    return liberator.util.escapeHTML(str);
                 else
                     return "undefined";
             }
@@ -127,9 +127,9 @@ vimperator.util = { //{{{
     generateHelp: function (command, extraHelp)
     {
         var start = "", end = "";
-        if (command instanceof vimperator.Command)
+        if (command instanceof liberator.Command)
             start = ":"
-        else if (command instanceof vimperator.Option)
+        else if (command instanceof liberator.Option)
             start = end = "'"
 
         var ret = "";
@@ -178,7 +178,7 @@ vimperator.util = { //{{{
     highlightURL: function (str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return "<a class='hl-URL' href='#'>" + vimperator.util.escapeHTML(str) + "</a>";
+            return "<a class='hl-URL' href='#'>" + liberator.util.escapeHTML(str) + "</a>";
         else
             return str;
     },
@@ -248,7 +248,7 @@ vimperator.util = { //{{{
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
             // first check if it is an existing local file
-            var file = vimperator.io.getFile(urls[url]);
+            var file = liberator.io.getFile(urls[url]);
             if (file.exists() && file.isReadable())
             {
                 urls[url] = file.path;
@@ -258,7 +258,7 @@ vimperator.util = { //{{{
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine
             // or keyword bookmark
-            if (vimperator.has("bookmarks") && (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url])))
+            if (liberator.has("bookmarks") && (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url])))
             {
                 var matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
                 var alias = matches[1];
@@ -271,7 +271,7 @@ vimperator.util = { //{{{
                 // like the comments below ;-)
 
                 // check if the first word is a search engine
-                var searchURL = vimperator.bookmarks.getSearchURL(text, alias);
+                var searchURL = liberator.bookmarks.getSearchURL(text, alias);
                 if (searchURL)
                 {
                     urls[url] = searchURL;
@@ -279,7 +279,7 @@ vimperator.util = { //{{{
                 }
                 else // the first word was not a search engine, search for the whole string in the default engine
                 {
-                    searchURL = vimperator.bookmarks.getSearchURL(urls[url], null);
+                    searchURL = liberator.bookmarks.getSearchURL(urls[url], null);
                     if (searchURL)
                     {
                         urls[url] = searchURL;

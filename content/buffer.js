@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Buffer = function () //{{{
+liberator.Buffer = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -39,7 +39,7 @@ vimperator.Buffer = function () //{{{
     {
         if (value < 1 || value > 2000)
         {
-            vimperator.echoerr("Zoom value out of range (1-2000%)");
+            liberator.echoerr("Zoom value out of range (1-2000%)");
             return;
         }
 
@@ -48,13 +48,13 @@ vimperator.Buffer = function () //{{{
         else
             getBrowser().markupDocumentViewer.textZoom = value / 100.0;
 
-        vimperator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
+        liberator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
 
         // TODO: shouldn't this just recalculate hint coords, rather than
         // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
         // on the recalculation side effect? -- djk
         // NOTE: we could really do with a zoom event...
-        // vimperator.hints.reshowHints();
+        // liberator.hints.reshowHints();
     }
 
     function bumpZoomLevel(steps, fullZoom)
@@ -89,7 +89,7 @@ vimperator.Buffer = function () //{{{
         }
         if (index < 0 || index >= zoomLevels.length)
         {
-            vimperator.beep();
+            liberator.beep();
             return;
         }
         setZoom(zoomLevels[index], fullZoom);
@@ -99,7 +99,7 @@ vimperator.Buffer = function () //{{{
     {
         // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
         if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY == 0)
-            vimperator.beep();
+            liberator.beep();
     }
 
     function findScrollableWindow()
@@ -145,26 +145,26 @@ vimperator.Buffer = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["fullscreen", "fs"], "Show the current window fullscreen", "boolean", false,
+    liberator.options.add(["fullscreen", "fs"], "Show the current window fullscreen", "boolean", false,
         {
             setter: function (value) { window.fullScreen = value; },
             getter: function () { return window.fullScreen; }
         });
 
-    vimperator.options.add(["nextpattern",],
+    liberator.options.add(["nextpattern",],
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$");
 
-    vimperator.options.add(["previouspattern"],
+    liberator.options.add(["previouspattern"],
         "Patterns to use when guessing the 'previous' page in a document sequence",
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
 
-    vimperator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
+    liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
             validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
         });
 
-    vimperator.options.add(["scroll", "scr"],
+    liberator.options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
         "number", 0,
         {
@@ -172,14 +172,14 @@ vimperator.Buffer = function () //{{{
         }
     );
 
-    vimperator.options.add(["showstatuslinks", "ssli"], 
+    liberator.options.add(["showstatuslinks", "ssli"], 
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
             validator: function (value) { return (value >= 0 && value <= 2); }
         });
 
-    vimperator.options.add(["usermode", "um"], 
+    liberator.options.add(["usermode", "um"], 
         "Show current website with a minimal style sheet to make it easily accessible",
         "boolean", false,
         {
@@ -191,271 +191,271 @@ vimperator.Buffer = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
         
-    vimperator.mappings.add(modes, ["i", "<Insert>"],
+    liberator.mappings.add(modes, ["i", "<Insert>"],
         "Start caret mode",
         function ()
         {
             // setting this option triggers an observer which takes care of the mode setting
-            vimperator.options.setPref("accessibility.browsewithcaret", true);
+            liberator.options.setPref("accessibility.browsewithcaret", true);
         });
 
-    vimperator.mappings.add(modes, ["<C-c>"],
+    liberator.mappings.add(modes, ["<C-c>"],
         "Stop loading",
         function() { BrowserStop(); });
 
     // scrolling
-    vimperator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
+    liberator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
         "Scroll document down",
-        function (count) { vimperator.buffer.scrollLines(count > 1 ? count : 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollLines(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["k", "<Up>", "<C-y>"],
+    liberator.mappings.add(modes, ["k", "<Up>", "<C-y>"],
         "Scroll document up",
-        function (count) { vimperator.buffer.scrollLines(-(count > 1 ? count : 1)); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollLines(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["h", "<Left>"],
+    liberator.mappings.add(modes, ["h", "<Left>"],
         "Scroll document to the left",
-        function (count) { vimperator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["l", "<Right>"],
+    liberator.mappings.add(modes, ["l", "<Right>"],
         "Scroll document to the right",
-        function (count) { vimperator.buffer.scrollColumns(count > 1 ? count : 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollColumns(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["0", "^"],
+    liberator.mappings.add(modes, ["0", "^"],
         "Scroll to the absolute left of the document",
-        function () { vimperator.buffer.scrollStart(); });
+        function () { liberator.buffer.scrollStart(); });
 
-    vimperator.mappings.add(modes, ["$"],
+    liberator.mappings.add(modes, ["$"],
         "Scroll to the absolute right of the document",
-        function () { vimperator.buffer.scrollEnd(); });
+        function () { liberator.buffer.scrollEnd(); });
 
-    vimperator.mappings.add(modes, ["gg", "<Home>"],
+    liberator.mappings.add(modes, ["gg", "<Home>"],
         "Goto the top of the document",
-        function (count) { vimperator.buffer.scrollToPercentile(count >  0 ? count : 0); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollToPercentile(count >  0 ? count : 0); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["G", "<End>"],
+    liberator.mappings.add(modes, ["G", "<End>"],
         "Goto the end of the document",
-        function (count) { vimperator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-d>"],
+    liberator.mappings.add(modes, ["<C-d>"],
         "Scroll window downwards in the buffer",
-        function (count) { vimperator.buffer.scrollByScrollSize(count, 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollByScrollSize(count, 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-u>"],
+    liberator.mappings.add(modes, ["<C-u>"],
         "Scroll window upwards in the buffer",
-        function (count) { vimperator.buffer.scrollByScrollSize(count, -1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollByScrollSize(count, -1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-b>", "<PageUp>", "<S-Space>"],
+    liberator.mappings.add(modes, ["<C-b>", "<PageUp>", "<S-Space>"],
         "Scroll up a full page",
-        function (count) { vimperator.buffer.scrollPages(-(count > 1 ? count : 1)); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollPages(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-f>", "<PageDown>", "<Space>"],
+    liberator.mappings.add(modes, ["<C-f>", "<PageDown>", "<Space>"],
         "Scroll down a full page",
-        function (count) { vimperator.buffer.scrollPages(count > 1 ? count : 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.scrollPages(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["]f"],
+    liberator.mappings.add(modes, ["]f"],
         "Focus next frame",
-        function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["[f"],
+    liberator.mappings.add(modes, ["[f"],
         "Focus previous frame",
-        function (count) { vimperator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["]]"],
+    liberator.mappings.add(modes, ["]]"],
         "Follow a link labeled to 'next' or '>' if it exists",
-        function (count) { vimperator.buffer.followDocumentRelationship("next"); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.followDocumentRelationship("next"); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["[["],
+    liberator.mappings.add(modes, ["[["],
         "Follow a link labeled to 'prev', 'previous' or '<' if it exists",
-        function (count) { vimperator.buffer.followDocumentRelationship("previous"); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.followDocumentRelationship("previous"); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["gf"],
+    liberator.mappings.add(modes, ["gf"],
         "View source",
-        function () { vimperator.buffer.viewSource(null, false); });
+        function () { liberator.buffer.viewSource(null, false); });
 
-    vimperator.mappings.add(modes, ["gF"],
+    liberator.mappings.add(modes, ["gF"],
         "View source with an external editor",
-        function () { vimperator.buffer.viewSource(null, true); });
+        function () { liberator.buffer.viewSource(null, true); });
 
-    vimperator.mappings.add(modes, ["gi"],
+    liberator.mappings.add(modes, ["gi"],
         "Focus last used input field",
         function ()
         {
-            if (vimperator.buffer.lastInputField)
-                vimperator.buffer.lastInputField.focus();
+            if (liberator.buffer.lastInputField)
+                liberator.buffer.lastInputField.focus();
             else
             {
-                var first = vimperator.buffer.evaluateXPath(
+                var first = liberator.buffer.evaluateXPath(
                     "//*[@type='text'] | //textarea | //xhtml:textarea").snapshotItem(0);
 
                 if (first)
                     first.focus();
                 else
-                    vimperator.beep();
+                    liberator.beep();
             }
         });
 
-    vimperator.mappings.add(modes, ["gP"],
+    liberator.mappings.add(modes, ["gP"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            vimperator.open(readFromClipboard(),
-                /\bpaste\b/.test(vimperator.options["activate"]) ?
-                vimperator.NEW_BACKGROUND_TAB : vimperator.NEW_TAB);
+            liberator.open(readFromClipboard(),
+                /\bpaste\b/.test(liberator.options["activate"]) ?
+                liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
         });
 
-    vimperator.mappings.add(modes, ["p", "<MiddleMouse>"],
+    liberator.mappings.add(modes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
-        function () { vimperator.open(readFromClipboard()); });
+        function () { liberator.open(readFromClipboard()); });
 
-    vimperator.mappings.add(modes, ["P"],
+    liberator.mappings.add(modes, ["P"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            vimperator.open(readFromClipboard(),
-                /\bpaste\b/.test(vimperator.options["activate"]) ?
-                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+            liberator.open(readFromClipboard(),
+                /\bpaste\b/.test(liberator.options["activate"]) ?
+                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         });
 
     // reloading
-    vimperator.mappings.add(modes, ["r"],
+    liberator.mappings.add(modes, ["r"],
         "Reload current page",
-        function () { vimperator.tabs.reload(getBrowser().mCurrentTab, false); });
+        function () { liberator.tabs.reload(getBrowser().mCurrentTab, false); });
 
-    vimperator.mappings.add(modes, ["R"],
+    liberator.mappings.add(modes, ["R"],
         "Reload while skipping the cache",
-        function () { vimperator.tabs.reload(getBrowser().mCurrentTab, true); });
+        function () { liberator.tabs.reload(getBrowser().mCurrentTab, true); });
 
     // yanking
-    vimperator.mappings.add(modes, ["Y"],
+    liberator.mappings.add(modes, ["Y"],
         "Copy selected text or current word",
         function ()
         {
-            var sel = vimperator.buffer.getCurrentWord();
+            var sel = liberator.buffer.getCurrentWord();
             if (sel)
-                vimperator.copyToClipboard(sel, true);
+                liberator.copyToClipboard(sel, true);
             else
-                vimperator.beep();
+                liberator.beep();
         });
 
     // zooming
-    vimperator.mappings.add(modes, ["zi", "+"],
+    liberator.mappings.add(modes, ["zi", "+"],
         "Enlarge text zoom of current web page",
-        function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomIn(count > 1 ? count : 1, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zm"],
+    liberator.mappings.add(modes, ["zm"],
         "Enlarge text zoom of current web page by a larger amount",
-        function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zo", "-"],
+    liberator.mappings.add(modes, ["zo", "-"],
         "Reduce text zoom of current web page",
-        function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomOut(count > 1 ? count : 1, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zr"],
+    liberator.mappings.add(modes, ["zr"],
         "Reduce text zoom of current web page by a larger amount",
-        function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zz"],
+    liberator.mappings.add(modes, ["zz"],
         "Set text zoom value of current web page",
-        function (count) { vimperator.buffer.textZoom = count > 1 ? count : 100; },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.textZoom = count > 1 ? count : 100; },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zI"],
+    liberator.mappings.add(modes, ["zI"],
         "Enlarge full zoom of current web page",
-        function (count) { vimperator.buffer.zoomIn(count > 1 ? count : 1, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomIn(count > 1 ? count : 1, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zM"],
+    liberator.mappings.add(modes, ["zM"],
         "Enlarge full zoom of current web page by a larger amount",
-        function (count) { vimperator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zO"],
+    liberator.mappings.add(modes, ["zO"],
         "Reduce full zoom of current web page",
-        function (count) { vimperator.buffer.zoomOut(count > 1 ? count : 1, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomOut(count > 1 ? count : 1, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zR"],
+    liberator.mappings.add(modes, ["zR"],
         "Reduce full zoom of current web page by a larger amount",
-        function (count) { vimperator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["zZ"],
+    liberator.mappings.add(modes, ["zZ"],
         "Set full zoom value of current web page",
-        function (count) { vimperator.buffer.fullZoom = count > 1 ? count : 100; },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.fullZoom = count > 1 ? count : 100; },
+        { flags: liberator.Mappings.flags.COUNT });
 
     // page info
-    vimperator.mappings.add(modes, ["<C-g>"],
+    liberator.mappings.add(modes, ["<C-g>"],
         "Print the current file name",
-        function (count) { vimperator.buffer.showPageInfo(false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.buffer.showPageInfo(false); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["g<C-g>"],
+    liberator.mappings.add(modes, ["g<C-g>"],
         "Print file information",
-        function (count) { vimperator.buffer.showPageInfo(true); });
+        function (count) { liberator.buffer.showPageInfo(true); });
 
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.commands.add(["ha[rdcopy]"],
+    liberator.commands.add(["ha[rdcopy]"],
         "Print current document",
         function () { getBrowser().contentWindow.print(); });
 
-    vimperator.commands.add(["pa[geinfo]"],
+    liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
-        function () { vimperator.buffer.showPageInfo(true); });
+        function () { liberator.buffer.showPageInfo(true); });
 
-    vimperator.commands.add(["re[load]"],
+    liberator.commands.add(["re[load]"],
         "Reload current page",
-        function (args, special) { vimperator.tabs.reload(getBrowser().mCurrentTab, special); });
+        function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); });
 
-    vimperator.commands.add(["sav[eas]", "w[rite]"],
+    liberator.commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
         function (args, special)
         {
-            var file = vimperator.io.getFile(args || ""); 
+            var file = liberator.io.getFile(args || ""); 
             // we always want to save that link relative to the current working directory
-            vimperator.options.setPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+            liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
             //if (args)
             //{
-            //    saveURL(vimperator.buffer.URL, args, null, true, special, // special == skipPrompt
-            //            makeURI(vimperator.buffer.URL, content.document.characterSet));
+            //    saveURL(liberator.buffer.URL, args, null, true, special, // special == skipPrompt
+            //            makeURI(liberator.buffer.URL, content.document.characterSet));
             //}
             //else
             saveDocument(window.content.document, special);
         });
 
-    vimperator.commands.add(["st[op]"],
+    liberator.commands.add(["st[op]"],
         "Stop loading",
         function () { BrowserStop(); });
 
-    vimperator.commands.add(["vie[wsource]"],
+    liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { vimperator.buffer.viewSource(args, special) });
+        function (args, special) { liberator.buffer.viewSource(args, special) });
 
-    vimperator.commands.add(["zo[om]"],
+    liberator.commands.add(["zo[om]"],
         "Set zoom value of current web page",
         function (args, special)
         {
@@ -472,9 +472,9 @@ vimperator.Buffer = function () //{{{
             else if (/^[+-]\d+$/.test(args))
             {
                 if (special)
-                    level = vimperator.buffer.fullZoom + parseInt(args, 10);
+                    level = liberator.buffer.fullZoom + parseInt(args, 10);
                 else
-                    level = vimperator.buffer.textZoom + parseInt(args, 10);
+                    level = liberator.buffer.textZoom + parseInt(args, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < 1)
@@ -484,14 +484,14 @@ vimperator.Buffer = function () //{{{
             }
             else
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
 
             if (special)
-                vimperator.buffer.fullZoom = level;
+                liberator.buffer.fullZoom = level;
             else
-                vimperator.buffer.textZoom = level;
+                liberator.buffer.textZoom = level;
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -591,7 +591,7 @@ vimperator.Buffer = function () //{{{
         // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
         getElement: function (args, index)
         {
-            return vimperator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
+            return liberator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
         },
 
         // artificially "clicks" a link in order to open it
@@ -618,15 +618,15 @@ vimperator.Buffer = function () //{{{
             var newTab = false, newWindow = false;
             switch (where)
             {
-                case vimperator.NEW_TAB:
-                case vimperator.NEW_BACKGROUND_TAB:
+                case liberator.NEW_TAB:
+                case liberator.NEW_BACKGROUND_TAB:
                     newTab = true;
                     break;
-                case vimperator.NEW_WINDOW:
+                case liberator.NEW_WINDOW:
                     newWindow = true;
                     break;
                 default:
-                    vimperator.log("Invalid where argument for followLink()");
+                    liberator.log("Invalid where argument for followLink()");
             }
 
             elem.focus();
@@ -680,12 +680,12 @@ vimperator.Buffer = function () //{{{
             {
                 urlSecurityCheck(url, doc.nodePrincipal);
                 // we always want to save that link relative to the current working directory
-                vimperator.options.setPref("browser.download.lastDir", vimperator.io.getCurrentDirectory());
+                liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
                 saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
             }
             catch (e)
             {
-                vimperator.echoerr(e);
+                liberator.echoerr(e);
             }
         },
 
@@ -723,7 +723,7 @@ vimperator.Buffer = function () //{{{
             const COL_WIDTH = 20;
 
             if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
-                vimperator.beep();
+                liberator.beep();
 
             win.scrollBy(COL_WIDTH * cols, 0);
         },
@@ -750,13 +750,13 @@ vimperator.Buffer = function () //{{{
         scrollByScrollSize: function (count, direction)
         {
             if (count > 0)
-                vimperator.options["scroll"] = count;
+                liberator.options["scroll"] = count;
 
             var win = findScrollableWindow();
             checkScrollYBounds(win, direction);
 
-            if (vimperator.options["scroll"] > 0)
-                this.scrollLines(vimperator.options["scroll"] * direction);
+            if (liberator.options["scroll"] > 0)
+                this.scrollLines(liberator.options["scroll"] * direction);
             else // scroll half a page down in pixels
                 win.scrollBy(0, win.innerHeight / 2 * direction);
         },
@@ -833,7 +833,7 @@ vimperator.Buffer = function () //{{{
                 if (next > frames.length - 1)
                 {
                     if (current == frames.length - 1)
-                        vimperator.beep(); // still allow the frame indicator to be activated
+                        liberator.beep(); // still allow the frame indicator to be activated
 
                     next = frames.length - 1;
                 }
@@ -848,7 +848,7 @@ vimperator.Buffer = function () //{{{
                 if (next < 0)
                 {
                     if (current == 0)
-                        vimperator.beep(); // still allow the frame indicator to be activated
+                        liberator.beep(); // still allow the frame indicator to be activated
 
                     next = 0;
                 }
@@ -864,7 +864,7 @@ vimperator.Buffer = function () //{{{
             // document
             var doc = frames[next].document;
             var indicator = doc.createElement("div");
-            indicator.id = "vimperator-frame-indicator";
+            indicator.id = "liberator-frame-indicator";
             // NOTE: need to set a high z-index - it's a crapshoot!
             var style = "background-color: red; opacity: 0.5; z-index: 999;" +
                         "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
@@ -879,12 +879,12 @@ vimperator.Buffer = function () //{{{
         // updates the buffer preview in place only if list is visible
         updateBufferList: function ()
         {
-            if (!vimperator.bufferwindow.visible())
+            if (!liberator.bufferwindow.visible())
                 return;
 
-            var items = vimperator.completion.buffer("")[1];
-            vimperator.bufferwindow.show(items);
-            vimperator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
+            var items = liberator.completion.buffer("")[1];
+            liberator.bufferwindow.show(items);
+            liberator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
         },
 
         zoomIn: function (steps, fullZoom)
@@ -901,7 +901,7 @@ vimperator.Buffer = function () //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            vimperator.echo("Element:<br/>" + vimperator.util.objectToString(elem), vimperator.commandline.FORCE_MULTILINE);
+            liberator.echo("Element:<br/>" + liberator.util.objectToString(elem), liberator.commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)
@@ -1001,8 +1001,8 @@ vimperator.Buffer = function () //{{{
             var pageSize = []; // [0] bytes; [1] kbytes
             if (cacheEntryDescriptor)
             {
-                pageSize[0] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
-                pageSize[1] = vimperator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+                pageSize[0] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+                pageSize[1] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
                 if (pageSize[1] == pageSize[0])
                     pageSize[1] = null; // don't output "xx Bytes" twice
             }
@@ -1030,7 +1030,7 @@ vimperator.Buffer = function () //{{{
                     if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
                     {
                         var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
-                        pageFeeds.push([feed.title, vimperator.util.highlightURL(feed.href, true) + " <span style='color: gray;'>(" + type + ")</span>"]);
+                        pageFeeds.push([feed.title, liberator.util.highlightURL(feed.href, true) + " <span style='color: gray;'>(" + type + ")</span>"]);
                     }
                 }
             }
@@ -1061,22 +1061,22 @@ vimperator.Buffer = function () //{{{
                 if (countFeeds)
                     info.push(countFeeds);
 
-                if (vimperator.bookmarks.isBookmarked(this.URL))
+                if (liberator.bookmarks.isBookmarked(this.URL))
                     info.push("bookmarked");
 
 
                 var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
-                vimperator.echo(pageInfoText, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.echo(pageInfoText, liberator.commandline.FORCE_SINGLELINE);
                 return;
             }
 
             // get general infos
             pageGeneral.push(["Title", window.content.document.title]);
-            pageGeneral.push(["URL", vimperator.util.highlightURL(window.content.document.location.toString(), true)]);
+            pageGeneral.push(["URL", liberator.util.highlightURL(window.content.document.location.toString(), true)]);
 
             var ref = "referrer" in window.content.document && window.content.document.referrer;
             if (ref)
-                pageGeneral.push(["Referrer", vimperator.util.highlightURL(ref, true)]);
+                pageGeneral.push(["Referrer", liberator.util.highlightURL(ref, true)]);
 
             if (pageSize[0])
             {
@@ -1111,7 +1111,7 @@ vimperator.Buffer = function () //{{{
                 // sort: ignore-case
                 tmpSort.sort(function (a, b) { return a.toLowerCase() > b.toLowerCase() ? 1 : -1; });
                 for (var i = 0; i < tmpSort.length; i++)
-                    pageMeta.push([tmpDict[tmpSort[i]][0], vimperator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
+                    pageMeta.push([tmpDict[tmpSort[i]][0], liberator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
             }
 
             pageMeta.push(["Meta Tags", ""]); // add extra text to the end
@@ -1119,7 +1119,7 @@ vimperator.Buffer = function () //{{{
             pageFeeds.push(["Feeds", ""]);
 
             var pageInfoText = "";
-            var option = vimperator.options["pageinfo"];
+            var option = liberator.options["pageinfo"];
             var br = "";
 
             for (var z = 0; z < option.length; z++)
@@ -1152,7 +1152,7 @@ vimperator.Buffer = function () //{{{
                         break;
                 }
             }
-            vimperator.echo(pageInfoText, vimperator.commandline.FORCE_MULTILINE);
+            liberator.echo(pageInfoText, liberator.commandline.FORCE_MULTILINE);
         },
 
         followDocumentRelationship: function (relationship)
@@ -1166,16 +1166,16 @@ vimperator.Buffer = function () //{{{
                 switch (relationship)
                 {
                     case "next":
-                        regexps = vimperator.options["nextpattern"].split(",");
+                        regexps = liberator.options["nextpattern"].split(",");
                         revString = "previous";
                         break;
                     case "previous":
                         // TODO: accept prev\%[ious]
-                        regexps = vimperator.options["previouspattern"].split(",");
+                        regexps = liberator.options["previouspattern"].split(",");
                         revString = "next";
                         break;
                     default:
-                        vimperator.echoerr("Bad document relationship: " + relationship);
+                        liberator.echoerr("Bad document relationship: " + relationship);
                 }
 
                 relText = new RegExp(relationship, "i");
@@ -1186,7 +1186,7 @@ vimperator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                            vimperator.open(elems[i].href);
+                            liberator.open(elems[i].href);
                             return true;
                     }
                 }
@@ -1197,7 +1197,7 @@ vimperator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                        vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                        liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
                         return true;
                     }
                 }
@@ -1209,7 +1209,7 @@ vimperator.Buffer = function () //{{{
                     {
                         if (patternText.test(elems[i].textContent))
                         {
-                            vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                            liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
                             return true;
                         }
                         else
@@ -1220,7 +1220,7 @@ vimperator.Buffer = function () //{{{
                             {
                                 if (patternText.test(children[j].alt))
                                 {
-                                    vimperator.buffer.followLink(elems[i], vimperator.CURRENT_TAB);
+                                    liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
                                     return true;
                                 }
                             }
@@ -1251,7 +1251,7 @@ vimperator.Buffer = function () //{{{
             }
 
             if (!retVal)
-                vimperator.beep();
+                liberator.beep();
         },
 
         viewSelectionSource: function () 
@@ -1277,27 +1277,27 @@ vimperator.Buffer = function () //{{{
         // url is optional
         viewSource: function (url, useExternalEditor)
         {
-            var url = url || vimperator.buffer.URL;
+            var url = url || liberator.buffer.URL;
             if (useExternalEditor)
             {
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
                 var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
-                var editor = vimperator.options["editor"];
+                var editor = liberator.options["editor"];
                 var args = editor.split(" "); // FIXME: too simple
                 if (args.length < 1)
                 {
-                    vimperator.echoerr("no editor specified");
+                    liberator.echoerr("no editor specified");
                     return;
                 }
 
                 var prog = args.shift();
                 args.push(url)
-                vimperator.callFunctionInThread(newThread, vimperator.io.run, [prog, args, true]);
+                liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
             }
             else
             {
-                vimperator.open("view-source:" + url)
+                liberator.open("view-source:" + url)
             }
         }
     };
@@ -1306,7 +1306,7 @@ vimperator.Buffer = function () //{{{
 
 
 
-vimperator.Marks = function () //{{{
+liberator.Marks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1344,7 +1344,7 @@ vimperator.Marks = function () //{{{
             {
                 if (localMarks[mark][i].location == win.location.href)
                 {
-                    vimperator.log("Deleting local mark: " + mark + " | " + localMarks[mark][i].location + " | (" + localMarks[mark][i].position.x + ", " + localMarks[mark][i].position.y + ") | tab: " + vimperator.tabs.index(localMarks[mark][i].tab), 5);
+                    liberator.log("Deleting local mark: " + mark + " | " + localMarks[mark][i].location + " | (" + localMarks[mark][i].position.x + ", " + localMarks[mark][i].position.y + ") | tab: " + liberator.tabs.index(localMarks[mark][i].tab), 5);
                     localMarks[mark].splice(i, 1);
                     if (localMarks[mark].length == 0)
                         delete localMarks[mark];
@@ -1358,7 +1358,7 @@ vimperator.Marks = function () //{{{
     {
         if (mark in urlMarks)
         {
-            vimperator.log("Deleting URL mark: " + mark + " | " + urlMarks[mark].location + " | (" + urlMarks[mark].position.x + ", " + urlMarks[mark].position.y + ") | tab: " + vimperator.tabs.index(urlMarks[mark].tab), 5);
+            liberator.log("Deleting URL mark: " + mark + " | " + urlMarks[mark].location + " | (" + urlMarks[mark].position.x + ", " + urlMarks[mark].position.y + ") | tab: " + liberator.tabs.index(urlMarks[mark].tab), 5);
             delete urlMarks[mark];
         }
     }
@@ -1411,44 +1411,44 @@ vimperator.Marks = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["m"], "Set mark at the cursor position",
         function (arg)
         {
             if (/[^a-zA-Z]/.test(arg))
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
-            vimperator.marks.add(arg);
+            liberator.marks.add(arg);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["'", "`"], "Jump to the mark in the current buffer",
-        function (arg) { vimperator.marks.jumpTo(arg); },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        function (arg) { liberator.marks.jumpTo(arg); },
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["delm[arks]"],
+    liberator.commands.add(["delm[arks]"],
         "Delete the specified marks",
         function (args, special)
         {
             if (!special && !args)
             {
-                vimperator.echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
             if (special && args)
             {
-                vimperator.echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return;
             }
             var matches;
@@ -1457,7 +1457,7 @@ vimperator.Marks = function () //{{{
                 // NOTE: this currently differs from Vim's behavior which
                 // deletes any valid marks in the arg list, up to the first
                 // invalid arg, as well as giving the error message.
-                vimperator.echoerr("E475: Invalid argument: " + matches[0]);
+                liberator.echoerr("E475: Invalid argument: " + matches[0]);
                 return;
             }
             // check for illegal ranges - only allow a-z A-Z 0-9
@@ -1472,51 +1472,51 @@ vimperator.Marks = function () //{{{
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
                         start > end)
                     {
-                        vimperator.echoerr("E475: Invalid argument: " + args.match(new RegExp(matches[i] + ".*"))[0]);
+                        liberator.echoerr("E475: Invalid argument: " + args.match(new RegExp(matches[i] + ".*"))[0]);
                         return;
                     }
                 }
             }
 
-            vimperator.marks.remove(args, special);
+            liberator.marks.remove(args, special);
         });
 
-    vimperator.commands.add(["ma[rk]"],
+    liberator.commands.add(["ma[rk]"],
         "Mark current location within the web page",
         function (args)
         {
             if (!args)
             {
-                vimperator.echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
             if (args.length > 1)
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
             if (!/[a-zA-Z]/.test(args))
             {
-                vimperator.echoerr("E191: Argument must be a letter or forward/backward quote");
+                liberator.echoerr("E191: Argument must be a letter or forward/backward quote");
                 return;
             }
 
-            vimperator.marks.add(args);
+            liberator.marks.add(args);
         });
 
-    vimperator.commands.add(["marks"],
+    liberator.commands.add(["marks"],
         "Show all location marks of current web page",
         function (args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
             {
-                vimperator.echoerr("E283: No marks matching \"" + args + "\"");
+                liberator.echoerr("E283: No marks matching \"" + args + "\"");
                 return;
             }
 
             var filter = args.replace(/[^a-zA-Z]/g, "");
-            vimperator.marks.list(filter);
+            liberator.marks.list(filter);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1532,7 +1532,7 @@ vimperator.Marks = function () //{{{
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                vimperator.echoerr("marks support for frameset pages not implemented yet");
+                liberator.echoerr("marks support for frameset pages not implemented yet");
                 return;
             }
 
@@ -1542,8 +1542,8 @@ vimperator.Marks = function () //{{{
 
             if (isURLMark(mark))
             {
-                vimperator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + vimperator.tabs.index(vimperator.tabs.getTab()), 5);
-                urlMarks[mark] = { location: win.location.href, position: position, tab: vimperator.tabs.getTab() };
+                liberator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + liberator.tabs.index(liberator.tabs.getTab()), 5);
+                urlMarks[mark] = { location: win.location.href, position: position, tab: liberator.tabs.getTab() };
             }
             else if (isLocalMark(mark))
             {
@@ -1551,7 +1551,7 @@ vimperator.Marks = function () //{{{
                 removeLocalMark(mark);
                 if (!localMarks[mark])
                     localMarks[mark] = [];
-                vimperator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
+                liberator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
                 localMarks[mark].push({ location: win.location.href, position: position });
             }
         },
@@ -1593,14 +1593,14 @@ vimperator.Marks = function () //{{{
                     {
                         pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
-                        // non-unique URLs, like Vimperator's help :(
-                        vimperator.open(slice.location, vimperator.NEW_TAB);
+                        // non-unique URLs, like liberator's help :(
+                        liberator.open(slice.location, liberator.NEW_TAB);
                         return;
                     }
-                    var index = vimperator.tabs.index(slice.tab);
+                    var index = liberator.tabs.index(slice.tab);
                     if (index != -1)
                     {
-                        vimperator.tabs.select(index);
+                        liberator.tabs.select(index);
                         var win = slice.tab.linkedBrowser.contentWindow;
                         if (win.location.href != slice.location)
                         {
@@ -1608,7 +1608,7 @@ vimperator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        vimperator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + vimperator.tabs.index(slice.tab), 5);
+                        liberator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + liberator.tabs.index(slice.tab), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -1623,7 +1623,7 @@ vimperator.Marks = function () //{{{
                 {
                     if (win.location.href == slice[i].location)
                     {
-                        vimperator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
+                        liberator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
                         win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -1631,7 +1631,7 @@ vimperator.Marks = function () //{{{
             }
 
             if (!ok)
-                vimperator.echoerr("E20: Mark not set"); // FIXME: move up?
+                liberator.echoerr("E20: Mark not set"); // FIXME: move up?
         },
 
         list: function (filter)
@@ -1640,7 +1640,7 @@ vimperator.Marks = function () //{{{
 
             if (marks.length == 0)
             {
-                vimperator.echoerr("No marks set");
+                liberator.echoerr("No marks set");
                 return;
             }
 
@@ -1652,12 +1652,12 @@ vimperator.Marks = function () //{{{
                 });
                 if (marks.length == 0)
                 {
-                    vimperator.echoerr("E283: No marks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No marks matching \"" + filter + "\"");
                     return;
                 }
             }
 
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
             for (var i = 0; i < marks.length; i++)
             {
@@ -1665,12 +1665,12 @@ vimperator.Marks = function () //{{{
                         "<td> "                        + marks[i][0]                              +  "</td>" +
                         "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
                         "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
-                        "<td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1].location) + "</td>" +
+                        "<td style=\"color: green;\">" + liberator.util.escapeHTML(marks[i][1].location) + "</td>" +
                         "</tr>";
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 
     };

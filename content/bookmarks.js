@@ -27,7 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // also includes methods for dealing with keywords and search engines
-vimperator.Bookmarks = function () //{{{
+liberator.Bookmarks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -47,7 +47,7 @@ vimperator.Bookmarks = function () //{{{
     var bookmarks = null;
     var keywords = null;
 
-    if (vimperator.options["preload"])
+    if (liberator.options["preload"])
         setTimeout(function () { load(); }, 100);
 
     function load()
@@ -98,10 +98,10 @@ vimperator.Bookmarks = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.options.add(["defsearch", "ds"],
+    liberator.options.add(["defsearch", "ds"],
         "Set the default search engine",
         "string", "google");
-    vimperator.options.add(["preload"],
+    liberator.options.add(["preload"],
         "Speed up first time history/bookmark completion",
         "boolean", true);
 
@@ -109,86 +109,86 @@ vimperator.Bookmarks = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
     
-    vimperator.mappings.add(modes, ["a"],
+    liberator.mappings.add(modes, ["a"],
         "Open a prompt to bookmark the current URL",
         function ()
         {
             var title = "";
-            if (vimperator.buffer.title != vimperator.buffer.URL)
-                title = " -title=\"" + vimperator.buffer.title + "\"";
-            vimperator.commandline.open(":", "bmark " + vimperator.buffer.URL + title, vimperator.modes.EX);
+            if (liberator.buffer.title != liberator.buffer.URL)
+                title = " -title=\"" + liberator.buffer.title + "\"";
+            liberator.commandline.open(":", "bmark " + liberator.buffer.URL + title, liberator.modes.EX);
         });
 
-    vimperator.mappings.add(modes, ["A"],
+    liberator.mappings.add(modes, ["A"],
         "Toggle bookmarked state of current URL",
-        function () { vimperator.bookmarks.toggle(vimperator.buffer.URL); });
+        function () { liberator.bookmarks.toggle(liberator.buffer.URL); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["bma[rk]"],
+    liberator.commands.add(["bma[rk]"],
         "Add a bookmark",
         function (args)
         {
-            var res = vimperator.commands.parseArgs(args, this.args);
+            var res = liberator.commands.parseArgs(args, this.args);
             if (!res)
                 return;
 
-            var url = res.args.length == 0 ? vimperator.buffer.URL : res.args[0];
-            var title = vimperator.commands.getOption(res.opts, "-title", res.args.length == 0 ? vimperator.buffer.title : null);
+            var url = res.args.length == 0 ? liberator.buffer.URL : res.args[0];
+            var title = liberator.commands.getOption(res.opts, "-title", res.args.length == 0 ? liberator.buffer.title : null);
             if (!title)
                 title = url;
-            var keyword = vimperator.commands.getOption(res.opts, "-keyword", null);
-            var tags = vimperator.commands.getOption(res.opts, "-tags", []);
+            var keyword = liberator.commands.getOption(res.opts, "-keyword", null);
+            var tags = liberator.commands.getOption(res.opts, "-tags", []);
 
-            if (vimperator.bookmarks.add(false, title, url, keyword, tags))
+            if (liberator.bookmarks.add(false, title, url, keyword, tags))
             {
                 var extra = "";
                 if (title != url)
                     extra = " (" + title + ")";
-                vimperator.echo("Added bookmark: " + url + extra, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.echo("Added bookmark: " + url + extra, liberator.commandline.FORCE_SINGLELINE);
             }
             else
-                vimperator.echoerr("Exxx: Could not add bookmark `" + title + "'", vimperator.commandline.FORCE_SINGLELINE);
+                liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", liberator.commandline.FORCE_SINGLELINE);
         },
         {
-            args: [[["-title", "-t"],    vimperator.commands.OPTION_STRING],
-                   [["-tags", "-T"],     vimperator.commands.OPTION_LIST],
-                   [["-keyword", "-k"],  vimperator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
+            args: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
+                   [["-tags", "-T"],     liberator.commands.OPTION_LIST],
+                   [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
         });
 
-    vimperator.commands.add(["bmarks"],
+    liberator.commands.add(["bmarks"],
         "List or open multiple bookmarks",
         function (args, special)
         {
-            var res = vimperator.commands.parseArgs(args, this.args);
+            var res = liberator.commands.parseArgs(args, this.args);
             if (!res)
                 return;
 
-            var tags = vimperator.commands.getOption(res.opts, "-tags", []);
-            vimperator.bookmarks.list(res.args.join(" "), tags, special);
+            var tags = liberator.commands.getOption(res.opts, "-tags", []);
+            liberator.bookmarks.list(res.args.join(" "), tags, special);
         },
         {
-            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; },
-            args: [[["-tags", "-T"], vimperator.commands.OPTION_LIST]]
+            completer: function (filter) { return [0, liberator.bookmarks.get(filter)]; },
+            args: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
 
-    vimperator.commands.add(["delbm[arks]"],
+    liberator.commands.add(["delbm[arks]"],
         "Delete a bookmark",
         function (args, special)
         {
             var url = args;
             if (!url)
-                url = vimperator.buffer.URL;
+                url = liberator.buffer.URL;
 
-            var deletedCount = vimperator.bookmarks.remove(url);
-            vimperator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", vimperator.commandline.FORCE_SINGLELINE);
+            var deletedCount = liberator.bookmarks.remove(url);
+            liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", liberator.commandline.FORCE_SINGLELINE);
         },
         {
-            completer: function (filter) { return [0, vimperator.bookmarks.get(filter)]; }
+            completer: function (filter) { return [0, liberator.bookmarks.get(filter)]; }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -205,7 +205,7 @@ vimperator.Bookmarks = function () //{{{
             if (!bookmarks || bypassCache)
                 load();
 
-            return vimperator.completion.filterURLArray(bookmarks, filter, tags);
+            return liberator.completion.filterURLArray(bookmarks, filter, tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
@@ -239,12 +239,12 @@ vimperator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                vimperator.log(e);
+                liberator.log(e);
                 return false;
             }
 
             // update the display of our "bookmarked" symbol
-            vimperator.statusline.updateUrl();
+            liberator.statusline.updateUrl();
 
             //also update bookmark cache
             bookmarks.unshift([url, title, keyword, tags || []]);
@@ -259,16 +259,16 @@ vimperator.Bookmarks = function () //{{{
             var count = this.remove(url);
             if (count > 0)
             {
-                vimperator.commandline.echo("Removed bookmark: " + url, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.commandline.echo("Removed bookmark: " + url, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_SINGLELINE);
             }
             else
             {
-                var title = vimperator.buffer.title || url;
+                var title = liberator.buffer.title || url;
                 var extra = "";
                 if (title != url)
                     extra = " (" + title + ")";
                 this.add(true, title, url);
-                vimperator.commandline.echo("Added bookmark: " + url + extra, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_SINGLELINE);
+                liberator.commandline.echo("Added bookmark: " + url + extra, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_SINGLELINE);
             }
         },
 
@@ -306,7 +306,7 @@ vimperator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                vimperator.log(e);
+                liberator.log(e);
                 return i;
             }
 
@@ -316,7 +316,7 @@ vimperator.Bookmarks = function () //{{{
                 load();
 
             // update the display of our "bookmarked" symbol
-            vimperator.statusline.updateUrl();
+            liberator.statusline.updateUrl();
 
             return count.value;
         },
@@ -373,7 +373,7 @@ vimperator.Bookmarks = function () //{{{
             var url = null;
             var postData = null;
             if (!engineName)
-                engineName = vimperator.options["defsearch"];
+                engineName = liberator.options["defsearch"];
 
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
@@ -423,9 +423,9 @@ vimperator.Bookmarks = function () //{{{
             if (items.length == 0)
             {
                 if (filter.length > 0 || tags.length > 0)
-                    vimperator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
                 else
-                    vimperator.echoerr("No bookmarks set");
+                    liberator.echoerr("No bookmarks set");
 
                 return;
             }
@@ -434,38 +434,38 @@ vimperator.Bookmarks = function () //{{{
             {
                 // FIXME: use yes/no question
                 if (items.length > 50)
-                    return vimperator.echoerr("For now, you can only open a hard limit of 50 items at once");
+                    return liberator.echoerr("For now, you can only open a hard limit of 50 items at once");
 
                 for (var i = 0; i < items.length; i++)
-                    vimperator.open(items[i][0], vimperator.NEW_TAB);
+                    liberator.open(items[i][0], liberator.NEW_TAB);
 
                 return;
             }
 
             var title, url, tags, keyword, extra;
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                title = vimperator.util.escapeHTML(items[i][1]);
+                title = liberator.util.escapeHTML(items[i][1]);
                 if (title.length > 50)
                     title = title.substr(0, 47) + "...";
-                url = vimperator.util.escapeHTML(items[i][0]);
+                url = liberator.util.escapeHTML(items[i][0]);
                 keyword = items[i][2];
                 tags = items[i][3].join(", ");
 
                 extra = "";
                 if (keyword)
                 {
-                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + vimperator.util.escapeHTML(keyword) + "</span>";
+                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + liberator.util.escapeHTML(keyword) + "</span>";
                     if (tags)
-                        extra += " tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + ")</span>";
+                        extra += " tags: <span style=\"color: blue;\">" + liberator.util.escapeHTML(tags) + ")</span>";
                     else
                         extra += ")</span>";
                 }
                 else if (tags)
                 {
-                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + vimperator.util.escapeHTML(tags) + "</span>)</span>";
+                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + liberator.util.escapeHTML(tags) + "</span>)</span>";
                 }
 
 
@@ -473,14 +473,14 @@ vimperator.Bookmarks = function () //{{{
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 
     };
     //}}}
 }; //}}}
 
-vimperator.History = function () //{{{
+liberator.History = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -491,7 +491,7 @@ vimperator.History = function () //{{{
 
     var history = null;
 
-    if (vimperator.options["preload"])
+    if (liberator.options["preload"])
         setTimeout(function () { load(); }, 100);
 
     function load()
@@ -527,38 +527,38 @@ vimperator.History = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-o>"], "Go to an older position in the jump list",
-        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.history.stepTo(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["<C-i>"], "Go to a newer position in the jump list",
-        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.history.stepTo(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["H", "<A-Left>", "<M-Left>"], "Go back in the browser history",
-        function (count) { vimperator.history.stepTo(-(count > 1 ? count : 1)); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.history.stepTo(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["L", "<A-Right>", "<M-Right>"], "Go forward in the browser history",
-        function (count) { vimperator.history.stepTo(count > 1 ? count : 1); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.history.stepTo(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["ba[ck]"],
+    liberator.commands.add(["ba[ck]"],
         "Go back in the browser history",
         function (args, special, count)
         {
             if (special)
-                vimperator.history.goToStart();
+                liberator.history.goToStart();
             else
             {
                 if (args)
@@ -573,7 +573,7 @@ vimperator.History = function () //{{{
                         }
                     }
                 }
-                vimperator.history.stepTo(count > 0 ? -1 * count : -1);
+                liberator.history.stepTo(count > 0 ? -1 * count : -1);
             }
         },
         {
@@ -586,19 +586,19 @@ vimperator.History = function () //{{{
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
                     var title = entry.title;
-                    if (vimperator.completion.match([url, title], filter, false))
+                    if (liberator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return [0, completions];
             }
         });
 
-    vimperator.commands.add(["fo[rward]", "fw"],
+    liberator.commands.add(["fo[rward]", "fw"],
         "Go forward in the browser history",
         function (args, special, count)
         {
             if (special)
-                vimperator.history.goToEnd();
+                liberator.history.goToEnd();
             else
             {
                 if (args)
@@ -613,7 +613,7 @@ vimperator.History = function () //{{{
                         }
                     }
                 }
-                vimperator.history.stepTo(count > 0 ? count : 1);
+                liberator.history.stepTo(count > 0 ? count : 1);
             }
         },
         {
@@ -626,17 +626,17 @@ vimperator.History = function () //{{{
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
                     var title = entry.title;
-                    if (vimperator.completion.match([url, title], filter, false))
+                    if (liberator.completion.match([url, title], filter, false))
                         completions.push([url, title]);
                 }
                 return [0, completions];
             }
         });
 
-    vimperator.commands.add(["hist[ory]", "hs"],
+    liberator.commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args, special) { vimperator.history.list(args, special); },
-        { completer: function (filter) { return [0, vimperator.history.get(filter)]; } });
+        function (args, special) { liberator.history.list(args, special); },
+        { completer: function (filter) { return [0, liberator.history.get(filter)]; } });
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -648,7 +648,7 @@ vimperator.History = function () //{{{
             if (!history)
                 load();
 
-                return vimperator.completion.filterURLArray(history, filter);
+                return liberator.completion.filterURLArray(history, filter);
         },
 
         // the history is automatically added to the Places global history
@@ -667,7 +667,7 @@ vimperator.History = function () //{{{
         },
 
         // TODO: better names?
-        //       and move to vimperator.buffer.?
+        //       and move to liberator.buffer.?
         stepTo: function (steps)
         {
             var index = getWebNavigation().sessionHistory.index + steps;
@@ -678,7 +678,7 @@ vimperator.History = function () //{{{
             }
             else
             {
-                vimperator.beep();
+                liberator.beep();
             }
         },
 
@@ -688,7 +688,7 @@ vimperator.History = function () //{{{
 
             if (index == 0)
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
@@ -702,7 +702,7 @@ vimperator.History = function () //{{{
 
             if (index == max)
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
@@ -716,9 +716,9 @@ vimperator.History = function () //{{{
             if (items.length == 0)
             {
                 if (filter.length > 0)
-                    vimperator.echoerr("E283: No history matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No history matching \"" + filter + "\"");
                 else
-                    vimperator.echoerr("No history set");
+                    liberator.echoerr("No history set");
 
                 return;
             }
@@ -727,28 +727,28 @@ vimperator.History = function () //{{{
             {
                 // FIXME: use yes/no question
                 if (items.length > 50)
-                    return vimperator.echoerr("For now, you can only open a hard limit of 50 items at once");
+                    return liberator.echoerr("For now, you can only open a hard limit of 50 items at once");
 
                 for (var i = 0; i < items.length; i++)
-                    vimperator.open(items[i][0], vimperator.NEW_TAB);
+                    liberator.open(items[i][0], liberator.NEW_TAB);
 
                 return;
             }
             else
             {
 
-                var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    var title = vimperator.util.escapeHTML(items[i][1]);
+                    var title = liberator.util.escapeHTML(items[i][1]);
                     if (title.length > 50)
                         title = title.substr(0, 47) + "...";
-                    var url = vimperator.util.escapeHTML(items[i][0]);
+                    var url = liberator.util.escapeHTML(items[i][0]);
                     list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
                 }
                 list += "</table>";
-                vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         }
 
@@ -756,7 +756,7 @@ vimperator.History = function () //{{{
     //}}}
 }; //}}}
 
-vimperator.QuickMarks = function () //{{{
+liberator.QuickMarks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -764,7 +764,7 @@ vimperator.QuickMarks = function () //{{{
 
     var qmarks = {};
     // TODO: move to a storage module
-    var savedMarks = vimperator.options.getPref("extensions.vimperator.quickmarks", "").split("\n");
+    var savedMarks = liberator.options.getPref("extensions.vimperator.quickmarks", "").split("\n");
 
     // load the saved quickmarks -- TODO: change to sqlite
     for (var i = 0; i < savedMarks.length - 1; i += 2)
@@ -775,95 +775,95 @@ vimperator.QuickMarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    var modes = vimperator.config.browserModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["go"], "Jump to a QuickMark",
-        function (arg) { vimperator.quickmarks.jumpTo(arg, vimperator.CURRENT_TAB); },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        function (arg) { liberator.quickmarks.jumpTo(arg, liberator.CURRENT_TAB); },
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["gn"], "Jump to a QuickMark in a new tab",
         function (arg)
         {
-            vimperator.quickmarks.jumpTo(arg,
-                /\bquickmark\b/.test(vimperator.options["activate"]) ?
-                vimperator.NEW_TAB : vimperator.NEW_BACKGROUND_TAB);
+            liberator.quickmarks.jumpTo(arg,
+                /\bquickmark\b/.test(liberator.options["activate"]) ?
+                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
-    vimperator.mappings.add(modes,
+    liberator.mappings.add(modes,
         ["M"], "Add new QuickMark for current URL",
         function (arg)
         {
             if (/[^a-zA-Z0-9]/.test(arg))
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
-            vimperator.quickmarks.add(arg, vimperator.buffer.URL);
+            liberator.quickmarks.add(arg, liberator.buffer.URL);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.commands.add(["delqm[arks]"],
+    liberator.commands.add(["delqm[arks]"],
         "Delete the specified QuickMarks",
         function (args, special)
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!special && !args)
             {
-                vimperator.echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
             if (special && args)
             {
-                vimperator.echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return;
             }
 
             if (special)
-                vimperator.quickmarks.removeAll();
+                liberator.quickmarks.removeAll();
             else
-                vimperator.quickmarks.remove(args);
+                liberator.quickmarks.remove(args);
         });
 
-    vimperator.commands.add(["qma[rk]"],
+    liberator.commands.add(["qma[rk]"],
         "Mark a URL with a letter for quick access",
         function (args)
         {
             if (!args)
             {
-                vimperator.echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
 
             var matches = args.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
             if (!matches)
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
             else if (!matches[2])
-                vimperator.quickmarks.add(matches[1], vimperator.buffer.URL);
+                liberator.quickmarks.add(matches[1], liberator.buffer.URL);
             else
-                vimperator.quickmarks.add(matches[1], matches[2]);
+                liberator.quickmarks.add(matches[1], matches[2]);
         });
 
-    vimperator.commands.add(["qmarks"],
+    liberator.commands.add(["qmarks"],
         "Show all QuickMarks",
         function (args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
             {
-                vimperator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
+                liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
                 return;
             }
 
             var filter = args.replace(/[^a-zA-Z0-9]/g, "");
-            vimperator.quickmarks.list(filter);
+            liberator.quickmarks.list(filter);
         });
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -897,9 +897,9 @@ vimperator.QuickMarks = function () //{{{
             var url = qmarks[qmark];
 
             if (url)
-                vimperator.open(url, where);
+                liberator.open(url, where);
             else
-                vimperator.echoerr("E20: QuickMark not set");
+                liberator.echoerr("E20: QuickMark not set");
         },
 
         list: function (filter)
@@ -913,7 +913,7 @@ vimperator.QuickMarks = function () //{{{
 
             if (marks.length == 0)
             {
-                vimperator.echoerr("No QuickMarks set");
+                liberator.echoerr("No QuickMarks set");
                 return;
             }
 
@@ -925,21 +925,21 @@ vimperator.QuickMarks = function () //{{{
                 });
                 if (marks.length == 0)
                 {
-                    vimperator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
                     return;
                 }
             }
 
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
             for (var i = 0; i < marks.length; i++)
             {
                 list += "<tr><td>    " + marks[i][0] +
-                        "</td><td style=\"color: green;\">" + vimperator.util.escapeHTML(marks[i][1]) + "</td></tr>";
+                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(marks[i][1]) + "</td></tr>";
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         destroy: function ()
@@ -953,7 +953,7 @@ vimperator.QuickMarks = function () //{{{
                 savedQuickMarks += qmarks[i] + "\n";
             }
 
-            vimperator.options.setPref("extensions.vimperator.quickmarks", savedQuickMarks);
+            liberator.options.setPref("extensions.vimperator.quickmarks", savedQuickMarks);
         }
 
     };

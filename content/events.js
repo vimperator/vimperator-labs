@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.AutoCommands = function() //{{{
+liberator.AutoCommands = function() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -46,16 +46,16 @@ vimperator.AutoCommands = function() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["au[tocmd]"],
+    liberator.commands.add(["au[tocmd]"],
         "Execute commands automatically on events",
         function (args, special) 
         {  
             if (!args)
             {
                 if (special) // :au!
-                    vimperator.autocommands.remove(null, null);
+                    liberator.autocommands.remove(null, null);
                 else // :au
-                    vimperator.autocommands.list(null, null);
+                    liberator.autocommands.list(null, null);
             } 
             else
             {
@@ -64,32 +64,32 @@ vimperator.AutoCommands = function() //{{{
 
                 if (cmds)
                 {
-                    vimperator.autocommands.add(auEvent, regex, cmds);
+                    liberator.autocommands.add(auEvent, regex, cmds);
                 }
                 else if (regex) // e.g. no cmds provided
                 {
                     if (special)
-                        vimperator.autocommands.remove(auEvent, regex);
+                        liberator.autocommands.remove(auEvent, regex);
                     else
-                        vimperator.autocommands.list(auEvent, regex);
+                        liberator.autocommands.list(auEvent, regex);
                 }
                 else if (auEvent)
                 {
                     if (asterix)
                         if (special)
-                            vimperator.autocommands.remove(null, auEvent); // ':au! * auEvent'
+                            liberator.autocommands.remove(null, auEvent); // ':au! * auEvent'
                         else
-                            vimperator.autocommands.list(null, auEvent);
+                            liberator.autocommands.list(null, auEvent);
                     else
                         if (special)
-                            vimperator.autocommands.remove(auEvent, null);
+                            liberator.autocommands.remove(auEvent, null);
                         else
-                            vimperator.autocommands.list(auEvent, null);
+                            liberator.autocommands.list(auEvent, null);
                 }
             }
         },
         {
-            completer: function (filter) { return vimperator.completion.autocommands(filter); }
+            completer: function (filter) { return liberator.completion.autocommands(filter); }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -187,13 +187,13 @@ vimperator.AutoCommands = function() //{{{
                             if (flag == true)
                             {
                                 list += "<tr><td style='font-weight: bold;'  colspan='2'>" +
-                                        vimperator.util.escapeHTML(item) + "</td></tr>";
+                                        liberator.util.escapeHTML(item) + "</td></tr>";
                                 flag = false;
                             }
 
                             list += "<tr>";
-                            list += "<td> &nbsp; " + vimperator.util.escapeHTML(autoCommands[item][i][0]) + "</td>";
-                            list += "<td>" + vimperator.util.escapeHTML(autoCommands[item][i][1]) + "</td>";
+                            list += "<td> &nbsp; " + liberator.util.escapeHTML(autoCommands[item][i][0]) + "</td>";
+                            list += "<td>" + liberator.util.escapeHTML(autoCommands[item][i][1]) + "</td>";
                             list += "</tr>";
                         }
                     }
@@ -201,7 +201,7 @@ vimperator.AutoCommands = function() //{{{
             }
 
             list += "</table>";
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         trigger: function (auEvent, url)
@@ -212,7 +212,7 @@ vimperator.AutoCommands = function() //{{{
                 {
                     var regex = new RegExp(autoCommands[auEvent][i][0]);
                     if (regex.test(url))
-                        vimperator.execute(autoCommands[auEvent][i][1]);
+                        liberator.execute(autoCommands[auEvent][i][1]);
                 }
             }
         }
@@ -220,7 +220,7 @@ vimperator.AutoCommands = function() //{{{
     //}}}
 } //}}}
 
-vimperator.Events = function () //{{{
+liberator.Events = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -239,30 +239,30 @@ vimperator.Events = function () //{{{
     {
         tabcontainer.addEventListener("TabMove",   function (event)
         {
-            vimperator.statusline.updateTabCount();
-            vimperator.buffer.updateBufferList();
+            liberator.statusline.updateTabCount();
+            liberator.buffer.updateBufferList();
         }, false);
         tabcontainer.addEventListener("TabOpen",   function (event)
         {
-            vimperator.statusline.updateTabCount();
-            vimperator.buffer.updateBufferList();
+            liberator.statusline.updateTabCount();
+            liberator.buffer.updateBufferList();
         }, false);
         tabcontainer.addEventListener("TabClose",  function (event)
         {
-            vimperator.statusline.updateTabCount();
-            vimperator.buffer.updateBufferList();
+            liberator.statusline.updateTabCount();
+            liberator.buffer.updateBufferList();
         }, false);
         tabcontainer.addEventListener("TabSelect", function (event)
         {
             // TODO: is all of that necessary?
-            vimperator.modes.reset();
-            vimperator.commandline.clear();
-            vimperator.modes.show();
-            vimperator.statusline.updateTabCount();
-            vimperator.buffer.updateBufferList();
-            vimperator.tabs.updateSelectionHistory();
+            liberator.modes.reset();
+            liberator.commandline.clear();
+            liberator.modes.show();
+            liberator.statusline.updateTabCount();
+            liberator.buffer.updateBufferList();
+            liberator.tabs.updateSelectionHistory();
 
-            setTimeout(function () { vimperator.focusContent(true); }, 10); // just make sure, that no widget has focus
+            setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
         }, false);
     }
 
@@ -273,15 +273,15 @@ vimperator.Events = function () //{{{
     // called when the active document is scrolled
     getBrowser().addEventListener("scroll", function (event)
     {
-        vimperator.statusline.updateBufferPosition();
-        vimperator.modes.show();
+        liberator.statusline.updateBufferPosition();
+        liberator.modes.show();
     }, null);
 
 //    getBrowser().addEventListener("submit", function (event)
 //    {
 //        // reset buffer loading state as early as possible, important for macros
 //        dump("submit\n");
-//        vimperator.buffer.loaded = 0;
+//        liberator.buffer.loaded = 0;
 //    }, null);
 
     /////////////////////////////////////////////////////////
@@ -289,26 +289,26 @@ vimperator.Events = function () //{{{
     var activeMenubar = false;
     function enterPopupMode(event)
     {
-        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "vimperator-visualbell")
+        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
             return;
 
-        vimperator.modes.add(vimperator.modes.MENU);
+        liberator.modes.add(liberator.modes.MENU);
     }
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by firefox, when a context menu is closed
         if (!gContextMenu && !activeMenubar)
-            vimperator.modes.remove(vimperator.modes.MENU);
+            liberator.modes.remove(liberator.modes.MENU);
     }
     function enterMenuMode()
     {
         activeMenubar = true;
-        vimperator.modes.add(vimperator.modes.MENU);
+        liberator.modes.add(liberator.modes.MENU);
     }
     function exitMenuMode()
     {
         activeMenubar = false;
-        vimperator.modes.remove(vimperator.modes.MENU);
+        liberator.modes.remove(liberator.modes.MENU);
     }
     window.addEventListener("popupshown", enterPopupMode, true);
     window.addEventListener("popuphidden", exitPopupMode, true);
@@ -317,12 +317,12 @@ vimperator.Events = function () //{{{
 
     // window.document.addEventListener("DOMTitleChanged", function (event)
     // {
-    //     vimperator.log("titlechanged");
+    //     liberator.log("titlechanged");
     // }, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
-    //       want to refer to within Vimperator's source code for
+    //       want to refer to within liberator's source code for
     //       comparisons like if (key == "<Esc>") { ... }
     var keyTable = [
         [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],
@@ -420,23 +420,23 @@ vimperator.Events = function () //{{{
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
                 // is not triggered there (firefox bug?)
-                setTimeout(vimperator.statusline.updateUrl, 10);
+                setTimeout(liberator.statusline.updateUrl, 10);
                 return;
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
 
-            var url = vimperator.buffer.URL;
-            var title = vimperator.buffer.title;
+            var url = liberator.buffer.URL;
+            var title = liberator.buffer.title;
 
             //update history
-            if (vimperator.history)
-                vimperator.history.add(url, title);
+            if (liberator.history)
+                liberator.history.add(url, title);
 
-            vimperator.buffer.updateBufferList();
-            vimperator.autocommands.trigger("PageLoad", url);
+            liberator.buffer.updateBufferList();
+            liberator.autocommands.trigger("PageLoad", url);
 
-            // mark the buffer as loaded, we can't use vimperator.buffer.loaded
+            // mark the buffer as loaded, we can't use liberator.buffer.loaded
             // since that always refers to the current buffer, while doc can be
             // any buffer, even in a background tab
             doc.pageIsFullyLoaded = 1;
@@ -458,13 +458,13 @@ vimperator.Events = function () //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
-        dump("start waiting in loaded state: " + vimperator.buffer.loaded + "\n");
+        dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
         var mainThread = Components.classes["@mozilla.org/thread-manager;1"].
                          getService(Components.interfaces.nsIThreadManager).mainThread;
         while (mainThread.hasPendingEvents()) // clear queue
             mainThread.processNextEvent(true);
 
-//        if (vimperator.buffer.loaded == 1)
+//        if (liberator.buffer.loaded == 1)
 //            return true;
 
         var ms = 15000; // maximum time to wait - TODO: add option
@@ -475,27 +475,27 @@ vimperator.Events = function () //{{{
             if ((now - then) % 1000 < 10)
                 dump("waited: " + (now - then) + " ms\n");
 
-            if (vimperator.buffer.loaded > 0)
+            if (liberator.buffer.loaded > 0)
                 break;
             else
-                vimperator.echo("Waiting for page to load...");
+                liberator.echo("Waiting for page to load...");
         }
 
         // TODO: allow macros to be continued when page does not fully load with an option
-        var ret = (vimperator.buffer.loaded == 1);
+        var ret = (liberator.buffer.loaded == 1);
         if (!ret)
-            vimperator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+            liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
         dump("done waiting: " + ret + "\n");
 
         return ret;
     }
 
     // load all macros inside ~/.vimperator/macros/
-    // setTimeout needed since vimperator.io. is loaded after vimperator.events.
+    // setTimeout needed since liberator.io. is loaded after liberator.events.
     setTimeout (function() {
         try
         {
-            var files = vimperator.io.readDirectory(vimperator.io.getSpecialDirectory("macros"));
+            var files = liberator.io.readDirectory(liberator.io.getSpecialDirectory("macros"));
             for (var i = 0; i < files.length; i++)
             {
                 var file = files[i];
@@ -504,13 +504,13 @@ vimperator.Events = function () //{{{
                         continue;
 
                 var name = file.leafName.replace(/\.vimp$/i, "");
-                macros[name] = vimperator.io.readFile(file).split(/\n/)[0];
-                vimperator.log("Macro " + name + " added: " + macros[name], 8);
+                macros[name] = liberator.io.readFile(file).split(/\n/)[0];
+                liberator.log("Macro " + name + " added: " + macros[name], 8);
             }
         }
         catch (e)
         {
-            vimperator.log("macro directory not found or error reading macro file");
+            liberator.log("macro directory not found or error reading macro file");
         }
     }, 100);
 
@@ -518,92 +518,92 @@ vimperator.Events = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.mappings.add(vimperator.modes.all,
+    liberator.mappings.add(liberator.modes.all,
         ["<Esc>", "<C-[>"], "Focus content",
-        function () { vimperator.events.onEscape(); });
+        function () { liberator.events.onEscape(); });
 
     // add the ":" mapping in all but insert mode mappings
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.HINTS, vimperator.modes.MESSAGE, vimperator.modes.CARET, vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.HINTS, liberator.modes.MESSAGE, liberator.modes.CARET, liberator.modes.TEXTAREA],
         [":"], "Enter command line mode",
-        function () { vimperator.commandline.open(":", "", vimperator.modes.EX); });
+        function () { liberator.commandline.open(":", "", liberator.modes.EX); });
 
     // focus events
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.CARET],
         ["<Tab>"], "Advance keyboard focus",
         function () { document.commandDispatcher.advanceFocus(); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.VISUAL, vimperator.modes.CARET, vimperator.modes.INSERT, vimperator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.CARET, liberator.modes.INSERT, liberator.modes.TEXTAREA],
         ["<S-Tab>"], "Rewind keyboard focus",
         function () { document.commandDispatcher.rewindFocus(); });
                     
-    vimperator.mappings.add(vimperator.modes.all,
-        ["<C-q>"], "Temporarily quit Vimperator mode",
-        function () { vimperator.modes.passAllKeys = true; });
+    liberator.mappings.add(liberator.modes.all,
+        ["<C-q>"], "Temporarily ignore all " + liberator.config.name + " key bindings",
+        function () { liberator.modes.passAllKeys = true; });
 
-    vimperator.mappings.add(vimperator.modes.all,
+    liberator.mappings.add(liberator.modes.all,
         ["<C-v>"], "Pass through next key",
-        function () { vimperator.modes.passNextKey = true; });
+        function () { liberator.modes.passNextKey = true; });
 
-    vimperator.mappings.add(vimperator.modes.all,
+    liberator.mappings.add(liberator.modes.all,
         ["<Nop>"], "Do nothing",
         function () { return; });
 
     // macros
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.MESSAGE],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.MESSAGE],
         ["q"], "Record a key sequence into a macro",
-        function (arg) { vimperator.events.startRecording(arg); },
-        { flags: vimperator.Mappings.flags.ARGUMENT });
+        function (arg) { liberator.events.startRecording(arg); },
+        { flags: liberator.Mappings.flags.ARGUMENT });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL, vimperator.modes.MESSAGE],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.MESSAGE],
         ["@"], "Play a macro",
         function (count, arg)
         {
             if (count < 1) count = 1;
             while (count--)
-                vimperator.events.playMacro(arg);
+                liberator.events.playMacro(arg);
         },
-        { flags: vimperator.Mappings.flags.ARGUMENT | vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     
-    vimperator.commands.add(["delmac[ros]"],
+    liberator.commands.add(["delmac[ros]"],
         "Delete macros",
         function (arg)
         {
             if (!arg)
-                vimperator.echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
             else
-                vimperator.events.deleteMacros(arg);
+                liberator.events.deleteMacros(arg);
         });
 
-    vimperator.commands.add(["macros"],
+    liberator.commands.add(["macros"],
         "List all macros",
         function (arg)
         {
             var str = "<table>";
-            var macroRef = vimperator.events.getMacros(arg);
+            var macroRef = liberator.events.getMacros(arg);
             for (var item in macroRef)
                str += "<tr><td> " + item + " &nbsp; </td><td>" + 
-                      vimperator.util.escapeHTML(macroRef[item]) + "</td></tr>";
+                      liberator.util.escapeHTML(macroRef[item]) + "</td></tr>";
 
             str += "</table>";
 
-            vimperator.echo(str, vimperator.commandline.FORCE_MULTILINE);
+            liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         });
 
-    vimperator.commands.add(["pl[ay]"],
+    liberator.commands.add(["pl[ay]"],
         "Replay a recorded macro",
         function (arg)
         {
             if (!arg)
-                vimperator.echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
             else
-                vimperator.events.playMacro(arg);
+                liberator.events.playMacro(arg);
         },
         {
-            completer: function (filter) { return vimperator.completion.macros(filter); }
+            completer: function (filter) { return liberator.completion.macros(filter); }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -634,10 +634,10 @@ vimperator.Events = function () //{{{
         {
             if (!/[a-zA-Z0-9]/.test(macro))
             {
-                vimperator.echoerr("Register must be [a-zA-z0-9]");
+                liberator.echoerr("Register must be [a-zA-z0-9]");
                 return false;
             }
-            vimperator.modes.isRecording = true;
+            liberator.modes.isRecording = true;
 
             if (/[A-Z]/.test(macro)) // uppercase (append)
             {
@@ -656,14 +656,14 @@ vimperator.Events = function () //{{{
         {
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
-                vimperator.echoerr("Register must be [a-z0-9]");
+                liberator.echoerr("Register must be [a-z0-9]");
                 return false;
             }
             if (macro == "@") // use lastMacro if it's set
             {
                 if (!lastMacro)
                 {
-                    vimperator.echoerr("E748: No previously used register");
+                    liberator.echoerr("E748: No previously used register");
                     return false;
                 }
             }
@@ -677,14 +677,14 @@ vimperator.Events = function () //{{{
 
             if (macros[lastMacro])
             {
-                vimperator.modes.isReplaying = true;
+                liberator.modes.isReplaying = true;
                 BrowserStop(); // make sure the page is stopped before starting to play the macro
-                vimperator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                vimperator.events.feedkeys(macros[lastMacro], true); // true -> noremap
-                vimperator.modes.isReplaying = false;
+                liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
+                liberator.events.feedkeys(macros[lastMacro], true); // true -> noremap
+                liberator.modes.isReplaying = false;
             }
             else
-                vimperator.echoerr("Register " + lastMacro + " not set");
+                liberator.echoerr("Register " + lastMacro + " not set");
         },
 
         getMacros: function (filter)
@@ -714,7 +714,7 @@ vimperator.Events = function () //{{{
             }
         },
 
-        // This method pushes keys into the event queue from vimperator
+        // This method pushes keys into the event queue from liberator
         // it is similar to vim's feedkeys() method, but cannot cope with
         // 2 partially feeded strings, you have to feed one parsable string
         //
@@ -783,7 +783,7 @@ vimperator.Events = function () //{{{
                 evt.noremap = noremap;
                 if (elem.dispatchEvent(evt)) // return true in onEvent to stop feeding keys
                 {
-                    vimperator.beep();
+                    liberator.beep();
                     return;
                 }
             }
@@ -880,7 +880,7 @@ vimperator.Events = function () //{{{
 
         getMapLeader: function ()
         {
-            var leaderRef = vimperator.variableReference("mapleader");
+            var leaderRef = liberator.variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 
@@ -892,7 +892,7 @@ vimperator.Events = function () //{{{
         onFocusChange: function (event)
         {
             // command line has it's own focus change handler
-            if (vimperator.mode == vimperator.modes.COMMAND_LINE)
+            if (liberator.mode == liberator.modes.COMMAND_LINE)
                 return;
 
             var win  = window.document.commandDispatcher.focusedWindow;
@@ -900,57 +900,57 @@ vimperator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
-            // dump("=+++++++++=\n" + vimperator.util.objectToString(event.target) + "\n")
+            // dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
             // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
             if (elem && elem instanceof HTMLInputElement &&
                     (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
             {
                 this.wantsModeReset = false;
-                vimperator.mode = vimperator.modes.INSERT;
-                vimperator.buffer.lastInputField = elem;
+                liberator.mode = liberator.modes.INSERT;
+                liberator.buffer.lastInputField = elem;
                 return;
             }
 
             if (elem && elem instanceof HTMLTextAreaElement)
             {
                 this.wantsModeReset = false;
-                if (vimperator.options["insertmode"])
-                    vimperator.modes.set(vimperator.modes.INSERT, vimperator.modes.TEXTAREA);
+                if (liberator.options["insertmode"])
+                    liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
                 else if (elem.selectionEnd - elem.selectionStart > 0)
-                    vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
+                    liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
                 else
-                    vimperator.modes.main = vimperator.modes.TEXTAREA;
-                vimperator.buffer.lastInputField = elem;
+                    liberator.modes.main = liberator.modes.TEXTAREA;
+                liberator.buffer.lastInputField = elem;
                 return;
             }
 
-            if (vimperator.config.name == "Muttator")
+            if (liberator.config.name == "Muttator")
             {
                 // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
                 if ((win && win.document && win.document instanceof HTMLDocument)
                     || elem instanceof HTMLAnchorElement)
                 {
-                    if (vimperator.mode != vimperator.modes.MESSAGE)
-                        vimperator.mode = vimperator.modes.MESSAGE;
+                    if (liberator.mode != liberator.modes.MESSAGE)
+                        liberator.mode = liberator.modes.MESSAGE;
                     return;
                 }
             }
 
-            if (vimperator.mode == vimperator.modes.INSERT ||
-                vimperator.mode == vimperator.modes.TEXTAREA ||
-                vimperator.mode == vimperator.modes.MESSAGE ||
-                vimperator.mode == vimperator.modes.VISUAL)
+            if (liberator.mode == liberator.modes.INSERT ||
+                liberator.mode == liberator.modes.TEXTAREA ||
+                liberator.mode == liberator.modes.MESSAGE ||
+                liberator.mode == liberator.modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
                // setTimeout(function ()
                // {
-               //     dump("cur: " + vimperator.mode + "\n");
-               //     if (vimperator.events.wantsModeReset)
+               //     dump("cur: " + liberator.mode + "\n");
+               //     if (liberator.events.wantsModeReset)
                //     {
-               //         vimperator.events.wantsModeReset = false;
-                        vimperator.modes.reset();
+               //         liberator.events.wantsModeReset = false;
+                        liberator.modes.reset();
                //     }
                // }, 0);
             }
@@ -963,40 +963,40 @@ vimperator.Events = function () //{{{
             if (controller && controller.isCommandEnabled("cmd_copy"))
                 couldCopy = true;
 
-            if (vimperator.mode != vimperator.modes.VISUAL)
+            if (liberator.mode != liberator.modes.VISUAL)
             {
                 if (couldCopy)
                 {
-                    if ((vimperator.mode == vimperator.modes.TEXTAREA ||
-                         (vimperator.modes.extended & vimperator.modes.TEXTAREA))
-                            && !vimperator.options["insertmode"])
-                        vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.TEXTAREA);
-                    else if (vimperator.mode == vimperator.modes.CARET)
-                        vimperator.modes.set(vimperator.modes.VISUAL, vimperator.modes.CARET);
+                    if ((liberator.mode == liberator.modes.TEXTAREA ||
+                         (liberator.modes.extended & liberator.modes.TEXTAREA))
+                            && !liberator.options["insertmode"])
+                        liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
+                    else if (liberator.mode == liberator.modes.CARET)
+                        liberator.modes.set(liberator.modes.VISUAL, liberator.modes.CARET);
                 }
             }
             // XXX: disabled, as i think automatically starting visual caret mode does more harm than help
             // else
             // {
-            //     if (!couldCopy && vimperator.modes.extended & vimperator.modes.CARET)
-            //         vimperator.mode = vimperator.modes.CARET;
+            //     if (!couldCopy && liberator.modes.extended & liberator.modes.CARET)
+            //         liberator.mode = liberator.modes.CARET;
             // }
         },
 
         // global escape handler, is called in ALL modes
         onEscape: function ()
         {
-            if (!vimperator.modes.passNextKey)
+            if (!liberator.modes.passNextKey)
             {
-                if (vimperator.modes.passAllKeys)
+                if (liberator.modes.passAllKeys)
                 {
-                    vimperator.modes.passAllKeys = false;
+                    liberator.modes.passAllKeys = false;
                     return;
                 }
 
-                switch (vimperator.mode)
+                switch (liberator.mode)
                 {
-                    case vimperator.modes.NORMAL:
+                    case liberator.modes.NORMAL:
                         // clear any selection made
                         var selection = window.content.getSelection();
                         try
@@ -1004,39 +1004,39 @@ vimperator.Events = function () //{{{
                             selection.collapseToStart();
                         }
                         catch (e) { }
-                        vimperator.commandline.clear();
+                        liberator.commandline.clear();
 
-                        vimperator.modes.reset();
-                        vimperator.focusContent(true);
+                        liberator.modes.reset();
+                        liberator.focusContent(true);
                         break;
 
-                    case vimperator.modes.VISUAL:
-                        if (vimperator.modes.extended & vimperator.modes.TEXTAREA)
-                            vimperator.mode = vimperator.modes.TEXTAREA;
-                        else if (vimperator.modes.extended & vimperator.modes.CARET)
-                            vimperator.mode = vimperator.modes.CARET;
+                    case liberator.modes.VISUAL:
+                        if (liberator.modes.extended & liberator.modes.TEXTAREA)
+                            liberator.mode = liberator.modes.TEXTAREA;
+                        else if (liberator.modes.extended & liberator.modes.CARET)
+                            liberator.mode = liberator.modes.CARET;
                         break;
 
-                    case vimperator.modes.CARET:
+                    case liberator.modes.CARET:
                         // setting this option will trigger an observer which will
                         // care about all other details like setting the NORMAL mode
-                        vimperator.options.setPref("accessibility.browsewithcaret", false);
+                        liberator.options.setPref("accessibility.browsewithcaret", false);
                         break;
 
-                    case vimperator.modes.INSERT:
-                        if ((vimperator.modes.extended & vimperator.modes.TEXTAREA) && !vimperator.options["insertmode"])
+                    case liberator.modes.INSERT:
+                        if ((liberator.modes.extended & liberator.modes.TEXTAREA) && !liberator.options["insertmode"])
                         {
-                            vimperator.mode = vimperator.modes.TEXTAREA;
+                            liberator.mode = liberator.modes.TEXTAREA;
                         }
                         else
                         {
-                            vimperator.modes.reset();
-                            vimperator.focusContent(true);
+                            liberator.modes.reset();
+                            liberator.focusContent(true);
                         }
                         break;
 
                     default: // HINTS, CUSTOM or COMMAND_LINE
-                        vimperator.modes.reset();
+                        liberator.modes.reset();
                         break;
                 }
             }
@@ -1046,23 +1046,23 @@ vimperator.Events = function () //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
-            var key = vimperator.events.toString(event);
+            var key = liberator.events.toString(event);
             if (!key)
                  return true;
-            // dump(key + " in mode: " + vimperator.mode + "\n");
+            // dump(key + " in mode: " + liberator.mode + "\n");
 
-            if (vimperator.modes.isRecording)
+            if (liberator.modes.isRecording)
             {
                 if (key == "q") // TODO: should not be hardcoded
                 {
-                    vimperator.modes.isRecording = false;
-                    vimperator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 8);
+                    liberator.modes.isRecording = false;
+                    liberator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 8);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
                 }
-                else if (!(vimperator.modes.extended & vimperator.modes.INACTIVE_HINT) &&
-                         !vimperator.mappings.hasMap(vimperator.mode, vimperator.input.buffer + key))
+                else if (!(liberator.modes.extended & liberator.modes.INACTIVE_HINT) &&
+                         !liberator.mappings.hasMap(liberator.mode, liberator.input.buffer + key))
                 {
                     macros[currentMacro] += key;
                 }
@@ -1075,20 +1075,20 @@ vimperator.Events = function () //{{{
                 return false;
 
             // menus have their own command handlers
-            if (vimperator.modes.extended & vimperator.modes.MENU)
+            if (liberator.modes.extended & liberator.modes.MENU)
                 return false;
 
             // handle Escape-one-key mode (Ctrl-v)
-            if (vimperator.modes.passNextKey && !vimperator.modes.passAllKeys)
+            if (liberator.modes.passNextKey && !liberator.modes.passAllKeys)
             {
-                vimperator.modes.passNextKey = false;
+                liberator.modes.passNextKey = false;
                 return false;
             }
             // handle Escape-all-keys mode (Ctrl-q)
-            if (vimperator.modes.passAllKeys)
+            if (liberator.modes.passAllKeys)
             {
-                if (vimperator.modes.passNextKey)
-                    vimperator.modes.passNextKey = false; // and then let flow continue
+                if (liberator.modes.passNextKey)
+                    liberator.modes.passNextKey = false; // and then let flow continue
                 else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                     ; // let flow continue to handle these keys to cancel escape-all-keys mode
                 else
@@ -1096,10 +1096,10 @@ vimperator.Events = function () //{{{
             }
 
             // just forward event without checking any mappings when the MOW is open
-            if (vimperator.mode == vimperator.modes.COMMAND_LINE &&
-                (vimperator.modes.extended & vimperator.modes.OUTPUT_MULTILINE))
+            if (liberator.mode == liberator.modes.COMMAND_LINE &&
+                (liberator.modes.extended & liberator.modes.OUTPUT_MULTILINE))
             {
-                vimperator.commandline.onMultilineOutputEvent(event);
+                liberator.commandline.onMultilineOutputEvent(event);
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
@@ -1108,15 +1108,15 @@ vimperator.Events = function () //{{{
             // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if ((vimperator.config.name == "Vimperator" && vimperator.mode == vimperator.modes.NORMAL)
-                 || vimperator.mode == vimperator.modes.INSERT)
+            if ((liberator.config.name == "Vimperator" && liberator.mode == liberator.modes.NORMAL)
+                 || liberator.mode == liberator.modes.INSERT)
             {
                 if (key == "<Return>")
                 {
-                    if (vimperator.modes.isReplaying)
+                    if (liberator.modes.isReplaying)
                     {
                         // TODO: how to really submit the correct form?
-                        vimperator.modes.reset();
+                        liberator.modes.reset();
                         content.document.forms[0].submit();
                         waitForPageLoaded();
                         dump("before return\n");
@@ -1155,17 +1155,17 @@ vimperator.Events = function () //{{{
             if (key != "<Esc>" && key != "<C-[>")
             {
                 // custom mode...
-                if (vimperator.mode == vimperator.modes.CUSTOM)
+                if (liberator.mode == liberator.modes.CUSTOM)
                 {
-                    vimperator.plugins.onEvent(event);
+                    liberator.plugins.onEvent(event);
                     event.preventDefault();
                     event.stopPropagation();
                     return false;
                 }
                 // if Hit-a-hint mode is on, special handling of keys is required
-                if (vimperator.mode == vimperator.modes.HINTS)
+                if (liberator.mode == liberator.modes.HINTS)
                 {
-                    vimperator.hints.onEvent(event);
+                    liberator.hints.onEvent(event);
                     event.preventDefault();
                     event.stopPropagation();
                     return false;
@@ -1179,103 +1179,103 @@ vimperator.Events = function () //{{{
             // whatever reason).  if that happens to be correct, well..
             // XXX: why not just do that as well for HINTS mode actually?
            
-            if (vimperator.mode == vimperator.modes.CUSTOM)
+            if (liberator.mode == liberator.modes.CUSTOM)
                 return true;
 
-            var countStr = vimperator.input.buffer.match(/^[0-9]*/)[0];
-            var candidateCommand = (vimperator.input.buffer + key).replace(countStr, "");
+            var countStr = liberator.input.buffer.match(/^[0-9]*/)[0];
+            var candidateCommand = (liberator.input.buffer + key).replace(countStr, "");
             var map;
             if (event.noremap)
-                map = vimperator.mappings.getDefault(vimperator.mode, candidateCommand);
+                map = liberator.mappings.getDefault(liberator.mode, candidateCommand);
             else
-                map = vimperator.mappings.get(vimperator.mode, candidateCommand);
+                map = liberator.mappings.get(liberator.mode, candidateCommand);
 
             
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if (/^[1-9][0-9]*$/.test(vimperator.input.buffer + key))
+            if (/^[1-9][0-9]*$/.test(liberator.input.buffer + key))
             {
                 // no count for insert mode mappings
-                if (vimperator.mode == vimperator.modes.INSERT || vimperator.mode == vimperator.modes.COMMAND_LINE)
+                if (liberator.mode == liberator.modes.INSERT || liberator.mode == liberator.modes.COMMAND_LINE)
                     stop = false;
                 else
                 {
-                    vimperator.input.buffer += key;
+                    liberator.input.buffer += key;
                     inputBufferLength++;
                 }
             }
-            else if (vimperator.input.pendingArgMap)
+            else if (liberator.input.pendingArgMap)
             {
-                vimperator.input.buffer = "";
+                liberator.input.buffer = "";
                 inputBufferLength = 0;
-                var tmp = vimperator.input.pendingArgMap; // must be set to null before .execute; if not
-                vimperator.input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
+                var tmp = liberator.input.pendingArgMap; // must be set to null before .execute; if not
+                liberator.input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
-                    if (vimperator.modes.isReplaying && !waitForPageLoaded())
+                    if (liberator.modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    tmp.execute(null, vimperator.input.count, key);
+                    tmp.execute(null, liberator.input.count, key);
                 }
             }
             // only follow a map if there isn't a longer possible mapping
             // (allows you to do :map z yy, when zz is a longer mapping than z)
             // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
             else if (map && !skipMap && (map.rhs ||
-                     vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length == 0))
+                     liberator.mappings.getCandidates(liberator.mode, candidateCommand).length == 0))
             {
-                vimperator.input.count = parseInt(countStr, 10);
-                if (isNaN(vimperator.input.count))
-                    vimperator.input.count = -1;
-                if (map.flags & vimperator.Mappings.flags.ARGUMENT)
+                liberator.input.count = parseInt(countStr, 10);
+                if (isNaN(liberator.input.count))
+                    liberator.input.count = -1;
+                if (map.flags & liberator.Mappings.flags.ARGUMENT)
                 {
-                    vimperator.input.pendingArgMap = map;
-                    vimperator.input.buffer += key;
+                    liberator.input.pendingArgMap = map;
+                    liberator.input.buffer += key;
                     inputBufferLength++;
                 }
-                else if (vimperator.input.pendingMotionMap)
+                else if (liberator.input.pendingMotionMap)
                 {
                     if (key != "<Esc>" && key != "<C-[>")
                     {
-                        vimperator.input.pendingMotionMap.execute(candidateCommand, vimperator.input.count, null);
+                        liberator.input.pendingMotionMap.execute(candidateCommand, liberator.input.count, null);
                     }
-                    vimperator.input.pendingMotionMap = null;
-                    vimperator.input.buffer = "";
+                    liberator.input.pendingMotionMap = null;
+                    liberator.input.buffer = "";
                     inputBufferLength = 0;
                 }
                 // no count support for these commands yet
-                else if (map.flags & vimperator.Mappings.flags.MOTION)
+                else if (map.flags & liberator.Mappings.flags.MOTION)
                 {
-                    vimperator.input.pendingMotionMap = map;
-                    vimperator.input.buffer = "";
+                    liberator.input.pendingMotionMap = map;
+                    liberator.input.buffer = "";
                     inputBufferLength = 0;
                 }
                 else
                 {
-                    vimperator.input.buffer = "";
+                    liberator.input.buffer = "";
                     inputBufferLength = 0;
 
-                    if (vimperator.modes.isReplaying && !waitForPageLoaded())
+                    if (liberator.modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    var ret = map.execute(null, vimperator.input.count);
-                    if (map.flags & vimperator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                    var ret = map.execute(null, liberator.input.count);
+                    if (map.flags & liberator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
             }
-            else if (vimperator.mappings.getCandidates(vimperator.mode, candidateCommand).length > 0 && !skipMap)
+            else if (liberator.mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !skipMap)
             {
-                vimperator.input.buffer += key;
+                liberator.input.buffer += key;
                 inputBufferLength++;
             }
             else // if the key is neither a mapping nor the start of one
             {
                 // the mode checking is necessary so that things like g<esc> do not beep
-                if (vimperator.input.buffer != "" && !skipMap && (vimperator.mode == vimperator.modes.INSERT ||
-                    vimperator.mode == vimperator.modes.COMMAND_LINE || vimperator.mode == vimperator.modes.TEXTAREA))
+                if (liberator.input.buffer != "" && !skipMap && (liberator.mode == liberator.modes.INSERT ||
+                    liberator.mode == liberator.modes.COMMAND_LINE || liberator.mode == liberator.modes.TEXTAREA))
                 {
                     // no map found -> refeed stuff in v.input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so
-                    vimperator.events.feedkeys(vimperator.input.buffer, true);
+                    liberator.events.feedkeys(liberator.input.buffer, true);
                 }
                 if (skipMap)
                 {
@@ -1283,22 +1283,22 @@ vimperator.Events = function () //{{{
                         skipMap = false; // done...
                 }
 
-                vimperator.input.buffer = "";
-                vimperator.input.pendingArgMap = null;
-                vimperator.input.pendingMotionMap = null;
+                liberator.input.buffer = "";
+                liberator.input.pendingArgMap = null;
+                liberator.input.pendingMotionMap = null;
 
                 if (key != "<Esc>" && key != "<C-[>")
                 {
                     // allow key to be passed to firefox if we can't handle it
                     stop = false;
 
-                    if (vimperator.mode == vimperator.modes.COMMAND_LINE)
+                    if (liberator.mode == liberator.modes.COMMAND_LINE)
                     {
-                        if (!(vimperator.modes.extended & vimperator.modes.INPUT_MULTILINE))
-                            stop = !vimperator.commandline.onEvent(event); // reroute event in command line mode
+                        if (!(liberator.modes.extended & liberator.modes.INPUT_MULTILINE))
+                            stop = !liberator.commandline.onEvent(event); // reroute event in command line mode
                     }
-                    else if (vimperator.mode != vimperator.modes.INSERT)
-                        vimperator.beep();
+                    else if (liberator.mode != liberator.modes.INSERT)
+                        liberator.beep();
                 }
             }
 
@@ -1308,15 +1308,15 @@ vimperator.Events = function () //{{{
                 event.stopPropagation();
             }
 
-            var motionMap = (vimperator.input.pendingMotionMap && vimperator.input.pendingMotionMap.names[0]) || "";
-            vimperator.statusline.updateInputBuffer(motionMap + vimperator.input.buffer);
+            var motionMap = (liberator.input.pendingMotionMap && liberator.input.pendingMotionMap.names[0]) || "";
+            liberator.statusline.updateInputBuffer(motionMap + liberator.input.buffer);
             return false;
         },
 
         // this is need for sites like msn.com which focus the input field on keydown
         onKeyUpOrDown: function (event)
         {
-            if (vimperator.modes.passNextKey ^ vimperator.modes.passAllKeys || isFormElemFocused())
+            if (liberator.modes.passNextKey ^ liberator.modes.passAllKeys || isFormElemFocused())
                 return true;
 
             event.stopPropagation();
@@ -1347,15 +1347,15 @@ vimperator.Events = function () //{{{
                     // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
-                        vimperator.buffer.loaded = 0;
-                        vimperator.statusline.updateProgress(0);
-                        setTimeout (function () { vimperator.modes.reset(false); },
-                            vimperator.mode == vimperator.modes.HINTS ? 500 : 0);
+                        liberator.buffer.loaded = 0;
+                        liberator.statusline.updateProgress(0);
+                        setTimeout (function () { liberator.modes.reset(false); },
+                            liberator.mode == liberator.modes.HINTS ? 500 : 0);
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                     {
-                        vimperator.buffer.loaded = (status == 0 ? 1 : 2);
-                        vimperator.statusline.updateUrl();
+                        liberator.buffer.loaded = (status == 0 ? 1 : 2);
+                        liberator.statusline.updateUrl();
                     }
                 }
             },
@@ -1364,51 +1364,51 @@ vimperator.Events = function () //{{{
             {
                 const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
                 if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                    vimperator.statusline.setClass("insecure");
+                    liberator.statusline.setClass("insecure");
                 else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                    vimperator.statusline.setClass("broken");
+                    liberator.statusline.setClass("broken");
                 else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
-                    vimperator.statusline.setClass("secure");
+                    liberator.statusline.setClass("secure");
             },
             onStatusChange: function (webProgress, request, status, message)
             {
-                vimperator.statusline.updateUrl(message);
+                liberator.statusline.updateUrl(message);
             },
             onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
             {
-                vimperator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+                liberator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
             },
             // happens when the users switches tabs
             onLocationChange: function ()
             {
-                vimperator.statusline.updateUrl();
-                vimperator.statusline.updateProgress();
+                liberator.statusline.updateUrl();
+                liberator.statusline.updateProgress();
 
                 // if this is not delayed we get the position of the old buffer
-                setTimeout(function () { vimperator.statusline.updateBufferPosition(); }, 100);
+                setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);
             },
             // called at the very end of a page load
             asyncUpdateUI: function ()
             {
-                setTimeout(vimperator.statusline.updateUrl, 100);
+                setTimeout(liberator.statusline.updateUrl, 100);
             },
             setOverLink : function (link, b)
             {
-                var ssli = vimperator.options["showstatuslinks"];
+                var ssli = liberator.options["showstatuslinks"];
                 if (link && ssli)
                 {
                     if (ssli == 1)
-                        vimperator.statusline.updateUrl("Link: " + link);
+                        liberator.statusline.updateUrl("Link: " + link);
                     else if (ssli == 2)
-                        vimperator.echo("Link: " + link, vimperator.commandline.DISALLOW_MULTILINE);
+                        liberator.echo("Link: " + link, liberator.commandline.DISALLOW_MULTILINE);
                 }
 
                 if (link == "")
                 {
                     if (ssli == 1)
-                        vimperator.statusline.updateUrl();
+                        liberator.statusline.updateUrl();
                     else if (ssli == 2)
-                        vimperator.modes.show();
+                        liberator.modes.show();
                 }
             },
 
@@ -1446,8 +1446,8 @@ vimperator.Events = function () //{{{
                 switch (aData)
                 {
                     case "accessibility.browsewithcaret":
-                        var value = vimperator.options.getPref("accessibility.browsewithcaret", false);
-                        vimperator.mode = value ? vimperator.modes.CARET : vimperator.modes.NORMAL;
+                        var value = liberator.options.getPref("accessibility.browsewithcaret", false);
+                        liberator.mode = value ? liberator.modes.CARET : liberator.modes.NORMAL;
                         break;
                 }
              }

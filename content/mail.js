@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Mail = function ()
+liberator.Mail = function ()
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -94,11 +94,11 @@ vimperator.Mail = function ()
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-//    vimperator.options.add(["editor"],
+//    liberator.options.add(["editor"],
 //        "Set the external text editor",
 //        "string", "gvim -f");
 
-    vimperator.options.add(["layout"],
+    liberator.options.add(["layout"],
         "Set the layout of the mail window",
         "string", "inherit",
         {
@@ -119,108 +119,108 @@ vimperator.Mail = function ()
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = vimperator.config.mailModes || [vimperator.modes.NORMAL];
+    var modes = liberator.config.mailModes || [liberator.modes.NORMAL];
 
-    vimperator.mappings.add(modes, ["<Return>", "i"],
+    liberator.mappings.add(modes, ["<Return>", "i"],
         "Inspect (focus) message",
         function () { content.focus(); });
 
-    vimperator.mappings.add(modes, ["d", "<Del>"],
+    liberator.mappings.add(modes, ["d", "<Del>"],
         "Move mail to Trash folder",
         function () { goDoCommand("cmd_delete"); });
 
-    vimperator.mappings.add(modes, ["j", "<Right>"],
+    liberator.mappings.add(modes, ["j", "<Right>"],
         "Select next message",
-        function (count) { vimperator.mail.selectMessage(function (msg) { return true; }, false, false, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
         
-    vimperator.mappings.add(modes, ["J", "<Tab>"],
+    liberator.mappings.add(modes, ["J", "<Tab>"],
         "Select next unread message",
-        function (count) { vimperator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, false, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["k", "<Left>"],
+    liberator.mappings.add(modes, ["k", "<Left>"],
         "Select previous message",
-        function (count) { vimperator.mail.selectMessage(function (msg) { return true; }, false, true, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
         
-    vimperator.mappings.add(modes, ["K"],
+    liberator.mappings.add(modes, ["K"],
         "Select previous unread message",
-        function (count) { vimperator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
         
-    vimperator.mappings.add(modes, ["r"],
+    liberator.mappings.add(modes, ["r"],
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); });
 
-    vimperator.mappings.add(modes, ["gm"],
+    liberator.mappings.add(modes, ["gm"],
         "Get new messages",
-        function () { vimperator.mail.getNewMessages(); });
+        function () { liberator.mail.getNewMessages(); });
 
-    vimperator.mappings.add(modes, ["gM"],
+    liberator.mappings.add(modes, ["gM"],
         "Get new messages for current account only",
-        function () { vimperator.mail.getNewMessages(true); });
+        function () { liberator.mail.getNewMessages(true); });
 
-    vimperator.mappings.add([vimperator.modes.NORMAL],
+    liberator.mappings.add([liberator.modes.NORMAL],
         ["c"], "Change folders",
-        function () { vimperator.commandline.open(":", "goto ", vimperator.modes.EX); });
+        function () { liberator.commandline.open(":", "goto ", liberator.modes.EX); });
 
-    vimperator.mappings.add(modes, ["]s"],
+    liberator.mappings.add(modes, ["]s"],
         "Select next starred message",
-        function (count) { vimperator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, false, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["[s"],
+    liberator.mappings.add(modes, ["[s"],
         "Select previous starred message",
-        function (count) { vimperator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["]a"],
+    liberator.mappings.add(modes, ["]a"],
         "Select next message with an attachment",
-        function (count) { vimperator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, false, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["[a"],
+    liberator.mappings.add(modes, ["[a"],
         "Select previous message with an attachment",
-        function (count) { vimperator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, count); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
 
 
 
-    vimperator.mappings.add(modes, ["<C-i>"],
+    liberator.mappings.add(modes, ["<C-i>"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.forward, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["<C-o>"],
+    liberator.mappings.add(modes, ["<C-o>"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.back, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["gg"],
+    liberator.mappings.add(modes, ["gg"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.firstMessage, true); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
-    vimperator.mappings.add(modes, ["G"],
+    liberator.mappings.add(modes, ["G"],
         "Get new messages",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.lastMessage, false); },
-        { flags: vimperator.Mappings.flags.COUNT });
+        { flags: liberator.Mappings.flags.COUNT });
 
     // tagging messages
-    vimperator.mappings.add(modes, ["tr"],
+    liberator.mappings.add(modes, ["tr"],
         "Toggle selected messages read",
         function ()
         {
             if (!GetSelectedMessages())
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
             MsgMarkMsgAsRead();
         });
-    vimperator.mappings.add(modes, ["tR"],
+    liberator.mappings.add(modes, ["tR"],
         "Tag thread as read",
         function ()
         {
@@ -230,37 +230,37 @@ vimperator.Mail = function ()
         });
 
 
-    vimperator.mappings.add(modes, ["ts"],
+    liberator.mappings.add(modes, ["ts"],
         "Toggle selected messages starred",
         function ()
         {
             if (!GetSelectedMessages())
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
             MsgMarkMsgAsFlagged();
         });
 
-    vimperator.mappings.add(modes, ["T"],
+    liberator.mappings.add(modes, ["T"],
         "Mark current folder as read",
         function ()
         {
-            if (vimperator.mail.currentFolder.isServer)
+            if (liberator.mail.currentFolder.isServer)
             {
-                vimperator.beep();
+                liberator.beep();
                 return;
             }
 
-            vimperator.mail.currentFolder.markAllMessagesRead();
+            liberator.mail.currentFolder.markAllMessagesRead();
         });
 
-    vimperator.mappings.add(modes, ["<C-t>"],
+    liberator.mappings.add(modes, ["<C-t>"],
         "Mark all messages as read",
         function ()
         {
-            vimperator.mail.getFolders("", false).forEach(function(folder) {
+            liberator.mail.getFolders("", false).forEach(function(folder) {
                 folder.markAllMessagesRead();
             });
         });
@@ -269,31 +269,31 @@ vimperator.Mail = function ()
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["go[to]"],
+    liberator.commands.add(["go[to]"],
         "Select a folder",
         function (args, special, count)
         {
             args = args || "Inbox";
             count = count > 0 ? (count - 1) : 0;
 
-            var folder = vimperator.mail.getFolders(args, true, true)[count];
+            var folder = liberator.mail.getFolders(args, true, true)[count];
             if (!folder)
-                vimperator.echoerr("Folder \"" + args + "\" does not exist");
+                liberator.echoerr("Folder \"" + args + "\" does not exist");
             else
                 SelectFolder(folder.URI);
         });
 
-    vimperator.commands.add(["get[messages]"],
+    liberator.commands.add(["get[messages]"],
         "Check for new messages",
         function (args, special)
         {
             if (args)
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
 
-            vimperator.mail.getNewMessages(!special);
+            liberator.mail.getNewMessages(!special);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -442,7 +442,7 @@ vimperator.Mail = function ()
 
             // TODO: finally for the "rest" of the current folder
 
-            vimperator.beep();
+            liberator.beep();
         }
     };
     //}}}

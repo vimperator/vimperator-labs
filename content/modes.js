@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.modes = (function () //{{{
+liberator.modes = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -48,41 +48,41 @@ vimperator.modes = (function () //{{{
             return "-- PASS THROUGH --";
 
         var ext = "";
-        if (extended & vimperator.modes.QUICK_HINT)
+        if (extended & liberator.modes.QUICK_HINT)
             ext += " (quick)";
-        if (extended & vimperator.modes.EXTENDED_HINT)
+        if (extended & liberator.modes.EXTENDED_HINT)
             ext += " (extended)";
-        if (extended & vimperator.modes.ALWAYS_HINT)
+        if (extended & liberator.modes.ALWAYS_HINT)
             ext += " (always)";
-        if (extended & vimperator.modes.INACTIVE_HINT)
+        if (extended & liberator.modes.INACTIVE_HINT)
             ext += " (inactive)";
-        if (extended & vimperator.modes.MENU) // TODO: desirable?
+        if (extended & liberator.modes.MENU) // TODO: desirable?
             ext += " (menu)";
 
         ext += " --";
 
         // when recording a macro
-        if (vimperator.modes.isRecording)
+        if (liberator.modes.isRecording)
             ext += "recording";
 
         switch (main)
         {
-            case vimperator.modes.INSERT:
+            case liberator.modes.INSERT:
                 return "-- INSERT" + ext;
-            case vimperator.modes.VISUAL:
-                return (extended & vimperator.modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
-            case vimperator.modes.HINTS:
+            case liberator.modes.VISUAL:
+                return (extended & liberator.modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
+            case liberator.modes.HINTS:
                 return "-- HINTS" + ext;
-            case vimperator.modes.CARET:
+            case liberator.modes.CARET:
                 return "-- CARET" + ext;
-            case vimperator.modes.TEXTAREA:
+            case liberator.modes.TEXTAREA:
                 return "-- TEXTAREA" + ext;
-            case vimperator.modes.MESSAGE:
+            case liberator.modes.MESSAGE:
                 return "-- MESSAGE" + ext;
-            case vimperator.modes.CUSTOM:
-                return "-- " + vimperator.plugins.mode + ext;
+            case liberator.modes.CUSTOM:
+                return "-- " + liberator.plugins.mode + ext;
             default: // NORMAL mode
-                if (vimperator.modes.isRecording)
+                if (liberator.modes.isRecording)
                     return "recording";
                 else
                     return "";
@@ -91,23 +91,23 @@ vimperator.modes = (function () //{{{
 
     // NOTE: Pay attention that you don't run into endless loops
     // Usually you should only indicate to leave a special mode linke HINTS
-    // by calling vimperator.modes.reset() and adding the stuff which is needed
+    // by calling liberator.modes.reset() and adding the stuff which is needed
     // for its cleanup here
     function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work with verbosity level
-        // vimperator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        // liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
         // dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
-            case vimperator.modes.TEXTAREA:
-            case vimperator.modes.INSERT:
-                vimperator.editor.unselectText();
+            case liberator.modes.TEXTAREA:
+            case liberator.modes.INSERT:
+                liberator.editor.unselectText();
                 break;
 
-            case vimperator.modes.VISUAL:
-                if (newMode == vimperator.modes.CARET)
+            case liberator.modes.VISUAL:
+                if (newMode == liberator.modes.CARET)
                 {
                     // clear any selection made
                     var selection = window.content.getSelection();
@@ -118,31 +118,31 @@ vimperator.modes = (function () //{{{
                     catch (e) { }
                 }
                 else
-                    vimperator.editor.unselectText();
+                    liberator.editor.unselectText();
                 break;
 
-            case vimperator.modes.CUSTOM:
-                vimperator.plugins.stop();
+            case liberator.modes.CUSTOM:
+                liberator.plugins.stop();
                 break;
 
-            case vimperator.modes.HINTS:
-                vimperator.hints.hide();
+            case liberator.modes.HINTS:
+                liberator.hints.hide();
                 break;
 
-            case vimperator.modes.COMMAND_LINE:
-                vimperator.commandline.close();
+            case liberator.modes.COMMAND_LINE:
+                liberator.commandline.close();
                 break;
         }
 
-        if (newMode == vimperator.modes.NORMAL)
+        if (newMode == liberator.modes.NORMAL)
         {
             // disable caret mode when we want to switch to normal mode
-            var value = vimperator.options.getPref("accessibility.browsewithcaret", false);
+            var value = liberator.options.getPref("accessibility.browsewithcaret", false);
             if (value)
-                vimperator.options.setPref("accessibility.browsewithcaret", false);
+                liberator.options.setPref("accessibility.browsewithcaret", false);
 
-            vimperator.statusline.updateUrl();
-            vimperator.focusContent(false);
+            liberator.statusline.updateUrl();
+            liberator.focusContent(false);
         }
     }
 
@@ -194,15 +194,15 @@ vimperator.modes = (function () //{{{
         // show the current mode string in the command line
         show: function ()
         {
-            if (!vimperator.options["showmode"])
+            if (!liberator.options["showmode"])
                 return;
 
             // never show mode messages if we are in command line mode
-            if (main == vimperator.modes.COMMAND_LINE)
+            if (main == liberator.modes.COMMAND_LINE)
                 return;
 
-            vimperator.commandline.echo(getModeMessage(), vimperator.commandline.HL_MODEMSG, 
-                                        vimperator.commandline.DISALLOW_MULTILINE);
+            liberator.commandline.echo(getModeMessage(), liberator.commandline.HL_MODEMSG, 
+                                        liberator.commandline.DISALLOW_MULTILINE);
         },
 
         // add/remove always work on the extended mode only
@@ -224,7 +224,7 @@ vimperator.modes = (function () //{{{
 
                 main = mainMode;
                 if (!extendedMode)
-                    extended = vimperator.modes.NONE;
+                    extended = liberator.modes.NONE;
 
             }
             if (typeof extendedMode === "number")
@@ -237,15 +237,15 @@ vimperator.modes = (function () //{{{
         setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
             // TODO this.plugin[id]... ('id' maybe submode or what..)
-            vimperator.plugins.mode = modestr;
-            vimperator.plugins.onEvent = oneventfunc;
-            vimperator.plugins.stop = stopfunc;
+            liberator.plugins.mode = modestr;
+            liberator.plugins.onEvent = oneventfunc;
+            liberator.plugins.stop = stopfunc;
         },
 
         // keeps recording state
         reset: function (silent)
         {
-            this.set(vimperator.modes.NORMAL, vimperator.modes.NONE, silent);
+            this.set(liberator.modes.NORMAL, liberator.modes.NONE, silent);
         },
 
         remove: function (mode)
@@ -273,7 +273,7 @@ vimperator.modes = (function () //{{{
 
             main = value;
             // setting the main mode always resets any extended mode
-            extended = vimperator.modes.NONE;
+            extended = liberator.modes.NONE;
             this.show();
         },
 

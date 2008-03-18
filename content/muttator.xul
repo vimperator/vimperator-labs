@@ -63,74 +63,74 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <commandset id="onVimperatorFocus"
             commandupdater="true"
             events="focus"
-            oncommandupdate="vimperator.events.onFocusChange(event);"/>
+            oncommandupdate="liberator.events.onFocusChange(event);"/>
         <commandset id="onVimperatorSelect"
             commandupdater="true"
             events="select"
-            oncommandupdate="vimperator.events.onSelectionChange(event);"/>
+            oncommandupdate="liberator.events.onSelectionChange(event);"/>
 
         <keyset id="mainKeyset">
-            <key id="key_open_vimbar" key=":" oncommand="vimperator.commandline.open(':', '', vimperator.modes.EX);" modifiers=""/>
-            <key id="key_stop" keycode="VK_ESCAPE" oncommand="vimperator.events.onEscape();"/>
-            <!-- other keys are handled inside vimperator.js event loop -->
+            <key id="key_open_vimbar" key=":" oncommand="liberator.commandline.open(':', '', liberator.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.events.onEscape();"/>
+            <!-- other keys are handled inside the event loop in events.js -->
         </keyset>
 
         <statusbar id="status-bar" class="hl-StatusLine">
-            <hbox insertafter="statusTextBox" id="vimperator-statusline" flex="1" height="10" hidden="false" align="center">
-                <statusbarpanel class="plain" id="vimperator-statusline-field-url" readonly="false" flex="1" crop="end"/>
-                <statusbarpanel class="plain" id="vimperator-statusline-field-inputbuffer"    flex="0"/>
-                <statusbarpanel class="plain" id="vimperator-statusline-field-progress"       flex="0"/>
-                <statusbarpanel class="plain" id="vimperator-statusline-field-tabcount"       flex="0"/>
-                <statusbarpanel class="plain" id="vimperator-statusline-field-bufferposition" flex="0"/>
+            <hbox insertafter="statusTextBox" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
+                <statusbarpanel class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-progress"       flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
             </hbox>
             <!-- just hide them since other elements expect them -->
             <statusbarpanel id="statusText" hidden="true"/>
             <statusbarpanel id="statusbarpanel-progress" hidden="true"/>
         </statusbar>
 
-        <vbox id="vimperator-container" hidden="false">
-            <listbox id="vimperator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
-                onclick=   "vimperator.bufferwindow.onEvent(event);"
-                ondblclick="vimperator.bufferwindow.onEvent(event);"
-                onkeydown= "vimperator.bufferwindow.onEvent(event);">
+        <vbox id="liberator-container" hidden="false">
+            <listbox id="liberator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "liberator.bufferwindow.onEvent(event);"
+                ondblclick="liberator.bufferwindow.onEvent(event);"
+                onkeydown= "liberator.bufferwindow.onEvent(event);">
                 <listcols>
                     <listcol flex="1" width="50%"/>
                     <listcol flex="1" width="50%"/>
                 </listcols>
             </listbox>
 
-            <listbox id="vimperator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
-                onclick=   "vimperator.previewwindow.onEvent(event);"
-                ondblclick="vimperator.previewwindow.onEvent(event);"
-                onkeydown= "vimperator.previewwindow.onEvent(event);">
+            <listbox id="liberator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
+                onclick=   "liberator.previewwindow.onEvent(event);"
+                ondblclick="liberator.previewwindow.onEvent(event);"
+                onkeydown= "liberator.previewwindow.onEvent(event);">
                 <listcols>
                     <listcol flex="1" width="50%"/>
                     <listcol flex="1" width="50%"/>
                 </listcols>
             </listbox>
 
-            <iframe id="vimperator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
-                onclick="vimperator.commandline.onMultilineOutputEvent(event)"/>
+            <iframe id="liberator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+                onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
 
-            <listbox id="vimperator-completion" class="plain" rows="1" flex="1" hidden="true">
+            <listbox id="liberator-completion" class="plain" rows="1" flex="1" hidden="true">
                 <listcols>
                     <listcol flex="1" width="50%"/>
                     <listcol flex="1" width="50%"/>
                 </listcols>
             </listbox>
 
-            <hbox insertafter="status-bar" id="vimperator-commandline" hidden="false" class="hl-Normal">
-                <label class="plain" id="vimperator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-                <textbox class="plain" id="vimperator-commandline-command" flex="1" type="timed" timeout="100"
-                    oninput="vimperator.commandline.onEvent(event);"
-                    onfocus="vimperator.commandline.onEvent(event);"
-                    onblur="vimperator.commandline.onEvent(event);"/>
+            <hbox insertafter="status-bar" id="liberator-commandline" hidden="false" class="hl-Normal">
+                <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                    oninput="liberator.commandline.onEvent(event);"
+                    onfocus="liberator.commandline.onEvent(event);"
+                    onblur="liberator.commandline.onEvent(event);"/>
             </hbox>
 
-            <textbox id="vimperator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
-                onkeypress="vimperator.commandline.onMultilineInputEvent(event);"
-                oninput="vimperator.commandline.onMultilineInputEvent(event);"
-                onblur="vimperator.commandline.onMultilineInputEvent(event);"/>
+            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
+                onkeypress="liberator.commandline.onMultilineInputEvent(event);"
+                oninput="liberator.commandline.onMultilineInputEvent(event);"
+                onblur="liberator.commandline.onMultilineInputEvent(event);"/>
         </vbox>
     </window>
 

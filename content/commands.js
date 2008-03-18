@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // Do NOT create instances of this class yourself, use the helper method
-// vimperator.commands.add() instead
-vimperator.Command = function (specs, description, action, extraInfo) //{{{
+// liberator.commands.add() instead
+liberator.Command = function (specs, description, action, extraInfo) //{{{
 {
     if (!specs || !action)
         return null;
@@ -79,7 +79,7 @@ vimperator.Command = function (specs, description, action, extraInfo) //{{{
     this.isUserCommand = extraInfo.isUserCommand || false;
 };
 
-vimperator.Command.prototype = {
+liberator.Command.prototype = {
 
     execute: function (args, special, count, modifiers)
     {
@@ -120,7 +120,7 @@ vimperator.Command.prototype = {
 };
 //}}}
 
-vimperator.Commands = function () //{{{
+liberator.Commands = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -284,7 +284,7 @@ vimperator.Commands = function () //{{{
                             [count, arg] = getNextArg(sub.substr(optname.length + 1));
                             if (count == -1)
                             {
-                                vimperator.echoerr("Invalid argument for option " + optname);
+                                liberator.echoerr("Invalid argument for option " + optname);
                                 return null;
                             }
 
@@ -295,7 +295,7 @@ vimperator.Commands = function () //{{{
                             [count, arg] = getNextArg(sub.substr(optname.length + 1));
                             if (count == -1)
                             {
-                                vimperator.echoerr("Invalid argument for option " + optname);
+                                liberator.echoerr("Invalid argument for option " + optname);
                                 return null;
                             }
 
@@ -318,7 +318,7 @@ vimperator.Commands = function () //{{{
                             case commandManager.OPTION_NOARG:
                                 if (arg != null)
                                 {
-                                    vimperator.echoerr("No argument allowed for option: " + optname);
+                                    liberator.echoerr("No argument allowed for option: " + optname);
                                     return null;
                                 }
                                 break;
@@ -329,14 +329,14 @@ vimperator.Commands = function () //{{{
                                     arg = false;
                                 else
                                 {
-                                    vimperator.echoerr("Invalid argument for boolean option: " + optname);
+                                    liberator.echoerr("Invalid argument for boolean option: " + optname);
                                     return null;
                                 }
                                 break;
                             case commandManager.OPTION_STRING:
                                 if (arg == null)
                                 {
-                                    vimperator.echoerr("Argument required for string option: " + optname);
+                                    liberator.echoerr("Argument required for string option: " + optname);
                                     return null;
                                 }
                                 break;
@@ -344,7 +344,7 @@ vimperator.Commands = function () //{{{
                                 arg = parseInt(arg, 10);
                                 if (isNaN(arg))
                                 {
-                                    vimperator.echoerr("Numeric argument required for integer option: " + optname);
+                                    liberator.echoerr("Numeric argument required for integer option: " + optname);
                                     return null;
                                 }
                                 break;
@@ -352,14 +352,14 @@ vimperator.Commands = function () //{{{
                                 arg = parseFloat(arg);
                                 if (isNaN(arg))
                                 {
-                                    vimperator.echoerr("Numeric argument required for float option: " + optname);
+                                    liberator.echoerr("Numeric argument required for float option: " + optname);
                                     return null;
                                 }
                                 break;
                             case commandManager.OPTION_LIST:
                                 if (arg == null)
                                 {
-                                    vimperator.echoerr("Argument required for list option: " + optname);
+                                    liberator.echoerr("Argument required for list option: " + optname);
                                     return null;
                                 }
                                 arg = arg.split(/\s*,\s*/);
@@ -371,7 +371,7 @@ vimperator.Commands = function () //{{{
                             {
                                 if (options[opt][2].call(this, arg) == false)
                                 {
-                                    vimperator.echoerr("Invalid argument for option: " + optname);
+                                    liberator.echoerr("Invalid argument for option: " + optname);
                                     return null;
                                 }
                             }
@@ -389,7 +389,7 @@ vimperator.Commands = function () //{{{
             var [count, arg] = getNextArg(sub);
             if (count == -1)
             {
-                vimperator.echoerr("Error parsing arguments: " + arg);
+                liberator.echoerr("Error parsing arguments: " + arg);
                 return null;
             }
 
@@ -468,7 +468,7 @@ vimperator.Commands = function () //{{{
 
         add: function (names, description, action, extra)
         {
-            var command = new vimperator.Command(names, description, action, extra);
+            var command = new liberator.Command(names, description, action, extra);
             if (!command)
                 return false;
 
@@ -477,7 +477,7 @@ vimperator.Commands = function () //{{{
                 if (exCommands[i].name == command.name)
                 {
                     // never replace for now
-                    vimperator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 2);
+                    liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 2);
                     return false;
                 }
             }
@@ -492,7 +492,7 @@ vimperator.Commands = function () //{{{
             extra.isUserCommand = true;
             description = description || "User defined command";
 
-            var command = new vimperator.Command(names, description, action, extra);
+            var command = new liberator.Command(names, description, action, extra);
             if (!command)
                 return false;
 
@@ -579,7 +579,7 @@ vimperator.Commands = function () //{{{
                 var res = args.match(/^(\w+)(?:\s+(.+))?$/);
                 if (!res)
                 {
-                    vimperator.echoerr("E182: Invalid command name");
+                    liberator.echoerr("E182: Invalid command name");
                     return false;
                 }
                 var [cmd, rep] = [res[1], res[2]]
@@ -587,12 +587,12 @@ vimperator.Commands = function () //{{{
 
             if (rep)
             {
-                if (!vimperator.commands.addUserCommand([cmd],
+                if (!liberator.commands.addUserCommand([cmd],
                         "User defined command",
                         function (args, special, count, modifiers) { eval(rep) }),
                         special);
                 {
-                    vimperator.echoerr("E174: Command already exists: add ! to replace it");
+                    liberator.echoerr("E174: Command already exists: add ! to replace it");
                 }
             }
             else
@@ -600,15 +600,15 @@ vimperator.Commands = function () //{{{
                 var cmdlist = getUserCommands(cmd);
                 if (cmdlist.length > 0)
                 {
-                    var str = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+                    var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                               "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
                         str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + cmdlist[i].isUserCommand + "</td></tr>";
                     str += "</table>"
-                    vimperator.commandline.echo(str, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+                    liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else
-                    vimperator.echo("No user-defined commands found");
+                    liberator.echo("No user-defined commands found");
             }
         },
         {
@@ -620,7 +620,7 @@ vimperator.Commands = function () //{{{
     // TODO: remove preview window, or change it at least
     commandManager.add(["pc[lose]"],
         "Close preview window on bottom of screen",
-        function () { vimperator.previewwindow.hide(); });
+        function () { liberator.previewwindow.hide(); });
 
     //}}}
 

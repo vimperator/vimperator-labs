@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-vimperator.Completion = function () //{{{
+liberator.Completion = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -150,7 +150,7 @@ vimperator.Completion = function () //{{{
         dialog: function (filter)
         {
             substrings = [];
-            var nodes = vimperator.config.dialogs || [];
+            var nodes = liberator.config.dialogs || [];
 
             if (!filter)
                 return [0, nodes];
@@ -165,7 +165,7 @@ vimperator.Completion = function () //{{{
         macros: function (filter)
         {
             var macros = [];
-            var tmp = vimperator.events.getMacros();
+            var tmp = liberator.events.getMacros();
             for (var item in tmp)
                 macros.push([item, tmp[item]]);
 
@@ -195,7 +195,7 @@ vimperator.Completion = function () //{{{
                 filter = skip[2];
             }
 
-            var cpt = complete || vimperator.options["complete"];
+            var cpt = complete || liberator.options["complete"];
             // join all completion arrays together
             for (var i = 0; i < cpt.length; i++)
             {
@@ -204,9 +204,9 @@ vimperator.Completion = function () //{{{
                 else if (cpt[i] == "f")
                     completions = completions.concat(this.file(filter, false)[1]);
                 else if (cpt[i] == "b")
-                    completions = completions.concat(vimperator.bookmarks.get(filter));
+                    completions = completions.concat(liberator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
-                    completions = completions.concat(vimperator.history.get(filter));
+                    completions = completions.concat(liberator.history.get(filter));
             }
 
             return [start, completions];
@@ -214,7 +214,7 @@ vimperator.Completion = function () //{{{
 
         search: function (filter)
         {
-            var engines = vimperator.bookmarks.getSearchEngines().concat(vimperator.bookmarks.getKeywords());
+            var engines = liberator.bookmarks.getSearchEngines().concat(liberator.bookmarks.getKeywords());
 
             if (!filter)
                 return [0, engines];
@@ -246,7 +246,7 @@ vimperator.Completion = function () //{{{
 
             try
             {
-                files = vimperator.io.readDirectory(dir);
+                files = liberator.io.readDirectory(dir);
                 mapped = files.map(function (file) {
                     return [[tail ? file.leafName : (dir + file.leafName)], file.isDirectory() ? "Directory" : "File"];
                 });
@@ -275,12 +275,12 @@ vimperator.Completion = function () //{{{
                 try
                 {
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + files[file], false);
+                    xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], false);
                     xmlhttp.send(null);
                 }
                 catch (e)
                 {
-                    vimperator.log("Error opening chrome://" + vimperator.config.name.toLowerCase() + "/locale/" + files[file], 1);
+                    liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], 1);
                     continue;
                 }
                 var doc = xmlhttp.responseXML;
@@ -305,12 +305,12 @@ vimperator.Completion = function () //{{{
 
             if (!filter)
             {
-                for (var command in vimperator.commands)
+                for (var command in liberator.commands)
                     completions.push([command.name, command.description]);
                 return [0, completions];
             }
 
-            for (var command in vimperator.commands)
+            for (var command in liberator.commands)
                 completions.push([command.longNames, command.description]);
 
             return [0, buildLongestStartingSubstring(completions, filter)];
@@ -330,7 +330,7 @@ vimperator.Completion = function () //{{{
             if (unfiltered)
             {
                 var options = [];
-                for (var option in vimperator.options)
+                for (var option in liberator.options)
                 {
                     if (prefix && option.type != "boolean")
                         continue;
@@ -353,7 +353,7 @@ vimperator.Completion = function () //{{{
                         var name = prefArray[i];
                         if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
                         {
-                            var value = vimperator.options.getPref(name) + "";
+                            var value = liberator.options.getPref(name) + "";
                             return [filter.length + 1, [[value, ""]]];
                         }
                     }
@@ -363,9 +363,9 @@ vimperator.Completion = function () //{{{
                 for (var i = 0; i < prefArray.length; i++)
                 {
                     if (!filter)
-                        optionCompletions.push([prefArray[i], vimperator.options.getPref(prefArray[i])]);
+                        optionCompletions.push([prefArray[i], liberator.options.getPref(prefArray[i])]);
                     else
-                        optionCompletions.push([[prefArray[i]], vimperator.options.getPref(prefArray[i])]);
+                        optionCompletions.push([[prefArray[i]], liberator.options.getPref(prefArray[i])]);
                 }
                         
 
@@ -378,7 +378,7 @@ vimperator.Completion = function () //{{{
             if (!filter)
             {
                 var options = [];
-                for (var option in vimperator.options)
+                for (var option in liberator.options)
                 {
                     if (prefix && option.type != "boolean")
                         continue;
@@ -390,7 +390,7 @@ vimperator.Completion = function () //{{{
             else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
             {
                 filter = filter.substr(0, filter.length - 1);
-                for (var option in vimperator.options)
+                for (var option in liberator.options)
                 {
                     if (option.hasName(filter))
                         return [filter.length + 1, [[option.value + "", ""]]];
@@ -400,7 +400,7 @@ vimperator.Completion = function () //{{{
 
             // can't use b_l_s_s, since this has special requirements (the prefix)
             var filterLength = filter.length;
-            for (var option in vimperator.options)
+            for (var option in liberator.options)
             {
                 if (prefix && option.type != "boolean")
                     continue;
@@ -533,7 +533,7 @@ vimperator.Completion = function () //{{{
             }
             else
             {
-                objects.push("vimperator");
+                objects.push("liberator");
                 objects.push("window");
             }
 
@@ -546,7 +546,7 @@ vimperator.Completion = function () //{{{
                         "var comp = [];" +
                         "var type = '';" +
                         "var value = '';" +
-                        "var obj = eval('with(vimperator){" + objects[o] + "}');" +
+                        "var obj = eval('with(liberator){" + objects[o] + "}');" +
                         "for (var i in obj) {" +
                         "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
                         "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
@@ -687,7 +687,7 @@ vimperator.Completion = function () //{{{
         // TODO: get completions for "nested" command lines like ":time :js <tab>" or ":tab :he<tab>"
         exTabCompletion: function (str)
         {
-            var [count, cmd, special, args] = vimperator.commands.parseCommand(str);
+            var [count, cmd, special, args] = liberator.commands.parseCommand(str);
             var completions = [];
             var start = 0;
             var exLength = 0;
@@ -699,7 +699,7 @@ vimperator.Completion = function () //{{{
                 return [matches[1].length, this.command(cmd)[1]];
 
             // dynamically get completions as specified with the command's completer function
-            var command = vimperator.commands.get(cmd);
+            var command = liberator.commands.get(cmd);
             if (command && command.completer)
             {
                 matches = str.match(/^:*\d*\w+!?\s+/);

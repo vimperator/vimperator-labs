@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // Do NOT create instances of this class yourself, use the helper method
-// vimperator.options.add() instead
-vimperator.Option = function (names, description, type, defaultValue, getter, setter, validator, completer)
+// liberator.options.add() instead
+liberator.Option = function (names, description, type, defaultValue, getter, setter, validator, completer)
 {
     if (!names || !type)
         return null;
@@ -103,7 +103,7 @@ vimperator.Option = function (names, description, type, defaultValue, getter, se
 }; //}}}
 
 
-vimperator.Options = function () //{{{
+liberator.Options = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -122,26 +122,26 @@ vimperator.Options = function () //{{{
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_STRING)
                     prefService.setCharPref(name, value);
                 else if (type == prefService.PREF_INT)
-                    vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
+                    liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
-                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_INT)
                     prefService.setIntPref(name, value);
                 else
-                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_BOOL)
                     prefService.setBoolPref(name, value);
                 else if (type == prefService.PREF_INT)
-                    vimperator.echoerr("E521: Number required after =: " + name + "=" + value);
+                    liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
-                    vimperator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             default:
-                vimperator.echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
+                liberator.echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
         }
     }
 
@@ -200,16 +200,16 @@ vimperator.Options = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    vimperator.commands.add(["let"],
+    liberator.commands.add(["let"],
         "Set or list a variable",
         function (args)
         {
             if (!args)
             {
                 var str = "";
-                for (var i in vimperator.globalVariables)
+                for (var i in liberator.globalVariables)
                 {
-                    var value = vimperator.globalVariables[i];
+                    var value = liberator.globalVariables[i];
                     if (typeof value == "number")
                         var prefix = "#";
                     else if (typeof value == "function")
@@ -220,9 +220,9 @@ vimperator.Options = function () //{{{
                     str += "<tr><td style=\"width: 200px;\">" + i + "</td><td>" + prefix + value + "</td>\n";
                 }
                 if (str)
-                    vimperator.echo("<table>" + str + "</table>", vimperator.commandline.FORCE_MULTILINE);
+                    liberator.echo("<table>" + str + "</table>", liberator.commandline.FORCE_MULTILINE);
                 else
-                    vimperator.echo("No variables found");
+                    liberator.echo("No variables found");
                 return;
             }
 
@@ -232,17 +232,17 @@ vimperator.Options = function () //{{{
             {
                 if (!matches[1])
                 {
-                    var reference = vimperator.variableReference(matches[2]);
+                    var reference = liberator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
                     {
-                        vimperator.echoerr("E121: Undefined variable: " + matches[2]);
+                        liberator.echoerr("E121: Undefined variable: " + matches[2]);
                         return;
                     }
 
-                    var expr = vimperator.eval(matches[4]);
+                    var expr = liberator.eval(matches[4]);
                     if (typeof expr === undefined)
                     {
-                        vimperator.echoerr("E15: Invalid expression: " + matches[4]);
+                        liberator.echoerr("E15: Invalid expression: " + matches[4]);
                         return;
                     }
                     else
@@ -250,7 +250,7 @@ vimperator.Options = function () //{{{
                         if (!reference[0])
                         {
                             if (reference[2] == "g")
-                                reference[0] = vimperator.globalVariables;
+                                reference[0] = liberator.globalVariables;
                             else
                                 return; // for now
                         }
@@ -272,10 +272,10 @@ vimperator.Options = function () //{{{
             // 1 - name
             else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
-                var reference = vimperator.variableReference(matches[1]);
+                var reference = liberator.variableReference(matches[1]);
                 if (!reference[0])
                 {
-                    vimperator.echoerr("E121: Undefined variable: " + matches[1]);
+                    liberator.echoerr("E121: Undefined variable: " + matches[1]);
                     return;
                 }
 
@@ -286,12 +286,12 @@ vimperator.Options = function () //{{{
                     var prefix = "*";
                 else
                     var prefix = "";
-                vimperator.echo(reference[1] + "\t\t" + prefix + value);
+                liberator.echo(reference[1] + "\t\t" + prefix + value);
             }
         });
 
-    vimperator.commands.add(["pref[erences]", "prefs"],
-        "Show " + vimperator.config.hostApplication + " Preferences",
+    liberator.commands.add(["pref[erences]", "prefs"],
+        "Show " + liberator.config.hostApplication + " Preferences",
         function (args, special, count, modifiers)
         {
             if (!args)
@@ -299,25 +299,25 @@ vimperator.Options = function () //{{{
                 // TODO: copy these snippets to more function which should work with :tab xxx
                 if (modifiers && modifiers.inTab)
                 {
-                    vimperator.open(special ? "about:config" :
-                        "chrome://browser/content/preferences/preferences.xul", vimperator.NEW_TAB);
+                    liberator.open(special ? "about:config" :
+                        "chrome://browser/content/preferences/preferences.xul", liberator.NEW_TAB);
                 }
                 else
                 {
                     if (special) // open firefox settings gui dialog
-                        vimperator.open("about:config", vimperator.CURRENT_TAB);
+                        liberator.open("about:config", liberator.CURRENT_TAB);
                     else
                         openPreferences();
                 }
             }
             else
             {
-                vimperator.echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
             }
         });
 
     // TODO: support setting multiple options at once
-    vimperator.commands.add(["se[t]"],
+    liberator.commands.add(["se[t]"],
         "Set an option",
         function (args, special, count, modifiers)
         {
@@ -341,13 +341,13 @@ vimperator.Options = function () //{{{
                     invertBoolean = true;
 
                 if (name == "all" && reset)
-                    vimperator.echoerr("You can't reset all the firefox options, it could make your browser unusable.");
+                    liberator.echoerr("You can't reset all the firefox options, it could make your browser unusable.");
                 else if (name == "all")
-                    vimperator.options.listPrefs(onlyNonDefault, "");
+                    liberator.options.listPrefs(onlyNonDefault, "");
                 else if (reset)
-                    vimperator.options.resetPref(name);
+                    liberator.options.resetPref(name);
                 else if (invertBoolean)
-                    vimperator.options.invertPref(name);
+                    liberator.options.invertPref(name);
                 else if (matches[3])
                 {
                     var value = matches[5];
@@ -367,11 +367,11 @@ vimperator.Options = function () //{{{
                             if (!isNaN(valueInt))
                                 value = valueInt;
                     }
-                    vimperator.options.setPref(name, value);
+                    liberator.options.setPref(name, value);
                 }
                 else
                 {
-                    vimperator.options.listPrefs(onlyNonDefault, name);
+                    liberator.options.listPrefs(onlyNonDefault, name);
                 }
                 return;
             }
@@ -387,7 +387,7 @@ vimperator.Options = function () //{{{
             var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
             if (!matches)
             {
-                vimperator.echoerr("E518: Unknown option: " + args);
+                liberator.echoerr("E518: Unknown option: " + args);
                 return;
             }
 
@@ -400,10 +400,10 @@ vimperator.Options = function () //{{{
             if (name == "all")
                 all = true;
 
-            var option = vimperator.options.get(name);
+            var option = liberator.options.get(name);
             if (!option && !all)
             {
-                vimperator.echoerr("E518: Unknown option: " + args);
+                liberator.echoerr("E518: Unknown option: " + args);
                 return;
             }
 
@@ -432,7 +432,7 @@ vimperator.Options = function () //{{{
             {
                 if (all)
                 {
-                    for (let option in vimperator.options)
+                    for (let option in liberator.options)
                         option.reset();
                 }
                 else
@@ -445,14 +445,14 @@ vimperator.Options = function () //{{{
             {
                 if (all)
                 {
-                    vimperator.options.list(onlyNonDefault);
+                    liberator.options.list(onlyNonDefault);
                 }
                 else
                 {
                     if (option.type == "boolean")
-                        vimperator.echo((option.value ? "  " : "no") + option.name);
+                        liberator.echo((option.value ? "  " : "no") + option.name);
                     else
-                        vimperator.echo("  " + option.name + "=" + option.value);
+                        liberator.echo("  " + option.name + "=" + option.value);
                 }
             }
             // write access
@@ -469,7 +469,7 @@ vimperator.Options = function () //{{{
                     case "boolean":
                         if (valueGiven)
                         {
-                            vimperator.echoerr("E474: Invalid argument: " + args);
+                            liberator.echoerr("E474: Invalid argument: " + args);
                             return;
                         }
 
@@ -485,7 +485,7 @@ vimperator.Options = function () //{{{
 
                         if (isNaN(value))
                         {
-                            vimperator.echoerr("E521: Number required after =: " + args);
+                            liberator.echoerr("E521: Number required after =: " + args);
                             return;
                         }
 
@@ -552,27 +552,27 @@ vimperator.Options = function () //{{{
                         break;
 
                     default:
-                        vimperator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
+                        liberator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
                 }
 
                 if (option.isValidValue(newValue))
                     option.value = newValue;
                 else
                     // FIXME: need to be able to specify more specific errors
-                    vimperator.echoerr("E474: Invalid argument: " + args);
+                    liberator.echoerr("E474: Invalid argument: " + args);
             }
         },
         {
-            completer: function (filter, special) { return vimperator.completion.option(filter, special); }
+            completer: function (filter, special) { return liberator.completion.option(filter, special); }
         });
 
-    vimperator.commands.add(["unl[et]"],
+    liberator.commands.add(["unl[et]"],
         "Delete a variable",
         function (args, special)
         {
             if (!args)
             {
-                vimperator.echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
 
@@ -581,11 +581,11 @@ vimperator.Options = function () //{{{
             var length = names.length;
             for (var i = 0, name = names[i]; i < length; name = names[++i])
             {
-                var reference = vimperator.variableReference(name);
+                var reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
                     if (!special)
-                        vimperator.echoerr("E108: No such variable: " + name);
+                        liberator.echoerr("E108: No such variable: " + name);
                     return;
                 }
 
@@ -612,10 +612,10 @@ vimperator.Options = function () //{{{
             if (!extraInfo)
                 extraInfo = {};
 
-            var option = new vimperator.Option(names, description, type, defaultValue,
+            var option = new liberator.Option(names, description, type, defaultValue,
                                                extraInfo.getter, extraInfo.setter, extraInfo.validator);
 
-            // quickly access options with vimperator.options["wildmode"]:
+            // quickly access options with liberator.options["wildmode"]:
             this.__defineGetter__(option.name, function () { return option.value; });
             this.__defineSetter__(option.name, function (value) { option.value = value; });
 
@@ -643,7 +643,7 @@ vimperator.Options = function () //{{{
 
         list: function (onlyNonDefault)
         {
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
             var name, value, def;
 
@@ -668,10 +668,10 @@ vimperator.Options = function () //{{{
                     if (value != def)
                     {
                         name  = "<span style=\"font-weight: bold\">" + name + "</span>";
-                        value = vimperator.util.colorize(value, false) + "<span style=\"color: gray\">  (default: " + def + ")</span>";
+                        value = liberator.util.colorize(value, false) + "<span style=\"color: gray\">  (default: " + def + ")</span>";
                     }
                     else
-                        value = vimperator.util.colorize(value, false);
+                        value = liberator.util.colorize(value, false);
 
                     list += "<tr><td>" + "  " + name + "=" + value + "</td></tr>";
                 }
@@ -679,7 +679,7 @@ vimperator.Options = function () //{{{
 
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         listPrefs: function (onlyNonDefault, filter)
@@ -689,8 +689,8 @@ vimperator.Options = function () //{{{
 
             var prefArray = prefService.getChildList("", {value: 0});
             prefArray.sort();
-            var list = ":" + vimperator.util.escapeHTML(vimperator.commandline.getCommand()) + "<br/>" +
-                "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + vimperator.config.hostApplication +
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
+                "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + liberator.config.hostApplication +
                 " Options ---</th></tr>";
             var name, value, defaultValue;
 
@@ -704,7 +704,7 @@ vimperator.Options = function () //{{{
                     if (typeof value == "string")
                         value = value.substr(0, 100).replace(/\n/g, " ");
 
-                    value = vimperator.util.colorize(value, true);
+                    value = liberator.util.colorize(value, true);
                     defaultValue = loadPreference(name, null, true);
 
                     if (defaultValue == null)
@@ -721,7 +721,7 @@ vimperator.Options = function () //{{{
                 }
             }
             list += "</table>";
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         getPref: function (name, forcedDefault)
@@ -745,7 +745,7 @@ vimperator.Options = function () //{{{
             if (prefService.getPrefType(name) == prefService.PREF_BOOL)
                 this.setPref(name, !this.getPref(name));
             else
-                vimperator.echoerr("E488: Trailing characters: " + name + "!");
+                liberator.echoerr("E488: Trailing characters: " + name + "!");
         }
     };
 }; //}}}

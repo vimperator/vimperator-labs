@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // Do NOT create instances of this class yourself, use the helper method
-// vimperator.mappings.add() instead
-vimperator.Map = function (modes, cmds, description, action, extraInfo) //{{{
+// liberator.mappings.add() instead
+liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
 {
     if (!modes || (!cmds || !cmds.length) || !action)
         return null;
@@ -47,7 +47,7 @@ vimperator.Map = function (modes, cmds, description, action, extraInfo) //{{{
     this.noremap = extraInfo.noremap || false;
 };
 
-vimperator.Map.prototype = {
+liberator.Map.prototype = {
 
     hasName: function (name)
     {
@@ -58,11 +58,11 @@ vimperator.Map.prototype = {
     {
         var args = [];
 
-        if (this.flags & vimperator.Mappings.flags.MOTION)
+        if (this.flags & liberator.Mappings.flags.MOTION)
             args.push(motion);
-        if (this.flags & vimperator.Mappings.flags.COUNT)
+        if (this.flags & liberator.Mappings.flags.COUNT)
             args.push(count);
-        if (this.flags & vimperator.Mappings.flags.ARGUMENT)
+        if (this.flags & liberator.Mappings.flags.ARGUMENT)
             args.push(argument);
 
         return this.action.apply(this, args);
@@ -71,7 +71,7 @@ vimperator.Map.prototype = {
 };
 //}}}
 
-vimperator.Mappings = function () //{{{
+liberator.Mappings = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -80,7 +80,7 @@ vimperator.Mappings = function () //{{{
     var main = []; // default mappings
     var user = []; // user created mappings
 
-    for (var mode in vimperator.modes)
+    for (var mode in liberator.modes)
     {
         main[mode] = [];
         user[mode] = [];
@@ -166,7 +166,7 @@ vimperator.Mappings = function () //{{{
         {
             if (!args)
             {
-                vimperator.mappings.list(mode);
+                liberator.mappings.list(mode);
                 return;
             }
 
@@ -175,21 +175,21 @@ vimperator.Mappings = function () //{{{
             var leaderRegexp = /<Leader>/i;
 
             if (leaderRegexp.test(lhs))
-                lhs = lhs.replace(leaderRegexp, vimperator.events.getMapLeader());
+                lhs = lhs.replace(leaderRegexp, liberator.events.getMapLeader());
 
             if (!rhs) // list the mapping
             {
-                vimperator.mappings.list(mode, lhs);
+                liberator.mappings.list(mode, lhs);
             }
             else
             {
                 for (var index = 0; index < mode.length; index++)
                 {
-                    vimperator.mappings.addUserMap([mode[index]], [lhs],
+                    liberator.mappings.addUserMap([mode[index]], [lhs],
                             "User defined mapping",
-                            function (count) { vimperator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                            function (count) { liberator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
                             {
-                                flags: vimperator.Mappings.flags.COUNT,
+                                flags: liberator.Mappings.flags.COUNT,
                                 rhs: rhs,
                                 noremap: noremap
                             });
@@ -199,49 +199,49 @@ vimperator.Mappings = function () //{{{
 
         var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
-        vimperator.commands.add([char ? char + "m[ap]" : "map"],
+        liberator.commands.add([char ? char + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
             function (args) { map(args, modes, false); });
 
-        vimperator.commands.add([char + "no[remap]"],
+        liberator.commands.add([char + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
             function (args) { map(args, modes, true); });
 
-        vimperator.commands.add([char + "mapc[lear]"],
+        liberator.commands.add([char + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
             function (args)
             {
                 if (args)
                 {
-                    vimperator.echoerr("E474: Invalid argument");
+                    liberator.echoerr("E474: Invalid argument");
                     return;
                 }
 
                 for (let i = 0; i < modes.length; i++)
-                    vimperator.mappings.removeAll(modes[i]);
+                    liberator.mappings.removeAll(modes[i]);
             });
 
-        vimperator.commands.add([char + "unm[ap]"],
+        liberator.commands.add([char + "unm[ap]"],
             "Remove a mapping" + modeDescription,
             function (args)
             {
                 if (!args)
                 {
-                    vimperator.echoerr("E474: Invalid argument");
+                    liberator.echoerr("E474: Invalid argument");
                     return;
                 }
 
                 var flag = false;
                 for (let i = 0; i < modes.length; i++)
                 {
-                    if (vimperator.mappings.hasMap(modes[i], args))
+                    if (liberator.mappings.hasMap(modes[i], args))
                     {
-                        vimperator.mappings.remove(modes[i], args);
+                        liberator.mappings.remove(modes[i], args);
                         flag = true;
                     }
                 }
                 if (!flag)
-                    vimperator.echoerr("E31: No such mapping");
+                    liberator.echoerr("E31: No such mapping");
             });
     }
 
@@ -249,18 +249,18 @@ vimperator.Mappings = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addMapCommands("",  [vimperator.modes.NORMAL], "");
-    addMapCommands("c", [vimperator.modes.COMMAND_LINE], "command line");
-    addMapCommands("i", [vimperator.modes.INSERT, vimperator.modes.TEXTAREA], "insert");
-    if (vimperator.has("mail"))
-        addMapCommands("m", [vimperator.modes.MESSAGE], "message");
+    addMapCommands("",  [liberator.modes.NORMAL], "");
+    addMapCommands("c", [liberator.modes.COMMAND_LINE], "command line");
+    addMapCommands("i", [liberator.modes.INSERT, liberator.modes.TEXTAREA], "insert");
+    if (liberator.has("mail"))
+        addMapCommands("m", [liberator.modes.MESSAGE], "message");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // FIXME:
-    vimperator.Mappings.flags = {
+    liberator.Mappings.flags = {
         ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox
         MOTION:              1 << 1,
         COUNT:               1 << 2,
@@ -272,7 +272,7 @@ vimperator.Mappings = function () //{{{
         // NOTE: just normal mode for now
         __iterator__: function ()
         {
-            return mappingsIterator([vimperator.modes.NORMAL], main);
+            return mappingsIterator([liberator.modes.NORMAL], main);
         },
 
         // used by :mkvimperatorrc to save mappings
@@ -283,12 +283,12 @@ vimperator.Mappings = function () //{{{
 
         add: function (modes, keys, description, action, extra)
         {
-            addMap (new vimperator.Map(modes, keys, description, action, extra), false);
+            addMap (new liberator.Map(modes, keys, description, action, extra), false);
         },
 
         addUserMap: function (modes, keys, description, action, extra)
         {
-            var map = new vimperator.Map(modes, keys, description || "User defined mapping", action, extra);
+            var map = new liberator.Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
             for (var i = 0; i < map.names.length; i++)
@@ -302,13 +302,13 @@ vimperator.Mappings = function () //{{{
 
         get: function (mode, cmd)
         {
-            mode = mode || vimperator.modes.NORMAL;
+            mode = mode || liberator.modes.NORMAL;
             return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
         getDefault: function (mode, cmd)
         {
-            mode = mode || vimperator.modes.NORMAL;
+            mode = mode || liberator.modes.NORMAL;
             return getMap(mode, cmd, main);
         },
 
@@ -359,7 +359,7 @@ vimperator.Mappings = function () //{{{
 
             if (!maps || maps.length == 0)
             {
-                vimperator.echo("No mappings found");
+                liberator.echo("No mappings found");
                 return;
             }
 
@@ -396,20 +396,20 @@ vimperator.Mappings = function () //{{{
 
             if (!flag)
             {
-                vimperator.echo("No mappings found");
+                liberator.echo("No mappings found");
                 return;
             }
 
             var modeSign = "";
             for (var i = 0; i < modes.length; i++)
             {
-                if (modes[i] == vimperator.modes.NORMAL) 
+                if (modes[i] == liberator.modes.NORMAL) 
                     modeSign += "n";
-                if ((modes[i] == vimperator.modes.INSERT || modes[i] == vimperator.modes.TEXTAREA) && modeSign.indexOf("i") == -1) 
+                if ((modes[i] == liberator.modes.INSERT || modes[i] == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1) 
                     modeSign += "i";
-                if (modes[i] == vimperator.modes.COMMAND_LINE) 
+                if (modes[i] == liberator.modes.COMMAND_LINE) 
                     modeSign += "c";
-                if (modes[i] == vimperator.modes.MESSAGRE) 
+                if (modes[i] == liberator.modes.MESSAGRE) 
                     modeSign += "m";
             }
 
@@ -421,16 +421,16 @@ vimperator.Mappings = function () //{{{
                 for (var j = 0; j < maps[i].names.length; j++)
                 {
                     list += "<tr>";
-                    list += "<td> " + modeSign + "   " + vimperator.util.escapeHTML(maps[i].names[j]) + "</td>";
+                    list += "<td> " + modeSign + "   " + liberator.util.escapeHTML(maps[i].names[j]) + "</td>";
                     if (maps[i].rhs)
                         list += "<td> "+ (maps[i].noremap ? "*" : " ") + "</td>" 
-                                        + "<td>" + vimperator.util.escapeHTML(maps[i].rhs) + "</td>";
+                                        + "<td>" + liberator.util.escapeHTML(maps[i].rhs) + "</td>";
                     list += "</tr>";
                 }
             }
             list += "</table>";
 
-            vimperator.commandline.echo(list, vimperator.commandline.HL_NORMAL, vimperator.commandline.FORCE_MULTILINE);
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 
     };
