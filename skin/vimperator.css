@@ -26,11 +26,11 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-#vimperator-container  {
+#liberator-container  {
     font-family: monospace;
 }
 
-#vimperator-bufferwindow, #vimperator-completion, #vimperator-previewwindow {
+#liberator-bufferwindow, #liberator-completion, #liberator-previewwindow {
     -moz-user-focus: ignore;
     overflow: -moz-scrollbars-none !important; /* does not seem to work fully */
     border-width: 0px !important;
@@ -38,9 +38,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 
 /* the selected item in listboxes is hardly readable without this */
-#vimperator-completion    > listitem[selected="true"] > listcell,
-#vimperator-bufferwindow  > listitem[selected="true"] > listcell,
-#vimperator-previewwindow > listitem[selected="true"] > listcell {
+#liberator-completion    > listitem[selected="true"] > listcell,
+#liberator-bufferwindow  > listitem[selected="true"] > listcell,
+#liberator-previewwindow > listitem[selected="true"] > listcell {
    background-color: Highlight !important;
    color: HighlightText !important;
 }
@@ -53,17 +53,17 @@ the terms of any one of the MPL, the GPL or the LGPL.
     font-weight: bold;
     font-family: monospace;
 }
-#vimperator-statusline {
+#liberator-statusline {
     font-family: monospace;
     margin: 0px;
 }
-#vimperator-statusline > label {
+#liberator-statusline > label {
     padding: 0px 0px 0px 8px;
 }
-#vimperator-statusline > label:first-child {
+#liberator-statusline > label:first-child {
     padding: 0px;
 }
-#vimperator-statusline-field-url {
+#liberator-statusline-field-url {
     background-color: inherit;
     color: inherit;
 }
@@ -76,19 +76,19 @@ the terms of any one of the MPL, the GPL or the LGPL.
     display: none;
 }
 
-#vimperator-commandline {
+#liberator-commandline {
     padding: 1px;
     /*
     background-color: white;
     color: black;
     */
 }
-#vimperator-commandline-prompt, #vimperator-commandline-command {
+#liberator-commandline-prompt, #liberator-commandline-command {
     background-color: inherit;
     color: inherit;
 }
 
-#vimperator-visualbell {
+#liberator-visualbell {
     border: none;
     background-color: black;
 }
@@ -158,29 +158,29 @@ a.hl-URL:hover {
 
 /* MOW */
 
-#vimperator-multiline-output {
+#liberator-multiline-output {
     overflow: hidden;
     background-color: white;
     color: black;
 }
 
-#vimperator-multiline-output-content {
+#liberator-multiline-output-content {
     white-space: pre; /* -moz-pre-wrap FIXME: Should lines wrap like Vim? */
     font-family: -moz-fixed;
     margin: 0px;
 }
 
-#vimperator-multiline-output-content * {
+#liberator-multiline-output-content * {
     font: inherit;
 }
 
-#vimperator-multiline-output-content table {
+#liberator-multiline-output-content table {
     white-space: inherit;
     border-spacing: 0px;
 }
 
-#vimperator-multiline-output-content td,
-#vimperator-multiline-output-content th {
+#liberator-multiline-output-content td,
+#liberator-multiline-output-content th {
     padding: 0px 2px;
 }
 
