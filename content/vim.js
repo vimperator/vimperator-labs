@@ -903,7 +903,7 @@ const liberator = (function () //{{{
                 mainThread.processNextEvent(true);
         },
 
-        get windows()
+        getWindows: function()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
