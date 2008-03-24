@@ -4,17 +4,29 @@ HEADER
 
 Vimperator can repeat a number of commands or record macros...
 
-section:Macros[+++macros+++]
+section:Macros[macros]
 
-q {arg}
-    record a keysequence into a macro
-Available macros are {0-9a-zA-Z} (uppercase to append).type 'q' to stop recording.
-    q
-[count]@ {arg}
-    Execute the contents of macro {0-9a-z}. @@ repeats the previous @{0-9a-z}
-    @
+|q|
+||q {arg}|| +
+____________________________________________________________________________
 
+Record a keysequence into a macro.
+Available macros are {0-9a-zA-Z} (uppercase to append).
+Type 'q' to stop recording.
+____________________________________________________________________________
 
+|@| |@@| |:play|
+||[count]@ {arg}|| +
+||[count]@@|| +
+||:play {arg}|| +
+____________________________________________________________________________
+
+Plays the contents of macro {0-9a-z}. 
+
+@@ replays a previous executed macro.
+
+:play {arg} plays a recorded macro.
+____________________________________________________________________________
 section:Profiling[profiling]
 
 :time ...
