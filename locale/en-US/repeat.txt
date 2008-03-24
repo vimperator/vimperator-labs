@@ -6,7 +6,13 @@ Vimperator can repeat a number of commands or record macros...
 
 section:Macros[+++macros+++]
 
-TO BE WRITTEN...
+q {arg}
+    record a keysequence into a macro
+Available macros are {0-9a-zA-Z} (uppercase to append).type 'q' to stop recording.
+    q
+[count]@ {arg}
+    Execute the contents of macro {0-9a-z}. @@ repeats the previous @{0-9a-z}
+    @
 
 
 section:Profiling[profiling]
