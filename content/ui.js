@@ -597,7 +597,6 @@ liberator.CommandLine = function () //{{{
                     if (completionIndex == UNINITIALIZED)
                     {
                         completionStartIndex = 0;
-
                         completionIndex = -1;
                         wildIndex = 0;
 

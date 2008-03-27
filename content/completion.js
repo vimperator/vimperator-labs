@@ -253,7 +253,7 @@ liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                return [];
+                return [0, []];
             }
 
             if (tail)
