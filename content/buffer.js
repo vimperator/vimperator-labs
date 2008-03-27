@@ -153,7 +153,7 @@ liberator.Buffer = function () //{{{
 
     liberator.options.add(["nextpattern",],
         "Patterns to use when guessing the 'next' page in a document sequence",
-        "stringlist", "\\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$");
+        "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
 
     liberator.options.add(["previouspattern"],
         "Patterns to use when guessing the 'previous' page in a document sequence",
