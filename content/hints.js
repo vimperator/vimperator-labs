@@ -108,7 +108,7 @@ liberator.Hints = function () //{{{
         var start = hints.length;
         while ((elem = res.iterateNext()) != null)
         {
-            // TODO: for frames, this calculation is wrong
+            // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
             if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
                 continue;
