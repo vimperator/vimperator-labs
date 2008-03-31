@@ -480,6 +480,7 @@ liberator.Events = function () //{{{
             else
                 liberator.echo("Waiting for page to load...");
         }
+        liberator.modes.show();
 
         // TODO: allow macros to be continued when page does not fully load with an option
         var ret = (liberator.buffer.loaded == 1);
@@ -1115,30 +1116,7 @@ liberator.Events = function () //{{{
                  || liberator.mode == liberator.modes.INSERT)
             {
                 if (key == "<Return>")
-                {
-                    /*if (liberator.modes.isReplaying != 44)
-                    {
-                        // TODO: how to really submit the correct form?
-                         //content.document.forms[0].submit();
-                        var elem = document.commandDispatcher.focusedElement;
-                        if (elem)
-                        {
-                            liberator.log("dipatching <enter>");
-                            event.ignore = true;
-                            try{
-                            elem.dispatchEvent(event);
-                            } catch (e) { alert(e); }
-                            event.stopPropagation();
-                            event.preventDefault();
-                            liberator.log("dipatched");
-                            waitForPageLoaded();
-                            liberator.log("page loaded");
-                            return false;
-                        }
-                    }
-                    else*/
-                        return false;
-                }
+                    return false;
                 else if (key == "<Space>" || key == "<Up>" || key == "<Down>")
                     return false;
             }

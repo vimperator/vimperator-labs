@@ -237,7 +237,8 @@ liberator.Editor = function () //{{{
             // broken in FF3, deletes the whole line:
             // liberator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
             liberator.editor.executeCommand("cmd_selectBeginLine", 1);
-            liberator.editor.executeCommand("cmd_delete", 1);
+            if (getController().isCommandEnabled("cmd_delete"))
+                liberator.editor.executeCommand("cmd_delete", 1);
         });
 
     liberator.mappings.add(modes,
