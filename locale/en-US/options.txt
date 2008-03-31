@@ -129,6 +129,7 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *b* Bookmarks
 *h* History
+*g* Google Suggestions
 -------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,

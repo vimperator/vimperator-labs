@@ -286,7 +286,7 @@ liberator.CommandLine = function () //{{{
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
-            validator: function (value) { return !/[^sfbh]/.test(value); }
+            validator: function (value) { return !/[^sfbhg]/.test(value); }
         });
 
     liberator.options.add(["showmode", "smd"], 

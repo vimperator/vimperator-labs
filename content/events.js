@@ -903,8 +903,9 @@ liberator.Events = function () //{{{
             // dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
             // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
-            if (elem && elem instanceof HTMLInputElement &&
-                    (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
+            if (win == window.content && // don't store it if e.g. the command line has focus
+                elem && elem instanceof HTMLInputElement &&
+                (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
             {
                 this.wantsModeReset = false;
                 liberator.mode = liberator.modes.INSERT;

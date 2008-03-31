@@ -177,6 +177,23 @@ liberator.Completion = function () //{{{
             });
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
+
+        googleSuggest: function(filter)
+        {
+            const endPoint = "http://suggestqueries.google.com/complete/search?output=firefox&client=firefox&hl=" +
+                liberator.options.getPref("font.language.group", "en") + "&qu=";
+            var xhr = new XMLHttpRequest();
+            var completions = [];
+
+            xhr.open("GET", endPoint + encodeURIComponent(filter), false);
+            xhr.send(null);
+            var response = window.eval(xhr.responseText)[1];
+
+            for each (var item in response)
+                completions.push([item, "Google Suggestion"]);
+            return [0, completions];
+        },
+
         // filter a list of urls
         //
         // may consist of search engines, filenames, bookmarks and history,
@@ -207,6 +224,8 @@ liberator.Completion = function () //{{{
                     completions = completions.concat(liberator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
                     completions = completions.concat(liberator.history.get(filter));
+                else if (cpt[i] == "g")
+                    completions = completions.concat(this.googleSuggest(filter)[1]);
             }
 
             return [start, completions];

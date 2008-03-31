@@ -11,6 +11,7 @@
       of bringing up the bookmarks/history window
     * IMPORTANT: "B" mapping now works just like :buffers, old bufferwindow will be removed
       at some time. Use B5gt to jump to the 5th tab.
+    * new "g" flag for "complete" to list google suggestions in :open vimp and pressing tab (disabled by default)
     * gi accepts now a count to jump to the nth input field
     * ctrl-t on input fields starts a very basic vi-mode
     * :play for playing a recorded macro
