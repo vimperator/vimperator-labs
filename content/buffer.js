@@ -294,21 +294,23 @@ liberator.Buffer = function () //{{{
 
     liberator.mappings.add(modes, ["gi"],
         "Focus last used input field",
-        function ()
+        function (count)
         {
-            if (liberator.buffer.lastInputField)
+            if (count < 1 && liberator.buffer.lastInputField)
                 liberator.buffer.lastInputField.focus();
             else
             {
                 var first = liberator.buffer.evaluateXPath(
-                    "//*[@type='text'] | //textarea | //xhtml:textarea").snapshotItem(0);
+                    "//*[@type='text'] | //textarea | //xhtml:textarea")
+                    .snapshotItem(count > 0 ? (count - 1) : 0);
 
                 if (first)
                     first.focus();
                 else
                     liberator.beep();
             }
-        });
+        },
+        { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["gP"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",

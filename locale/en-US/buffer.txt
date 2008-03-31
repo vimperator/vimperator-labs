@@ -9,6 +9,52 @@ section:Motion{nbsp}Commands[motion,scrolling]
 
 List mappings how to scroll the window.
 
+
+section:Jumping{nbsp}to{nbsp}Elements[jumping]
+
+|gi| 
+||[count]gi||
+________________________________________________________________________________
+Focus last used input field. If there is no last input field, it focuses the
+first input field. When used with [count] it directly jumps to the [count]th input
+field.
+________________________________________________________________________________
+
+
+|]f| +
+||[count]]f||
+________________________________________________________________________________
+Focus next frame. Transfer keyboard focus to the [count]th next frame in
+order. The newly focused frame is briefly colored red. Does not wrap.
+________________________________________________________________________________
+
+
+|[f| +
+||[count][f||
+________________________________________________________________________________
+Focus previous frame. Transfer keyboard focus to the [count]th previous frame
+in order. The newly focused frame is briefly colored red. Does not wrap.
+________________________________________________________________________________
+
+
+|]]| +
+||[count]]]||
+________________________________________________________________________________
+Open link labeled with "next" or ">".  Useful when browsing forums or
+documentation. Change 'nextpattern' to modify its behavior. It follows
+relations between files too.
+________________________________________________________________________________
+
+
+|[[| +
+||[count][[||
+________________________________________________________________________________
+Open link labeled with "prev", "previous" or "<".  Useful when browsing forums
+or documentation. Change 'previouspattern' to modify its behavior. It follows
+relations between files too.
+________________________________________________________________________________
+
+
 section:Copying{nbsp}Text[copying,yanking]
 
 When running in X11 the text of the following commands is not only copyied to

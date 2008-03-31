@@ -112,39 +112,6 @@ Do nothing. This command is useful for disabling a specific mapping. [c]:map
 ________________________________________________________________________________
 
 
-|]f| +
-||[count]]f||
-________________________________________________________________________________
-Focus next frame. Transfer keyboard focus to the [count]th next frame in
-order. The newly focused frame is briefly colored red. Does not wrap.
-________________________________________________________________________________
-
-
-|[f| +
-||[count][f||
-________________________________________________________________________________
-Focus previous frame. Transfer keyboard focus to the [count]th previous frame
-in order. The newly focused frame is briefly colored red. Does not wrap.
-________________________________________________________________________________
-
-
-|]]| +
-||[count]]]||
-________________________________________________________________________________
-Open link labeled with "next" or ">".  Useful when browsing forums or
-documentation. Change 'nextpattern' to modify its behavior. It follows
-relations between files too.
-________________________________________________________________________________
-
-
-|[[| +
-||[count][[||
-________________________________________________________________________________
-Open link labeled with "prev", "previous" or "<".  Useful when browsing forums
-or documentation. Change 'previouspattern' to modify its behavior. It follows
-relations between files too.
-________________________________________________________________________________
-
 
 |A| +
 ||A||
@@ -243,14 +210,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Go home in a new tab. Opens the homepage in a new tab. Whether the new tab is
 activated or not depends on the 'activate' option.
-________________________________________________________________________________
-
-
-|gi| 
-||gi||
-________________________________________________________________________________
-Focus last used input field. If there is no last input field, it focuses the
-first input field.
 ________________________________________________________________________________
 
 
