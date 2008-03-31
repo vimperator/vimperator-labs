@@ -1047,13 +1047,12 @@ liberator.Events = function () //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
-            /*if (event.ignore)
-             return false;*/
             var key = liberator.events.toString(event);
             if (!key)
                  return true;
-            //liberator.log(key + " in mode: " + liberator.mode);
-            dump(key + " in mode: " + liberator.mode + "\n");
+
+            // liberator.log(key + " in mode: " + liberator.mode);
+            // dump(key + " in mode: " + liberator.mode + "\n");
 
             if (liberator.modes.isRecording)
             {
