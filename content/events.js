@@ -464,8 +464,8 @@ liberator.Events = function () //{{{
         while (mainThread.hasPendingEvents()) // clear queue
             mainThread.processNextEvent(true);
 
-//        if (liberator.buffer.loaded == 1)
-//            return true;
+        if (liberator.buffer.loaded == 1)
+            return true;
 
         var ms = 15000; // maximum time to wait - TODO: add option
         var then = new Date().getTime();
@@ -749,7 +749,7 @@ liberator.Events = function () //{{{
                         if (matches[2].length == 1)
                         {
                             if (!ctrl && !alt && !shift && !meta)
-                                return; // an invalid key like <a>
+                                return false; // an invalid key like <a>
                             charCode = matches[2].charCodeAt(0);
                         }
                         else if (matches[2].toLowerCase() == "space")
@@ -762,7 +762,7 @@ liberator.Events = function () //{{{
                         }
                         else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
                         {
-                            return;
+                            return false;
                         }
 
                         i += matches[0].length + 1;
@@ -781,12 +781,11 @@ liberator.Events = function () //{{{
                 var evt = doc.createEvent("KeyEvents");
                 evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                 evt.noremap = noremap;
-                if (elem.dispatchEvent(evt)) // return true in onEvent to stop feeding keys
-                {
-                    liberator.beep();
+                elem.dispatchEvent(evt)
+                if (!waitForPageLoaded()) // stop feeding keys if page loading failed
                     return;
-                }
             }
+            return true;
         },
 
         // this function converts the given event to
@@ -1047,10 +1046,13 @@ liberator.Events = function () //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
+            /*if (event.ignore)
+             return false;*/
             var key = liberator.events.toString(event);
             if (!key)
                  return true;
-            // dump(key + " in mode: " + liberator.mode + "\n");
+            //liberator.log(key + " in mode: " + liberator.mode);
+            dump(key + " in mode: " + liberator.mode + "\n");
 
             if (liberator.modes.isRecording)
             {
@@ -1114,18 +1116,27 @@ liberator.Events = function () //{{{
             {
                 if (key == "<Return>")
                 {
-                    if (liberator.modes.isReplaying)
+                    /*if (liberator.modes.isReplaying != 44)
                     {
                         // TODO: how to really submit the correct form?
-                        liberator.modes.reset();
-                        content.document.forms[0].submit();
-                        waitForPageLoaded();
-                        dump("before return\n");
-                        event.stopPropagation();
-                        event.preventDefault();
-                        return true;
+                         //content.document.forms[0].submit();
+                        var elem = document.commandDispatcher.focusedElement;
+                        if (elem)
+                        {
+                            liberator.log("dipatching <enter>");
+                            event.ignore = true;
+                            try{
+                            elem.dispatchEvent(event);
+                            } catch (e) { alert(e); }
+                            event.stopPropagation();
+                            event.preventDefault();
+                            liberator.log("dipatched");
+                            waitForPageLoaded();
+                            liberator.log("page loaded");
+                            return false;
+                        }
                     }
-                    else
+                    else*/
                         return false;
                 }
                 else if (key == "<Space>" || key == "<Up>" || key == "<Down>")
