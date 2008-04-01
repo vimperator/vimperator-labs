@@ -783,7 +783,8 @@ liberator.Events = function () //{{{
                 evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                 evt.noremap = noremap;
                 elem.dispatchEvent(evt)
-                if (!waitForPageLoaded()) // stop feeding keys if page loading failed
+                // stop feeding keys if page loading failed
+                if (liberator.modes.isReplaying && !waitForPageLoaded())
                     return;
             }
             return true;
