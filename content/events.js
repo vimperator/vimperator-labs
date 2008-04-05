@@ -782,7 +782,7 @@ liberator.Events = function () //{{{
                 var evt = doc.createEvent("KeyEvents");
                 evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                 evt.noremap = noremap;
-                elem.dispatchEvent(evt)
+                elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
                 if (liberator.modes.isReplaying && !waitForPageLoaded())
                     return;
@@ -904,8 +904,7 @@ liberator.Events = function () //{{{
             // dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
             // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
-            if (win == window.content && // don't store it if e.g. the command line has focus
-                elem && elem instanceof HTMLInputElement &&
+            if (elem && elem instanceof HTMLInputElement &&
                 (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password"))
             {
                 this.wantsModeReset = false;
