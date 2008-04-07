@@ -20,15 +20,16 @@ syn region  vimperatorString  start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" one
 
 syn match   vimperatorLineComment +^\s*".*$+ contains=vimperatorTodo,@Spell
 
-syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers bun[load]
-	\ bw[ipeout] ca[bbrev] cabc[lear] cuna[bbrev] delbm[arks] delm[arks] delqm[arks] dl downl[oads] e[dit] ec[ho] echoe[rr]
-	\ exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy] hist[ory] hs ia[bbrev] iabc[lear] iuna[bbrev] javas[cript] js
-	\ let ls ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen] pa[geinfo] pc[lose]
-	\ pref[erences] prefs q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run sav[eas] sb[ar]
-	\ sb[open] sbcl[ose] se[t] sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit] tabfir[st]
-	\ tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo]
-	\ una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit]
-    \ wo[pen] wq \ wqa[ll] xa[ll] zo[om]
+syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] au[tocmd] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers
+	\ bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd cuna[bbrev] cm[ap] cmapc[lear] cno[remap] com[mand] cu[nmap] delbm[arks]
+	\ delmac[ros] delm[arks] delqm[arks] dia[log] dl downl[oads] e[dit] ec[ho] echoe[rr] exe[cute] exu[sage] files fo[rward]
+	\ fw h[elp] ha[rdcopy] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iuna[bbrev] iu[nmap] javas[cript]
+	\ js let ls macros ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen] pa[geinfo] pc[lose]
+	\ pl[ay] pref[erences] prefs pwd q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run
+	\ sav[eas] sb[ar] sb[open] sbcl[ose] se[t] sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabN[ext] tabc[lose] tabe[dit]
+	\ tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs time tn[ext]
+	\ tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] w[rite] wc[lose] win[open]
+	\ winc[lose] wine[dit] wo[pen] wqa[ll] wq xa[ll] zo[om]
 	\ contained
 
 syn match vimperatorCommand "!" contained
