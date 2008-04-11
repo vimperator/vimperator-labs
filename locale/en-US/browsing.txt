@@ -2,8 +2,8 @@ HEADER
 
 |surfing| |browsing| +
 
-Vimperator overrides nearly all Firefox keys in order to make browing more
-pleasent for vim users. In the rare occurences where you want to pass a
+Vimperator overrides nearly all Firefox keys in order to make browsing more
+pleasant for Vim users. In the rare occurrences where you want to pass a
 keystroke to the web page or to Firefox to retain its original meaning you
 have 2 possibilities:
 
@@ -45,7 +45,7 @@ Each token is analyzed and in this order:
 	 [a]/home/other/foo.html[a]
 2. Opened with the specified search engine if the token looks like a search
    string and the first word is the name of a search engine ([c]:open wikipedia
-   linus torvalds[c] opens the wikipedia entry for linus torvalds). The short
+   linus torvalds[c] opens the Wikipedia entry for linus torvalds). The short
    name of a search engine is automatically guessed from its name. If you want
    to set a custom name, you can change it with [c]:dialog searchengines[c].
 3. Opened with the default search engine or keyword (specified with the

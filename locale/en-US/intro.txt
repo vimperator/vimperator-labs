@@ -45,7 +45,7 @@ it, recommend it and like it :)
 
 section:Help{nbsp}topics[overview]
 
-- help:Initialization[starting.html]: How vimperator starts up, where it reads the config file...
+- help:Initialization[starting.html]: How Vimperator starts up, where it reads the config file...
 - help:Browsing[browsing.html]: Basic mappings and commands needed for
   a browsing session (how to open a web page or go back in history).
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document like
@@ -55,7 +55,7 @@ section:Help{nbsp}topics[overview]
 - help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
 - help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
   recurring workflows.
-- help:Autocommands[autocommands.html]: Automatically execute code on ceratain
+- help:Autocommands[autocommands.html]: Automatically execute code on certain
   events.
 - help:Developer{nbsp}Information[developer.html]: How to write docs or
   plugins.

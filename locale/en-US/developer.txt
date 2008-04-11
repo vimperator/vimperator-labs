@@ -59,7 +59,7 @@ Some notes about the code above:
   automatically drawn in a blue color.
 
 There are also some additional asciidoc commands specifically for writing
-vimperator documentation:
+Vimperator documentation:
 
 - *$$section:Writing{nbsp}Documentation[writing-docs,documentation]$$* Creates
   a new section like _Writing Documentation_ in this help file with 2 tags.

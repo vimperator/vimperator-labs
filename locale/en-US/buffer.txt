@@ -57,7 +57,7 @@ ________________________________________________________________________________
 
 section:Copying{nbsp}Text[copying,yanking]
 
-When running in X11 the text of the following commands is not only copyied to
+When running in X11 the text of the following commands is not only copied to
 the clipboard, but also put into the X11 selection, which can be pasted with
 the middle mouse button:
 
