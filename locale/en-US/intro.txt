@@ -85,7 +85,7 @@ section:Features[features]
 * QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
 * [c]:map[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
-* Move the text cursor and select text with vim keys and a visual mode
+* Move the text cursor and select text with Vim keys and a visual mode
 * A comprehensive help file, explaining all commands, mappings and options.
 
 section:Contact[contact]

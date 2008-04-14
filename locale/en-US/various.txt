@@ -876,7 +876,7 @@ ________________________________________________________________________________
 |:com| |:command|
 ||:com[mand][!] [{attr}...] {cmd} {rep}|| +
 ________________________________________________________________________________
-Lists and defines commands. To be written - but it works similar to vim's :command
+Lists and defines commands. To be written - but it works similar to Vim's :command
 ________________________________________________________________________________
 
 
