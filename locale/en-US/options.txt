@@ -83,7 +83,7 @@ ____
 
 section:Setting{nbsp}Firefox{nbsp}options[firefox-options]
 
-Most Firefox options are not touched/overriden by Vimperator. In order to set
+Most Firefox options are not touched/overridden by Vimperator. In order to set
 any of these preferences use either of the following:
 
 |:prefs| |:preferences|

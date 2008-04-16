@@ -74,7 +74,7 @@ section:Features[features]
 * Advanced completion of bookmark and history URLs (searching also in title, not only URL)
 * Vim-like statusline with a wget-like progress bar
 * Minimal GUI (easily hide useless menubar and toolbar with [c]:set guioptions=[c])
-* Ability to [c]:source[c] javascript files, and to use a [a]~/.vimperatorrc[a] file
+* Ability to [c]:source[c] Javascript files, and to use a [a]~/.vimperatorrc[a] file
   with syntax highlighting if you install scripts/vimperator.vim
 * Easy quick searches ([c]:open foo[c] will search foo in google,
   [c]:open ebay terminator[c] will search for terminator on ebay)

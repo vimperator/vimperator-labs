@@ -10,7 +10,7 @@ section:Macros[macros]
 ||q {arg}|| +
 ____________________________________________________________________________
 
-Record a keysequence into a macro.
+Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
 Type 'q' to stop recording.
 ____________________________________________________________________________

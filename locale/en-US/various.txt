@@ -1029,7 +1029,7 @@ ________________________________________________________________________________
 ||:ab[breviate]||
 ________________________________________________________________________________
 Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
-If only {lhs} given, list that particual abbreviation.
+If only {lhs} given, list that particular abbreviation.
 List all abbreviations, if no arguments to are given.
 
 ________________________________________________________________________________
