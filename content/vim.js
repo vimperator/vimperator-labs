@@ -933,7 +933,7 @@ const liberator = (function () //{{{
 
                     run: function ()
                     {
-                        func(args);
+                        func.apply(window, args);
                     }
                 };
             }
