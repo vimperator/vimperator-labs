@@ -178,20 +178,46 @@ liberator.Completion = function () //{{{
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
-        googleSuggest: function(filter)
+        searchEngineSuggest: function(filter, engineAliases)
         {
-            const endPoint = "http://suggestqueries.google.com/complete/search?output=firefox&client=firefox&hl=" +
-                liberator.options.getPref("font.language.group", "en") + "&qu=";
-            var xhr = new XMLHttpRequest();
-            var completions = [];
+            if (!filter)
+                return [0,null];
 
-            xhr.open("GET", endPoint + encodeURIComponent(filter), false);
-            xhr.send(null);
-            var response = window.eval(xhr.responseText)[1];
+        	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
+        	var responseType = "application/x-suggestions+json";
+        	var ss = Components.classes["@mozilla.org/browser/search-service;1"]
+        	               .getService(Components.interfaces.nsIBrowserSearchService);
 
-            for each (var item in response)
-                completions.push([item, "Google Suggestion"]);
-            return [0, completions];
+        	var completions = [];
+        	engineList.forEach (function(name)
+        	{
+        		var query = filter;
+        		var queryURI;
+        		var engine = ss.getEngineByAlias(name);
+        		var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
+        		var matches = query.match(reg);
+        		if (matches)
+            		query = matches[2];
+
+            	if (engine && engine.supportsResponseType(responseType))
+                    queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
+                else
+                    return;
+                 
+            	var xhr = new XMLHttpRequest();
+            	xhr.open("GET", queryURI, false);
+            	xhr.send(null);
+            	var results = window.eval(xhr.responseText)[1];
+                if (!results)
+                    return;
+
+            	results.forEach(function(item)
+            	{
+            	    completions.push([(matches ? matches[1] : "") + item, name + " suggestion"]);
+            	});
+        	});
+        	
+        	return [0, completions];
         },
 
         // filter a list of urls
@@ -213,6 +239,7 @@ liberator.Completion = function () //{{{
             }
 
             var cpt = complete || liberator.options["complete"];
+            var suggestEngineAlias = liberator.options["suggestengines"] || "google";
             // join all completion arrays together
             for (var i = 0; i < cpt.length; i++)
             {
@@ -224,8 +251,8 @@ liberator.Completion = function () //{{{
                     completions = completions.concat(liberator.bookmarks.get(filter));
                 else if (cpt[i] == "h")
                     completions = completions.concat(liberator.history.get(filter));
-                else if (cpt[i] == "g")
-                    completions = completions.concat(this.googleSuggest(filter)[1]);
+                else if (cpt[i] == "S")
+                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
             }
 
             return [start, completions];

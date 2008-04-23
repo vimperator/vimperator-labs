@@ -129,7 +129,7 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *b* Bookmarks
 *h* History
-*g* Google Suggestions
+*S* Suggest engines
 -------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
@@ -419,6 +419,18 @@ ____
 Override the 'ignorecase' option if the pattern contains uppercase characters.
 This is only used if the 'ignorecase' option is set.
 ____
+
+
+|\'suggestengines'|
+||'suggestengines' || stringlist (default: "google")
+____
+Set the search engines which can be used for completion suggestions.
+Add "S" to the 'complete' option if you want use this feature.
+
+Warning: This feature could make tab-completion slower because it needs to
+wait for changes, so use it only if you have a fast internet connection.
+____
+
 
 |\'titlestring'|
 ||'titlestring'|| string (default: "Vimperator")

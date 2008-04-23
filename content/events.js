@@ -476,7 +476,10 @@ liberator.Events = function () //{{{
                 dump("waited: " + (now - then) + " ms\n");
 
             if (liberator.buffer.loaded > 0)
+            {
+                liberator.sleep(250);
                 break;
+            }
             else
                 liberator.echo("Waiting for page to load...");
         }
@@ -487,6 +490,10 @@ liberator.Events = function () //{{{
         if (!ret)
             liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
         dump("done waiting: " + ret + "\n");
+
+        // sometimes the input widget had focus when replaying a macro
+        // maybe this call should be moved somewhere else?
+        // liberator.focusContent(true);
 
         return ret;
     }
@@ -784,8 +791,13 @@ liberator.Events = function () //{{{
                 evt.noremap = noremap;
                 elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
-                if (liberator.modes.isReplaying && !waitForPageLoaded())
-                    return;
+                if (liberator.modes.isReplaying)
+                {
+                    if (!waitForPageLoaded())
+                        return;
+                    // else // a short break between keys often helps 
+                    //     liberator.sleep(50);
+                }
             }
             return true;
         },
