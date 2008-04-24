@@ -72,8 +72,8 @@ ________________________________________________________________________________
 
 
 
-|w| |:w| |:winopen|
-||:winopen[!] [arg1], [arg2], ...|| +
+|:winopen| |:wopen| |:winedit|
+||:wino[pen][!] [arg1], [arg2], ...|| +
 ________________________________________________________________________________
 Just like help::open[browsing.html,:open], but opens the resulting web page(s)
 in a new window.
