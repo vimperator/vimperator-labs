@@ -186,6 +186,54 @@ liberator.Mail = function ()
         { flags: liberator.Mappings.flags.COUNT });
 
 
+
+    // FOLDER SWITCHING
+    liberator.mappings.add(modes, ["gi"],
+        "Go to inbox",
+        function (count)
+        {
+            var folder = liberator.mail.getFolders("Inbox", false, true)[(count > 0) ? (count - 1) : 0];
+            if (folder)
+                SelectFolder(folder.URI);
+            else
+                liberator.beep();
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["<C-n>"],
+        "Select next folder",
+        function (count)
+        {
+            count = (count > 0 ) ? count : 1;
+            var tree = GetFolderTree();
+            var c = tree.currentIndex;
+            if (c + count >= tree.view.rowCount)
+            {
+                liberator.beep();
+                return;
+            }
+            tree.view.selection.timedSelect(c + count, tree._selectDelay );
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["<C-p>"],
+        "Select previous folder",
+        function (count)
+        {
+            count = (count > 0 ) ? count : 1;
+            var tree = GetFolderTree();
+            var c = tree.currentIndex;
+            if (c - count < 0)
+            {
+                liberator.beep();
+                return;
+            }
+            tree.view.selection.timedSelect(c - count, tree._selectDelay );
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
+
+    // THREADING
     liberator.mappings.add(modes, ["za"],
         "Toggle thread collapsed/expanded",
         function () { if (!liberator.mail.expandThread()) liberator.mail.collapseThread(); });
@@ -208,24 +256,25 @@ liberator.Mail = function ()
 
 
     liberator.mappings.add(modes, ["<C-i>"],
-        "Get new messages",
+        "Go forward",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.forward, true); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["<C-o>"],
-        "Get new messages",
+        "Go back",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.back, true); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["gg"],
-        "Get new messages",
+        "Select first message",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.firstMessage, true); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["G"],
-        "Get new messages",
+        "Select last message",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.lastMessage, false); },
         { flags: liberator.Mappings.flags.COUNT });
+
 
     // tagging messages
     liberator.mappings.add(modes, ["tr"],
