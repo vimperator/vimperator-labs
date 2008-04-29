@@ -186,6 +186,10 @@ liberator.Mail = function ()
         { flags: liberator.Mappings.flags.COUNT });
 
 
+    liberator.mappings.add(modes, ["za"],
+        "Toggle thread collapsed/expanded",
+        function () { if (!liberator.mail.expandThread()) liberator.mail.collapseThread(); });
+
     liberator.mappings.add(modes, ["zc"],
         "Collapse thread",
         function () { liberator.mail.collapseThread(); });
@@ -193,6 +197,14 @@ liberator.Mail = function ()
     liberator.mappings.add(modes, ["zo"],
         "Open thread",
         function () { liberator.mail.expandThread(); });
+
+    liberator.mappings.add(modes, ["zr", "zR"],
+        "Expand all threads",
+        function () { goDoCommand("cmd_expandAllThreads"); });
+
+    liberator.mappings.add(modes, ["zm", "zM"],
+        "Collapse all threads",
+        function () { goDoCommand("cmd_collapseAllThreads"); });
 
 
     liberator.mappings.add(modes, ["<C-i>"],
@@ -369,40 +381,39 @@ liberator.Mail = function ()
 
         collapseThread: function()
         {
-            //var tree = document.getElementById('folderTree');
             var tree = GetThreadTree();
             if (tree)
             {
-                if (!tree.changeOpenState(tree.currentIndex, false))
+                var parent = tree.currentIndex;
+                while (true)
                 {
-                    var parentIndex = tree.view.getParentIndex(tree.currentIndex);
-                    if (parentIndex >= 0)
-                    {
-                        tree.view.selection.select(parentIndex);
-                        tree.treeBoxObject.ensureRowIsVisible(parentIndex);
-                    }
+                    var tmp = tree.view.getParentIndex(parent);
+                    if (tmp >= 0)
+                        parent = tmp;
+                    else
+                        break;
+                }
+
+                if (tree.changeOpenState(parent, false))
+                {
+                    tree.view.selection.select(parent);
+                    tree.treeBoxObject.ensureRowIsVisible(parent);
+                    return true;
                 }
             }
+            return false;
         },
 
         expandThread: function()
         {
-            //var tree = document.getElementById('folderTree');
-
             var tree = GetThreadTree();
             if (tree)
             {
                 var row = tree.currentIndex;
-                if (row >= 0 && !tree.changeOpenState(row, true))
-                {
-                    var view = tree.view;
-                    if (row + 1 < view.rowCount && view.getParentIndex(row + 1) == row)
-                    {
-                        tree.view.selection.timedSelect(row + 1, tree._selectDelay);
-                        tree.treeBoxObject.ensureRowIsVisible(row + 1);
-                    }
-                }
+                if (row >= 0 && tree.changeOpenState(row, true))
+                   return true;
             }
+            return false;
         },
 
         selectMessage: function(validatorFunc, canWrap, reverse, count)
