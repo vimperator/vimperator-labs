@@ -382,7 +382,9 @@ liberator.Mail = function ()
 
                     if (count == 0)
                     {
-                        gDBView.selectMsgByKey(key);
+                        // gDBView.selectMsgByKey(key);
+                        gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
+                        GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
                         return;
                     }
                 }

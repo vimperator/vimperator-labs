@@ -87,6 +87,9 @@ liberator.config = {
         liberator.mappings.add([liberator.modes.NORMAL],
             ["o"], "Open a message",
             function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
+
+        // don't wait too long when selecting new messages
+        GetThreadTree()._selectDelay = 250; // TODO: make configurable
     }
 }
 
