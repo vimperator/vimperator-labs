@@ -186,6 +186,14 @@ liberator.Mail = function ()
         { flags: liberator.Mappings.flags.COUNT });
 
 
+    liberator.mappings.add(modes, ["zc"],
+        "Collapse thread",
+        function () { liberator.mail.collapseThread(); });
+
+    liberator.mappings.add(modes, ["zo"],
+        "Open thread",
+        function () { liberator.mail.expandThread(); });
+
 
     liberator.mappings.add(modes, ["<C-i>"],
         "Get new messages",
@@ -357,6 +365,44 @@ liberator.Mail = function ()
             }
 
             return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount }
+        },
+
+        collapseThread: function()
+        {
+            //var tree = document.getElementById('folderTree');
+            var tree = GetThreadTree();
+            if (tree)
+            {
+                if (!tree.changeOpenState(tree.currentIndex, false))
+                {
+                    var parentIndex = tree.view.getParentIndex(tree.currentIndex);
+                    if (parentIndex >= 0)
+                    {
+                        tree.view.selection.select(parentIndex);
+                        tree.treeBoxObject.ensureRowIsVisible(parentIndex);
+                    }
+                }
+            }
+        },
+
+        expandThread: function()
+        {
+            //var tree = document.getElementById('folderTree');
+
+            var tree = GetThreadTree();
+            if (tree)
+            {
+                var row = tree.currentIndex;
+                if (row >= 0 && !tree.changeOpenState(row, true))
+                {
+                    var view = tree.view;
+                    if (row + 1 < view.rowCount && view.getParentIndex(row + 1) == row)
+                    {
+                        tree.view.selection.timedSelect(row + 1, tree._selectDelay);
+                        tree.treeBoxObject.ensureRowIsVisible(row + 1);
+                    }
+                }
+            }
         },
 
         selectMessage: function(validatorFunc, canWrap, reverse, count)
