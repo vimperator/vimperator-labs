@@ -157,6 +157,28 @@ liberator.Mail = function ()
         "Forward message",
         function () { goDoCommand("cmd_forward"); });
 
+    liberator.mappings.add(modes, ["y"],
+        "Archive message",
+        function ()
+        {
+            var folder = liberator.mail.getFolders("Archive")[0];
+            if (!folder)
+            {
+                liberator.echoerr("No Archive folder found");
+                return;
+            }
+
+            var count = gDBView.selection.count;
+            if (!count)
+            {
+                liberator.beep();
+                return;
+            }
+
+            MsgMoveMessage(folder.URI);
+            liberator.echo(count +  " messages moved to: Archive");
+        });
+
     liberator.mappings.add(modes, ["F"],
         "Forward message inline",
         function () { goDoCommand("cmd_forwardInline"); });
