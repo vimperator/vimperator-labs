@@ -153,6 +153,14 @@ liberator.Mail = function ()
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); });
 
+    liberator.mappings.add(modes, ["f"],
+        "Forward message",
+        function () { goDoCommand("cmd_forward"); });
+
+    liberator.mappings.add(modes, ["F"],
+        "Forward message inline",
+        function () { goDoCommand("cmd_forwardInline"); });
+
     liberator.mappings.add(modes, ["gm"],
         "Get new messages",
         function () { liberator.mail.getNewMessages(); });
