@@ -1,8 +1,11 @@
 <pre>
-2008-
+2008-04-30:
     * version 0.2
     * ctrl-s mappings to move messages to an "Archive" folder (inspired by gmail)
     * new :moveto and :copyto commands
+    * u and ctrl-r mappings to undo/redo
+    * new muttator specific :help screen
+    * small bug fixes
 
 2008-04-29:
     * version 0.1
