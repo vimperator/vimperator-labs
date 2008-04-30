@@ -1,4 +1,9 @@
 <pre>
+2008-
+    * version 0.2
+    * ctrl-s mappings to move messages to an "Archive" folder (inspired by gmail)
+    * new :moveto and :copyto commands
+
 2008-04-29:
     * version 0.1
     * first public release, straight port from vimperator with many basic mappings
