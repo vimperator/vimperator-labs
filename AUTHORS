@@ -11,6 +11,7 @@ Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
  
 Patches (in no special order):
+  * Daniel Trstenjak (various things with hints)
   * M.Terada (suggest engines)
   * Muthu Kannan (ctrl-v support)
   * Lars Kindler (:buffer(s) functionality)

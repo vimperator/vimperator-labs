@@ -89,7 +89,7 @@ liberator.config = {
             function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
 
         // don't wait too long when selecting new messages
-        GetThreadTree()._selectDelay = 250; // TODO: make configurable
+        GetThreadTree()._selectDelay = 300; // TODO: make configurable
     }
 }
 

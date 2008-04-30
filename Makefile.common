@@ -8,7 +8,7 @@ DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
 
 # TODO: specify source files manually?
-JAR_TXT_FILES = ${shell find content skin locale	\
+JAR_TXT_FILES = ${shell find -L content skin locale	\
 			-type f			\
 			-a ! -path '*CVS*'	\
 			-a \(			\

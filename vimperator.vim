@@ -38,14 +38,15 @@ syn match vimperatorCommand "!" contained
 syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act complete cpt defsearch ds editor extendedhinttags eht focusedhintstyle fhs fullscreen fs
-	\ nofullscreen nofs guioptions go hintstyle hs hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls
-	\ hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im
-	\ noinsertmode noim laststatus ls linksearch lks nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload
-	\ nopreload previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline
-	\ stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
-	\ wildmode wim wildoptions wop
-	\ contained
+syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc complete cpt defsearch ds editor extendedhinttags eht
+    \ fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs hinttags ht hinttimeout hto history hi
+    \ hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic
+    \ noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks linkmatching lm 
+    \ nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload
+    \ nopreload previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline
+    \ stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
+    \ wildmode wim wildoptions wop
+    \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
 syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
@@ -70,4 +71,4 @@ let b:current_syntax = "vimperator"
 let &cpo = s:cpo_save
 unlet s:cpo_save
 
-" vim: tw=130:
+" vim: tw=130 et ts=4 sw=4:

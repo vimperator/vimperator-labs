@@ -202,9 +202,25 @@ liberator.Mail = function ()
         function () { goDoCommand("cmd_forwardInline"); });
 
       
-    liberator.mappings.add(modes, ["r"],
-        "Reply to sender",
-        function () { goDoCommand("cmd_reply"); });
+    // UNDO/REDO
+    liberator.mappings.add(modes, ["u"],
+        "Undo",
+        function ()
+        { 
+            if (messenger.canUndo())
+                messenger.undo(msgWindow);
+            else
+                liberator.beep();
+        });
+    liberator.mappings.add(modes, ["<C-r>"],
+        "Redo",
+        function ()
+        { 
+            if (messenger.canRedo())
+                messenger.redo(msgWindow);
+            else
+                liberator.beep();
+        });
 
     // GETTING MAIL
     liberator.mappings.add(modes, ["gm"],

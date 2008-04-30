@@ -89,15 +89,7 @@ liberator.Hints = function () //{{{
         var scrollY = doc.defaultView.scrollY;
 
         var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-        baseNodeAbsolute.style.backgroundColor = "red";
-        baseNodeAbsolute.style.color = "white";
-        baseNodeAbsolute.style.position = "absolute";
-        baseNodeAbsolute.style.fontSize = "10px";
-        baseNodeAbsolute.style.fontWeight = "bold";
-        baseNodeAbsolute.style.lineHeight = "10px";
-        baseNodeAbsolute.style.padding = "0px 1px 0px 0px";
-        baseNodeAbsolute.style.zIndex = "10000001";
-        baseNodeAbsolute.style.display = "none";
+        baseNodeAbsolute.style.cssText = liberator.options["hintstyle"];
         baseNodeAbsolute.className = "liberator-hint";
 
         var elem, tagname, text, span, rect;
@@ -155,11 +147,76 @@ liberator.Hints = function () //{{{
     {
         var oldElem = validHints[oldID - 1];
         if (oldElem)
-            oldElem.style.backgroundColor = "yellow";
+            oldElem.style.backgroundColor = liberator.options["linkbgcolor"];
 
         var newElem = validHints[newID - 1];
         if (newElem)
-            newElem.style.backgroundColor = "#88FF00";
+            newElem.style.backgroundColor = liberator.options["activelinkbgcolor"];
+    }
+
+    function containsTokensMatcher(hintString)
+    {
+        var tokens = hintString.split(/ +/);
+
+        function containsTokens(textOfLink)
+        {
+            for (var i = 0; i < tokens.length; i++) 
+            {
+                if (textOfLink.indexOf(tokens[i]) < 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        return containsTokens;
+    }
+
+    function wordBoundaryMatcher(hintString)
+    {
+        var tokens = hintString.split(/ +/);
+        var regexs = [];
+        for (var i = 0; i < tokens.length; i++) 
+            regexs[i] = new RegExp((tokens[i] == "" ? ".*" : ("\\b" + tokens[i] + ".*")));
+
+        function wordBoundary(textOfLink)
+        {
+            for (var i = 0; i < tokens.length; i++) 
+            {
+                if (! regexs[i].test(textOfLink))
+                    return false;
+            }
+
+            return true;
+        }
+
+        return wordBoundary;
+    }
+
+    function startsWithMatcher(hintString)
+    {
+        var regex = new RegExp((hintString == "" ? ".*" : ("^\\s*" + hintString + ".*")));
+
+        function startsWith(textOfLink) 
+        {
+            return (regex.test(textOfLink));
+        }
+
+        return startsWith;
+    }
+
+    function hintMatcher(hintString)
+    {
+        var hintMatching = liberator.options["hintmatching"];
+        switch (hintMatching)
+        {
+            case "contains":     return containsTokensMatcher(hintString);
+            case "startswith":   return startsWithMatcher(hintString);
+            case "wordboundary": return wordBoundaryMatcher(hintString);
+            default:
+                liberator.echoerr("Invalid hintmatching type: " + hintMatching);
+        }
+        return null;
     }
 
     function showHints()
@@ -169,11 +226,16 @@ liberator.Hints = function () //{{{
         var height = win.innerHeight;
         var width  = win.innerWidth;
 
-        liberator.log("Show hints matching: " + hintString, 7);
+        liberator.log("Show hints matching: \"" + hintString + "\"", 7);
+
+        var linkfgcolor       = liberator.options["linkfgcolor"];
+        var linkbgcolor       = liberator.options["linkbgcolor"];
+        var activelinkfgcolor = liberator.options["activelinkfgcolor"];
+        var activelinkbgcolor = liberator.options["activelinkbgcolor"];
 
         var elem, tagname, text, rect, span, imgspan;
         var hintnum = 1;
-        var findTokens = hintString.split(/ +/);
+        var validHint = hintMatcher(hintString);
         var activeHint = hintNumber || 1;
         validHints = [];
 
@@ -193,19 +255,16 @@ liberator.Hints = function () //{{{
                 span = hints[i][2];
                 imgspan = hints[i][3];
 
-                for (var k = 0; k < findTokens.length; k++)
+                if (! validHint(text))
                 {
-                    if (text.indexOf(findTokens[k]) < 0)
-                    {
-                        span.style.display = "none";
-                        if (imgspan)
-                            imgspan.style.display = "none";
+                    span.style.display = "none";
+                    if (imgspan)
+                        imgspan.style.display = "none";
 
-                        // reset background color
-                        elem.style.backgroundColor = hints[i][4];
-                        elem.style.color = hints[i][5];
-                        continue outer;
-                    }
+                    // reset background color
+                    elem.style.backgroundColor = hints[i][4];
+                    elem.style.color = hints[i][5];
+                    continue outer;
                 }
 
                 if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
@@ -228,13 +287,13 @@ liberator.Hints = function () //{{{
                         hints[i][3] = imgspan;
                         doc.body.appendChild(imgspan);
                     }
-                    imgspan.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
+                    imgspan.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
                     imgspan.style.display = "inline";
                 }
 
                 if (!imgspan)
-                    elem.style.backgroundColor = (activeHint == hintnum) ? "#88FF00" : "yellow";
-                elem.style.color = "black";
+                    elem.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
+                elem.style.color = (activeHint == hintnum) ? activelinkfgcolor : linkfgcolor;
                 span.textContent = "" + (hintnum++);
                 span.style.display = "inline";
                 validHints.push(elem);
@@ -404,15 +463,15 @@ liberator.Hints = function () //{{{
     liberator.options.add(["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
         "string", DEFAULT_HINTTAGS);
-    liberator.options.add(["focusedhintstyle", "fhs"],
-        "CSS specification of focused hints",
-        "string", "z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
+
     liberator.options.add(["hintstyle", "hs"],
         "CSS specification of unfocused hints",
-        "string", "z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
+        "string", "z-index:5000; font-family:monospace; font-size:10px; font-weight: bold; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
+
     liberator.options.add(["hinttags", "ht"],
         "XPath string of hintable elements activated by 'f' and 'F'",
         "string", DEFAULT_HINTTAGS);
+
     liberator.options.add(["hinttimeout", "hto"],
         "Automatically follow non unique numerical hint",
         "number", 0,
@@ -420,7 +479,30 @@ liberator.Hints = function () //{{{
             validator: function (value) { return value >= 0; }
         });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
+    liberator.options.add(["linkfgcolor", "lfc"],
+        "Foreground color of a link during hint mode",
+        "string", "black");
+
+    liberator.options.add(["linkbgcolor", "lbc"],
+        "Background color of a link during hint mode",
+        "string", "yellow");
+
+    liberator.options.add(["activelinkfgcolor", "alfc"],
+        "Foreground color of the current active link during hint mode",
+        "string", "black");
+
+    liberator.options.add(["activelinkbgcolor", "albc"],
+        "Background color of the current active link during hint mode",
+        "string", "#88FF00");
+
+    liberator.options.add(["hintmatching", "lm"],
+        "How links are matched",
+        "string", "contains",
+        {
+            validator: function (value) { return /^startswith|contains|wordboundary$/.test(value); }
+        });
+
+    ///////////////////////////////////////////////////////////////////////////
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
         
