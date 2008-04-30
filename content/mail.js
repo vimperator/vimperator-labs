@@ -89,6 +89,46 @@ liberator.Mail = function ()
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
+    function moveOrCopy(copy, destinationFolder, operateOnThread)
+    {
+        if (!destinationFolder)
+        {
+            liberator.echoerr("E471: Argument required");
+            return false;
+        }
+
+        var folders = liberator.mail.getFolders(destinationFolder);
+        if (folders.length == 0)
+        {
+            liberator.echoerr("E94: No matching folder for " + destinationFolder);
+            return false;
+        }
+        else if (folders.length > 1)
+        {
+            liberator.echoerr("E93: More than one match for " + destinationFolder);
+            return false;
+        }
+
+        var count = gDBView.selection.count;
+        if (!count)
+        {
+            liberator.beep();
+            return false;
+        }
+
+        if (copy)
+        {
+            MsgCopyMessage(folders[0].URI);
+            setTimeout(function() { liberator.echo(count +  " message(s) copied to " + folders[0].prettyName); }, 100);
+        }
+        else
+        {
+            MsgMoveMessage(folders[0].URI);
+            setTimeout(function() { liberator.echo(count +  " message(s) moved to " + folders[0].prettyName); }, 100);
+        }
+        return true;
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -157,32 +197,16 @@ liberator.Mail = function ()
         "Forward message",
         function () { goDoCommand("cmd_forward"); });
 
-    liberator.mappings.add(modes, ["y"],
-        "Archive message",
-        function ()
-        {
-            var folder = liberator.mail.getFolders("Archive")[0];
-            if (!folder)
-            {
-                liberator.echoerr("No Archive folder found");
-                return;
-            }
-
-            var count = gDBView.selection.count;
-            if (!count)
-            {
-                liberator.beep();
-                return;
-            }
-
-            MsgMoveMessage(folder.URI);
-            liberator.echo(count +  " messages moved to: Archive");
-        });
-
     liberator.mappings.add(modes, ["F"],
         "Forward message inline",
         function () { goDoCommand("cmd_forwardInline"); });
 
+      
+    liberator.mappings.add(modes, ["r"],
+        "Reply to sender",
+        function () { goDoCommand("cmd_reply"); });
+
+    // GETTING MAIL
     liberator.mappings.add(modes, ["gm"],
         "Get new messages",
         function () { liberator.mail.getNewMessages(); });
@@ -191,9 +215,22 @@ liberator.Mail = function ()
         "Get new messages for current account only",
         function () { liberator.mail.getNewMessages(true); });
 
-    liberator.mappings.add([liberator.modes.NORMAL],
-        ["c"], "Change folders",
+    // MOVING MAIL
+    liberator.mappings.add(modes, ["c"],
+        "Change folders",
         function () { liberator.commandline.open(":", "goto ", liberator.modes.EX); });
+
+    liberator.mappings.add(modes, ["s"],
+        "Move selected messages",
+        function () { liberator.commandline.open(":", "moveto ", liberator.modes.EX); });
+
+    liberator.mappings.add(modes, ["S"],
+        "Copy selected messages",
+        function () { liberator.commandline.open(":", "copyto ", liberator.modes.EX); });
+
+    liberator.mappings.add(modes, ["<C-s>"],
+        "Archive message",
+        function () { moveOrCopy(false, "Archive"); });
 
     liberator.mappings.add(modes, ["]s"],
         "Select next starred message",
@@ -381,6 +418,14 @@ liberator.Mail = function ()
             else
                 SelectFolder(folder.URI);
         });
+
+    liberator.commands.add(["copy[to]"],
+        "Copy selected messages",
+        function (args, special) { moveOrCopy(true, args); });
+
+    liberator.commands.add(["move[to]"],
+        "Move selected messages",
+        function (args, special) { moveOrCopy(false, args); });
 
     liberator.commands.add(["get[messages]"],
         "Check for new messages",
