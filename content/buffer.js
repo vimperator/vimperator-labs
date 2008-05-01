@@ -216,12 +216,12 @@ liberator.Buffer = function () //{{{
         function (count) { liberator.buffer.scrollLines(-(count > 1 ? count : 1)); },
         { flags: liberator.Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["h", "<Left>"],
+    liberator.mappings.add(modes, liberator.has("mail") ? ["h"] : ["h", "<Left>"],
         "Scroll document to the left",
         function (count) { liberator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
         { flags: liberator.Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["l", "<Right>"],
+    liberator.mappings.add(modes, liberator.has("mail") ? ["l"] : ["l", "<Right>"],
         "Scroll document to the right",
         function (count) { liberator.buffer.scrollColumns(count > 1 ? count : 1); },
         { flags: liberator.Mappings.flags.COUNT });

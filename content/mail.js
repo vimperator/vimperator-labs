@@ -201,6 +201,27 @@ liberator.Mail = function ()
         "Forward message inline",
         function () { goDoCommand("cmd_forwardInline"); });
 
+    // SCROLLING
+    liberator.mappings.add(modes, ["<Down>"],
+        "Scroll message down",
+        function (count) { liberator.buffer.scrollLines(count > 1 ? count : 1); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["<Up>"],
+        "Scroll message up",
+        function (count) { liberator.buffer.scrollLines(-(count > 1 ? count : 1)); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add([liberator.modes.MESSAGE], ["<Left>"],
+        "Select previous message",
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add([liberator.modes.MESSAGE], ["<Right>"],
+        "Select next message",
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
       
     // UNDO/REDO
     liberator.mappings.add(modes, ["u"],
