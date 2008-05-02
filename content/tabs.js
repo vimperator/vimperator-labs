@@ -88,6 +88,16 @@ liberator.Tabs = function () //{{{
             }
         });
 
+    liberator.options.add(["newtab"],
+        "Define which commands should output in a new tab by default",
+        "stringlist", "",
+        {
+            validator: function(value)
+            {
+                return value == "all" || value.split(",").every(function (item) { return /^(addons|downloads|help|javascript|prefs|)$/.test(item); });
+            }
+        });
+
     liberator.options.add(["popups", "pps"],
         "Where to show requested popup windows",
         "number", 1,
@@ -250,7 +260,12 @@ liberator.Tabs = function () //{{{
 
     liberator.commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
-        function (args) { liberator.execute(args, { inTab: true }); },
+        function (args)
+        {
+            liberator.forceNewTab = true;
+            liberator.execute(args);
+            liberator.forceNewTab = false;
+        },
         { completer: function (filter) { return liberator.completion.command(filter); } });
 
     liberator.commands.add(["tabl[ast]"],

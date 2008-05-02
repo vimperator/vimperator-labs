@@ -54,6 +54,7 @@
     * Escape finally clears any selection made in the document
     * initial start of caret mode. Start with 'i', stop with Escape;
     * many small bug fixes and enhancements
+    * new "newtab" option for opening the command output in a new tab
 
 2007-12-21:
     * version 0.5.3

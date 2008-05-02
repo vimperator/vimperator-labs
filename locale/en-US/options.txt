@@ -342,8 +342,26 @@ ____
 Pause the message list window when more than one screen of listings is displayed
 ____
 
+|\'newtab'|
+||'newtab'|| stringlist (default: "")
+____
+Define which ex commands output the result in a new tab automatically. You can
+also use [c]:tab command[c] to manually output a command in a new tab.
+
+The possible values:
+`------------`---------------------------------------------
+*all*        All commands
+*addons*     [c]:addo[ns][c] command
+*downloads*  [c]:downl[oads][c] command
+*help*       [c]:h[elp][c] command
+*javascript* [c]:javascript![c] or [c]:js![c] command
+*prefs*      [c]:pref[erences]![c] or [c]:prefs![c] command
+-----------------------------------------------------------
+
+____
+
 |\'nextpattern'|
-||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$)
+||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 ____
 Patterns to use when guessing the 'next' page in a document sequence.
 Each pattern, in order, is matched against all links in the page with the first match being used.

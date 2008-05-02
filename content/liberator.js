@@ -121,7 +121,12 @@ const liberator = (function () //{{{
     {
         liberator.commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
-            function () { liberator.open("chrome://mozapps/content/extensions/extensions.xul", liberator.NEW_TAB); });
+            function ()
+            {
+                liberator.open("chrome://mozapps/content/extensions/extensions.xul",
+                    (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("addons") != -1) ?
+                        liberator.NEW_TAB: liberator.CURRENT_TAB);
+            });
 
         liberator.commands.add(["beep"],
             "Play a system beep",
@@ -182,7 +187,11 @@ const liberator = (function () //{{{
             function (args, special)
             {
                 if (special) // open javascript console
-                    liberator.open("chrome://global/content/console.xul", liberator.NEW_TAB);
+                {
+                    liberator.open("chrome://global/content/console.xul",
+                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("javascript") != -1) ?
+                            liberator.NEW_TAB : liberator.CURRENT_TAB);
+                }
                 else
                 {
                     // check for a heredoc
@@ -395,6 +404,8 @@ const liberator = (function () //{{{
         NEW_BACKGROUND_TAB: 3,
         NEW_WINDOW: 4,
 
+        forceNewTab: false,
+
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
@@ -592,9 +603,12 @@ const liberator = (function () //{{{
 
         help: function(topic)
         {
+            var where = (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("help") != -1) ?
+                        liberator.NEW_TAB : liberator.CURRENT_TAB;
+
             function jumpToTag(file, tag)
             {
-                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file);
+                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file, where);
                 setTimeout(function() {
                     var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
@@ -606,7 +620,7 @@ const liberator = (function () //{{{
 
             if (!topic)
             {
-                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/intro.html");
+                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/intro.html", where);
                 return;
             }
 
@@ -651,6 +665,7 @@ const liberator = (function () //{{{
         //              ["url1", "url2", "url3", ...] or:
         //              [["url1", postdata1], ["url2", postdata2], ...]
         // @param where: if ommited, CURRENT_TAB is assumed
+        //                  but NEW_TAB is set when liberator.forceNewTab is true.
         // @param callback: not implemented, will be allowed to specify a callback function
         //                  which is called, when the page finished loading
         // @returns true when load was initiated, or false on error
@@ -664,7 +679,9 @@ const liberator = (function () //{{{
             if (urls.length == 0)
                 return false;
 
-            if (!where || !liberator.has("tabs"))
+            if (liberator.forceNewTab && liberator.has("tabs"))
+                where = liberator.NEW_TAB;
+            else if (!where || !liberator.has("tabs"))
                 where = liberator.CURRENT_TAB;
 
             var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];

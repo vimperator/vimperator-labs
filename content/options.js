@@ -296,18 +296,15 @@ liberator.Options = function () //{{{
         {
             if (!args)
             {
-                // TODO: copy these snippets to more function which should work with :tab xxx
-                if (modifiers && modifiers.inTab)
+                if (special) // open firefox settings gui dialog
                 {
-                    liberator.open(special ? "about:config" :
-                        "chrome://browser/content/preferences/preferences.xul", liberator.NEW_TAB);
+                    liberator.open("about:config", 
+                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("prefs") != -1) ?
+                            liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else
                 {
-                    if (special) // open firefox settings gui dialog
-                        liberator.open("about:config", liberator.CURRENT_TAB);
-                    else
-                        openPreferences();
+                    openPreferences();
                 }
             }
             else
