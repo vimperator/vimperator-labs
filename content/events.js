@@ -686,7 +686,13 @@ liberator.Events = function () //{{{
             if (macros[lastMacro])
             {
                 liberator.modes.isReplaying = true;
-                BrowserStop(); // make sure the page is stopped before starting to play the macro
+                
+                // make sure the page is stopped before starting to play the macro
+                try
+                {
+                    getWebNavigation().stop(nsIWebNavigation.STOP_ALL);
+                } catch (ex) { }
+
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
                 liberator.events.feedkeys(macros[lastMacro], true); // true -> noremap
                 liberator.modes.isReplaying = false;
