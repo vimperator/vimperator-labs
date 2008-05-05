@@ -117,7 +117,7 @@ liberator.config = {
     
         liberator.mappings.add([liberator.modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { liberator.copyToClipboard(liberator.buffer.URL, true); });
+            function () { liberator.util.copyToClipboard(liberator.buffer.URL, true); });
 
         // opening websites
         liberator.mappings.add([liberator.modes.NORMAL],

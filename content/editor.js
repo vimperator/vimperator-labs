@@ -378,7 +378,7 @@ liberator.Editor = function () //{{{
             {
                 var sel = window.content.document.getSelection();
                 if (sel)
-                    liberator.copyToClipboard(sel, true);
+                    liberator.util.copyToClipboard(sel, true);
                 else
                     liberator.beep();
             }
@@ -494,14 +494,14 @@ liberator.Editor = function () //{{{
         {
             var elt = window.document.commandDispatcher.focusedElement;
 
-            if (elt.setSelectionRange && readFromClipboard())
+            if (elt.setSelectionRange && liberator.util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
                 var rangeStart = elt.selectionStart; // caret position
                 var rangeEnd = elt.selectionEnd;
                 var tempStr1 = elt.value.substring(0, rangeStart);
-                var tempStr2 = readFromClipboard();
+                var tempStr2 = liberator.util.readFromClipboard();
                 var tempStr3 = elt.value.substring(rangeEnd);
                 elt.value = tempStr1 + tempStr2  + tempStr3;
                 elt.selectionStart = rangeStart + tempStr2.length;

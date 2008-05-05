@@ -935,7 +935,7 @@ liberator.CommandLine = function () //{{{
 
                 // copy text to clipboard
                 case "<C-y>":
-                    liberator.copyToClipboard(win.getSelection());
+                    liberator.util.copyToClipboard(win.getSelection());
                     break;
 
                 // close the window

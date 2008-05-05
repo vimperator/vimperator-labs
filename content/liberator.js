@@ -463,17 +463,6 @@ const liberator = (function () //{{{
             }
         },
 
-        // XXX? move to liberator.util?
-        copyToClipboard: function (str, verbose)
-        {
-            var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                .getService(Components.interfaces.nsIClipboardHelper);
-            clipboardHelper.copyString(str);
-
-            if (verbose)
-                liberator.echo("Yanked " + str, liberator.commandline.FORCE_SINGLELINE);
-        },
-
         // Execute an ex command like str=":zoom 300"
         execute: function (str, modifiers)
         {

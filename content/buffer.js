@@ -316,20 +316,20 @@ liberator.Buffer = function () //{{{
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            liberator.open(readFromClipboard(),
+            liberator.open(liberator.util.readFromClipboard(),
                 /\bpaste\b/.test(liberator.options["activate"]) ?
                 liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
         });
 
     liberator.mappings.add(modes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
-        function () { liberator.open(readFromClipboard()); });
+        function () { liberator.open(liberator.util.readFromClipboard()); });
 
     liberator.mappings.add(modes, ["P"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            liberator.open(readFromClipboard(),
+            liberator.open(liberator.util.readFromClipboard(),
                 /\bpaste\b/.test(liberator.options["activate"]) ?
                 liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         });
@@ -350,7 +350,7 @@ liberator.Buffer = function () //{{{
         {
             var sel = liberator.buffer.getCurrentWord();
             if (sel)
-                liberator.copyToClipboard(sel, true);
+                liberator.util.copyToClipboard(sel, true);
             else
                 liberator.beep();
         });

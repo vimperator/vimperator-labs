@@ -79,6 +79,16 @@ liberator.util = { //{{{
         return "&lt;unknown type&gt;";
     },
 
+    copyToClipboard: function (str, verbose)
+    {
+        var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+            .getService(Components.interfaces.nsIClipboardHelper);
+        clipboardHelper.copyString(str);
+
+        if (verbose)
+            liberator.echo("Yanked " + str, liberator.commandline.FORCE_SINGLELINE);
+    },
+
     escapeHTML: function (str)
     {
         // XXX: the following code is _much_ slower than a simple .replace()
@@ -234,6 +244,34 @@ liberator.util = { //{{{
         catch (e) { }
 
         return string;
+    },
+
+    // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
+    readFromClipboard: function()
+    {
+        var url;
+        try
+        {
+            var clipboard = Components.classes['@mozilla.org/widget/clipboard;1'].getService(Components.interfaces.nsIClipboard);
+            var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+            trans.addDataFlavor("text/unicode");
+            if (clipboard.supportsSelectionClipboard())
+                clipboard.getData(trans, clipboard.kSelectionClipboard);
+            else 
+                clipboard.getData(trans, clipboard.kGlobalClipboard);
+
+            var data = {};
+            var dataLen = {};
+            trans.getTransferData("text/unicode", data, dataLen);
+            if (data)
+            {
+                data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+                url = data.data.substring(0, dataLen.value / 2);
+            }
+        }
+        catch (ex) { }
+
+        return url;
     },
 
     // takes a string like 'google bla, www.osnews.com'
