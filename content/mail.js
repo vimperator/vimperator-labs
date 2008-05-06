@@ -533,6 +533,19 @@ liberator.Mail = function ()
         "Move selected messages",
         function (args, special) { moveOrCopy(false, args); });
 
+    liberator.commands.add(["empty[trash]"],
+        "Empty trash of the current account",
+        function (args, special)
+        {
+            if (args)
+            {
+                liberator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            goDoCommand("cmd_emptyTrash");
+        });
+
     liberator.commands.add(["get[messages]"],
         "Check for new messages",
         function (args, special)
