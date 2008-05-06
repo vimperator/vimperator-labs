@@ -505,6 +505,10 @@ const liberator = (function () //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
+            // TODO: make more generic
+            if (liberator.has("mail") && clearFocusedElement && gDBView)
+                gDBView.selection.select(gDBView.selection.currentIndex);
+
             var elem = liberator.config.mainWidget || content;
             if (elem != document.commandDispatcher.focusedElement)
                 elem.focus();

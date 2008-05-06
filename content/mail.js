@@ -129,6 +129,21 @@ liberator.Mail = function ()
         return true;
     }
 
+    function parentIndex(index)
+    {
+        var parent = index;
+        var tree = GetThreadTree();
+
+        while (true)
+        {
+            var tmp = tree.view.getParentIndex(parent);
+            if (tmp >= 0)
+                parent = tmp;
+            else
+                break;
+        }
+        return parent;
+    }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -155,6 +170,19 @@ liberator.Mail = function ()
             }
         });
 
+    /*liberator.options.add(["threads"],
+        "Use threading to group messages",
+        "boolean", true,
+        {
+            setter: function (value)
+            {
+                if (value)
+                    MsgSortThreaded();
+                else
+                    MsgSortUnthreaded();
+            }
+        });*/
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -165,28 +193,42 @@ liberator.Mail = function ()
         "Inspect (focus) message",
         function () { content.focus(); });
 
+    liberator.mappings.add(modes, ["x"],
+        "Select thread",
+        function () { liberator.mail.selectThread(); });
+
     liberator.mappings.add(modes, ["d", "<Del>"],
         "Move mail to Trash folder",
         function () { goDoCommand("cmd_delete"); });
 
     liberator.mappings.add(modes, ["j", "<Right>"],
         "Select next message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, false, count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["gj"],
+        "Select next message, including closed threads",
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
         
     liberator.mappings.add(modes, ["J", "<Tab>"],
         "Select next unread message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["k", "<Left>"],
         "Select previous message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, true, count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["gk"],
+        "Select previous message",
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
         
     liberator.mappings.add(modes, ["K"],
         "Select previous unread message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
         
     liberator.mappings.add(modes, ["r"],
@@ -214,12 +256,12 @@ liberator.Mail = function ()
 
     liberator.mappings.add([liberator.modes.MESSAGE], ["<Left>"],
         "Select previous message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.MESSAGE], ["<Right>"],
         "Select next message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
       
@@ -271,22 +313,22 @@ liberator.Mail = function ()
 
     liberator.mappings.add(modes, ["]s"],
         "Select next starred message",
-        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[s"],
         "Select previous starred message",
-        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["]a"],
         "Select next message with an attachment",
-        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[a"],
         "Select previous message with an attachment",
-        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
 
@@ -545,16 +587,7 @@ liberator.Mail = function ()
             var tree = GetThreadTree();
             if (tree)
             {
-                var parent = tree.currentIndex;
-                while (true)
-                {
-                    var tmp = tree.view.getParentIndex(parent);
-                    if (tmp >= 0)
-                        parent = tmp;
-                    else
-                        break;
-                }
-
+                var parent = parentIndex(tree.currentIndex);
                 if (tree.changeOpenState(parent, false))
                 {
                     tree.view.selection.select(parent);
@@ -577,8 +610,24 @@ liberator.Mail = function ()
             return false;
         },
 
-        selectMessage: function(validatorFunc, canWrap, reverse, count)
+        /*
+         * general-purpose method to find messages
+         * @param validatorFunc(msg): return true/false whether msg should be selected or not
+         * @param canWrap: when true, wraps around folders
+         * @param openThreads: should we open closed threads?
+         * @param reverse: change direction of searching
+         */
+        selectMessage: function(validatorFunc, canWrap, openThreads, reverse, count)
         {
+            function closedThread(index)
+            {
+                if (!(gDBView.viewFlags & nsMsgViewFlagsType.kThreadedDisplay))
+                    return false;
+
+                index = (typeof index == "number") ? index : gDBView.selection.currentIndex;
+                return !gDBView.isContainerOpen(index) && !gDBView.isContainerEmpty(index);
+            }
+
             if (typeof validatorFunc != "function")
                 return;
 
@@ -588,22 +637,47 @@ liberator.Mail = function ()
             // first try to find in current folder
             if (gDBView)
             {
-                //var curIndex = 
-                // FIXME: doesn't work with collapsed threads
-                for (var i = gDBView.selection.currentIndex + (reverse ? -1 : 1);
-                     (reverse ? ( i >= 0) : (i < gDBView.rowCount)); reverse ? i-- : i++)
+                for (var i = gDBView.selection.currentIndex + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
+                    reverse ? (i >= 0) : (i < gDBView.rowCount);
+                    reverse ? i-- : i++)
                 {
                     var key = gDBView.getKeyAt(i);
                     var msg = gDBView.db.GetMsgHdrForKey(key);
-                    if (validatorFunc(msg))
-                        count--;
 
-                    if (count == 0)
+                    // a closed thread
+                    if (openThreads && closedThread(i))
                     {
-                        // gDBView.selectMsgByKey(key);
-                        gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
-                        GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
-                        return;
+                        var thread = gDBView.db.GetThreadContainingMsgHdr(msg);
+                        var originalCount = count;
+
+                        for (let j = (i == gDBView.selection.currentIndex && !reverse) ?  1 : (reverse ? thread.numChildren - 1 : 0);
+                                 reverse ? (j >= 0) : (j < thread.numChildren);
+                                 reverse ? j-- : j++)
+                        {
+                            msg = thread.getChildAt(j);
+                            if (validatorFunc(msg) && --count == 0)
+                            {
+                                // this hack is needed to get the correct message, because getChildAt() does not
+                                // necessarily return the messages in the order they are displayed
+                                gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
+                                GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
+                                if (j > 0)
+                                {
+                                    GetThreadTree().changeOpenState(i, true);
+                                    this.selectMessage(validatorFunc, false, false, false, originalCount);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                    else // simple non-threaded message
+                    {
+                        if (validatorFunc(msg) && --count == 0)
+                        {
+                            gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
+                            GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
+                            return;
+                        }
                     }
                 }
             }
@@ -663,8 +737,21 @@ liberator.Mail = function ()
             // TODO: finally for the "rest" of the current folder
 
             liberator.beep();
+        },
+
+        // gDBView.doCommand(nsMsgViewCommandType.selectThread);
+        selectThread: function()
+        {
+            var tree = GetThreadTree();
+            var key = gDBView.getKeyAt(tree.currentIndex);
+            var msg = gDBView.db.GetMsgHdrForKey(key);
+            var thread = gDBView.db.GetThreadContainingMsgHdr(msg);
+
+            var parent = parentIndex(tree.currentIndex);
+            gDBView.selection.rangedSelect(parent + thread.numChildren -1, parent, false);
         }
     };
+
     //}}}
 };
 
