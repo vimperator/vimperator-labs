@@ -195,7 +195,7 @@ liberator.Mail = function ()
 
     liberator.mappings.add(modes, ["x"],
         "Select thread",
-        function () { liberator.mail.selectThread(); });
+        function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false) });
 
     liberator.mappings.add(modes, ["d", "<Del>"],
         "Move mail to Trash folder",
@@ -264,7 +264,6 @@ liberator.Mail = function ()
         function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
-      
     // UNDO/REDO
     liberator.mappings.add(modes, ["u"],
         "Undo",
@@ -739,17 +738,6 @@ liberator.Mail = function ()
             liberator.beep();
         },
 
-        // gDBView.doCommand(nsMsgViewCommandType.selectThread);
-        selectThread: function()
-        {
-            var tree = GetThreadTree();
-            var key = gDBView.getKeyAt(tree.currentIndex);
-            var msg = gDBView.db.GetMsgHdrForKey(key);
-            var thread = gDBView.db.GetThreadContainingMsgHdr(msg);
-
-            var parent = parentIndex(tree.currentIndex);
-            gDBView.selection.rangedSelect(parent + thread.numChildren -1, parent, false);
-        }
     };
 
     //}}}
