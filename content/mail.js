@@ -230,7 +230,35 @@ liberator.Mail = function ()
         "Select previous unread message",
         function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["*"],
+        "Select next message from the same sender",
+        function (count)
+        {
+            try
+            {
+                var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
+                liberator.mail.selectMessage(function(msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, false, count);
+            }
+            catch (e) { liberator.beep(); }
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["#"],
+        "Select previous message from the same sender",
+        function (count)
+        {
+            try
+            {
+                var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
+                liberator.mail.selectMessage(function(msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, true, count);
+            }
+            catch (e) { liberator.beep(); }
+        },
+        { flags: liberator.Mappings.flags.COUNT });
         
+
+    // SENDING MESSAGES
     liberator.mappings.add(modes, ["r"],
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); });
@@ -626,7 +654,6 @@ liberator.Mail = function ()
                 index = (typeof index == "number") ? index : gDBView.selection.currentIndex;
                 return !gDBView.isContainerOpen(index) && !gDBView.isContainerEmpty(index);
             }
-
             if (typeof validatorFunc != "function")
                 return;
 
@@ -688,7 +715,7 @@ liberator.Mail = function ()
 
                 var folders = this.getFolders("", true, true);
                 var ci = GetFolderTree().currentIndex;
-                for (var i = 1; i <= folders.length; i++)
+                for (var i = 1; i < folders.length; i++)
                 {
                     let index = (i + ci) % folders.length;
                     if (reverse)
