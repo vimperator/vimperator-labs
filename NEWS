@@ -11,6 +11,8 @@
       of bringing up the bookmarks/history window
     * IMPORTANT: "B" mapping now works just like :buffers, old bufferwindow will be removed
       at some time. Use B5gt to jump to the 5th tab.
+    * also go to INSERT mode for HTMLSelectElements, so you can type text to go to element
+      in drop down boxes
     * new "S" flag for "complete" to list google suggestions in :open vimp and
       pressing tab (disabled by default). Also added new 'suggestengines' option.
     * gi accepts now a count to jump to the nth input field
