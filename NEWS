@@ -1,11 +1,11 @@
 <pre>
-2008-xx-xx:
-    * version 0.6
-    * THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta1 or newer
+2008-05-14:
+    * version 1.0
+    * THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
     * IMPORTANT: Major hints rewrite
       read up the new help for the f, F and ; commands for details
       removed the following hint options: 'hintchars' 'maxhints'
-      added the following hint options: 'hinttimeout'
+      added the following hint options: 'hinttimeout', 'hintmatching', 'wordseperators'
     * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
     * IMPORTANT: :bmarks! and :history! open the matching items now in a tab, instead
       of bringing up the bookmarks/history window
@@ -55,8 +55,8 @@
     * support for * and # mappings to search for the text selection or the text under the cursor
     * Escape finally clears any selection made in the document
     * initial start of caret mode. Start with 'i', stop with Escape;
+    * new "newtab" option for opening the command output in a new tab and better :tab support
     * many small bug fixes and enhancements
-    * new "newtab" option for opening the command output in a new tab
 
 2007-12-21:
     * version 0.5.3

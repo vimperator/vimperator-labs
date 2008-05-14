@@ -77,8 +77,6 @@ liberator.Hints = function () //{{{
 
     function generate(win)
     {
-        var startDate = Date.now();
-
         if (!win)
             win = window.content;
 
@@ -94,7 +92,6 @@ liberator.Hints = function () //{{{
 
         var elem, tagname, text, span, rect;
         var res = liberator.buffer.evaluateXPath(liberator.options["hinttags"], doc, null, true);
-        liberator.log("evaluated XPath after: " + (Date.now() - startDate) + "ms");
 
         var fragment = doc.createDocumentFragment();
         var start = hints.length;
@@ -138,7 +135,6 @@ liberator.Hints = function () //{{{
         for (var i = 0; i < win.frames.length; i++)
             generate(win.frames[i]);
 
-        liberator.log("hints.generate() completed after: " + (Date.now() - startDate) + "ms for " + hints.length + " hints.");
         return true;
     }
 
@@ -156,12 +152,9 @@ liberator.Hints = function () //{{{
 
     function showHints()
     {
-        var startDate = Date.now();
         var win = window.content;
         var height = win.innerHeight;
         var width  = win.innerWidth;
-
-        liberator.log("Show hints matching: \"" + hintString + "\"", 7);
 
         var linkfgcolor       = liberator.options["linkfgcolor"];
         var linkbgcolor       = liberator.options["linkbgcolor"];
@@ -235,7 +228,6 @@ liberator.Hints = function () //{{{
             }
         }
 
-        liberator.log("showHints() completed after: " + (Date.now() - startDate) + "ms");
         return true;
     }
 
@@ -305,7 +297,6 @@ liberator.Hints = function () //{{{
             }
         }
 
-        liberator.log("removeHints() done");
         reset();
     }
 
@@ -335,7 +326,6 @@ liberator.Hints = function () //{{{
         var loc = elem.href || "";
         switch (submode)
         {
-            // TODO: move/rename those helper functions to a better place
             case ";": liberator.buffer.focusElement(elem); break;
             case "?": liberator.buffer.showElementInfo(elem); break;
             case "a": liberator.buffer.saveLink(elem, false); break;
@@ -579,7 +569,6 @@ liberator.Hints = function () //{{{
 
     return {
 
-        // TODO: implement framesets
         show: function (mode, minor, filter)
         {
             if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtTvVwWyY]$/.test(minor))

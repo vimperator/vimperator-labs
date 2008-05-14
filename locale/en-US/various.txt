@@ -631,7 +631,7 @@ When browsing a local directory, it goes to the root directory.
 ________________________________________________________________________________
 
 
-|f| +
+|f| |hints| +
 ||f\\{hint\\}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the

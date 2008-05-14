@@ -64,6 +64,7 @@ const liberator = (function () //{{{
                     return !(new RegExp(regex + "]").test(value));
                 }
             });
+
         liberator.options.add(["titlestring"], // TODO: broken for Thunderbird
             "Change the title of the window",
             "string", "Vimperator",
@@ -85,12 +86,14 @@ const liberator = (function () //{{{
                     }
                 },
             });
+
         liberator.options.add(["verbose", "vbs"], 
             "Define which type of messages are logged",
             "number", 0,
             {
                 validator: function (value) { return (value >= 0 && value <= 9); }
             });
+
         liberator.options.add(["visualbell", "vb"], 
             "Use visual bell instead of beeping on errors",
             "boolean", false,
@@ -384,9 +387,6 @@ const liberator = (function () //{{{
                 catch (e) { }
             });
         }
-
-//        if (liberator.has("tabs"))
-
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -617,7 +617,7 @@ const liberator = (function () //{{{
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
                         dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
-                }, 200);
+                }, 500);
             }
 
             if (!topic)
@@ -781,6 +781,7 @@ const liberator = (function () //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+        // TODO: probably move to {muttator,vimperator,...}.js
         // this function is called, when the chrome is ready
         startup: function ()
         {
