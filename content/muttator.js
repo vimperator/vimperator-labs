@@ -93,9 +93,18 @@ liberator.config = {
             ["o"], "Open a message",
             function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
 
+        // TODO: move elsewhere
         liberator.mappings.add([liberator.modes.COMPOSE],
             ["e"], "Edit message",
             function () { liberator.editor.editWithExternalEditor(); });
+
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["y"], "Send message now",
+            function () { goDoCommand("cmd_sendNow"); });
+
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["Y"], "Send message later",
+            function () { goDoCommand("cmd_sendLater"); });
 
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable

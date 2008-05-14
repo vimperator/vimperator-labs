@@ -264,6 +264,10 @@ liberator.Mail = function ()
         
 
     // SENDING MESSAGES
+    liberator.mappings.add(modes, ["m"],
+        "Compose a new message",
+        function () { goOpenNewMessage(); });
+
     liberator.mappings.add(modes, ["r"],
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); });
