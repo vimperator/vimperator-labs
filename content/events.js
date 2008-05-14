@@ -233,49 +233,52 @@ liberator.Events = function () //{{{
     var currentMacro = "";
     var lastMacro = "";
 
-    // any tab related events
-    var tabcontainer = getBrowser().mTabContainer;
-    if (tabcontainer) // not every VIM-like extension has a tab container
+    try // not every extension has a getBrowser() method
     {
-        tabcontainer.addEventListener("TabMove",   function (event)
+        var tabcontainer = getBrowser().mTabContainer;
+        if (tabcontainer) // not every VIM-like extension has a tab container
         {
-            liberator.statusline.updateTabCount();
-            liberator.buffer.updateBufferList();
-        }, false);
-        tabcontainer.addEventListener("TabOpen",   function (event)
+            tabcontainer.addEventListener("TabMove",   function (event)
+            {
+                liberator.statusline.updateTabCount();
+                liberator.buffer.updateBufferList();
+            }, false);
+            tabcontainer.addEventListener("TabOpen",   function (event)
+            {
+                liberator.statusline.updateTabCount();
+                liberator.buffer.updateBufferList();
+            }, false);
+            tabcontainer.addEventListener("TabClose",  function (event)
+            {
+                liberator.statusline.updateTabCount();
+                liberator.buffer.updateBufferList();
+            }, false);
+            tabcontainer.addEventListener("TabSelect", function (event)
+            {
+                // TODO: is all of that necessary?
+                liberator.modes.reset();
+                liberator.commandline.clear();
+                liberator.modes.show();
+                liberator.statusline.updateTabCount();
+                liberator.buffer.updateBufferList();
+                liberator.tabs.updateSelectionHistory();
+
+                setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
+            }, false);
+        }
+
+        // this adds an event which is is called on each page load, even if the
+        // page is loaded in a background tab
+        getBrowser().addEventListener("load", onPageLoad, true);
+
+        // called when the active document is scrolled
+        getBrowser().addEventListener("scroll", function (event)
         {
-            liberator.statusline.updateTabCount();
-            liberator.buffer.updateBufferList();
-        }, false);
-        tabcontainer.addEventListener("TabClose",  function (event)
-        {
-            liberator.statusline.updateTabCount();
-            liberator.buffer.updateBufferList();
-        }, false);
-        tabcontainer.addEventListener("TabSelect", function (event)
-        {
-            // TODO: is all of that necessary?
-            liberator.modes.reset();
-            liberator.commandline.clear();
+            liberator.statusline.updateBufferPosition();
             liberator.modes.show();
-            liberator.statusline.updateTabCount();
-            liberator.buffer.updateBufferList();
-            liberator.tabs.updateSelectionHistory();
-
-            setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
-        }, false);
+        }, null);
     }
-
-    // this adds an event which is is called on each page load, even if the
-    // page is loaded in a background tab
-    getBrowser().addEventListener("load", onPageLoad, true);
-
-    // called when the active document is scrolled
-    getBrowser().addEventListener("scroll", function (event)
-    {
-        liberator.statusline.updateBufferPosition();
-        liberator.modes.show();
-    }, null);
+    catch (e) { }
 
 //    getBrowser().addEventListener("submit", function (event)
 //    {
@@ -430,7 +433,7 @@ liberator.Events = function () //{{{
             var title = liberator.buffer.title;
 
             //update history
-            if (liberator.history)
+            if (url && liberator.history)
                 liberator.history.add(url, title);
 
             liberator.buffer.updateBufferList();
@@ -531,7 +534,7 @@ liberator.Events = function () //{{{
         function () { liberator.events.onEscape(); });
 
     // add the ":" mapping in all but insert mode mappings
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.HINTS, liberator.modes.MESSAGE, liberator.modes.CARET, liberator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.HINTS, liberator.modes.MESSAGE, liberator.modes.COMPOSE, liberator.modes.CARET, liberator.modes.TEXTAREA],
         [":"], "Enter command line mode",
         function () { liberator.commandline.open(":", "", liberator.modes.EX); });
 
@@ -950,7 +953,15 @@ liberator.Events = function () //{{{
                 if ((win && win.document && win.document instanceof HTMLDocument)
                     || elem instanceof HTMLAnchorElement)
                 {
-                    if (liberator.mode != liberator.modes.MESSAGE)
+                    if (liberator.config.isComposeWindow)
+                    {
+                        dump("Compose editor got focus\n");
+                        liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                        //setTimeout(function(){liberator.editor.editWithExternalEditor();}, 100);
+                        win.blur();
+                        //liberator.editor.editWithExternalEditor();
+                    }
+                    else if (liberator.mode != liberator.modes.MESSAGE)
                         liberator.mode = liberator.modes.MESSAGE;
                     return;
                 }
@@ -1092,7 +1103,7 @@ liberator.Events = function () //{{{
             var stop = true; // set to false if we should NOT consume this event but let also firefox handle it
 
             var win = document.commandDispatcher.focusedWindow;
-            if (win && win.document.designMode == "on")
+            if (win && win.document.designMode == "on" && !liberator.config.isComposeWindow)
                 return false;
 
             // menus have their own command handlers
@@ -1468,7 +1479,11 @@ liberator.Events = function () //{{{
         .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
         .getInterface(Components.interfaces.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
-    getBrowser().addProgressListener(eventManager.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    try
+    {
+        getBrowser().addProgressListener(eventManager.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    }
+    catch(e) { }
 
     eventManager.prefObserver.register();
 

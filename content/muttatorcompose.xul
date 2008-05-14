@@ -28,55 +28,66 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK ***** -->
 
-<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://vimperator/skin/vimperator.css" type="text/css"?>
+<!--?xml-stylesheet href="chrome://browser/skin/" type="text/css"?-->
+<?xml-stylesheet href="chrome://muttator/skin/vimperator.css" type="text/css"?>
 
-<overlay id="vimperator"
+<overlay id="muttator"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:nc="http://home.netscape.com/NC-rdf#"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript;version=1.8" src="liberator.js"/>
-    <script type="application/x-javascript;version=1.8" src="vimperator.js"/>
+    <script type="application/x-javascript;version=1.8" src="muttator.js"/>
 
-    <script type="application/x-javascript;version=1.8" src="bookmarks.js"/>
-    <script type="application/x-javascript;version=1.8" src="buffer.js"/>
     <script type="application/x-javascript;version=1.8" src="commands.js"/>
-    <script type="application/x-javascript;version=1.8" src="completion.js"/>
+    <script type="application/x-javascript;version=1.8" src="mappings.js"/>
+    <script type="application/x-javascript;version=1.8" src="options.js"/>
+    <script type="application/x-javascript;version=1.8" src="io.js"/>
     <script type="application/x-javascript;version=1.8" src="editor.js"/>
+    <!--script type="application/x-javascript;version=1.8" src="mail.js"/-->
+    <script type="application/x-javascript;version=1.8" src="util.js"/>
+    <script type="application/x-javascript;version=1.8" src="modes.js"/>
     <script type="application/x-javascript;version=1.8" src="events.js"/>
+    <script type="application/x-javascript;version=1.8" src="completion.js"/>
+    <script type="application/x-javascript;version=1.8" src="buffer.js"/>
     <script type="application/x-javascript;version=1.8" src="find.js"/>
     <script type="application/x-javascript;version=1.8" src="help.js"/>
     <script type="application/x-javascript;version=1.8" src="hints.js"/>
-    <script type="application/x-javascript;version=1.8" src="io.js"/>
-    <script type="application/x-javascript;version=1.8" src="mappings.js"/>
-    <script type="application/x-javascript;version=1.8" src="modes.js"/>
-    <script type="application/x-javascript;version=1.8" src="options.js"/>
-    <script type="application/x-javascript;version=1.8" src="tabs.js"/>
     <script type="application/x-javascript;version=1.8" src="ui.js"/>
-    <script type="application/x-javascript;version=1.8" src="util.js"/>
 
-    <window id="main-window">
+    <window id="msgcomposeWindow">
+
+        <!--this notifies us also of focus events in the XUL
+            from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
+        <commandset id="onLiberatorFocus"
+            commandupdater="true"
+            events="focus"
+            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onFocusChange(event);"/>
+        <commandset id="onLiberatorSelect"
+            commandupdater="true"
+            events="select"
+            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
 
         <keyset id="mainKeyset">
             <key id="key_open_vimbar" key=":" oncommand="liberator.commandline.open(':', '', liberator.modes.EX);" modifiers=""/>
+            <key id="key_send" key="y" oncommand="alert('y');" modifiers=""/>
             <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.events.onEscape();"/>
             <!-- other keys are handled inside the event loop in events.js -->
         </keyset>
 
-        <panel id="liberator-visualbell"/>
-
-        <!--this notifies us also of focus events in the XUL
-            from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
-        <commandset id="onVimperatorFocus"
-            commandupdater="true"
-            events="focus"
-            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onFocusChange(event);"/>
-        <commandset id="onVimperatorSelect"
-            commandupdater="true"
-            events="select"
-            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
+        <statusbar id="status-bar" class="hl-StatusLine">
+            <hbox insertafter="statusText" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
+                <statusbarpanel class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-progress"       flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
+                <statusbarpanel class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
+            </hbox>
+            <!-- just hide them since other elements expect them -->
+            <!--statusbarpanel id="statusText" hidden="true"/>
+            <statusbarpanel id="statusbarpanel-progress" hidden="true"/-->
+        </statusbar>
 
         <vbox id="liberator-container" hidden="false">
             <listbox id="liberator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
@@ -109,7 +120,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 </listcols>
             </listbox>
 
-            <hbox id="liberator-commandline" hidden="false" class="hl-Normal">
+            <hbox insertafter="status-bar" id="liberator-commandline" hidden="false" class="hl-Normal">
                 <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                 <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                     oninput="liberator.commandline.onEvent(event);"
@@ -122,59 +133,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 oninput="liberator.commandline.onMultilineInputEvent(event);"
                 onblur="liberator.commandline.onMultilineInputEvent(event);"/>
         </vbox>
-
     </window>
-
-    <statusbar id="status-bar" class="hl-StatusLine">
-        <hbox insertbefore="statusbar-display" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
-            <textbox class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
-            <label class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
-            <label class="plain" id="liberator-statusline-field-progress"       flex="0"/>
-            <label class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
-            <label class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
-        </hbox>
-        <!-- just hide them since other elements expect them -->
-        <statusbarpanel id="statusbar-display" hidden="true"/>
-        <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
-    </statusbar>
-
-    <menupopup id="viewSidebarMenu">
-        <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
-        <menuitem observes="vimperator-viewConsoleSidebar" label="Console" accesskey="C"/>
-        <menuitem observes="vimperator-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
-        <menuitem observes="vimperator-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
-    </menupopup>
-
-    <broadcasterset id="mainBroadcasterSet">
-        <broadcaster id="vimperator-viewAddonsSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
-            sidebartitle="Add-ons"
-            oncommand="toggleSidebar('vimperator-viewAddonsSidebar');"/>
-        <broadcaster id="vimperator-viewConsoleSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://global/content/console.xul"
-            sidebartitle="Console"
-            oncommand="toggleSidebar('vimperator-viewConsoleSidebar');"/>
-        <broadcaster id="vimperator-viewDownloadsSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
-            sidebartitle="Downloads"
-            oncommand="toggleSidebar('vimperator-viewDownloadsSidebar');"/>
-        <broadcaster id="vimperator-viewPreferencesSidebar"
-            autoCheck="false"
-            type="checkbox"
-            group="sidebar"
-            sidebarurl="about:config"
-            sidebartitle="Preferences"
-            oncommand="toggleSidebar('vimperator-viewPreferencesSidebar');"/>
-    </broadcasterset>
 
 </overlay>
 

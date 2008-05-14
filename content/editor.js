@@ -265,7 +265,7 @@ liberator.Editor = function () //{{{
         ["<S-Insert>"], "Insert clipboard/selection",
         function () { liberator.editor.pasteClipboard(); });
 
-    liberator.mappings.add([liberator.modes.INSERT, liberator.modes.TEXTAREA],
+    liberator.mappings.add([liberator.modes.INSERT, liberator.modes.TEXTAREA, liberator.modes.COMPOSE],
         ["<C-i>"], "Edit text field with an external editor",
         function () { liberator.editor.editWithExternalEditor(); });
 
@@ -719,15 +719,27 @@ liberator.Editor = function () //{{{
             return -1;
         },
 
+        // TODO: clean up with 2 functions for textboxes and currentEditor?
         editWithExternalEditor: function ()
         {
-            var textBox = document.commandDispatcher.focusedElement;
+            var textBox = null;
+            if (!(liberator.config.isComposeWindow))
+                textBox = document.commandDispatcher.focusedElement;
+
+            var text = "";
+            if (textBox)
+                text = textBox.value;
+            else if (typeof GetCurrentEditor == "function") // Thunderbird composer
+                text = GetCurrentEditor().outputToString("text/plain", 2);
+            else
+                return false;
+
             var editor = liberator.options["editor"];
             var args = editor.split(" ");
             if (args.length < 1)
             {
                 liberator.echoerr("no editor specified");
-                return;
+                return false;
             }
 
             try
@@ -737,29 +749,35 @@ liberator.Editor = function () //{{{
             catch (e)
             {
                 liberator.echoerr("Could not create temporary file: " + e.message);
-                return;
+                return false;
             }
             try
             {
-                liberator.io.writeFile(tmpfile, textBox.value);
+                liberator.io.writeFile(tmpfile, text);
             }
             catch (e)
             {
                 liberator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
-                return;
+                return false;
             }
 
             var prog = args.shift();
             args.push(tmpfile.path)
 
-            textBox.setAttribute("readonly", "true");
-            var oldBg = textBox.style.backgroundColor;
-            var tmpBg = "yellow";
-            textBox.style.backgroundColor = "#bbbbbb";
+            if (textBox)
+            {
+                textBox.setAttribute("readonly", "true");
+                var oldBg = textBox.style.backgroundColor;
+                var tmpBg = "yellow";
+                textBox.style.backgroundColor = "#bbbbbb";
+            }
+
             var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
             // TODO: save return value in v:shell_error
             liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
-            textBox.removeAttribute("readonly");
+
+            if (textBox)
+                textBox.removeAttribute("readonly");
 
 
     //        if (v:shell_error != 0)
@@ -772,7 +790,22 @@ liberator.Editor = function () //{{{
                 try
                 {
                     var val = liberator.io.readFile(tmpfile);
-                    textBox.value = val;
+                    if (textBox)
+                        textBox.value = val;
+                    else
+                    {
+                        //document.getElementById("content-frame").contentDocument.designMode = "on";
+                        var editor = GetCurrentEditor();
+                        var wholeDocRange = editor.document.createRange();
+                        var rootNode = editor.rootElement.QueryInterface(Components.interfaces.nsIDOMNode);
+                        wholeDocRange.selectNodeContents(rootNode);
+                        editor.selection.addRange(wholeDocRange);
+                        editor.selection.deleteFromDocument();
+                        editor.insertText(val);
+                        //setTimeout(function() {
+                        //    document.getElementById("content-frame").contentDocument.designMode = "off";
+                        //}, 100);
+                    }
                 }
                 catch (e)
                 {
@@ -782,19 +815,23 @@ liberator.Editor = function () //{{{
     //        }
 
             // blink the textbox after returning - TODO: could use setInterval
-            var timeout = 100;
-            textBox.style.backgroundColor = tmpBg;
-            setTimeout(function () {
-                textBox.style.backgroundColor = oldBg;
+            if (textBox)
+            {
+                var timeout = 100;
+                textBox.style.backgroundColor = tmpBg;
                 setTimeout(function () {
-                    textBox.style.backgroundColor = tmpBg;
+                    textBox.style.backgroundColor = oldBg;
                     setTimeout(function () {
-                        textBox.style.backgroundColor = oldBg;
+                        textBox.style.backgroundColor = tmpBg;
+                        setTimeout(function () {
+                            textBox.style.backgroundColor = oldBg;
+                        }, timeout);
                     }, timeout);
                 }, timeout);
-            }, timeout);
+            }
 
             tmpfile.remove(false);
+            return true;
         },
 
         // Abbreviations {{{

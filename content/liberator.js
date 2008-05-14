@@ -501,16 +501,25 @@ const liberator = (function () //{{{
         {
             var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
                      getService(Components.interfaces.nsIWindowWatcher);
-
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
             // TODO: make more generic
-            if (liberator.has("mail") && clearFocusedElement && gDBView)
-                gDBView.selection.select(gDBView.selection.currentIndex);
+            try
+            {
+                if (liberator.has("mail") && clearFocusedElement && !liberator.config.isComposeWindow)
+                {
+                    var i = gDBView.selection.currentIndex;
+                    if (i == -1 && gDBView.rowCount >= 0)
+                        i = 0;
 
-            var elem = liberator.config.mainWidget || content;
-            if (elem != document.commandDispatcher.focusedElement)
+                    gDBView.selection.select(i);
+                }
+            }
+            catch (e) { }
+
+            var elem = liberator.config.mainWidget || window.content;
+            if (elem && (elem != document.commandDispatcher.focusedElement))
                 elem.focus();
         },
 
@@ -797,7 +806,7 @@ const liberator = (function () //{{{
             // optional modules
             if (liberator.has("bookmarks"))  { log("bookmarks");  liberator.bookmarks  = liberator.Bookmarks(); }
             if (liberator.has("history"))    { log("history");    liberator.history    = liberator.History(); }
-            if (liberator.has("mail"))       { log("mail");       liberator.mail       = liberator.Mail(); }
+            if (liberator.has("mail") && liberator.Mail)       { log("mail");       liberator.mail       = liberator.Mail(); }
             if (liberator.has("tabs"))       { log("tabs");       liberator.tabs       = liberator.Tabs(); }
             if (liberator.has("marks"))      { log("marks");      liberator.marks      = liberator.Marks(); }
             if (liberator.has("quickmarks")) { log("quickmarks"); liberator.quickmarks = liberator.QuickMarks(); }
@@ -888,16 +897,17 @@ const liberator = (function () //{{{
             }, 0);
 
             liberator.statusline.update();
-            liberator.log("Vimperator fully initialized", 1);
+            liberator.log(liberator.config.name + " fully initialized", 1);
         },
 
         shutdown: function ()
         {
             // save our preferences
             liberator.commandline.destroy();
-            liberator.quickmarks.destroy();
             liberator.options.destroy();
             liberator.events.destroy();
+            if (liberator.has("quickmarks"))
+                liberator.quickmarks.destroy();
 
             window.dump("All liberator modules destroyed\n");
         },

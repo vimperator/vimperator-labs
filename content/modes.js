@@ -79,6 +79,8 @@ liberator.modes = (function () //{{{
                 return "-- TEXTAREA" + ext;
             case liberator.modes.MESSAGE:
                 return "-- MESSAGE" + ext;
+            case liberator.modes.COMPOSE:
+                return "-- COMPOSE" + ext;
             case liberator.modes.CUSTOM:
                 return "-- " + liberator.plugins.mode + ext;
             default: // NORMAL mode
@@ -162,7 +164,8 @@ liberator.modes = (function () //{{{
         CARET:            1 << 5, // text cursor is visible
         TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
         MESSAGE:          1 << 7, // for now only used in Muttator when the message has focus
-        CUSTOM:           1 << 8,
+        COMPOSE:          1 << 8, 
+        CUSTOM:           1 << 9,
         // extended modes, can include multiple modes, and even main modes
         EX:               1 << 10,
         INPUT_MULTILINE:  1 << 11,
@@ -189,7 +192,7 @@ liberator.modes = (function () //{{{
 
         get all() { return [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
                             this.HINTS, this.COMMAND_LINE, this.CARET,
-                            this.TEXTAREA, this.MESSAGE, this.CUSTOM]; },
+                            this.TEXTAREA, this.MESSAGE, this.COMPOSE, this.CUSTOM]; },
 
         // show the current mode string in the command line
         show: function ()
@@ -245,7 +248,11 @@ liberator.modes = (function () //{{{
         // keeps recording state
         reset: function (silent)
         {
-            this.set(liberator.modes.NORMAL, liberator.modes.NONE, silent);
+            //if (window.wintype == "msgcompose")
+            if (liberator.config.isComposeWindow)
+                this.set(liberator.modes.COMPOSE, liberator.modes.NONE, silent);
+            else    
+                this.set(liberator.modes.NORMAL, liberator.modes.NONE, silent);
         },
 
         remove: function (mode)

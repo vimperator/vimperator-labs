@@ -63,11 +63,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <commandset id="onVimperatorFocus"
             commandupdater="true"
             events="focus"
-            oncommandupdate="liberator.events.onFocusChange(event);"/>
+            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onFocusChange(event);"/>
         <commandset id="onVimperatorSelect"
             commandupdater="true"
             events="select"
-            oncommandupdate="liberator.events.onSelectionChange(event);"/>
+            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
 
         <keyset id="mainKeyset">
             <key id="key_open_vimbar" key=":" oncommand="liberator.commandline.open(':', '', liberator.modes.EX);" modifiers=""/>

@@ -192,10 +192,13 @@ liberator.CommandLine = function () //{{{
         stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
         multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
-        var availableHeight = getBrowser().mPanelContainer != undefined ?
-            getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
-        if (!availableHeight)
-            availableHeight = 250;
+        var availableHeight = 250;
+        try
+        {
+            availableHeight = getBrowser().mPanelContainer != undefined ?
+                getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
+        }
+        catch (e) {}
         var contentHeight = multilineOutputWidget.contentDocument.height;
         var height = contentHeight < availableHeight ? contentHeight : availableHeight;
 

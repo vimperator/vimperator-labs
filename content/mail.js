@@ -193,6 +193,11 @@ liberator.Mail = function ()
         "Inspect (focus) message",
         function () { content.focus(); });
 
+    liberator.mappings.add(modes, ["<Space>"],
+        "Scroll message or select next unread one",
+        function () { return true; },
+        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+
     liberator.mappings.add(modes, ["x"],
         "Select thread",
         function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false) });

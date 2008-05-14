@@ -36,8 +36,13 @@ liberator.config = {
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
 
     get browserModes() { return [liberator.modes.MESSAGE]; },
-	get mainWidget() { return GetThreadTree(); }, // focusContent() focuses this widget
-	mainWindowID: "messengerWindow", // used for :set titlestring
+    get mainWidget() { // focusContent() focuses this widget
+        return this.isComposeWindow ?
+               document.getElementById("content-frame") :
+               GetThreadTree();
+    },
+    get mainWindowID() { return this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow"; },
+    isComposeWindow: false,
 
     dialogs: [
         /*["about",            "About Firefox", 
@@ -88,8 +93,33 @@ liberator.config = {
             ["o"], "Open a message",
             function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
 
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["e"], "Edit message",
+            function () { liberator.editor.editWithExternalEditor(); });
+
         // don't wait too long when selecting new messages
-        GetThreadTree()._selectDelay = 300; // TODO: make configurable
+        // GetThreadTree()._selectDelay = 300; // TODO: make configurable
+        this.isComposeWindow = window.wintype == "msgcompose";
+
+        if (this.isComposeWindow)
+        {
+            /*setTimeout(function() {
+                document.getElementById("content-frame").contentDocument.designMode = "off";
+                document.getElementById("content-frame").focus();
+            }, 500);*/
+           //document.getElementById("content-frame").contentWindow.addEventListener("load", function() {
+           /*window.addEventListener("load", function() {
+               alert("load");
+               if (! liberator.editor.editWithExternalEditor())
+                    liberator.echoerr("Editing with external editor failed. Be sure to :set editor correctly");
+           }, true);
+           document.getElementById("content-frame").contentDocument.addEventListener("load", function() {
+               alert("load1");
+           }, true);*/
+           /*document.getElementById("content-frame").addEventListener("DOMContentLoaded", function() {
+               alert("load2");
+           }, true);*/
+        }
     }
 }
 
