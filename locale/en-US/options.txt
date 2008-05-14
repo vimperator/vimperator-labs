@@ -214,11 +214,21 @@ ____
 
 Change the hint matching algorithm during hint mode. Possible values:
 
-`--------------`------------------------------------------------------------------------------------------------------------------------
-*contains*     The typed characters are splitted by spaces, and these character groups have to be anywhere inside the text of the link.
-*wordboundary* The typed characters are splitted by spaces, and these character groups must each match the start of a word of the link.
-*startswith*   The typed characters have to be in the typed order at the beginning of the text of the link.
-----------------------------------------------------------------------------------------------------------------------------------------
+`--------------------`-------------------------------------------------------------------------------------------------------------------------------
+*contains*           The typed characters are splitted by spaces, and these character groups have to be anywhere inside the text of the link.
+*wordstartswith*     The typed characters are matched with the beginning of the first word (see 'wordseparators') in the link as long as possible. If no more or no character matches in the current word, than the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, than the characters are splitted by spaces. These character groups are than matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.
+*firstletters*       Behaves almost as wordstartswith, but non matching words aren't overleaped.
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+____
+
+|\'wsp'| |\'wordseparators'|
+||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+____
+
+A regex which defines the word separators which are used for the 'hintmatching' types
+'wordstartswith' and 'firstletters' to split the words in the text of a link. +
+NOTE: Because 'wordseparators' is a string, each backspace has to be quoted by another backspace. 
 
 ____
 
@@ -361,7 +371,7 @@ The possible values:
 ____
 
 |\'nextpattern'|
-||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
+||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
 ____
 Patterns to use when guessing the 'next' page in a document sequence.
 Each pattern, in order, is matched against all links in the page with the first match being used.
@@ -423,7 +433,7 @@ ____
 // 'pvh'
 
 |\'previouspattern'|
-||'previouspattern'|| stringlist (default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
+||'previouspattern'|| stringlist (default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
 ____
 Patterns to use when guessing the 'previous' page in a document sequence
 Each pattern, in order, is matched against all links in the page with the first match being used.

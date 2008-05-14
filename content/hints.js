@@ -154,71 +154,6 @@ liberator.Hints = function () //{{{
             newElem.style.backgroundColor = liberator.options["activelinkbgcolor"];
     }
 
-    function containsTokensMatcher(hintString)
-    {
-        var tokens = hintString.split(/ +/);
-
-        function containsTokens(textOfLink)
-        {
-            for (var i = 0; i < tokens.length; i++) 
-            {
-                if (textOfLink.indexOf(tokens[i]) < 0)
-                    return false;
-            }
-
-            return true;
-        }
-
-        return containsTokens;
-    }
-
-    function wordBoundaryMatcher(hintString)
-    {
-        var tokens = hintString.split(/ +/);
-        var regexs = [];
-        for (var i = 0; i < tokens.length; i++) 
-            regexs[i] = new RegExp((tokens[i] == "" ? ".*" : ("\\b" + tokens[i] + ".*")));
-
-        function wordBoundary(textOfLink)
-        {
-            for (var i = 0; i < tokens.length; i++) 
-            {
-                if (! regexs[i].test(textOfLink))
-                    return false;
-            }
-
-            return true;
-        }
-
-        return wordBoundary;
-    }
-
-    function startsWithMatcher(hintString)
-    {
-        var regex = new RegExp((hintString == "" ? ".*" : ("^\\s*" + hintString + ".*")));
-
-        function startsWith(textOfLink) 
-        {
-            return (regex.test(textOfLink));
-        }
-
-        return startsWith;
-    }
-
-    function hintMatcher(hintString)
-    {
-        var hintMatching = liberator.options["hintmatching"];
-        switch (hintMatching)
-        {
-            case "contains":     return containsTokensMatcher(hintString);
-            case "startswith":   return startsWithMatcher(hintString);
-            case "wordboundary": return wordBoundaryMatcher(hintString);
-            default:
-                liberator.echoerr("Invalid hintmatching type: " + hintMatching);
-        }
-        return null;
-    }
-
     function showHints()
     {
         var startDate = Date.now();
@@ -451,6 +386,112 @@ liberator.Hints = function () //{{{
         return true;
     }
 
+    function hintMatcher(hintString) //{{{
+    {
+        function containsMatcher(hintString) //{{{
+        {
+            var tokens = hintString.split(/ +/);
+
+            function contains(textOfLink)
+            {
+                for (var i = 0; i < tokens.length; i++) 
+                {
+                    if (textOfLink.indexOf(tokens[i]) < 0)
+                        return false;
+                }
+
+                return true;
+            }
+
+            return contains;
+        } //}}}
+
+        function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
+        {
+            var hintStrings    = hintString.split(/ +/);
+            var wordSplitRegex = new RegExp(liberator.options["wordseparators"]);
+
+            function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
+            {
+                var charIdx = 0;
+                for (var wIdx = 0; wIdx < words.length; wIdx++)
+                {
+                    var word = words[wIdx];
+                    if (word.length == 0)
+                        continue;
+
+                    var prevCharIdx = charIdx;
+                    for (var j = 0; j < word.length && charIdx < chars.length; j++, charIdx++)
+                    {
+                        if (word[j] != chars[charIdx])
+                            break;
+                    }
+
+                    if (prevCharIdx == charIdx && ! allowWordOverleaping)
+                        return false;
+
+                    if (charIdx == chars.length)
+                        return true;
+                }
+
+                return (charIdx == chars.length);
+            }
+
+            function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
+            {
+                var strIdx = 0;
+                for (var wIdx = 0; wIdx < words.length; wIdx++)
+                {
+                    var word = words[wIdx];
+                    if (word.length == 0)
+                        continue;
+
+                    var str = strings[strIdx];
+                    if (str.length == 0)
+                        strIdx++;
+                    else if (word.indexOf(str) == 0)
+                        strIdx++;
+                    else if (! allowWordOverleaping)
+                        return false;
+
+                    if (strIdx == strings.length)
+                        return true;
+                }
+
+                for (; strIdx < strings.length; strIdx++) {
+                    if (strings[strIdx].length != 0)
+                        return false;
+                }
+
+                return (strIdx == strings.length);
+            }
+
+            function wordStartsWith(textOfLink)
+            {
+                if (hintStrings.length == 1 && hintStrings[0].length == 0)
+                    return true;
+
+                var words = textOfLink.split(wordSplitRegex);
+                if (hintStrings.length == 1)
+                    return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
+                else
+                    return stringsAtBeginningOfWords(hintStrings, words, allowWordOverleaping);
+            }
+
+            return wordStartsWith;
+        } //}}}
+
+        var hintMatching = liberator.options["hintmatching"];
+        switch (hintMatching)
+        {
+            case "contains"      : return containsMatcher(hintString);
+            case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
+            case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
+            default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
+        }
+        return null;
+    } //}}}
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -495,14 +536,18 @@ liberator.Hints = function () //{{{
         "Background color of the current active link during hint mode",
         "string", "#88FF00");
 
-    liberator.options.add(["hintmatching", "lm"],
+    liberator.options.add(["hintmatching", "hm"],
         "How links are matched",
         "string", "contains",
         {
-            validator: function (value) { return /^startswith|contains|wordboundary$/.test(value); }
+            validator: function (value) { return /^contains|wordstartswith|firstletters$/.test(value); }
         });
 
-    ///////////////////////////////////////////////////////////////////////////
+    liberator.options.add(["wordseparators", "wsp"],
+        "How words are splitted for hintmatching",
+        "string", '[\\.,!\\?:;/\\\"\\^\\$%&§\\(\\)\\[\\]\\{\\}<>#\\*\\+\\|=~ _\\-]');
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
         

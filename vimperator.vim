@@ -45,7 +45,7 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload
     \ nopreload previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline
     \ stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
-    \ wildmode wim wildoptions wop
+    \ wildmode wim wildoptions wop wordseparators wsp
     \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
