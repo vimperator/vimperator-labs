@@ -127,8 +127,9 @@ const liberator = (function () //{{{
             function ()
             {
                 liberator.open("chrome://mozapps/content/extensions/extensions.xul",
-                    (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("addons") != -1) ?
-                        liberator.NEW_TAB: liberator.CURRENT_TAB);
+                    (liberator.options.newtab &&
+                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("addons") != -1)) ?
+                            liberator.NEW_TAB: liberator.CURRENT_TAB);
             });
 
         liberator.commands.add(["beep"],
@@ -192,8 +193,9 @@ const liberator = (function () //{{{
                 if (special) // open javascript console
                 {
                     liberator.open("chrome://global/content/console.xul",
-                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("javascript") != -1) ?
-                            liberator.NEW_TAB : liberator.CURRENT_TAB);
+                        (liberator.options.newtab &&
+                            (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("javascript") != -1)) ?
+                                liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else
                 {
@@ -605,7 +607,7 @@ const liberator = (function () //{{{
 
         help: function(topic)
         {
-            var where = (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("help") != -1) ?
+            var where = (liberator.options.newtab && (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("help") != -1)) ?
                         liberator.NEW_TAB : liberator.CURRENT_TAB;
 
             function jumpToTag(file, tag)

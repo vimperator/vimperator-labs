@@ -45,10 +45,10 @@ liberator.config = {
     isComposeWindow: false,
 
     dialogs: [
-        /*["about",            "About Firefox", 
-            function() { openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
+        ["about",            "About Thunderbird",  //XXX: Shredder ?
+            function() { openAboutDialog(); }],
         ["addons",           "Manage Add-ons",
-            function() { BrowserOpenAddonsMgr(); }],*/
+            function() { openAddonsMgr(); }],
         ["checkupdates",     "Check for updates",
             function() { checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
