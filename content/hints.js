@@ -403,22 +403,76 @@ liberator.Hints = function () //{{{
 
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
-                var charIdx = 0;
+                var charIdx         = 0;
+                var numMatchedWords = 0;
                 for (var wIdx = 0; wIdx < words.length; wIdx++)
                 {
                     var word = words[wIdx];
                     if (word.length == 0)
                         continue;
 
-                    var prevCharIdx = charIdx;
-                    for (var j = 0; j < word.length && charIdx < chars.length; j++, charIdx++)
+                    var wcIdx = 0;
+                    // Check if the current word matches same characters as the previous word.
+                    // Each already matched word has matched at least one character. 
+                    if (charIdx > numMatchedWords)
                     {
-                        if (word[j] != chars[charIdx])
-                            break;
+                        var matchingStarted = false;
+                        for (var i = numMatchedWords; i < charIdx; i++)
+                        {
+                            if (chars[i] == word[wcIdx])
+                            {
+                                matchingStarted = true;
+                                wcIdx++;
+                            }
+                            else if (matchingStarted)
+                            {
+                                wcIdx = 0;
+                                break;
+                            }
+                        }
                     }
 
-                    if (prevCharIdx == charIdx && ! allowWordOverleaping)
-                        return false;
+                    // the current word matches same characters as the previous word
+                    if (wcIdx > 0) {
+                        var prevCharIdx = charIdx;
+                        // now check if it matches additional characters
+                        for (; wcIdx < word.length && charIdx < chars.length; wcIdx++, charIdx++)
+                        {
+                            if (word[wcIdx] != chars[charIdx])
+                                break;
+                        }
+
+                        // the word doesn't match additional characters, now check if the
+                        // already matched characters are equal to the next characters for matching,
+                        // if yes, then consume them
+                        if (prevCharIdx == charIdx) 
+                        {
+                            for (var i = 0; i < wcIdx && charIdx < chars.length; i++, charIdx++)
+                            {
+                                if (word[i] != chars[charIdx])
+                                    break;
+                            }
+                        }
+
+                        numMatchedWords++;
+                    }
+                    // the current word doesn't match same characters as the previous word, just
+                    // try to match the next characters
+                    else {
+                        var prevCharIdx = charIdx;
+                        for (var i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
+                        {
+                            if (word[i] != chars[charIdx])
+                                break;
+                        }
+
+                        if (prevCharIdx == charIdx) {
+                            if (! allowWordOverleaping)
+                                return false;
+                        }
+                        else
+                            numMatchedWords++;
+                    }
 
                     if (charIdx == chars.length)
                         return true;

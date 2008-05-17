@@ -21,7 +21,7 @@ section:Setting{nbsp}options[set-option,E764]
 
 ||:se[t] {option}?|| Show value of {option}.
 
-||:se[t] {option}|| 	Toggle option: set, switch it on.
+||:se[t] {option}|| Toggle option: set, switch it on.
 ____
 Number option: show value. +
 String option: show value.
@@ -95,11 +95,20 @@ all Firefox preferences work, because Vimperator overrides some key
 bindings and changes Firefox's GUI.
 ________________________________________________________________________________
 
+
 |:prefs!| |:preferences!|
 ||:pref[erences]!||
 ________________________________________________________________________________
 Opens about:config in the current tab where you can change advanced Firefox
 preferences.
+________________________________________________________________________________
+
+
+|:set-!|
+||:se[t]! {preference}={value}|| +
+________________________________________________________________________________
+Change any Firefox {preference} (those in the about:config window). You can also 
+reset/delete those preferences with [c]:set! {preference}&[c].
 ________________________________________________________________________________
 
 
@@ -228,7 +237,6 @@ ____
 
 A regex which defines the word separators which are used for the 'hintmatching' types
 'wordstartswith' and 'firstletters' to split the words in the text of a link. +
-NOTE: Because 'wordseparators' is a string, each backspace has to be quoted by another backspace. 
 
 ____
 
