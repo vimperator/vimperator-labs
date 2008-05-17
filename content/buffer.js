@@ -119,7 +119,6 @@ liberator.Buffer = function () //{{{
         return win;
     }
 
-
     // both values are given in percent, -1 means no change
     function scrollToPercentiles(horizontal, vertical)
     {
@@ -138,8 +137,6 @@ liberator.Buffer = function () //{{{
 
         win.scrollTo(h, v);
     }
-
-
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -415,7 +412,6 @@ liberator.Buffer = function () //{{{
     liberator.mappings.add(modes, ["g<C-g>"],
         "Print file information",
         function (count) { liberator.buffer.showPageInfo(true); });
-
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -1066,7 +1062,6 @@ liberator.Buffer = function () //{{{
                 if (liberator.bookmarks.isBookmarked(this.URL))
                     info.push("bookmarked");
 
-
                 var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
                 liberator.echo(pageInfoText, liberator.commandline.FORCE_SINGLELINE);
                 return;
@@ -1090,7 +1085,7 @@ liberator.Buffer = function () //{{{
 
             pageGeneral.push(["Mime-Type", content.document.contentType]);
             pageGeneral.push(["Encoding",  content.document.characterSet]);
-            pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ?  "Quirks Mode" : "Full/Almost Standards Mode"]);
+            pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"]);
             if (lastModVerbose)
                 pageGeneral.push(["Last Modified", lastModVerbose]);
 
@@ -1306,8 +1301,6 @@ liberator.Buffer = function () //{{{
     //}}}
 }; //}}}
 
-
-
 liberator.Marks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1433,7 +1426,6 @@ liberator.Marks = function () //{{{
         ["'", "`"], "Jump to the mark in the current buffer",
         function (arg) { liberator.marks.jumpTo(arg); },
         { flags: liberator.Mappings.flags.ARGUMENT });
-
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -1678,6 +1670,5 @@ liberator.Marks = function () //{{{
     };
     //}}}
 }; //}}}
-
 
 // vim: set fdm=marker sw=4 ts=4 et:

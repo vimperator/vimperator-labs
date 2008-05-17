@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // Do NOT create instances of this class yourself, use the helper method
 // liberator.options.add() instead
-liberator.Option = function (names, description, type, defaultValue, getter, setter, validator, completer)
+liberator.Option = function (names, description, type, defaultValue, getter, setter, validator, completer) //{{{
 {
     if (!names || !type)
         return null;
@@ -101,7 +101,6 @@ liberator.Option = function (names, description, type, defaultValue, getter, set
     };
 
 }; //}}}
-
 
 liberator.Options = function () //{{{
 {
@@ -746,6 +745,7 @@ liberator.Options = function () //{{{
                 liberator.echoerr("E488: Trailing characters: " + name + "!");
         }
     };
+    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

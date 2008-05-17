@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.Mail = function ()
+liberator.Mail = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -367,8 +367,6 @@ liberator.Mail = function ()
         function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
-
-
     // FOLDER SWITCHING
     liberator.mappings.add(modes, ["gi"],
         "Go to inbox",
@@ -414,7 +412,6 @@ liberator.Mail = function ()
         },
         { flags: liberator.Mappings.flags.COUNT });
 
-
     // THREADING
     liberator.mappings.add(modes, ["za"],
         "Toggle thread collapsed/expanded",
@@ -436,7 +433,6 @@ liberator.Mail = function ()
         "Collapse all threads",
         function () { goDoCommand("cmd_collapseAllThreads"); });
 
-
     liberator.mappings.add(modes, ["<C-i>"],
         "Go forward",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.forward, true); },
@@ -456,7 +452,6 @@ liberator.Mail = function ()
         "Select last message",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.lastMessage, false); },
         { flags: liberator.Mappings.flags.COUNT });
-
 
     // tagging messages
     liberator.mappings.add(modes, ["tr"],
@@ -479,7 +474,6 @@ liberator.Mail = function ()
 
             MsgMarkThreadAsRead();
         });
-
 
     liberator.mappings.add(modes, ["ts"],
         "Toggle selected messages starred",
@@ -747,7 +741,6 @@ liberator.Mail = function ()
                     if (folder.isServer)
                         continue;
 
-
                     selectMessageCount = count;
                     selectMessageKeys = [];
 
@@ -790,6 +783,6 @@ liberator.Mail = function ()
     };
 
     //}}}
-};
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

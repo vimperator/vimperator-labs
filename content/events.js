@@ -1171,7 +1171,6 @@ liberator.Events = function () //{{{
         //      return true;
         //  } }}}
 
-
             if (key != "<Esc>" && key != "<C-[>")
             {
                 // custom mode...

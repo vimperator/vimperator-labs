@@ -220,7 +220,6 @@ liberator.Tabs = function () //{{{
                 liberator.tabs.select(index);
         });
 
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -311,7 +310,6 @@ liberator.Tabs = function () //{{{
                 liberator.echoerr("E488: Trailing characters");
             }
         });
-
 
     liberator.commands.add(["tabo[nly]"],
         "Close all other tabs",

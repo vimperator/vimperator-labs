@@ -312,7 +312,6 @@ liberator.IO = function () //{{{
                 return null;
         },
 
-
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
         // also expands relative paths

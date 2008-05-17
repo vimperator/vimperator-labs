@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.config = {
+liberator.config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
@@ -111,7 +111,7 @@ liberator.config = {
             liberator.open(matches[1] + newNum + matches[3]);
         }
 
-        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
     
@@ -328,6 +328,7 @@ liberator.config = {
                 completer: function (filter) { return liberator.completion.url(filter); }
             });
     }
-}
+    //}}}
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

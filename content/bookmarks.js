@@ -310,7 +310,6 @@ liberator.Bookmarks = function () //{{{
                 return i;
             }
 
-
             // also update bookmark cache, if we removed at least one bookmark
             if (count.value > 0)
                 load();
@@ -467,7 +466,6 @@ liberator.Bookmarks = function () //{{{
                 {
                     extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + liberator.util.escapeHTML(tags) + "</span>)</span>";
                 }
-
 
                 list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
             }

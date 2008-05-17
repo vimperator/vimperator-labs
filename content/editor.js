@@ -779,7 +779,6 @@ liberator.Editor = function () //{{{
             if (textBox)
                 textBox.removeAttribute("readonly");
 
-
     //        if (v:shell_error != 0)
     //        {
     //            tmpBg = "red";
