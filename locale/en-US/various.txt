@@ -752,7 +752,7 @@ ________________________________________________________________________________
 |\#| 
 ||\#||
 ________________________________________________________________________________
-Search backward for the previours word under the cursor.
+Search backward for the previous word under the cursor.
 ________________________________________________________________________________
 
 
@@ -1214,7 +1214,7 @@ Write current key mappings and changed options to [file]. If no [file] is
 specified then _~/.vimperatorrc_ is written unless this file already exists. The
 special version will overwrite [file] if it exists.
 
-Warnging: this differs from Vim's behavior which defaults to writing the file
+Warning: this differs from Vim's behavior which defaults to writing the file
 in the current directory.
 ________________________________________________________________________________
 
