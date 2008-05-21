@@ -246,11 +246,11 @@ liberator.Editor = function () //{{{
         function () { liberator.editor.executeCommand("cmd_deleteToEndOfLine", 1); });
 
     liberator.mappings.add(modes,
-        ["<C-a>", "<Home>"], "Move cursor to beginning of current line",
+        ["<C-a>"], "Move cursor to beginning of current line",
         function () { liberator.editor.executeCommand("cmd_beginLine", 1); });
 
     liberator.mappings.add(modes,
-        ["<C-e>", "<End>"], "Move cursor to end of current line",
+        ["<C-e>"], "Move cursor to end of current line",
         function () { liberator.editor.executeCommand("cmd_endLine", 1); });
 
     liberator.mappings.add(modes,
