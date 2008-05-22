@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	    VIMperator configuration file
 " Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2007 November 16
+" Latest Revision:  2008 May 23
 
 if exists("b:current_syntax")
   finish
@@ -38,14 +38,14 @@ syn match vimperatorCommand "!" contained
 syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc complete cpt defsearch ds editor extendedhinttags eht
-    \ fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs hinttags ht hinttimeout hto history hi
-    \ hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase ic
-    \ noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks linkmatching lm 
-    \ nolinksearch nolks more nextpattern nomore pageinfo pa popups pps preload
-    \ nopreload previewheight pvh previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline
-    \ stal smartcase scs nosmartcase noscs titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
-    \ wildmode wim wildoptions wop wordseparators wsp
+syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc complete cpt defsearch ds editor
+    \ extendedhinttags eht fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs hinttags ht hinttimeout hto
+    \ history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase
+    \ ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks
+    \ linkmatching lm nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight pvh
+    \ previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase
+    \ noscs suggestengines titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim
+    \ wildoptions wop wordseparators wsp
     \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
@@ -57,14 +57,14 @@ syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<m
 syn match vimperatorKeySym "<[0-9A-Za-z-]\+>"
 
 " Note: match vim.vim highlighting groups
-hi def link vimperatorCommand			Statement
-hi def link vimperatorComment			Comment
+hi def link vimperatorCommand			    Statement
+hi def link vimperatorComment			    Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
-hi def link vimperatorKeySym			Special
-hi def link vimperatorLineComment		Comment
-hi def link vimperatorOption			PreProc
-hi def link vimperatorString			String 
-hi def link vimperatorTodo			Todo
+hi def link vimperatorKeySym			    Special
+hi def link vimperatorLineComment		    Comment
+hi def link vimperatorOption			    PreProc
+hi def link vimperatorString			    String 
+hi def link vimperatorTodo                  Todo
 
 let b:current_syntax = "vimperator"
 
