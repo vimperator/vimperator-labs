@@ -6,6 +6,6 @@ BUGS:
 
 FEATURES:
 9 edit messages with vim
-8 */# support
+7 :set! mailnews.wraplength=140 or similar
 
 </pre>

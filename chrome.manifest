@@ -3,3 +3,5 @@ content	muttator content/
 locale	muttator en-US locale/en-US/
 skin muttator classic/1.0 skin/
 overlay chrome://messenger/content/messenger.xul chrome://muttator/content/muttator.xul
+
+overlay chrome://messenger/content/messengercompose/messengercompose.xul chrome://muttator/content/muttatorcompose.xul
