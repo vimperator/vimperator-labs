@@ -415,6 +415,7 @@ they always open in a new tab. Possible values:
 *1*  Always open in a new tab
 *2*  Open in a new window if it has a specific requested size (default in Firefox)
 *3*  Always open in a new window
+*4*  Open in the same tab unless it has a specific requested size
 -----------------------------------------------------------------------------------------------------
 
 NOTE: This option does not change the popup blocker of Firefox in any way.

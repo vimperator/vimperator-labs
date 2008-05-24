@@ -1,5 +1,9 @@
 <pre>
 2008-05-14:
+    * version 1.1
+    * new popups=4 option
+
+2008-05-14:
     * version 1.0
     * THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
     * IMPORTANT: Major hints rewrite

@@ -13,6 +13,7 @@ BUGS:
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - :sidebar History is broken
 - http://www.maximonline.com/jokes/ - the prev and next buttons on the image map are not hinted
+- ;f seems broken after a page load
 
 FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer

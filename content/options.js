@@ -381,7 +381,7 @@ liberator.Options = function () //{{{
             }
 
             //                               1        2       3       4  5       6
-            var matches = args.match(/^\s*(no|inv)?([a-z]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
+            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
             if (!matches)
             {
                 liberator.echoerr("E518: Unknown option: " + args);

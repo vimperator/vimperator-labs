@@ -107,11 +107,12 @@ liberator.Tabs = function () //{{{
                 var values = [[0, 1], // always in current tab
                               [0, 3], // in a new tab
                               [2, 3], // in a new window if it has specified sizes
-                              [1, 2]];// always in new window
+                              [1, 2], // always in new window
+                              [2, 1]];// current tab unless it has specified sizes
                 liberator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
                 liberator.options.setPref("browser.link.open_newwindow", values[value][1]);
             },
-            validator: function (value) { return (value >= 0 && value <= 3); }
+            validator: function (value) { return (value >= 0 && value <= 4); }
         });
 
     liberator.options.add(["showtabline", "stal"], 
