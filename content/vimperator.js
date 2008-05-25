@@ -220,7 +220,7 @@ liberator.config = { //{{{
 
         liberator.mappings.add([liberator.modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { liberator.commands.redraw(); });
+            function () { liberator.commands.get("redraw").execute(); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
