@@ -469,6 +469,19 @@ liberator.IO = function () //{{{
                         file.initWithPath(path);
                         if (file.exists())
                             break;
+
+                        // automatically try to add common file extensions on windows
+                        if (WINDOWS)
+                        {
+                            var extensions = [".exe", ".cmd", ".bat"];
+                            for (let j = 0; j < extensions.length; j++)
+                            {
+                                path = dirs[i] +  "\\" + program + extensions[j];
+                                file.initWithPath(path);
+                                if (file.exists())
+                                    break;
+                            }
+                        }
                     }
                     catch (e) { }
                 }
