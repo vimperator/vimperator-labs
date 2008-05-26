@@ -362,6 +362,24 @@ liberator.Completion = function () //{{{
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
+        mail: function (filter) 
+        {
+            var completions = [];
+            var folders = liberator.mail.getFolders();
+            for (var folder in folders) 
+            {
+                completions.push([folders[folder].server.prettyName + ": " 
+                                  + folders[folder].name, 
+                                 "Unread: " + folders[folder].getNumUnread(false)]);
+            }
+            if (!filter)
+                return [0, completions];
+            var mapped = completions.map(function (node) {
+                                         return [[node[0]], node[1]];
+                                         });
+            return [0, buildLongestCommonSubstring(mapped, filter)];
+        },
+
         option: function (filter, special, unfiltered)
         {
             substrings = [];

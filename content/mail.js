@@ -145,6 +145,58 @@ liberator.Mail = function () //{{{
         return parent;
     }
 
+    function selectUnreadFolder(backwards, count) 
+    {
+        count = (count > 0 ) ? count : 1;
+        var direction = backwards ? -1 : 1;
+        var tree = GetFolderTree();
+        var c = tree.currentIndex;
+        var i = direction;
+        var folder;
+        while (count > 0 && (c + i) < tree.view.rowCount && (c + i) >= 0) 
+        {
+            var resource = GetFolderResource(tree, (c + i)).QueryInterface(Components.interfaces.nsIMsgFolder);
+            if (!resource.isServer && resource.getNumUnread(false)) 
+            {
+                count -= 1; 
+                folder = i; 
+            }
+            i += direction;
+        }
+        if (!folder || count > 0) 
+            liberator.beep();
+        else 
+            tree.view.selection.timedSelect(c + folder, tree._selectDelay);
+    }
+
+    function composeNewMail(args) {
+        var params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
+                       .createInstance(Components.interfaces.nsIMsgComposeParams);
+        params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
+                       .createInstance(Components.interfaces.nsIMsgCompFields);
+
+        if (args) {
+            if (args.originalMsg)
+                params.originalMsgURI = args.originalMsg;
+            if (args.to)
+                params.composeFields.to = args.to;
+            if (args.cc)
+                params.composeFields.cc = args.cc;
+            if (args.bcc)
+                params.composeFields.bcc = args.bcc;
+            if (args.newsgroups)
+                params.composeFields.newsgroups = args.newsgroups;
+            if (args.subject)
+                params.composeFields.subject = args.subject;
+        }
+        
+        params.type = Components.interfaces.nsIMsgCompType.New
+
+        var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
+        msgComposeService = msgComposeService.QueryInterface(Components.interfaces.nsIMsgComposeService);
+        msgComposeService.OpenComposeWindowWithParams(null, params);
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -198,6 +250,7 @@ liberator.Mail = function () //{{{
         function () { return true; },
         { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
+    // TODO: change to "t" probably
     liberator.mappings.add(modes, ["x"],
         "Select thread",
         function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false) });
@@ -266,7 +319,20 @@ liberator.Mail = function () //{{{
     // SENDING MESSAGES
     liberator.mappings.add(modes, ["m"],
         "Compose a new message",
-        function () { goOpenNewMessage(); });
+        function () { composeNewMail(); });
+
+    liberator.mappings.add(modes, ["M"],
+        "Compose a new message to the sender of selected mail",
+        function () 
+        { 
+          try
+          {
+            var args = new Object();
+            args.to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+            composeNewMail(args); 
+          }
+          catch (e) { liberator.beep(); }
+        });
 
     liberator.mappings.add(modes, ["r"],
         "Reply to sender",
@@ -396,6 +462,14 @@ liberator.Mail = function () //{{{
         },
         { flags: liberator.Mappings.flags.COUNT });
 
+    liberator.mappings.add(modes, ["<C-N>"],
+        "Go to next mailbox with unread messages",
+        function (count)
+        {
+            selectUnreadFolder(false, count) 
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
     liberator.mappings.add(modes, ["<C-p>"],
         "Select previous folder",
         function (count)
@@ -409,6 +483,14 @@ liberator.Mail = function () //{{{
                 return;
             }
             tree.view.selection.timedSelect(c - count, tree._selectDelay );
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["<C-P>"],
+        "Go to previous mailbox with unread messages",
+        function (count)
+        {
+            selectUnreadFolder(true, count) 
         },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -526,15 +608,24 @@ liberator.Mail = function () //{{{
                 liberator.echoerr("Folder \"" + args + "\" does not exist");
             else
                 SelectFolder(folder.URI);
+        },
+        {
+            completer: function (filter) { return liberator.completion.mail(filter); }
         });
 
     liberator.commands.add(["copy[to]"],
         "Copy selected messages",
-        function (args, special) { moveOrCopy(true, args); });
+        function (args, special) { moveOrCopy(true, args); },
+        {
+            completer: function (filter) { return liberator.completion.mail(filter); }
+        });
 
     liberator.commands.add(["move[to]"],
         "Move selected messages",
-        function (args, special) { moveOrCopy(false, args); });
+        function (args, special) { moveOrCopy(false, args); },
+        {
+            completer: function (filter) { return liberator.completion.mail(filter); }
+        });
 
     liberator.commands.add(["empty[trash]"],
         "Empty trash of the current account",
@@ -565,8 +656,8 @@ liberator.Mail = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
-    return {
+      
+        return {
 
         get currentAccount() { return this.currentFolder.rootFolder; },
 
@@ -594,7 +685,11 @@ liberator.Mail = function () //{{{
                 if ((resource.isServer && !includeServers) || (!resource.isServer && !includeMsgFolders))
                     continue;
 
+                var folderString = resource.server.prettyName + ": " + resource.name;
+
                 if (resource.prettiestName.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+                    folders.push(resource);
+                else if (folderString.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
                     folders.push(resource);
             }
             return folders;
