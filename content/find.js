@@ -77,9 +77,9 @@ liberator.Search = function () //{{{
 
         // links only search - \l wins if both modifiers specified
         if (/\\l/.test(pattern))
-            linksOnly = false;
-        else if (/\L/.test(pattern))
             linksOnly = true;
+        else if (/\L/.test(pattern))
+            linksOnly = false;
         else if (liberator.options["linksearch"])
             linksOnly = true;
         else
@@ -142,7 +142,7 @@ liberator.Search = function () //{{{
         "Limit the search to hyperlink text",
         "boolean", false);
 
-    liberator.options.add(["smartcase", "scs"], 
+    liberator.options.add(["smartcase", "scs"],
         "Override the 'ignorecase' option if the pattern contains uppercase characters",
         "boolean", true);
 
@@ -152,7 +152,7 @@ liberator.Search = function () //{{{
 
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
     modes = modes.concat([liberator.modes.CARET]);
-        
+
     liberator.mappings.add(modes,
         ["/"], "Search forward for a pattern",
         function () { liberator.search.openSearchDialog(liberator.modes.SEARCH_FORWARD); });
@@ -188,7 +188,7 @@ liberator.Search = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
         function (args) { liberator.search.clear(); });
