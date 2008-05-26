@@ -461,6 +461,7 @@ liberator.IO = function () //{{{
             catch (e)
             {
                 var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+lookup:
                 for (var i = 0; i < dirs.length; i++)
                 {
                     var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
@@ -470,16 +471,16 @@ liberator.IO = function () //{{{
                         if (file.exists())
                             break;
 
-                        // automatically try to add common file extensions on windows
+                        // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
-                            var extensions = [".exe", ".cmd", ".bat"];
+                            var extensions = environmentService.get("PATHEXT").split(";");
                             for (let j = 0; j < extensions.length; j++)
                             {
                                 path = dirs[i] +  "\\" + program + extensions[j];
                                 file.initWithPath(path);
                                 if (file.exists())
-                                    break;
+                                    break lookup;
                             }
                         }
                     }
