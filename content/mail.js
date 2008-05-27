@@ -38,15 +38,15 @@ liberator.Mail = function () //{{{
     var selectMessageReverse = false;
 
     var folderListener = {
-        OnItemAdded: function(parentItem, item) { },
-        OnItemRemoved: function(parentItem, item) { },
-        OnItemPropertyChanged: function(item, property, oldValue, newValue) { },
-        OnItemIntPropertyChanged: function(item, property, oldValue, newValue) { },
-        OnItemBoolPropertyChanged: function(item, property, oldValue, newValue) { },
-        OnItemUnicharPropertyChanged: function(item, property, oldValue, newValue) { },
-        OnItemPropertyFlagChanged: function(item, property, oldFlag, newFlag) { },
+        OnItemAdded: function (parentItem, item) { },
+        OnItemRemoved: function (parentItem, item) { },
+        OnItemPropertyChanged: function (item, property, oldValue, newValue) { },
+        OnItemIntPropertyChanged: function (item, property, oldValue, newValue) { },
+        OnItemBoolPropertyChanged: function (item, property, oldValue, newValue) { },
+        OnItemUnicharPropertyChanged: function (item, property, oldValue, newValue) { },
+        OnItemPropertyFlagChanged: function (item, property, oldFlag, newFlag) { },
 
-        OnItemEvent: function(folder, event)
+        OnItemEvent: function (folder, event)
         {
             var eventType = event.toString();
             if (eventType == "FolderLoaded")
@@ -119,12 +119,12 @@ liberator.Mail = function () //{{{
         if (copy)
         {
             MsgCopyMessage(folders[0].URI);
-            setTimeout(function() { liberator.echo(count +  " message(s) copied to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count +  " message(s) copied to " + folders[0].prettyName); }, 100);
         }
         else
         {
             MsgMoveMessage(folders[0].URI);
-            setTimeout(function() { liberator.echo(count +  " message(s) moved to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count +  " message(s) moved to " + folders[0].prettyName); }, 100);
         }
         return true;
     }
@@ -296,7 +296,7 @@ liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                liberator.mail.selectMessage(function(msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, false, count);
+                liberator.mail.selectMessage(function (msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, false, count);
             }
             catch (e) { liberator.beep(); }
         },
@@ -309,7 +309,7 @@ liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                liberator.mail.selectMessage(function(msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, true, count);
+                liberator.mail.selectMessage(function (msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, true, count);
             }
             catch (e) { liberator.beep(); }
         },
@@ -415,22 +415,22 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add(modes, ["]s"],
         "Select next starred message",
-        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return msg.isFlagged; }, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[s"],
         "Select previous starred message",
-        function (count) { liberator.mail.selectMessage(function(msg) { return msg.isFlagged; }, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return msg.isFlagged; }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["]a"],
         "Select next message with an attachment",
-        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[a"],
         "Select previous message with an attachment",
-        function (count) { liberator.mail.selectMessage(function(msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     // FOLDER SWITCHING
@@ -587,7 +587,7 @@ liberator.Mail = function () //{{{
         "Mark all messages as read",
         function ()
         {
-            liberator.mail.getFolders("", false).forEach(function(folder) {
+            liberator.mail.getFolders("", false).forEach(function (folder) {
                 folder.markAllMessagesRead();
             });
         });
@@ -667,7 +667,7 @@ liberator.Mail = function () //{{{
                    QueryInterface(Components.interfaces.nsIMsgFolder);
         },
 
-        getFolders: function(filter, includeServers, includeMsgFolders)
+        getFolders: function (filter, includeServers, includeMsgFolders)
         {
             var folders = [];
             if (!filter)
@@ -695,15 +695,15 @@ liberator.Mail = function () //{{{
             return folders;
         },
 
-        getNewMessages: function(currentAccountOnly)
+        getNewMessages: function (currentAccountOnly)
         {
             var accounts = currentAccountOnly ? [this.currentAccount]
                                               : this.getFolders("", true, false);
 
-            accounts.forEach( function(account) { account.getNewMessages(msgWindow, null); });
+            accounts.forEach(function (account) { account.getNewMessages(msgWindow, null); });
         },
 
-        getStatistics: function(currentAccountOnly)
+        getStatistics: function (currentAccountOnly)
         {
             var accounts = currentAccountOnly ? [this.currentAccount]
                                               : this.getFolders("", true, false);
@@ -720,7 +720,7 @@ liberator.Mail = function () //{{{
             return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount }
         },
 
-        collapseThread: function()
+        collapseThread: function ()
         {
             var tree = GetThreadTree();
             if (tree)
@@ -736,7 +736,7 @@ liberator.Mail = function () //{{{
             return false;
         },
 
-        expandThread: function()
+        expandThread: function ()
         {
             var tree = GetThreadTree();
             if (tree)
@@ -755,7 +755,7 @@ liberator.Mail = function () //{{{
          * @param openThreads: should we open closed threads?
          * @param reverse: change direction of searching
          */
-        selectMessage: function(validatorFunc, canWrap, openThreads, reverse, count)
+        selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
         {
             function closedThread(index)
             {

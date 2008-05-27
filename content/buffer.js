@@ -200,7 +200,7 @@ liberator.Buffer = function () //{{{
 
     liberator.mappings.add(modes, ["<C-c>"],
         "Stop loading",
-        function() { BrowserStop(); });
+        function () { BrowserStop(); });
 
     // scrolling
     liberator.mappings.add(modes, ["j", "<Down>", "<C-e>"],

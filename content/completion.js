@@ -178,7 +178,7 @@ liberator.Completion = function () //{{{
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
-        searchEngineSuggest: function(filter, engineAliases)
+        searchEngineSuggest: function (filter, engineAliases)
         {
             if (!filter)
                 return [0,null];
@@ -189,7 +189,7 @@ liberator.Completion = function () //{{{
         	               .getService(Components.interfaces.nsIBrowserSearchService);
 
         	var completions = [];
-        	engineList.forEach (function(name)
+        	engineList.forEach (function (name)
         	{
         		var query = filter;
         		var queryURI;
@@ -211,7 +211,7 @@ liberator.Completion = function () //{{{
                 if (!results)
                     return;
 
-            	results.forEach(function(item)
+            	results.forEach(function (item)
             	{
             	    completions.push([(matches ? matches[1] : "") + item, name + " suggestion"]);
             	});
@@ -407,7 +407,7 @@ liberator.Completion = function () //{{{
             {
                 var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefBranch);
-                var prefArray = prefs.getChildList("", {value: 0});
+                var prefArray = prefs.getChildList("", { value: 0 });
                 prefArray.sort();
 
                 if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)

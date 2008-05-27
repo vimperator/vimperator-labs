@@ -408,7 +408,7 @@ liberator.Editor = function () //{{{
             if (pos >= 0)
                 liberator.editor.moveToPosition(pos, true, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["F"], "Move to a charater on the current line before the cursor",
@@ -418,7 +418,7 @@ liberator.Editor = function () //{{{
             if (pos >= 0)
                 liberator.editor.moveToPosition(pos, false, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["t"], "Move before a character on the current line",
@@ -428,7 +428,7 @@ liberator.Editor = function () //{{{
             if (pos >= 0)
                 liberator.editor.moveToPosition(pos - 1, true, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["T"], "Move before a character on the current line, backwards",
@@ -438,7 +438,7 @@ liberator.Editor = function () //{{{
             if (pos >= 0)
                 liberator.editor.moveToPosition(pos + 1, false, liberator.mode == liberator.modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT});
+        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -801,7 +801,7 @@ liberator.Editor = function () //{{{
                         editor.selection.addRange(wholeDocRange);
                         editor.selection.deleteFromDocument();
                         editor.insertText(val);
-                        //setTimeout(function() {
+                        //setTimeout(function () {
                         //    document.getElementById("content-frame").contentDocument.designMode = "off";
                         //}, 100);
                     }

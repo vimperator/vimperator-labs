@@ -445,8 +445,8 @@ liberator.Commands = function () //{{{
         //        Idea: If v.commands.add() specifies args or opts in extraInfo, don't call the function
         //        with args as a string, but already pass an object like:
         //        args = { -option: value, -anotheroption: true, arguments: [] }
-        getOption: function(opts, option, def) { return getOption(opts, option, def); },
-        parseArgs: function(str, options) { return parseArgs(str, options); },
+        getOption: function (opts, option, def) { return getOption(opts, option, def); },
+        parseArgs: function (str, options) { return parseArgs(str, options); },
 
         OPTION_ANY: 0, // can be given no argument or an argument of any type,
                        // caller is responsible for parsing the return value

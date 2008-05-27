@@ -38,7 +38,7 @@ liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
 
     this.modes = modes;
     // only store keysyms with uppercase modifier strings
-    this.names = cmds.map(function (cmd) { return cmd.replace(/[casm]-/g, function (name) { return name.toUpperCase(); });});
+    this.names = cmds.map(function (cmd) { return cmd.replace(/[casm]-/g, function (name) { return name.toUpperCase(); }); });
     this.action = action;
 
     this.flags = extraInfo.flags || 0;

@@ -46,48 +46,48 @@ liberator.config = {
 
     dialogs: [
         ["about",            "About Thunderbird",  //XXX: Shredder ?
-            function() { openAboutDialog(); }],
+            function () { openAboutDialog(); }],
         ["addons",           "Manage Add-ons",
-            function() { openAddonsMgr(); }],
+            function () { openAddonsMgr(); }],
         ["checkupdates",     "Check for updates",
-            function() { checkForUpdates(); }],
+            function () { checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
-         function() { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
+         function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
-            function() { toJavaScriptConsole(); }],
+            function () { toJavaScriptConsole(); }],
         /*["customizetoolbar", "Customize the Toolbar",
-            function() { BrowserCustomizeToolbar(); }],*/
+            function () { BrowserCustomizeToolbar(); }],*/
         ["dominspector",     "DOM Inspector",
-            function() { inspectDOMDocument(content.document); }],
+            function () { inspectDOMDocument(content.document); }],
         ["downloads",        "Manage Downloads",
-            function() { toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); }],
+            function () { toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); }],
         /*["import",           "Import Preferences, Bookmarks, History, etc. from other browsers",
-            function() { BrowserImport(); }],
+            function () { BrowserImport(); }],
         ["openfile",         "Open the file selector dialog",
-            function() { BrowserOpenFileWindow(); }],
+            function () { BrowserOpenFileWindow(); }],
         ["pageinfo",         "Show information about the current page",
-            function() { BrowserPageInfo(); }],
+            function () { BrowserPageInfo(); }],
         ["pagesource",       "View page source",
-            function() { BrowserViewSourceOfDocument(content.document); }],
+            function () { BrowserViewSourceOfDocument(content.document); }],
         ["preferences",      "Show Firefox preferences dialog",
-            function() { openPreferences(); }],
+            function () { openPreferences(); }],
         ["printpreview",     "Preview the page before printing",
-            function() { PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); }],*/
+            function () { PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); }],*/
         ["printsetup",       "Setup the page size and orientation before printing",
-            function() { PrintUtils.showPageSetup(); }],
+            function () { PrintUtils.showPageSetup(); }],
         ["print",            "Show print dialog",
-            function() { PrintUtils.print(); }],
+            function () { PrintUtils.print(); }],
         ["saveframe",        "Save frame to disk",
-            function() { saveFrameDocument(); }],
+            function () { saveFrameDocument(); }],
         ["savepage",         "Save page to disk",
-            function() { saveDocument(window.content.document); }],
+            function () { saveDocument(window.content.document); }],
         /*["searchengines",    "Manage installed search engines",
-            function() { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
+            function () { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function() { liberator.buffer.viewSelectionSource(); }]*/
+            function () { liberator.buffer.viewSelectionSource(); }]*/
     ],
 
-    init: function()
+    init: function ()
     {
         liberator.mappings.add([liberator.modes.NORMAL],
             ["o"], "Open a message",
@@ -112,20 +112,20 @@ liberator.config = {
 
         if (this.isComposeWindow)
         {
-            /*setTimeout(function() {
+            /*setTimeout(function () {
                 document.getElementById("content-frame").contentDocument.designMode = "off";
                 document.getElementById("content-frame").focus();
             }, 500);*/
-           //document.getElementById("content-frame").contentWindow.addEventListener("load", function() {
-           /*window.addEventListener("load", function() {
+           //document.getElementById("content-frame").contentWindow.addEventListener("load", function () {
+           /*window.addEventListener("load", function () {
                alert("load");
                if (! liberator.editor.editWithExternalEditor())
                     liberator.echoerr("Editing with external editor failed. Be sure to :set editor correctly");
            }, true);
-           document.getElementById("content-frame").contentDocument.addEventListener("load", function() {
+           document.getElementById("content-frame").contentDocument.addEventListener("load", function () {
                alert("load1");
            }, true);*/
-           /*document.getElementById("content-frame").addEventListener("DOMContentLoaded", function() {
+           /*document.getElementById("content-frame").addEventListener("DOMContentLoaded", function () {
                alert("load2");
            }, true);*/
         }

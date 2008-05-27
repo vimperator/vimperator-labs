@@ -684,7 +684,7 @@ liberator.Options = function () //{{{
             if (!filter)
                 filter = "";
 
-            var prefArray = prefService.getChildList("", {value: 0});
+            var prefArray = prefService.getChildList("", { value: 0 });
             prefArray.sort();
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + liberator.config.hostApplication +

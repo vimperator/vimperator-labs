@@ -92,7 +92,7 @@ liberator.Tabs = function () //{{{
         "Define which commands should output in a new tab by default",
         "stringlist", "",
         {
-            validator: function(value)
+            validator: function (value)
             {
                 return value == "all" || value.split(",").every(function (item) { return /^(addons|downloads|help|javascript|prefs|)$/.test(item); });
             }
@@ -639,7 +639,7 @@ liberator.Tabs = function () //{{{
 
         // "buffer" is a string which matches the URL or title of a buffer, if it
         // is null, the last used string is used again
-        switchTo: function(buffer, allowNonUnique, count, reverse)
+        switchTo: function (buffer, allowNonUnique, count, reverse)
         {
             if (buffer == "")
             {

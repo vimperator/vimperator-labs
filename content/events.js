@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.AutoCommands = function() //{{{
+liberator.AutoCommands = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -503,7 +503,7 @@ liberator.Events = function () //{{{
 
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since liberator.io. is loaded after liberator.events.
-    setTimeout (function() {
+    setTimeout (function () {
         try
         {
             var files = liberator.io.readDirectory(liberator.io.getSpecialDirectory("macros"));
@@ -959,7 +959,7 @@ liberator.Events = function () //{{{
                     {
                         dump("Compose editor got focus\n");
                         liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
-                        //setTimeout(function(){liberator.editor.editWithExternalEditor();}, 100);
+                        //setTimeout(function (){ liberator.editor.editWithExternalEditor(); }, 100);
                         win.blur();
                         //liberator.editor.editWithExternalEditor();
                     }

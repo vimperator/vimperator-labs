@@ -45,7 +45,7 @@ const liberator = (function () //{{{
                     var guioptions = liberator.config.guioptions || {};
                     for (let option in guioptions)
                     {
-                        guioptions[option].forEach( function(elem)
+                        guioptions[option].forEach(function (elem)
                         {
                             try
                             {
@@ -385,7 +385,7 @@ const liberator = (function () //{{{
         var guioptions = liberator.config.guioptions || {};
         for (let option in guioptions)
         {
-            guioptions[option].forEach( function(elem)
+            guioptions[option].forEach(function (elem)
             {
                 try
                 {
@@ -612,10 +612,10 @@ const liberator = (function () //{{{
         has: function (feature)
         {
             var features = liberator.config.features || [];
-            return features.some (function(feat) { return feat == feature; });
+            return features.some (function (feat) { return feat == feature; });
         },
 
-        help: function(topic)
+        help: function (topic)
         {
             var where = (liberator.options.newtab && (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("help") != -1)) ?
                         liberator.NEW_TAB : liberator.CURRENT_TAB;
@@ -623,7 +623,7 @@ const liberator = (function () //{{{
             function jumpToTag(file, tag)
             {
                 liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file, where);
-                setTimeout(function() {
+                setTimeout(function () {
                     var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context

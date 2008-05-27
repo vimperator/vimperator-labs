@@ -247,7 +247,7 @@ liberator.util = { //{{{
     },
 
     // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
-    readFromClipboard: function()
+    readFromClipboard: function ()
     {
         var url;
         try
