@@ -169,14 +169,14 @@ liberator.Buffer = function () //{{{
         }
     );
 
-    liberator.options.add(["showstatuslinks", "ssli"], 
+    liberator.options.add(["showstatuslinks", "ssli"],
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
             validator: function (value) { return (value >= 0 && value <= 2); }
         });
 
-    liberator.options.add(["usermode", "um"], 
+    liberator.options.add(["usermode", "um"],
         "Show current website with a minimal style sheet to make it easily accessible",
         "boolean", false,
         {
@@ -189,7 +189,7 @@ liberator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
-        
+
     liberator.mappings.add(modes, ["i", "<Insert>"],
         "Start caret mode",
         function ()
@@ -416,7 +416,7 @@ liberator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.commands.add(["ha[rdcopy]"],
         "Print current document",
         function () { getBrowser().contentWindow.print(); });
@@ -433,7 +433,7 @@ liberator.Buffer = function () //{{{
         "Save current document to disk",
         function (args, special)
         {
-            var file = liberator.io.getFile(args || ""); 
+            var file = liberator.io.getFile(args || "");
             // we always want to save that link relative to the current working directory
             liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
             //if (args)
@@ -451,7 +451,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { liberator.buffer.viewSource(args, special) });
+        function (args, special) { liberator.buffer.viewSource(args, special); });
 
     liberator.commands.add(["zo[om]"],
         "Set zoom value of current web page",
@@ -510,7 +510,7 @@ liberator.Buffer = function () //{{{
         {
             window.content.document.pageIsFullyLoaded = value;
         },
-        
+
         // used to keep track of the right field for "gi"
         get lastInputField()
         {
@@ -589,7 +589,7 @@ liberator.Buffer = function () //{{{
         // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
         getElement: function (args, index)
         {
-            return liberator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0)
+            return liberator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0);
         },
 
         // artificially "clicks" a link in order to open it
@@ -1231,7 +1231,7 @@ liberator.Buffer = function () //{{{
             if (window.content.frames.length != 0)
             {
                 retVal = followFrameRelationship(relationship, window.content);
-                if (!retVal) 
+                if (!retVal)
                 {
                     // only loop through frames if the main content didnt match
                     for (var i = 0; i < window.content.frames.length; i++)
@@ -1251,7 +1251,7 @@ liberator.Buffer = function () //{{{
                 liberator.beep();
         },
 
-        viewSelectionSource: function () 
+        viewSelectionSource: function ()
         {
             // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
             var focusedWindow = document.commandDispatcher.focusedWindow;
@@ -1405,7 +1405,7 @@ liberator.Marks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
     liberator.mappings.add(modes,

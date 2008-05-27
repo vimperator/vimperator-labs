@@ -338,8 +338,8 @@ liberator.Hints = function () //{{{
             case "V": liberator.buffer.viewSource(loc, true); break;
             case "w": liberator.buffer.followLink(elem, liberator.NEW_WINDOW);  break;
             case "W": liberator.commandline.open(":", "winopen " + loc, liberator.modes.EX); break;
-            case "y": setTimeout(function () { liberator.util.copyToClipboard(loc, true) }, timeout + 50); break;
-            case "Y": setTimeout(function () { liberator.util.copyToClipboard(elem.textContent || "", true) }, timeout + 50); break;
+            case "y": setTimeout(function () { liberator.util.copyToClipboard(loc, true); }, timeout + 50); break;
+            case "Y": setTimeout(function () { liberator.util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
             default:
                 liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
@@ -384,7 +384,7 @@ liberator.Hints = function () //{{{
 
             function contains(textOfLink)
             {
-                for (var i = 0; i < tokens.length; i++) 
+                for (var i = 0; i < tokens.length; i++)
                 {
                     if (textOfLink.indexOf(tokens[i]) < 0)
                         return false;
@@ -413,7 +413,7 @@ liberator.Hints = function () //{{{
 
                     var wcIdx = 0;
                     // Check if the current word matches same characters as the previous word.
-                    // Each already matched word has matched at least one character. 
+                    // Each already matched word has matched at least one character.
                     if (charIdx > numMatchedWords)
                     {
                         var matchingStarted = false;
@@ -445,7 +445,7 @@ liberator.Hints = function () //{{{
                         // the word doesn't match additional characters, now check if the
                         // already matched characters are equal to the next characters for matching,
                         // if yes, then consume them
-                        if (prevCharIdx == charIdx) 
+                        if (prevCharIdx == charIdx)
                         {
                             for (var i = 0; i < wcIdx && charIdx < chars.length; i++, charIdx++)
                             {
@@ -594,7 +594,7 @@ liberator.Hints = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-        
+
     liberator.mappings.add(modes, ["f"],
         "Start QuickHint mode",
         function () { liberator.hints.show(liberator.modes.QUICK_HINT); });
