@@ -490,7 +490,7 @@ const liberator = (function () //{{{
 
             if (command === null)
             {
-                liberator.echoerr("E492: Not an editor command: " + str);
+                liberator.echoerr("E492: Not a browser command: " + str);
                 liberator.focusContent();
                 return;
             }
