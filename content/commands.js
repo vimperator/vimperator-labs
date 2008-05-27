@@ -423,7 +423,7 @@ liberator.Commands = function () //{{{
             {
                 if (name)
                 {
-                    if (exCommands[i].name.match("^"+name))
+                    if (exCommands[i].name.match("^" + name))
                         matches.push(exCommands[i]);
                 }
                 else
@@ -433,6 +433,18 @@ liberator.Commands = function () //{{{
             }
         }
         return matches;
+    }
+
+    function removeUserCommand(name)
+    {
+        for (var i = 0; i < exCommands.length; i++)
+        {
+            if (exCommands[i].isUserCommand && exCommands[i].name == name)
+            {
+                exCommands.splice(i, 1);
+                break;
+            }
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -501,9 +513,14 @@ liberator.Commands = function () //{{{
                 if (exCommands[i].name == command.name)
                 {
                     if (!replace)
+                    {
                         return false;
+                    }
                     else
+                    {
+                        removeUserCommand(command.name);
                         break;
+                    }
                 }
             }
 
@@ -589,8 +606,8 @@ liberator.Commands = function () //{{{
             {
                 if (!liberator.commands.addUserCommand([cmd],
                         "User defined command",
-                        function (args, special, count, modifiers) { eval(rep) }),
-                        special);
+                        function (args, special, count, modifiers) { eval(rep) },
+                        null, special))
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
                 }
