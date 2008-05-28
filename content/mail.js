@@ -175,7 +175,8 @@ liberator.Mail = function () //{{{
         params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
                        .createInstance(Components.interfaces.nsIMsgCompFields);
 
-        if (args) {
+        if (args) 
+        {
             if (args.originalMsg)
                 params.originalMsgURI = args.originalMsg;
             if (args.to)
@@ -188,7 +189,30 @@ liberator.Mail = function () //{{{
                 params.composeFields.newsgroups = args.newsgroups;
             if (args.subject)
                 params.composeFields.subject = args.subject;
+            if (args.body)
+                params.composeFields.body = args.body;
+            while (args.attachments.length > 0) 
+            {
+                var url = args.attachments.pop();
+
+                // Check if the file really exists
+                var file = Components.classes["@mozilla.org/file/local;1"]
+                    .createInstance(Components.interfaces.nsILocalFile);
+                file.initWithPath(url);
+
+                if (!file.exists()) 
+                {
+                    liberator.echoerr("Exxx: Could attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
+                    continue;
+                }
+                attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
+                    .createInstance(Components.interfaces.nsIMsgAttachment);
+                attachment.url = "file://" + url;
+                params.composeFields.addAttachment(attachment);
+            } 
+
         }
+
         
         params.type = Components.interfaces.nsIMsgCompType.New
 
@@ -319,7 +343,7 @@ liberator.Mail = function () //{{{
     // SENDING MESSAGES
     liberator.mappings.add(modes, ["m"],
         "Compose a new message",
-        function () { composeNewMail(); });
+        function () { liberator.commandline.open(":", "message ", liberator.modes.EX); });
 
     liberator.mappings.add(modes, ["M"],
         "Compose a new message to the sender of selected mail",
@@ -327,9 +351,8 @@ liberator.Mail = function () //{{{
         { 
           try
           {
-            var args = new Object();
-            args.to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
-            composeNewMail(args); 
+            var to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+            liberator.commandline.open(":", "message \"" + to + "\"", liberator.modes.EX);
           }
           catch (e) { liberator.beep(); }
         });
@@ -611,6 +634,38 @@ liberator.Mail = function () //{{{
         },
         {
             completer: function (filter) { return liberator.completion.mail(filter); }
+        });
+
+    liberator.commands.add(["m[essage]"],
+        "Write a new message",
+        function (args, special, count)
+        {
+            var res = liberator.commands.parseArgs(args, this.args);
+            if (!res)
+                return;
+
+            var mailargs = new Object();
+
+            mailargs.subject = liberator.commands.getOption(res.opts, "-subject", undefined);
+            mailargs.bcc = liberator.commands.getOption(res.opts, "-bcc", undefined);
+            mailargs.cc = liberator.commands.getOption(res.opts, "-cc", undefined);
+            mailargs.body = liberator.commands.getOption(res.opts, "-text", undefined);
+            mailargs.attachments = liberator.commands.getOption(res.opts, "-attachment", []);
+
+            if (res.args.length > 0)
+            {
+                mailargs.to = res.args.join(", ");
+             
+            }
+
+            composeNewMail(mailargs);
+        },
+        {
+            args: [[["-subject", "-s"],    liberator.commands.OPTION_STRING],
+                   [["-attachment", "-a"], liberator.commands.OPTION_LIST],
+                   [["-bcc", "-b"],        liberator.commands.OPTION_STRING],
+                   [["-cc", "-c"],         liberator.commands.OPTION_STRING],
+                   [["-text", "-t"],       liberator.commands.OPTION_STRING]]
         });
 
     liberator.commands.add(["copy[to]"],
