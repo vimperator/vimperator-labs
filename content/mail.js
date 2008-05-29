@@ -169,7 +169,15 @@ liberator.Mail = function () //{{{
             tree.view.selection.timedSelect(c + folder, tree._selectDelay);
     }
 
-    function composeNewMail(args) {
+    function escapeRecipient(recipient)
+    {
+        // strip all ":
+        recipient = recipient.replace(/"/g, "");
+        return "\"" + recipient + "\"";
+    }
+
+    function composeNewMail(args)
+    {
         var params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
                        .createInstance(Components.interfaces.nsIMsgComposeParams);
         params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
@@ -343,7 +351,7 @@ liberator.Mail = function () //{{{
     // SENDING MESSAGES
     liberator.mappings.add(modes, ["m"],
         "Compose a new message",
-        function () { liberator.commandline.open(":", "message ", liberator.modes.EX); });
+        function () { liberator.commandline.open(":", "message -subject=", liberator.modes.EX); });
 
     liberator.mappings.add(modes, ["M"],
         "Compose a new message to the sender of selected mail",
@@ -351,8 +359,8 @@ liberator.Mail = function () //{{{
         { 
           try
           {
-            var to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
-            liberator.commandline.open(":", "message \"" + to + "\"", liberator.modes.EX);
+            var to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
+            liberator.commandline.open(":", "message " + to + " -subject=", liberator.modes.EX);
           }
           catch (e) { liberator.beep(); }
         });
