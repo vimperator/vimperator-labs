@@ -27,7 +27,7 @@ section:Online{nbsp}Help[online-help]
 ||:h[elp] {subject}|| +
 ||<F1>||
 ________________________________________________________________________________
-Open help window. 
+Open help window.
 The default section is shown unless {subject} is specified.
 If you need help for a specific topic, try [c]:help overview[c].
 ____________________________________________________________________________
@@ -97,7 +97,7 @@ cursor and can move around. If you want to select text in this mode, press
 ________________________________________________________________________________
 
 
-|<C-c>| 
+|<C-c>|
 ||<C-c>||
 ________________________________________________________________________________
 Stop loading the current web page.
@@ -198,7 +198,7 @@ external editor must be able to download and open files from a remote URL.
 ________________________________________________________________________________
 
 
-|gh| 
+|gh|
 ||gh||
 ________________________________________________________________________________
 Go home. Opens the homepage in the current tab.
@@ -241,14 +241,14 @@ Works like [m]P[m], but inverts the 'activate' option.
 ________________________________________________________________________________
 
 
-|g^| |g0| 
+|g^| |g0|
 ||g0||
 ________________________________________________________________________________
 Go to the first tab. TODO: Unify with :tabfirst.
 ________________________________________________________________________________
 
 
-|g$| 
+|g$|
 ||g$||
 ________________________________________________________________________________
 Go to the last tab. TODO: Unify with :tablast.
@@ -334,7 +334,7 @@ Whether the new buffer is activated, depends on the 'activate' option.
 ________________________________________________________________________________
 
 
-|r| 
+|r|
 ||r||
 ________________________________________________________________________________
 Force reloading of the current page.
@@ -479,7 +479,7 @@ Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] 
 ________________________________________________________________________________
 
 
-|$| 
+|$|
 ||$||
 ________________________________________________________________________________
 Scroll to the absolute right of the document
@@ -727,29 +727,14 @@ opposite direction.
 ________________________________________________________________________________
 
 
-|q| +
-||q {arg}||
-________________________________________________________________________________
-Record a keysequence into a macro. Available macros are {0-9a-zA-Z} (uppercase
-to append).type 'q' to stop recording.
-________________________________________________________________________________
-
-
-|@| 
-||[count]@ {arg}||
-________________________________________________________________________________
-Execute the contents of macro {0-9a-z}. @@ repeats the previous @{0-9a-z}
-________________________________________________________________________________
-
-
-|\*| 
+|\*|
 ||\*||
 ________________________________________________________________________________
 Search forward for the next word under the cursor.
 ________________________________________________________________________________
 
 
-|\#| 
+|\#|
 ||\#||
 ________________________________________________________________________________
 Search backward for the previous word under the cursor.
@@ -784,7 +769,7 @@ the left after removing the current tab.
 ________________________________________________________________________________
 
 
-|:beep| 
+|:beep|
 ||:beep||
 ________________________________________________________________________________
 Play a system beep.
@@ -855,7 +840,7 @@ key on a string to complete the URL which you want to delete.
 
 The following options WILL be interpreted in the future:
 
-* [!] a special version to delete ALL bookmarks 
+* [!] a special version to delete ALL bookmarks
 ________________________________________________________________________________
 
 
@@ -866,7 +851,7 @@ Change the current directory. [c]:cd -[c] changes to the last directory.
 ________________________________________________________________________________
 
 
-|:pw| |:pwd| 
+|:pw| |:pwd|
 ||:pw[d]||
 ________________________________________________________________________________
 Print the current directory name.
@@ -1055,7 +1040,7 @@ for Insert mode only.
 ________________________________________________________________________________
 
 
-|:una| |:unabbreviate| 
+|:una| |:unabbreviate|
 ||:una[bbreviate] {lhs}||
 ________________________________________________________________________________
 Remove an abbreviation.
@@ -1078,21 +1063,21 @@ Insert mode only.
 ________________________________________________________________________________
 
 
-|:abc| |:abclear| 
+|:abc| |:abclear|
 ||:abc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations.
 ________________________________________________________________________________
 
 
-|:cabc| |:cabclear| 
+|:cabc| |:cabclear|
 ||:cabc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations for Command-line mode.
 ________________________________________________________________________________
 
 
-|:iabc| |:iabclear| 
+|:iabc| |:iabclear|
 ||:iabc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations for Insert mode.
@@ -1111,28 +1096,6 @@ Add {cmd} to the list of commands Vimperator will execute on {event}:
 * [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
 * [c]:autocmd[!][c]: list/remove all autocommands
 
-________________________________________________________________________________
-
-
-|:macros| +
-||:mac[ros] [regex]||
-________________________________________________________________________________
-List recorded macros matching the optional regular expression. If no regex is
-given, list all.
-________________________________________________________________________________
-
-
-|:delmac| |:delmacros|
-||:delmac[ros] [regex]|| +
-________________________________________________________________________________
-Delete recorded macros matching a regular expression.
-________________________________________________________________________________
-
-
-|:pl| |:play| 
-||:pl[ay] <macro>||
-________________________________________________________________________________
-Play a macro.
 ________________________________________________________________________________
 
 
@@ -1193,7 +1156,7 @@ by [c]:imap[c] or [c]:inoremap[c] are cleared.
 ________________________________________________________________________________
 
 
-|:ma| |:mark| 
+|:ma| |:mark|
 ||:ma[rk] {a-zA-Z}||
 ________________________________________________________________________________
 Mark current location within the web page.
@@ -1271,7 +1234,7 @@ Show various page information. See :help 'pageinfo' for available options.
 ________________________________________________________________________________
 
 
-|:pc| |:pclose| 
+|:pc| |:pclose|
 ||:pc[lose]||
 ________________________________________________________________________________
 Close preview window on bottom of screen.
@@ -1350,7 +1313,7 @@ directory, skipping the Save as... prompt
 ________________________________________________________________________________
 
 
-|:sbcl| |:sbclose| 
+|:sbcl| |:sbclose|
 ||:sbcl[ose]||
 ________________________________________________________________________________
 Close the sidebar window.
@@ -1399,7 +1362,7 @@ specified, errors are not printed.
 ________________________________________________________________________________
 
 
-|:st| |:stop| 
+|:st| |:stop|
 ||:st[op]||
 ________________________________________________________________________________
 Stop loading. Stop loading current web page.
@@ -1418,7 +1381,7 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:tabl| |:tablast| 
+|:tabl| |:tablast|
 ||:tabl[ast]||
 ________________________________________________________________________________
 Switch to the last tab.
@@ -1444,7 +1407,7 @@ selected and {count} is not specified.
 ________________________________________________________________________________
 
 
-|:tabo| |:tabonly| 
+|:tabo| |:tabonly|
 ||:tabo[nly]||
 ________________________________________________________________________________
 Close all other tabs.
@@ -1459,7 +1422,7 @@ first tab to the last tab.
 ________________________________________________________________________________
 
 
-|:tabfir| |:tabfirst| |:tabr| |:tabrewind| 
+|:tabfir| |:tabfirst| |:tabr| |:tabrewind|
 ||:tabr[ewind]|| +
 ||:tabfir[st]||
 Switch to the first tab.
@@ -1504,21 +1467,21 @@ Deletes the variable {name}. Several variable names can be given.
 ________________________________________________________________________________
 
 
-|:unm| |:unmap| 
+|:unm| |:unmap|
 ||:unm[ap] {lhs}||
 ________________________________________________________________________________
 Remove the mapping of {lhs}.
 ________________________________________________________________________________
 
 
-|:cunm| |:cunmap| 
+|:cunm| |:cunmap|
 ||:cunm[ap] {lhs}||
 ________________________________________________________________________________
 Remove the mapping of {lhs} (in command-line mode).
 ________________________________________________________________________________
 
 
-|:iunm| |:iunmap| 
+|:iunm| |:iunmap|
 ||:iunm[ap] {lhs}||
 ________________________________________________________________________________
 Remove the mapping of {lhs} (in insert mode).
@@ -1541,7 +1504,7 @@ external editor.
 ________________________________________________________________________________
 
 
-|:wc| |:wclose| |:winc| |:winclose| 
+|:wc| |:wclose| |:winc| |:winclose|
 ||:winc[ose] [url] [, url]|| +
 ________________________________________________________________________________
 Close window.

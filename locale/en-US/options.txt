@@ -107,7 +107,7 @@ ________________________________________________________________________________
 |:set-!|
 ||:se[t]! {preference}={value}|| +
 ________________________________________________________________________________
-Change any Firefox {preference} (those in the about:config window). You can also 
+Change any Firefox {preference} (those in the about:config window). You can also
 reset/delete those preferences with [c]:set! {preference}&[c].
 ________________________________________________________________________________
 
@@ -435,7 +435,7 @@ ____
 // 'pvh'
 // 	Default height for preview window
 // number (default: 10)
-// 
+//
 // Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
 // NOTE: Option currently disabled
 // 	'previewheight'
@@ -452,7 +452,7 @@ ____
 |\'scr'| |\'scroll'|
 ||'scroll' 'scr'|| number (default 0)
 ____
-Number of lines to scroll with C-u and C-d commands. 
+Number of lines to scroll with C-u and C-d commands.
 The number of lines scrolled defaults to half the window size.
 When a {count} is specified to the <C-u> or <C-d> commands this is used to set the value of 'scroll' and also used for the current command. The value can be reset to half the window height with :set scroll=0.
 ____

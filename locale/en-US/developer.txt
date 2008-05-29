@@ -17,7 +17,7 @@ like for help::help[various.html#:help].
 ||:h[elp] {subject}|| +
 ||<F1>||
 ____________________________________________________________________________
-Open help window. 
+Open help window.
 The default section is shown unless {subject} is specified.
 If you need help for a specific topic, try [c]:help overview[c].
 ____________________________________________________________________________

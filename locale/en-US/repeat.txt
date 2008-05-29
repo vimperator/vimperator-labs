@@ -9,25 +9,40 @@ section:Macros[macros]
 |q|
 ||q {arg}|| +
 ____________________________________________________________________________
-
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
 Type 'q' to stop recording.
 ____________________________________________________________________________
 
+
+|:macros| +
+||:mac[ros] [regex]||
+________________________________________________________________________________
+List recorded macros matching the optional regular expression. If no regex is
+given, list all.
+________________________________________________________________________________
+
+
+|:delmac| |:delmacros|
+||:delmac[ros] [regex]|| +
+________________________________________________________________________________
+Delete recorded macros matching a regular expression.
+________________________________________________________________________________
+
+
 |@| |@@| |:play|
 ||[count]@ {arg}|| +
 ||[count]@@|| +
-||:play {arg}|| +
+||:pl[ay] {arg}|| +
 ____________________________________________________________________________
 
-Plays the contents of macro {0-9a-z}. 
+Plays the contents of macro {0-9a-z}.
 
 @@ replays a previous executed macro.
 
 :play {arg} plays a recorded macro.
 ____________________________________________________________________________
-section:Profiling[profiling]
+section:Profiling[profile,profiling]
 
 :time ...
 

@@ -12,7 +12,7 @@ List mappings how to scroll the window.
 
 section:Jumping{nbsp}to{nbsp}Elements[jumping]
 
-|gi| 
+|gi| +
 ||[count]gi||
 ________________________________________________________________________________
 Focus last used input field. If there is no last input field, it focuses the

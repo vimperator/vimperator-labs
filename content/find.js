@@ -67,11 +67,11 @@ liberator.Search = function () //{{{
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
     {
-        // strip off pattern terminator and offset
-        if (backwards)
-            pattern = pattern.replace(/\?.*/, "");
-        else
-            pattern = pattern.replace(/\/.*/, "");
+        //// strip off pattern terminator and offset
+        //if (backwards)
+        //    pattern = pattern.replace(/\?.*/, "");
+        //else
+        //    pattern = pattern.replace(/\/.*/, "");
 
         searchPattern = pattern;
 
@@ -292,7 +292,8 @@ liberator.Search = function () //{{{
             this.find(command, backwards);
 
             lastSearchBackwards = backwards;
-            lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
+            //lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
+            lastSearchPattern = command;
             lastSearchString = searchString;
 
             // TODO: move to find() when reverse incremental searching is kludged in
