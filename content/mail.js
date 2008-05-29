@@ -653,17 +653,30 @@ liberator.Mail = function () //{{{
                 return;
 
             var mailargs = new Object();
-
             mailargs.subject = liberator.commands.getOption(res.opts, "-subject", undefined);
             mailargs.bcc = liberator.commands.getOption(res.opts, "-bcc", undefined);
             mailargs.cc = liberator.commands.getOption(res.opts, "-cc", undefined);
             mailargs.body = liberator.commands.getOption(res.opts, "-text", undefined);
             mailargs.attachments = liberator.commands.getOption(res.opts, "-attachment", []);
 
+            var addresses = [];
+            if (res.args)
+                addresses = addresses.concat(res.args);
+            if (mailargs.bcc)
+                addresses = addresses.concat(mailargs.bcc);
+            if (mailargs.cc)
+                addresses = addresses.concat(mailargs.cc);
+
+            // TODO: is there a better way to check for validity?
+            if (addresses.some(function(recipient) { return !(/\S@\S+\.\S/.test(recipient)); }))
+            {
+                liberator.echoerr("Exxx: Invalid e-mail address");
+                return;
+            }
+
             if (res.args.length > 0)
             {
                 mailargs.to = res.args.join(", ");
-             
             }
 
             composeNewMail(mailargs);
