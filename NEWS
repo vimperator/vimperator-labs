@@ -1,9 +1,12 @@
 <pre>
 2008-05-xx:
     * version 0.3
+    * new :message command
     * new -- COMPOSE -- mode with mutt-like keybindings (y to send message, e to edit message)
     * external editor support for sending messages
     * m to open a new message compose window
+    * new M command to send a new message to the sender of the currently selected message
+    * completions for :{go,copy,move}to commands
     * :emptytrash command
     * new * and # mappings to select next/prev message from same author (not perfect matching however)
     * new "threads" option (non-functional for now)
