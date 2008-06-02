@@ -47,6 +47,7 @@ BUILD_XPI_SUBDIRS = $(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
 ASCIIDOC = asciidoc
 ZIP = zip
 SED = sed
+PERL = perl
 
 # specify V=1 on make line to see more verbose output
 Q=$(if ${V},,@)
@@ -119,8 +120,11 @@ ${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
 		( echo "modified: $$f" ; \
 		  diff -u $$f ${BUILD_XPI_DIR}/$$f | grep '^[-+][^-+]' ) ; \
 	    done
-	# FIXME: VERSION and DATE tokens not replaced
-	${Q}${SED} -e 's,\(skin\|content\|locale/.*\)/$$,jar:chrome/${NAME}.jar!/\1/,' \
+
+	@# sed -e -> does not work correctly on MacOS's sed, therefore we use perl
+	@# ${Q}${SED} -e 's,\(skin\|content\|locale/.*\)/$$,jar:chrome/${NAME}.jar!/\1/,' \
+
+	${Q}${PERL} -pe 's,(skin|content|locale/.*)/$$,jar:chrome/${NAME}.jar!/\1/,' \
 	           < chrome.manifest > ${BUILD_XPI_DIR}/chrome.manifest
 	${Q}( cd ${BUILD_XPI_DIR} && ${ZIP} -r ${TOP}/${XPI} ${XPI_FILES} )
 	@echo "SUCCESS: $@"
