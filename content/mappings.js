@@ -128,6 +128,13 @@ liberator.Mappings = function () //{{{
         }
     }
 
+    function expandLeader(keyString)
+    {
+        var leaderRegexp = /<Leader>/i;
+        var currentLeader = liberator.events.getMapLeader();
+        return keyString.replace(leaderRegexp, currentLeader);
+    }
+
     function mappingsIterator(modes, stack)
     {
         var output;
@@ -172,14 +179,10 @@ liberator.Mappings = function () //{{{
 
             // ?:\s+ <- don't remember; (...)? optional = rhs
             var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/);
-            var leaderRegexp = /<Leader>/i;
-
-            if (leaderRegexp.test(lhs))
-                lhs = lhs.replace(leaderRegexp, liberator.events.getMapLeader());
 
             if (!rhs) // list the mapping
             {
-                liberator.mappings.list(mode, lhs);
+                liberator.mappings.list(mode, expandLeader(lhs));
             }
             else
             {
@@ -288,6 +291,7 @@ liberator.Mappings = function () //{{{
 
         addUserMap: function (modes, keys, description, action, extra)
         {
+            keys = keys.map(function (key) { return expandLeader(key); });
             var map = new liberator.Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence

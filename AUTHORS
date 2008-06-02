@@ -24,4 +24,5 @@ Patches (in no special order):
   * Joseph Xu (supporting multiple top level windows better)
   * Raimon Grau Cuscó (document relationship navigation - ]], [[)
   * Ryan Zheng (ctrl-x/a support)
+  * Tim Hammerquist (better <Leader> support)
 </pre>
