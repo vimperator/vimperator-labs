@@ -223,6 +223,18 @@ liberator.Mail = function () //{{{
         "Inspect (focus) message",
         function () { content.focus(); });
 
+    liberator.mappings.add(modes, ["I"],
+	    "Open the message in new tab",
+	    function ()
+	    {
+	    	if (gDBView && gDBView.selection.count < 1)
+	    	{
+	    		liberator.echoerr("Message is not selected");
+	    		return;
+	    	}
+	    	MsgOpenNewTabForMessage();
+	    });
+
     liberator.mappings.add(modes, ["<Space>"],
         "Scroll message or select next unread one",
         function () { return true; },
@@ -583,6 +595,8 @@ liberator.Mail = function () //{{{
             var folder = liberator.mail.getFolders(args, true, true)[count];
             if (!folder)
                 liberator.echoerr("Folder \"" + args + "\" does not exist");
+            else if (liberator.forceNewTab)
+                MsgOpenNewTabForFolder(folder.URI);
             else
                 SelectFolder(folder.URI);
         },

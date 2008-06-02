@@ -82,7 +82,7 @@ liberator.Addressbook = function () //{{{
             {
                 to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
             }
-            catch (e) { liberator.echoerr("Exxx: No message is selected");}
+            catch (e) { liberator.beep();}
 
             if (!to)
                 return;
@@ -93,7 +93,8 @@ liberator.Addressbook = function () //{{{
             if (/^\S+\s+\S+\s*$/.test(displayName)) 
             {
                 var names = displayName.split(/\s+/);
-                displayName = "-firstname=" + names[0] + " -lastname=" + names[1];
+                displayName = "-firstname=" + names[0].replace(/"/g, "")
+                            + " -lastname=" + names[1].replace(/"/g, "");
             } 
             else
             {
@@ -140,7 +141,7 @@ liberator.Addressbook = function () //{{{
                    [["-name", "-n"],      liberator.commands.OPTION_STRING]]
         });
 
-    liberator.commands.add(["contacts", "abook"],
+    liberator.commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
         function (args, special) { liberator.addressbook.list(args, special); });
 

@@ -793,7 +793,7 @@ const liberator = (function () //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
-        // TODO: probably move to {muttator,vimperator,...}.js
+        // TODO: move to {muttator,vimperator,...}.js
         // this function is called, when the chrome is ready
         startup: function ()
         {
@@ -820,7 +820,7 @@ const liberator = (function () //{{{
             if (liberator.has("bookmarks"))  { log("bookmarks");  liberator.bookmarks  = liberator.Bookmarks(); }
             if (liberator.has("history"))    { log("history");    liberator.history    = liberator.History(); }
             if (liberator.has("mail") && liberator.Mail)       { log("mail");       liberator.mail       = liberator.Mail(); }
-            if (liberator.has("tabs"))       { log("tabs");       liberator.tabs       = liberator.Tabs(); }
+            if (liberator.has("tabs") && liberator.Tabs)       { log("tabs");       liberator.tabs       = liberator.Tabs(); }
             if (liberator.has("marks"))      { log("marks");      liberator.marks      = liberator.Marks(); }
             if (liberator.has("quickmarks")) { log("quickmarks"); liberator.quickmarks = liberator.QuickMarks(); }
             if (liberator.has("hints"))      { log("hints");      liberator.hints      = liberator.Hints(); }
