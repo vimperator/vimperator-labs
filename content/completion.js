@@ -203,7 +203,7 @@ liberator.Completion = function () //{{{
                     queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
                 else
                     return;
-                 
+
             	var xhr = new XMLHttpRequest();
             	xhr.open("GET", queryURI, false);
             	xhr.send(null);
@@ -216,7 +216,7 @@ liberator.Completion = function () //{{{
             	    completions.push([(matches ? matches[1] : "") + item, name + " suggestion"]);
             	});
         	});
-        	
+
         	return [0, completions];
         },
 
@@ -362,14 +362,14 @@ liberator.Completion = function () //{{{
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        mail: function (filter) 
+        mail: function (filter)
         {
             var completions = [];
             var folders = liberator.mail.getFolders();
-            for (var folder in folders) 
+            for (var folder in folders)
             {
-                completions.push([folders[folder].server.prettyName + ": " 
-                                  + folders[folder].name, 
+                completions.push([folders[folder].server.prettyName + ": "
+                                  + folders[folder].name,
                                  "Unread: " + folders[folder].getNumUnread(false)]);
             }
             if (!filter)
@@ -431,7 +431,7 @@ liberator.Completion = function () //{{{
                     else
                         optionCompletions.push([[prefArray[i]], liberator.options.getPref(prefArray[i])]);
                 }
-                        
+
 
                 if (!filter)
                     return [0, optionCompletions];

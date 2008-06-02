@@ -110,7 +110,7 @@ liberator.Bookmarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
-    
+
     liberator.mappings.add(modes, ["a"],
         "Open a prompt to bookmark the current URL",
         function ()
@@ -484,8 +484,8 @@ liberator.History = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const historyService   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-                             .getService(Components.interfaces.nsINavHistoryService);
+    const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+                           .getService(Components.interfaces.nsINavHistoryService);
 
     var history = null;
 
@@ -807,7 +807,7 @@ liberator.QuickMarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.commands.add(["delqm[arks]"],
         "Delete the specified QuickMarks",
         function (args, special)

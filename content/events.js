@@ -38,7 +38,7 @@ liberator.AutoCommands = function () //{{{
     {
         for (var item in autoCommands)
             for (var i = 0; i < autoCommands[item].length; i++)
-                yield  item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
+                yield item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
         throw StopIteration;
     }
 
@@ -48,19 +48,19 @@ liberator.AutoCommands = function () //{{{
 
     liberator.commands.add(["au[tocmd]"],
         "Execute commands automatically on events",
-        function (args, special) 
-        {  
+        function (args, special)
+        {
             if (!args)
             {
                 if (special) // :au!
                     liberator.autocommands.remove(null, null);
                 else // :au
                     liberator.autocommands.list(null, null);
-            } 
+            }
             else
             {
                 // (?:  ) means don't store; (....)? <-> exclamation marks makes the group optional
-                var [all, asterix, auEvent, regex, cmds] =  args.match(/^(\*)?(?:\s+)?(\S+)(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
+                var [all, asterix, auEvent, regex, cmds] = args.match(/^(\*)?(?:\s+)?(\S+)(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
 
                 if (cmds)
                 {
@@ -238,17 +238,17 @@ liberator.Events = function () //{{{
         var tabcontainer = getBrowser().mTabContainer;
         if (tabcontainer) // not every VIM-like extension has a tab container
         {
-            tabcontainer.addEventListener("TabMove",   function (event)
+            tabcontainer.addEventListener("TabMove", function (event)
             {
                 liberator.statusline.updateTabCount();
                 liberator.buffer.updateBufferList();
             }, false);
-            tabcontainer.addEventListener("TabOpen",   function (event)
+            tabcontainer.addEventListener("TabOpen", function (event)
             {
                 liberator.statusline.updateTabCount();
                 liberator.buffer.updateBufferList();
             }, false);
-            tabcontainer.addEventListener("TabClose",  function (event)
+            tabcontainer.addEventListener("TabClose", function (event)
             {
                 liberator.statusline.updateTabCount();
                 liberator.buffer.updateBufferList();
@@ -546,7 +546,7 @@ liberator.Events = function () //{{{
     liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.CARET, liberator.modes.INSERT, liberator.modes.TEXTAREA],
         ["<S-Tab>"], "Rewind keyboard focus",
         function () { document.commandDispatcher.rewindFocus(); });
-                    
+
     liberator.mappings.add(liberator.modes.all,
         ["<C-q>"], "Temporarily ignore all " + liberator.config.name + " key bindings",
         function () { liberator.modes.passAllKeys = true; });
@@ -578,7 +578,7 @@ liberator.Events = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.commands.add(["delmac[ros]"],
         "Delete macros",
         function (arg)
@@ -596,7 +596,7 @@ liberator.Events = function () //{{{
             var str = "<table>";
             var macroRef = liberator.events.getMacros(arg);
             for (var item in macroRef)
-               str += "<tr><td> " + item + " &nbsp; </td><td>" + 
+               str += "<tr><td> " + item + " &nbsp; </td><td>" +
                       liberator.util.escapeHTML(macroRef[item]) + "</td></tr>";
 
             str += "</table>";
@@ -689,7 +689,7 @@ liberator.Events = function () //{{{
             if (macros[lastMacro])
             {
                 liberator.modes.isReplaying = true;
-                
+
                 // make sure the page is stopped before starting to play the macro
                 try
                 {
@@ -804,7 +804,7 @@ liberator.Events = function () //{{{
                 {
                     if (!waitForPageLoaded())
                         return;
-                    // else // a short break between keys often helps 
+                    // else // a short break between keys often helps
                     //     liberator.sleep(50);
                 }
             }
@@ -1197,7 +1197,7 @@ liberator.Events = function () //{{{
             // return true, with the effect that it also gets to there (for
             // whatever reason).  if that happens to be correct, well..
             // XXX: why not just do that as well for HINTS mode actually?
-           
+
             if (liberator.mode == liberator.modes.CUSTOM)
                 return true;
 
@@ -1209,7 +1209,7 @@ liberator.Events = function () //{{{
             else
                 map = liberator.mappings.get(liberator.mode, candidateCommand);
 
-            
+
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(liberator.input.buffer + key))
             {

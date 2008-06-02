@@ -297,7 +297,7 @@ liberator.Options = function () //{{{
             {
                 if (special) // open firefox settings gui dialog
                 {
-                    liberator.open("about:config", 
+                    liberator.open("about:config",
                         (liberator.options.newtab &&
                             (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("prefs") != -1)) ?
                                 liberator.NEW_TAB : liberator.CURRENT_TAB);

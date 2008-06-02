@@ -36,7 +36,7 @@ liberator.config = { //{{{
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
     dialogs: [
-        ["about",            "About Firefox", 
+        ["about",            "About Firefox",
             function () { openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["addbookmark",      "Add bookmark for the current page",
             function () { PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); }],
@@ -114,7 +114,7 @@ liberator.config = { //{{{
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
-    
+
         liberator.mappings.add([liberator.modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
             function () { liberator.util.copyToClipboard(liberator.buffer.URL, true); });

@@ -164,7 +164,7 @@ liberator.modes = (function () //{{{
         CARET:            1 << 5, // text cursor is visible
         TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
         MESSAGE:          1 << 7, // for now only used in Muttator when the message has focus
-        COMPOSE:          1 << 8, 
+        COMPOSE:          1 << 8,
         CUSTOM:           1 << 9,
         // extended modes, can include multiple modes, and even main modes
         EX:               1 << 10,
@@ -204,7 +204,7 @@ liberator.modes = (function () //{{{
             if (main == liberator.modes.COMMAND_LINE)
                 return;
 
-            liberator.commandline.echo(getModeMessage(), liberator.commandline.HL_MODEMSG, 
+            liberator.commandline.echo(getModeMessage(), liberator.commandline.HL_MODEMSG,
                                         liberator.commandline.DISALLOW_MULTILINE);
         },
 
@@ -251,7 +251,7 @@ liberator.modes = (function () //{{{
             //if (window.wintype == "msgcompose")
             if (liberator.config.isComposeWindow)
                 this.set(liberator.modes.COMPOSE, liberator.modes.NONE, silent);
-            else    
+            else
                 this.set(liberator.modes.NORMAL, liberator.modes.NONE, silent);
         },
 

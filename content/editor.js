@@ -184,7 +184,7 @@ liberator.Editor = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.options.add(["editor"],
         "Set the external text editor",
         "string", "gvim -f");
@@ -443,7 +443,7 @@ liberator.Editor = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     addAbbreviationCommands("", "");
     addAbbreviationCommands("i", "insert");
     addAbbreviationCommands("c", "command line");
@@ -503,7 +503,7 @@ liberator.Editor = function () //{{{
                 var tempStr1 = elt.value.substring(0, rangeStart);
                 var tempStr2 = liberator.util.readFromClipboard();
                 var tempStr3 = elt.value.substring(rangeEnd);
-                elt.value = tempStr1 + tempStr2  + tempStr3;
+                elt.value = tempStr1 + tempStr2 + tempStr3;
                 elt.selectionStart = rangeStart + tempStr2.length;
                 elt.selectionEnd = elt.selectionStart;
             }
@@ -1012,7 +1012,7 @@ liberator.Editor = function () //{{{
                             return true;
                         }
                     }
-                    else // two abbrev's exists ( 'i' or  'c' (filter as well))
+                    else // two abbrev's exists ( 'i' or 'c' (filter as well))
                     {
                         if (abbrev[lhs][0][0] == "c" && filter == "c")
                             abbrev[lhs][0] = abbrev[lhs][1];

@@ -101,7 +101,7 @@ liberator.Tabs = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["showtabline", "stal"], 
+    liberator.options.add(["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
         "number", liberator.config.name == "Vimperator" ? 2 : 0,
         {

@@ -308,11 +308,11 @@ liberator.CommandLine = function () //{{{
          	}
          });
 
-    liberator.options.add(["showmode", "smd"], 
+    liberator.options.add(["showmode", "smd"],
         "Show the current mode in the command line",
         "boolean", true);
 
-    liberator.options.add(["wildmode", "wim"], 
+    liberator.options.add(["wildmode", "wim"],
         "Define how command line completion works",
         "stringlist", "list:full",
         {
@@ -322,7 +322,7 @@ liberator.CommandLine = function () //{{{
             }
         });
 
-    liberator.options.add(["wildoptions", "wop"], 
+    liberator.options.add(["wildoptions", "wop"],
         "Change how command line completion is done",
         "stringlist", "",
         {
@@ -334,7 +334,7 @@ liberator.CommandLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var modes = [liberator.modes.COMMAND_LINE];
-    
+
     liberator.mappings.add(modes,
         ["<Space>"], "Expand command line abbreviation",
         function () { return liberator.editor.expandAbbreviation("c"); },
@@ -347,7 +347,7 @@ liberator.CommandLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     liberator.commands.add(["ec[ho]"],
         "Display a string at the bottom of the window",
         function (args)

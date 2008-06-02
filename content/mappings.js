@@ -335,7 +335,7 @@ liberator.Mappings = function () //{{{
             return matches;
         },
 
-        // returns whether the user added a custom user map 
+        // returns whether the user added a custom user map
         hasMap: function (mode, cmd)
         {
             return user[mode].some(function (map) { return map.hasName(cmd); });
@@ -403,13 +403,13 @@ liberator.Mappings = function () //{{{
             var modeSign = "";
             for (var i = 0; i < modes.length; i++)
             {
-                if (modes[i] == liberator.modes.NORMAL) 
+                if (modes[i] == liberator.modes.NORMAL)
                     modeSign += "n";
-                if ((modes[i] == liberator.modes.INSERT || modes[i] == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1) 
+                if ((modes[i] == liberator.modes.INSERT || modes[i] == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1)
                     modeSign += "i";
-                if (modes[i] == liberator.modes.COMMAND_LINE) 
+                if (modes[i] == liberator.modes.COMMAND_LINE)
                     modeSign += "c";
-                if (modes[i] == liberator.modes.MESSAGRE) 
+                if (modes[i] == liberator.modes.MESSAGRE)
                     modeSign += "m";
             }
 
@@ -423,7 +423,7 @@ liberator.Mappings = function () //{{{
                     list += "<tr>";
                     list += "<td> " + modeSign + "   " + liberator.util.escapeHTML(maps[i].names[j]) + "</td>";
                     if (maps[i].rhs)
-                        list += "<td> "+ (maps[i].noremap ? "*" : " ") + "</td>" 
+                        list += "<td> "+ (maps[i].noremap ? "*" : " ") + "</td>"
                                         + "<td>" + liberator.util.escapeHTML(maps[i].rhs) + "</td>";
                     list += "</tr>";
                 }

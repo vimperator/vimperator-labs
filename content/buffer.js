@@ -233,7 +233,7 @@ liberator.Buffer = function () //{{{
 
     liberator.mappings.add(modes, ["gg", "<Home>"],
         "Goto the top of the document",
-        function (count) { liberator.buffer.scrollToPercentile(count >  0 ? count : 0); },
+        function (count) { liberator.buffer.scrollToPercentile(count > 0 ? count : 0); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["G", "<End>"],
@@ -671,7 +671,7 @@ liberator.Buffer = function () //{{{
         saveLink: function (elem, skipPrompt)
         {
             var doc  = elem.ownerDocument;
-            var url = makeURLAbsolute(elem.baseURI, elem.href);
+            var url  = makeURLAbsolute(elem.baseURI, elem.href);
             var text = elem.textContent;
 
             try
@@ -1084,7 +1084,7 @@ liberator.Buffer = function () //{{{
             }
 
             pageGeneral.push(["Mime-Type", content.document.contentType]);
-            pageGeneral.push(["Encoding",  content.document.characterSet]);
+            pageGeneral.push(["Encoding", content.document.characterSet]);
             pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"]);
             if (lastModVerbose)
                 pageGeneral.push(["Last Modified", lastModVerbose]);

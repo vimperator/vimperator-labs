@@ -87,14 +87,14 @@ const liberator = (function () //{{{
                 },
             });
 
-        liberator.options.add(["verbose", "vbs"], 
+        liberator.options.add(["verbose", "vbs"],
             "Define which type of messages are logged",
             "number", 0,
             {
                 validator: function (value) { return (value >= 0 && value <= 9); }
             });
 
-        liberator.options.add(["visualbell", "vb"], 
+        liberator.options.add(["visualbell", "vb"],
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
@@ -438,7 +438,7 @@ const liberator = (function () //{{{
 
         triggerCallback: function (type, mode, data)
         {
-            // dump("type: " + type + " mode: " + mode + "data: " + data  + "\n");
+            // dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
             for (var i in callbacks)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
@@ -698,7 +698,7 @@ const liberator = (function () //{{{
             else if (!where || !liberator.has("tabs"))
                 where = liberator.CURRENT_TAB;
 
-            var url =   typeof urls[0] == "string" ? urls[0] : urls[0][0];
+            var url = typeof urls[0] == "string" ? urls[0] : urls[0][0];
             var postdata = typeof urls[0] == "string" ? null : urls[0][1];
             var whichwindow = window;
 
@@ -738,7 +738,7 @@ const liberator = (function () //{{{
             // all other URLs are always loaded in background
             for (var i = 1; i < urls.length; i++)
             {
-                url =   typeof urls[i] == "string" ? urls[i] : urls[i][0];
+                url = typeof urls[i] == "string" ? urls[i] : urls[i][0];
                 postdata = typeof urls[i] == "string" ? null : urls[i][1];
                 whichwindow.getBrowser().addTab(url, null, null, postdata);
             }
@@ -843,7 +843,7 @@ const liberator = (function () //{{{
 
             // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
             // v.plugins.mode = <str> string to show on v.modes.CUSTOM
-            // v.plugins.stop = <func> hooked on a v.modes.reset() 
+            // v.plugins.stop = <func> hooked on a v.modes.reset()
             // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
             liberator.plugins = {};
 

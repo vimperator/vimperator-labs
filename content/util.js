@@ -257,7 +257,7 @@ liberator.util = { //{{{
             trans.addDataFlavor("text/unicode");
             if (clipboard.supportsSelectionClipboard())
                 clipboard.getData(trans, clipboard.kSelectionClipboard);
-            else 
+            else
                 clipboard.getData(trans, clipboard.kGlobalClipboard);
 
             var data = {};

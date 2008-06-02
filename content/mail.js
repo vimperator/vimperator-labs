@@ -119,12 +119,12 @@ liberator.Mail = function () //{{{
         if (copy)
         {
             MsgCopyMessage(folders[0].URI);
-            setTimeout(function () { liberator.echo(count +  " message(s) copied to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
         }
         else
         {
             MsgMoveMessage(folders[0].URI);
-            setTimeout(function () { liberator.echo(count +  " message(s) moved to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
         }
         return true;
     }
@@ -145,7 +145,7 @@ liberator.Mail = function () //{{{
         return parent;
     }
 
-    function selectUnreadFolder(backwards, count) 
+    function selectUnreadFolder(backwards, count)
     {
         count = (count > 0 ) ? count : 1;
         var direction = backwards ? -1 : 1;
@@ -153,19 +153,19 @@ liberator.Mail = function () //{{{
         var c = tree.currentIndex;
         var i = direction;
         var folder;
-        while (count > 0 && (c + i) < tree.view.rowCount && (c + i) >= 0) 
+        while (count > 0 && (c + i) < tree.view.rowCount && (c + i) >= 0)
         {
             var resource = GetFolderResource(tree, (c + i)).QueryInterface(Components.interfaces.nsIMsgFolder);
-            if (!resource.isServer && resource.getNumUnread(false)) 
+            if (!resource.isServer && resource.getNumUnread(false))
             {
-                count -= 1; 
-                folder = i; 
+                count -= 1;
+                folder = i;
             }
             i += direction;
         }
-        if (!folder || count > 0) 
+        if (!folder || count > 0)
             liberator.beep();
-        else 
+        else
             tree.view.selection.timedSelect(c + folder, tree._selectDelay);
     }
 
@@ -258,7 +258,7 @@ liberator.Mail = function () //{{{
         "Select next message, including closed threads",
         function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
-        
+
     liberator.mappings.add(modes, ["J", "<Tab>"],
         "Select next unread message",
         function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, false, count); },
@@ -273,7 +273,7 @@ liberator.Mail = function () //{{{
         "Select previous message",
         function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
-        
+
     liberator.mappings.add(modes, ["K"],
         "Select previous unread message",
         function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, true, count); },
@@ -304,7 +304,7 @@ liberator.Mail = function () //{{{
             catch (e) { liberator.beep(); }
         },
         { flags: liberator.Mappings.flags.COUNT });
-        
+
 
     // SENDING MESSAGES
     liberator.mappings.add(modes, ["m"],
@@ -313,8 +313,8 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add(modes, ["M"],
         "Compose a new message to the sender of selected mail",
-        function () 
-        { 
+        function ()
+        {
           try
           {
             var to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
@@ -360,7 +360,7 @@ liberator.Mail = function () //{{{
     liberator.mappings.add(modes, ["u"],
         "Undo",
         function ()
-        { 
+        {
             if (messenger.canUndo())
                 messenger.undo(msgWindow);
             else
@@ -369,7 +369,7 @@ liberator.Mail = function () //{{{
     liberator.mappings.add(modes, ["<C-r>"],
         "Redo",
         function ()
-        { 
+        {
             if (messenger.canRedo())
                 messenger.redo(msgWindow);
             else
@@ -455,7 +455,7 @@ liberator.Mail = function () //{{{
         "Go to next mailbox with unread messages",
         function (count)
         {
-            selectUnreadFolder(false, count) 
+            selectUnreadFolder(false, count)
         },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -479,7 +479,7 @@ liberator.Mail = function () //{{{
         "Go to previous mailbox with unread messages",
         function (count)
         {
-            selectUnreadFolder(true, count) 
+            selectUnreadFolder(true, count)
         },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -692,7 +692,7 @@ liberator.Mail = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-      
+
         return {
 
         get currentAccount() { return this.currentFolder.rootFolder; },
@@ -710,7 +710,7 @@ liberator.Mail = function () //{{{
             params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
                                    .createInstance(Components.interfaces.nsIMsgCompFields);
 
-            if (args) 
+            if (args)
             {
                 if (args.originalMsg)
                     params.originalMsgURI = args.originalMsg;
@@ -727,9 +727,9 @@ liberator.Mail = function () //{{{
                 if (args.body)
                     params.composeFields.body = args.body;
 
-                if (args.attachments) 
+                if (args.attachments)
                 {
-                    while (args.attachments.length > 0) 
+                    while (args.attachments.length > 0)
                     {
                         var url = args.attachments.pop();
 
@@ -738,7 +738,7 @@ liberator.Mail = function () //{{{
                             .createInstance(Components.interfaces.nsILocalFile);
                         file.initWithPath(url);
 
-                        if (!file.exists()) 
+                        if (!file.exists())
                         {
                             liberator.echoerr("Exxx: Could attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
                             continue;
@@ -747,10 +747,10 @@ liberator.Mail = function () //{{{
                             .createInstance(Components.interfaces.nsIMsgAttachment);
                         attachment.url = "file://" + url;
                         params.composeFields.addAttachment(attachment);
-                    } 
+                    }
                 }
             }
-        
+
             params.type = Components.interfaces.nsIMsgCompType.New
 
             var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
@@ -879,7 +879,7 @@ liberator.Mail = function () //{{{
                         var thread = gDBView.db.GetThreadContainingMsgHdr(msg);
                         var originalCount = count;
 
-                        for (let j = (i == gDBView.selection.currentIndex && !reverse) ?  1 : (reverse ? thread.numChildren - 1 : 0);
+                        for (let j = (i == gDBView.selection.currentIndex && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
                                  reverse ? (j >= 0) : (j < thread.numChildren);
                                  reverse ? j-- : j++)
                         {

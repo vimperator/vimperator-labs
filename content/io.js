@@ -44,7 +44,7 @@ liberator.IO = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-        
+
     liberator.commands.add(["cd", "chd[ir]"],
         "Change the current directory",
         function (args)
@@ -135,7 +135,7 @@ liberator.IO = function () //{{{
 
             liberator.io.writeFile(file, line);
         });
-    
+
     liberator.commands.add(["so[urce]"],
         "Read Ex commands from a file",
         function (args, special)
@@ -477,7 +477,7 @@ lookup:
                             var extensions = environmentService.get("PATHEXT").split(";");
                             for (let j = 0; j < extensions.length; j++)
                             {
-                                path = dirs[i] +  "\\" + program + extensions[j];
+                                path = dirs[i] + "\\" + program + extensions[j];
                                 file.initWithPath(path);
                                 if (file.exists())
                                     break lookup;
