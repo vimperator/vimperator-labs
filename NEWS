@@ -1,6 +1,7 @@
 <pre>
 2008-05-xx:
     * version 0.3
+    * new :contacts and :??? commands for address book operations
     * new :message command
     * new -- COMPOSE -- mode with mutt-like keybindings (y to send message, e to edit message)
     * external editor support for sending messages
