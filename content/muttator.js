@@ -32,7 +32,7 @@ liberator.config = {
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
-    features: ["hints", "mail", "marks"],
+    features: ["hints", "mail", "marks", "addressbook"],
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
 
     get browserModes() { return [liberator.modes.MESSAGE]; },

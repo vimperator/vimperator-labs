@@ -824,6 +824,7 @@ const liberator = (function () //{{{
             if (liberator.has("marks"))      { log("marks");      liberator.marks      = liberator.Marks(); }
             if (liberator.has("quickmarks")) { log("quickmarks"); liberator.quickmarks = liberator.QuickMarks(); }
             if (liberator.has("hints"))      { log("hints");      liberator.hints      = liberator.Hints(); }
+            if (liberator.has("addressbook") && liberator.Addressbook)      { log("addressbook");      liberator.addressbook      = liberator.Addressbook(); }
 
             liberator.log("All modules loaded", 3);
 

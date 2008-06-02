@@ -40,6 +40,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.8" src="liberator.js"/>
     <script type="application/x-javascript;version=1.8" src="muttator.js"/>
 
+    <script type="application/x-javascript;version=1.8" src="addressbook.js"/>
     <script type="application/x-javascript;version=1.8" src="buffer.js"/>
     <script type="application/x-javascript;version=1.8" src="commands.js"/>
     <script type="application/x-javascript;version=1.8" src="completion.js"/>

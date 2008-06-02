@@ -175,60 +175,6 @@ liberator.Mail = function () //{{{
         recipient = recipient.replace(/"/g, "");
         return "\"" + recipient + "\"";
     }
-
-    function composeNewMail(args)
-    {
-        var params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
-                       .createInstance(Components.interfaces.nsIMsgComposeParams);
-        params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-                       .createInstance(Components.interfaces.nsIMsgCompFields);
-
-        if (args) 
-        {
-            if (args.originalMsg)
-                params.originalMsgURI = args.originalMsg;
-            if (args.to)
-                params.composeFields.to = args.to;
-            if (args.cc)
-                params.composeFields.cc = args.cc;
-            if (args.bcc)
-                params.composeFields.bcc = args.bcc;
-            if (args.newsgroups)
-                params.composeFields.newsgroups = args.newsgroups;
-            if (args.subject)
-                params.composeFields.subject = args.subject;
-            if (args.body)
-                params.composeFields.body = args.body;
-            while (args.attachments.length > 0) 
-            {
-                var url = args.attachments.pop();
-
-                // Check if the file really exists
-                var file = Components.classes["@mozilla.org/file/local;1"]
-                    .createInstance(Components.interfaces.nsILocalFile);
-                file.initWithPath(url);
-
-                if (!file.exists()) 
-                {
-                    liberator.echoerr("Exxx: Could attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
-                    continue;
-                }
-                attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
-                    .createInstance(Components.interfaces.nsIMsgAttachment);
-                attachment.url = "file://" + url;
-                params.composeFields.addAttachment(attachment);
-            } 
-
-        }
-
-        
-        params.type = Components.interfaces.nsIMsgCompType.New
-
-        var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
-        msgComposeService = msgComposeService.QueryInterface(Components.interfaces.nsIMsgComposeService);
-        msgComposeService.OpenComposeWindowWithParams(null, params);
-    }
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -679,7 +625,7 @@ liberator.Mail = function () //{{{
                 mailargs.to = res.args.join(", ");
             }
 
-            composeNewMail(mailargs);
+            liberator.mail.composeNewMail(mailargs);
         },
         {
             args: [[["-subject", "-s"],    liberator.commands.OPTION_STRING],
@@ -742,6 +688,62 @@ liberator.Mail = function () //{{{
             return GetFolderResource(tree, tree.currentIndex).
                    QueryInterface(Components.interfaces.nsIMsgFolder);
         },
+
+        composeNewMail: function (args)
+        {
+            var params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
+                         .createInstance(Components.interfaces.nsIMsgComposeParams);
+            params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
+                                   .createInstance(Components.interfaces.nsIMsgCompFields);
+
+            if (args) 
+            {
+                if (args.originalMsg)
+                    params.originalMsgURI = args.originalMsg;
+                if (args.to)
+                    params.composeFields.to = args.to;
+                if (args.cc)
+                    params.composeFields.cc = args.cc;
+                if (args.bcc)
+                    params.composeFields.bcc = args.bcc;
+                if (args.newsgroups)
+                    params.composeFields.newsgroups = args.newsgroups;
+                if (args.subject)
+                    params.composeFields.subject = args.subject;
+                if (args.body)
+                    params.composeFields.body = args.body;
+
+                if (args.attachments) 
+                {
+                    while (args.attachments.length > 0) 
+                    {
+                        var url = args.attachments.pop();
+
+                        // Check if the file really exists
+                        var file = Components.classes["@mozilla.org/file/local;1"]
+                            .createInstance(Components.interfaces.nsILocalFile);
+                        file.initWithPath(url);
+
+                        if (!file.exists()) 
+                        {
+                            liberator.echoerr("Exxx: Could attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
+                            continue;
+                        }
+                        attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
+                            .createInstance(Components.interfaces.nsIMsgAttachment);
+                        attachment.url = "file://" + url;
+                        params.composeFields.addAttachment(attachment);
+                    } 
+                }
+            }
+        
+            params.type = Components.interfaces.nsIMsgCompType.New
+
+            var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
+            msgComposeService = msgComposeService.QueryInterface(Components.interfaces.nsIMsgComposeService);
+            msgComposeService.OpenComposeWindowWithParams(null, params);
+        },
+
 
         getFolders: function (filter, includeServers, includeMsgFolders)
         {
