@@ -118,7 +118,7 @@ liberator.Addressbook = function () //{{{
 
             if (res.args.length == 0)
             {
-                liberator.echoerr("E474: Invalid argument")
+                liberator.echoerr("E474: Invalid argument");
                 return;
             }
 
@@ -227,7 +227,7 @@ liberator.Addressbook = function () //{{{
             }
             return true;
         }
-    }
+    };
 
 }; //}}}
 

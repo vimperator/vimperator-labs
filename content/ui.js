@@ -1290,7 +1290,7 @@ liberator.StatusLine = function () //{{{
             }
             else
             {
-                var matches = url.match(/^chrome:\/\/vimperator\/locale\/(\S+)$/)
+                var matches = url.match(/^chrome:\/\/vimperator\/locale\/(\S+)$/);
                 if (matches && matches[1])
                     url = matches[1] + " [Help]";
             }

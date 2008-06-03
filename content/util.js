@@ -138,9 +138,9 @@ liberator.util = { //{{{
     {
         var start = "", end = "";
         if (command instanceof liberator.Command)
-            start = ":"
+            start = ":";
         else if (command instanceof liberator.Option)
-            start = end = "'"
+            start = end = "'";
 
         var ret = "";
         var longHelp = false;
@@ -154,7 +154,7 @@ liberator.util = { //{{{
         if (longHelp)
             ret += "+";
 
-        ret += "\n"
+        ret += "\n";
 
         // the usage information for the command
         var usage = command.names[0];
@@ -167,7 +167,7 @@ liberator.util = { //{{{
         if (usage.length > 15)
             ret += " +";
 
-        ret += "\n________________________________________________________________________________\n"
+        ret += "\n________________________________________________________________________________\n";
 
         // the actual help text
         if (command.description)

@@ -81,7 +81,7 @@ liberator.Mail = function () //{{{
             else if (eventType == "RenameCompleted") { }
             else if (eventType == "JunkStatusChanged") { }*/
         }
-    }
+    };
 
     var mailSession = Components.classes[mailSessionContractID]
                       .getService(Components.interfaces.nsIMsgMailSession);
@@ -243,7 +243,7 @@ liberator.Mail = function () //{{{
     // TODO: change to "t" probably
     liberator.mappings.add(modes, ["x"],
         "Select thread",
-        function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false) });
+        function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false); });
 
     liberator.mappings.add(modes, ["d", "<Del>"],
         "Move mail to Trash folder",
@@ -455,7 +455,7 @@ liberator.Mail = function () //{{{
         "Go to next mailbox with unread messages",
         function (count)
         {
-            selectUnreadFolder(false, count)
+            selectUnreadFolder(false, count);
         },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -479,7 +479,7 @@ liberator.Mail = function () //{{{
         "Go to previous mailbox with unread messages",
         function (count)
         {
-            selectUnreadFolder(true, count)
+            selectUnreadFolder(true, count);
         },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -751,7 +751,7 @@ liberator.Mail = function () //{{{
                 }
             }
 
-            params.type = Components.interfaces.nsIMsgCompType.New
+            params.type = Components.interfaces.nsIMsgCompType.New;
 
             var msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
             msgComposeService = msgComposeService.QueryInterface(Components.interfaces.nsIMsgComposeService);
@@ -809,7 +809,7 @@ liberator.Mail = function () //{{{
                 newCount    += account.getNumUnread(true);
             }
 
-            return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount }
+            return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount };
         },
 
         collapseThread: function ()
