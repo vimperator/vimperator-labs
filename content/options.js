@@ -478,7 +478,7 @@ liberator.Options = function () //{{{
                         break;
 
                     case "number":
-                        value = parseInt(value);
+                        value = parseInt(value); // deduce radix
 
                         if (isNaN(value))
                         {

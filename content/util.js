@@ -104,7 +104,7 @@ liberator.util = { //{{{
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
         var unitIndex = 0;
-        var tmpNum = parseInt(num) || 0;
+        var tmpNum = parseInt(num, 10) || 0;
         var strNum = [tmpNum + ""];
 
         if (humanReadable)
