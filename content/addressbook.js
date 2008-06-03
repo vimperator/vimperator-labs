@@ -173,7 +173,7 @@ liberator.Addressbook = function () //{{{
 		{
             var addresses = [];
             var dirs = abManager.directories;
-            filter = filter.toLowerCase();
+            var lowerFilter = filter.toLowerCase();
 
             while (dirs.hasMoreElements())
             {
@@ -187,14 +187,14 @@ liberator.Addressbook = function () //{{{
                     if (!displayName) 
                         displayName = generateDisplayName(card.firstName, card.lastName);
                     
-                    if (displayName.toLowerCase().indexOf(filter) > -1 
-                        || card.primaryEmail.toLowerCase().indexOf(filter) > -1)
+                    if (displayName.toLowerCase().indexOf(lowerFilter) > -1 
+                        || card.primaryEmail.toLowerCase().indexOf(lowerFilter) > -1)
                             addresses.push([displayName, card.primaryEmail]);
                 }
             }
             if (addresses.length < 1)
             {
-                liberator.echoerr("E94: No matching contact for " + args, liberator.commandline.FORCE_SINGLELINE);
+                liberator.echoerr("E94: No matching contact for " + filter, liberator.commandline.FORCE_SINGLELINE);
                 return false;            
             }
 
