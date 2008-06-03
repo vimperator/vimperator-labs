@@ -148,7 +148,7 @@ liberator.Buffer = function () //{{{
             getter: function () { return window.fullScreen; }
         });
 
-    liberator.options.add(["nextpattern",],
+    liberator.options.add(["nextpattern"],
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
 
