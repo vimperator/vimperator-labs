@@ -19,7 +19,6 @@ FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 add more autocommands (BrowserStart, TabClose, TabOpen, TabChanged, LocationChanged, any more?)
 8 ;?<hint> should show more information
-8 there should be a listbox/combobox mode
 8 all search commands should start searching from the top of the visible viewport 
 8 :bdelete full_url<cr> and :bdelete! filter<cr> should delete all tabs matching filter or full_url
 7 adaptive learning for tab-completions
@@ -34,6 +33,8 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
+6 :set [no]focuscontent
+6 :set! browser.zoom.siteSpecific  by default?
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim

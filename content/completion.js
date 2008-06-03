@@ -35,6 +35,9 @@ liberator.Completion = function () //{{{
     // the completion substrings, used for showing the longest common match
     var substrings = [];
 
+    // import JSON module, needed for secure JSON parsing
+    Components.utils.import("resource://gre/modules/JSON.jsm");
+
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
     function buildLongestCommonSubstring(list, filter)
@@ -207,13 +210,19 @@ liberator.Completion = function () //{{{
             	var xhr = new XMLHttpRequest();
             	xhr.open("GET", queryURI, false);
             	xhr.send(null);
-            	var results = window.eval(xhr.responseText)[1];
+                var results = JSON.fromString(xhr.responseText)[1];
                 if (!results)
                     return;
 
             	results.forEach(function (item)
             	{
-            	    completions.push([(matches ? matches[1] : "") + item, name + " suggestion"]);
+                    // make sure we receive strings, otherwise a man-in-the-middle attack
+                    // could return objects which toString() method could be called to
+                    // execute untrusted code
+                    if(typeof(item) != "string")
+                        return;
+
+            	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
             	});
         	});
 
