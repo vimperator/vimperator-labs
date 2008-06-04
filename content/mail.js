@@ -730,20 +730,16 @@ liberator.Mail = function () //{{{
                     while (args.attachments.length > 0)
                     {
                         var url = args.attachments.pop();
-
-                        // Check if the file really exists
-                        var file = Components.classes["@mozilla.org/file/local;1"]
-                            .createInstance(Components.interfaces.nsILocalFile);
-                        file.initWithPath(url);
-
+                        var file = liberator.io.getFile(url);
                         if (!file.exists())
                         {
                             liberator.echoerr("Exxx: Could not attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
                             return;
                         }
+
                         attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
                             .createInstance(Components.interfaces.nsIMsgAttachment);
-                        attachment.url = "file://" + url;
+                        attachment.url = "file://" + file.path;
                         params.composeFields.addAttachment(attachment);
                     }
                 }
