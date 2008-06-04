@@ -473,6 +473,7 @@ const liberator = (function () //{{{
                                    getService(Components.interfaces.nsISound);
                 soundService.beep();
             }
+            return false; // so you can do: if (...) return liberator.beep();
         },
 
         // Execute an ex command like str=":zoom 300"

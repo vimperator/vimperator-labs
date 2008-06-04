@@ -228,10 +228,8 @@ liberator.Mail = function () //{{{
 	    function ()
 	    {
 	    	if (gDBView && gDBView.selection.count < 1)
-	    	{
-	    		liberator.echoerr("Message is not selected");
-	    		return;
-	    	}
+	    		return liberator.beep();
+
 	    	MsgOpenNewTabForMessage();
 	    });
 
@@ -240,8 +238,7 @@ liberator.Mail = function () //{{{
         function () { return true; },
         { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
-    // TODO: change to "t" probably
-    liberator.mappings.add(modes, ["x"],
+    liberator.mappings.add(modes, ["t"],
         "Select thread",
         function () { gDBView.ExpandAndSelectThreadByIndex(GetThreadTree().currentIndex, false); });
 
@@ -525,7 +522,7 @@ liberator.Mail = function () //{{{
         { flags: liberator.Mappings.flags.COUNT });
 
     // tagging messages
-    liberator.mappings.add(modes, ["tr"],
+    liberator.mappings.add(modes, ["lr"],
         "Toggle selected messages read",
         function ()
         {
@@ -537,16 +534,16 @@ liberator.Mail = function () //{{{
 
             MsgMarkMsgAsRead();
         });
-    liberator.mappings.add(modes, ["tR"],
+    /*liberator.mappings.add(modes, ["tR"],
         "Tag thread as read",
         function ()
         {
             // TODO: ensure thread or beep
 
             MsgMarkThreadAsRead();
-        });
+        });*/
 
-    liberator.mappings.add(modes, ["ts"],
+    liberator.mappings.add(modes, ["ls"],
         "Toggle selected messages starred",
         function ()
         {
@@ -559,6 +556,7 @@ liberator.Mail = function () //{{{
             MsgMarkMsgAsFlagged();
         });
 
+    // TODO: change binding?
     liberator.mappings.add(modes, ["T"],
         "Mark current folder as read",
         function ()
