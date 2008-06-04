@@ -738,8 +738,8 @@ liberator.Mail = function () //{{{
 
                         if (!file.exists())
                         {
-                            liberator.echoerr("Exxx: Could attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
-                            continue;
+                            liberator.echoerr("Exxx: Could not attach file `" + url + "'", liberator.commandline.FORCE_SINGLELINE);
+                            return;
                         }
                         attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
                             .createInstance(Components.interfaces.nsIMsgAttachment);
