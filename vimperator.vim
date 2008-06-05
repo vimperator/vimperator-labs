@@ -42,10 +42,10 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ extendedhinttags eht fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs hinttags ht hinttimeout hto
     \ history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase
     \ ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks
-    \ linkmatching lm nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight pvh
-    \ previouspattern scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase
-    \ noscs suggestengines titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim
-    \ wildoptions wop wordseparators wsp
+    \ nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight pvh previouspattern
+    \ scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs
+    \ suggestengines titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim wildoptions
+    \ wop wordseparators wsp
     \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
