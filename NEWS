@@ -1,5 +1,9 @@
 <pre>
-2008-05-xx:
+2008-06-xx:
+    * version 0.4
+    * new "threads" option (non-functional for now)
+
+2008-06-04:
     * version 0.3
     * new tab related mappings + commands
     * new :contacts and :contact commands for address book operations
@@ -11,10 +15,9 @@
     * completions for :{go,copy,move}to commands
     * :emptytrash command
     * new * and # mappings to select next/prev message from same author (not perfect matching however)
-    * new "threads" option (non-functional for now)
     * J, K, ]s, etc. search in closed threads now
     * gj and gk to select messages in closed threads
-    * "x" to select current thread (change to t at some point)
+    * "t" to select current thread, use "lr" now to label a message as read
     * KMail-like mode-independent scrolling with left/right and up/down
     * many small improvements
 
