@@ -285,9 +285,10 @@ liberator.util = { //{{{
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
-            // first check if it is an existing local file
+            // first check if it is an existing local file but NOT a search url/keyword
+            // NOTE: the test for being a file is done first, because it's faster than getSearchURL
             var file = liberator.io.getFile(urls[url]);
-            if (file.exists() && file.isReadable())
+            if (file.exists() && file.isReadable() && !liberator.bookmarks.getSearchURL("", urls[url]))
             {
                 urls[url] = file.path;
                 continue;
