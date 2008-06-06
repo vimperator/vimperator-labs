@@ -337,8 +337,22 @@ liberator.CommandLine = function () //{{{
 
     liberator.mappings.add(modes,
         ["<Space>"], "Expand command line abbreviation",
-        function () { return liberator.editor.expandAbbreviation("c"); },
-        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+        function ()
+        {
+            // XXX: VERY ugly, hacky code, I know, but it fixes :side<tab><space><tab>
+            liberator.editor.expandAbbreviation("c");
+            var commandline = document.getElementById("liberator-commandline-command");
+            var txt = commandline.value;
+            var start = commandline.selectionStart;
+            commandline.value = txt.substr(0, start) + " " +
+                                txt.substr(commandline.selectionEnd);
+            commandline.selectionStart = commandline.selectionEnd = start + 1;
+
+            var evt = window.document.createEvent("KeyEvents");
+            var view = window.document.defaultView;
+            evt.initKeyEvent("keypress", true, true, view, false, false, false, false, 0, 32);
+            liberator.commandline.onEvent(evt);
+        });
 
     liberator.mappings.add(modes,
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
