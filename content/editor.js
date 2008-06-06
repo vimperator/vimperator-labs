@@ -262,6 +262,14 @@ liberator.Editor = function () //{{{
         function () { liberator.editor.executeCommand("cmd_deleteCharForward", 1); });
 
     liberator.mappings.add(modes,
+        ["<C-Home>"], "Move cursor to beginning of text field",
+        function () { liberator.editor.executeCommand("cmd_moveTop", 1); });
+
+    liberator.mappings.add(modes,
+        ["<C-End>"], "Move cursor to end of text field",
+        function () { liberator.editor.executeCommand("cmd_moveBottom", 1); });
+
+    liberator.mappings.add(modes,
         ["<S-Insert>"], "Insert clipboard/selection",
         function () { liberator.editor.pasteClipboard(); });
 
