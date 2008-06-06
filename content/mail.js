@@ -626,7 +626,7 @@ liberator.Mail = function () //{{{
                 addresses = addresses.concat(mailargs.cc);
 
             // TODO: is there a better way to check for validity?
-            if (addresses.some(function(recipient) { return !(/\S@\S+\.\S/.test(recipient)); }))
+            if (addresses.some(function (recipient) { return !(/\S@\S+\.\S/.test(recipient)); }))
             {
                 liberator.echoerr("Exxx: Invalid e-mail address");
                 return;

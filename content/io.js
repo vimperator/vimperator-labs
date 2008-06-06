@@ -70,7 +70,7 @@ liberator.IO = function () //{{{
         });
 
     // mkv[imperatorrc] or mkm[uttatorrc]
-    liberator.commands.add(["mk" + extname.substr(0,1) + "[" + extname.substr(1) + "rc]"],
+    liberator.commands.add(["mk" + extname.substr(0, 1) + "[" + extname.substr(1) + "rc]"],
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {

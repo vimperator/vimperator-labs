@@ -433,7 +433,8 @@ liberator.Hints = function () //{{{
                     }
 
                     // the current word matches same characters as the previous word
-                    if (wcIdx > 0) {
+                    if (wcIdx > 0)
+                    {
                         var prevCharIdx = charIdx;
                         // now check if it matches additional characters
                         for (; wcIdx < word.length && charIdx < chars.length; wcIdx++, charIdx++)
@@ -458,7 +459,8 @@ liberator.Hints = function () //{{{
                     }
                     // the current word doesn't match same characters as the previous word, just
                     // try to match the next characters
-                    else {
+                    else
+                    {
                         var prevCharIdx = charIdx;
                         for (var i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
                         {
@@ -466,7 +468,8 @@ liberator.Hints = function () //{{{
                                 break;
                         }
 
-                        if (prevCharIdx == charIdx) {
+                        if (prevCharIdx == charIdx)
+                        {
                             if (! allowWordOverleaping)
                                 return false;
                         }
@@ -502,7 +505,8 @@ liberator.Hints = function () //{{{
                         return true;
                 }
 
-                for (; strIdx < strings.length; strIdx++) {
+                for (; strIdx < strings.length; strIdx++)
+                {
                     if (strings[strIdx].length != 0)
                         return false;
                 }

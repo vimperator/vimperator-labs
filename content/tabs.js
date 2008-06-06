@@ -34,18 +34,18 @@ liberator.Tabs = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
     var tabmail;
-    var getBrowser = (function(){
+    var getBrowser = (function () {
         if (liberator.config.hostApplication == "Thunderbird")
         {
-            return function()
+            return function ()
             {
                 if (!tabmail)
                 {
                     tabmail = document.getElementById('tabmail');
-                    tabmail.__defineGetter__('mTabContainer',function(){ return this.tabContainer; });
-                    tabmail.__defineGetter__('mTabs',function(){ return this.tabContainer.childNodes; });
-                    tabmail.__defineGetter__('mCurrentTab',function(){ return this.tabContainer.selectedItem; });
-                    tabmail.__defineGetter__('mStrip',function(){ return this.tabStrip; });
+                    tabmail.__defineGetter__('mTabContainer', function () { return this.tabContainer; });
+                    tabmail.__defineGetter__('mTabs', function () { return this.tabContainer.childNodes; });
+                    tabmail.__defineGetter__('mCurrentTab', function () { return this.tabContainer.selectedItem; });
+                    tabmail.__defineGetter__('mStrip', function () { return this.tabStrip; });
                 }
                 return tabmail;
             };
@@ -605,7 +605,7 @@ liberator.Tabs = function () //{{{
                             liberator.beep();
                     };
                 }
-                return function() { return null; };
+                return function () { return null; };
             })();
 
             if (typeof count != "number" || count < 1)

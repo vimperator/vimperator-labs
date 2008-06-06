@@ -181,7 +181,7 @@ liberator.Completion = function () //{{{
         searchEngineSuggest: function (filter, engineAliases)
         {
             if (!filter)
-                return [0,null];
+                return [0, null];
 
         	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
         	var responseType = "application/x-suggestions+json";
@@ -218,7 +218,7 @@ liberator.Completion = function () //{{{
                     // make sure we receive strings, otherwise a man-in-the-middle attack
                     // could return objects which toString() method could be called to
                     // execute untrusted code
-                    if(typeof(item) != "string")
+                    if (typeof item != "string")
                         return;
 
             	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);

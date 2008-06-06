@@ -31,7 +31,7 @@ liberator.Addressbook = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    
+
     const abManager = Components.classes["@mozilla.org/abmanager;1"]
                        .getService(Components.interfaces.nsIAbManager);
     const rdf = Components.classes["@mozilla.org/rdf/rdf-service;1"]
@@ -45,15 +45,15 @@ liberator.Addressbook = function () //{{{
 
     // TODO: add option for a format specifier, like:
     // :set displayname=%l, %f
-    function generateDisplayName(firstName, lastName) 
+    function generateDisplayName(firstName, lastName)
     {
         if (firstName && lastName)
             return lastName + ", " + firstName;
         else if (firstName)
             return firstName;
-        else if (lastName) 
+        else if (lastName)
             return lastName;
-        else 
+        else
             return "";
     }
 
@@ -72,7 +72,7 @@ liberator.Addressbook = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var modes = liberator.config.mailModes || [liberator.modes.NORMAL];
-    
+
     liberator.mappings.add(modes, ["a"],
         "Open a prompt to save a new addressbook entry for the sender of the selected message",
         function ()
@@ -82,7 +82,7 @@ liberator.Addressbook = function () //{{{
             {
                 to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
             }
-            catch (e) { liberator.beep();}
+            catch (e) { liberator.beep(); }
 
             if (!to)
                 return;
@@ -90,12 +90,12 @@ liberator.Addressbook = function () //{{{
             var address = to.substring(to.indexOf("<") + 1, to.indexOf(">"));
 
             var displayName = to.substr(0, to.indexOf("<") - 1);
-            if (/^\S+\s+\S+\s*$/.test(displayName)) 
+            if (/^\S+\s+\S+\s*$/.test(displayName))
             {
                 var names = displayName.split(/\s+/);
                 displayName = "-firstname=" + names[0].replace(/"/g, "")
                             + " -lastname=" + names[1].replace(/"/g, "");
-            } 
+            }
             else
             {
                 displayName = "-name=\"" + displayName.replace(/"/g, "") + "\"";
@@ -126,7 +126,7 @@ liberator.Addressbook = function () //{{{
             var firstName = liberator.commands.getOption(res.opts, "-firstname", null);
             var lastName = liberator.commands.getOption(res.opts, "-lastname", null);
             var displayName = liberator.commands.getOption(res.opts, "-name", null);
-            if (!displayName) 
+            if (!displayName)
                 displayName = generateDisplayName(firstName, lastName);
 
             if (liberator.addressbook.add(mailAddr, firstName, lastName, displayName))
@@ -148,10 +148,10 @@ liberator.Addressbook = function () //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-        
+
     return {
 
-		add: function(address, firstname, lastname, displayName)
+		add: function (address, firstname, lastname, displayName)
 		{
 			var directory = getDirectoryFromURI(kPersonalAddressbookURI);
 			var card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
@@ -169,7 +169,7 @@ liberator.Addressbook = function () //{{{
 		},
 
         // TODO: add telephone number support
-		list: function(filter, newMail) 
+		list: function (filter, newMail)
 		{
             var addresses = [];
             var dirs = abManager.directories;
@@ -179,15 +179,15 @@ liberator.Addressbook = function () //{{{
             {
                 var addrbook = dirs.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
                 var cards = addrbook.childCards;
-                while(cards.hasMoreElements())
+                while (cards.hasMoreElements())
                 {
                     var card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
                     var mail = card.primaryEmail || "";
                     var displayName = card.displayName;
-                    if (!displayName) 
+                    if (!displayName)
                         displayName = generateDisplayName(card.firstName, card.lastName);
-                    
-                    if (displayName.toLowerCase().indexOf(lowerFilter) > -1 
+
+                    if (displayName.toLowerCase().indexOf(lowerFilter) > -1
                         || card.primaryEmail.toLowerCase().indexOf(lowerFilter) > -1)
                             addresses.push([displayName, card.primaryEmail]);
                 }
@@ -195,21 +195,21 @@ liberator.Addressbook = function () //{{{
             if (addresses.length < 1)
             {
                 liberator.echoerr("E94: No matching contact for " + filter, liberator.commandline.FORCE_SINGLELINE);
-                return false;            
+                return false;
             }
 
-			if (newMail) 
+			if (newMail)
 			{
 				// Now we have to create a new message
 				var args = new Object();
-				args.to = addresses.map(function(address) 
-				{ 
-					return "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""; 
+				args.to = addresses.map(function (address)
+				{
+					return "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\"";
 				}).join(", ");
 
 				liberator.mail.composeNewMail(args);
-			} 
-			else 
+			}
+			else
 			{
 				var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
 						   "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Address</th></tr>";
