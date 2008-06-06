@@ -386,6 +386,12 @@ Each pattern, in order, is matched against all links in the page with the first 
 The patterns are case insensitive regular expressions.
 ____
 
+|\'noonline'| |\'online'|
+||'online'|| boolean (default on)
+____
+Show and set the 'work offline' behavior.
+____
+
 |\'pageinfo' \'pa'|
 ||'pageinfo' 'pa'||
 charlist (default: gfm)

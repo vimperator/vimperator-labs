@@ -327,6 +327,29 @@ liberator.config = { //{{{
             {
                 completer: function (filter) { return liberator.completion.url(filter); }
             });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.options.add(["online"], "Set and reset the 'work offline' option", "boolean", true,
+        {
+            setter: function (value) 
+            {
+                var ioService = Components.classes['@mozilla.org/network/io-service;1'].
+                                getService(Components.interfaces.nsIIOService2);
+
+                ioService.offline = !value;
+                gPrefService.setBoolPref("browser.offline", ioService.offline);
+            },
+
+            getter: function ()
+            {
+                return Components.classes['@mozilla.org/network/io-service;1'].
+                       getService(Components.interfaces.nsIIOService2).offline;
+            }
+        });
+
     }
     //}}}
 }; //}}}

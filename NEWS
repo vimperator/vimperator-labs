@@ -3,6 +3,7 @@
     * version 1.2
     * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode
     * keywords in :open <arg> have higher priority than local files now
+    * add :set online to control the "work offline" menu item
 
 2008-06-03:
     * version 1.1

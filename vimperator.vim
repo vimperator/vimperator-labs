@@ -43,7 +43,7 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase
     \ ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks
     \ nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight pvh previouspattern
-    \ scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs
+    \ online noonline scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs
     \ suggestengines titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb wildmode wim wildoptions
     \ wop wordseparators wsp
     \ contained
