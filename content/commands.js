@@ -606,7 +606,7 @@ liberator.Commands = function () //{{{
             {
                 if (!liberator.commands.addUserCommand([cmd],
                         "User defined command",
-                        function (args, special, count, modifiers) { eval(rep) },
+                        function (args, special, count, modifiers) { eval(rep); },
                         null, special))
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
