@@ -53,7 +53,7 @@ liberator.Bookmarks = function () //{{{
     function load()
     {
         // update our bookmark cache
-        bookmarks = []; // also clear our bookmark cache
+        bookmarks = [];
         keywords  = [];
 
         var folders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
