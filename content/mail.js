@@ -579,6 +579,34 @@ liberator.Mail = function () //{{{
             });
         });
 
+    liberator.mappings.add(modes, ["h"],
+        "Toggle displayed headers",
+        function ()
+        {
+            var value = gPrefBranch.getIntPref("mail.show_headers", 2);
+            gPrefBranch.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
+            MsgReload();
+        });
+
+    liberator.mappings.add(modes, ["x"],
+        "Toggle HTML message display",
+        function ()
+        {
+            var want_html = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
+
+            gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", want_html ? false : true);
+            gPrefBranch.setIntPref("mailnews.display.html_as", want_html ? 0 : 1);
+            gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", want_html ? 0 : gDisallow_classes_no_html);
+
+            /*MsgBodySanitized() {
+                gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext",
+                false); gPrefBranch.setIntPref("mailnews.display.html_as", 3);
+                gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers",
+                gDisallow_classes_no_html); MsgReload(); return true; }*/
+
+            MsgReload();
+        });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -843,14 +871,23 @@ liberator.Mail = function () //{{{
          */
         selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
         {
+            function currentIndex()
+            {
+                var index = gDBView.selection.currentIndex;
+                if (index < 0)
+                    index = 0;
+                return index;
+            }
+
             function closedThread(index)
             {
                 if (!(gDBView.viewFlags & nsMsgViewFlagsType.kThreadedDisplay))
                     return false;
 
-                index = (typeof index == "number") ? index : gDBView.selection.currentIndex;
+                index = (typeof index == "number") ? index : currentIndex();
                 return !gDBView.isContainerOpen(index) && !gDBView.isContainerEmpty(index);
             }
+
             if (typeof validatorFunc != "function")
                 return;
 
@@ -860,7 +897,7 @@ liberator.Mail = function () //{{{
             // first try to find in current folder
             if (gDBView)
             {
-                for (var i = gDBView.selection.currentIndex + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
+                for (var i = currentIndex() + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
                     reverse ? (i >= 0) : (i < gDBView.rowCount);
                     reverse ? i-- : i++)
                 {
@@ -873,7 +910,7 @@ liberator.Mail = function () //{{{
                         var thread = gDBView.db.GetThreadContainingMsgHdr(msg);
                         var originalCount = count;
 
-                        for (let j = (i == gDBView.selection.currentIndex && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
+                        for (let j = (i == currentIndex() && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
                                  reverse ? (j >= 0) : (j < thread.numChildren);
                                  reverse ? j-- : j++)
                         {

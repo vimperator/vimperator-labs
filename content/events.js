@@ -1323,6 +1323,8 @@ liberator.Events = function () //{{{
                         if (!(liberator.modes.extended & liberator.modes.INPUT_MULTILINE))
                             liberator.commandline.onEvent(event); // reroute event in command line mode
                     }
+                    else // NORMAL mode, no liberator mapping
+                        liberator.beep();
                 }
             }
 
