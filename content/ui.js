@@ -657,6 +657,8 @@ liberator.CommandLine = function () //{{{
                     {
                         liberator.beep();
                         // prevent tab from moving to the next field:
+                        event.preventDefault();
+                        event.stopPropagation();
                         return false;
                     }
 
@@ -730,7 +732,6 @@ liberator.CommandLine = function () //{{{
                                 completionIndex = UNINITIALIZED;
                         }
                     }
-
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
