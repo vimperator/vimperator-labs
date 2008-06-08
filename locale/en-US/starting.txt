@@ -7,7 +7,7 @@ section:Initialization[initialization, startup]
 
 At startup Vimperator sources a user RC file, containing Ex commands, and any
 JavaScript files found in the plugin directory. The RC file may be named
-[a].vimperatorrc_[a] or [a]\_vimperatorrc[a]. The search order is:
+[a].vimperatorrc[a] or [a]\_vimperatorrc[a]. The search order is:
 
 * Unix and Mac: [a]\~/.vimperatorrc[a] then [a]\~/_vimperatorrc[a]
 * Windows - [a]\~/_vimperatorrc[a] then [a]\~/.vimperatorrc[a]
