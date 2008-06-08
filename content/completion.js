@@ -133,7 +133,6 @@ liberator.Completion = function () //{{{
         // TODO: move "nodes" to {muttator,vimperator}.js
         autocommands: function (filter)
         {
-            substrings = [];
             var nodes = [
                 ["BrowserExit",    "when firefox exits"],
                 ["BrowserRestart", "when firefox restarts"],
@@ -153,7 +152,6 @@ liberator.Completion = function () //{{{
 
         dialog: function (filter)
         {
-            substrings = [];
             var nodes = liberator.config.dialogs || [];
 
             if (!filter)
@@ -241,7 +239,6 @@ liberator.Completion = function () //{{{
         url: function (filter, complete)
         {
             var completions = [];
-            substrings = [];
 
             var start = 0;
             var skip = filter.match(/^(.*,\s+)(.*)/); // start after the last ", "
@@ -289,11 +286,6 @@ liberator.Completion = function () //{{{
         // if "tail" is true, only return names without any directory components
         file: function (filter, tail)
         {
-            // this is now also used as part of the url completion, so the
-            // substrings shouldn't be cleared for that case
-            if (!arguments[1])
-                substrings = [];
-
             var dir = "", compl = "";
             var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
             if (matches)
@@ -359,7 +351,6 @@ liberator.Completion = function () //{{{
 
         command: function (filter)
         {
-            substrings = [];
             var completions = [];
 
             if (!filter)
@@ -395,7 +386,6 @@ liberator.Completion = function () //{{{
 
         option: function (filter, special, unfiltered)
         {
-            substrings = [];
             var optionCompletions = [];
             var prefix = filter.match(/^no|inv/) || "";
 
@@ -419,7 +409,7 @@ liberator.Completion = function () //{{{
             if (special)
             {
                 var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefBranch);
+                            .getService(Components.interfaces.nsIPrefBranch);
                 var prefArray = prefs.getChildList("", { value: 0 });
                 prefArray.sort();
 
@@ -510,7 +500,6 @@ liberator.Completion = function () //{{{
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function (filter)
         {
-            substrings = [];
             var items = [];
             var num = getBrowser().browsers.length;
             var title, url;
@@ -547,7 +536,6 @@ liberator.Completion = function () //{{{
 
         sidebar: function (filter)
         {
-            substrings = [];
             var menu = document.getElementById("viewSidebarMenu");
             var nodes = [];
 
@@ -566,7 +554,6 @@ liberator.Completion = function () //{{{
 
         javascript: function (str)
         {
-            substrings = [];
             var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
             var objects = [];
             var filter = matches[3] || "";
@@ -764,6 +751,7 @@ liberator.Completion = function () //{{{
         // TODO: get completions for "nested" command lines like ":time :js <tab>" or ":tab :he<tab>"
         exTabCompletion: function (str)
         {
+            substrings = [];
             var [count, cmd, special, args] = liberator.commands.parseCommand(str);
             var completions = [];
             var start = 0;

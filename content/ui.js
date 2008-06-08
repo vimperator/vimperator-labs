@@ -706,9 +706,7 @@ liberator.CommandLine = function () //{{{
                     if (completionIndex == -1 && !longest) // wrapped around matches, reset command line
                     {
                         if (full && completions.length > 1)
-                        {
                             setCommand(completionPrefix + completionPostfix);
-                        }
                     }
                     else
                     {
@@ -728,8 +726,8 @@ liberator.CommandLine = function () //{{{
                             // Start a new completion in the next iteration. Useful for commands like :source
                             // RFC: perhaps the command can indicate whether the completion should be restarted
                             // Needed for :source to grab another set of completions after a file/directory has been filled out
-                            if (completions.length == 1 && !full)
-                                completionIndex = UNINITIALIZED;
+                            // if (completions.length == 1 && !full)
+                            //     completionIndex = UNINITIALIZED;
                         }
                     }
                     // prevent tab from moving to the next field
