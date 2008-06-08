@@ -350,6 +350,15 @@ const liberator = (function () //{{{
                 {
                     liberator.echoerr(e);
                 }
+            },
+            {
+                completer: function (filter)
+                {
+                    if (/^:/.test(filter)) 
+                        return liberator.completion.exTabCompletion(filter);
+                    else
+                        return liberator.completion.javascript(filter);
+                }
             });
 
         liberator.commands.add(["ve[rsion]"],
