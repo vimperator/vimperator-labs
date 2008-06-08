@@ -873,18 +873,6 @@ liberator.Buffer = function () //{{{
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
         },
 
-        // XXX: probably remove this method/functionality
-        // updates the buffer preview in place only if list is visible
-        updateBufferList: function ()
-        {
-            if (!liberator.bufferwindow.visible())
-                return;
-
-            var items = liberator.completion.buffer("")[1];
-            liberator.bufferwindow.show(items);
-            liberator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-        },
-
         zoomIn: function (steps, fullZoom)
         {
             bumpZoomLevel(steps, fullZoom);

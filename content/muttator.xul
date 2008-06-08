@@ -91,16 +91,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
         </statusbar>
 
         <vbox id="liberator-container" hidden="false">
-            <listbox id="liberator-bufferwindow" class="plain" rows="10" flex="1" hidden="true"
-                onclick=   "liberator.bufferwindow.onEvent(event);"
-                ondblclick="liberator.bufferwindow.onEvent(event);"
-                onkeydown= "liberator.bufferwindow.onEvent(event);">
-                <listcols>
-                    <listcol flex="1" width="50%"/>
-                    <listcol flex="1" width="50%"/>
-                </listcols>
-            </listbox>
-
             <listbox id="liberator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
                 onclick=   "liberator.previewwindow.onEvent(event);"
                 ondblclick="liberator.previewwindow.onEvent(event);"

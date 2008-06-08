@@ -244,17 +244,14 @@ liberator.Events = function () //{{{
             tabcontainer.addEventListener("TabMove", function (event)
             {
                 liberator.statusline.updateTabCount();
-                liberator.buffer.updateBufferList();
             }, false);
             tabcontainer.addEventListener("TabOpen", function (event)
             {
                 liberator.statusline.updateTabCount();
-                liberator.buffer.updateBufferList();
             }, false);
             tabcontainer.addEventListener("TabClose", function (event)
             {
                 liberator.statusline.updateTabCount();
-                liberator.buffer.updateBufferList();
             }, false);
             tabcontainer.addEventListener("TabSelect", function (event)
             {
@@ -263,7 +260,6 @@ liberator.Events = function () //{{{
                 liberator.commandline.clear();
                 liberator.modes.show();
                 liberator.statusline.updateTabCount();
-                liberator.buffer.updateBufferList();
                 liberator.tabs.updateSelectionHistory();
 
                 setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
@@ -449,7 +445,6 @@ liberator.Events = function () //{{{
             if (url && liberator.history)
                 liberator.history.add(url, title);
 
-            liberator.buffer.updateBufferList();
             liberator.autocommands.trigger("PageLoad", url);
 
             // mark the buffer as loaded, we can't use liberator.buffer.loaded

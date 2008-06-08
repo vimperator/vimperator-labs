@@ -810,7 +810,6 @@ const liberator = (function () //{{{
             log("commandline");    liberator.commandline   = liberator.CommandLine();
             log("search");         liberator.search        = liberator.Search();
             log("preview window"); liberator.previewwindow = liberator.InformationList("liberator-previewwindow", { incrementalFill: false, maxItems: 10 });
-            log("buffer window");  liberator.bufferwindow  = liberator.InformationList("liberator-bufferwindow", { incrementalFill: false, maxItems: 10 });
             log("statusline");     liberator.statusline    = liberator.StatusLine();
             log("buffer");         liberator.buffer        = liberator.Buffer();
             log("editor");         liberator.editor        = liberator.Editor();

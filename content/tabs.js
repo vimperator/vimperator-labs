@@ -515,51 +515,35 @@ liberator.Tabs = function () //{{{
             return getBrowser().mTabContainer.selectedItem;
         },
 
-        list: function (fullmode)
+        // TODO: shouldn't that have a filter argument?
+        list: function ()
         {
-            if (fullmode)
+            // TODO: move this to liberator.tabs.get()
+            var items = liberator.completion.buffer("")[1];
+            var number, indicator, title, url;
+
+            var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
+            for (var i = 0; i < items.length; i++)
             {
-                // toggle the special buffer preview window
-                if (liberator.bufferwindow.visible())
-                {
-                    liberator.bufferwindow.hide();
-                }
+                if (i == liberator.tabs.index())
+                   indicator = " <span style=\"color: blue\">%</span> ";
+                else if (i == liberator.tabs.index(liberator.tabs.alternate))
+                   indicator = " <span style=\"color: blue\">#</span> ";
                 else
-                {
-                    var items = liberator.completion.buffer("")[1];
-                    liberator.bufferwindow.show(items);
-                    liberator.bufferwindow.selectItem(getBrowser().mTabContainer.selectedIndex);
-                }
+                   indicator = "   ";
+
+                [number, title] = items[i][0].split(/:\s+/, 2);
+                url = items[i][1];
+                url = liberator.util.escapeHTML(url);
+                title = liberator.util.escapeHTML(title);
+
+                list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
+                        "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                        "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
             }
-            else
-            {
-                // TODO: move this to liberator.buffers.get()
-                var items = liberator.completion.buffer("")[1];
-                var number, indicator, title, url;
+            list += "</table>";
 
-                var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
-                for (var i = 0; i < items.length; i++)
-                {
-                    if (i == liberator.tabs.index())
-                       indicator = " <span style=\"color: blue\">%</span> ";
-                    else if (i == liberator.tabs.index(liberator.tabs.alternate))
-                       indicator = " <span style=\"color: blue\">#</span> ";
-                    else
-                       indicator = "   ";
-
-                    [number, title] = items[i][0].split(/:\s+/, 2);
-                    url = items[i][1];
-                    url = liberator.util.escapeHTML(url);
-                    title = liberator.util.escapeHTML(title);
-
-                    list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
-                            "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                            "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
-                }
-                list += "</table>";
-
-                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
-            }
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         // wrap causes the movement to wrap around the start and end of the tab list
