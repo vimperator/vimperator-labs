@@ -191,7 +191,7 @@ const liberator = (function () //{{{
             "Display help",
             function (args) { liberator.help(args); },
             {
-                completer: function (filter) { return liberator.completion.help(filter); }
+                completer: function (filter) { return getHelpCompletions(filter); }
             });
 
         liberator.commands.add(["javas[cript]", "js"],
@@ -388,6 +388,36 @@ const liberator = (function () //{{{
 
                 liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
             });
+    }
+
+    function getHelpCompletions(filter)
+    {
+        var res = [];
+        // they are sorted by relevance, not alphabetically
+        var files = ["intro.html", "tutorial.html", "starting.html", "browsing.html", "buffer.html",
+                     "options.html", "tabs.html", "marks.html", "repeat.html",
+                     "autocommands.html", "developer.html", "various.html"];
+
+        for (var file in files)
+        {
+            try
+            {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], false);
+                xmlhttp.send(null);
+            }
+            catch (e)
+            {
+                liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], 1);
+                continue;
+            }
+            var doc = xmlhttp.responseXML;
+            var elems = doc.getElementsByClassName("tag");
+            for (var i = 0; i < elems.length; i++)
+                res.push([elems[i].textContent, files[file]]);
+        }
+
+        return [0, liberator.completion.filter(res, filter)];
     }
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
@@ -636,6 +666,7 @@ const liberator = (function () //{{{
             function jumpToTag(file, tag)
             {
                 liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file, where);
+                // TODO: it would be better wo wait for pageLoad
                 setTimeout(function () {
                     var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
@@ -651,7 +682,7 @@ const liberator = (function () //{{{
                 return;
             }
 
-            var [, items] = liberator.completion.help(topic);
+            var [, items] = getHelpCompletions(topic);
             var partialMatch = -1;
             for (var i = 0; i < items.length; i++)
             {

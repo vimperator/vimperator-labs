@@ -80,7 +80,6 @@ how Vimperator challenges this preconception.
 
 section:Scrolling[keyboard_scrolling]
 
-____
 Scrolling the browser window is done with simple keystrokes:
 
   * [m]j[m]/[m]k[m] --
@@ -94,12 +93,10 @@ Scrolling the browser window is done with simple keystrokes:
 
 Your standard buttons ([m]<Up>[m]/[m]<Down>[m]/[m]<PgUp>[m]/[m]<PgDn>[m]) will
 also work as expected.
-____
 
 
 section:History{nbsp}and{nbsp}Tabs[history_navigation,tab_navigation]
 
-____
 History navigation (e.g., ``Back'', ``Forward'') are done similarly to
 scrolling.
 
@@ -127,12 +124,10 @@ following pairs sequences are equivalent:
   :tabopen vimperator.mozdev.org<cr>
   tvimperator.mozdev.org<cr>
 
-____
 
 
 section:Common{nbsp}Issues[common_issues]
 
-____
 Say you get half-way down typing in a new URL, only to remember that you've
 already got that page open in the previous tab.  Your command-line might look
 something like this:
@@ -144,12 +139,10 @@ following:
 
   <Esc>gT
 
-____
 
 
 section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
 
-____
 Vimperator supports all of Vim's classing methods of exitting.
 
   * [c]:xall[c] -- command to quit and save the current browsing
@@ -158,12 +151,10 @@ Vimperator supports all of Vim's classing methods of exitting.
   * [m]ZZ[m] -- normal mode mapping equivalent to [c]:xall[c]
   * [m]ZQ[m] -- normal mode mapping equivalent to [c]:qall[c]
 
-____
 
 
 section:Where{nbsp}did{nbsp}Firefox{nbsp}go?[whither_firefox]
 
-____
 You might feel pretty disoriented now. Don't worry.  This is still Firefox
 underneath.  Here are some ways Vimperator allows Firefox to shine through.
 See the [c]:help[c] for these commands and mappings for more information on
@@ -183,8 +174,6 @@ how to make the best use of them.
 Finally, in addition to the help system itself, [c]:exusage[c] and
 [c]:viusage[c] are useful quick-reference commands.
 
-____
-
 
 Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
 remember to use the [m]gt[m]/[m]gT[m] mappings to get back to this page.  If
@@ -198,7 +187,7 @@ If you get hopelessly lost, just type [c]:help<cr>[c] and click the
 
 section:Get{nbsp}me{nbsp}out{nbsp}of{nbsp}here![removal]
 
-If you've given it a fair shot and determined
+If you've given it a fair shot and determined ... TODO
 
 The Vimperator way to do this is with the command [c]:addons[c].  Issuing this
 command brings up the Firefox Add-ons dialog window; you can then remove it as
@@ -222,6 +211,5 @@ hear from you as well.  Developers work on Vimperator whenever possible, but
 we are neither infinite nor omnipotent; please bear with us.  If you can't
 wait for us to get around to it, rest assured patches are welcome!  See
 the help:Developer[developer.html] page for more information.
-
 
 // vim: set syntax=asciidoc:

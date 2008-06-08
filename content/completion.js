@@ -289,36 +289,6 @@ liberator.Completion = function () //{{{
                 return [0, buildLongestStartingSubstring(mapped, filter)];
         },
 
-        help: function (filter)
-        {
-            var res = [];
-            // they are sorted by relevance, not alphabetically
-            var files = ["intro.html", "starting.html", "browsing.html", "buffer.html",
-                         "options.html", "tabs.html", "marks.html", "repeat.html",
-                         "autocommands.html", "developer.html", "various.html"];
-
-            for (var file in files)
-            {
-                try
-                {
-                    var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], false);
-                    xmlhttp.send(null);
-                }
-                catch (e)
-                {
-                    liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], 1);
-                    continue;
-                }
-                var doc = xmlhttp.responseXML;
-                var elems = doc.getElementsByClassName("tag");
-                for (var i = 0; i < elems.length; i++)
-                    res.push([elems[i].textContent, files[file]]);
-            }
-
-            return [0, this.filter(res, filter)];
-        },
-
         command: function (filter)
         {
             var completions = [];
