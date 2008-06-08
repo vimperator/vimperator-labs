@@ -129,13 +129,16 @@ liberator.Completion = function () //{{{
             }
             return longest;
         },
+
+        // TODO: move "nodes" to {muttator,vimperator}.js
         autocommands: function (filter)
         {
             substrings = [];
             var nodes = [
                 ["BrowserExit",    "when firefox exits"],
                 ["BrowserRestart", "when firefox restarts"],
-                ["PageLoad",       "when a page gets (re)loaded/opened"]
+                ["PageLoad",       "when a page gets (re)loaded/opened"],
+                ["FolderLoaded",   "when a new folder in Thunderbird is opened"]
             ];
 
             if (!filter)
@@ -147,6 +150,7 @@ liberator.Completion = function () //{{{
 
             return [0, buildLongestCommonSubstring(mapped, filter)];
         },
+
         dialog: function (filter)
         {
             substrings = [];
@@ -181,7 +185,7 @@ liberator.Completion = function () //{{{
         searchEngineSuggest: function (filter, engineAliases)
         {
             if (!filter)
-                return [0, null];
+                return [0, []];
 
         	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
         	var responseType = "application/x-suggestions+json";
@@ -202,16 +206,17 @@ liberator.Completion = function () //{{{
             	if (engine && engine.supportsResponseType(responseType))
                     queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
                 else
-                    return;
+                    return [0, []];
 
             	var xhr = new XMLHttpRequest();
             	xhr.open("GET", queryURI, false);
             	xhr.send(null);
 
-                var json = Components.classes["@mozilla.org/dom/json;1"].createInstance(Components.interfaces.nsIJSON);
+                var json = Components.classes["@mozilla.org/dom/json;1"]
+                           .createInstance(Components.interfaces.nsIJSON);
                 var results = json.decode(xhr.responseText)[1];
                 if (!results)
-                    return;
+                    return [0, []];
 
             	results.forEach(function (item)
             	{
@@ -219,7 +224,7 @@ liberator.Completion = function () //{{{
                     // could return objects which toString() method could be called to
                     // execute untrusted code
                     if (typeof item != "string")
-                        return;
+                        return [0, []];
 
             	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
             	});

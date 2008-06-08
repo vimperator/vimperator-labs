@@ -54,7 +54,7 @@ liberator.Mail = function () //{{{
                 if (folder)
                 {
                     var msgFolder = folder.QueryInterface(Components.interfaces.nsIMsgFolder);
-                    dump (msgFolder.prettiestName + " loaded\n");
+                    liberator.autocommands.trigger("FolderLoaded", msgFolder);
 
                     // Jump to a message when requested
                     var indices = [];
@@ -593,18 +593,7 @@ liberator.Mail = function () //{{{
         function ()
         {
             var want_html = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
-
-            gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", want_html ? false : true);
-            gPrefBranch.setIntPref("mailnews.display.html_as", want_html ? 0 : 1);
-            gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", want_html ? 0 : gDisallow_classes_no_html);
-
-            /*MsgBodySanitized() {
-                gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext",
-                false); gPrefBranch.setIntPref("mailnews.display.html_as", 3);
-                gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers",
-                gDisallow_classes_no_html); MsgReload(); return true; }*/
-
-            MsgReload();
+            liberator.mail.setHTML(want_html ? 1 : 0);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -998,6 +987,20 @@ liberator.Mail = function () //{{{
             liberator.beep();
         },
 
+        setHTML: function (value)
+        {
+            var values = [[true,  1, gDisallow_classes_no_html],  // plaintext
+                          [false, 0, 0],                          // HTML
+                          [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML 
+
+            if (typeof(value) != "number" || value < 0 || value > 2)
+                value = 1;
+
+            gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", values[value][0]);
+            gPrefBranch.setIntPref("mailnews.display.html_as", values[value][1]);
+            gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", values[value][2]);
+            MsgReload();
+        }
     };
 
     //}}}
