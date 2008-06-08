@@ -568,9 +568,8 @@ liberator.Completion = function () //{{{
             return false;
         },
 
-        // FIXME: rename
-        // TODO: get completions for "nested" command lines like ":time :js <tab>" or ":tab :he<tab>"
-        exTabCompletion: function (str)
+        // provides completions for ex commands, including their arguments
+        ex: function (str)
         {
             substrings = [];
             var [count, cmd, special, args] = liberator.commands.parseCommand(str);

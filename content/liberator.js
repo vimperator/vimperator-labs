@@ -355,7 +355,7 @@ const liberator = (function () //{{{
                 completer: function (filter)
                 {
                     if (/^:/.test(filter)) 
-                        return liberator.completion.exTabCompletion(filter);
+                        return liberator.completion.ex(filter);
                     else
                         return liberator.completion.javascript(filter);
                 }
@@ -859,7 +859,7 @@ const liberator = (function () //{{{
 
             // TODO: move elsewhere
             liberator.registerCallback("submit", liberator.modes.EX, function (command) { liberator.execute(command); });
-            liberator.registerCallback("complete", liberator.modes.EX, function (str) { return liberator.completion.exTabCompletion(str); });
+            liberator.registerCallback("complete", liberator.modes.EX, function (str) { return liberator.completion.ex(str); });
 
             // first time intro message
             if (liberator.options.getPref("extensions." + liberator.config.name.toLowerCase() + ".firsttime", true))
