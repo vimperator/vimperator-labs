@@ -1,0 +1,227 @@
+LOGO
+
+// Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu)
+
++++<center>+++
+*This is a quickstart tutorial to help get new users up and running in
+Vimperator.*
++++</center>+++
+
+
+section:Quick-Start{nbsp}Tutorial[tutorial]
+
+If you've started using Vimperator from scratch (i.e., without any
+customization), you should be looking at this help page in a relatively
+bare-looking window.  The menubar, navigation bar, and bookmark bars are
+hidden.  In case you missed the notice in the help:Introduction[intro.html],
+you can regain these by issuing the command
+
+  [c]:set go+=mTb<cr>[c]
+
+where [m]cr[m] represents pressing the <Enter> or <Return> key.
+If you're a veteran Vim user, this may look familiar.  It should.
+
+However, in this author's opinion, the best way to get familiar with
+Vimperator is to leave these disabled for now. (The above action can be
+reversed with [c]:set go=<cr>[c])  You can look at the entry for
+[o]guioptions[o] in help:options[options.html] for more information on this.
+
+section:Vimperator's{nbsp}Modal{nbsp}Interface[modal]
+
+Vimperator's power, like Vim's, comes from it's modal interface.  Keys have
+different meanings depending on which mode the browser is in.  Vimperator has
+several modes, but the 2 most important are ``normal'' mode and
+``command-line'' mode.
+
+When Vimperator starts, it is in normal mode by default.  This is probably
+where you will spend the majority of your time.
+
+The other core mode of Vimperator, command-line mode, can be entered from
+normal mode by typing a ':' (colon).  You will frequently see Vimperator
+commands start with a ':', indicating that what follows is a command.
+
+To return to normal mode command-line mode, type [m]<Esc>[m].  Pressing
+[m]<Esc>[m] will also return you to normal mode from most other modes in
+Vimperator.
+
+section:Getting{nbsp}Help[getting_help]
+
+Vim is a great editor but it's not much of a web browser.  So even seasoned
+Vim users will probably have to look at Vimperator documentation sooner or
+later.  Most of the documentation for Vimperator's features are easily found
+using the [c]:help[c] command.  For example, you can find help on the
+[c]:help[c] command by typing
+
+  [c]:help :help<cr>[c]
+
+Similarly, help on configurable options is available with [c]:help
+'{option_name}'[c]. (Note the single quotes around the option name as in Vim.)
+Information on all available options is, predictably, [c]:help options[c].
+
+and you can find out about the [m]gt[m] and [m]gT[m] mapping with
+
+  [c]:help gt<cr>[c]
+  [c]:help gT<cr>[c]
+
+
+section:Mouseless[living_mouseless]
+
+*-- or how I learned to stop worrying and love the 80+ buttons I already have.*
+
+The efficiency of Vimperator, as with the legendary editor it was inspired by,
+relies on the user being able to keep his fingers on the keyboard where they
+can do the most good.  While there are some areas where the mouse is clearly
+superior at, such as GUI design or some games, Vimperator acts on the
+assumption that the web browser doesn't have to be one of those.
+
+Here are some areas where the mouse is typically considered indisposable, and
+how Vimperator challenges this preconception.
+
+
+section:Scrolling[keyboard_scrolling]
+
+____
+Scrolling the browser window is done with simple keystrokes:
+
+  * [m]j[m]/[m]k[m] --
+    scroll window down/up by one line, respectively
+  * [m]h[m]/[m]l[m] --
+    scroll window left/right
+  * [m]<Space>[m]/[m]<C-b>[m] --
+    scroll down/up by one page
+  * [m]<C-d>[m]/[m]<C-u>[m] --
+    scroll down/up by 1/2 page
+
+Your standard buttons ([m]<Up>[m]/[m]<Down>[m]/[m]<PgUp>[m]/[m]<PgDn>[m]) will
+also work as expected.
+____
+
+
+section:History{nbsp}and{nbsp}Tabs[history_navigation,tab_navigation]
+
+____
+History navigation (e.g., ``Back'', ``Forward'') are done similarly to
+scrolling.
+
+  * [m]<C-o>[m]/[m]<C-i>[m] --
+    move Back/Forward in the current window/tab's history, respectively
+
+Move between tabs using these keystrokes which may also be familiar to tabbing
+Vimmers.
+
+  * [m]gt[m]/[m]<C-n>[m] --
+    go to the next tab
+  * [m]gT[m]/[m]<C-p>[m] --
+    go to the previous tab
+  * [m]g0[m]/[m]g$[m] --
+    go to the first/last tab
+
+To open a webpage in a new tab, use the [c]:tabopen {url}[c].  To open a URL
+in the current tab, use [c]:open[c]. The normal mode
+mappings [m]t[m] and [m]o[m], respectively, map to these commands, so the
+following pairs sequences are equivalent:
+
+  :open my.webmail.com<cr>
+  omy.webmail.com<cr>
+
+  :tabopen vimperator.mozdev.org<cr>
+  tvimperator.mozdev.org<cr>
+
+____
+
+
+section:Common{nbsp}Issues[common_issues]
+
+____
+Say you get half-way down typing in a new URL, only to remember that you've
+already got that page open in the previous tab.  Your command-line might look
+something like this:
+
+  :open my.partial.url/fooba
+
+You can exit the command-line and access the already loaded page with the
+following:
+
+  <Esc>gT
+
+____
+
+
+section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
+
+____
+Vimperator supports all of Vim's classing methods of exitting.
+
+  * [c]:xall[c] -- command to quit and save the current browsing
+    session for next time; the default.
+  * [c]:qall[c] -- command to quit _without_ saving the session
+  * [m]ZZ[m] -- normal mode mapping equivalent to [c]:xall[c]
+  * [m]ZQ[m] -- normal mode mapping equivalent to [c]:qall[c]
+
+____
+
+
+section:Where{nbsp}did{nbsp}Firefox{nbsp}go?[whither_firefox]
+
+____
+You might feel pretty disoriented now. Don't worry.  This is still Firefox
+underneath.  Here are some ways Vimperator allows Firefox to shine through.
+See the [c]:help[c] for these commands and mappings for more information on
+how to make the best use of them.
+
+  * [c]:dialog[c] --
+    To access some of Firefox's many dialog windows, you can use the
+    [c]:dialog[c] command.  See [c]:help :dialog[c].
+  * [c]:bmarks[c] --
+    Vimperator provides a new interface to bookmarks, but they're still your
+    standard Firefox bookmarks under the hood.  [c]:bmark[c] will add a new
+    bookmark, while [c]:bmarks[c] will list the bookmarks currently defined.
+  * [c]:history[c] --
+    It's exactly what it sounds like.  This command will display a colorized,
+    scrollable and clickable list of the locations in Vimperator's history.
+
+Finally, in addition to the help system itself, [c]:exusage[c] and
+[c]:viusage[c] are useful quick-reference commands.
+
+____
+
+
+Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
+remember to use the [m]gt[m]/[m]gT[m] mappings to get back to this page.  If
+using the [c]:open[c] command, use the history keys (e.g., [m]H[m]) to return.
+If you get hopelessly lost, just type [c]:help<cr>[c] and click the
+``Tutorial'' link to return.
+
+
+// TODO: other sections?
+
+
+section:Get{nbsp}me{nbsp}out{nbsp}of{nbsp}here![removal]
+
+If you've given it a fair shot and determined
+
+The Vimperator way to do this is with the command [c]:addons[c].  Issuing this
+command brings up the Firefox Add-ons dialog window; you can then remove it as
+normal, selecting Vimperator from the list and clicking (yes, clicking)
+*Uninstall*.
+
+Alternatively, you can do this the old-fashioned way: re-enable the menubar,
+as above, with [c]:set go+=m[c], and select *Add-ons* from the *Tools* menu.
+
+
+section:I'm{nbsp}Interested...but{nbsp}Lost![support]
+
+Vimperator has an energetic and growing user base.  If you've run into a
+problem that you can seem to solve with Vimperator, or if you think you might
+have found a bug, please let us know!  There is support available on the
+http://vimperator.cutup.org/index.php?title=Main_Page[wiki], or in the
+#vimperator IRC channel on http://freenode.net/[freenode].
+
+If you have any feature requests or (even better) offers to help, we'd love to
+hear from you as well.  Developers work on Vimperator whenever possible, but
+we are neither infinite nor omnipotent; please bear with us.  If you can't
+wait for us to get around to it, rest assured patches are welcome!  See
+the help:Developer[developer.html] page for more information.
+
+
+// vim: set syntax=asciidoc:

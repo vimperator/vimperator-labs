@@ -45,6 +45,7 @@ it, recommend it and like it :)
 
 section:Help{nbsp}topics[overview]
 
+- help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
 - help:Initialization[starting.html]: How Vimperator starts up, where it reads the config file...
 - help:Browsing[browsing.html]: Basic mappings and commands needed for
   a browsing session (how to open a web page or go back in history).

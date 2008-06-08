@@ -128,6 +128,21 @@ Define when tabs are automatically activated. Available items:
 
 ____
 
+
+|\'albc'| |\'activelinkbgcolor'|
+||'activelinkbgcolor' 'albc'|| string (default: ##88FF00)
+____
+Background color of the current active link during hint mode.
+____
+
+
+|\'alfc'| |\'activelinkfgcolor'|
+||'activelinkfgcolor' 'alfc'|| string (default: black)
+____
+Foreground color of the current active link during hint mode.
+____
+
+
 |\'cpt'| |\'complete'|
 ||'complete' 'cpt'|| charlist (default: sfbh)
 ____
@@ -181,72 +196,13 @@ or @oncommand or @class='lk' or @class='s'] |
 The XPath string of hintable elements activated by [m];[m].
 ____
 
-|\'hs'| |\'hintstyle'|
-||'hintstyle' 'hs'|| string
-____
-(default: z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;)
-
-CSS specification of hints
-____
-
-|\'lfc'| |\'linkfgcolor'|
-||'linkfgcolor' 'lfc'|| string (default: black)
-____
-
-Foreground color of a link during hint mode.
-____
-
-|\'lbc'| |\'linkbgcolor'|
-||'linkbgcolor' 'lbc'|| string (default: yellow)
-____
-
-Background color of a link during hint mode.
-____
-
-|\'alfc'| |\'activelinkfgcolor'|
-||'activelinkfgcolor' 'alfc'|| string (default: black)
-____
-
-Foreground color of the current active link during hint mode.
-____
-
-|\'albc'| |\'activelinkbgcolor'|
-||'activelinkbgcolor' 'albc'|| string (default: ##88FF00)
-____
-
-Background color of the current active link during hint mode.
-____
-
-|\'hm'| |\'hintmatching'|
-||'hintmatching' 'hm'|| string (default: contains)
-____
-
-Change the hint matching algorithm during hint mode. Possible values:
-
-`--------------------`-------------------------------------------------------------------------------------------------------------------------------
-*contains*           The typed characters are splitted by spaces, and these character groups have to be anywhere inside the text of the link.
-*wordstartswith*     The typed characters are matched with the beginning of the first word (see 'wordseparators') in the link as long as possible. If no more or no character matches in the current word, than the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, than the characters are splitted by spaces. These character groups are than matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.
-*firstletters*       Behaves almost as wordstartswith, but non matching words aren't overleaped.
------------------------------------------------------------------------------------------------------------------------------------------------------
-
-____
-
-|\'wsp'| |\'wordseparators'|
-||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
-____
-
-A regex which defines the word separators which are used for the 'hintmatching' types
-'wordstartswith' and 'firstletters' to split the words in the text of a link. +
-
-____
 
 |\'nofs'| |\'nofullscreen'| |\'fs'| |\'fullscreen'|
-||'fullscreen' 'fs'|| boolean (default off)
+||'fullscreen' 'fs'|| boolean (default: off)
 ____
 Show the current window fullscreen. Also hide certain GUI elements like the
 statusline.
 ____
-
 
 
 |\'go'| |\'guioptions'|
@@ -264,13 +220,27 @@ You can also hide the tab bar with [c]:set showtabline=0[c].
 ____
 
 
-|\'hto'| |\'hinttimeout'|
-||'hinttimeout' 'hto'|| number (default 0)
+|\'hm'| |\'hintmatching'|
+||'hintmatching' 'hm'|| string (default: contains)
 ____
-Automatically follow non unique numerical hint after 'hinttimeout'
-milliseconds. +
-Set to 0 (the default) to only follow numeric hints after pressing
-[m]<Return>[m] or when the hint is unique.
+
+Change the hint matching algorithm during hint mode. Possible values:
+
+`--------------------`-------------------------------------------------------------------------------------------------------------------------------
+*contains*           The typed characters are splitted by spaces, and these character groups have to be anywhere inside the text of the link.
+*wordstartswith*     The typed characters are matched with the beginning of the first word (see 'wordseparators') in the link as long as possible. If no more or no character matches in the current word, than the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, than the characters are splitted by spaces. These character groups are than matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.
+*firstletters*       Behaves almost as wordstartswith, but non matching words aren't overleaped.
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+____
+
+
+|\'hs'| |\'hintstyle'|
+||'hintstyle' 'hs'|| string
+____
+(default: z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;)
+
+CSS specification of hints
 ____
 
 
@@ -287,6 +257,17 @@ ____
 XPath string of hintable elements activated by 'f' and 'F'
 ____
 
+
+|\'hto'| |\'hinttimeout'|
+||'hinttimeout' 'hto'|| number (default: 0)
+____
+Automatically follow non unique numerical hint after 'hinttimeout'
+milliseconds. +
+Set to 0 (the default) to only follow numeric hints after pressing
+[m]<Return>[m] or when the hint is unique.
+____
+
+
 |\'hi'| |\'history'|
 ||'history' 'hi'|| number (default: 500)
 ____
@@ -295,7 +276,7 @@ ____
 
 
 |\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'|
-||'hlsearch' 'hls'|| boolean (default off)
+||'hlsearch' 'hls'|| boolean (default: off)
 ____
 Highlight previous search pattern matches
 ____
@@ -312,29 +293,31 @@ ____
 
 
 |\'noic'| |\'noignorecase'| |\'ic'| |\'ignorecase'|
-||'ignorecase' 'ic'|| boolean (default on)
+||'ignorecase' 'ic'|| boolean (default: on)
 ____
 Ignore case in search patterns.
 ____
 
 
 |\'nois'| |\'noincsearch'| |\'is'| |\'incsearch'|
-||'incsearch' 'is'|| boolean (default on)
+||'incsearch' 'is'|| boolean (default: on)
 ____
 Show where the search pattern matches as it is typed. +
 NOTE: Incremental searching currently only works in the forward direction.
 ____
 
+
 |\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'|
-||'insertmode' 'im'|| boolean (default on)
+||'insertmode' 'im'|| boolean (default: on)
 ____
 Use Insert mode as the default for text areas.
 Makes Vimperator work in a way that Insert mode is the default mode for text areas.
 Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.
 ____
 
+
 |\'ls'| |\'laststatus'|
-||'laststatus' 'ls'|| number (default 2)
+||'laststatus' 'ls'|| number (default: 2)
 ____
 Determines when the last window will have a status line. Possible values:
 
@@ -347,18 +330,44 @@ Determines when the last window will have a status line. Possible values:
 NOTE: laststatus=1 not implemented yet.
 ____
 
+
+|\'lbc'| |\'linkbgcolor'|
+||'linkbgcolor' 'lbc'|| string (default: yellow)
+____
+Background color of a link during hint mode.
+____
+
+
+|\'lfc'| |\'linkfgcolor'|
+||'linkfgcolor' 'lfc'|| string (default: black)
+____
+Foreground color of a link during hint mode.
+____
+
+
 |\'nolks'| |\'nolinksearch'| |\'lks'| |\'linksearch'|
-||'linksearch' 'lks'|| boolean (default off)
+||'linksearch' 'lks'|| boolean (default: off)
 ____
 Limit the search to hyperlink text.
 This includes (X)HTML elements with an "href" atrribute and XLink "simple" links.
 ____
 
+
 |\'nomore'| |\'more'|
-||'more'|| boolean (default on)
+||'more'|| boolean (default: on)
 ____
 Pause the message list window when more than one screen of listings is displayed
 ____
+
+
+|\'nextpattern'|
+||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
+____
+Patterns to use when guessing the 'next' page in a document sequence.
+Each pattern, in order, is matched against all links in the page with the first match being used.
+The patterns are case insensitive regular expressions.
+____
+
 
 |\'newtab'|
 ||'newtab'|| stringlist (default: "")
@@ -378,13 +387,6 @@ The possible values:
 
 ____
 
-|\'nextpattern'|
-||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
-____
-Patterns to use when guessing the 'next' page in a document sequence.
-Each pattern, in order, is matched against all links in the page with the first match being used.
-The patterns are case insensitive regular expressions.
-____
 
 |\'noonline'| |\'online'|
 ||'online'|| boolean (default on)
@@ -409,8 +411,9 @@ contains behavior
 The order matters.
 ____
 
+
 |\'pps'| |\'popups'|
-||'popups' 'pps'|| number (default 1)
+||'popups' 'pps'|| number (default: 1)
 ____
 Define where to show requested popup windows.
 Does not apply to windows which are opened by middle clicking a link,
@@ -427,8 +430,9 @@ they always open in a new tab. Possible values:
 NOTE: This option does not change the popup blocker of Firefox in any way.
 ____
 
-|\'preload'|
-||'preload'|| boolean (default on)
+
+|\'nopreload'| |\'preload'|
+||'preload' 'nopreload'|| boolean (default: on)
 ____
 Speed up first time history/bookmark completion
 
@@ -437,15 +441,15 @@ Vimperator maintains a cache to speed it up significantly on subsequent access.
 In order to also speed up first time access, it is cached at startup, if this option is set (recommended).
 ____
 
-// 'previewheight'
-// 'pvh'
-// 	Default height for preview window
-// number (default: 10)
+
+//|\'pvh'| |\'previewheight'|
+//||'previewheight' 'pvh'|| number (default: 10)
+//____
+//Default height for preview window
 //
-// Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
-// NOTE: Option currently disabled
-// 	'previewheight'
-// 'pvh'
+//Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
+//NOTE: Option currently disabled
+//____
 
 |\'previouspattern'|
 ||'previouspattern'|| stringlist (default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
@@ -455,23 +459,25 @@ Each pattern, in order, is matched against all links in the page with the first 
 The patterns are case insensitive regular expressions.
 ____
 
+
 |\'scr'| |\'scroll'|
-||'scroll' 'scr'|| number (default 0)
+||'scroll' 'scr'|| number (default: 0)
 ____
 Number of lines to scroll with C-u and C-d commands.
 The number of lines scrolled defaults to half the window size.
 When a {count} is specified to the <C-u> or <C-d> commands this is used to set the value of 'scroll' and also used for the current command. The value can be reset to half the window height with :set scroll=0.
 ____
 
+
 |\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
-||'showmode' 'smd'|| boolean (default on)
+||'showmode' 'smd'|| boolean (default: on)
 ____
 Show the current mode in the command line.
 ____
 
 
 |\'ssli'| |\'showstatuslinks'|
-||'showstatuslinks' 'ssli'|| number (default 1)
+||'showstatuslinks' 'ssli'|| number (default: 1)
 ____
 Show the destination of the link under the cursor in the status bar
 Also links which are focused by keyboard commands like <Tab> are shown. Possible values:
@@ -486,7 +492,7 @@ ____
 
 
 |\'stal'| |\'showtabline'|
-||'showtabline' 'stal'|| number (default 2)
+||'showtabline' 'stal'|| number (default: 2)
 ____
 Control when to show the tab bar of opened web pages. Possible values:
 
@@ -498,8 +504,9 @@ Control when to show the tab bar of opened web pages. Possible values:
 
 ____
 
+
 |\'noscs'| |\'nosmartcase'| |\'scs'| |\'smartcase'|
-||'smartcase' 'scs'|| boolean (default on)
+||'smartcase' 'scs'|| boolean (default: on)
 ____
 Override the 'ignorecase' option if the pattern contains uppercase characters.
 This is only used if the 'ignorecase' option is set.
@@ -527,15 +534,17 @@ If you don't like that, you can restore it with: [c]:set titlestring=Mozilla
 Firefox[c].
 ____
 
+
 |\'noum'| |\'nousermode'| |\'um'| |\'usermode'|
-||'usermode' 'um'|| boolean (default off)
+||'usermode' 'um'|| boolean (default: off)
 ____
 Show current website with a minimal style sheet to make it easily accessible.
 Note that this is a local option for now, later it may be split into a global and :setlocal part
 ____
 
+
 |\'verbose', \'vbs'|
-||'verbose' 'vbs'|| number (default 0)
+||'verbose' 'vbs'|| number (default: 0)
 ____
 Define which type of messages are logged.
 When bigger than zero, Vimperator will give messages about what it is doing.
@@ -545,12 +554,14 @@ The highest value is 9, being the most verbose mode.
 NOTE: non-functional for now.
 ____
 
+
 |\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
-||'visualbell' 'vb'|| boolean (default off)
+||'visualbell' 'vb'|| boolean (default: off)
 ____
 Use visual bell instead of beeping on errors. For now you can't turn off both,
 this will hopefully change.
 ____
+
 
 |\'visualbellstyle'| |\'t_vb'|
 ||'visualbellstyle' 't_vb'|| string (default: "border: none; background-color: black;")
@@ -559,9 +570,9 @@ The CSS style to use for the visual bell. Set this to the empty string if you
 want no bell at all.
 ____
 
+
 |\'wim'| |\'wildmode'|
-||'wildmode' 'wim'||
-stringlist (default: "list:full")
+||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
 Define how command line completion works.
 It is a comma-separated list of parts, where each part specifies
@@ -578,19 +589,30 @@ These are the possible values for each part:
 'list:full'     When more than one match, list all matches and complete first match.
 'list:longest'  When more than one match, list all matches and complete till the longest common string. \
                 When there is only a single match, it is fully completed regardless of the case.
--------------------------------------------
+-----------------------------------------
 
 ____
+
 
 |\'wop'| |\'wildoptions'|
 ||'wildoptions' 'wop'|| stringlist (default: "")
 ____
 A list of words that change how command line completion is done.
+
 Currently only one word is allowed:
 `------`---------------------------------
 sort   Always sorts completion list, overriding the 'complete' option.
 -----------------------------------------
 
 ____
+
+
+|\'wsp'| |\'wordseparators'|
+||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+____
+A regex which defines the word separators which are used for the 'hintmatching' types
+'wordstartswith' and 'firstletters' to split the words in the text of a link.
+____
+
 
 // vim: set syntax=asciidoc:

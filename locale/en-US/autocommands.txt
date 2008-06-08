@@ -2,8 +2,32 @@ HEADER
 
 |autocommands| +
 
-Autocommands are a way to execute code when certain events happen.
+Autocommands are a way to automatically execute code when certain events
+happen.
 
-TO BE WRITTEN.
+
+|:au| |:autocmd| +
+||:au[tocmd]|| Execute commands automatically on events.
+________________________________________________________________________________
+[c]:au[tocmd][c] {event} {pat} {cmd}.
+
+Add {cmd} to the list of commands Vimperator will execute on {event}:
+
+* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered be {events} and {pat}
+* [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
+* [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
+* [c]:autocmd[!][c]: list/remove all autocommands
+
+________________________________________________________________________________
+
+
+____
+Available events:
+
+* BrowserExit
+* BrowserRestart
+* PageLoad
+
+____
 
 // vim: set syntax=asciidoc:
