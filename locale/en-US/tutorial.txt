@@ -64,6 +64,11 @@ and you can find out about the [m]gt[m] and [m]gT[m] mapping with
   [c]:help gT<cr>[c]
 
 
+Finally, in addition to the help system itself, [c]:exusage[c] and
+[c]:viusage[c] are useful quick-reference commands.
+
+
+
 section:Mouseless[living_mouseless]
 
 *-- or how I learned to stop worrying and love the 80+ buttons I already have.*
@@ -170,9 +175,6 @@ how to make the best use of them.
   * [c]:history[c] --
     It's exactly what it sounds like.  This command will display a colorized,
     scrollable and clickable list of the locations in Vimperator's history.
-
-Finally, in addition to the help system itself, [c]:exusage[c] and
-[c]:viusage[c] are useful quick-reference commands.
 
 
 Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
