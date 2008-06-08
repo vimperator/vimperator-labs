@@ -339,20 +339,10 @@ liberator.CommandLine = function () //{{{
         ["<Space>"], "Expand command line abbreviation",
         function ()
         {
-            // XXX: VERY ugly, hacky code, I know, but it fixes :side<tab><space><tab>
-            liberator.editor.expandAbbreviation("c");
-            var commandline = document.getElementById("liberator-commandline-command");
-            var txt = commandline.value;
-            var start = commandline.selectionStart;
-            commandline.value = txt.substr(0, start) + " " +
-                                txt.substr(commandline.selectionEnd);
-            commandline.selectionStart = commandline.selectionEnd = start + 1;
-
-            var evt = window.document.createEvent("KeyEvents");
-            var view = window.document.defaultView;
-            evt.initKeyEvent("keypress", true, true, view, false, false, false, false, 0, 32);
-            liberator.commandline.onEvent(evt);
-        });
+            liberator.commandline.resetCompletions();
+            return liberator.editor.expandAbbreviation("c");
+        },
+        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
     liberator.mappings.add(modes,
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
@@ -748,8 +738,7 @@ liberator.CommandLine = function () //{{{
                 }
                 else // any other key
                 {
-                    // reset the tab completion
-                    completionIndex = historyIndex = UNINITIALIZED;
+                    this.resetCompletions();
                 }
                 return true; // allow this event to be handled by Firefox
             }
@@ -985,6 +974,11 @@ liberator.CommandLine = function () //{{{
                 else
                     setLine("Press ENTER or type command to continue", this.HL_QUESTION);
             }
+        },
+
+        resetCompletions: function ()
+        {
+            completionIndex = historyIndex = UNINITIALIZED;
         },
 
         // it would be better if we had a destructor in javascript ...

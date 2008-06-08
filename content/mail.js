@@ -100,7 +100,7 @@ liberator.Mail = function () //{{{
                              "Unread: " + folders[folder].getNumUnread(false)]);
         }
 
-        return [0, liberator.filter(completions, filter)];
+        return [0, liberator.completion.filter(completions, filter)];
     }
 
     function moveOrCopy(copy, destinationFolder, operateOnThread)
