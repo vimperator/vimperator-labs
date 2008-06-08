@@ -1338,7 +1338,9 @@ liberator.Events = function () //{{{
                             liberator.commandline.onEvent(event); // reroute event in command line mode
                     }
                     else if (liberator.mode != liberator.modes.INSERT && liberator.mode != liberator.modes.TEXTAREA)
+                    {
                         liberator.beep();
+                    }
                 }
             }
 

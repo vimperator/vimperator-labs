@@ -94,11 +94,11 @@ liberator.config = {
 
     init: function ()
     {
-        liberator.mappings.add([liberator.modes.NORMAL],
+        /*liberator.mappings.add([liberator.modes.NORMAL],
             ["o"], "Open a message",
-            function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
+            function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });*/
 
-        // TODO: move elsewhere
+        // TODO: move elsewhere, probably compose.js
         liberator.mappings.add([liberator.modes.COMPOSE],
             ["e"], "Edit message",
             function () { liberator.editor.editWithExternalEditor(); });
@@ -110,6 +110,19 @@ liberator.config = {
         liberator.mappings.add([liberator.modes.COMPOSE],
             ["Y"], "Send message later",
             function () { goDoCommand("cmd_sendLater"); });
+
+        // FIXME: does not really work reliably
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["t"], "Select To: field",
+            function () { awSetFocus(0, awGetInputElement(1)); });
+
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["s"], "Select Subject: field",
+            function () { GetMsgSubjectElement().focus(); });
+
+        liberator.mappings.add([liberator.modes.COMPOSE],
+            ["i"], "Select message body",
+            function () { SetMsgBodyFrameFocus(); });
 
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable

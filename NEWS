@@ -1,6 +1,8 @@
 <pre>
 2008-06-xx:
     * version 1.2
+    * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
+      use "B" or :buffers instead
     * :bdelete accepts an optional argument now
     * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
     * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode

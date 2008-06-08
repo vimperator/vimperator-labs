@@ -180,8 +180,22 @@ liberator.Buffer = function () //{{{
         "Show current website with a minimal style sheet to make it easily accessible",
         "boolean", false,
         {
-            setter: function (value) { getMarkupDocumentViewer().authorStyleDisabled = value; },
-            getter: function () { return getMarkupDocumentViewer().authorStyleDisabled; },
+            setter: function (value)
+            {
+                try
+                {
+                    getMarkupDocumentViewer().authorStyleDisabled = value;
+                }
+                catch (e) { }
+            },
+            getter: function ()
+            {
+                try
+                {
+                    return getMarkupDocumentViewer().authorStyleDisabled;
+                }
+                catch (e) { }
+            }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
