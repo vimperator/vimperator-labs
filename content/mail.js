@@ -89,6 +89,20 @@ liberator.Mail = function () //{{{
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
+    function getFolderCompletions(filter)
+    {
+        var completions = [];
+        var folders = liberator.mail.getFolders();
+        for (var folder in folders)
+        {
+            completions.push([folders[folder].server.prettyName + ": "
+                              + folders[folder].name,
+                             "Unread: " + folders[folder].getNumUnread(false)]);
+        }
+
+        return [0, liberator.filter(completions, filter)];
+    }
+
     function moveOrCopy(copy, destinationFolder, operateOnThread)
     {
         if (!destinationFolder)
@@ -616,7 +630,7 @@ liberator.Mail = function () //{{{
                 SelectFolder(folder.URI);
         },
         {
-            completer: function (filter) { return liberator.completion.mail(filter); }
+            completer: function (filter) { return getFolderCompletions(filter); }
         });
 
     liberator.commands.add(["m[essage]"],
@@ -668,14 +682,14 @@ liberator.Mail = function () //{{{
         "Copy selected messages",
         function (args, special) { moveOrCopy(true, args); },
         {
-            completer: function (filter) { return liberator.completion.mail(filter); }
+            completer: function (filter) { return getFolderCompletions(filter); }
         });
 
     liberator.commands.add(["move[to]"],
         "Move selected messages",
         function (args, special) { moveOrCopy(false, args); },
         {
-            completer: function (filter) { return liberator.completion.mail(filter); }
+            completer: function (filter) { return getFolderCompletions(filter); }
         });
 
     liberator.commands.add(["empty[trash]"],
@@ -769,7 +783,7 @@ liberator.Mail = function () //{{{
             msgComposeService.OpenComposeWindowWithParams(null, params);
         },
 
-
+        // returns an array of nsIMsgFolder objects
         getFolders: function (filter, includeServers, includeMsgFolders)
         {
             var folders = [];

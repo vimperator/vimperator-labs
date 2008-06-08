@@ -44,6 +44,11 @@ liberator.config = {
     get mainWindowID() { return this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow"; },
     isComposeWindow: false,
 
+    autocommands: [["FolderLoaded", "Triggered after switching folders in Thunderbird"],
+                   ["PageLoad",     "Triggered when a page gets (re)loaded/opened"],
+                   ["Quit",         "Triggered before exiting Thunderbird"],
+                   ["Startup",      "Triggered after Thunderbird starts"]],
+
     dialogs: [
         ["about",            "About Thunderbird",
             function () { openAboutDialog(); }],

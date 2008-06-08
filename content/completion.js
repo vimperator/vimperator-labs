@@ -40,68 +40,88 @@ liberator.Completion = function () //{{{
     function buildLongestCommonSubstring(list, filter)
     {
         var filtered = [];
+
         var ignorecase = false;
         if (filter == filter.toLowerCase())
             ignorecase = true;
 
+        var longest = false;
+        if (liberator.options["wildmode"].indexOf("longest") >= 0)
+            longest = true;
+
         for (var i = 0; i < list.length; i++)
         {
-            for (var j = 0; j < list[i][0].length; j++)
+            var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
+            for (var j = 0; j < complist.length; j++)
             {
-                var item = list[i][0][j];
+                var item = complist[j];
                 if (ignorecase)
                     item = item.toLowerCase();
 
                 if (item.indexOf(filter) == -1)
                     continue;
 
-                if (substrings.length == 0)
+                filtered.push([complist[j], list[i][1]]);
+
+                if (longest)
                 {
-                    var lastIndex = item.lastIndexOf(filter);
-                    var length = item.length;
-                    for (var k = item.indexOf(filter); k != -1 && k <= lastIndex; k = item.indexOf(filter, k + 1))
+                    if (substrings.length == 0)
                     {
-                        for (var l = k + filter.length; l <= length; l++)
-                            substrings.push(list[i][0][j].substring(k, l));
+                        var lastIndex = item.lastIndexOf(filter);
+                        var length = item.length;
+                        for (var k = item.indexOf(filter); k != -1 && k <= lastIndex; k = item.indexOf(filter, k + 1))
+                        {
+                            for (var l = k + filter.length; l <= length; l++)
+                                substrings.push(complist[j].substring(k, l));
+                        }
+                    }
+                    else
+                    {
+                        substrings = substrings.filter(function ($_) {
+                            return complist[j].indexOf($_) >= 0;
+                        });
                     }
                 }
-                else
-                {
-                    substrings = substrings.filter(function ($_) {
-                        return list[i][0][j].indexOf($_) >= 0;
-                    });
-                }
-                filtered.push([list[i][0][j], list[i][1]]);
                 break;
             }
         }
         return filtered;
     }
 
-    // this function is case sensitive and should be documented about input and output ;)
+    // this function is case sensitive
     function buildLongestStartingSubstring(list, filter)
     {
         var filtered = [];
+
+        var longest = false;
+        if (liberator.options["wildmode"].indexOf("longest") >= 0)
+            longest = true;
+
         for (var i = 0; i < list.length; i++)
         {
-            for (var j = 0; j < list[i][0].length; j++)
+            var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
+            for (var j = 0; j < complist.length; j++)
             {
-                if (list[i][0][j].indexOf(filter) != 0)
+                if (complist[j].indexOf(filter) != 0)
                     continue;
 
-                if (substrings.length == 0)
+                filtered.push([complist[j], list[i][1]]);
+
+                if (longest)
                 {
-                    var length = list[i][0][j].length;
-                    for (var k = filter.length; k <= length; k++)
-                        substrings.push(list[i][0][j].substring(0, k));
+                    if (substrings.length == 0)
+                    {
+                        var length = complist[j].length;
+                        for (var k = filter.length; k <= length; k++)
+                            substrings.push(complist[j].substring(0, k));
+                    }
+                    else
+                    {
+                        substrings = substrings.filter(function ($_) {
+                            return complist[j].indexOf($_) == 0;
+                        });
+                    }
                 }
-                else
-                {
-                    substrings = substrings.filter(function ($_) {
-                        return list[i][0][j].indexOf($_) == 0;
-                    });
-                }
-                filtered.push([list[i][0][j], list[i][1]]);
                 break;
             }
         }
@@ -130,56 +150,20 @@ liberator.Completion = function () //{{{
             return longest;
         },
 
-        // TODO: move "nodes" to {muttator,vimperator}.js
-        autocommands: function (filter)
+        // generic filter function, also builds substrings needed
+        // for :set wildmode=list:longest, if necessary
+        filter: function (array, filter, matchFromBeginning)
         {
-            var nodes = [
-                ["BrowserExit",    "when firefox exits"],
-                ["BrowserRestart", "when firefox restarts"],
-                ["PageLoad",       "when a page gets (re)loaded/opened"],
-                ["FolderLoaded",   "when a new folder in Thunderbird is opened"]
-            ];
-
             if (!filter)
-                return [0, nodes];
+                return array;
 
-            var mapped = nodes.map(function (node) {
-                return [[node[0]], node[1]];
-            });
-
-            return [0, buildLongestCommonSubstring(mapped, filter)];
+            if (matchFromBeginning)
+                return buildLongestStartingSubstring(array, filter);
+            else
+                return buildLongestCommonSubstring(array, filter);
         },
 
-        dialog: function (filter)
-        {
-            var nodes = liberator.config.dialogs || [];
-
-            if (!filter)
-                return [0, nodes];
-
-            var mapped = nodes.map(function (node) {
-                return [[node[0]], node[1]];
-            });
-
-            return [0, buildLongestCommonSubstring(mapped, filter)];
-        },
-
-        macros: function (filter)
-        {
-            var macros = [];
-            var tmp = liberator.events.getMacros();
-            for (var item in tmp)
-                macros.push([item, tmp[item]]);
-
-            if (!filter)
-                return [0, macros];
-
-            var mapped = macros.map(function (macro) {
-                return [[macro[0]], macro[1]];
-            });
-            return [0, buildLongestCommonSubstring(mapped, filter)];
-        },
-
+        // XXX: Move to bookmarks.js?
         searchEngineSuggest: function (filter, engineAliases)
         {
             if (!filter)
@@ -239,7 +223,6 @@ liberator.Completion = function () //{{{
         url: function (filter, complete)
         {
             var completions = [];
-
             var start = 0;
             var skip = filter.match(/^(.*,\s+)(.*)/); // start after the last ", "
             if (skip)
@@ -271,14 +254,7 @@ liberator.Completion = function () //{{{
         search: function (filter)
         {
             var engines = liberator.bookmarks.getSearchEngines().concat(liberator.bookmarks.getKeywords());
-
-            if (!filter)
-                return [0, engines];
-
-            var mapped = engines.map(function (engine) {
-                return [[engine[0]], engine[1]];
-            });
-            return [0, buildLongestCommonSubstring(mapped, filter)];
+            return [0, this.filter(engines, filter)];
         },
 
         // TODO: support file:// and \ or / path separators on both platforms
@@ -293,8 +269,8 @@ liberator.Completion = function () //{{{
                 dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
                 compl = matches[2] || "";
             }
-            var files = [], mapped = [];
 
+            var files = [], mapped = [];
             try
             {
                 files = liberator.io.readDirectory(dir);
@@ -340,13 +316,7 @@ liberator.Completion = function () //{{{
                     res.push([elems[i].textContent, files[file]]);
             }
 
-            if (!filter)
-                return [0, res];
-
-            var mapped = res.map(function (node) {
-                return [[node[0]], node[1]];
-            });
-            return [0, buildLongestCommonSubstring(mapped, filter)];
+            return [0, this.filter(res, filter)];
         },
 
         command: function (filter)
@@ -364,137 +334,6 @@ liberator.Completion = function () //{{{
                 completions.push([command.longNames, command.description]);
 
             return [0, buildLongestStartingSubstring(completions, filter)];
-        },
-
-        mail: function (filter)
-        {
-            var completions = [];
-            var folders = liberator.mail.getFolders();
-            for (var folder in folders)
-            {
-                completions.push([folders[folder].server.prettyName + ": "
-                                  + folders[folder].name,
-                                 "Unread: " + folders[folder].getNumUnread(false)]);
-            }
-            if (!filter)
-                return [0, completions];
-            var mapped = completions.map(function (node) {
-                                         return [[node[0]], node[1]];
-                                         });
-            return [0, buildLongestCommonSubstring(mapped, filter)];
-        },
-
-        option: function (filter, special, unfiltered)
-        {
-            var optionCompletions = [];
-            var prefix = filter.match(/^no|inv/) || "";
-
-            if (prefix)
-                filter = filter.replace(prefix, "");
-
-            // needed for help-completions, don't return [start, options], just options
-            // FIXME: doesn't belong here to be honest (rather v.options.get(filter)) --mst
-            if (unfiltered)
-            {
-                var options = [];
-                for (var option in liberator.options)
-                {
-                    if (prefix && option.type != "boolean")
-                        continue;
-                    options.push([option.names, option.description]);
-                }
-                return options;
-            }
-
-            if (special)
-            {
-                var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch);
-                var prefArray = prefs.getChildList("", { value: 0 });
-                prefArray.sort();
-
-                if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
-                {
-                    for (var i = 0; i < prefArray.length; i++)
-                    {
-                        var name = prefArray[i];
-                        if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
-                        {
-                            var value = liberator.options.getPref(name) + "";
-                            return [filter.length + 1, [[value, ""]]];
-                        }
-                    }
-                    return [0, []];
-                }
-
-                for (var i = 0; i < prefArray.length; i++)
-                {
-                    if (!filter)
-                        optionCompletions.push([prefArray[i], liberator.options.getPref(prefArray[i])]);
-                    else
-                        optionCompletions.push([[prefArray[i]], liberator.options.getPref(prefArray[i])]);
-                }
-
-
-                if (!filter)
-                    return [0, optionCompletions];
-
-                return [0, buildLongestCommonSubstring(optionCompletions, filter)];
-            }
-
-            if (!filter)
-            {
-                var options = [];
-                for (var option in liberator.options)
-                {
-                    if (prefix && option.type != "boolean")
-                        continue;
-                    options.push([prefix + option.name, option.description]);
-                }
-                return [0, options];
-            }
-            // check if filter ends with =, then complete current value
-            else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
-            {
-                filter = filter.substr(0, filter.length - 1);
-                for (var option in liberator.options)
-                {
-                    if (option.hasName(filter))
-                        return [filter.length + 1, [[option.value + "", ""]]];
-                }
-                return [0, optionCompletions];
-            }
-
-            // can't use b_l_s_s, since this has special requirements (the prefix)
-            var filterLength = filter.length;
-            for (var option in liberator.options)
-            {
-                if (prefix && option.type != "boolean")
-                    continue;
-
-                for (var j = 0; j < option.names.length; j++)
-                {
-                    if (option.names[j].indexOf(filter) != 0)
-                        continue;
-
-                    if (substrings.length == 0)
-                    {
-                        var length = option.names[j].length;
-                        for (var k = filterLength; k <= length; k++)
-                            substrings.push(prefix + option.names[j].substring(0, k));
-                    }
-                    else
-                    {
-                        substrings = substrings.filter(function ($_) {
-                            return option.names[j].indexOf($_) == 0;
-                        });
-                    }
-                    optionCompletions.push([prefix + option.names[j], option.description]);
-                    break;
-                }
-            }
-
-            return [0, optionCompletions];
         },
 
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
@@ -532,24 +371,6 @@ liberator.Completion = function () //{{{
                 return [0, items.map(function ($_) { return [$_[0][0], $_[1]]; })];
 
             return [0, buildLongestCommonSubstring(items, filter)];
-        },
-
-        sidebar: function (filter)
-        {
-            var menu = document.getElementById("viewSidebarMenu");
-            var nodes = [];
-
-            for (var i = 0; i < menu.childNodes.length; i++)
-                nodes.push([menu.childNodes[i].label, ""]);
-
-            if (!filter)
-                return [0, nodes];
-
-            var mapped = nodes.map(function (node) {
-                return [[node[0]], node[1]];
-            });
-
-            return [0, buildLongestCommonSubstring(mapped, filter)];
         },
 
         javascript: function (str)

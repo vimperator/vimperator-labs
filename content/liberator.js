@@ -161,7 +161,10 @@ const liberator = (function () //{{{
                 }
             },
             {
-                completer: function (filter) { return liberator.completion.dialog(filter); }
+                completer: function (filter)
+                {
+                    return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
+                }
             });
 
         liberator.commands.add(["exe[cute]"],
@@ -750,7 +753,7 @@ const liberator = (function () //{{{
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession)
         {
-            liberator.autocommands.trigger("BrowserExit", "");
+            liberator.autocommands.trigger("Quit", "");
 
             if (saveSession)
                 liberator.options.setPref("browser.startup.page", 3); // start with saved session
@@ -762,8 +765,6 @@ const liberator = (function () //{{{
 
         restart: function ()
         {
-            liberator.autocommands.trigger("BrowserRestart", "");
-
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
 
             // notify all windows that an application quit has been requested.
@@ -912,6 +913,8 @@ const liberator = (function () //{{{
             }, 0);
 
             liberator.statusline.update();
+
+            liberator.autocommands.trigger("Startup", "");
             liberator.log(liberator.config.name + " fully initialized", 1);
         },
 

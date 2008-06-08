@@ -560,7 +560,82 @@ liberator.Options = function () //{{{
             }
         },
         {
-            completer: function (filter, special) { return liberator.completion.option(filter, special); }
+            completer: function (filter, special)
+            {
+                var optionCompletions = [];
+                var prefix = filter.match(/^no|inv/) || "";
+
+                if (prefix)
+                    filter = filter.replace(prefix, "");
+
+                if (special) // list completions for about:config entries
+                {
+                    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                .getService(Components.interfaces.nsIPrefBranch);
+                    var prefArray = prefs.getChildList("", { value: 0 });
+                    prefArray.sort();
+
+                    if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
+                    {
+                        for (var i = 0; i < prefArray.length; i++)
+                        {
+                            var name = prefArray[i];
+                            if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
+                            {
+                                var value = liberator.options.getPref(name) + "";
+                                return [filter.length + 1, [[value, ""]]];
+                            }
+                        }
+                        return [0, []];
+                    }
+
+                    for (var i = 0; i < prefArray.length; i++)
+                        optionCompletions.push([prefArray[i], liberator.options.getPref(prefArray[i])]);
+
+                    return [0, liberator.completion.filter(optionCompletions, filter)];
+                }
+
+                if (!filter)
+                {
+                    var options = [];
+                    for (var option in liberator.options)
+                    {
+                        if (prefix && option.type != "boolean")
+                            continue;
+                        options.push([prefix + option.name, option.description]);
+                    }
+                    return [0, options];
+                }
+                // check if filter ends with =, then complete current value
+                else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
+                {
+                    filter = filter.substr(0, filter.length - 1);
+                    for (var option in liberator.options)
+                    {
+                        if (option.hasName(filter))
+                            return [filter.length + 1, [[option.value + "", ""]]];
+                    }
+                    return [0, optionCompletions];
+                }
+
+                var filterLength = filter.length;
+                for (var option in liberator.options)
+                {
+                    if (prefix && option.type != "boolean")
+                        continue;
+
+                    for (var j = 0; j < option.names.length; j++)
+                    {
+                        if (option.names[j].indexOf(filter) != 0)
+                            continue;
+
+                        optionCompletions.push([prefix + option.names[j], option.description]);
+                        break;
+                    }
+                }
+
+                return [0, liberator.completion.filter(optionCompletions, prefix + filter, true)];
+            }
         });
 
     liberator.commands.add(["unl[et]"],

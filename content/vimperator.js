@@ -35,6 +35,10 @@ liberator.config = { //{{{
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
+    autocommands: [["PageLoad",     "Triggered when a page gets (re)loaded/opened"],
+                   ["Quit",         "Triggered before exiting Thunderbird"],
+                   ["Startup",      "Triggered after Thunderbird starts"]],
+
     dialogs: [
         ["about",            "About Firefox",
             function () { openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
@@ -308,7 +312,16 @@ liberator.config = { //{{{
                 }
             },
             {
-                completer: function (filter) { return liberator.completion.sidebar(filter); }
+                completer: function (filter)
+                {
+                    var menu = document.getElementById("viewSidebarMenu");
+                    var nodes = [];
+
+                    for (var i = 0; i < menu.childNodes.length; i++)
+                        nodes.push([menu.childNodes[i].label, ""]);
+
+                    return [0, liberator.completion.filter(nodes, filter)];
+                }
             });
 
         liberator.commands.add(["winc[lose]", "wc[lose]"],
