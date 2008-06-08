@@ -760,15 +760,6 @@ The special version [c]:back![c] goes to the beginning of the browser history.
 ________________________________________________________________________________
 
 
-|:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
-||:[count]bd[elete][!]|| +
-________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
-and the one to the right is selected. Do [c]:bdelete![c] to select the tab to
-the left after removing the current tab.
-________________________________________________________________________________
-
-
 |:beep|
 ||:beep||
 ________________________________________________________________________________

@@ -1,8 +1,22 @@
 HEADER
 
 |tabs| +
-
 Tabs are used to be able to view many web pages at the same time...
+
+
+section:Closing{nbsp}tabs[closing-tabs]
+
+|:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
+||:[count]bd[elete][!] [arg]|| +
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
+and the one to the right is selected.
+
+When used with [arg], remove all tabs which contain [arg] in the hostname. 
+[!] forces this command to also search for [arg] in the full URL and also
+the title of the tab. Use with care.
+________________________________________________________________________________
+
 
 TO BE WRITTEN...
 

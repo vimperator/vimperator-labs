@@ -260,8 +260,43 @@ liberator.Tabs = function () //{{{
         "Delete current buffer",
         function (args, special, count)
         {
-            liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
-        });
+            if (args)
+            {
+                args = args.toLowerCase();
+                var removed = 0;
+                var match;
+                if (match = args.match(/^(\d+):?/))
+                {
+                    liberator.tabs.remove(liberator.tabs.getTab(parseInt(match[1], 10) - 1));
+                    removed = 1;
+                }
+                else
+                {
+                    var browsers = getBrowser().browsers;
+                    for (let i = browsers.length - 1; i >= 0; i--)
+                    {
+                        var title = browsers[i].contentTitle.toLowerCase() || "";
+                        var uri = browsers[i].currentURI.spec.toLowerCase();
+                        var host = browsers[i].currentURI.host.toLowerCase();
+
+                        if (host.indexOf(args) >= 0 || uri == args ||
+                            (special && (title.indexOf(args) >= 0 || uri.indexOf(args) >= 0)))
+                        {
+                            liberator.tabs.remove(liberator.tabs.getTab(i));
+                            removed++;
+                        }
+                    }
+                }
+
+                if (removed > 0)
+                    liberator.echo(removed + " fewer tab(s)");
+                else
+                    liberator.echoerr("E94: No matching tab for " + args);
+            }
+            else // just remove the current tab
+                liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+        },
+        { completer: function (filter) { return liberator.completion.buffer(filter); } });
 
     liberator.commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",

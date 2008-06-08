@@ -787,6 +787,8 @@ const liberator = (function () //{{{
             if (cancelQuit.data)
                 return;
 
+            liberator.autocommands.trigger("Quit", "");
+
             // notify all windows that an application quit has been granted.
             os.notifyObservers(null, "quit-application-granted", null);
 
@@ -918,11 +920,12 @@ const liberator = (function () //{{{
                     if (option.setter && !option.hasChanged)
                         option.reset();
                 }
+
+                liberator.autocommands.trigger("Startup", "");
             }, 0);
 
             liberator.statusline.update();
 
-            liberator.autocommands.trigger("Startup", "");
             liberator.log(liberator.config.name + " fully initialized", 1);
         },
 

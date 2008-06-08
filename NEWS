@@ -1,10 +1,12 @@
 <pre>
 2008-06-xx:
     * version 1.2
+    * :bdelete accepts an optional argument now
     * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
     * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode
     * keywords in :open <arg> have higher priority than local files now
     * add :set online to control the "work offline" menu item
+    * many small bug fixes
 
 2008-06-03:
     * version 1.1
