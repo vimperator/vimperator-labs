@@ -338,7 +338,7 @@ liberator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"].
                                   createInstance(Components.interfaces.nsILocalFile);
 
-            var tmpname = liberator.config.name.toLowerCase() + ".tmp"
+            var tmpname = liberator.config.name.toLowerCase() + ".tmp";
             if (WINDOWS)
             {
                 var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";

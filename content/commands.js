@@ -621,7 +621,7 @@ liberator.Commands = function () //{{{
                               "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
                         str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + cmdlist[i].isUserCommand + "</td></tr>";
-                    str += "</table>"
+                    str += "</table>";
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else
