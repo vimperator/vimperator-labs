@@ -203,7 +203,7 @@ as above, with [c]:set go+=m[c], and select *Add-ons* from the *Tools* menu.
 section:I'm{nbsp}Interested...but{nbsp}Lost![support]
 
 Vimperator has an energetic and growing user base.  If you've run into a
-problem that you can seem to solve with Vimperator, or if you think you might
+problem that you can't seem to solve with Vimperator, or if you think you might
 have found a bug, please let us know!  There is support available on the
 http://vimperator.cutup.org/index.php?title=Main_Page[wiki], or in the
 #vimperator IRC channel on http://freenode.net/[freenode].
