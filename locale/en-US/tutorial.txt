@@ -148,7 +148,7 @@ following:
 
 section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
 
-Vimperator supports all of Vim's classing methods of exitting.
+Vimperator supports all of Vim's classing methods of exiting.
 
   * [c]:xall[c] -- command to quit and save the current browsing
     session for next time; the default.
