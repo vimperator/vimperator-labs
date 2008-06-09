@@ -548,14 +548,6 @@ liberator.Mail = function () //{{{
 
             MsgMarkMsgAsRead();
         });
-    /*liberator.mappings.add(modes, ["tR"],
-        "Tag thread as read",
-        function ()
-        {
-            // TODO: ensure thread or beep
-
-            MsgMarkThreadAsRead();
-        });*/
 
     liberator.mappings.add(modes, ["ls"],
         "Toggle selected messages starred",
@@ -593,6 +585,7 @@ liberator.Mail = function () //{{{
             });
         });
 
+    // DISPLAY OPTIONS
     liberator.mappings.add(modes, ["h"],
         "Toggle displayed headers",
         function ()
@@ -608,6 +601,31 @@ liberator.Mail = function () //{{{
         {
             var want_html = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
             liberator.mail.setHTML(want_html ? 1 : 0);
+        });
+
+    // YANKING TEXT
+    liberator.mappings.add(modes, ["ys"],
+        "Yank subject",
+        function ()
+        {
+            try
+            {
+                var subject = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
+                liberator.util.copyToClipboard(subject, true);
+            }
+            catch (e) { liberator.beep(); }
+        });
+
+    liberator.mappings.add(modes, ["yf"],
+        "Yank From:",
+        function ()
+        {
+            try
+            {
+                var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+                liberator.util.copyToClipboard(author, true);
+            }
+            catch (e) { liberator.beep(); }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
