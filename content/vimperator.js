@@ -33,6 +33,7 @@ liberator.config = { //{{{
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
+    defaults: { guioptions: "" },
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
     autocommands: [["PageLoad",     "Triggered when a page gets (re)loaded/opened"],

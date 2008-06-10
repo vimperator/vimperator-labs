@@ -38,7 +38,7 @@ const liberator = (function () //{{{
     {
         liberator.options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
-            "charlist", "",
+            "charlist", liberator.config.defaults.guioptions || "",
             {
                 setter: function (value)
                 {
