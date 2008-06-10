@@ -142,7 +142,9 @@ liberator.Buffer = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["fullscreen", "fs"], "Show the current window fullscreen", "boolean", false,
+    liberator.options.add(["fullscreen", "fs"],
+        "Show the current window fullscreen",
+        "boolean", false,
         {
             setter: function (value) { window.fullScreen = value; },
             getter: function () { return window.fullScreen; }

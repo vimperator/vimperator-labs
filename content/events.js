@@ -43,6 +43,14 @@ liberator.AutoCommands = function () //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.options.add(["focuscontent", "fc"],
+        "Try to stay in normal mode after loading a web page",
+        "boolean", false);
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -456,12 +464,16 @@ liberator.Events = function () //{{{
             if (doc == getBrowser().contentDocument)
             {
                 // we want to stay in command mode after a page has loaded
-                // XXX: Does this still causes window map events which is _very_ annoying
-                setTimeout(function () {
-                    var focused = document.commandDispatcher.focusedElement;
-                    if (focused && (typeof focused.value != "undefined") && focused.value.length == 0)
-                        focused.blur();
-                }, 100);
+                // TODO: move somehwere else, as focusing can already happen earlier than on "load"
+                if (liberator.options["focuscontent"])
+                {
+                    liberator.log("focuscontent");
+                    setTimeout(function () {
+                        var focused = document.commandDispatcher.focusedElement;
+                        if (focused && (typeof focused.value != "undefined") && focused.value.length == 0)
+                            focused.blur();
+                    }, 100);
+                }
             }
         }
     }
@@ -478,7 +490,7 @@ liberator.Events = function () //{{{
         if (liberator.buffer.loaded == 1)
             return true;
 
-        var ms = 15000; // maximum time to wait - TODO: add option
+        var ms = 25000; // maximum time to wait - TODO: add option
         var then = new Date().getTime();
         for (var now = then; now - then < ms; now = new Date().getTime())
         {
@@ -930,6 +942,8 @@ liberator.Events = function () //{{{
             // command line has it's own focus change handler
             if (liberator.mode == liberator.modes.COMMAND_LINE)
                 return;
+
+            // liberator.log("onFocusChange: " + liberator.buffer.loaded);
 
             var win  = window.document.commandDispatcher.focusedWindow;
             var elem = window.document.commandDispatcher.focusedElement;

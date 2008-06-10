@@ -197,6 +197,17 @@ The XPath string of hintable elements activated by [m];[m].
 ____
 
 
+|\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
+||'focuscontent' 'fc'|| boolean (default: off)
+____
+Focus the content after a page has loaded. This is useful, if you always
+want to stay in normal mode when browsing between web sites. When "on", it
+blurs any textbox which often is automatically focused on page load.
+If you usually like 'focuscontent' but sometimes you'd like to focus the
+first input field, you can use [m]gi[m] to jump to it.
+____
+
+
 |\'nofs'| |\'nofullscreen'| |\'fs'| |\'fullscreen'|
 ||'fullscreen' 'fs'|| boolean (default: off)
 ____
