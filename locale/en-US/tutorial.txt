@@ -117,6 +117,8 @@ Vimmers.
     go to the previous tab
   * [m]g0[m]/[m]g$[m] --
     go to the first/last tab
+  * [m]d[m] --
+    close the active tab (delete the buffer)
 
 To open a webpage in a new tab, use the [c]:tabopen {url}[c].  To open a URL
 in the current tab, use [c]:open[c]. The normal mode
@@ -129,6 +131,37 @@ following pairs sequences are equivalent:
   :tabopen vimperator.mozdev.org<cr>
   tvimperator.mozdev.org<cr>
 
+
+section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints.html]
+
+So now you can navigate around in Vimperator.  But wait... how do you *open* a
+page or tab linked in a web page?  How do you ``click'' on all those links
+without your tailed friend?
+
+The answer is ``hints''.  Activating hints displays a number next to every
+link Vimperator can find.  To follow the link, simply type the number
+corresponding to the hint, a white number inside a red square by default.
+
+For text links, there's an additional shortcut; you can type some text
+contained in the link and Vimperator will search all the links it can find and
+only hint the matching links, further narrowing down the list.  If the text
+you type uniquely identifies any given link, Vimperator will follow that link
+immediately without any further user input.
+
+Whichever way you choose to indicate your target link, once Vimperator has
+highlighted the link you want, simply hit [m]<Enter>[m] to open it.
+
+The most common hint mode is called help:QuickHint{nbsp}mode[various.html,f].
+To activate QuickHint mode, press either [m]f[m] or [m]F[m].  The lower-case
+[m]f[m] will open the resulting link in the current tab, while the upper-case
+[m]F[m] will open it in a new tab.
+
+To test it, try this link: http://vimperator.mozdev.org/[Vimperator Homepage].
+Activate QuickHint mode with [m]f[m] or [m]F[m] to highlight all currently
+visible links.  The start typing the text of the link.  The link should be
+uniquely identified soon, and Vimperator will open it.  Once you're done,
+remember to use [m]<C-o>[m] (``History Back'') or [m]d[m] (``Delete Buffer'')
+to return here, depending on which key you used to activate QuickHint mode.
 
 
 section:Common{nbsp}Issues[common_issues]
@@ -148,7 +181,7 @@ following:
 
 section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
 
-Vimperator supports all of Vim's classing methods of exiting.
+Vimperator supports all of Vim's classic methods of exiting.
 
   * [c]:xall[c] -- command to quit and save the current browsing
     session for next time; the default.
