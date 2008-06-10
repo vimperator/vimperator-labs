@@ -226,6 +226,12 @@ liberator.Editor = function () //{{{
     addMotionMap("y"); // yank
 
     // insert mode mappings
+    liberator.mappings.add([liberator.modes.INSERT],
+        ["<C-Left>", "<C-Right>", "<C-Home>", "<C-End>", "<C-S-Home>", "<C-S-End>"],
+        "Keys are passed to " + liberator.config.hostApplication,
+        function () { return true; },
+        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+
     liberator.mappings.add(modes,
         ["<C-w>"], "Delete previous word",
         function () { liberator.editor.executeCommand("cmd_deleteWordBackward", 1); });
@@ -261,13 +267,13 @@ liberator.Editor = function () //{{{
         ["<C-d>"], "Delete character to the right",
         function () { liberator.editor.executeCommand("cmd_deleteCharForward", 1); });
 
-    liberator.mappings.add(modes,
+    /*liberator.mappings.add(modes,
         ["<C-Home>"], "Move cursor to beginning of text field",
         function () { liberator.editor.executeCommand("cmd_moveTop", 1); });
 
     liberator.mappings.add(modes,
         ["<C-End>"], "Move cursor to end of text field",
-        function () { liberator.editor.executeCommand("cmd_moveBottom", 1); });
+        function () { liberator.editor.executeCommand("cmd_moveBottom", 1); });*/
 
     liberator.mappings.add(modes,
         ["<S-Insert>"], "Insert clipboard/selection",
