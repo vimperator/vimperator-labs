@@ -338,6 +338,10 @@ liberator.Mail = function () //{{{
         "Reply to sender",
         function () { goDoCommand("cmd_reply"); });
 
+    liberator.mappings.add(modes, ["R"],
+        "Reply to all",
+        function () { goDoCommand("cmd_replyall"); });
+
     liberator.mappings.add(modes, ["f"],
         "Forward message",
         function () { goDoCommand("cmd_forward"); });
