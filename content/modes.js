@@ -98,7 +98,7 @@ liberator.modes = (function () //{{{
     function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work with verbosity level
-        // liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
         // dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
@@ -248,7 +248,6 @@ liberator.modes = (function () //{{{
         // keeps recording state
         reset: function (silent)
         {
-            //if (window.wintype == "msgcompose")
             if (liberator.config.isComposeWindow)
                 this.set(liberator.modes.COMPOSE, liberator.modes.NONE, silent);
             else

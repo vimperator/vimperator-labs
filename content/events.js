@@ -270,7 +270,8 @@ liberator.Events = function () //{{{
                 liberator.statusline.updateTabCount();
                 liberator.tabs.updateSelectionHistory();
 
-                setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
+                if (liberator.options["focuscontent"])
+                    setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
             }, false);
         }
 
@@ -943,13 +944,12 @@ liberator.Events = function () //{{{
             if (liberator.mode == liberator.modes.COMMAND_LINE)
                 return;
 
-            // liberator.log("onFocusChange: " + liberator.buffer.loaded);
-
             var win  = window.document.commandDispatcher.focusedWindow;
             var elem = window.document.commandDispatcher.focusedElement;
             if (elem && elem.readOnly)
                 return;
 
+            // liberator.log("onFocusChange: " + elem);
             // dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
             // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
@@ -1405,8 +1405,14 @@ liberator.Events = function () //{{{
                     {
                         liberator.buffer.loaded = 0;
                         liberator.statusline.updateProgress(0);
-                        setTimeout (function () { liberator.modes.reset(false); },
-                            liberator.mode == liberator.modes.HINTS ? 500 : 0);
+
+                        // don't reset mode if a frame of the frameset gets reloaded which
+                        // is not the focused frame
+                        if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)
+                        {
+                            setTimeout (function () { liberator.modes.reset(false); },
+                                liberator.mode == liberator.modes.HINTS ? 500 : 0);
+                        }
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                     {

@@ -559,6 +559,7 @@ const liberator = (function () //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
+                    liberator.log("focusContent: " + clearFocusedElement);
             // TODO: make more generic
             try
             {
