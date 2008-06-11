@@ -227,7 +227,7 @@ liberator.Editor = function () //{{{
 
     // insert mode mappings
     liberator.mappings.add([liberator.modes.INSERT],
-        ["<C-Left>", "<C-Right>", "<C-Home>", "<C-End>", "<C-S-Home>", "<C-S-End>"],
+        ["<C-Left>", "<C-Right>", "<C-Home>", "<C-End>", "<C-S-Home>", "<C-S-End>", "<C-BS"],
         "Keys are passed to " + liberator.config.hostApplication,
         function () { return true; },
         { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
