@@ -339,6 +339,9 @@ liberator.IO = function () //{{{
                                   createInstance(Components.interfaces.nsILocalFile);
 
             var tmpname = liberator.config.name.toLowerCase() + ".tmp";
+            if (liberator.config.name == "Muttator")
+                tmpname = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
+
             if (WINDOWS)
             {
                 var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";
