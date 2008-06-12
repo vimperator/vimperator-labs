@@ -103,6 +103,11 @@ liberator.Mail = function () //{{{
         return [0, liberator.completion.filter(completions, filter)];
     }
 
+    function getRSSUrl()
+    {
+        return gDBView.hdrForFirstSelectedMessage.messageId.replace(/(#.*)?@.*$/, "");
+    }
+
     function moveOrCopy(copy, destinationFolder, operateOnThread)
     {
         if (!destinationFolder)
@@ -612,7 +617,7 @@ liberator.Mail = function () //{{{
         });
 
     // YANKING TEXT
-    liberator.mappings.add(modes, ["ys"],
+    liberator.mappings.add(modes, ["Y"],
         "Yank subject",
         function ()
         {
@@ -624,14 +629,30 @@ liberator.Mail = function () //{{{
             catch (e) { liberator.beep(); }
         });
 
-    liberator.mappings.add(modes, ["yf"],
-        "Yank From:",
+    liberator.mappings.add(modes, ["y"],
+        "Yank sender or feed URL",
         function ()
         {
             try
             {
-                var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
-                liberator.util.copyToClipboard(author, true);
+                if (liberator.mail.currentAccount.server.type == "rss")
+                    liberator.util.copyToClipboard(getRSSUrl(), true);
+                else
+                    liberator.util.copyToClipboard(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor, true);
+            }
+            catch (e) { liberator.beep(); }
+        });
+
+    // RSS specific mappings
+    liberator.mappings.add(modes, ["p"],
+        "Open RSS message in browser",
+        function ()
+        {
+            try
+            {
+                if (liberator.mail.currentAccount.server.type == "rss")
+                    OpenBrowserWithMessageId(gDBView.hdrForFirstSelectedMessage.messageId)
+                // TODO: what to do for non-rss message?
             }
             catch (e) { liberator.beep(); }
         });

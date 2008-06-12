@@ -127,6 +127,10 @@ liberator.config = {
             liberator.mappings.add([liberator.modes.COMPOSE],
                 ["i"], "Select message body",
                 function () { SetMsgBodyFrameFocus(); });
+
+            liberator.mappings.add([liberator.modes.COMPOSE],
+                ["q", "ZQ"], "Close composer",
+                function () { window.close(); });
         }
         else
         {
