@@ -247,6 +247,10 @@ liberator.Mail = function () //{{{
 	    	MsgOpenNewTabForMessage();
 	    });
 
+    /*liberator.mappings.add([liberator.modes.NORMAL],
+        ["o"], "Open a message",
+        function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });*/
+
     liberator.mappings.add(modes, ["<Space>"],
         "Scroll message or select next unread one",
         function () { return true; },
