@@ -640,7 +640,7 @@ liberator.Buffer = function () //{{{
                     newWindow = true;
                     break;
                 default:
-                    liberator.log("Invalid where argument for followLink()");
+                    liberator.log("Invalid where argument for followLink()", 0);
             }
 
             elem.focus();

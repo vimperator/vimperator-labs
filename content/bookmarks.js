@@ -239,7 +239,7 @@ liberator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                liberator.log(e);
+                liberator.log(e, 0);
                 return false;
             }
 
@@ -306,7 +306,7 @@ liberator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                liberator.log(e);
+                liberator.log(e, 0);
                 return i;
             }
 

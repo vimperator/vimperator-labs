@@ -561,8 +561,6 @@ Define which type of messages are logged.
 When bigger than zero, Vimperator will give messages about what it is doing.
 They are printed to the error console which can be shown with [c]:javascript![c].
 The highest value is 9, being the most verbose mode.
-
-NOTE: non-functional for now.
 ____
 
 

@@ -129,24 +129,18 @@ liberator.config = {
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
         this.isComposeWindow = window.wintype == "msgcompose";
 
+        // load Muttator specific modules
         if (this.isComposeWindow)
         {
-            /*setTimeout(function () {
-                document.getElementById("content-frame").contentDocument.designMode = "off";
-                document.getElementById("content-frame").focus();
-            }, 500);*/
-           //document.getElementById("content-frame").contentWindow.addEventListener("load", function () {
-           /*window.addEventListener("load", function () {
-               alert("load");
-               if (! liberator.editor.editWithExternalEditor())
-                    liberator.echoerr("Editing with external editor failed. Be sure to :set editor correctly");
-           }, true);
-           document.getElementById("content-frame").contentDocument.addEventListener("load", function () {
-               alert("load1");
-           }, true);*/
-           /*document.getElementById("content-frame").addEventListener("DOMContentLoaded", function () {
-               alert("load2");
-           }, true);*/
+
+        }
+        else
+        {
+            liberator.loadModule("mail",        liberator.Mail);
+            liberator.loadModule("addressbook", liberator.Addressbook);
+            liberator.loadModule("tabs",        liberator.Tabs);
+            liberator.loadModule("marks",       liberator.Marks);
+            liberator.loadModule("hints",       liberator.Hints);
         }
     }
 };

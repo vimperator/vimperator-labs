@@ -489,7 +489,7 @@ liberator.Commands = function () //{{{
                 if (exCommands[i].name == command.name)
                 {
                     // never replace for now
-                    liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 2);
+                    liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
                     return false;
                 }
             }
@@ -635,9 +635,9 @@ liberator.Commands = function () //{{{
         });
 
     // TODO: remove preview window, or change it at least
-    commandManager.add(["pc[lose]"],
-        "Close preview window on bottom of screen",
-        function () { liberator.previewwindow.hide(); });
+    // commandManager.add(["pc[lose]"],
+    //     "Close preview window on bottom of screen",
+    //     function () { liberator.previewwindow.hide(); });
 
     //}}}
 

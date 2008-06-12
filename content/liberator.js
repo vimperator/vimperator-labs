@@ -33,6 +33,12 @@ const liberator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
     var callbacks = [];
 
+    function loadModule(name, func)
+    {
+        liberator.log("Loading module " + name + "...", 0);
+        liberator[name] = func();
+    }
+
     // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
@@ -82,7 +88,7 @@ const liberator = (function () //{{{
                     }
                     catch (e)
                     {
-                        liberator.log("Couldn't set titlestring", 1);
+                        liberator.log("Couldn't set titlestring", 3);
                     }
                 },
             });
@@ -201,8 +207,8 @@ const liberator = (function () //{{{
                 if (special) // open javascript console
                 {
                     liberator.open("chrome://global/content/console.xul",
-                        (liberator.options.newtab &&
-                            (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("javascript") != -1)) ?
+                        (liberator.options["newtab"] &&
+                            (liberator.options["newtab"] == "all" || liberator.options["newtab"].split(",").indexOf("javascript") != -1)) ?
                                 liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else
@@ -228,7 +234,7 @@ const liberator = (function () //{{{
                     {
                         try
                         {
-                            eval("with(liberator){" + args + "}");
+                            eval("with(liberator) {" + args + "}");
                         }
                         catch (e)
                         {
@@ -287,7 +293,7 @@ const liberator = (function () //{{{
                         else
                         {
                             while (i--)
-                                eval("with(liberator){" + args + "}");
+                                eval("with(liberator) {" + args + "}");
                         }
 
                         if (special)
@@ -394,6 +400,7 @@ const liberator = (function () //{{{
     {
         var res = [];
         // they are sorted by relevance, not alphabetically
+        // TODO: move files to liberator.config
         var files = ["intro.html", "tutorial.html", "starting.html", "browsing.html", "buffer.html",
                      "options.html", "tabs.html", "marks.html", "repeat.html",
                      "autocommands.html", "developer.html", "various.html"];
@@ -472,6 +479,7 @@ const liberator = (function () //{{{
         //  "cancel"
         //  "complete"
         //  TODO: "zoom": if the zoom value of the current buffer changed
+        //  TODO: move to ui.js?
         registerCallback: function (type, mode, func)
         {
             // TODO: check if callback is already registered
@@ -559,7 +567,6 @@ const liberator = (function () //{{{
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
-                    liberator.log("focusContent: " + clearFocusedElement);
             // TODO: make more generic
             try
             {
@@ -580,6 +587,8 @@ const liberator = (function () //{{{
         },
 
         // partial sixth level expression evaluation
+        // TODO: what is that really needed for, and where could it be used?
+        //       Or should it be removed? (c) Viktor
         eval: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
@@ -652,6 +661,10 @@ const liberator = (function () //{{{
             }
         },
 
+        echo:    function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags); },
+
+        echoerr: function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags); },
+
         // return true, if this VIM-like extension has a certain feature
         has: function (feature)
         {
@@ -661,8 +674,9 @@ const liberator = (function () //{{{
 
         help: function (topic)
         {
-            var where = (liberator.options.newtab && (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("help") != -1)) ?
-                        liberator.NEW_TAB : liberator.CURRENT_TAB;
+            var where = (liberator.options["newtab"] && (liberator.options["newtab"] == "all" ||
+                         liberator.options["newtab"].split(",").indexOf("help") != -1)) ?
+                            liberator.NEW_TAB : liberator.CURRENT_TAB;
 
             function jumpToTag(file, tag)
             {
@@ -704,11 +718,25 @@ const liberator = (function () //{{{
                 liberator.echoerr("E149: Sorry, no help for " + topic);
         },
 
+        globalVariables: { },
+
+        loadModule: function (name, func) { loadModule(name, func); },
+
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
         log: function (msg, level)
         {
-            //if (liberator.options.getPref("verbose") >= level) // FIXME: hangs liberator, probably timing issue --mst
+            var verbose = 0;
+            if (typeof level != "number")
+                level = 1;
+
+            // liberator.options does not exist at the very beginning
+            if (liberator.options)
+                verbose = liberator.options["verbose"];
+dump("level: " + level + " - verbose: " + verbose + "\n");
+            if (level > verbose)
+                return;
+
             if (typeof msg == "object")
                 msg = liberator.util.objectToString(msg, false);
 
@@ -791,6 +819,12 @@ const liberator = (function () //{{{
             return true;
         },
 
+        // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
+        // v.plugins.mode = <str> string to show on v.modes.CUSTOM
+        // v.plugins.stop = <func> hooked on a v.modes.reset()
+        // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
+        plugins: { },
+
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession)
         {
@@ -838,58 +872,32 @@ const liberator = (function () //{{{
                 .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
+
         // TODO: move to {muttator,vimperator,...}.js
         // this function is called, when the chrome is ready
         startup: function ()
         {
-            function log(module) { liberator.log("Loading module " + module + "...", 3); };
+            liberator.log("Initializing liberator object...", 0);
 
-            liberator.log("Initializing vimperator object...", 1);
             // commands must always be the first module to be initialized
-            log("commands");       liberator.commands = liberator.Commands(); addCommands();
-            log("options");        liberator.options  = liberator.Options();  addOptions();
-            log("mappings");       liberator.mappings = liberator.Mappings(); addMappings();
-            log("events");         liberator.events   = liberator.Events();
-            log("commandline");    liberator.commandline   = liberator.CommandLine();
-            log("search");         liberator.search        = liberator.Search();
-            log("preview window"); liberator.previewwindow = liberator.InformationList("liberator-previewwindow", { incrementalFill: false, maxItems: 10 });
-            log("statusline");     liberator.statusline    = liberator.StatusLine();
-            log("buffer");         liberator.buffer        = liberator.Buffer();
-            log("editor");         liberator.editor        = liberator.Editor();
-            log("autocommands");   liberator.autocommands  = liberator.AutoCommands();
-            log("io");             liberator.io            = liberator.IO();
-            log("completion");     liberator.completion    = liberator.Completion();
-
-            // optional modules
-            if (liberator.has("bookmarks"))  { log("bookmarks");  liberator.bookmarks  = liberator.Bookmarks(); }
-            if (liberator.has("history"))    { log("history");    liberator.history    = liberator.History(); }
-            if (liberator.has("mail") && liberator.Mail)       { log("mail");       liberator.mail       = liberator.Mail(); }
-            if (liberator.has("tabs") && liberator.Tabs)       { log("tabs");       liberator.tabs       = liberator.Tabs(); }
-            if (liberator.has("marks"))      { log("marks");      liberator.marks      = liberator.Marks(); }
-            if (liberator.has("quickmarks")) { log("quickmarks"); liberator.quickmarks = liberator.QuickMarks(); }
-            if (liberator.has("hints"))      { log("hints");      liberator.hints      = liberator.Hints(); }
-            if (liberator.has("addressbook") && liberator.Addressbook)      { log("addressbook");      liberator.addressbook      = liberator.Addressbook(); }
-
-            liberator.log("All modules loaded", 3);
+            loadModule("commands",     liberator.Commands); addCommands();
+            loadModule("options",      liberator.Options);  addOptions();
+            loadModule("mappings",     liberator.Mappings); addMappings();
+            loadModule("events",       liberator.Events);
+            loadModule("commandline",  liberator.CommandLine);
+            loadModule("statusline",   liberator.StatusLine);
+            loadModule("buffer",       liberator.Buffer);
+            loadModule("editor",       liberator.Editor);
+            loadModule("autocommands", liberator.AutoCommands);
+            loadModule("io",           liberator.IO);
+            loadModule("completion",   liberator.Completion);
+            // loadModule("previewwindow" = liberator.InformationList("liberator-previewwindow", { incrementalFill: false, maxItems: 10 });
 
             // This adds options/mappings/commands which are only valid in this particular extension
             if (liberator.config.init)
-            {
                 liberator.config.init();
-                // liberator.log("Loaded additional mappings, etc. for " + liberator.config.name, 3);
-            }
 
-            // we define some shortcuts to functions which are used often
-            liberator.echo    = function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags); };
-            liberator.echoerr = function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags); };
-
-            liberator.globalVariables = {};
-
-            // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
-            // v.plugins.mode = <str> string to show on v.modes.CUSTOM
-            // v.plugins.stop = <func> hooked on a v.modes.reset()
-            // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
-            liberator.plugins = {};
+            liberator.log("All modules loaded", 3);
 
             // TODO: move elsewhere
             liberator.registerCallback("submit", liberator.modes.EX, function (command) { liberator.execute(command); });
@@ -958,7 +966,7 @@ const liberator = (function () //{{{
 
             liberator.statusline.update();
 
-            liberator.log(liberator.config.name + " fully initialized", 1);
+            liberator.log(liberator.config.name + " fully initialized", 0);
         },
 
         shutdown: function ()

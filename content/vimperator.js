@@ -116,6 +116,15 @@ liberator.config = { //{{{
             liberator.open(matches[1] + newNum + matches[3]);
         }
 
+        // load Vimperator specific modules
+        liberator.loadModule("search",     liberator.Search);
+        liberator.loadModule("bookmarks",  liberator.Bookmarks);
+        liberator.loadModule("history",    liberator.History);
+        liberator.loadModule("tabs",       liberator.Tabs);
+        liberator.loadModule("marks",      liberator.Marks);
+        liberator.loadModule("quickmarks", liberator.QuickMarks);
+        liberator.loadModule("hints",      liberator.Hints);
+
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
@@ -342,28 +351,29 @@ liberator.config = { //{{{
                 completer: function (filter) { return liberator.completion.url(filter); }
             });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// OPTIONS /////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["online"], "Set and reset the 'work offline' option", "boolean", true,
-        {
-            setter: function (value) 
+        liberator.options.add(["online"],
+            "Set the 'work offline' option",
+            "boolean", true,
             {
-                var ioService = Components.classes['@mozilla.org/network/io-service;1'].
-                                getService(Components.interfaces.nsIIOService2);
+                setter: function (value) 
+                {
+                    var ioService = Components.classes['@mozilla.org/network/io-service;1'].
+                                    getService(Components.interfaces.nsIIOService2);
 
-                ioService.offline = !value;
-                gPrefService.setBoolPref("browser.offline", ioService.offline);
-            },
+                    ioService.offline = !value;
+                    gPrefService.setBoolPref("browser.offline", ioService.offline);
+                },
 
-            getter: function ()
-            {
-                return Components.classes['@mozilla.org/network/io-service;1'].
-                       getService(Components.interfaces.nsIIOService2).offline;
-            }
-        });
-
+                getter: function ()
+                {
+                    return Components.classes['@mozilla.org/network/io-service;1'].
+                           getService(Components.interfaces.nsIIOService2).offline;
+                }
+            });
     }
     //}}}
 }; //}}}

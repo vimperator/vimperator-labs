@@ -468,7 +468,6 @@ liberator.Events = function () //{{{
                 // TODO: move somehwere else, as focusing can already happen earlier than on "load"
                 if (liberator.options["focuscontent"])
                 {
-                    liberator.log("focuscontent");
                     setTimeout(function () {
                         var focused = document.commandDispatcher.focusedElement;
                         if (focused && (typeof focused.value != "undefined") && focused.value.length == 0)
@@ -537,12 +536,12 @@ liberator.Events = function () //{{{
 
                 var name = file.leafName.replace(/\.vimp$/i, "");
                 macros[name] = liberator.io.readFile(file).split(/\n/)[0];
-                liberator.log("Macro " + name + " added: " + macros[name], 8);
+                liberator.log("Macro " + name + " added: " + macros[name], 5);
             }
         }
         catch (e)
         {
-            liberator.log("macro directory not found or error reading macro file");
+            liberator.log("macro directory not found or error reading macro file", 9);
         }
     }, 100);
 
@@ -1118,7 +1117,7 @@ liberator.Events = function () //{{{
                 if (key == "q") // TODO: should not be hardcoded
                 {
                     liberator.modes.isRecording = false;
-                    liberator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 8);
+                    liberator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 9);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
