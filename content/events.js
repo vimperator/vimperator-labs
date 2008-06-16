@@ -1445,6 +1445,8 @@ liberator.Events = function () //{{{
                 liberator.statusline.updateUrl();
                 liberator.statusline.updateProgress();
 
+                liberator.autocommands.trigger("LocationChange", liberator.buffer.URL);
+
                 // if this is not delayed we get the position of the old buffer
                 setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);
             },

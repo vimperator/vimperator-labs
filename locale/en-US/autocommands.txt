@@ -20,9 +20,10 @@ Add {cmd} to the list of commands Vimperator will execute on {event}:
 
 Available {events}:
 
-* Startup
-* Quit
+* LocationChange
 * PageLoad
+* Quit
+* Startup
 
 {pat} is a regular expression, use .* if you want to match all events.
 ________________________________________________________________________________
