@@ -38,8 +38,8 @@ liberator.config = { //{{{
 
     autocommands: [["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
                    ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
-                   ["Quit",           "Triggered before exiting Thunderbird"],
-                   ["Startup",        "Triggered after Thunderbird starts"]],
+                   ["Quit",           "Triggered before exiting Firefox"],
+                   ["Startup",        "Triggered after Firefox starts"]],
 
     dialogs: [
         ["about",            "About Firefox",
