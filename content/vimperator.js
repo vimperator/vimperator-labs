@@ -36,9 +36,10 @@ liberator.config = { //{{{
     defaults: { guioptions: "" },
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
-    autocommands: [["PageLoad",     "Triggered when a page gets (re)loaded/opened"],
-                   ["Quit",         "Triggered before exiting Thunderbird"],
-                   ["Startup",      "Triggered after Thunderbird starts"]],
+    autocommands: [["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
+                   ["Quit",           "Triggered before exiting Thunderbird"],
+                   ["Startup",        "Triggered after Thunderbird starts"]],
 
     dialogs: [
         ["about",            "About Firefox",
