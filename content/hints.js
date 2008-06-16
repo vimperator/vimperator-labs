@@ -535,6 +535,7 @@ liberator.Hints = function () //{{{
             case "contains"      : return containsMatcher(hintString);
             case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
             case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
+            case "custom"        : return liberator.plugins.customHintMatcher(hintString);
             default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
         }
         return null;
@@ -588,7 +589,7 @@ liberator.Hints = function () //{{{
         "How links are matched",
         "string", "contains",
         {
-            validator: function (value) { return /^contains|wordstartswith|firstletters$/.test(value); }
+            validator: function (value) { return /^(?:contains|wordstartswith|firstletters|custom)$/.test(value); }
         });
 
     liberator.options.add(["wordseparators", "wsp"],
