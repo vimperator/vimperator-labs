@@ -112,20 +112,10 @@ liberator.Addressbook = function () //{{{
         "Add an address book entry",
         function (args)
         {
-            var res = liberator.commands.parseArgs(args, this.args);
-            if (!res)
-                return;
-
-            if (res.args.length == 0)
-            {
-                liberator.echoerr("E474: Invalid argument");
-                return;
-            }
-
-            var mailAddr = res.args[0]; // TODO: support more than one email address
-            var firstName = liberator.commands.getOption(res.opts, "-firstname", null);
-            var lastName = liberator.commands.getOption(res.opts, "-lastname", null);
-            var displayName = liberator.commands.getOption(res.opts, "-name", null);
+            var mailAddr =    args.arguments[0]; // TODO: support more than one email address
+            var firstName =   args["-firstname"] || null;
+            var lastName =    args["-lastname"] || null;
+            var displayName = args["-name"] || null;
             if (!displayName)
                 displayName = generateDisplayName(firstName, lastName);
 
@@ -136,9 +126,10 @@ liberator.Addressbook = function () //{{{
 
         },
         {
-            args: [[["-firstname", "-f"], liberator.commands.OPTION_STRING],
-                   [["-lastname", "-l"],  liberator.commands.OPTION_STRING],
-                   [["-name", "-n"],      liberator.commands.OPTION_STRING]]
+            options: [[["-firstname", "-f"], liberator.commands.OPTION_STRING],
+                      [["-lastname", "-l"],  liberator.commands.OPTION_STRING],
+                      [["-name", "-n"],      liberator.commands.OPTION_STRING]],
+            argCount: "+"
         });
 
     liberator.commands.add(["contacts", "addr[essbook]"],

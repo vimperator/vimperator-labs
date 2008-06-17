@@ -651,7 +651,7 @@ liberator.Mail = function () //{{{
             try
             {
                 if (liberator.mail.currentAccount.server.type == "rss")
-                    OpenBrowserWithMessageId(gDBView.hdrForFirstSelectedMessage.messageId)
+                    messenger.launchExternalURL(getRSSUrl());
                 // TODO: what to do for non-rss message?
             }
             catch (e) { liberator.beep(); }
@@ -684,20 +684,15 @@ liberator.Mail = function () //{{{
         "Write a new message",
         function (args, special, count)
         {
-            var res = liberator.commands.parseArgs(args, this.args);
-            if (!res)
-                return;
-
             var mailargs = new Object();
-            mailargs.subject = liberator.commands.getOption(res.opts, "-subject", undefined);
-            mailargs.bcc = liberator.commands.getOption(res.opts, "-bcc", undefined);
-            mailargs.cc = liberator.commands.getOption(res.opts, "-cc", undefined);
-            mailargs.body = liberator.commands.getOption(res.opts, "-text", undefined);
-            mailargs.attachments = liberator.commands.getOption(res.opts, "-attachment", []);
+            mailargs.to =          args.arguments.join(", ");
+            mailargs.subject =     args["-subject"];
+            mailargs.bcc =         args["-bcc"];
+            mailargs.cc =          args["-cc"];
+            mailargs.body =        args["-text"];
+            mailargs.attachments = args["-attachment"] || [];
 
-            var addresses = [];
-            if (res.args)
-                addresses = addresses.concat(res.args);
+            var addresses = args.arguments;
             if (mailargs.bcc)
                 addresses = addresses.concat(mailargs.bcc);
             if (mailargs.cc)
@@ -710,19 +705,14 @@ liberator.Mail = function () //{{{
                 return;
             }
 
-            if (res.args.length > 0)
-            {
-                mailargs.to = res.args.join(", ");
-            }
-
             liberator.mail.composeNewMail(mailargs);
         },
         {
-            args: [[["-subject", "-s"],    liberator.commands.OPTION_STRING],
-                   [["-attachment", "-a"], liberator.commands.OPTION_LIST],
-                   [["-bcc", "-b"],        liberator.commands.OPTION_STRING],
-                   [["-cc", "-c"],         liberator.commands.OPTION_STRING],
-                   [["-text", "-t"],       liberator.commands.OPTION_STRING]]
+            options: [[["-subject", "-s"],    liberator.commands.OPTION_STRING],
+                      [["-attachment", "-a"], liberator.commands.OPTION_LIST],
+                      [["-bcc", "-b"],        liberator.commands.OPTION_STRING],
+                      [["-cc", "-c"],         liberator.commands.OPTION_STRING],
+                      [["-text", "-t"],       liberator.commands.OPTION_STRING]]
         });
 
     liberator.commands.add(["copy[to]"],

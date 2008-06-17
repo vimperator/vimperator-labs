@@ -733,7 +733,7 @@ const liberator = (function () //{{{
             // liberator.options does not exist at the very beginning
             if (liberator.options)
                 verbose = liberator.options["verbose"];
-dump("level: " + level + " - verbose: " + verbose + "\n");
+
             if (level > verbose)
                 return;
 

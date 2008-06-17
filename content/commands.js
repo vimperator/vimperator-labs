@@ -75,7 +75,8 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.description   = description || "";
     this.action        = action;
     this.completer     = extraInfo.completer || null;
-    this.args          = extraInfo.args || [];
+    this.options       = extraInfo.options || [];
+    this.argCount      = extraInfo.argCount || "";
     this.isUserCommand = extraInfo.isUserCommand || false;
 };
 
@@ -83,6 +84,15 @@ liberator.Command.prototype = {
 
     execute: function (args, special, count, modifiers)
     {
+        // whenever the user specifies special options or fixed number of arguments
+        // we use our args parser instead of passing a string to the callback
+        if (this.options.length > 0 || this.argCount)
+        {
+            args = liberator.commands.parseArgs(args, this.options, this.argCount);
+            if (args == null)
+                return false;
+        }
+
         return this.action.call(this, args, special, count, modifiers);
     },
 
@@ -128,292 +138,6 @@ liberator.Commands = function () //{{{
 
     var exCommands = [];
 
-    // in '-quoted strings, only ' and \ itself are escaped
-    // in "-quoted strings, also ", \n and \t are translated
-    // in non-quoted strings everything is taken literally apart from "\ " and "\\"
-    //
-    // "options" is an array [name, type, validator, completions] and could look like:
-    //  options = [[["-force"], OPTION_NOARG],
-    //             [["-fullscreen", "-f"], OPTION_BOOL],
-    //             [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
-    //             [["-speed"], OPTION_INT],
-    //             [["-acceleration"], OPTION_FLOAT],
-    //             [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
-    //             [["-other"], OPTION_ANY]];
-    // TODO: should it handle comments?
-    // TODO: should it return an error, if it contains arguments which look like options (beginning with -)?
-    function parseArgs(str, options)
-    {
-        // returns [count, parsed_argument]
-        function getNextArg(str)
-        {
-            var inSingleString = false;
-            var inDoubleString = false;
-            var inEscapeKey = false;
-
-            var arg = "";
-
-            outer:
-            for (var i = 0; i < str.length; i++)
-            {
-                switch (str[i])
-                {
-                    case "\"":
-                        if (inEscapeKey)
-                        {
-                            inEscapeKey = false;
-                            break;
-                        }
-                        if (!inSingleString)
-                        {
-                            inDoubleString = !inDoubleString;
-                            continue outer;
-                        }
-                        break;
-
-                    case "'":
-                        if (inEscapeKey)
-                        {
-                            inEscapeKey = false;
-                            break;
-                        }
-                        if (!inDoubleString)
-                        {
-                            inSingleString = !inSingleString;
-                            continue outer;
-                        }
-                        break;
-
-                    // \ is an escape key for non quoted or "-quoted strings
-                    // for '-quoted strings it is taken literally, apart from \' and \\
-                    case "\\":
-                        if (inEscapeKey)
-                        {
-                            inEscapeKey = false;
-                            break;
-                        }
-                        else
-                        {
-                            // only escape "\\" and "\ " in non quoted strings
-                            if (!inSingleString && !inDoubleString && str[i + 1] != "\\" && str[i + 1] != " ")
-                                continue outer;
-                            // only escape "\\" and "\'" in single quoted strings
-                            else if (inSingleString && str[i + 1] != "\\" && str[i + 1] != "'")
-                                break;
-                            else
-                            {
-                                inEscapeKey = true;
-                                continue outer;
-                            }
-                        }
-                        break;
-
-                    default:
-                        if (inSingleString)
-                        {
-                            inEscapeKey = false;
-                            break;
-                        }
-                        else if (inEscapeKey)
-                        {
-                            inEscapeKey = false;
-                            switch (str[i])
-                            {
-                                case "n": arg += "\n"; continue outer;
-                                case "t": arg += "\t"; continue outer;
-                                default:
-                                    break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
-                            }
-                        }
-                        else if (!inDoubleString && /\s/.test(str[i]))
-                        {
-                            return [i, arg];
-                        }
-                        else // a normal charcter
-                            break;
-                }
-                arg += str[i];
-            }
-
-            // TODO: add parsing of a " comment here:
-            if (inDoubleString || inSingleString)
-                return [-1, "E114: Missing quote"];
-            if (inEscapeKey)
-                return [-1, "trailing \\"];
-            else
-                return [str.length, arg];
-        }
-
-        var args = []; // parsed arguments
-        var opts = []; // parsed options
-        if (!options)
-            options = [];
-
-        var invalid = false;
-        var arg = null;
-        var count = 0; // the length of the argument
-        var i = 0;
-        outer:
-        while (i < str.length)
-        {
-            // skip whitespace
-            if (/\s/.test(str[i]))
-            {
-                i++;
-                continue;
-            }
-
-            var sub = str.substr(i);
-            var optname = "";
-            for (var opt = 0; opt < options.length; opt++)
-            {
-                for (var name = 0; name < options[opt][0].length; name++)
-                {
-                    optname = options[opt][0][name];
-                    if (sub.indexOf(optname) == 0)
-                    {
-                        invalid = false;
-                        arg = null;
-                        // no value to the option
-                        if (optname.length >= sub.length)
-                        {
-                            count = 0;
-                        }
-                        else if (sub[optname.length] == "=")
-                        {
-                            [count, arg] = getNextArg(sub.substr(optname.length + 1));
-                            if (count == -1)
-                            {
-                                liberator.echoerr("Invalid argument for option " + optname);
-                                return null;
-                            }
-
-                            count++; // to compensate the "=" character
-                        }
-                        else if (options[opt][1] != commandManager.OPTION_NOARG && /\s/.test(sub[optname.length]))
-                        {
-                            [count, arg] = getNextArg(sub.substr(optname.length + 1));
-                            if (count == -1)
-                            {
-                                liberator.echoerr("Invalid argument for option " + optname);
-                                return null;
-                            }
-
-                            // if we add the argument to an option after a space, it MUST not be empty
-                            if (arg.length == 0)
-                                arg = null;
-
-                            count++; // to compensate the " " character
-                        }
-                        else
-                        {
-                            // this isn't really an option as it has trailing characters, parse it as an argument
-                            invalid = true;
-                        }
-
-                        if (!invalid)
-                        {
-                            switch (options[opt][1]) // type
-                            {
-                            case commandManager.OPTION_NOARG:
-                                if (arg != null)
-                                {
-                                    liberator.echoerr("No argument allowed for option: " + optname);
-                                    return null;
-                                }
-                                break;
-                            case commandManager.OPTION_BOOL:
-                                if (arg == "true" || arg == "1" || arg == "on")
-                                    arg = true;
-                                else if (arg == "false" || arg == "0" || arg == "off")
-                                    arg = false;
-                                else
-                                {
-                                    liberator.echoerr("Invalid argument for boolean option: " + optname);
-                                    return null;
-                                }
-                                break;
-                            case commandManager.OPTION_STRING:
-                                if (arg == null)
-                                {
-                                    liberator.echoerr("Argument required for string option: " + optname);
-                                    return null;
-                                }
-                                break;
-                            case commandManager.OPTION_INT:
-                                arg = parseInt(arg, 10);
-                                if (isNaN(arg))
-                                {
-                                    liberator.echoerr("Numeric argument required for integer option: " + optname);
-                                    return null;
-                                }
-                                break;
-                            case commandManager.OPTION_FLOAT:
-                                arg = parseFloat(arg);
-                                if (isNaN(arg))
-                                {
-                                    liberator.echoerr("Numeric argument required for float option: " + optname);
-                                    return null;
-                                }
-                                break;
-                            case commandManager.OPTION_LIST:
-                                if (arg == null)
-                                {
-                                    liberator.echoerr("Argument required for list option: " + optname);
-                                    return null;
-                                }
-                                arg = arg.split(/\s*,\s*/);
-                                break;
-                            }
-
-                            // we have a validator function
-                            if (typeof options[opt][2] == "function")
-                            {
-                                if (options[opt][2].call(this, arg) == false)
-                                {
-                                    liberator.echoerr("Invalid argument for option: " + optname);
-                                    return null;
-                                }
-                            }
-
-                            opts.push([options[opt][0][0], arg]); // always use the first name of the option
-                            i += optname.length + count;
-                            continue outer;
-                        }
-                        // if it is invalid, just fall through and try the next argument
-                    }
-                }
-            }
-
-            // if not an option, treat this token as an argument
-            var [count, arg] = getNextArg(sub);
-            if (count == -1)
-            {
-                liberator.echoerr("Error parsing arguments: " + arg);
-                return null;
-            }
-
-            if (arg != null)
-                args.push(arg);
-
-            i += count; // hopefully count is always >0, otherwise we get an endless loop
-        }
-
-        return { opts: opts, args: args };
-    }
-
-    function getOption(opts, option, def)
-    {
-        for (var i = 0; i < opts.length; i++)
-        {
-            if (opts[i][0] == option)
-                return opts[i][1];
-        }
-
-        // no match found, return default
-        return def;
-    }
-
     function getUserCommands(name)
     {
         var matches = [];
@@ -457,9 +181,6 @@ liberator.Commands = function () //{{{
         //        Idea: If v.commands.add() specifies args or opts in extraInfo, don't call the function
         //        with args as a string, but already pass an object like:
         //        args = { -option: value, -anotheroption: true, arguments: [] }
-        getOption: function (opts, option, def) { return getOption(opts, option, def); },
-        parseArgs: function (str, options) { return parseArgs(str, options); },
-
         OPTION_ANY: 0, // can be given no argument or an argument of any type,
                        // caller is responsible for parsing the return value
         OPTION_NOARG: 1,
@@ -539,8 +260,321 @@ liberator.Commands = function () //{{{
             return null;
         },
 
-        // TODO: generalized 0 count handling -> "Zero count"
-        // FIXME: doesn't really belong here...
+        // in '-quoted strings, only ' and \ itself are escaped
+        // in "-quoted strings, also ", \n and \t are translated
+        // in non-quoted strings everything is taken literally apart from "\ " and "\\"
+        //
+        // @param str: something like "-x=foo -opt=bar arg1 arg2"
+        // "options" is an array [name, type, validator, completions] and could look like:
+        //  options = [[["-force"], OPTION_NOARG],
+        //             [["-fullscreen", "-f"], OPTION_BOOL],
+        //             [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
+        //             [["-speed"], OPTION_INT],
+        //             [["-acceleration"], OPTION_FLOAT],
+        //             [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
+        //             [["-other"], OPTION_ANY]];
+        // argCount can be:
+        //            "0": no arguments
+        //            "1": exactly one argument
+        //            "+": one or more aguments
+        //            "*": zero or more arguments
+        //            "?": zero or one arguments
+        // TODO: should it handle comments?
+        parseArgs: function(str, options, argCount)
+        {
+            // returns [count, parsed_argument]
+            function getNextArg(str)
+            {
+                var inSingleString = false;
+                var inDoubleString = false;
+                var inEscapeKey = false;
+
+                var arg = "";
+
+                outer:
+                for (var i = 0; i < str.length; i++)
+                {
+                    switch (str[i])
+                    {
+                        case "\"":
+                            if (inEscapeKey)
+                            {
+                                inEscapeKey = false;
+                                break;
+                            }
+                            if (!inSingleString)
+                            {
+                                inDoubleString = !inDoubleString;
+                                continue outer;
+                            }
+                            break;
+
+                        case "'":
+                            if (inEscapeKey)
+                            {
+                                inEscapeKey = false;
+                                break;
+                            }
+                            if (!inDoubleString)
+                            {
+                                inSingleString = !inSingleString;
+                                continue outer;
+                            }
+                            break;
+
+                        // \ is an escape key for non quoted or "-quoted strings
+                        // for '-quoted strings it is taken literally, apart from \' and \\
+                        case "\\":
+                            if (inEscapeKey)
+                            {
+                                inEscapeKey = false;
+                                break;
+                            }
+                            else
+                            {
+                                // only escape "\\" and "\ " in non quoted strings
+                                if (!inSingleString && !inDoubleString && str[i + 1] != "\\" && str[i + 1] != " ")
+                                    continue outer;
+                                // only escape "\\" and "\'" in single quoted strings
+                                else if (inSingleString && str[i + 1] != "\\" && str[i + 1] != "'")
+                                    break;
+                                else
+                                {
+                                    inEscapeKey = true;
+                                    continue outer;
+                                }
+                            }
+                            break;
+
+                        default:
+                            if (inSingleString)
+                            {
+                                inEscapeKey = false;
+                                break;
+                            }
+                            else if (inEscapeKey)
+                            {
+                                inEscapeKey = false;
+                                switch (str[i])
+                                {
+                                    case "n": arg += "\n"; continue outer;
+                                    case "t": arg += "\t"; continue outer;
+                                    default:
+                                        break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                                }
+                            }
+                            else if (!inDoubleString && /\s/.test(str[i]))
+                            {
+                                return [i, arg];
+                            }
+                            else // a normal charcter
+                                break;
+                    }
+                    arg += str[i];
+                }
+
+                // TODO: add parsing of a " comment here:
+                if (inDoubleString || inSingleString)
+                    return [-1, "E114: Missing quote"];
+                if (inEscapeKey)
+                    return [-1, "trailing \\"];
+                else
+                    return [str.length, arg];
+            }
+
+            if (!options)
+                options = [];
+
+            if (!argCount)
+                argCount = "*";
+
+            var args = {};       // parsed options
+            args.arguments = []; // remaining arguments
+
+            var invalid = false;
+            var onlyArgumentsRemaining = false; // after a -- has been found
+            var arg = null;
+            var count = 0; // the length of the argument
+            var i = 0;
+            outer:
+            while (i < str.length)
+            {
+                // skip whitespace
+                if (/\s/.test(str[i]))
+                {
+                    i++;
+                    continue;
+                }
+
+                var sub = str.substr(i);
+                // dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
+                if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub))
+                {
+                    onlyArgumentsRemaining = true;
+                    i+=2;
+                    continue;
+                }
+
+                var optname = "";
+                if (!onlyArgumentsRemaining)
+                {
+                    for (var opt = 0; opt < options.length; opt++)
+                    {
+                        for (var name = 0; name < options[opt][0].length; name++)
+                        {
+                            optname = options[opt][0][name];
+                            if (sub.indexOf(optname) == 0)
+                            {
+                                invalid = false;
+                                arg = null;
+                                // no value to the option
+                                if (optname.length >= sub.length)
+                                {
+                                    count = 0;
+                                }
+                                else if (sub[optname.length] == "=")
+                                {
+                                    [count, arg] = getNextArg(sub.substr(optname.length + 1));
+                                    if (count == -1)
+                                    {
+                                        liberator.echoerr("Invalid argument for option " + optname);
+                                        return null;
+                                    }
+
+                                    count++; // to compensate the "=" character
+                                }
+                                else if (/\s/.test(sub[optname.length]))
+                                {
+                                    if (options[opt][1] != this.OPTION_NOARG)
+                                    {
+                                        [count, arg] = getNextArg(sub.substr(optname.length + 1));
+                                        if (count == -1)
+                                        {
+                                            liberator.echoerr("Invalid argument for option " + optname);
+                                            return null;
+                                        }
+
+                                        // if we add the argument to an option after a space, it MUST not be empty
+                                        if (arg.length == 0)
+                                            arg = null;
+
+                                        count++; // to compensate the " " character
+                                    }
+                                    else
+                                        count = 1; // the space
+                                }
+                                else
+                                {
+                                    // this isn't really an option as it has trailing characters, parse it as an argument
+                                    invalid = true;
+                                }
+
+                                if (!invalid)
+                                {
+                                    switch (options[opt][1]) // type
+                                    {
+                                    case this.OPTION_NOARG:
+                                        if (arg != null)
+                                        {
+                                            liberator.echoerr("No argument allowed for option: " + optname);
+                                            return null;
+                                        }
+                                        break;
+                                    case this.OPTION_BOOL:
+                                        if (arg == "true" || arg == "1" || arg == "on")
+                                            arg = true;
+                                        else if (arg == "false" || arg == "0" || arg == "off")
+                                            arg = false;
+                                        else
+                                        {
+                                            liberator.echoerr("Invalid argument for boolean option: " + optname);
+                                            return null;
+                                        }
+                                        break;
+                                    case this.OPTION_STRING:
+                                        if (arg == null)
+                                        {
+                                            liberator.echoerr("Argument required for string option: " + optname);
+                                            return null;
+                                        }
+                                        break;
+                                    case this.OPTION_INT:
+                                        arg = parseInt(arg, 10);
+                                        if (isNaN(arg))
+                                        {
+                                            liberator.echoerr("Numeric argument required for integer option: " + optname);
+                                            return null;
+                                        }
+                                        break;
+                                    case this.OPTION_FLOAT:
+                                        arg = parseFloat(arg);
+                                        if (isNaN(arg))
+                                        {
+                                            liberator.echoerr("Numeric argument required for float option: " + optname);
+                                            return null;
+                                        }
+                                        break;
+                                    case this.OPTION_LIST:
+                                        if (arg == null)
+                                        {
+                                            liberator.echoerr("Argument required for list option: " + optname);
+                                            return null;
+                                        }
+                                        arg = arg.split(/\s*,\s*/);
+                                        break;
+                                    }
+
+                                    // we have a validator function
+                                    if (typeof options[opt][2] == "function")
+                                    {
+                                        if (options[opt][2].call(this, arg) == false)
+                                        {
+                                            liberator.echoerr("Invalid argument for option: " + optname);
+                                            return null;
+                                        }
+                                    }
+
+                                    args[options[opt][0][0]] = arg; // always use the first name of the option
+                                    i += optname.length + count;
+                                    continue outer;
+                                }
+                                // if it is invalid, just fall through and try the next argument
+                            }
+                        }
+                    }
+                }
+
+                // if not an option, treat this token as an argument
+                var [count, arg] = getNextArg(sub);
+                if (count == -1)
+                {
+                    liberator.echoerr("Error parsing arguments: " + arg);
+                    return null;
+                }
+                else if (!onlyArgumentsRemaining && /^-/.test(arg))
+                {
+                    liberator.echoerr("Invalid option: " + arg);
+                    return null;
+                }
+
+                if (arg != null)
+                    args.arguments.push(arg);
+
+                i += count; // hopefully count is always >0, otherwise we get an endless loop
+            }
+
+            // check for correct number of arguments
+            if ((args.arguments.length == 0 && (argCount == "1" || argCount == "+")) ||
+                (args.arguments.length == 1 && (argCount == "0"))                    ||
+                (args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?")))
+            {
+                liberator.echoerr("Invalid number of arguments: " + args.arguments.length);
+                return null;
+            }
+
+            return args;
+        },
+
         // return [null, null, null, null, heredoc_tag || false];
         //        [count, cmd, special, args] = match;
         parseCommand: function (str, tag)
@@ -629,7 +663,7 @@ liberator.Commands = function () //{{{
             }
         },
         {
-            /*args: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
+            /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
         });

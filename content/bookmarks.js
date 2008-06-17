@@ -133,16 +133,12 @@ liberator.Bookmarks = function () //{{{
         "Add a bookmark",
         function (args)
         {
-            var res = liberator.commands.parseArgs(args, this.args);
-            if (!res)
-                return;
-
-            var url = res.args.length == 0 ? liberator.buffer.URL : res.args[0];
-            var title = liberator.commands.getOption(res.opts, "-title", res.args.length == 0 ? liberator.buffer.title : null);
+            var url = args.arguments.length == 0 ? liberator.buffer.URL : args.arguments[0];
+            var title = args["-title"] || (args.arguments.length == 0 ? liberator.buffer.title : null);
             if (!title)
                 title = url;
-            var keyword = liberator.commands.getOption(res.opts, "-keyword", null);
-            var tags = liberator.commands.getOption(res.opts, "-tags", []);
+            var keyword = args["-keyword"] || null;
+            var tags =    args["-tags"] || [];
 
             if (liberator.bookmarks.add(false, title, url, keyword, tags))
             {
@@ -155,25 +151,21 @@ liberator.Bookmarks = function () //{{{
                 liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", liberator.commandline.FORCE_SINGLELINE);
         },
         {
-            args: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
-                   [["-tags", "-T"],     liberator.commands.OPTION_LIST],
-                   [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
+            options: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
+                      [["-tags", "-T"],     liberator.commands.OPTION_LIST],
+                      [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]],
+            argCount: "?"
         });
 
     liberator.commands.add(["bmarks"],
         "List or open multiple bookmarks",
         function (args, special)
         {
-            var res = liberator.commands.parseArgs(args, this.args);
-            if (!res)
-                return;
-
-            var tags = liberator.commands.getOption(res.opts, "-tags", []);
-            liberator.bookmarks.list(res.args.join(" "), tags, special);
+            liberator.bookmarks.list(args.arguments.join(" "), args["-tags"] || [], special);
         },
         {
             completer: function (filter) { return [0, liberator.bookmarks.get(filter)]; },
-            args: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
+            options: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
 
     liberator.commands.add(["delbm[arks]"],

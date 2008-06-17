@@ -6,6 +6,8 @@
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded
       use :set [no]focuscontent to control the behavior (thanks Paul Sobey for the 
       generous donation which made this behavior possible)
+    * new argument parser for ex commands, should tell better error messages when
+      you do things like :bmark -tag=a,b instead of :bmark -tags=a,b
     * :bdelete accepts an optional argument now
     * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
     * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode
