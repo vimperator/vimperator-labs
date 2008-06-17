@@ -97,14 +97,11 @@ liberator.config = { //{{{
         function incrementURL(count)
         {
             var url = liberator.buffer.URL;
-            var regex = /(.*?)(-?\d+)(\D*)$/;
+            var regex = /(.*?)(\d+)(\D*)$/;
 
             var matches = url.match(regex);
             if (!matches || !matches[2]) // no number to increment
-            {
-                liberator.beep();
-                return;
-            }
+                return liberator.beep();
 
             var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
             var nums = newNum.match(/^(-?)(\d+)$/);
