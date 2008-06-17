@@ -6,6 +6,8 @@
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded
       use :set [no]focuscontent to control the behavior (thanks Paul Sobey for the 
       generous donation which made this behavior possible)
+    * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
+      too unpredictable
     * new argument parser for ex commands, should tell better error messages when
       you do things like :bmark -tag=a,b instead of :bmark -tags=a,b
     * :bdelete accepts an optional argument now
