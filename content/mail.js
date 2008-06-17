@@ -549,30 +549,27 @@ liberator.Mail = function () //{{{
         { flags: liberator.Mappings.flags.COUNT });
 
     // tagging messages
-    liberator.mappings.add(modes, ["lr"],
-        "Toggle selected messages read",
-        function ()
+    liberator.mappings.add(modes, ["l"],
+        "Label message",
+        function (arg)
         {
             if (!GetSelectedMessages())
+                return liberator.beep();
+
+            switch (arg)
             {
-                liberator.beep();
-                return;
+                case "r": MsgMarkMsgAsRead(); break;
+                case "s": MsgMarkMsgAsFlagged(); break;
+                case "i": ToggleMessageTagKey(1); break; // Important
+                case "w": ToggleMessageTagKey(2); break; // Work
+                case "p": ToggleMessageTagKey(3); break; // Personal
+                case "t": ToggleMessageTagKey(4); break; // TODO
+                case "l": ToggleMessageTagKey(5); break; // Later
+                default:  liberator.beep();
             }
-
-            MsgMarkMsgAsRead();
-        });
-
-    liberator.mappings.add(modes, ["ls"],
-        "Toggle selected messages starred",
-        function ()
+        },
         {
-            if (!GetSelectedMessages())
-            {
-                liberator.beep();
-                return;
-            }
-
-            MsgMarkMsgAsFlagged();
+            flags: liberator.Mappings.flags.ARGUMENT
         });
 
     // TODO: change binding?
@@ -581,10 +578,7 @@ liberator.Mail = function () //{{{
         function ()
         {
             if (liberator.mail.currentFolder.isServer)
-            {
-                liberator.beep();
-                return;
-            }
+                return liberator.beep();
 
             liberator.mail.currentFolder.markAllMessagesRead();
         });
