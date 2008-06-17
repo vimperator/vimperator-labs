@@ -13,20 +13,32 @@ ________________________________________________________________________________
 
 Add {cmd} to the list of commands Vimperator will execute on {event}:
 
-* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered be {events} and {pat}
+* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
 * [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
 * [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
 * [c]:autocmd[!][c]: list/remove all autocommands
 
 Available {events}:
 
-* LocationChange
-* PageLoad
-* Quit
-* Startup
+`----------------`--------------------------------------------
+*LocationChange* Triggered when changing tabs or when navigating to a new location
+*PageLoad*       Triggered when a page gets (re)loaded/opened
+*Quit*           Triggered before exiting Firefox
+*Startup*        Triggered after Firefox starts
+--------------------------------------------------------------
 
 {pat} is a regular expression, use .* if you want to match all events.
+
 ________________________________________________________________________________
 
+section:Examples[examples]
+
+Enable _passthrough_ mode on all Google sites:
+
+  :au LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)
+
+Enable _passthrough_ mode on *some* Google sites:
+
+  :au LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)
 
 // vim: set syntax=asciidoc:
