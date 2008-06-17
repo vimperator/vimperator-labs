@@ -40,7 +40,7 @@ liberator.CommandLine = function () //{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
 
-    var completionlist = new liberator.InformationList("liberator-completion", { minItems: 2, maxItems: 10 });
+    var completionlist = new liberator.InformationList("liberator-completion", { minItems: 1, maxItems: 10 });
     var completions = [];
 
     // TODO: clean this up when it's not 3am...
@@ -129,6 +129,14 @@ liberator.CommandLine = function () //{{{
     // save the arguments for the inputMultiline method which are needed in the event handler
     var multilineRegexp = null;
     var multilineCallback = null;
+
+    liberator.registerCallback("change", liberator.modes.EX, function (command) {
+        if (liberator.options["wildoptions"].indexOf("auto") >= 0)
+        {
+            var res = liberator.completion.ex(command);
+            liberator.commandline.setCompletions(res[1], res[0]);
+        }
+    });
 
     function setHighlightGroup(group)
     {
@@ -285,11 +293,12 @@ liberator.CommandLine = function () //{{{
         "Pause the message list window when more than one screen of listings is displayed",
         "boolean", true);
 
+    // TODO: doesn't belong in ui.js
     liberator.options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
-            validator: function (value) { return !/[^sfbhS]/.test(value); }
+            validator: function (value) { return !/[^sfbhSl]/.test(value); }
         });
 
     liberator.options.add(["suggestengines"],
@@ -326,7 +335,10 @@ liberator.CommandLine = function () //{{{
         "Change how command line completion is done",
         "stringlist", "",
         {
-            validator: function (value) { return /^(sort|)$/.test(value); }
+            validator: function (value)
+            {
+                return value.split(",").every(function (item) { return /^(sort|auto|)$/.test(item); });
+            }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -434,6 +446,7 @@ liberator.CommandLine = function () //{{{
             multilineInputWidget.collapsed = true;
             multilineOutputWidget.collapsed = true;
             completionlist.hide();
+            completions = [];
 
             setLine("", this.HL_NORMAL);
         },
@@ -672,6 +685,7 @@ liberator.CommandLine = function () //{{{
                         else
                             completionlist.show();
                     }
+
 
                     if (full)
                     {
@@ -976,6 +990,24 @@ liberator.CommandLine = function () //{{{
             }
         },
 
+        // to allow asynchronous adding of completions
+        setCompletions: function (compl, start)
+        {
+            if (liberator.mode != liberator.modes.COMMAND_LINE)
+                return;
+
+            completions = compl;
+            completionlist.show(compl, 10);
+            completionIndex = -1;
+
+            var command = this.getCommand();
+            completionPrefix = command.substring(0, commandWidget.selectionStart);
+            completionPostfix = command.substring(commandWidget.selectionStart);
+
+            if (typeof start == "number")
+                completionStartIndex = start;
+        },
+
         resetCompletions: function ()
         {
             completionIndex = historyIndex = UNINITIALIZED;
@@ -1099,7 +1131,7 @@ liberator.InformationList = function (id, options) //{{{
          *          use entries of 'compl' to fill the list.
          *          Required format: [["left", "right"], ["another"], ["completion"]]
          */
-        show: function (compl)
+        show: function (compl, rows)
         {
             //maxItems = liberator.options["previewheight"];
 
@@ -1114,7 +1146,7 @@ liberator.InformationList = function (id, options) //{{{
                 length = maxItems;
             if (length >= minItems)
             {
-                widget.setAttribute("rows", length.toString());
+                widget.setAttribute("rows", rows ? rows : length.toString());
                 widget.hidden = false;
                 return true;
             }

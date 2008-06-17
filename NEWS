@@ -8,6 +8,10 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * new "l" flag for 'complete' to reuse the Firefox awesome bar for getting better
+      completions for :open. Works only when 'wildoptions' contains "auto"
+    * new wildoptions=auto option (default off for now), to automatically list
+      completions without the need to press the tab key
     * new argument parser for ex commands, should tell better error messages when
       you do things like :bmark -tag=a,b instead of :bmark -tags=a,b
     * :bdelete accepts an optional argument now

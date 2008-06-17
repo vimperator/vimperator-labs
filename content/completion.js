@@ -232,6 +232,7 @@ liberator.Completion = function () //{{{
             }
 
             var cpt = complete || liberator.options["complete"];
+            var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
             var suggestEngineAlias = liberator.options["suggestengines"] || "google";
             // join all completion arrays together
             for (var i = 0; i < cpt.length; i++)
@@ -240,12 +241,30 @@ liberator.Completion = function () //{{{
                     completions = completions.concat(this.search(filter)[1]);
                 else if (cpt[i] == "f")
                     completions = completions.concat(this.file(filter, false)[1]);
-                else if (cpt[i] == "b")
+                else if (!autoCompletions && cpt[i] == "b")
                     completions = completions.concat(liberator.bookmarks.get(filter));
-                else if (cpt[i] == "h")
+                else if (!autoCompletions && cpt[i] == "h")
                     completions = completions.concat(liberator.history.get(filter));
                 else if (cpt[i] == "S")
                     completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
+                else if (autoCompletions && cpt[i] == "l") // add completions like Firefox's smart location bar
+                {
+                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"].
+                                            getService(Components.interfaces.nsIAutoCompleteSearch);
+                    completionService.startSearch(filter, "", null, {
+                        onSearchResult: function (search, result) {
+                            //var res = "";// + util.objectToString(result) + "\n---\n";
+                            //liberator.log(result.matchCount + " matches: " + result.searchResult);
+                            var comp = [];
+                            for (var i = 0; i < result.matchCount; i++)
+                            {
+                                comp.push([result.getValueAt(i), result.getCommentAt(i)]);
+                            }
+                            if (comp.length > 0 || result.searchResult == result.RESULT_SUCCESS)
+                                liberator.commandline.setCompletions(completions.concat(comp));
+                        }
+                    });
+                }
             }
 
             return [start, completions];
