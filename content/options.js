@@ -360,9 +360,8 @@ liberator.Options = function () //{{{
                             value = false;
                             break;
                         default:
-                            var valueInt = parseInt(value, 10);
-                            if (!isNaN(valueInt))
-                                value = valueInt;
+                            if (/^(\d+)$/.test(value))
+                                value = parseInt(value, 10);
                     }
                     liberator.options.setPref(name, value);
                 }
