@@ -996,8 +996,10 @@ liberator.CommandLine = function () //{{{
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
 
+            // liberator.log(compl);
+
             completions = compl;
-            completionlist.show(compl, 10);
+            completionlist.show(compl);
             completionIndex = -1;
 
             var command = this.getCommand();

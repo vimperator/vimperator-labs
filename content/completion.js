@@ -34,6 +34,8 @@ liberator.Completion = function () //{{{
 
     // the completion substrings, used for showing the longest common match
     var substrings = [];
+    var urlResultsCache = null;
+    var urlCompletionCache = [];
 
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
@@ -251,15 +253,20 @@ liberator.Completion = function () //{{{
                 {
                     var completionService = Components.classes["@mozilla.org/browser/global-history;2"].
                                             getService(Components.interfaces.nsIAutoCompleteSearch);
-                    completionService.startSearch(filter, "", null, {
+                    completionService.startSearch(filter, "", urlResultsCache, {
                         onSearchResult: function (search, result) {
+                            //if (result.searchResult != result.RESULT_SUCCESS)
+                            //    return;
+                            //liberator.log(result.searchResult);
                             //var res = "";// + util.objectToString(result) + "\n---\n";
                             //liberator.log(result.matchCount + " matches: " + result.searchResult);
                             var comp = [];
+                            urlResultsCache = result;
                             for (var i = 0; i < result.matchCount; i++)
                             {
                                 comp.push([result.getValueAt(i), result.getCommentAt(i)]);
                             }
+                            urlCompletionCache = comp;
                             if (comp.length > 0 || result.searchResult == result.RESULT_SUCCESS)
                                 liberator.commandline.setCompletions(completions.concat(comp));
                         }
@@ -267,7 +274,7 @@ liberator.Completion = function () //{{{
                 }
             }
 
-            return [start, completions];
+            return [start, completions.concat(urlCompletionCache)];
         },
 
         search: function (filter)
