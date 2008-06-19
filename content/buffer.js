@@ -142,6 +142,9 @@ liberator.Buffer = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // override this stupid pref, because otherwise zoom is lost after switching tabs
+    liberator.options.setPref("browser.zoom.siteSpecific", false);
+
     liberator.options.add(["fullscreen", "fs"],
         "Show the current window fullscreen",
         "boolean", false,

@@ -998,9 +998,17 @@ liberator.CommandLine = function () //{{{
 
             // liberator.log(compl);
 
+            if (completionIndex >= 0 && completionIndex < compl.length && completionIndex < completions.length)
+            {
+                if (compl[completionIndex][0] != completions[completionIndex][0])
+                    completionIndex = -1;
+            }
+            else
+                completionIndex = -1;
+
             completions = compl;
             completionlist.show(compl);
-            completionIndex = -1;
+            completionlist.selectItem(completionIndex);
 
             var command = this.getCommand();
             completionPrefix = command.substring(0, commandWidget.selectionStart);
