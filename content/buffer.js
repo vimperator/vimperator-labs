@@ -178,7 +178,15 @@ liberator.Buffer = function () //{{{
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            validator: function (value) { return (value >= 0 && value <= 2); }
+            validator: function (value) { return (value >= 0 && value <= 2); },
+            completer: function (filter)
+            {
+                return [
+                  ["0", "Don't show link destination"],
+                  ["1", "Show the link in the status line"],
+                  ["2", "Show the link in the command line"],
+                ];
+            },
         });
 
     liberator.options.add(["usermode", "um"],

@@ -328,7 +328,18 @@ liberator.CommandLine = function () //{{{
             validator: function (value)
             {
                 return value.split(",").every(function (item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
-            }
+            },
+            completer: function (filter)
+            {
+                return [
+                    ["",              "Complete only the first match"],
+                    ["full",          "Complete the next full match"],
+                    ["longest",       "Complete to longest common string"],
+                    ["list",          "If more than one match, list all matches"],
+                    ["list:full",     "List all and complete first match"],
+                    ["list:longest",  "List all and complete common string"],
+                ];
+            },
         });
 
     liberator.options.add(["wildoptions", "wop"],
@@ -1280,7 +1291,15 @@ liberator.StatusLine = function () //{{{
                 else
                     document.getElementById("status-bar").collapsed = false;
             },
-            validator: function (value) { return (value >= 0 && value <= 2); }
+            validator: function (value) { return (value in [0,1,2]); },
+            completer: function (filter)
+            {
+                return [
+                  ["0", "Never display status line"],
+                  ["1", "Display status line only if there are multiple windows"],
+                  ["2", "Always display status line"],
+                ];
+            },
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

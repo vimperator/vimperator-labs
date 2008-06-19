@@ -360,7 +360,7 @@ liberator.Options = function () //{{{
                             value = false;
                             break;
                         default:
-                            if (/^(\d+)$/.test(value))
+                            if (/^\d+$/.test(value))
                                 value = parseInt(value, 10);
                     }
                     liberator.options.setPref(name, value);
@@ -612,7 +612,11 @@ liberator.Options = function () //{{{
                     for (var option in liberator.options)
                     {
                         if (option.hasName(filter))
+                        {
+                            if (option.completer)
+                                return [filter.length + 1, option.completer(filter)];
                             return [filter.length + 1, [[option.value + "", ""]]];
+                        }
                     }
                     return [0, optionCompletions];
                 }
@@ -684,7 +688,7 @@ liberator.Options = function () //{{{
                 extraInfo = {};
 
             var option = new liberator.Option(names, description, type, defaultValue,
-                                               extraInfo.getter, extraInfo.setter, extraInfo.validator);
+                                               extraInfo.getter, extraInfo.setter, extraInfo.validator, extraInfo.completer);
 
             // quickly access options with liberator.options["wildmode"]:
             this.__defineGetter__(option.name, function () { return option.value; });
