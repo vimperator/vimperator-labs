@@ -14,6 +14,7 @@
       completions without the need to press the tab key
     * new argument parser for ex commands, should tell better error messages when
       you do things like :bmark -tag=a,b instead of :bmark -tags=a,b
+    * some option values can be tab-completed now; e.g., :set wim=<tab>
     * :bdelete accepts an optional argument now
     * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
     * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode
