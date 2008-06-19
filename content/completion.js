@@ -261,7 +261,9 @@ liberator.Completion = function () //{{{
                             //var res = "";// + util.objectToString(result) + "\n---\n";
                             //liberator.log(result.matchCount + " matches: " + result.searchResult);
                             var comp = [];
-                            urlResultsCache = result;
+                            //if (result.searchResult == result.RESULT_SUCCESS)
+                            //    urlResultsCache = result;
+
                             for (var i = 0; i < result.matchCount; i++)
                             {
                                 comp.push([result.getValueAt(i), result.getCommentAt(i)]);

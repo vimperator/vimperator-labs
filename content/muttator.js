@@ -55,6 +55,8 @@ liberator.config = {
             function () { openAboutDialog(); }],
         ["addons",           "Manage Add-ons",
             function () { openAddonsMgr(); }],
+        ["addressbook",      "Address book",
+            function () { toAddressBook(); }],
         ["checkupdates",     "Check for updates",
             function () { checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
