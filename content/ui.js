@@ -441,6 +441,15 @@ liberator.CommandLine = function () //{{{
             setCommand(currentCommand);
 
             commandWidget.focus();
+
+            // open the completion list automatically if wanted
+            if (/\s/.test(cmd) &&
+                liberator.options["wildoptions"].indexOf("auto") >= 0 &&
+                extendedMode == liberator.modes.EX)
+            {
+                var [start, compl] = liberator.completion.ex(cmd);
+                this.setCompletions(compl, start);
+            }
         },
 
         // normally used when pressing esc, does not execute a command
