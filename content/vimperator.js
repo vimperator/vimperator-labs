@@ -37,6 +37,7 @@ liberator.config = { //{{{
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
     autocommands: [["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["PageLoadPre",    "Triggered after a page load is initiated"],
                    ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
                    ["Quit",           "Triggered before exiting Firefox"],
                    ["Startup",        "Triggered after Firefox starts"]],
