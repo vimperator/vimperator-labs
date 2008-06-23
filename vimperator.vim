@@ -39,8 +39,8 @@ syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vi
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
 syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc complete cpt defsearch ds editor
-    \ extendedhinttags eht fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs hinttags ht hinttimeout hto
-    \ history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss nohlsearchstyle nohlss incsearch is noincsearch nois ignorecase
+    \ extendedhinttags eht focuscontent fc nofocuscontent nofc fullscreen fs nofullscreen nofs guioptions go hintmatching hm hintstyle hs
+    \ hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss incsearch is noincsearch nois ignorecase
     \ ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor lfc linksearch lks
     \ nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight pvh previouspattern
     \ online noonline scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs
