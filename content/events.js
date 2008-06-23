@@ -1405,6 +1405,8 @@ liberator.Events = function () //{{{
                         liberator.buffer.loaded = 0;
                         liberator.statusline.updateProgress(0);
 
+                        liberator.autocommands.trigger("PageLoadPre", liberator.buffer.URL);
+
                         // don't reset mode if a frame of the frameset gets reloaded which
                         // is not the focused frame
                         if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)

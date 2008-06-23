@@ -22,6 +22,7 @@ Available {events}:
 
 `----------------`--------------------------------------------
 *LocationChange* Triggered when changing tabs or when navigating to a new location
+*PageLoadPre*    Triggered after a page load is initiated.
 *PageLoad*       Triggered when a page gets (re)loaded/opened
 *Quit*           Triggered before exiting Firefox
 *Startup*        Triggered after Firefox starts
