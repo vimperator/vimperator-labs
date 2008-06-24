@@ -109,6 +109,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: white;
     font-weight: bold;
 }
+.hl-InfoMsg {
+    background-color: white;
+    color: magenta;
+}
 .hl-ModeMsg {
     background-color: white;
     color: black;

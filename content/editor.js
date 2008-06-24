@@ -226,11 +226,10 @@ liberator.Editor = function () //{{{
     addMotionMap("y"); // yank
 
     // insert mode mappings
-    liberator.mappings.add([liberator.modes.INSERT],
-        ["<C-Left>", "<C-Right>", "<C-Home>", "<C-End>", "<C-S-Home>", "<C-S-End>", "<C-BS"],
-        "Keys are passed to " + liberator.config.hostApplication,
-        function () { return true; },
-        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+    liberator.mappings.add(modes,
+        ["<C-o>", "<C-i>", "<C-f>", "<C-g>", "<C-n>"],
+        "Ignore certain " + liberator.config.hostApplication + " key bindings",
+        function () { /*liberator.beep();*/ });
 
     liberator.mappings.add(modes,
         ["<C-w>"], "Delete previous word",

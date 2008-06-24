@@ -8,6 +8,8 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * show informative message when a background tab was loaded, especially useful
+      with a hidden tab bar.
     * new "l" flag for 'complete' to reuse the Firefox awesome bar for getting better
       completions for :open. Works only when 'wildoptions' contains "auto"
     * new wildoptions=auto option (default off for now), to automatically list
@@ -17,7 +19,7 @@
     * some option values can be tab-completed now; e.g., :set wim=<tab>
     * :bdelete accepts an optional argument now
     * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
-    * don't pass any ctrl- or alt- prefixed keys to firefox in insert mode
+    * don't pass certain keys like ctrl-o or ctrl-n to firefox in insert mode
     * keywords in :open <arg> have higher priority than local files now
     * add :set online to control the "work offline" menu item
     * many small bug fixes

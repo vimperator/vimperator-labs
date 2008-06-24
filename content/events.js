@@ -475,6 +475,10 @@ liberator.Events = function () //{{{
                     }, 100);
                 }
             }
+            else // background tab
+            {
+                liberator.commandline.echo("Background tab loaded: " + doc.title || doc.location.href, liberator.commandline.HL_INFOMSG);
+            }
         }
     }
 
@@ -1208,7 +1212,7 @@ liberator.Events = function () //{{{
                     event.stopPropagation();
                     return false;
                 }
-                // if Hit-a-hint mode is on, special handling of keys is required
+                // if Hint mode is on, special handling of keys is required
                 if (liberator.mode == liberator.modes.HINTS)
                 {
                     liberator.hints.onEvent(event);
@@ -1235,7 +1239,6 @@ liberator.Events = function () //{{{
                 map = liberator.mappings.getDefault(liberator.mode, candidateCommand);
             else
                 map = liberator.mappings.get(liberator.mode, candidateCommand);
-
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(liberator.input.buffer + key))
@@ -1338,14 +1341,7 @@ liberator.Events = function () //{{{
                     // allow key to be passed to firefox if we can't handle it
                     stop = false;
 
-                    // allow ctrl- or alt- prefixed keys only in NORMAL mode, as it is annoying
-                    // if you press ctrl-o in a textarea and the file->open dialog pops up
-                    if (liberator.mode != liberator.modes.NORMAL && (event.ctrlKey || event.metaKey || event.altKey))
-                    {
-                        stop = true;
-                        liberator.beep();
-                    }
-                    else if (liberator.mode == liberator.modes.COMMAND_LINE)
+                    if (liberator.mode == liberator.modes.COMMAND_LINE)
                     {
                         if (!(liberator.modes.extended & liberator.modes.INPUT_MULTILINE))
                             liberator.commandline.onEvent(event); // reroute event in command line mode
