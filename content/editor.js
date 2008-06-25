@@ -227,7 +227,7 @@ liberator.Editor = function () //{{{
 
     // insert mode mappings
     liberator.mappings.add(modes,
-        ["<C-o>", "<C-i>", "<C-f>", "<C-g>", "<C-n>"],
+        ["<C-o>", "<C-f>", "<C-g>", "<C-n>"],
         "Ignore certain " + liberator.config.hostApplication + " key bindings",
         function () { /*liberator.beep();*/ });
 
