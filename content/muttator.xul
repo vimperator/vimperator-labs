@@ -77,6 +77,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
             <!-- other keys are handled inside the event loop in events.js -->
         </keyset>
 
+        <panel id="liberator-visualbell"/>
+
         <statusbar id="status-bar" class="hl-StatusLine">
             <hbox insertafter="statusTextBox" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
                 <statusbarpanel class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>

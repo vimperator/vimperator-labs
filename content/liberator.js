@@ -507,7 +507,7 @@ const liberator = (function () //{{{
                 {
                     // flash the visual bell
                     var popup = document.getElementById("liberator-visualbell");
-                    var win = getBrowser().mPanelContainer;
+                    var win = liberator.config.visualbellWindow;
                     var box = document.getBoxObjectFor(win);
 
                     popup.style.cssText = vbs;

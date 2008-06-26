@@ -43,6 +43,7 @@ liberator.config = {
                GetThreadTree();
     },
     get mainWindowID() { return this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow"; },
+    get visualbellWindow() { return document.getElementById(this.mainWindowID); },
     isComposeWindow: false,
 
     autocommands: [["FolderLoaded", "Triggered after switching folders in Thunderbird"],

@@ -36,6 +36,8 @@ liberator.config = { //{{{
     defaults: { guioptions: "" },
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
+    get visualbellWindow() { return getBrowser().mPanelContainer; },
+
     autocommands: [["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
                    ["PageLoadPre",    "Triggered after a page load is initiated"],
                    ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
