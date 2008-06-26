@@ -47,6 +47,7 @@ liberator.config = {
     isComposeWindow: false,
 
     autocommands: [["FolderLoaded", "Triggered after switching folders in Thunderbird"],
+                   ["PageLoadPre",    "Triggered after a page load is initiated"],
                    ["PageLoad",     "Triggered when a page gets (re)loaded/opened"],
                    ["Quit",         "Triggered before exiting Thunderbird"],
                    ["Startup",      "Triggered after Thunderbird starts"]],
