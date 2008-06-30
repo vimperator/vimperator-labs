@@ -848,7 +848,16 @@ liberator.Mail = function () //{{{
             var accounts = currentAccountOnly ? [this.currentAccount]
                                               : this.getFolders("", true, false);
 
-            accounts.forEach(function (account) { account.getNewMessages(msgWindow, null); });
+            accounts.forEach(function (account) {
+                try
+                {
+                    account.getNewMessages(msgWindow, null);
+                }
+                catch (e)
+                {
+                    liberator.log("Error getting messages for account " + account.prettyName + ": " + e);
+                }
+            });
         },
 
         getStatistics: function (currentAccountOnly)
