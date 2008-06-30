@@ -8,6 +8,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * support for :%foo as a count for commands (not yet widely used)
     * show informative message when a background tab was loaded, especially useful
       with a hidden tab bar.
     * new "l" flag for 'complete' to reuse the Firefox awesome bar for getting better

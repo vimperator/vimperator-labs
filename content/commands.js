@@ -181,14 +181,18 @@ liberator.Commands = function () //{{{
         //        Idea: If v.commands.add() specifies args or opts in extraInfo, don't call the function
         //        with args as a string, but already pass an object like:
         //        args = { -option: value, -anotheroption: true, arguments: [] }
-        OPTION_ANY: 0, // can be given no argument or an argument of any type,
-                       // caller is responsible for parsing the return value
-        OPTION_NOARG: 1,
-        OPTION_BOOL:2,
+        OPTION_ANY:    0, // can be given no argument or an argument of any type,
+                          // caller is responsible for parsing the return value
+        OPTION_NOARG:  1,
+        OPTION_BOOL:   2,
         OPTION_STRING: 3,
-        OPTION_INT: 4,
-        OPTION_FLOAT: 5,
-        OPTION_LIST: 6,
+        OPTION_INT:    4,
+        OPTION_FLOAT:  5,
+        OPTION_LIST:   6,
+
+        COUNT_NONE: -1,
+        COUNT_ALL:  -2, // :%...
+
 
         __iterator__: function ()
         {
@@ -591,16 +595,16 @@ liberator.Commands = function () //{{{
             }
 
             // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-            var matches = str.match(/^:*(\d+)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
+            var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
             if (!matches)
                 return [null, null, null, null, null];
             matches.shift();
 
             // parse count
             if (matches[0])
-                matches[0] = parseInt(matches[0], 10);
+                matches[0] = matches[0] == "%" ? this.COUNT_ALL: parseInt(matches[0], 10);
             else
-                matches[0] = -1;
+                matches[0] = this.COUNT_NONE;
 
             matches[2] = !!matches[2];
             matches.push(null);
