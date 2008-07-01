@@ -1162,11 +1162,11 @@ ________________________________________________________________________________
 
 
 |:mkv| |:mkvimperatorrc|
-||:mkv[imperatorrc] [file]|| +
+||:mkv[imperatorrc][!] [file]|| +
 ________________________________________________________________________________
 Write current key mappings and changed options to [file]. If no [file] is
 specified then _~/.vimperatorrc_ is written unless this file already exists. The
-special version will overwrite [file] if it exists.
+special version [c]:mkvimperatorrc![c] will overwrite [file] if it exists.
 
 Warning: this differs from Vim's behavior which defaults to writing the file
 in the current directory.
