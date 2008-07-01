@@ -12,7 +12,7 @@ have 2 possibilities:
 ________________________________________________________________________________
 Disable all Vimperator keys except <Esc> and pass them to the next event handler.
 This is especially useful, if JavaScript controlled forms like the RichEdit
-form fields of GMail don't work anymore. To exit this mode, press <Esc>. If
+form fields of Gmail don't work anymore. To exit this mode, press <Esc>. If
 you also need to pass <Esc> in this mode to the web page, prepend it with
 help:CTRL-V[browsing.html,CTRL-V].
 ________________________________________________________________________________

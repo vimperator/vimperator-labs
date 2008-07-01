@@ -9,7 +9,7 @@ boolean    can only be on or off
 number     has a numeric value
 string     has a string value
 charlist   like a string but with unique characters
-stringlist a comma-seperated list of strings
+stringlist a comma-separated list of strings
 -------------------------------------------------------
 
 section:Setting{nbsp}options[set-option,E764]
