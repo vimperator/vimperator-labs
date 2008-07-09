@@ -23,6 +23,7 @@
     * don't pass certain keys like ctrl-o or ctrl-n to firefox in insert mode
     * keywords in :open <arg> have higher priority than local files now
     * add :set online to control the "work offline" menu item
+    * add :jumps command to list current tab's history
     * many small bug fixes
 
 2008-06-03:

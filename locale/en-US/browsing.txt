@@ -90,12 +90,24 @@ Go [count] pages back in the browser history.
 The special version [c]:back![c] goes to the beginning of the browser history.
 ________________________________________________________________________________
 
+
 |L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
 ||:[count]fo[rward][!] [url]|| +
 ||CTRL-i||
 ________________________________________________________________________________
 Go [count] pages forward in the browser history.
 The special version [c]:forward![c] goes to the end of the browser history.
+________________________________________________________________________________
+
+
+|:ju| |:jumps|
+||:ju[mps]||
+________________________________________________________________________________
+List all jumps aka current tab's history aka session history.
+
+Current history position is marked with >, jump numbers are counters
+to be used with [c]:back[c] (above zero record) or [c]:forward[c]
+(below zero record).
 ________________________________________________________________________________
 
 

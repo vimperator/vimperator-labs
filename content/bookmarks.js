@@ -129,6 +129,33 @@ liberator.Bookmarks = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.commands.add(["ju[mps]"],
+        "Show jumplist",
+        function ()
+        {
+            var sh = getWebNavigation().sessionHistory;
+            var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "jumps") + "<br/>" + "<table>";
+            list += "<tr style=\"text-align: left; color: magenta; font-weight: bold;\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
+            var num = -sh.index;
+
+            for (var i = 0; i < sh.count; i++)
+            {
+                var entry = sh.getEntryAtIndex(i, false);
+                var uri = entry.URI.spec;
+                var title = entry.title;
+                var indicator = i == sh.index? "<span style=\"color: blue;\">&gt;</span>": " ";
+                list += "<tr><td>" + indicator + "<td>" + Math.abs(num) + "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
+                        "</td><td><a href=\"#\" class=\"hl-URL jump-list\">" + uri + "</a></td></tr>";
+                num++;
+            } 
+
+            list += "</table>";
+            
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+        },
+        {}
+    );
+
     liberator.commands.add(["bma[rk]"],
         "Add a bookmark",
         function (args)
