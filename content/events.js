@@ -545,7 +545,7 @@ liberator.Events = function () //{{{
         }
         catch (e)
         {
-            liberator.log("macro directory not found or error reading macro file", 9);
+            liberator.log("Macro directory not found or error reading macro file", 9);
         }
     }, 100);
 
