@@ -748,7 +748,7 @@ liberator.Editor = function () //{{{
                 return false;
 
             var editor = liberator.options["editor"];
-            var args = editor.split(" ");
+            var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
             if (args.length < 1)
             {
                 liberator.echoerr("no editor specified");

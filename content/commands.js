@@ -277,14 +277,16 @@ liberator.Commands = function () //{{{
         //             [["-acceleration"], OPTION_FLOAT],
         //             [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
         //             [["-other"], OPTION_ANY]];
-        // argCount can be:
+        // @param argCount can be:
         //            "0": no arguments
         //            "1": exactly one argument
         //            "+": one or more aguments
         //            "*": zero or more arguments
         //            "?": zero or one arguments
+        // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
+        //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function(str, options, argCount)
+        parseArgs: function(str, options, argCount, allowUnknownOptions)
         {
             // returns [count, parsed_argument]
             function getNextArg(str)
@@ -396,7 +398,7 @@ liberator.Commands = function () //{{{
             args.arguments = []; // remaining arguments
 
             var invalid = false;
-            var onlyArgumentsRemaining = false; // after a -- has been found
+            var onlyArgumentsRemaining = allowUnknownOptions || false; // after a -- has been found
             var arg = null;
             var count = 0; // the length of the argument
             var i = 0;

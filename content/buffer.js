@@ -1296,7 +1296,7 @@ liberator.Buffer = function () //{{{
                 // TODO: save return value in v:shell_error
                 var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
                 var editor = liberator.options["editor"];
-                var args = editor.split(" "); // FIXME: too simple
+                var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)
                 {
                     liberator.echoerr("no editor specified");
