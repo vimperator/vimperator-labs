@@ -137,12 +137,12 @@ liberator.Mail = function () //{{{
 
         if (copy)
         {
-            MsgCopyMessage(folders[0].URI);
+            MsgCopyMessage(folders[0]);
             setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
         }
         else
         {
-            MsgMoveMessage(folders[0].URI);
+            MsgMoveMessage(folders[0]);
             setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
         }
         return true;
