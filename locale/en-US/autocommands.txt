@@ -11,7 +11,7 @@ happen.
 ________________________________________________________________________________
 [c]:au[tocmd][c] {event} {pat} {cmd}.
 
-Add {cmd} to the list of commands Vimperator will execute on {event}:
+Add {cmd} to the list of commands Vimperator will execute on {event} for a URL matching {pat}:
 
 * [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
 * [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
@@ -28,7 +28,7 @@ Available {events}:
 *Startup*        Triggered after Firefox starts
 --------------------------------------------------------------
 
-{pat} is a regular expression, use .* if you want to match all events.
+{pat} is a regular expression, use .* if you want to match all URLs.
 
 ________________________________________________________________________________
 
