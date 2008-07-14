@@ -447,8 +447,10 @@ liberator.Events = function () //{{{
 
             // code which should happen for all (also background) newly loaded tabs goes here:
 
-            var url = liberator.buffer.URL;
-            var title = liberator.buffer.title;
+            // loaded page can be not current (e.g. background tab loaded)
+            // so we should use defaultView from event object, not liberator.buffer.
+            var url = doc.defaultView.location.href;
+            var title = doc.defaultView.title;
 
             //update history
             if (url && liberator.history)
