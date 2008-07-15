@@ -166,7 +166,7 @@ to return here, depending on which key you used to activate QuickHint mode.
 
 section:Common{nbsp}Issues[common_issues]
 
-Say you get half-way down typing in a new URL, only to remember that you've
+Say you get half-way done typing in a new URL, only to remember that you've
 already got that page open in the previous tab.  Your command-line might look
 something like this:
 
@@ -177,6 +177,20 @@ following:
 
   <Esc>gT
 
+
+section:Saving{nbsp}for{nbsp}Posterity{nbsp}-{nbsp}vimperatorrc[vimperatorrc]
+
+Once you get Vimperator set up with your desired options, maps, and
+commands, you'll probably want them to be available the next time you
+open Vimperator.  Continuing the Vim theme, this is done with a
+vimperatorrc file.
+
+To save your current settings and allow them to be loaded automatically
+next time you start Vimperator, issue the [c]:mkv[c] command.
+
+This will create the file *$HOME/.vimperatorrc* containing your settings.
+It is a simple text file, just like a vimrc file and can be easily
+edited to suit your preferences.
 
 
 section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
