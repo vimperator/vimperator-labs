@@ -88,6 +88,63 @@ section:History[history]
 
 TO BE WRITTEN...
 
+|<C-o>| +
+||[count]<C-o>||
+________________________________________________________________________________
+Go to an older position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<C-i>| +
+||[count]<C-i>||
+________________________________________________________________________________
+Go to a newer position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<M-Left>| |<A-Left>| |H| +
+||[count]H||
+________________________________________________________________________________
+Go back in the browser history. Count is supported: [m]3H[m] goes back 3 steps.
+________________________________________________________________________________
+
+
+|<M-Right>| |<A-Right>| |L| +
+||[count]L||
+________________________________________________________________________________
+Go forward in the browser history. Count is supported: [m]3L[m] goes forward 3 steps.
+________________________________________________________________________________
+
+
+|:ba| |:back|
+||:[count]ba[ck][!] [url]|| +
+________________________________________________________________________________
+Go back in the browser history. Count is supported, [c]:3back[c] goes back 3
+pages in the browser history. +
+The special version [c]:back![c] goes to the beginning of the browser history.
+________________________________________________________________________________
+
+
+|:fw| |:fo| |:forward|
+||:[count]fo[rward][!] [url]|| +
+________________________________________________________________________________
+Go forward in the browser history. Count is supported, [c]:3forward[c] goes
+forward 3 pages in the browser history. The special version [c]:forward![c]
+goes to the end of the browser history.
+________________________________________________________________________________
+
+
+|:hs| |:hist| |:history|
+||:hist[ory][!] [filter]|| +
+________________________________________________________________________________
+Show recently visited URLs. Open the message window at the bottom of the
+screen with all history items which match [filter] either in the title or URL.
+The special version [c]:history![c] works the same as [c]:history[c] except
+it opens all the found items in new tabs.
+________________________________________________________________________________
+
 
 section:QuickMarks[quickmarks]
 
