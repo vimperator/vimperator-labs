@@ -35,7 +35,53 @@ without any tags.
 ____________________________________________________________________________
 
 
-TODO: Add more commands here (A, :bmarks, :delbmarks)
+|A| +
+||A||
+________________________________________________________________________________
+Toggle bookmarked state of current URL. Add/remove a bookmark for the current
+location, depending if it already is bookmarked or not. In contrast to the
+[c]:bmark[c] command, the bookmark is just _starred_ which means it is placed
+in the _Unfiled Bookmarks Folder_ instead of the bookmarks menu.
+________________________________________________________________________________
+
+
+|:bma| |:bmark|
+||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+________________________________________________________________________________
+Add a bookmark. If you don't add a custom title, either the title of the web page or the URL is taken as the title. +
+You can omit the optional [url] argument, so just do [c]:bmark[c] to bookmark the currently loaded web page with a default title and without any tags. +
+
+The following options are interpreted: +
+ -title="custom title" +
+ -tags=comma,separated,tag,list +
+ -keyword=keyword +
+________________________________________________________________________________
+
+
+|:bmarks|
+||:bmarks[!] [filter]|| +
+________________________________________________________________________________
+List or open multiple bookmarks. Open the message window at the bottom of the
+screen with all bookmarks which match [filter] either in the title or URL. +
+The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
+opens all the found bookmarks in new tabs.
+
+Filter can also contain the following options: +
+-tags=comma,separated,tag,list +
+________________________________________________________________________________
+
+
+|:delbm| |:delbmarks|
+||:delbm[arks] [url]|| +
+________________________________________________________________________________
+Delete a bookmark. Deletes *all* bookmarks which match the [url].
+If omitted, [url] defaults to the URL of the current buffer. Use [m]<Tab>[m]
+key on a string to complete the URL which you want to delete.
+
+The following options WILL be interpreted in the future:
+
+* [!] a special version to delete ALL bookmarks
+________________________________________________________________________________
 
 
 section:History[history]
