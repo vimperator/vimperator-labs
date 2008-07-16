@@ -327,7 +327,7 @@ liberator.Options = function () //{{{
                     onlyNonDefault = true;
                 }
                 //                                1                    2       3  4       5
-                var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
+                var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
                 var name = matches[1];
                 var reset = false;
                 var invertBoolean = false;
@@ -380,7 +380,7 @@ liberator.Options = function () //{{{
             }
 
             //                               1        2       3       4  5       6
-            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([+-^]?)=(.*))?\s*$/);
+            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
             if (!matches)
             {
                 liberator.echoerr("E518: Unknown option: " + args);
