@@ -35,8 +35,8 @@ section:Opening{nbsp}web{nbsp}pages[opening]
 ||o||
 ________________________________________________________________________________
 Open one or more URLs in the current tab.
-Multiple URLs can be separated with ", ".
-Note that the space after the comma is required.
+Multiple URLs can be separated with 'urlseparator' (default: ", " Note that the
+space after the comma is required.")
 Each token is analyzed and in this order:
 
 1. Opened as a local file if it is an existing relative or absolute filename.

@@ -375,6 +375,10 @@ liberator.config = { //{{{
                            getService(Components.interfaces.nsIIOService2).offline;
                 }
             });
+
+        liberator.options.add(["urlseparator"],
+            "Set the separator regexp used to split URL args",
+            "string", ",\\s");
     }
     //}}}
 }; //}}}

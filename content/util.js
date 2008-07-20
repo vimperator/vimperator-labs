@@ -278,7 +278,7 @@ liberator.util = { //{{{
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
     stringToURLArray: function (str)
     {
-        var urls = str.split(/\s*\,\s+/);
+        var urls = str.split(new RegExp("\s*" + liberator.options["urlseparator"] + "\s*"));
 
         begin: for (var url = 0; url < urls.length; url++)
         {

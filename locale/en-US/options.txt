@@ -565,6 +565,17 @@ Note that this is a local option for now, later it may be split into a global an
 ____
 
 
+|\'urlseparator'|
+||'urlseparator'|| string (default: ",\s")
+____
+Set the separator regexp used to separate multiple URL args.  Multiple
+arguments can be specified for :open, and similar commands, using this regexp
+as the separator.  Using whitespace alone is not generally useful since it is
+often contained in a single argument.  E.g. [c]:open linus torvalds[c] should
+perform a single search for the key words "linus" and "torvalds"
+____
+
+
 |\'verbose', \'vbs'|
 ||'verbose' 'vbs'|| number (default: 0)
 ____
