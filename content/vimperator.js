@@ -246,7 +246,7 @@ liberator.config = { //{{{
             function ()
             {
                 liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("downloads") != -1) ?
+                    (liberator.options["newtab"] == "all" || liberator.options["newtab"].split(",").indexOf("downloads") != -1) ?
                         liberator.NEW_TAB : liberator.CURRENT_TAB);
             });
 
