@@ -71,6 +71,13 @@ in a new tab. When used with [a]![a], the 'tabopen' value of the 'activate' opti
 ________________________________________________________________________________
 
 
+|:tabd| |:tabduplicate|
+||:[count]tabd[uplicate][!]|| +
+________________________________________________________________________________
+Duplicates current tab [count] times. Uses 'tabopen' value of the 'activate' to determine
+if last cloned tab should be activated. When used with [a]![a], 'tabopen' value is negated.
+________________________________________________________________________________
+
 
 |:winopen| |:wopen| |:winedit|
 ||:wino[pen][!] [arg1], [arg2], ...|| +

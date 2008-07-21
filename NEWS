@@ -8,6 +8,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * add :tabduplicate command 
     * new 'urlseparator' option for specifying the regexp used to split the arg to
       :open, :tabopen and :winopen
     * :set editor now accepts quoting/escaping to use an editor with spaces in the path

@@ -426,6 +426,23 @@ liberator.Tabs = function () //{{{
                     liberator.open("about:blank", where);
             },
             { completer: function (filter) { return liberator.completion.url(filter); } });
+
+        liberator.commands.add(["tabd[uplicate]"],
+            "Duplicate current tab",
+            function (args, special, count)
+            {
+                var tab = liberator.tabs.getTab();
+
+                var activate = special ? true : false;
+                if (/\btabopen\b/.test(liberator.options["activate"]))
+                    activate = !activate;
+
+                if (count < 1)
+                    count = 1;
+
+                for (var i = 0; i < count; i++)
+                    liberator.tabs.cloneTab(tab, activate);
+            });
     }
 
     if (liberator.has("session"))
@@ -793,6 +810,23 @@ liberator.Tabs = function () //{{{
 
                 liberator.tabs.select(matches[index], false);
             }
+        },
+
+        cloneTab: function (tab, activate)
+        {
+            var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                     getService(Components.interfaces.nsISessionStore);
+
+            if (!tab)
+                tab = getBrowser().mTabContainer.selectedItem;
+
+            var tabState = ss.getTabState(tab);
+            var newTab = getBrowser().addTab();
+            ss.setTabState(newTab, tabState);
+            if (activate)
+                getBrowser().mTabContainer.selectedItem = newTab;
+
+            return newTab;
         },
 
         // TODO: when restarting a session FF selects the first tab and then the
