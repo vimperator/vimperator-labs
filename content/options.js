@@ -227,7 +227,7 @@ liberator.Options = function () //{{{
 
             var matches;
             // 1 - type, 2 - name, 3 - +-., 4 - expr
-            if (matches = args.match(/([$@&])?([\w:]+)\s*([+-.])?=\s*(.+)/))
+            if (matches = args.match(/([$@&])?([\w:]+)\s*([-+.])?=\s*(.+)/))
             {
                 if (!matches[1])
                 {
