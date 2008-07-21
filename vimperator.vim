@@ -1,7 +1,7 @@
 " Vim syntax file
-" Language:	    VIMperator configuration file
-" Maintainer:	    Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2008 July 7
+" Language:         VIMperator configuration file
+" Maintainer:       Doug Kearns <dougkearns@gmail.com>
+" Latest Revision:  2008 July 21
 
 if exists("b:current_syntax")
   finish
@@ -44,8 +44,8 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc linkfgcolor
     \ lfc linksearch lks nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload previewheight
     \ pvh previouspattern online noonline scroll scr showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase
-    \ scs nosmartcase noscs suggestengines titlestring usermode um nousermode noum verbose vbs visualbell vb novisualbell novb
-    \ visualbellstyle wildmode wim wildoptions wop wordseparators wsp
+    \ scs nosmartcase noscs suggestengines titlestring usermode um nousermode noum urlseparator verbose vbs visualbell vb
+    \ novisualbell novb visualbellstyle wildmode wim wildoptions wop wordseparators wsp
     \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
