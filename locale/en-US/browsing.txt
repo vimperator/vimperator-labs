@@ -7,8 +7,8 @@ pleasant for Vim users. In the rare occurrences where you want to pass a
 keystroke to the web page or to Firefox to retain its original meaning you
 have 2 possibilities:
 
-|pass-through| |<C-q>| |CTRL-Q| +
-||CTRL-Q||
+|pass-through| |<C-z>| |CTRL-Z| +
+||CTRL-Z||
 ________________________________________________________________________________
 Disable all Vimperator keys except <Esc> and pass them to the next event handler.
 This is especially useful, if JavaScript controlled forms like the RichEdit

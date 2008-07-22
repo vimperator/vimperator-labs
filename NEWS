@@ -1,6 +1,8 @@
 <pre>
 2008-06-xx:
     * version 1.2
+    * IMPORTANT: changed the default keybinding to temporarily disable all
+      Vimperator keybindings from <C-Q> to <C-Z>
     * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
       use "B" or :buffers instead
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded

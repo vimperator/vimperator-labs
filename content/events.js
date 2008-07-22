@@ -574,7 +574,7 @@ liberator.Events = function () //{{{
         function () { document.commandDispatcher.rewindFocus(); });
 
     liberator.mappings.add(liberator.modes.all,
-        ["<C-q>"], "Temporarily ignore all " + liberator.config.name + " key bindings",
+        ["<C-z>"], "Temporarily ignore all " + liberator.config.name + " key bindings",
         function () { liberator.modes.passAllKeys = true; });
 
     liberator.mappings.add(liberator.modes.all,
