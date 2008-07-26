@@ -1045,7 +1045,7 @@ liberator.Mail = function () //{{{
         {
             var values = [[true,  1, gDisallow_classes_no_html],  // plaintext
                           [false, 0, 0],                          // HTML
-                          [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML 
+                          [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML
 
             if (typeof(value) != "number" || value < 0 || value > 2)
                 value = 1;
@@ -1056,7 +1056,6 @@ liberator.Mail = function () //{{{
             MsgReload();
         }
     };
-
     //}}}
 }; //}}}
 

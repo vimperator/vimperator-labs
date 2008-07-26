@@ -592,8 +592,8 @@ liberator.Hints = function () //{{{
             validator: function (value) { return /^(?:contains|wordstartswith|firstletters|custom)$/.test(value); },
             completer: function (filter)
             {
-                return ["contains","wordstartswith","firstletters","custom"]
-                  .map(function(m){ return [m,""] });
+                return ["contains", "wordstartswith", "firstletters", "custom"]
+                  .map(function (m){ return [m, ""] });
             },
         });
 

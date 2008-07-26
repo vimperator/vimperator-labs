@@ -90,7 +90,7 @@ const liberator = (function () //{{{
                     {
                         liberator.log("Couldn't set titlestring", 3);
                     }
-                },
+                }
             });
 
         liberator.options.add(["verbose", "vbs"],
@@ -104,7 +104,7 @@ const liberator = (function () //{{{
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
-                setter: function (value) { liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value); },
+                setter: function (value) { liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value); }
             });
 
         liberator.options.add(["visualbellstyle", "t_vb"],
@@ -360,7 +360,7 @@ const liberator = (function () //{{{
             {
                 completer: function (filter)
                 {
-                    if (/^:/.test(filter)) 
+                    if (/^:/.test(filter))
                         return liberator.completion.ex(filter);
                     else
                         return liberator.completion.javascript(filter);
@@ -1034,7 +1034,8 @@ const liberator = (function () //{{{
 			thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
         }
 
-    }; //}}}
+    };
+    //}}}
 })(); //}}}
 
 // called when the chrome is fully loaded and before the main window is shown

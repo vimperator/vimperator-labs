@@ -147,10 +147,10 @@ liberator.Bookmarks = function () //{{{
                 list += "<tr><td>" + indicator + "<td>" + Math.abs(num) + "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
                         "</td><td><a href=\"#\" class=\"hl-URL jump-list\">" + uri + "</a></td></tr>";
                 num++;
-            } 
+            }
 
             list += "</table>";
-            
+
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         {}

@@ -286,7 +286,7 @@ liberator.Commands = function () //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function(str, options, argCount, allowUnknownOptions)
+        parseArgs: function (str, options, argCount, allowUnknownOptions)
         {
             // returns [count, parsed_argument]
             function getNextArg(str)
