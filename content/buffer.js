@@ -184,9 +184,9 @@ liberator.Buffer = function () //{{{
                 return [
                   ["0", "Don't show link destination"],
                   ["1", "Show the link in the status line"],
-                  ["2", "Show the link in the command line"],
+                  ["2", "Show the link in the command line"]
                 ];
-            },
+            }
         });
 
     liberator.options.add(["usermode", "um"],
@@ -1304,12 +1304,12 @@ liberator.Buffer = function () //{{{
                 }
 
                 var prog = args.shift();
-                args.push(url)
+                args.push(url);
                 liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
             }
             else
             {
-                liberator.open("view-source:" + url)
+                liberator.open("view-source:" + url);
             }
         }
     };

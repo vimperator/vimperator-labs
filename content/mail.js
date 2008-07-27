@@ -865,7 +865,7 @@ liberator.Mail = function () //{{{
             var accounts = currentAccountOnly ? [this.currentAccount]
                                               : this.getFolders("", true, false);
 
-            var unreadCount = 0, totalCount = 0, newCount = 0;;
+            var unreadCount = 0, totalCount = 0, newCount = 0;
             for (var i = 0; i < accounts.length; i++)
             {
                 var account = accounts[i];

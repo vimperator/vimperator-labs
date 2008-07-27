@@ -1309,7 +1309,7 @@ liberator.StatusLine = function () //{{{
                   ["1", "Display status line only if there are multiple windows"],
                   ["2", "Always display status line"],
                 ];
-            },
+            }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

@@ -594,7 +594,7 @@ liberator.Hints = function () //{{{
             {
                 return ["contains", "wordstartswith", "firstletters", "custom"]
                   .map(function (m){ return [m, ""] });
-            },
+            }
         });
 
     liberator.options.add(["wordseparators", "wsp"],

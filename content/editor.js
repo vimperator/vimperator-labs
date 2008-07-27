@@ -775,7 +775,7 @@ liberator.Editor = function () //{{{
             }
 
             var prog = args.shift();
-            args.push(tmpfile.path)
+            args.push(tmpfile.path);
 
             if (textBox)
             {

@@ -229,7 +229,7 @@ liberator.AutoCommands = function () //{{{
         }
     };
     //}}}
-} //}}}
+}; //}}}
 
 liberator.Events = function () //{{{
 {
