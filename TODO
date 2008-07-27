@@ -48,7 +48,6 @@ FEATURES:
 4 y and Y could maybe changed to, but probably not: Y, yy and yl=yank location, ys=yank selection,
   yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 4 Add -nargs, -complete, etc. to :command
-4 :set urlseparators=,\s+
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
