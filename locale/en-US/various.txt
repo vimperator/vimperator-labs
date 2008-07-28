@@ -682,6 +682,8 @@ If argument is neither a full URL nor an index but uniquely identifies a
 buffer, it is selected. With [!] the next buffer matching the argument is
 selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
+
+If argument is #, the alternate buffer will be selected (see [m]<C-6>[m]).
 ________________________________________________________________________________
 
 

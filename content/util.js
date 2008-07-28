@@ -285,46 +285,40 @@ liberator.util = { //{{{
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
-            // first check if it is an existing local file but NOT a search url/keyword
-            // NOTE: the test for being a file is done first, because it's faster than getSearchURL
-            var file = liberator.io.getFile(urls[url]);
-            if (file.exists() && file.isReadable() && !liberator.bookmarks.getSearchURL("", urls[url]))
-            {
-                urls[url] = file.path;
-                continue;
-            }
-
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine
             // or keyword bookmark
-            if (liberator.has("bookmarks") && (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url])))
+            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
             {
-                var matches = urls[url].match(/^(\S+)(?:\s+(.+))?$/);
-                var alias = matches[1];
-                var text = matches[2] || null;
-
                 // TODO: it would be clearer if the appropriate call to
                 // getSearchURL was made based on whether or not the first word was
                 // indeed an SE alias rather than seeing if getSearchURL can
                 // process the call usefully and trying again if it fails - much
                 // like the comments below ;-)
 
-                // check if the first word is a search engine
-                var searchURL = liberator.bookmarks.getSearchURL(text, alias);
+                // check for a search engine match in the string
+                var searchURL = liberator.bookmarks.getSearchURL(urls[url], false);
                 if (searchURL)
                 {
                     urls[url] = searchURL;
                     continue;
                 }
-                else // the first word was not a search engine, search for the whole string in the default engine
+                else // no search engine match, search for the whole string in the default engine
                 {
-                    searchURL = liberator.bookmarks.getSearchURL(urls[url], null);
+                    searchURL = liberator.bookmarks.getSearchURL(urls[url], true);
                     if (searchURL)
                     {
                         urls[url] = searchURL;
                         continue;
                     }
                 }
+            }
+
+            var file = liberator.io.getFile(urls[url]);
+            if (file.exists() && file.isReadable())
+            {
+                urls[url] = file.path;
+                continue;
             }
 
             // if we are here let Firefox handle the url and hope it does

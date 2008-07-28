@@ -238,26 +238,7 @@ liberator.Tabs = function () //{{{
 
         liberator.mappings.add([liberator.modes.NORMAL], ["<C-^>", "<C-6>"],
             "Select the alternate tab",
-            function ()
-            {
-                if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
-                {
-                    liberator.echoerr("E23: No alternate page");
-                    return;
-                }
-
-                // NOTE: this currently relies on v.tabs.index() returning the
-                // currently selected tab index when passed null
-                var index = liberator.tabs.index(liberator.tabs.alternate);
-
-                // TODO: since a tab close is more like a bdelete for us we
-                // should probably reopen the closed tab when a 'deleted'
-                // alternate is selected
-                if (index == -1)
-                    liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-                else
-                    liberator.tabs.select(index);
-            });
+            function () { liberator.tabs.selectAlternateTab(); });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -748,10 +729,9 @@ liberator.Tabs = function () //{{{
         switchTo: function (buffer, allowNonUnique, count, reverse)
         {
             if (buffer == "")
-            {
                 return;
-            }
-            else if (buffer != null)
+
+            if (buffer != null)
             {
                 // store this command, so it can be repeated with "B"
                 lastBufferSwitchArgs = buffer;
@@ -762,6 +742,12 @@ liberator.Tabs = function () //{{{
                 buffer = lastBufferSwitchArgs;
                 if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
                     allowNonUnique = lastBufferSwitchSpecial;
+            }
+
+            if (buffer == "#")
+            {
+                liberator.tabs.selectAlternateTab();
+                return;
             }
 
             if (!count || count < 1)
@@ -827,6 +813,29 @@ liberator.Tabs = function () //{{{
                 getBrowser().mTabContainer.selectedItem = newTab;
 
             return newTab;
+        },
+
+        selectAlternateTab: function ()
+        {
+          if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
+          {
+            liberator.echoerr("E23: No alternate page");
+            return;
+          }
+
+          // NOTE: this currently relies on v.tabs.index() returning the
+          // currently selected tab index when passed null
+          var index = liberator.tabs.index(liberator.tabs.alternate);
+
+          // TODO: since a tab close is more like a bdelete for us we
+          // should probably reopen the closed tab when a 'deleted'
+          // alternate is selected
+          if (index == -1)
+            liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+          else
+            liberator.tabs.select(index);
+
+          return;
         },
 
         // TODO: when restarting a session FF selects the first tab and then the

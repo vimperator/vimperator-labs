@@ -383,53 +383,22 @@ liberator.Bookmarks = function () //{{{
             return keywords;
         },
 
-        // if @param engineName is null, it uses the default search engine
+        // full search string including engine name as first word in @param text
+        // if @param useDefSearch is true, it uses the default search engine
         // @returns the url for the search string
         //          if the search also requires a postData, [url, postData] is returned
-        getSearchURL: function (text, engineName)
+        getSearchURL: function (text, useDefsearch)
         {
             var url = null;
-            var postData = null;
-            if (!engineName)
-                engineName = liberator.options["defsearch"];
+            var aPostDataRef = {};
+            var searchString = (useDefsearch? liberator.options["defsearch"] + " " : "") + text;
 
-            // we need to make sure our custom alias have been set, even if the user
-            // did not :open <tab> once before
-            this.getSearchEngines();
+            url = getShortcutOrURI(searchString, aPostDataRef);
+            if (url == searchString)
+                url = null;
 
-            // first checks the search engines for a match
-            var engine = searchService.getEngineByAlias(engineName);
-            if (engine)
-            {
-                if (text)
-                {
-                    var submission = engine.getSubmission(text, null);
-                    url = submission.uri.spec;
-                    postData = submission.postData;
-                }
-                else
-                    url = engine.searchForm;
-            }
-            else // check for keyword urls
-            {
-                if (!keywords)
-                    load();
-
-                for (var i in keywords)
-                {
-                    if (keywords[i][0] == engineName)
-                    {
-                        if (text == null)
-                            text = "";
-                        url = keywords[i][2].replace(/%s/g, encodeURIComponent(text));
-                        break;
-                    }
-                }
-            }
-
-            // if we came here, the engineName is neither a search engine or URL
-            if (postData)
-                return [url, postData];
+            if (aPostDataRef && aPostDataRef.value)
+                return [url, aPostDataRef.value];
             else
                 return url; // can be null
         },
