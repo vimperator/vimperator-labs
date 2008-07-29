@@ -300,12 +300,12 @@ liberator.Tabs = function () //{{{
             completer: function (filter) { return liberator.completion.ex(filter); }
         });
 
-    liberator.commands.add(["tabl[ast]"],
+    liberator.commands.add(["tabl[ast]", "bl[ast]"],
         "Switch to the last tab",
         function () { liberator.tabs.select("$", false); });
 
     // TODO: count support
-    liberator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]"],
+    liberator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]", "bp[revious]", "bN[ext]"],
         "Switch to the previous tab or go [count] tabs back",
         function (args)
         {
@@ -318,7 +318,7 @@ liberator.Tabs = function () //{{{
         });
 
     // TODO: count support
-    liberator.commands.add(["tabn[ext]", "tn[ext]"],
+    liberator.commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
         "Switch to the next or [count]th tab",
         function (args)
         {
@@ -340,7 +340,7 @@ liberator.Tabs = function () //{{{
             }
         });
 
-    liberator.commands.add(["tabr[ewind]", "tabfir[st]"],
+    liberator.commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
         "Switch to the first tab",
         function () { liberator.tabs.select(0, false); });
 

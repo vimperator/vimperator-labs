@@ -1161,8 +1161,9 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:tabl| |:tablast|
-||:tabl[ast]||
+|:bl| |:blast| |:tabl| |:tablast|
+||:tabl[ast]|| +
+||:bl[ast]||
 ________________________________________________________________________________
 Switch to the last tab.
 ________________________________________________________________________________
@@ -1179,8 +1180,10 @@ specified the movement wraps around the start or end of the tab list.
 ________________________________________________________________________________
 
 
-|:tn| |:tnext| |:tabn| |:tabnext|
+|:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
 ||:tabn[ext] [count]|| +
+||:tn[ext] [count]|| +
+||:bn[ext] [count]||
 ________________________________________________________________________________
 Switch to the next or [count]th tab. Cycles to the first tab when the last is
 selected and {count} is not specified.
@@ -1194,17 +1197,23 @@ Close all other tabs.
 ________________________________________________________________________________
 
 
-|:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
+|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
 ||:tabp[revious] [count]|| +
+||:tp[revious] [count]|| +
+||:tabN[ext] [count]|| +
+||:bp[revious] [count]|| +
+||:bN[ext] [count]||
 ________________________________________________________________________________
 Switch to the previous tab or go [count] tabs back. Wraps around from the
 first tab to the last tab.
 ________________________________________________________________________________
 
 
-|:tabfir| |:tabfirst| |:tabr| |:tabrewind|
+|:bf| |:bfirst| |:br| |:brewind| |:tabfir| |:tabfirst| |:tabr| |:tabrewind|
 ||:tabr[ewind]|| +
-||:tabfir[st]||
+||:tabfir[st]|| +
+||:br[ewind]|| +
+||:bf[irst]||
 Switch to the first tab.
 ________________________________________________________________________________
 ________________________________________________________________________________
