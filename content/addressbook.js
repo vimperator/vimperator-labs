@@ -192,7 +192,7 @@ liberator.Addressbook = function () //{{{
 			if (newMail)
 			{
 				// Now we have to create a new message
-				var args = new Object();
+				var args = {};
 				args.to = addresses.map(function (address)
 				{
 					return "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\"";

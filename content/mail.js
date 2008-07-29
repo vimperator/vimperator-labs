@@ -678,7 +678,7 @@ liberator.Mail = function () //{{{
         "Write a new message",
         function (args, special, count)
         {
-            var mailargs = new Object();
+            var mailargs = {};
             mailargs.to =          args.arguments.join(", ");
             mailargs.subject =     args["-subject"];
             mailargs.bcc =         args["-bcc"];
