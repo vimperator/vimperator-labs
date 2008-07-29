@@ -452,6 +452,19 @@ liberator.Buffer = function () //{{{
         "Show various page information",
         function () { liberator.buffer.showPageInfo(true); });
 
+    liberator.commands.add(["pagest[yle]"],
+        "Select the author style sheet to apply",
+        function (args)
+        {
+            if (liberator.options["usermode"])
+                liberator.options["usermode"] = false;
+
+            stylesheetSwitchAll(window.content, args);
+        },
+        {
+            completer: function (filter) { return liberator.completion.stylesheet(filter); }
+        });
+
     liberator.commands.add(["re[load]"],
         "Reload current page",
         function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); });

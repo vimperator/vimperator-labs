@@ -285,6 +285,12 @@ liberator.Completion = function () //{{{
             return [0, this.filter(engines, filter)];
         },
 
+        stylesheet: function (filter)
+        {
+            var stylesheets = getAllStyleSheets(window.content).map(function (stylesheet) { return [stylesheet.title, ""]; });
+            return [0, this.filter(stylesheets, filter)];
+        },
+
         // TODO: support file:// and \ or / path separators on both platforms
         // TODO: sort directories first
         // if "tail" is true, only return names without any directory components

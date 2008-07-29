@@ -61,4 +61,16 @@ When running in X11 the text of the following commands is not only copied to
 the clipboard, but also put into the X11 selection, which can be pasted with
 the middle mouse button:
 
+section:Alternate{nbsp}Style{nbsp}Sheets[stylesheet,style]
+
+|:pagest| |:pagestyle|
+||:pagest[yle]||
+________________________________________________________________________________
+Select the author style sheet to apply.  Page authors may specify alternate
+style sheets for an HTML document.  Users can then switch between these
+various style sheets, selecting their favorite.
+
+All author styling can be removed by setting the 'usermode' option.
+________________________________________________________________________________
+
 // vim: set syntax=asciidoc:
