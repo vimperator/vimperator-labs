@@ -427,7 +427,7 @@ liberator.Mappings = function () //{{{
                     list += "<tr>";
                     list += "<td> " + modeSign + "   " + liberator.util.escapeHTML(maps[i].names[j]) + "</td>";
                     if (maps[i].rhs)
-                        list += "<td> "+ (maps[i].noremap ? "*" : " ") + "</td>"
+                        list += "<td> " + (maps[i].noremap ? "*" : " ") + "</td>"
                                         + "<td>" + liberator.util.escapeHTML(maps[i].rhs) + "</td>";
                     list += "</tr>";
                 }
