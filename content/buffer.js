@@ -456,6 +456,12 @@ liberator.Buffer = function () //{{{
         "Select the author style sheet to apply",
         function (args)
         {
+            if (!args)
+            {
+                liberator.echoerr("E471: Argument required");
+                return;
+            }
+
             if (liberator.options["usermode"])
                 liberator.options["usermode"] = false;
 

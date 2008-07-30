@@ -287,7 +287,15 @@ liberator.Completion = function () //{{{
 
         stylesheet: function (filter)
         {
-            var stylesheets = getAllStyleSheets(window.content).map(function (stylesheet) { return [stylesheet.title, ""]; });
+            var stylesheets = getAllStyleSheets(window.content);
+
+            // TODO: how should we handle duplicate titles?
+            stylesheets = stylesheets.filter(function(stylesheet) {
+                return !(!/^(screen|all|)$/i.test(stylesheet.media.mediaText) || /^\s*$/.test(stylesheet.title))
+            }).map(function (stylesheet) {
+                return [stylesheet.title, stylesheet.href || "inline"];
+            });
+
             return [0, this.filter(stylesheets, filter)];
         },
 
