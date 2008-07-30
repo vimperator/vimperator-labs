@@ -1318,7 +1318,7 @@ liberator.Buffer = function () //{{{
                 var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)
                 {
-                    liberator.echoerr("no editor specified");
+                    liberator.echoerr("No editor specified");
                     return;
                 }
 
@@ -1560,7 +1560,7 @@ liberator.Marks = function () //{{{
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                liberator.echoerr("marks support for frameset pages not implemented yet");
+                liberator.echoerr("Marks support for frameset pages not implemented yet");
                 return;
             }
 

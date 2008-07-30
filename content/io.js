@@ -493,7 +493,7 @@ lookup:
 
             if (!file.exists())
             {
-                liberator.echoerr("command not found: " + program);
+                liberator.echoerr("Command not found: " + program);
                 return -1;
             }
 
