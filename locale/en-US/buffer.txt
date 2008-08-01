@@ -7,8 +7,98 @@ Vimperator holds exactly one buffer object for each tab. It is usually an
 
 section:Motion{nbsp}Commands[motion,scrolling]
 
-List mappings how to scroll the window.
+|^| |0| +
+||0||
+________________________________________________________________________________
+Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] work exactly the same way.
+________________________________________________________________________________
 
+
+|$|
+||$||
+________________________________________________________________________________
+Scroll to the absolute right of the document
+________________________________________________________________________________
+
+
+|<Home>| |gg| +
+||[count]gg||
+________________________________________________________________________________
+Goto the top of the document. When used with [count] like in [m]35gg[m], it
+scrolls to 35% of the document.
+________________________________________________________________________________
+
+
+|<End>| |G| +
+||[count]G||
+________________________________________________________________________________
+Goto the end of the document. When used with [count] like in [m]35G[m], it
+scrolls to 35% of the document.
+________________________________________________________________________________
+
+
+|<Left>| |h| +
+||[count]h||
+________________________________________________________________________________
+Scroll document to the left. Count is supported: [m]10h[m] will move 10 times as much to the left. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-e>| |<Down>| |j| +
+||[count]j||
+________________________________________________________________________________
+Scroll document down. Count is supported: [m]10j[m] will move 10 times as much down. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-y>| |<Up>| |k| +
+||[count]k||
+________________________________________________________________________________
+Scroll document up. Count is supported: [m]10k[m] will move 10 times as much up. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<C-d>| +
+||[count]<C-d>||
+________________________________________________________________________________
+Scroll window downwards in the buffer. The number of lines is set by the
+'scroll' option which defaults to half a page. If [count] is given 'scroll' is
+first set to this value.
+________________________________________________________________________________
+
+
+|<C-u>| +
+||[count]<C-u>||
+________________________________________________________________________________
+Scroll window upwards in the buffer. The number of lines is set by the
+'scroll' option which defaults to half a page. If [count] is given 'scroll' is
+first set to this value.
+________________________________________________________________________________
+
+
+|<Right>| |l| +
+||[count]l||
+________________________________________________________________________________
+Scroll document to the right. Count is supported: [m]10l[m] will move 10 times as much to the right. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+________________________________________________________________________________
+
+
+|<S-Space>| |<PageUp>| |<C-b>| +
+||[count]<C-b>||
+________________________________________________________________________________
+Scroll up a full page. Scroll window [count] pages Backwards (upwards) in the buffer.
+________________________________________________________________________________
+
+
+|<Space>| |<PageDown>| |<C-f>| +
+||[count]<C-f>||
+________________________________________________________________________________
+Scroll down a full page. Scroll window [count] pages Forwards (downwards) in the buffer.
+________________________________________________________________________________
 
 section:Jumping{nbsp}to{nbsp}Elements[jumping]
 
@@ -55,6 +145,92 @@ relations between files too.
 ________________________________________________________________________________
 
 
+section:Zooming[zooming]
+
+|+| |zi|
+||[count]zi||
+________________________________________________________________________________
+Enlarge text zoom of current web page. Mnemonic: zoom in
+________________________________________________________________________________
+
+
+|zm|
+||[count]zm||
+________________________________________________________________________________
+Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more
+________________________________________________________________________________
+
+
+|-| |zo| +
+||[count]zo||
+________________________________________________________________________________
+Reduce text zoom of current web page. Mnemonic: zoom out
+________________________________________________________________________________
+
+
+|zr|
+||[count]zr||
+________________________________________________________________________________
+Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce
+________________________________________________________________________________
+
+
+|zz|
+||[count]zz||
+________________________________________________________________________________
+Set text zoom value of current web page. Zoom value can be between 1 and
+2000%. If it is omitted, text zoom is reset to 100%.
+________________________________________________________________________________
+
+
+|zI|
+||[count]zI||
+________________________________________________________________________________
+Enlarge full zoom of current web page. Mnemonic: zoom in
+________________________________________________________________________________
+
+
+|zM|
+||[count]zM||
+________________________________________________________________________________
+Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more
+________________________________________________________________________________
+
+
+|zO|
+||[count]zO||
+________________________________________________________________________________
+Reduce full zoom of current web page. Mnemonic: zoom out
+________________________________________________________________________________
+
+
+|zR|
+||[count]zR||
+________________________________________________________________________________
+Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce
+________________________________________________________________________________
+
+
+|zZ|
+||[count]zZ||
+________________________________________________________________________________
+Set full zoom value of current web page. Zoom value can be between 1 and
+2000%. If it is omitted, full zoom is reset to 100%.
+________________________________________________________________________________
+
+
+|:zo| |:zoom|
+||:zo[om][!] [value]|| +
+||:zo[om][!] +{value} | -{value}|| +
+________________________________________________________________________________
+Set zoom value of current web page. If [value] can be an absolute value
+between 1 and 2000% or a relative value if prefixed with '-' or '+'. If
+[value] is omitted, zoom is reset to 100%.
+
+Normally this command operates on the text zoom, if used with [!] it operates
+on full zoom.
+________________________________________________________________________________
+
 section:Copying{nbsp}Text[copying,yanking]
 
 When running in X11 the text of the following commands is not only copied to
@@ -73,4 +249,4 @@ various style sheets, selecting their favorite.
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc fdm=marker:

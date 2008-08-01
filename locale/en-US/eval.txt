@@ -1,0 +1,68 @@
+HEADER
+
+|expression| |expr| |eval| +
+
+INTRO TO BE WRITTEN...
+
+|:ec| |:echo| +
+||:ec[ho] {expr}||
+________________________________________________________________________________
+Display a string at the bottom of the window. Useful for showing informational
+messages. Multiple lines can be separated by \n.
+{expr} can either be a quoted string, or any expression which can be fed to
+eval() like 4+5. You can also view the source code of objects and functions if
+the return value of {expr} is an object or function.
+________________________________________________________________________________
+
+
+|:echoe| |:echoerr|
+||:echoe[rr] {expr}|| +
+________________________________________________________________________________
+Display an error string at the bottom of the window. Just like [c]:ec[ho][c],
+but echoes the result highlighted in red. Useful for showing important
+messages.
+________________________________________________________________________________
+
+
+|:exe| |:execute|
+||:exe[cute] {expr1} [ ... ]|| +
+________________________________________________________________________________
+Execute the string that results from the evaluation of {expr1} as an Ex
+command.. Example: [c]:execute echo "test"[c] shows a message with the text
+"test".
+________________________________________________________________________________
+
+
+|:js| |:javas| |:javascript|
+||:javas[cript] \\{cmd\\}|| +
+||:javascript <<\\{endpattern\\}\n\\{script\\}\n\\{endpattern\\}|| +
+||:javascript[!]||
+________________________________________________________________________________
+Run any JavaScript command through eval(). Acts as a JavaScript interpreter by
+passing the argument to <code>eval()</code>.
+[c]:javascript alert('Hello world')[c] shows a dialog box with the text "Hello world".
+[c]:javascript <<EOF[c] reads all the lines until a line starting with 'EOF'
+is found, and interpret them with the JavaScript _eval()_ function.
+
+The special version [c]:javascript![c] opens the JavaScript console of
+Firefox.
+
+Rudimentary [m]<Tab>[m] completion is available for [c]:javascript
+{cmd}<Tab>[c] (but not yet for the [c]:js <<EOF[c] multiline widget). Be aware
+that Vimperator needs to run {cmd} through eval() to get the completions,
+which could have unwanted side effects.
+________________________________________________________________________________
+
+// >> To make the syntax highlighting happy
+
+|:let|
+||:let {var-name} [+-.]= {expr1}|| +
+||:let {var-name}|| +
+||:let||
+________________________________________________________________________________
+Sets or lists a variable. Sets the variable {var-name} to the value of the
+expression {expr1}.If no expression is given, the value of the variable is
+displayed.Without arguments, displays a list of all variables.
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

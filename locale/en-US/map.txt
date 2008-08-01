@@ -1,0 +1,208 @@
+HEADER
+
+|key-mapping| |abbreviations| |user-commands| +
+
+INTRO TO BE WRITTEN...
+
+section:Key{nbsp}Mapping[key-mapping,mapping,macro]
+
+|<Nop>| +
+||<Nop>||
+________________________________________________________________________________
+Do nothing. This command is useful for disabling a specific mapping. [c]:map
+<C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
+________________________________________________________________________________
+
+
+|:map|
+||:map {lhs} {rhs}|| +
+||:map {lhs}|| +
+||:map||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
+nested and recursive mappings. Mappings are NOT saved during sessions, make
+sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:cm| |:cmap|
+||:cmap {lhs} {rhs}|| +
+||:cmap {lhs}|| +
+||:cmap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in command-line mode). The {rhs} is
+remapped, allowing for nested and recursive mappings. Mappings are NOT saved
+during sessions, make sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:im| |:imap|
+||:imap {lhs} {rhs}|| +
+||:imap {lhs}|| +
+||:imap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in insert mode). The {rhs} is remapped,
+allowing for nested and recursive mappings. Mappings are NOT saved during
+sessions, make sure you put them in your vimperatorrc file!
+________________________________________________________________________________
+
+
+|:mapc| |:mapclear|
+||:mapc[lear]||
+________________________________________________________________________________
+Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
+[c]:noremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:cmapc| |:cmapclear|
+||:cmapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in command-line mode). All user-defined mappings which
+were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:imapc| |:imapclear| +
+||:imapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in insert mode). All user-defined mappings which were set
+by [c]:imap[c] or [c]:inoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:no| |:noremap| +
+||:no[remap] {lhs} {rhs}|| +
+||:no[remap] {lhs}|| +
+||:no[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. No remapping of the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:cno| |:cnoremap| +
+||:cno[remap] {lhs} {rhs}|| +
+||:cno[remap] {lhs}|| +
+||:cno[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in command-line mode). No remapping of
+the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:ino| |:inoremap| +
+||:ino[remap] {lhs} {rhs}|| +
+||:ino[remap] {lhs}|| +
+||:ino[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
+{rhs} is performed.
+________________________________________________________________________________
+
+
+|:unm| |:unmap|
+||:unm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs}.
+________________________________________________________________________________
+
+
+|:cunm| |:cunmap|
+||:cunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in command-line mode).
+________________________________________________________________________________
+
+
+|:iunm| |:iunmap|
+||:iunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in insert mode).
+________________________________________________________________________________
+
+section:Abbreviations[abbreviations]
+
+|:ab| |:abbreviate|
+||:ab[breviate] {lhs} {rhs}|| +
+||:ab[breviate] {lhs}|| +
+||:ab[breviate]||
+________________________________________________________________________________
+Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
+If only {lhs} given, list that particular abbreviation.
+List all abbreviations, if no arguments to are given.
+
+________________________________________________________________________________
+
+
+|:ca| |:cabbrev|
+||:ca[bbrev] {lhs} {rhs}|| +
+||:ca[bbrev] {lhs}|| +
+||:ca[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
+but for commandline mode only.
+________________________________________________________________________________
+
+
+|:ia| |:iabbrev|
+||:ia[bbrev] {lhs} {rhs}|| +
+||:ia[bbrev] {lhs}|| +
+||:ia[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c], but
+for Insert mode only.
+________________________________________________________________________________
+
+
+|:una| |:unabbreviate|
+||:una[bbreviate] {lhs}||
+________________________________________________________________________________
+Remove an abbreviation.
+________________________________________________________________________________
+
+
+|:cuna| |:cunabbrev|
+||:cuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Command-line mode. Same as [c]:una[bbreviate][c],
+but for Command-line mode only.
+________________________________________________________________________________
+
+
+|:iuna| |:iunabbrev|
+||:iuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c], but for
+Insert mode only.
+________________________________________________________________________________
+
+
+|:abc| |:abclear|
+||:abc[lear]||
+________________________________________________________________________________
+Remove all abbreviations.
+________________________________________________________________________________
+
+
+|:cabc| |:cabclear|
+||:cabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Command-line mode.
+________________________________________________________________________________
+
+
+|:iabc| |:iabclear|
+||:iabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Insert mode.
+________________________________________________________________________________
+
+section:User-defined{nbsp}Commands[user-commands]
+
+|:com| |:command|
+||:com[mand][!] [{attr}...] {cmd} {rep}|| +
+________________________________________________________________________________
+Lists and defines commands. To be written - but it works similar to Vim's :command
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

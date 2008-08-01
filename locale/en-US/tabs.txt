@@ -4,7 +4,165 @@ HEADER
 Tabs are used to be able to view many web pages at the same time...
 
 
+section:Listing{nbsp}tabs[listing-tabs]
+
+|B| +
+||B||
+________________________________________________________________________________
+Toggle buffer list. Toggles the display of the buffer list which shows all opened tabs. +
+Warning: This mapping may be removed/changed in future.
+________________________________________________________________________________
+
+
+|:tabs| |:ls| |:files| |:buffers| +
+||:buffers[!]||
+________________________________________________________________________________
+Show a list of all buffers (=tabs). The special version [c]:buffers![c] opens
+the buffer list in a persistent preview window. Call the special version of
+this command again to close the window.
+________________________________________________________________________________
+
+section:Changing{nbsp}tabs[changing-tabs]
+
+|b| +
+||b||
+________________________________________________________________________________
+Open a prompt to switch buffers. Typing the corresponding number switches to
+this buffer.
+________________________________________________________________________________
+
+
+|gb| +
+||[count]gb||
+________________________________________________________________________________
+Repeat last [c]:buffer[!][c] command. This is useful to quickly jump between
+buffers which have a similar URL or title.
+________________________________________________________________________________
+
+
+|gB| +
+||[count]gB||
+________________________________________________________________________________
+Repeat last [c]:buffer[!][c] command in reverse direction. Just like [m]gb[m]
+but in the other direction.
+________________________________________________________________________________
+
+
+|g^| |g0|
+||g0||
+________________________________________________________________________________
+Go to the first tab. TODO: Unify with :tabfirst.
+________________________________________________________________________________
+
+
+|g$|
+||g$||
+________________________________________________________________________________
+Go to the last tab. TODO: Unify with :tablast.
+________________________________________________________________________________
+
+
+|<C-PageDown>| |<C-Tab>| |<C-n>| |gt| +
+||[count]gt||
+________________________________________________________________________________
+Go to the next tab. Cycles to the first tab, when the last is selected. +
+Count is supported: [m]3gt[m] goes to the third tab.
+________________________________________________________________________________
+
+
+|<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
+||[count]gT||
+________________________________________________________________________________
+Go {count} pages back. Wraps around from the first tab to the last tab. +
+Count is supported: [m]3gT[m] goes three tabs back.
+________________________________________________________________________________
+
+
+|<C-6>| |<C-^>| +
+||<C-^>||
+________________________________________________________________________________
+Select the alternate tab. The alternate tab is the last selected tab. This
+provides a quick method of toggling between two tabs.
+________________________________________________________________________________
+
+
+|:bl| |:blast| |:tabl| |:tablast|
+||:tabl[ast]|| +
+||:bl[ast]||
+________________________________________________________________________________
+Switch to the last tab.
+________________________________________________________________________________
+
+
+|:tabm| |:tabmove|
+||:tabm[ove] [N]|| +
+||:tabm[ove][!] +N | -N|| +
+________________________________________________________________________________
+Move the current tab after tab N. When N is 0 the current tab is made the
+first one. Without N the current tab is made the last one. N can also be
+prefixed with '+' or '-' to indicate a relative movement. If [!] is
+specified the movement wraps around the start or end of the tab list.
+________________________________________________________________________________
+
+
+|:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
+||:tabn[ext] [count]|| +
+||:tn[ext] [count]|| +
+||:bn[ext] [count]||
+________________________________________________________________________________
+Switch to the next or [count]th tab. Cycles to the first tab when the last is
+selected and {count} is not specified.
+________________________________________________________________________________
+
+
+|:tabo| |:tabonly|
+||:tabo[nly]||
+________________________________________________________________________________
+Close all other tabs.
+________________________________________________________________________________
+
+
+|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
+||:tabp[revious] [count]|| +
+||:tp[revious] [count]|| +
+||:tabN[ext] [count]|| +
+||:bp[revious] [count]|| +
+||:bN[ext] [count]||
+________________________________________________________________________________
+Switch to the previous tab or go [count] tabs back. Wraps around from the
+first tab to the last tab.
+________________________________________________________________________________
+
+
+|:bf| |:bfirst| |:br| |:brewind| |:tabfir| |:tabfirst| |:tabr| |:tabrewind|
+||:tabr[ewind]|| +
+||:tabfir[st]|| +
+||:br[ewind]|| +
+||:bf[irst]||
+Switch to the first tab.
+________________________________________________________________________________
+________________________________________________________________________________
+
+
 section:Closing{nbsp}tabs[closing-tabs]
+
+|d| +
+||[count]d||
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [m]2d[m] removes the current
+and next tab and the one to the right is selected. Does not wrap if [count] is
+larger than available tabs to the right.
+________________________________________________________________________________
+
+
+|D| +
+||[count]D||
+________________________________________________________________________________
+Delete current buffer (=tab). Count is supported, [m]2D[m] removes the current
+and previous tab and the one to the left is selected. Does not wrap if [count]
+is larger than available tabs to the left.
+________________________________________________________________________________
+
 
 |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
 ||:[count]bd[elete][!] [arg]|| +
@@ -18,7 +176,27 @@ the title of the tab. Use with care.
 ________________________________________________________________________________
 
 
-TO BE WRITTEN...
+|u| +
+||[count]u||
+________________________________________________________________________________
+Undo closing of a tab. If a count is given, don't close the last but the
+[count]th last tab.
+________________________________________________________________________________
 
+
+|:u| |:undo|
+||:[count]u[ndo][!] [url]|| +
+________________________________________________________________________________
+Undo closing of a tab. If a count is given, don't close the last but the
+[count]th last tab. With [url] restores the tab matching the url.
+________________________________________________________________________________
+
+
+|:undoa| |:undoall| +
+||:undoa[ll]||
+________________________________________________________________________________
+Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
+after a browser restart.
+________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

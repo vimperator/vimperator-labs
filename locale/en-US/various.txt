@@ -53,7 +53,6 @@ now dead, unfortunately.  So now you might wonder what the meaning of death
 is...
 
 
-
 section:Uncategorized{nbsp}Help[uncategorized]
 
 
@@ -101,64 +100,6 @@ ________________________________________________________________________________
 ||<C-c>||
 ________________________________________________________________________________
 Stop loading the current web page.
-________________________________________________________________________________
-
-
-|<Nop>| +
-||<Nop>||
-________________________________________________________________________________
-Do nothing. This command is useful for disabling a specific mapping. [c]:map
-<C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
-________________________________________________________________________________
-
-
-|b| +
-||b||
-________________________________________________________________________________
-Open a prompt to switch buffers. Typing the corresponding number switches to
-this buffer.
-________________________________________________________________________________
-
-
-|B| +
-||B||
-________________________________________________________________________________
-Toggle buffer list. Toggles the display of the buffer list which shows all opened tabs. +
-Warning: This mapping may be removed/changed in future.
-________________________________________________________________________________
-
-
-|gb| +
-||[count]gb||
-________________________________________________________________________________
-Repeat last [c]:buffer[!][c] command. This is useful to quickly jump between
-buffers which have a similar URL or title.
-________________________________________________________________________________
-
-
-|gB| +
-||[count]gB||
-________________________________________________________________________________
-Repeat last [c]:buffer[!][c] command in reverse direction. Just like [m]gb[m]
-but in the other direction.
-________________________________________________________________________________
-
-
-|d| +
-||[count]d||
-________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [m]2d[m] removes the current
-and next tab and the one to the right is selected. Does not wrap if [count] is
-larger than available tabs to the right.
-________________________________________________________________________________
-
-
-|D| +
-||[count]D||
-________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [m]2D[m] removes the current
-and previous tab and the one to the left is selected. Does not wrap if [count]
-is larger than available tabs to the left.
 ________________________________________________________________________________
 
 
@@ -210,44 +151,6 @@ Works like [m]P[m], but inverts the 'activate' option.
 ________________________________________________________________________________
 
 
-|g^| |g0|
-||g0||
-________________________________________________________________________________
-Go to the first tab. TODO: Unify with :tabfirst.
-________________________________________________________________________________
-
-
-|g$|
-||g$||
-________________________________________________________________________________
-Go to the last tab. TODO: Unify with :tablast.
-________________________________________________________________________________
-
-
-|<C-PageDown>| |<C-Tab>| |<C-n>| |gt| +
-||[count]gt||
-________________________________________________________________________________
-Go to the next tab. Cycles to the first tab, when the last is selected. +
-Count is supported: [m]3gt[m] goes to the third tab.
-________________________________________________________________________________
-
-
-|<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
-||[count]gT||
-________________________________________________________________________________
-Go {count} pages back. Wraps around from the first tab to the last tab. +
-Count is supported: [m]3gT[m] goes three tabs back.
-________________________________________________________________________________
-
-
-|<C-6>| |<C-^>| +
-||<C-^>||
-________________________________________________________________________________
-Select the alternate tab. The alternate tab is the last selected tab. This
-provides a quick method of toggling between two tabs.
-________________________________________________________________________________
-
-
 |O| +
 ||O||
 ________________________________________________________________________________
@@ -292,14 +195,6 @@ Force reloading of the current page skipping the cache.
 ________________________________________________________________________________
 
 
-|u| +
-||[count]u||
-________________________________________________________________________________
-Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab.
-________________________________________________________________________________
-
-
 |y| +
 ||y||
 ________________________________________________________________________________
@@ -312,78 +207,6 @@ ________________________________________________________________________________
 ||Y||
 ________________________________________________________________________________
 Copy currently selected text to the system clipboard.
-________________________________________________________________________________
-
-
-|+| |zi|
-||[count]zi||
-________________________________________________________________________________
-Enlarge text zoom of current web page. Mnemonic: zoom in
-________________________________________________________________________________
-
-
-|zm|
-||[count]zm||
-________________________________________________________________________________
-Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more
-________________________________________________________________________________
-
-
-|-| |zo| +
-||[count]zo||
-________________________________________________________________________________
-Reduce text zoom of current web page. Mnemonic: zoom out
-________________________________________________________________________________
-
-
-|zr|
-||[count]zr||
-________________________________________________________________________________
-Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce
-________________________________________________________________________________
-
-
-|zz|
-||[count]zz||
-________________________________________________________________________________
-Set text zoom value of current web page. Zoom value can be between 1 and
-2000%. If it is omitted, text zoom is reset to 100%.
-________________________________________________________________________________
-
-
-|zI|
-||[count]zI||
-________________________________________________________________________________
-Enlarge full zoom of current web page. Mnemonic: zoom in
-________________________________________________________________________________
-
-
-|zM|
-||[count]zM||
-________________________________________________________________________________
-Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more
-________________________________________________________________________________
-
-
-|zO|
-||[count]zO||
-________________________________________________________________________________
-Reduce full zoom of current web page. Mnemonic: zoom out
-________________________________________________________________________________
-
-
-|zR|
-||[count]zR||
-________________________________________________________________________________
-Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce
-________________________________________________________________________________
-
-
-|zZ|
-||[count]zZ||
-________________________________________________________________________________
-Set full zoom value of current web page. Zoom value can be between 1 and
-2000%. If it is omitted, full zoom is reset to 100%.
 ________________________________________________________________________________
 
 
@@ -413,100 +236,6 @@ ________________________________________________________________________________
 ||[count]<C-a>||
 ________________________________________________________________________________
 Increments the last number in URL by 1, or by count if given.
-________________________________________________________________________________
-
-
-|^| |0| +
-||0||
-________________________________________________________________________________
-Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] work exactly the same way.
-________________________________________________________________________________
-
-
-|$|
-||$||
-________________________________________________________________________________
-Scroll to the absolute right of the document
-________________________________________________________________________________
-
-
-|<Home>| |gg| +
-||[count]gg||
-________________________________________________________________________________
-Goto the top of the document. When used with [count] like in [m]35gg[m], it
-scrolls to 35% of the document.
-________________________________________________________________________________
-
-
-|<End>| |G| +
-||[count]G||
-________________________________________________________________________________
-Goto the end of the document. When used with [count] like in [m]35G[m], it
-scrolls to 35% of the document.
-________________________________________________________________________________
-
-
-|<Left>| |h| +
-||[count]h||
-________________________________________________________________________________
-Scroll document to the left. Count is supported: [m]10h[m] will move 10 times as much to the left. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
-________________________________________________________________________________
-
-
-|<C-e>| |<Down>| |j| +
-||[count]j||
-________________________________________________________________________________
-Scroll document down. Count is supported: [m]10j[m] will move 10 times as much down. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
-________________________________________________________________________________
-
-
-|<C-y>| |<Up>| |k| +
-||[count]k||
-________________________________________________________________________________
-Scroll document up. Count is supported: [m]10k[m] will move 10 times as much up. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
-________________________________________________________________________________
-
-
-|<C-d>| +
-||[count]<C-d>||
-________________________________________________________________________________
-Scroll window downwards in the buffer. The number of lines is set by the
-'scroll' option which defaults to half a page. If [count] is given 'scroll' is
-first set to this value.
-________________________________________________________________________________
-
-
-|<C-u>| +
-||[count]<C-u>||
-________________________________________________________________________________
-Scroll window upwards in the buffer. The number of lines is set by the
-'scroll' option which defaults to half a page. If [count] is given 'scroll' is
-first set to this value.
-________________________________________________________________________________
-
-
-|<Right>| |l| +
-||[count]l||
-________________________________________________________________________________
-Scroll document to the right. Count is supported: [m]10l[m] will move 10 times as much to the right. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
-________________________________________________________________________________
-
-
-|<S-Space>| |<PageUp>| |<C-b>| +
-||[count]<C-b>||
-________________________________________________________________________________
-Scroll up a full page. Scroll window [count] pages Backwards (upwards) in the buffer.
-________________________________________________________________________________
-
-
-|<Space>| |<PageDown>| |<C-f>| +
-||[count]<C-f>||
-________________________________________________________________________________
-Scroll down a full page. Scroll window [count] pages Forwards (downwards) in the buffer.
 ________________________________________________________________________________
 
 
@@ -542,64 +271,6 @@ Go to the root of the website. [m]gU[m] on
 _http://www.example.com/dir1/dir2/file.htm_ opens
 _http://www.example.com/_. +
 When browsing a local directory, it goes to the root directory.
-________________________________________________________________________________
-
-
-|f| |hints| +
-||f\\{hint\\}||
-________________________________________________________________________________
-Start QuickHint mode. In QuickHint mode, every hintable item (according to the
-'hinttags' XPath query) is assigned a unique number.  You can now either type
-this number or type any part of the URL which you want to follow, and it is
-followed as soon as it can be uniquely identified. Often it is can be useful
-to combine these techniques to narrow down results with some letters, and then
-typing a single digit to make the match unique.  Pressing [m]<Leader>[m]
-(defaults to :let mapleader = "\") toggles "escape-mode", where numbers are
-treated as normal text. +
-[m]<Esc>[m] stops this mode at any time.
-________________________________________________________________________________
-
-
-|F| +
-||F\\{hint\\}||
-________________________________________________________________________________
-Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
-(activated with [m]f[m]) but opens the link in a new tab.
-________________________________________________________________________________
-
-
-|;| +
-||;\\{mode\\}\\{hint\\}||
-________________________________________________________________________________
-Start an extended hint mode. ExtendedHint mode is useful, since in this mode
-you can yank link locations, open them in a new window or save images. If
-you want to yank the location of hint [a]24[a], press [m];y[m] to start
-this hint mode. Then press [a]24[a] to copy the hint location.
-
-{mode} can be either one of: +
-
-* [m];[m] to focus a link and hover it with the mouse
-* [m]a[m] to save its destination (prompting for save location)
-* [m]s[m] to save its destination
-* [m]o[m] to open its location in the current tab
-* [m]t[m] to open its location in a new tab
-* [m]O[m] to open its location in an [c]:open[c] query
-* [m]T[m] to open its location in a [c]:tabopen[c] query
-* [m]v[m] to view its destination source
-* [m]w[m] to open its destination in a new window
-* [m]W[m] to open its location in a [c]:winopen[c] query
-* [m]y[m] to yank its destination location
-* [m]Y[m] to yank its text description
-
-Additionally there are two {mode}s, which will start an AlwaysHint mode:
-
-* [m]f[m] to open its location in the current tab
-* [m]F[m] to open its location in a new tab
-
-These work like the [m]f[m] or [m]F[m] mappings but will keep you in
-AlwaysHint mode. This is useful if you want to open many links of one page
-without pressing [m]f[m] or [m]F[m] each time. Hintable elements for all
-extended hint modes can be set in the 'extendedhinttags' XPath string.
 ________________________________________________________________________________
 
 
@@ -694,15 +365,6 @@ Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c] <tab>
 ________________________________________________________________________________
 
 
-|:tabs| |:ls| |:files| |:buffers| +
-||:buffers[!]||
-________________________________________________________________________________
-Show a list of all buffers (=tabs). The special version [c]:buffers![c] opens
-the buffer list in a persistent preview window. Call the special version of
-this command again to close the window.
-________________________________________________________________________________
-
-
 |:chd| |:chdir| |:cd|
 ||:cd [-|path]||
 ________________________________________________________________________________
@@ -717,47 +379,11 @@ Print the current directory name.
 ________________________________________________________________________________
 
 
-|:com| |:command|
-||:com[mand][!] [{attr}...] {cmd} {rep}|| +
-________________________________________________________________________________
-Lists and defines commands. To be written - but it works similar to Vim's :command
-________________________________________________________________________________
-
-
 |:dl| |:downl| |:downloads| +
 ||:downl[oads]||
 ________________________________________________________________________________
 Show progress of current downloads. Open the original Firefox download dialog
 in a new tab. Here, downloads can be paused, canceled and resumed.
-________________________________________________________________________________
-
-
-|:ec| |:echo| +
-||:ec[ho] {expr}||
-________________________________________________________________________________
-Display a string at the bottom of the window. Useful for showing informational
-messages. Multiple lines can be separated by \n.
-{expr} can either be a quoted string, or any expression which can be fed to
-eval() like 4+5. You can also view the source code of objects and functions if
-the return value of {expr} is an object or function.
-________________________________________________________________________________
-
-
-|:echoe| |:echoerr|
-||:echoe[rr] {expr}|| +
-________________________________________________________________________________
-Display an error string at the bottom of the window. Just like [c]:ec[ho][c],
-but echoes the result highlighted in red. Useful for showing important
-messages.
-________________________________________________________________________________
-
-
-|:exe| |:execute|
-||:exe[cute] {expr1} [ ... ]|| +
-________________________________________________________________________________
-Execute the string that results from the evaluation of {expr1} as an Ex
-command.. Example: [c]:execute echo "test"[c] shows a message with the text
-"test".
 ________________________________________________________________________________
 
 
@@ -784,115 +410,6 @@ completes [c]:help :help[c].
 ________________________________________________________________________________
 
 
-|:js| |:javas| |:javascript|
-||:javas[cript] \\{cmd\\}|| +
-||:javascript <<\\{endpattern\\}\n\\{script\\}\n\\{endpattern\\}|| +
-||:javascript[!]||
-________________________________________________________________________________
-Run any JavaScript command through eval(). Acts as a JavaScript interpreter by
-passing the argument to <code>eval()</code>.
-[c]:javascript alert('Hello world')[c] shows a dialog box with the text "Hello world".
-[c]:javascript <<EOF[c] reads all the lines until a line starting with 'EOF'
-is found, and interpret them with the JavaScript _eval()_ function.
-
-The special version [c]:javascript![c] opens the JavaScript console of
-Firefox.
-
-Rudimentary [m]<Tab>[m] completion is available for [c]:javascript
-{cmd}<Tab>[c] (but not yet for the [c]:js <<EOF[c] multiline widget). Be aware
-that Vimperator needs to run {cmd} through eval() to get the completions,
-which could have unwanted side effects.
-________________________________________________________________________________
-
-// >> To make the syntax highlighting happy
-
-|:let|
-||:let {var-name} [+-.]= {expr1}|| +
-||:let {var-name}|| +
-||:let||
-________________________________________________________________________________
-Sets or lists a variable. Sets the variable {var-name} to the value of the
-expression {expr1}.If no expression is given, the value of the variable is
-displayed.Without arguments, displays a list of all variables.
-________________________________________________________________________________
-
-
-|:ab| |:abbreviate|
-||:ab[breviate] {lhs} {rhs}|| +
-||:ab[breviate] {lhs}|| +
-||:ab[breviate]||
-________________________________________________________________________________
-Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
-If only {lhs} given, list that particular abbreviation.
-List all abbreviations, if no arguments to are given.
-
-________________________________________________________________________________
-
-
-|:ca| |:cabbrev|
-||:ca[bbrev] {lhs} {rhs}|| +
-||:ca[bbrev] {lhs}|| +
-||:ca[bbrev]||
-________________________________________________________________________________
-Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
-but for commandline mode only.
-________________________________________________________________________________
-
-
-|:ia| |:iabbrev|
-||:ia[bbrev] {lhs} {rhs}|| +
-||:ia[bbrev] {lhs}|| +
-||:ia[bbrev]||
-________________________________________________________________________________
-Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c], but
-for Insert mode only.
-________________________________________________________________________________
-
-
-|:una| |:unabbreviate|
-||:una[bbreviate] {lhs}||
-________________________________________________________________________________
-Remove an abbreviation.
-________________________________________________________________________________
-
-
-|:cuna| |:cunabbrev|
-||:cuna[bbrev] {lhs}|| +
-________________________________________________________________________________
-Remove an abbreviation for Command-line mode. Same as [c]:una[bbreviate][c],
-but for Command-line mode only.
-________________________________________________________________________________
-
-
-|:iuna| |:iunabbrev|
-||:iuna[bbrev] {lhs}|| +
-________________________________________________________________________________
-Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c], but for
-Insert mode only.
-________________________________________________________________________________
-
-
-|:abc| |:abclear|
-||:abc[lear]||
-________________________________________________________________________________
-Remove all abbreviations.
-________________________________________________________________________________
-
-
-|:cabc| |:cabclear|
-||:cabc[lear]||
-________________________________________________________________________________
-Remove all abbreviations for Command-line mode.
-________________________________________________________________________________
-
-
-|:iabc| |:iabclear|
-||:iabc[lear]||
-________________________________________________________________________________
-Remove all abbreviations for Insert mode.
-________________________________________________________________________________
-
-
 |:au| |:autocmd| +
 ||:au[tocmd]||
 ________________________________________________________________________________
@@ -905,63 +422,6 @@ Add {cmd} to the list of commands Vimperator will execute on {event}:
 * [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
 * [c]:autocmd[!][c]: list/remove all autocommands
 
-________________________________________________________________________________
-
-
-|:map|
-||:map {lhs} {rhs}|| +
-||:map {lhs}|| +
-||:map||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
-nested and recursive mappings. Mappings are NOT saved during sessions, make
-sure you put them in your vimperatorrc file!
-________________________________________________________________________________
-
-
-|:cm| |:cmap|
-||:cmap {lhs} {rhs}|| +
-||:cmap {lhs}|| +
-||:cmap||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in command-line mode). The {rhs} is
-remapped, allowing for nested and recursive mappings. Mappings are NOT saved
-during sessions, make sure you put them in your vimperatorrc file!
-________________________________________________________________________________
-
-
-|:im| |:imap|
-||:imap {lhs} {rhs}|| +
-||:imap {lhs}|| +
-||:imap||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in insert mode). The {rhs} is remapped,
-allowing for nested and recursive mappings. Mappings are NOT saved during
-sessions, make sure you put them in your vimperatorrc file!
-________________________________________________________________________________
-
-
-|:mapc| |:mapclear|
-||:mapc[lear]||
-________________________________________________________________________________
-Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
-[c]:noremap[c] are cleared.
-________________________________________________________________________________
-
-
-|:cmapc| |:cmapclear|
-||:cmapc[lear]||
-________________________________________________________________________________
-Remove all mappings (in command-line mode). All user-defined mappings which
-were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
-________________________________________________________________________________
-
-
-|:imapc| |:imapclear| +
-||:imapc[lear]||
-________________________________________________________________________________
-Remove all mappings (in insert mode). All user-defined mappings which were set
-by [c]:imap[c] or [c]:inoremap[c] are cleared.
 ________________________________________________________________________________
 
 
@@ -990,35 +450,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Execute Normal mode commands. Example: [c]:normal 20j[c] scrolls 20 lines
 down. If the [!] is specified mappings will not be used.
-________________________________________________________________________________
-
-
-|:no| |:noremap| +
-||:no[remap] {lhs} {rhs}|| +
-||:no[remap] {lhs}|| +
-||:no[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs}. No remapping of the {rhs} is performed.
-________________________________________________________________________________
-
-
-|:cno| |:cnoremap| +
-||:cno[remap] {lhs} {rhs}|| +
-||:cno[remap] {lhs}|| +
-||:cno[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in command-line mode). No remapping of
-the {rhs} is performed.
-________________________________________________________________________________
-
-
-|:ino| |:inoremap| +
-||:ino[remap] {lhs} {rhs}|| +
-||:ino[remap] {lhs}|| +
-||:ino[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
-{rhs} is performed.
 ________________________________________________________________________________
 
 
@@ -1161,64 +592,6 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:bl| |:blast| |:tabl| |:tablast|
-||:tabl[ast]|| +
-||:bl[ast]||
-________________________________________________________________________________
-Switch to the last tab.
-________________________________________________________________________________
-
-
-|:tabm| |:tabmove|
-||:tabm[ove] [N]|| +
-||:tabm[ove][!] +N | -N|| +
-________________________________________________________________________________
-Move the current tab after tab N. When N is 0 the current tab is made the
-first one. Without N the current tab is made the last one. N can also be
-prefixed with '+' or '-' to indicate a relative movement. If [!] is
-specified the movement wraps around the start or end of the tab list.
-________________________________________________________________________________
-
-
-|:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
-||:tabn[ext] [count]|| +
-||:tn[ext] [count]|| +
-||:bn[ext] [count]||
-________________________________________________________________________________
-Switch to the next or [count]th tab. Cycles to the first tab when the last is
-selected and {count} is not specified.
-________________________________________________________________________________
-
-
-|:tabo| |:tabonly|
-||:tabo[nly]||
-________________________________________________________________________________
-Close all other tabs.
-________________________________________________________________________________
-
-
-|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
-||:tabp[revious] [count]|| +
-||:tp[revious] [count]|| +
-||:tabN[ext] [count]|| +
-||:bp[revious] [count]|| +
-||:bN[ext] [count]||
-________________________________________________________________________________
-Switch to the previous tab or go [count] tabs back. Wraps around from the
-first tab to the last tab.
-________________________________________________________________________________
-
-
-|:bf| |:bfirst| |:br| |:brewind| |:tabfir| |:tabfirst| |:tabr| |:tabrewind|
-||:tabr[ewind]|| +
-||:tabfir[st]|| +
-||:br[ewind]|| +
-||:bf[irst]||
-Switch to the first tab.
-________________________________________________________________________________
-________________________________________________________________________________
-
-
 |:time|
 ||:[count]time[!] {code|:command}|| +
 ________________________________________________________________________________
@@ -1233,47 +606,10 @@ times without showing profiling statistics.
 ________________________________________________________________________________
 
 
-|:u| |:undo|
-||:[count]u[ndo][!] [url]|| +
-________________________________________________________________________________
-Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab. With [url] restores the tab matching the url.
-________________________________________________________________________________
-
-
-|:undoa| |:undoall| +
-||:undoa[ll]||
-________________________________________________________________________________
-Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
-after a browser restart.
-________________________________________________________________________________
-
-
 |:unl| |:unlet|
 ||:unl[et][!] {name} ...|| +
 ________________________________________________________________________________
 Deletes the variable {name}. Several variable names can be given.
-________________________________________________________________________________
-
-
-|:unm| |:unmap|
-||:unm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs}.
-________________________________________________________________________________
-
-
-|:cunm| |:cunmap|
-||:cunm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs} (in command-line mode).
-________________________________________________________________________________
-
-
-|:iunm| |:iunmap|
-||:iunm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs} (in insert mode).
 ________________________________________________________________________________
 
 
@@ -1311,19 +647,6 @@ mailing list, if you want to change that.
 ________________________________________________________________________________
 
 
-|:zo| |:zoom|
-||:zo[om][!] [value]|| +
-||:zo[om][!] +{value} | -{value}|| +
-________________________________________________________________________________
-Set zoom value of current web page. If [value] can be an absolute value
-between 1 and 2000% or a relative value if prefixed with '-' or '+'. If
-[value] is omitted, zoom is reset to 100%.
-
-Normally this command operates on the text zoom, if used with [!] it operates
-on full zoom.
-________________________________________________________________________________
-
-
 |:run| |:!| +
 ||:!{cmd}||
 ________________________________________________________________________________
@@ -1334,6 +657,5 @@ backslash before the '!', then that backslash is removed.
 Warning: Input redirection (< foo) not done, also do not run commands which
 require stdin or it will hang Firefox!
 ________________________________________________________________________________
-
 
 // vim: set syntax=asciidoc:
