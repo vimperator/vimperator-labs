@@ -592,20 +592,6 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:time|
-||:[count]time[!] {code|:command}|| +
-________________________________________________________________________________
-Profile a piece of code or a command. Run {code} [count] times (default 1)
-and returns the elapsed time. {code} is always passed to JavaScript's eval(),
-which might be slow, so take the results with a grain of salt.
-
-If {code} starts with a [c]:[c], it is executed as a Vimperator command.
-
-Use the special version with [!] if you just want to run any command multiple
-times without showing profiling statistics.
-________________________________________________________________________________
-
-
 |:unl| |:unlet|
 ||:unl[et][!] {name} ...|| +
 ________________________________________________________________________________
