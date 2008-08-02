@@ -376,6 +376,28 @@ liberator.config = { //{{{
                 }
             });
 
+        liberator.options.add(["titlestring"],
+            "Change the title of the window",
+            "string", "Vimperator",
+            {
+                setter: function (value)
+                {
+                    try
+                    {
+                        var id = liberator.config.mainWindowID || "main-window";
+                        document.getElementById(id).setAttribute("titlemodifier", value);
+                        if (window.content.document.title.length > 0)
+                            document.title = window.content.document.title + " - " + value;
+                        else
+                            document.title = value;
+                    }
+                    catch (e)
+                    {
+                        liberator.log("Couldn't set titlestring", 3);
+                    }
+                }
+            });
+
         liberator.options.add(["urlseparator"],
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");

@@ -106,6 +106,8 @@ liberator.config = {
         // load Muttator specific modules
         if (this.isComposeWindow)
         {
+            this.features = ["mail"];
+
             // TODO: move mappings elsewhere, probably compose.js
             liberator.mappings.add([liberator.modes.COMPOSE],
                 ["e"], "Edit message",

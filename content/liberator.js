@@ -72,28 +72,6 @@ const liberator = (function () //{{{
                 }
             });
 
-        liberator.options.add(["titlestring"], // TODO: broken for Thunderbird
-            "Change the title of the window",
-            "string", "Vimperator",
-            {
-                setter: function (value)
-                {
-                    try
-                    {
-                        var id = liberator.config.mainWindowID || "main-window";
-                        document.getElementById(id).setAttribute("titlemodifier", value);
-                        if (window.content.document.title.length > 0)
-                            document.title = window.content.document.title + " - " + value;
-                        else
-                            document.title = value;
-                    }
-                    catch (e)
-                    {
-                        liberator.log("Couldn't set titlestring", 3);
-                    }
-                }
-            });
-
         liberator.options.add(["verbose", "vbs"],
             "Define which type of messages are logged",
             "number", 0,
@@ -892,7 +870,6 @@ const liberator = (function () //{{{
             loadModule("autocommands", liberator.AutoCommands);
             loadModule("io",           liberator.IO);
             loadModule("completion",   liberator.Completion);
-            // loadModule("previewwindow" = liberator.InformationList("liberator-previewwindow", { incrementalFill: false, maxItems: 10 });
 
             // This adds options/mappings/commands which are only valid in this particular extension
             if (liberator.config.init)
