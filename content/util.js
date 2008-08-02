@@ -282,6 +282,14 @@ liberator.util = { //{{{
 
         begin: for (var url = 0; url < urls.length; url++)
         {
+
+            var file = liberator.io.getFile(urls[url]);
+            if (file.exists() && file.isReadable())
+            {
+                urls[url] = file.path;
+                continue;
+            }
+
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
@@ -313,14 +321,6 @@ liberator.util = { //{{{
                     }
                 }
             }
-
-            var file = liberator.io.getFile(urls[url]);
-            if (file.exists() && file.isReadable())
-            {
-                urls[url] = file.path;
-                continue;
-            }
-
             // if we are here let Firefox handle the url and hope it does
             // something useful with it :)
         }
