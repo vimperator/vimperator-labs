@@ -103,10 +103,19 @@ liberator.config = {
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
         this.isComposeWindow = window.wintype == "msgcompose";
 
+        // 0: never automatically edit externally
+        // 1: automatically edit externally when message window is shown the first time
+        // 2: automatically edit externally, once the message text gets focus (not working currently)
+        liberator.options.add(["autoexternal", "ae"],
+            "Edit message with external editor by default",
+            "boolean", false);
+
+
         // load Muttator specific modules
         if (this.isComposeWindow)
         {
-            this.features = ["mail"];
+            this.features = ["addressbook"]; // the composer has no special features
+            //liberator.loadModule("addressbook", liberator.Addressbook);
 
             // TODO: move mappings elsewhere, probably compose.js
             liberator.mappings.add([liberator.modes.COMPOSE],
@@ -135,8 +144,56 @@ liberator.config = {
                 function () { SetMsgBodyFrameFocus(); });
 
             liberator.mappings.add([liberator.modes.COMPOSE],
-                ["q", "ZQ"], "Close composer",
-                function () { window.close(); });
+                ["q"], "Close composer, ask when for unsaved changes",
+                function () { DoCommandClose(); });
+
+            liberator.mappings.add([liberator.modes.COMPOSE],
+                ["Q", "ZQ"], "Force closing composer",
+                function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
+
+            var stateListener = 
+            {
+                QueryInterface: function (aIID)
+                {
+                    if (aIID.equals(Components.interfaces.nsIDocumentStateListener))
+                        return this;
+                    throw Components.results.NS_NOINTERFACE;
+                },
+
+                // this is (also) fired once the new compose window loaded the message for the first time
+                NotifyDocumentStateChanged: function (nowDirty)
+                {
+                    // only edit with external editor if this window was not cached!
+                    if (liberator.options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
+                    {
+                        window.messageWasEditedExternally = true;
+                        liberator.editor.editWithExternalEditor();
+                    }
+                    
+                },
+                NotifyDocumentCreated: function () { },
+                NotifyDocumentWillBeDestroyed: function () { }
+            }
+
+
+            // XXX: Hack!
+            window.document.addEventListener("load", function()
+            {
+                if (typeof(window.messageWasEditedExternally) == "undefined")
+                {
+                    window.messageWasEditedExternally = false;
+                    GetCurrentEditor().addDocumentStateListener(stateListener);
+                }
+            }, true);
+
+            window.addEventListener("compose-window-close", function()
+            {
+                window.messageWasEditedExternally = false;
+            }, true);
+            /*window.document.addEventListener("unload", function() {
+                GetCurrentEditor().removeDocumentStateListener(liberator.config.stateListener);
+            }, true);*/
+
         }
         else
         {

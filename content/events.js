@@ -993,9 +993,6 @@ liberator.Events = function () //{{{
                     {
                         dump("Compose editor got focus\n");
                         liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
-                        //setTimeout(function (){ liberator.editor.editWithExternalEditor(); }, 100);
-                        win.blur();
-                        //liberator.editor.editWithExternalEditor();
                     }
                     else if (liberator.mode != liberator.modes.MESSAGE)
                         liberator.mode = liberator.modes.MESSAGE;
