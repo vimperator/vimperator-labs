@@ -184,4 +184,9 @@ a.hl-URL:hover {
     padding: 0px 2px;
 }
 
+/* for muttator's composer */
+#content-frame, #appcontent {
+    border: 0px;
+}
+
 /* vim: set fdm=marker sw=4 ts=4 et: */

@@ -1,16 +1,22 @@
 <pre>
-2008-06-xx:
+2008-08-xx:
+    * version 0.5
+    * new "threads" option (non-functional for now)
+
+2008-08-03:
     * version 0.4
+    * new 'autoexternal' option to edit new messages/reply with the external editor by default
+      NOTE: You must set this option in your .muttatorrc, as options are not shared between the
+      main thunderbird window and the compose window!
     * various "l" mappings for labeling messages
     * "p" to open RSS message in browser
     * "y" to yank sender or RSS URL
     * "Y" to yank subject
     * "R" to reply to all
     * new compose mappings: s, t and i: Focus subject:, To: or message body
-    * q quits composer now, attention: does not save!
+    * q quits composer now
     * new "x" mapping to toggle HTML display (is there a need for "simple HTML"?)
     * new "h" mapping to toggle headers
-    * new "threads" option (non-functional for now)
 
 2008-06-04:
     * version 0.3
