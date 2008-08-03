@@ -1,6 +1,6 @@
 #### configuration
 
-VERSION       = 0.4pre
+VERSION       = 0.5pre
 NAME          = muttator
 
 include Makefile.common
