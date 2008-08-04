@@ -4,7 +4,7 @@ HEADER
 
 Vimperator can repeat a number of commands or record macros...
 
-section:Macros[macros]
+section:Macros[macros,complex-repeat]
 
 |q|
 ||q {arg}|| +
@@ -42,6 +42,39 @@ Plays the contents of macro {0-9a-z}.
 
 :play {arg} plays a recorded macro.
 ____________________________________________________________________________
+
+section:Using{nbsp}scripts[using-scripts]
+
+|:so| |:source|
+||:so[urce][!] {file}|| +
+________________________________________________________________________________
+Read Ex commands from {file}. You can either source files which mostly contain
+Ex commands like [c]map < gt[c] and put JavaScript code within a:
+
+--------------------------------------------------------------------------------
+js <<EOF
+hello = function () {
+  alert("Hello world");
+}
+EOF
+--------------------------------------------------------------------------------
+Or you can alternatively source a file which ends in _.js_, these files are
+automatically sourced as pure JavaScript files.
+
+Note: In both cases you must add functions to the global window object like
+shown above, functions written as:
+--------------------------------------------------------------------------------
+function hello2() {
+  alert("Hello world");
+}
+--------------------------------------------------------------------------------
+are only available within the scope of the script.
+
+The _.vimperatorrc_ file in your home directory and any files in
+_\~/.vimperator/plugin/_ are always sourced at startup.
+\~ is supported as a shortcut for the _$HOME_ directory.  If [!] is
+specified, errors are not printed.
+________________________________________________________________________________
 
 section:Profiling[profile,profiling]
 
