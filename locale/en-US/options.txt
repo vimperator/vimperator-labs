@@ -111,7 +111,6 @@ Change any Firefox {preference} (those in the about:config window). You can also
 reset/delete those preferences with [c]:set! {preference}&[c].
 ________________________________________________________________________________
 
-
 section:List{nbsp}of{nbsp}options[list-options]
 
 |\'act'| |\'activate'|

@@ -7,7 +7,6 @@ LOGO
 Vimperator.*
 +++</center>+++
 
-
 section:Quick-Start{nbsp}Tutorial[tutorial]
 
 If you've started using Vimperator from scratch (i.e., without any
@@ -63,11 +62,8 @@ and you can find out about the [m]gt[m] and [m]gT[m] mapping with
   [c]:help gt<cr>[c]
   [c]:help gT<cr>[c]
 
-
 Finally, in addition to the help system itself, [c]:exusage[c] and
 [c]:viusage[c] are useful quick-reference commands.
-
-
 
 section:Mouseless[living_mouseless]
 
@@ -81,7 +77,6 @@ assumption that the web browser doesn't have to be one of those.
 
 Here are some areas where the mouse is typically considered indisposable, and
 how Vimperator challenges this preconception.
-
 
 section:Scrolling[keyboard_scrolling]
 
@@ -98,7 +93,6 @@ Scrolling the browser window is done with simple keystrokes:
 
 Your standard buttons ([m]<Up>[m]/[m]<Down>[m]/[m]<PgUp>[m]/[m]<PgDn>[m]) will
 also work as expected.
-
 
 section:History{nbsp}and{nbsp}Tabs[history_navigation,tab_navigation]
 
@@ -131,7 +125,6 @@ following pairs sequences are equivalent:
   :tabopen vimperator.mozdev.org<cr>
   tvimperator.mozdev.org<cr>
 
-
 section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints.html]
 
 So now you can navigate around in Vimperator.  But wait... how do you *open* a
@@ -163,7 +156,6 @@ uniquely identified soon, and Vimperator will open it.  Once you're done,
 remember to use [m]<C-o>[m] (``History Back'') or [m]d[m] (``Delete Buffer'')
 to return here, depending on which key you used to activate QuickHint mode.
 
-
 section:Common{nbsp}Issues[common_issues]
 
 Say you get half-way done typing in a new URL, only to remember that you've
@@ -176,7 +168,6 @@ You can exit the command-line and access the already loaded page with the
 following:
 
   <Esc>gT
-
 
 section:Saving{nbsp}for{nbsp}Posterity{nbsp}-{nbsp}vimperatorrc[vimperatorrc]
 
@@ -192,7 +183,6 @@ This will create the file *$HOME/.vimperatorrc* containing your settings.
 It is a simple text file, just like a vimrc file and can be easily
 edited to suit your preferences.
 
-
 section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
 
 Vimperator supports all of Vim's classic methods of exiting.
@@ -202,8 +192,6 @@ Vimperator supports all of Vim's classic methods of exiting.
   * [c]:qall[c] -- command to quit _without_ saving the session
   * [m]ZZ[m] -- normal mode mapping equivalent to [c]:xall[c]
   * [m]ZQ[m] -- normal mode mapping equivalent to [c]:qall[c]
-
-
 
 section:Where{nbsp}did{nbsp}Firefox{nbsp}go?[whither_firefox]
 

@@ -83,7 +83,6 @@ The following options WILL be interpreted in the future:
 * [!] a special version to delete ALL bookmarks
 ________________________________________________________________________________
 
-
 section:History[history]
 
 TO BE WRITTEN...
@@ -144,7 +143,6 @@ screen with all history items which match [filter] either in the title or URL.
 The special version [c]:history![c] works the same as [c]:history[c] except
 it opens all the found items in new tabs.
 ________________________________________________________________________________
-
 
 section:QuickMarks[quickmarks]
 
@@ -208,7 +206,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Show all QuickMarks. If [arg] is specified then limit the list to those QuickMarks mentioned.
 ________________________________________________________________________________
-
 
 section:Local{nbsp}Marks[localmarks]
 

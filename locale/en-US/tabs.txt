@@ -3,7 +3,6 @@ HEADER
 |tabs| +
 Tabs are used to be able to view many web pages at the same time...
 
-
 section:Listing{nbsp}tabs[listing-tabs]
 
 |B| +
@@ -86,6 +85,21 @@ provides a quick method of toggling between two tabs.
 ________________________________________________________________________________
 
 
+|:b| |:buffer|
+||:b[uffer][!] {url|index}|| +
+________________________________________________________________________________
+Go to buffer from buffer list. Argument can be either the buffer index or the
+full URL.
+
+If argument is neither a full URL nor an index but uniquely identifies a
+buffer, it is selected. With [!] the next buffer matching the argument is
+selected, even if it cannot be identified uniquely. Use [m]b[m] as a
+shortcut to open this prompt.
+
+If argument is #, the alternate buffer will be selected (see [m]<C-6>[m]).
+________________________________________________________________________________
+
+
 |:bl| |:blast| |:tabl| |:tablast|
 ||:tabl[ast]|| +
 ||:bl[ast]||
@@ -139,10 +153,9 @@ ________________________________________________________________________________
 ||:tabfir[st]|| +
 ||:br[ewind]|| +
 ||:bf[irst]||
+________________________________________________________________________________
 Switch to the first tab.
 ________________________________________________________________________________
-________________________________________________________________________________
-
 
 section:Closing{nbsp}tabs[closing-tabs]
 

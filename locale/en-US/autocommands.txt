@@ -5,7 +5,6 @@ HEADER
 Autocommands are a way to automatically execute code when certain events
 happen.
 
-
 |:au| |:autocmd| +
 ||:au[tocmd]|| Execute commands automatically on events.
 ________________________________________________________________________________

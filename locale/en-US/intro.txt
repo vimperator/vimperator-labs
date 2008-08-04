@@ -52,7 +52,7 @@ section:Help{nbsp}topics[overview]
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document like
   scrolling or copying text.
 - help:Tabs[tabs.html]: Manage your tabbed browsing session.
-- help:Hints[hints.html]: Select hyperlinks. 
+- help:Hints[hints.html]: Select hyperlinks.
 - help:Key{nbsp}Mapping{nbsp}and{nbsp}Abbreviations[map.html]: Define new key mappings.
 - help:Expression{nbsp}Evaluation[eval.html]: Execute JavaScript.
 - help:Options[options.html]: A description of all options.

@@ -20,7 +20,6 @@ typed. If the [!] is given, mappings will not be used.
 before it, 1 space is one space.
 ________________________________________________________________________________
 
-
 section:Online{nbsp}Help[online-help]
 
 |<F1>| |:help| |:h| |help|
@@ -52,9 +51,7 @@ Douglas Adams, the only person who knew what this question really was about is
 now dead, unfortunately.  So now you might wonder what the meaning of death
 is...
 
-
 section:Uncategorized{nbsp}Help[uncategorized]
-
 
 |<C-[>| |<Esc>| +
 ||<Esc>||
@@ -340,21 +337,6 @@ ________________________________________________________________________________
 ||:beep||
 ________________________________________________________________________________
 Play a system beep.
-________________________________________________________________________________
-
-
-|:b| |:buffer|
-||:b[uffer][!] {url|index}|| +
-________________________________________________________________________________
-Go to buffer from buffer list. Argument can be either the buffer index or the
-full URL.
-
-If argument is neither a full URL nor an index but uniquely identifies a
-buffer, it is selected. With [!] the next buffer matching the argument is
-selected, even if it cannot be identified uniquely. Use [m]b[m] as a
-shortcut to open this prompt.
-
-If argument is #, the alternate buffer will be selected (see [m]<C-6>[m]).
 ________________________________________________________________________________
 
 

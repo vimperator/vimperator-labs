@@ -27,7 +27,6 @@ in Vimperator.  When Vimperator mode is temporarily disabled with <C-q>, <C-v>
 will pass the next key to Vimperator instead of the web page.
 ________________________________________________________________________________
 
-
 section:Opening{nbsp}web{nbsp}pages[opening]
 
 |o| |:o| |:open|
@@ -85,7 +84,6 @@ ________________________________________________________________________________
 Just like help::open[browsing.html,:open], but opens the resulting web page(s)
 in a new window.
 ________________________________________________________________________________
-
 
 section:Navigating[navigating]
 

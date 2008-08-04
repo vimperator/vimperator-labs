@@ -73,7 +73,6 @@ on the mailing list or on #vimperator. Usually help should be grouped together
 in logically connected subject areas like
 help:opening{nbsp}web{nbsp}pages[browsing.html#opening].
 
-
 section:Generating{nbsp}Documentation[generating-docs]
 
 You can also autogenerate most of the asciidoc help after you have written a

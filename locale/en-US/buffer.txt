@@ -144,7 +144,6 @@ or documentation. Change 'previouspattern' to modify its behavior. It follows
 relations between files too.
 ________________________________________________________________________________
 
-
 section:Zooming[zooming]
 
 |+| |zi|
