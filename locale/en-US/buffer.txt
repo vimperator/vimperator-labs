@@ -236,6 +236,20 @@ When running in X11 the text of the following commands is not only copied to
 the clipboard, but also put into the X11 selection, which can be pasted with
 the middle mouse button:
 
+|y| +
+||y||
+________________________________________________________________________________
+Yank current location to the clipboard. When running in X11 the location is
+also put into the selection, which can be pasted with the middle mouse button.
+________________________________________________________________________________
+
+
+|Y|
+||Y||
+________________________________________________________________________________
+Copy currently selected text to the system clipboard.
+________________________________________________________________________________
+
 section:Alternate{nbsp}style{nbsp}sheets[stylesheet,style]
 
 |:pagest| |:pagestyle|

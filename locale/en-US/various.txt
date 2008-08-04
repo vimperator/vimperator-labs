@@ -141,21 +141,6 @@ Whether the new buffer is activated, depends on the 'activate' option.
 ________________________________________________________________________________
 
 
-|y| +
-||y||
-________________________________________________________________________________
-Yank current location to the clipboard. When running in X11 the location is
-also put into the selection, which can be pasted with the middle mouse button.
-________________________________________________________________________________
-
-
-|Y|
-||Y||
-________________________________________________________________________________
-Copy currently selected text to the system clipboard.
-________________________________________________________________________________
-
-
 |<C-x>|
 ||[count]<C-x>||
 ________________________________________________________________________________
