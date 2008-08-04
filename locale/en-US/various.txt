@@ -1,6 +1,6 @@
 HEADER
 
-section:Various{nbsp}Commands[various]
+section:Various{nbsp}commands[various]
 
 |<C-l>| |CTRL-L| |:redr| |:redraw| +
 ||:redr[aw]||
@@ -20,7 +20,7 @@ typed. If the [!] is given, mappings will not be used.
 before it, 1 space is one space.
 ________________________________________________________________________________
 
-section:Online{nbsp}Help[online-help]
+section:Online{nbsp}help[online-help]
 
 |<F1>| |:help| |:h| |help|
 ||:h[elp] {subject}|| +
@@ -51,7 +51,7 @@ Douglas Adams, the only person who knew what this question really was about is
 now dead, unfortunately.  So now you might wonder what the meaning of death
 is...
 
-section:Uncategorized{nbsp}Help[uncategorized]
+section:Uncategorized{nbsp}help[uncategorized]
 
 |<C-[>| |<Esc>| +
 ||<Esc>||

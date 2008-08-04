@@ -7,7 +7,7 @@ LOGO
 Vimperator.*
 +++</center>+++
 
-section:Quick-Start{nbsp}Tutorial[tutorial]
+section:Quick-start{nbsp}tutorial[tutorial]
 
 If you've started using Vimperator from scratch (i.e., without any
 customization), you should be looking at this help page in a relatively
@@ -25,7 +25,7 @@ Vimperator is to leave these disabled for now. (The above action can be
 reversed with [c]:set go=<cr>[c])  You can look at the entry for
 [o]guioptions[o] in help:options[options.html] for more information on this.
 
-section:Vimperator's{nbsp}Modal{nbsp}Interface[modal]
+section:Vimperator's{nbsp}modal{nbsp}interface[modal]
 
 Vimperator's power, like Vim's, comes from it's modal interface.  Keys have
 different meanings depending on which mode the browser is in.  Vimperator has
@@ -43,7 +43,7 @@ To return to normal mode command-line mode, type [m]<Esc>[m].  Pressing
 [m]<Esc>[m] will also return you to normal mode from most other modes in
 Vimperator.
 
-section:Getting{nbsp}Help[getting_help]
+section:Getting{nbsp}help[getting_help]
 
 Vim is a great editor but it's not much of a web browser.  So even seasoned
 Vim users will probably have to look at Vimperator documentation sooner or
@@ -94,7 +94,7 @@ Scrolling the browser window is done with simple keystrokes:
 Your standard buttons ([m]<Up>[m]/[m]<Down>[m]/[m]<PgUp>[m]/[m]<PgDn>[m]) will
 also work as expected.
 
-section:History{nbsp}and{nbsp}Tabs[history_navigation,tab_navigation]
+section:History{nbsp}and{nbsp}tabs[history_navigation,tab_navigation]
 
 History navigation (e.g., ``Back'', ``Forward'') are done similarly to
 scrolling.
@@ -156,7 +156,7 @@ uniquely identified soon, and Vimperator will open it.  Once you're done,
 remember to use [m]<C-o>[m] (``History Back'') or [m]d[m] (``Delete Buffer'')
 to return here, depending on which key you used to activate QuickHint mode.
 
-section:Common{nbsp}Issues[common_issues]
+section:Common{nbsp}issues[common_issues]
 
 Say you get half-way done typing in a new URL, only to remember that you've
 already got that page open in the previous tab.  Your command-line might look
@@ -169,7 +169,7 @@ following:
 
   <Esc>gT
 
-section:Saving{nbsp}for{nbsp}Posterity{nbsp}-{nbsp}vimperatorrc[vimperatorrc]
+section:Saving{nbsp}for{nbsp}posterity{nbsp}-{nbsp}vimperatorrc[vimperatorrc]
 
 Once you get Vimperator set up with your desired options, maps, and
 commands, you'll probably want them to be available the next time you
@@ -183,7 +183,7 @@ This will create the file *$HOME/.vimperatorrc* containing your settings.
 It is a simple text file, just like a vimrc file and can be easily
 edited to suit your preferences.
 
-section:Find{nbsp}the{nbsp}Exit{nbsp}Nearest{nbsp}You[quitting_without_menus]
+section:Find{nbsp}the{nbsp}exit{nbsp}nearest{nbsp}you[quitting_without_menus]
 
 Vimperator supports all of Vim's classic methods of exiting.
 
@@ -235,7 +235,7 @@ Alternatively, you can do this the old-fashioned way: re-enable the menubar,
 as above, with [c]:set go+=m[c], and select *Add-ons* from the *Tools* menu.
 
 
-section:I'm{nbsp}Interested...but{nbsp}Lost![support]
+section:I'm{nbsp}interested...but{nbsp}lost![support]
 
 Vimperator has an energetic and growing user base.  If you've run into a
 problem that you can't seem to solve with Vimperator, or if you think you might

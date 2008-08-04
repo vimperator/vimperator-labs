@@ -207,7 +207,7 @@ ________________________________________________________________________________
 Show all QuickMarks. If [arg] is specified then limit the list to those QuickMarks mentioned.
 ________________________________________________________________________________
 
-section:Local{nbsp}Marks[localmarks]
+section:Local{nbsp}marks[localmarks]
 
 Local marks are used to ...
 We differentiate between  two types ...

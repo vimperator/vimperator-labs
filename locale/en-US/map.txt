@@ -4,7 +4,7 @@ HEADER
 
 INTRO TO BE WRITTEN...
 
-section:Key{nbsp}Mapping[key-mapping,mapping,macro]
+section:Key{nbsp}mapping[key-mapping,mapping,macro]
 
 |<Nop>| +
 ||<Nop>||
@@ -197,7 +197,7 @@ ________________________________________________________________________________
 Remove all abbreviations for Insert mode.
 ________________________________________________________________________________
 
-section:User-defined{nbsp}Commands[user-commands]
+section:User-defined{nbsp}commands[user-commands]
 
 |:com| |:command|
 ||:com[mand][!] [{attr}...] {cmd} {rep}|| +

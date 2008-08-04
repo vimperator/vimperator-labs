@@ -5,7 +5,7 @@ HEADER
 Vimperator holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.
 
-section:Motion{nbsp}Commands[motion,scrolling]
+section:Motion{nbsp}commands[motion,scrolling]
 
 |^| |0| +
 ||0||
@@ -100,7 +100,7 @@ ________________________________________________________________________________
 Scroll down a full page. Scroll window [count] pages Forwards (downwards) in the buffer.
 ________________________________________________________________________________
 
-section:Jumping{nbsp}to{nbsp}Elements[jumping]
+section:Jumping{nbsp}to{nbsp}elements[jumping]
 
 |gi| +
 ||[count]gi||
@@ -230,13 +230,13 @@ Normally this command operates on the text zoom, if used with [!] it operates
 on full zoom.
 ________________________________________________________________________________
 
-section:Copying{nbsp}Text[copying,yanking]
+section:Copying{nbsp}text[copying,yanking]
 
 When running in X11 the text of the following commands is not only copied to
 the clipboard, but also put into the X11 selection, which can be pasted with
 the middle mouse button:
 
-section:Alternate{nbsp}Style{nbsp}Sheets[stylesheet,style]
+section:Alternate{nbsp}style{nbsp}sheets[stylesheet,style]
 
 |:pagest| |:pagestyle|
 ||:pagest[yle]||
