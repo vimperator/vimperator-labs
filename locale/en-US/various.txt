@@ -93,13 +93,6 @@ cursor and can move around. If you want to select text in this mode, press
 ________________________________________________________________________________
 
 
-|<C-c>|
-||<C-c>||
-________________________________________________________________________________
-Stop loading the current web page.
-________________________________________________________________________________
-
-
 |\~| +
 ||\~||
 ________________________________________________________________________________
@@ -133,21 +126,6 @@ Works like [m]P[m], but inverts the 'activate' option.
 ________________________________________________________________________________
 
 
-|O| +
-||O||
-________________________________________________________________________________
-Open one or more URLs in the current tab, based on current location. Works
-like [m]o[m], but preselects current URL in the [c]:open[c] query.
-________________________________________________________________________________
-
-
-|T| +
-||T||
-________________________________________________________________________________
-Open one or more URLs in a new tab, based on current location. Works like [m]t[m], but preselects current URL in the [c]:tabopen[c] query.
-________________________________________________________________________________
-
-
 |<MiddleMouse>| |p| +
 ||p||
 ________________________________________________________________________________
@@ -163,20 +141,6 @@ Whether the new buffer is activated, depends on the 'activate' option.
 ________________________________________________________________________________
 
 
-|r|
-||r||
-________________________________________________________________________________
-Force reloading of the current page.
-________________________________________________________________________________
-
-
-|R|
-||R||
-________________________________________________________________________________
-Force reloading of the current page skipping the cache.
-________________________________________________________________________________
-
-
 |y| +
 ||y||
 ________________________________________________________________________________
@@ -189,21 +153,6 @@ ________________________________________________________________________________
 ||Y||
 ________________________________________________________________________________
 Copy currently selected text to the system clipboard.
-________________________________________________________________________________
-
-
-|ZQ|
-||ZQ||
-________________________________________________________________________________
-Quit and don't save the session. Works like [c]:qall[c].
-________________________________________________________________________________
-
-
-|ZZ|
-||ZZ||
-________________________________________________________________________________
-Quit and save the session. Quit Vimperator, no matter how many tabs/windows
-are open. The session is stored. Works like [c]:xall[c].
 ________________________________________________________________________________
 
 
@@ -359,23 +308,6 @@ Close preview window on bottom of screen.
 ________________________________________________________________________________
 
 
-|:q| |:quit| +
-||:q[uit]||
-________________________________________________________________________________
-Quit current tab. If this is the last tab in the window, close the window. If
-this was the last window, close Vimperator. When quitting Vimperator, the
-session is not stored.
-________________________________________________________________________________
-
-
-|:qa| |:qall| |:quita| |:quitall| +
-||:quita[ll]||
-________________________________________________________________________________
-Quit Vimperator. Quit Vimperator, no matter how many tabs/windows are open.
-The session is not stored.
-________________________________________________________________________________
-
-
 |:redr| |:redraw| +
 ||:redr[aw]||
 ________________________________________________________________________________
@@ -384,35 +316,10 @@ function.
 ________________________________________________________________________________
 
 
-|:re| |:reload| +
-||:re[load][!]||
-________________________________________________________________________________
-Reload current page. Forces reloading of the current page. If [c]![c] is
-given, skip the cache.
-________________________________________________________________________________
-
-
-|:reloada| |:reloadall| +
-||:reloada[ll][!]||
-________________________________________________________________________________
-Reload all pages. Forces reloading of all pages. If [c]![c] is given, skip the cache.
-________________________________________________________________________________
-
-
 |:res| |:restart| +
 ||:res[tart]||
 ________________________________________________________________________________
 Force the browser to restart. Useful when installing extensions.
-________________________________________________________________________________
-
-
-|:w| |:write| |:sav| |:saveas| +
-||:sav[eas]||
-________________________________________________________________________________
-Save current web page to disk. Opens the original Firefox "Save page as..."
-dialog.  There, you can save the current web page to disk with various
-options. Use [!] to save the file with a default filename to the current working
-directory, skipping the Save as... prompt
 ________________________________________________________________________________
 
 
@@ -430,13 +337,6 @@ Open the sidebar window. +
 {name} is any of the menu items listed under the standard Firefox
 View->Sidebar menu. Add-ons, Preferences and Downloads are also available in
 the sidebar.
-________________________________________________________________________________
-
-
-|:st| |:stop|
-||:st[op]||
-________________________________________________________________________________
-Stop loading. Stop loading current web page.
 ________________________________________________________________________________
 
 
@@ -465,24 +365,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 View source code of current document. When ! is given, it is opened with the
 external editor.
-________________________________________________________________________________
-
-
-|:wc| |:wclose| |:winc| |:winclose|
-||:winc[ose] [url] [, url]|| +
-________________________________________________________________________________
-Close window.
-________________________________________________________________________________
-
-
-|:xa| |:xall| |:wq| |:wqa| |:wqall|
-||:wqa[ll]|| +
-||:xa[ll]||
-________________________________________________________________________________
-Save the session and quit. Quit Vimperator, no matter how many tabs/windows
-are open. The session is stored. [c]:wq[c] is different as in Vim, as it
-closes the window instead of just one tab by popular demand. Complain on the
-mailing list, if you want to change that.
 ________________________________________________________________________________
 
 

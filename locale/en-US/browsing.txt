@@ -70,11 +70,27 @@ in a new tab. When used with [a]![a], the 'tabopen' value of the 'activate' opti
 ________________________________________________________________________________
 
 
+|T| +
+||T||
+________________________________________________________________________________
+Open one or more URLs in a new tab, based on current location. Works like
+[m]t[m], but preselects current URL in the [c]:tabopen[c] query.
+________________________________________________________________________________
+
+
 |:tabd| |:tabduplicate|
 ||:[count]tabd[uplicate][!]|| +
 ________________________________________________________________________________
 Duplicates current tab [count] times. Uses 'tabopen' value of the 'activate' to determine
 if last cloned tab should be activated. When used with [a]![a], 'tabopen' value is negated.
+________________________________________________________________________________
+
+
+|O| +
+||O||
+________________________________________________________________________________
+Open one or more URLs in the current tab, based on current location. Works
+like [m]o[m], but preselects current URL in the [c]:open[c] query.
 ________________________________________________________________________________
 
 
@@ -149,6 +165,113 @@ Go to the root of the website. +
 [m]gU[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
 _http://www.example.com/_.
 When browsing a local directory, it goes to the root directory.
+________________________________________________________________________________
+
+section:Reloading[reloading]
+
+|r|
+||r||
+________________________________________________________________________________
+Force reloading of the current page.
+________________________________________________________________________________
+
+
+|R|
+||R||
+________________________________________________________________________________
+Force reloading of the current page skipping the cache.
+________________________________________________________________________________
+
+
+|:re| |:reload| +
+||:re[load][!]||
+________________________________________________________________________________
+Reload current page. Forces reloading of the current page. If [c]![c] is
+given, skip the cache.
+________________________________________________________________________________
+
+
+|:reloada| |:reloadall| +
+||:reloada[ll][!]||
+________________________________________________________________________________
+Reload all pages. Forces reloading of all pages. If [c]![c] is given, skip the cache.
+________________________________________________________________________________
+
+section:Stopping[stopping]
+
+|<C-c>|
+||<C-c>||
+________________________________________________________________________________
+Stop loading the current web page.
+________________________________________________________________________________
+
+
+|:st| |:stop|
+||:st[op]||
+________________________________________________________________________________
+Stop loading. Stop loading current web page.
+________________________________________________________________________________
+
+section:Writing[writing,save-file]
+
+|:w| |:write| |:sav| |:saveas| +
+||:sav[eas]||
+________________________________________________________________________________
+Save current web page to disk. Opens the original Firefox "Save page as..."
+dialog.  There, you can save the current web page to disk with various
+options. Use [!] to save the file with a default filename to the current working
+directory, skipping the Save as... prompt
+________________________________________________________________________________
+
+section:Quitting[quitting,save-session]
+
+|:q| |:quit| +
+||:q[uit]||
+________________________________________________________________________________
+Quit current tab. If this is the last tab in the window, close the window. If
+this was the last window, close Vimperator. When quitting Vimperator, the
+session is not stored.
+________________________________________________________________________________
+
+
+|:qa| |:qall| |:quita| |:quitall| +
+||:quita[ll]||
+________________________________________________________________________________
+Quit Vimperator. Quit Vimperator, no matter how many tabs/windows are open.
+The session is not stored.
+________________________________________________________________________________
+
+
+|:wc| |:wclose| |:winc| |:winclose|
+||:winc[ose] [url] [, url]|| +
+________________________________________________________________________________
+Close window.
+________________________________________________________________________________
+
+
+|:xa| |:xall| |:wq| |:wqa| |:wqall|
+||:wqa[ll]|| +
+||:xa[ll]||
+________________________________________________________________________________
+Save the session and quit. Quit Vimperator, no matter how many tabs/windows
+are open. The session is stored. [c]:wq[c] is different as in Vim, as it
+closes the window instead of just one tab by popular demand. Complain on the
+mailing list, if you want to change that.
+________________________________________________________________________________
+
+
+|ZQ|
+||ZQ||
+________________________________________________________________________________
+Quit and don't save the session. Works like [c]:qall[c].
+________________________________________________________________________________
+
+
+|ZZ|
+||ZZ||
+________________________________________________________________________________
+Quit and save the session. Quit Vimperator, no matter how many tabs/windows
+are open. The session is stored. Works like [c]:xall[c].
 ________________________________________________________________________________
 
 section:The{nbsp}current{nbsp}directory[current-directory]
