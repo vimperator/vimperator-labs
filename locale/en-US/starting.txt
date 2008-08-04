@@ -3,7 +3,7 @@ HEADER
 Vimperator does not yet read any command line options. When it does, they will
 be documented here.
 
-section:Initialization[initialization, startup]
+section:Initialization[initialization,startup]
 
 At startup Vimperator sources a user RC file, containing Ex commands, and any
 JavaScript files found in the plugin directory. The RC file may be named
@@ -24,5 +24,18 @@ The user's '$HOME'(~) directory is determined as follows:
 _%HOMEDRIVE%%HOMEPATH%_.
 
 _$VIMPERATOR_HOME_ can be used to override the calculated _$HOME_ directory.
+
+section:Saving{nbsp}settings[save-settings]
+
+|:mkv| |:mkvimperatorrc|
+||:mkv[imperatorrc][!] [file]|| +
+________________________________________________________________________________
+Write current key mappings and changed options to [file]. If no [file] is
+specified then _~/.vimperatorrc_ is written unless this file already exists. The
+special version [c]:mkvimperatorrc![c] will overwrite [file] if it exists.
+
+Warning: this differs from Vim's behavior which defaults to writing the file
+in the current directory.
+________________________________________________________________________________
 
 // vim: set syntax=asciidoc:
