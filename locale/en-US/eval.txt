@@ -65,4 +65,11 @@ expression {expr1}.If no expression is given, the value of the variable is
 displayed.Without arguments, displays a list of all variables.
 ________________________________________________________________________________
 
+
+|:unl| |:unlet|
+||:unl[et][!] {name} ...|| +
+________________________________________________________________________________
+Deletes the variable {name}. Several variable names can be given.
+________________________________________________________________________________
+
 // vim: set syntax=asciidoc:
