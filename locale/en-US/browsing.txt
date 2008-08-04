@@ -128,6 +128,20 @@ Open (put) a URL based on the current clipboard contents in a new buffer.
 Works like [m]P[m], but inverts the 'activate' option.
 ________________________________________________________________________________
 
+
+|<C-x>|
+||[count]<C-x>||
+________________________________________________________________________________
+Decrements the last number in URL by 1, or by count if given.
+________________________________________________________________________________
+
+
+|<C-a>|
+||[count]<C-a>||
+________________________________________________________________________________
+Increments the last number in URL by 1, or by count if given.
+________________________________________________________________________________
+
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
