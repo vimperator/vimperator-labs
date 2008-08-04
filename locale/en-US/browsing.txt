@@ -151,4 +151,19 @@ _http://www.example.com/_.
 When browsing a local directory, it goes to the root directory.
 ________________________________________________________________________________
 
+section:The{nbsp}current{nbsp}directory[current-directory]
+
+|:chd| |:chdir| |:cd|
+||:cd [-|path]||
+________________________________________________________________________________
+Change the current directory. [c]:cd -[c] changes to the last directory.
+________________________________________________________________________________
+
+
+|:pw| |:pwd|
+||:pw[d]||
+________________________________________________________________________________
+Print the current directory name.
+________________________________________________________________________________
+
 // vim: set syntax=asciidoc:

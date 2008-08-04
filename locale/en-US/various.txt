@@ -313,20 +313,6 @@ Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c] <tab>
 ________________________________________________________________________________
 
 
-|:chd| |:chdir| |:cd|
-||:cd [-|path]||
-________________________________________________________________________________
-Change the current directory. [c]:cd -[c] changes to the last directory.
-________________________________________________________________________________
-
-
-|:pw| |:pwd|
-||:pw[d]||
-________________________________________________________________________________
-Print the current directory name.
-________________________________________________________________________________
-
-
 |:dl| |:downl| |:downloads| +
 ||:downl[oads]||
 ________________________________________________________________________________
@@ -340,36 +326,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Print current document. Open a GUI dialog where you can select the printer,
 number of copies, orientation, etc.
-________________________________________________________________________________
-
-
-|:h| |:help|
-||:h[elp] {subject}|| +
-________________________________________________________________________________
-Open the help window. You can jump to the specified {subject} with [c]:help
-{subject}[c]. You can use the full Vim notation when jumping to {subject}. This means:
-
-* [c]:help :help[c] for commands (: prefix)
-* [c]:help 'complete'[c] for options (surrounded by \' and \')
-* [c]:help o[c] for mappings (no pre- or postfix)
-
-You can also use partial strings in the tab completion, so [c]:help he<Tab>[c]
-completes [c]:help :help[c].
-________________________________________________________________________________
-
-
-|:au| |:autocmd| +
-||:au[tocmd]||
-________________________________________________________________________________
-Execute commands automatically on events. [c]:au[tocmd][c] {event} {pat}
-{cmd}.
-Add {cmd} to the list of commands Vimperator will execute on {event}:
-
-* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered be {events} and {pat}
-* [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
-* [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
-* [c]:autocmd[!][c]: list/remove all autocommands
-
 ________________________________________________________________________________
 
 
