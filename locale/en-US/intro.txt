@@ -53,15 +53,15 @@ section:Help{nbsp}topics[overview]
   scrolling or copying text.
 - help:Tabs[tabs.html]: Manage your tabbed browsing session.
 - help:Hints[hints.html]: Select hyperlinks.
-- help:Key{nbsp}Mapping{nbsp}and{nbsp}Abbreviations[map.html]: Define new key mappings.
-- help:Expression{nbsp}Evaluation[eval.html]: Execute JavaScript.
+- help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Define new key mappings.
+- help:Expression{nbsp}evaluation[eval.html]: Execute JavaScript.
 - help:Options[options.html]: A description of all options.
 - help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
 - help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
   recurring workflows.
 - help:Autocommands[autocommands.html]: Automatically execute code on certain
   events.
-- help:Developer{nbsp}Information[developer.html]: How to write docs or
+- help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other category.
 

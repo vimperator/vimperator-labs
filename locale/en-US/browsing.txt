@@ -101,6 +101,33 @@ Just like help::open[browsing.html,:open], but opens the resulting web page(s)
 in a new window.
 ________________________________________________________________________________
 
+
+|<MiddleMouse>| |p| +
+||p||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in the current buffer.
+You can also just select (for non-X11 users: copy) some non-URL text, and
+search for it with the default search engine or keyword (specified by the
+'defsearch' option) with [m]p[m].
+________________________________________________________________________________
+
+
+|P| +
+||P||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer. Works
+like [m]p[m], but opens a new tab. +
+Whether the new buffer is activated, depends on the 'activate' option.
+________________________________________________________________________________
+
+
+|gP| +
+||gP||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer.
+Works like [m]P[m], but inverts the 'activate' option.
+________________________________________________________________________________
+
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|

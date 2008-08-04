@@ -20,6 +20,26 @@ typed. If the [!] is given, mappings will not be used.
 before it, 1 space is one space.
 ________________________________________________________________________________
 
+
+|:run| |:!| +
+||:!{cmd}||
+________________________________________________________________________________
+Run a command. Runs {cmd} through system() and displays its output. Any '!' in
+{cmd} is replaced with the previous external command. But not when there is a
+backslash before the '!', then that backslash is removed.
+
+Warning: Input redirection (< foo) not done, also do not run commands which
+require stdin or it will hang Firefox!
+________________________________________________________________________________
+
+
+|:ve| |:version| +
+||:ve[rsion][!]||
+________________________________________________________________________________
+Show version information. You can show the Firefox version page with
+[c]:version![c].
+________________________________________________________________________________
+
 section:Online{nbsp}help[online-help]
 
 |<F1>| |:help| |:h| |help|
@@ -115,29 +135,6 @@ ________________________________________________________________________________
 View source with an external editor. Opens the source code of the current
 website with the external editor specified by the 'editor' option. For now the
 external editor must be able to download and open files from a remote URL.
-________________________________________________________________________________
-
-
-|gP| +
-||gP||
-________________________________________________________________________________
-Open (put) a URL based on the current clipboard contents in a new buffer.
-Works like [m]P[m], but inverts the 'activate' option.
-________________________________________________________________________________
-
-
-|<MiddleMouse>| |p| +
-||p||
-________________________________________________________________________________
-Open (put) a URL based on the current clipboard contents in the current buffer. You can also just select (for non-X11 users: copy) some non-URL text, and search for it with the default search engine or keyword (specified by the 'defsearch' option) with [m]p[m].
-________________________________________________________________________________
-
-
-|P| +
-||P||
-________________________________________________________________________________
-Open (put) a URL based on the current clipboard contents in a new buffer. Works like [m]p[m], but opens a new tab. +
-Whether the new buffer is activated, depends on the 'activate' option.
 ________________________________________________________________________________
 
 
@@ -271,14 +268,6 @@ when another search command is used or the 'hlsearch' option is set.
 ________________________________________________________________________________
 
 
-|:norm| |:normal| +
-||:norm[al][!] {commands}|| +
-________________________________________________________________________________
-Execute Normal mode commands. Example: [c]:normal 20j[c] scrolls 20 lines
-down. If the [!] is specified mappings will not be used.
-________________________________________________________________________________
-
-
 |:pa| |:pageinfo|
 ||:pa[geinfo]||
 ________________________________________________________________________________
@@ -290,14 +279,6 @@ ________________________________________________________________________________
 ||:pc[lose]||
 ________________________________________________________________________________
 Close preview window on bottom of screen.
-________________________________________________________________________________
-
-
-|:redr| |:redraw| +
-||:redr[aw]||
-________________________________________________________________________________
-Redraw the screen. Useful to update the screen halfway executing a script or
-function.
 ________________________________________________________________________________
 
 
@@ -337,31 +318,11 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:ve| |:version| +
-||:ve[rsion][!]||
-________________________________________________________________________________
-Show version information. You can show the Firefox version page with
-[c]:version![c].
-________________________________________________________________________________
-
-
 |:vie| |:viewsource|
 ||:vie[wsource][!] [url]|| +
 ________________________________________________________________________________
 View source code of current document. When ! is given, it is opened with the
 external editor.
-________________________________________________________________________________
-
-
-|:run| |:!| +
-||:!{cmd}||
-________________________________________________________________________________
-Run a command. Runs {cmd} through system() and displays its output. Any '!' in
-{cmd} is replaced with the previous external command. But not when there is a
-backslash before the '!', then that backslash is removed.
-
-Warning: Input redirection (< foo) not done, also do not run commands which
-require stdin or it will hang Firefox!
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:
