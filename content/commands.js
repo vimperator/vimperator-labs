@@ -639,7 +639,7 @@ liberator.Commands = function () //{{{
                     liberator.echoerr("E182: Invalid command name");
                     return false;
                 }
-                var [cmd, rep] = [res[1], res[2]]
+                var [cmd, rep] = [res[1], res[2]];
             }
 
             if (rep)
@@ -682,6 +682,7 @@ liberator.Commands = function () //{{{
     //}}}
 
     return commandManager;
+
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
