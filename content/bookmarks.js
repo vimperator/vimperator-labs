@@ -413,8 +413,12 @@ liberator.Bookmarks = function () //{{{
             var items = this.get(filter, tags, false);
             if (items.length == 0)
             {
-                if (filter.length > 0 || tags.length > 0)
-                    liberator.echoerr("E283: No bookmarks matching \"" + filter + "\"");
+                if (filter.length > 0 && tags.length > 0)
+                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
+                else if (filter.length > 0)
+                    liberator.echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
+                else if (tags.length > 0)
+                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
                 else
                     liberator.echoerr("No bookmarks set");
 
