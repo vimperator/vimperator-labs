@@ -61,7 +61,7 @@ ________________________________________________________________________________
 ||:let||
 ________________________________________________________________________________
 Sets or lists a variable. Sets the variable {var-name} to the value of the
-expression {expr1}.If no expression is given, the value of the variable is
+expression {expr1}. If no expression is given, the value of the variable is
 displayed.Without arguments, displays a list of all variables.
 ________________________________________________________________________________
 
@@ -69,7 +69,8 @@ ________________________________________________________________________________
 |:unl| |:unlet|
 ||:unl[et][!] {name} ...|| +
 ________________________________________________________________________________
-Deletes the variable {name}. Several variable names can be given.
+Deletes the variable {name}. Several variable names can be given. When used
+with [!] no error message is output for non-existing variables.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:
