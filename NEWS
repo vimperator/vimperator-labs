@@ -10,6 +10,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * add a special version to :hardcopy to skip the Print dialog
     * add :bl[ast], :bf[irst], :br[ewind] to go to first/last tab
     * add :bn[ext], :bp[revious], :bN[ext] to switch to next/previous tab
     * add :pagestyle command to allow for switching between alternate style sheets

@@ -61,6 +61,7 @@ section:Help{nbsp}topics[overview]
   recurring workflows.
 - help:Autocommands[autocommands.html]: Automatically execute code on certain
   events.
+- help:Print[print.html]: Printing commands.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other category.

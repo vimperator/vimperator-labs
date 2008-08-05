@@ -382,7 +382,7 @@ const liberator = (function () //{{{
         // TODO: move files to liberator.config
         var files = ["intro.html", "tutorial.html", "starting.html", "browsing.html", "buffer.html",
                      "options.html", "tabs.html", "hints.html", "map.html", "eval.html", "marks.html",
-                     "repeat.html", "autocommands.html", "developer.html", "various.html"];
+                     "repeat.html", "autocommands.html", "print.html", "developer.html", "various.html"];
 
         for (var file in files)
         {

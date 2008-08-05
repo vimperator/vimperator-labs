@@ -446,7 +446,17 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["ha[rdcopy]"],
         "Print current document",
-        function () { getBrowser().contentWindow.print(); });
+        function (args, special)
+        {
+            // TODO: Hide the progress bar ("print.show_print_progress") when
+            // the special version is called?
+            var value = liberator.options.getPref("print.always_print_silent");
+            liberator.options.setPref("print.always_print_silent", special);
+
+            getBrowser().contentWindow.print();
+
+            liberator.options.setPref("print.always_print_silent", value);
+        });
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",

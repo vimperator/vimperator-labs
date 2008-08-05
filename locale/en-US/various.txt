@@ -238,14 +238,6 @@ in a new tab. Here, downloads can be paused, canceled and resumed.
 ________________________________________________________________________________
 
 
-|:ha| |:hardcopy| +
-||:ha[rdcopy]||
-________________________________________________________________________________
-Print current document. Open a GUI dialog where you can select the printer,
-number of copies, orientation, etc.
-________________________________________________________________________________
-
-
 |:noh| |:nohlsearch| +
 ||:noh[lsearch]||
 ________________________________________________________________________________
