@@ -164,7 +164,7 @@ liberator.Mappings = function () //{{{
         throw StopIteration;
     }
 
-    function addMapCommands(char, modes, modeDescription)
+    function addMapCommands(ch, modes, modeDescription)
     {
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
@@ -202,15 +202,15 @@ liberator.Mappings = function () //{{{
 
         var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
-        liberator.commands.add([char ? char + "m[ap]" : "map"],
+        liberator.commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
             function (args) { map(args, modes, false); });
 
-        liberator.commands.add([char + "no[remap]"],
+        liberator.commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
             function (args) { map(args, modes, true); });
 
-        liberator.commands.add([char + "mapc[lear]"],
+        liberator.commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
             function (args)
             {
@@ -224,7 +224,7 @@ liberator.Mappings = function () //{{{
                     liberator.mappings.removeAll(modes[i]);
             });
 
-        liberator.commands.add([char + "unm[ap]"],
+        liberator.commands.add([ch + "unm[ap]"],
             "Remove a mapping" + modeDescription,
             function (args)
             {

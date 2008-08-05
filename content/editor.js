@@ -149,12 +149,12 @@ liberator.Editor = function () //{{{
     }
 
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
-    function addAbbreviationCommands(char, modeDescription)
+    function addAbbreviationCommands(ch, modeDescription)
     {
         var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
-        var mode = char || "!";
+        var mode = ch || "!";
 
-        liberator.commands.add([char ? char + "a[bbrev]" : "ab[breviate]"],
+        liberator.commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
@@ -172,11 +172,11 @@ liberator.Editor = function () //{{{
                     liberator.editor.listAbbreviations(mode, lhs);
             });
 
-        liberator.commands.add([char ? char + "una[bbrev]" : "una[bbreviate]"],
+        liberator.commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
             function (args) { liberator.editor.removeAbbreviation(mode, args); });
 
-        liberator.commands.add([char + "abc[lear]"],
+        liberator.commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
             function (args) { liberator.editor.removeAllAbbreviations(mode); });
     }
