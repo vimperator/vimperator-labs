@@ -393,6 +393,10 @@ liberator.Bookmarks = function () //{{{
             var aPostDataRef = {};
             var searchString = (useDefsearch? liberator.options["defsearch"] + " " : "") + text;
 
+            // we need to make sure our custom alias have been set, even if the user
+            // did not :open <tab> once before
+            this.getSearchEngines();
+
             url = getShortcutOrURI(searchString, aPostDataRef);
             if (url == searchString)
                 url = null;
