@@ -226,7 +226,8 @@ ________________________________________________________________________________
 |:dia| |:dialog|
 ||:dia[log] [firefox-dialog]|| +
 ________________________________________________________________________________
-Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c] <tab>
+Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c]
+[m]<Tab>[m]
 ________________________________________________________________________________
 
 

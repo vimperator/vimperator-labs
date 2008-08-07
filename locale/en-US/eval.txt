@@ -39,7 +39,7 @@ ________________________________________________________________________________
 ||:javascript[!]||
 ________________________________________________________________________________
 Run any JavaScript command through eval(). Acts as a JavaScript interpreter by
-passing the argument to <code>eval()</code>.
+passing the argument to `eval()`.
 [c]:javascript alert('Hello world')[c] shows a dialog box with the text "Hello world".
 [c]:javascript <<EOF[c] reads all the lines until a line starting with 'EOF'
 is found, and interpret them with the JavaScript _eval()_ function.
