@@ -81,6 +81,44 @@ exactly as they appear in the option.  Remove flags
 one by one to avoid problems.
 ____
 
+|:setlocal| |:setl|
+||:setl[ocal]|| +
+||:setl[ocal] all|| +
+||:setl[ocal] {option}?|| +
+||:setl[ocal] {option}|| +
+||:setl[ocal] no{option}|| +
+||:setl[ocal] inv{option}|| +
+||:setl[ocal] {option}&|| +
+||:setl[ocal] all&|| +
+||:setl[ocal] {option}={value}|| +
+||:setl[ocal] {option}+={value}|| +
+||:setl[ocal] {option}^={value}|| +
+||:setl[ocal] {option}-={value}|| +
+
+____
+The same as [c]:set[c] command, but operates on local for current
+tab options only. See [c]:set[c] for details.
+____
+
+|:setglobal| |:setg|
+||:setg[lobal]|| +
+||:setg[lobal] all|| +
+||:setg[lobal] {option}?|| +
+||:setg[lobal] {option}|| +
+||:setg[lobal] no{option}|| +
+||:setg[lobal] inv{option}|| +
+||:setg[lobal] {option}&|| +
+||:setg[lobal] all&|| +
+||:setg[lobal] {option}={value}|| +
+||:setg[lobal] {option}+={value}|| +
+||:setg[lobal] {option}^={value}|| +
+||:setg[lobal] {option}-={value}|| +
+
+____
+The same as [c]:set[c] command, but operates on global options only.
+See [c]:set[c] for details.
+____
+
 section:Setting{nbsp}Firefox{nbsp}options[firefox-options]
 
 Most Firefox options are not touched/overridden by Vimperator. In order to set

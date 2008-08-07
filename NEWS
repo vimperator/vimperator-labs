@@ -35,6 +35,7 @@
     * keywords in :open <arg> have higher priority than local files now
     * add :set online to control the "work offline" menu item
     * add :jumps command to list current tab's history
+    * add :setlocal & :setglobal commands, so options can be local (per tab) & global
     * many small bug fixes
 
 2008-06-03:

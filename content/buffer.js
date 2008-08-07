@@ -582,8 +582,6 @@ liberator.Buffer = function () //{{{
 
         get URL()
         {
-            // TODO: .URL is not defined for XUL documents
-            //return window.content.document.URL;
             return window.content.document.location.href;
         },
 
@@ -613,6 +611,13 @@ liberator.Buffer = function () //{{{
         get title()
         {
             return window.content.document.title;
+        },
+
+        get options()
+        {
+            if (!window.content.document.liberatorOptions)
+                window.content.document.liberatorOptions = {};
+            return window.content.document.liberatorOptions;
         },
 
         // returns an XPathResult object

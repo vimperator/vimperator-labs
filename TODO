@@ -34,6 +34,7 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
+6 check/correct spellings in insert mode with some mappings
 6 add more autocommands (TabClose, TabOpen, TabChanged, any more?)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
