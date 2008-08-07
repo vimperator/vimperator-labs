@@ -299,7 +299,7 @@ ________________________________________________________________________________
 |:vie| |:viewsource|
 ||:vie[wsource][!] [url]|| +
 ________________________________________________________________________________
-View source code of current document. When ! is given, it is opened with the
+View source code of current document. When [!] is given, it is opened with the
 external editor.
 ________________________________________________________________________________
 

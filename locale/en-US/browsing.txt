@@ -54,10 +54,13 @@ Each token is analyzed and in this order:
    www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
    background tab).
 
-You can use :open -tags linux torvalds<Tab> to complete bookmarks with tag "linux" and which contain "torvalds". Note that -tags support is only available for tab completion, not for the actual command.
-The items which are completed on <Tab> are specified in the 'complete' option.
+You can use [c]:open -tags linux torvalds<Tab>[c] to complete bookmarks with
+tag "linux" and which contain "torvalds". Note that -tags support is only
+available for tab completion, not for the actual command.
+The items which are completed on [m]<Tab>[m] are specified in the 'complete'
+option.
 Without argument, reloads the current page.
-Without argument but with !, reloads the current page skipping the cache.
+Without argument but with [!], reloads the current page skipping the cache.
 ________________________________________________________________________________
 
 
@@ -66,7 +69,8 @@ ________________________________________________________________________________
 ||t||
 ________________________________________________________________________________
 Just like help::open[browsing.html,:open], but opens the resulting web page(s)
-in a new tab. When used with [a]![a], the 'tabopen' value of the 'activate' option is negated.
+in a new tab. When used with [!], the 'tabopen' value of the 'activate' option
+is negated.
 ________________________________________________________________________________
 
 
@@ -81,8 +85,9 @@ ________________________________________________________________________________
 |:tabd| |:tabduplicate|
 ||:[count]tabd[uplicate][!]|| +
 ________________________________________________________________________________
-Duplicates current tab [count] times. Uses 'tabopen' value of the 'activate' to determine
-if last cloned tab should be activated. When used with [a]![a], 'tabopen' value is negated.
+Duplicates current tab [count] times. Uses 'tabopen' value of the 'activate' to
+determine if last cloned tab should be activated. When used with [!], 'tabopen'
+value is negated.
 ________________________________________________________________________________
 
 
