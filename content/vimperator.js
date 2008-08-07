@@ -360,7 +360,7 @@ liberator.config = { //{{{
             "Set the 'work offline' option",
             "boolean", true,
             {
-                setter: function (value) 
+                setter: function (value)
                 {
                     var ioService = Components.classes['@mozilla.org/network/io-service;1'].
                                     getService(Components.interfaces.nsIIOService2);

@@ -151,7 +151,7 @@ liberator.config = {
                 ["Q", "ZQ"], "Force closing composer",
                 function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
 
-            var stateListener = 
+            var stateListener =
             {
                 QueryInterface: function (aIID)
                 {
@@ -169,7 +169,7 @@ liberator.config = {
                         window.messageWasEditedExternally = true;
                         liberator.editor.editWithExternalEditor();
                     }
-                    
+
                 },
                 NotifyDocumentCreated: function () { },
                 NotifyDocumentWillBeDestroyed: function () { }
@@ -177,7 +177,7 @@ liberator.config = {
 
 
             // XXX: Hack!
-            window.document.addEventListener("load", function()
+            window.document.addEventListener("load", function ()
             {
                 if (typeof(window.messageWasEditedExternally) == "undefined")
                 {
@@ -186,11 +186,11 @@ liberator.config = {
                 }
             }, true);
 
-            window.addEventListener("compose-window-close", function()
+            window.addEventListener("compose-window-close", function ()
             {
                 window.messageWasEditedExternally = false;
             }, true);
-            /*window.document.addEventListener("unload", function() {
+            /*window.document.addEventListener("unload", function () {
                 GetCurrentEditor().removeDocumentStateListener(liberator.config.stateListener);
             }, true);*/
 

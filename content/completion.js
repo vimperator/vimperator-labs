@@ -290,7 +290,7 @@ liberator.Completion = function () //{{{
             var stylesheets = getAllStyleSheets(window.content);
 
             // TODO: how should we handle duplicate titles?
-            stylesheets = stylesheets.filter(function(stylesheet) {
+            stylesheets = stylesheets.filter(function (stylesheet) {
                 return !(!/^(screen|all|)$/i.test(stylesheet.media.mediaText) || /^\s*$/.test(stylesheet.title))
             }).map(function (stylesheet) {
                 return [stylesheet.title, stylesheet.href || "inline"];
