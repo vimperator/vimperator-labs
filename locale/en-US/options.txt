@@ -42,7 +42,7 @@ ____
 ____
 Set string or number option to {value}. +
 For numeric options the value must be given in decimal.
-The old value can be inserted by typing <Tab>.
+The old value can be inserted by typing [m]<Tab>[m].
 ____
 
 |:set+=|
@@ -539,7 +539,7 @@ ____
 ||'showstatuslinks' 'ssli'|| number (default: 1)
 ____
 Show the destination of the link under the cursor in the status bar
-Also links which are focused by keyboard commands like <Tab> are shown. Possible values:
+Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Possible values:
 
 .---`--------------------------------------
 *0* Don't show link destination
