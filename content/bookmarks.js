@@ -101,6 +101,7 @@ liberator.Bookmarks = function () //{{{
     liberator.options.add(["defsearch", "ds"],
         "Set the default search engine",
         "string", "google");
+
     liberator.options.add(["preload"],
         "Speed up first time history/bookmark completion",
         "boolean", true);
