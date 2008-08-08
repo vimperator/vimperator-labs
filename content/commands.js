@@ -646,7 +646,11 @@ liberator.Commands = function () //{{{
             {
                 if (!liberator.commands.addUserCommand([cmd],
                         "User defined command",
-                        function (args, special, count, modifiers) { eval(rep); },
+                        function (args, special, count, modifiers)
+                        {
+                            var replaced = rep.replace("<args>", args).replace("<lt>", "<");
+                            liberator.execute(replaced);
+                        },
                         null, special))
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
@@ -660,18 +664,55 @@ liberator.Commands = function () //{{{
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                               "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
-                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + cmdlist[i].isUserCommand + "</td></tr>";
+                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + "...definition not implemented yet" + "</td></tr>";
                     str += "</table>";
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else
+                {
                     liberator.echo("No user-defined commands found");
+                }
             }
         },
         {
             /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
+        });
+
+    commandManager.add(["comc[lear]"],
+        "Delete all user-defined commands",
+        function (args)
+        {
+            if (args)
+            {
+                liberator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            var commands = getUserCommands();
+            for (var i = 0; i < commands.length; i++)
+                removeUserCommand(commands[i].name);
+        });
+
+    // TODO: complete with user-defined commands
+    commandManager.add(["delc[ommand]"],
+        "Delete the specified user-defined command",
+        function (args)
+        {
+            if (!args)
+            {
+                liberator.echoerr("E471: Argument required");
+                return;
+            }
+
+            // TODO: add getUserCommand, removeUserCommands, or similar, and make them 'public'?
+            var commands = getUserCommands(args);
+
+            if (commands.length == 1 && args == commands[0].name)
+                removeUserCommand(commands[0].name);
+            else
+                liberator.echoerr("E184: No such user-defined command: " + args);
         });
 
     // TODO: remove preview window, or change it at least

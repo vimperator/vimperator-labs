@@ -200,9 +200,50 @@ ________________________________________________________________________________
 section:User-defined{nbsp}commands[user-commands]
 
 |:com| |:command|
+||:com[mand]|| +
+________________________________________________________________________________
+List all user-defined commands.
+________________________________________________________________________________
+
+||:com[mand] {cmd}|| +
+________________________________________________________________________________
+List all user-defined commands that start with {cmd}.
+________________________________________________________________________________
+
+
 ||:com[mand][!] [{attr}...] {cmd} {rep}|| +
 ________________________________________________________________________________
-Lists and defines commands. To be written - but it works similar to Vim's :command
+Define a new user command.  The name of the command is {cmd} and its relacement
+text is {rep}.  The command's attributes are {attr}.  If a command with this
+name already exists an error is reported unless [!] is specified, in which case
+the command is redefined.  Unlike Vim, the command may start with a lowercase
+letter.
+
+The replacement text {rep} is scanned for escape sequences and these are
+replaced with values from the user entered command line.  The resulting string
+is then executed as an Ex command.
+
+The valid escape sequences are:
+`------`------------------------------------------------------------------------
+<args> The command arguments exactly as supplied
+<lt>   A literal '<' character to allow for a literal copy of one of the escape sequences.  Eg. <lt>args> will expand to a literal <args>
+--------------------------------------------------------------------------------
+
+Note: {attr} not implemented yet.
+________________________________________________________________________________
+
+
+|:comc| |:comclear|
+||:comc[lear]|| +
+________________________________________________________________________________
+Delete all user-defined commands.
+________________________________________________________________________________
+
+
+|:delc| |:delcommand|
+||:delc[ommand] {cmd}|| +
+________________________________________________________________________________
+Delete the user-defined command {cmd}.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

@@ -1,6 +1,11 @@
 <pre>
 2008-06-xx:
     * version 1.2
+    * IMPORTANT: changed :command to behave like Vim's version.
+      Eg. An alert command specified previously as
+          :command AlertMe alert(args)
+      should now be defined as
+          :command AlertMe :js alert(<args>)
     * IMPORTANT: changed the default keybinding to temporarily disable all
       Vimperator keybindings from <C-Q> to <C-Z>
     * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
@@ -10,6 +15,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * add :comclear and :delcommand
     * add a special version to :hardcopy to skip the Print dialog
     * add :bl[ast], :bf[irst], :br[ewind] to go to first/last tab
     * add :bn[ext], :bp[revious], :bN[ext] to switch to next/previous tab
