@@ -313,7 +313,7 @@ ____
 @class='s'] | //xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area |
 //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select+++)
 
-XPath string of hintable elements activated by 'f' and 'F'
+XPath string of hintable elements activated by [m]f[m] and [m]F[m]
 ____
 
 
