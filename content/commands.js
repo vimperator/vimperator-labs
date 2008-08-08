@@ -70,14 +70,16 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.longNames  = expandedSpecs.longNames;
 
     // return the primary command name (the long name of the first spec listed)
-    this.name          = this.longNames[0];
-    this.names         = expandedSpecs.names; // return all command name aliases
-    this.description   = description || "";
-    this.action        = action;
-    this.completer     = extraInfo.completer || null;
-    this.options       = extraInfo.options || [];
-    this.argCount      = extraInfo.argCount || "";
-    this.isUserCommand = extraInfo.isUserCommand || false;
+    this.name        = this.longNames[0];
+    this.names       = expandedSpecs.names; // return all command name aliases
+    this.description = description || "";
+    this.action      = action;
+    this.completer   = extraInfo.completer || null;
+    this.options     = extraInfo.options || [];
+    this.argCount    = extraInfo.argCount || "";
+
+    this.isUserCommand   = extraInfo.isUserCommand || false;
+    this.replacementText = extraInfo.replacementText || null;
 };
 
 liberator.Command.prototype = {
@@ -651,7 +653,7 @@ liberator.Commands = function () //{{{
                             var replaced = rep.replace("<args>", args).replace("<lt>", "<");
                             liberator.execute(replaced);
                         },
-                        null, special))
+                        { replacementText: rep }, special))
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
                 }
@@ -664,7 +666,7 @@ liberator.Commands = function () //{{{
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                               "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
-                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + "...definition not implemented yet" + "</td></tr>";
+                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + liberator.util.escapeHTML(cmdlist[i].replacementText) + "</td></tr>";
                     str += "</table>";
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
