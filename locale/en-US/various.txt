@@ -250,7 +250,7 @@ ________________________________________________________________________________
 |:pa| |:pageinfo|
 ||:pa[geinfo]||
 ________________________________________________________________________________
-Show various page information. See :help 'pageinfo' for available options.
+Show various page information. See [c]:help 'pageinfo'[c] for available options.
 ________________________________________________________________________________
 
 
@@ -291,8 +291,8 @@ ________________________________________________________________________________
 Execute {cmd} and tell it to output in a new tab. Works only for commands that
 support it, currently:
 
-* :tab help
-* :tab prefs[!]
+* [c]:tab help[c]
+* [c]:tab prefs[!][c]
 
 ________________________________________________________________________________
 

@@ -28,7 +28,7 @@ ________________________________________________________________________________
 ||:exe[cute] {expr1} [ ... ]|| +
 ________________________________________________________________________________
 Execute the string that results from the evaluation of {expr1} as an Ex
-command.. Example: [c]:execute echo "test"[c] shows a message with the text
+command. Example: [c]:execute echo "test"[c] shows a message with the text
 "test".
 ________________________________________________________________________________
 
