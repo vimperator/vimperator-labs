@@ -362,7 +362,7 @@ ____
 ||'incsearch' 'is'|| boolean (default: on)
 ____
 Show where the search pattern matches as it is typed. +
-NOTE: Incremental searching currently only works in the forward direction.
+Note: Incremental searching currently only works in the forward direction.
 ____
 
 
@@ -386,7 +386,7 @@ Determines when the last window will have a status line. Possible values:
 *2* always
 --------------------------------------
 
-NOTE: laststatus=1 not implemented yet.
+Note: laststatus=1 not implemented yet.
 ____
 
 
@@ -486,7 +486,7 @@ they always open in a new tab. Possible values:
 *4*  Open in the same tab unless it has a specific requested size
 -----------------------------------------------------------------------------------------------------
 
-NOTE: This option does not change the popup blocker of Firefox in any way.
+Note: This option does not change the popup blocker of Firefox in any way.
 ____
 
 
@@ -507,7 +507,7 @@ ____
 //Default height for preview window
 //
 //Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
-//NOTE: Option currently disabled
+//Note: Option currently disabled
 //____
 
 |\'previouspattern'|

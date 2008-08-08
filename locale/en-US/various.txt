@@ -173,7 +173,7 @@ ________________________________________________________________________________
 Search backwards for {pattern}.
 
 {pattern} can use the same modifiers as for [m]/[m]. +
-NOTE: incremental searching currently only works in the forward direction.
+Note: incremental searching currently only works in the forward direction.
 ________________________________________________________________________________
 
 
