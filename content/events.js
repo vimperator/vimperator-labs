@@ -308,7 +308,7 @@ liberator.Events = function () //{{{
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by Firefox, when a context menu is closed
-        if (typeof gContextMenu != "undefined" && gContextMenu == NULL && !activeMenubar)
+        if (typeof gContextMenu != "undefined" && gContextMenu == null && !activeMenubar)
             liberator.modes.remove(liberator.modes.MENU);
     }
     function enterMenuMode()
