@@ -303,7 +303,7 @@ liberator.Options = function () //{{{
         });
 
     liberator.commands.add(["pref[erences]", "prefs"],
-        "Show " + liberator.config.hostApplication + " Preferences",
+        "Show " + liberator.config.hostApplication + " preferences",
         function (args, special, count, modifiers)
         {
             if (!args)
