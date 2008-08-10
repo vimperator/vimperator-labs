@@ -253,11 +253,11 @@ ________________________________________________________________________________
 section:Alternate{nbsp}style{nbsp}sheets[stylesheet,style]
 
 |:pagest| |:pagestyle|
-||:pagest[yle]||
+||:pagest[yle] {style}|| +
 ________________________________________________________________________________
 Select the author style sheet to apply.  Page authors may specify alternate
-style sheets for an HTML document.  Users can then switch between these
-various style sheets, selecting their favorite.
+style sheets for an HTML document.  Users can then switch between these various
+style sheets, selecting their favorite.
 
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________
