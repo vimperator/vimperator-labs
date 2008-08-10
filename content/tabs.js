@@ -839,7 +839,7 @@ liberator.Tabs = function () //{{{
           return;
         },
 
-        // TODO: when restarting a session FF selects the first tab and then the
+        // NOTE: when restarting a session FF selects the first tab and then the
         // tab that was selected when the session was created.  As a result the
         // alternate after a restart is often incorrectly tab 1 when there
         // shouldn't be one yet.
