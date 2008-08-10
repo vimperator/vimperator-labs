@@ -218,7 +218,7 @@ Set full zoom value of current web page. Zoom value can be between 1 and
 ________________________________________________________________________________
 
 
-|:zo| |:zoom|
+|:zoom| |:zo|
 ||:zo[om][!] [value]|| +
 ||:zo[om][!] +{value} | -{value}|| +
 ________________________________________________________________________________
@@ -252,12 +252,14 @@ ________________________________________________________________________________
 
 section:Alternate{nbsp}style{nbsp}sheets[stylesheet,style]
 
+Page authors may specify alternate style sheets for an HTML document.  Users
+can then switch between these various style sheets, selecting their favorite.
+
 |:pagest| |:pagestyle|
-||:pagest[yle] {style}|| +
+||:pagest[yle] [stylesheet]|| +
 ________________________________________________________________________________
-Select the author style sheet to apply.  Page authors may specify alternate
-style sheets for an HTML document.  Users can then switch between these various
-style sheets, selecting their favorite.
+Select the author style sheet to apply.  If [stylesheet] is not specified the
+page's default stylesheet is used.
 
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________

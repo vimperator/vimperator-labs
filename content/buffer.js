@@ -466,9 +466,12 @@ liberator.Buffer = function () //{{{
         "Select the author style sheet to apply",
         function (args)
         {
-            if (!args)
+            // TODO: move alternate stylesheet listing function here
+            var stylesheets = liberator.completion.stylesheet()[1].map(function (s) { return s[0]; });
+
+            if (args && !stylesheets.some(function (s) { return s == args; }))
             {
-                liberator.echoerr("E471: Argument required");
+                liberator.echoerr("Exxx: No matching stylesheet");
                 return;
             }
 
