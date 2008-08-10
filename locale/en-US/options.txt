@@ -4,12 +4,12 @@ HEADER
 
 Vimperator has a number of internal variables and switches which can be set to
 achieve special effects.  These options come in 5 forms:
-`----------`-------------------------------------------
-boolean    can only be on or off
-number     has a numeric value
-string     has a string value
-charlist   like a string but with unique characters
-stringlist a comma-separated list of strings
+`------------`-----------------------------------------
+*boolean*    can only be on or off
+*number*     has a numeric value
+*string*     has a string value
+*charlist*   like a string but with unique characters
+*stringlist* a comma-separated list of strings
 -------------------------------------------------------
 
 section:Setting{nbsp}options[set-option,E764]
@@ -269,9 +269,9 @@ ____
 Show or hide certain GUI elements like the menu or toolbar. Supported characters:
 
 `---`-----------
-*m* menubar
-*T* toolbar
-*b* bookmark bar
+*m* Menubar
+*T* Toolbar
+*b* Bookmark bar
 ----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].
@@ -381,9 +381,9 @@ ____
 Determines when the last window will have a status line. Possible values:
 
 `---`---------------------------------
-*0* never
-*1* only if there are multiple windows
-*2* always
+*0* Never
+*1* Only if there are multiple windows
+*2* Always
 --------------------------------------
 
 Note: laststatus=1 not implemented yet.
@@ -460,11 +460,9 @@ ____
 Desired info on [c]:pa[geinfo][c].  Available items:
 
 .--------`----------------
-contains behavior
---------------------------
-*g*      general info
-*f*      feeds
-*m*      meta tags
+*g*      General info
+*f*      Feeds
+*m*      Meta tags
 --------------------------
 
 The order matters.
@@ -650,12 +648,12 @@ the second part for the second use, etc.
 
 These are the possible values for each part:
 `---------------`------------------------
-''              Complete only the first match
-'full'          Complete the next full match. After the last, the original string is used.
-'longest'       Complete till the longest common string.
-'list'          When more than one match, list all matches.
-'list:full'     When more than one match, list all matches and complete first match.
-'list:longest'  When more than one match, list all matches and complete till the longest common string. \
+""              Complete only the first match
+"full"          Complete the next full match. After the last, the original string is used.
+"longest"       Complete till the longest common string.
+"list"          When more than one match, list all matches.
+"list:full"     When more than one match, list all matches and complete first match.
+"list:longest"  When more than one match, list all matches and complete till the longest common string. \
                 When there is only a single match, it is fully completed regardless of the case.
 -----------------------------------------
 
@@ -668,9 +666,9 @@ ____
 A list of words that change how command line completion is done.
 
 Possible words:
-`------`---------------------------------
-auto   Automatically show completions while you are typing
-sort   Always sorts completion list, overriding the 'complete' option.
+`--------`-------------------------------
+*auto*   Automatically show completions while you are typing
+*sort*   Always sorts completion list, overriding the 'complete' option.
 -----------------------------------------
 
 ____
