@@ -64,7 +64,7 @@ Without argument but with [!], reloads the current page skipping the cache.
 ________________________________________________________________________________
 
 
-|t| |:t| |:tabopen|
+|t| |:t| |:tabopen| |:tabnew| |:tabe| |:tabedit|
 ||:tabopen[!] [arg1], [arg2], ...|| +
 ||t||
 ________________________________________________________________________________
