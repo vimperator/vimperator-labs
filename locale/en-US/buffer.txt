@@ -54,7 +54,6 @@ View source code of current document. When [!] is given, it is opened with the
 external editor.
 ________________________________________________________________________________
 
-
 section:Motion{nbsp}commands[motion,scrolling]
 
 |^| |0| +

@@ -147,6 +147,14 @@ ________________________________________________________________________________
 Increments the last number in URL by 1, or by count if given.
 ________________________________________________________________________________
 
+
+|\~| +
+||\~||
+________________________________________________________________________________
+Open home directory. You can also use the hints and have the probably fastest
+file browser on earth. :)
+________________________________________________________________________________
+
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
