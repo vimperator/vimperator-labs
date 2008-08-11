@@ -96,7 +96,7 @@ buffer, it is selected. With [!] the next buffer matching the argument is
 selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
 
-If argument is #, the alternate buffer will be selected (see [m]<C-6>[m]).
+If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-6>[m]).
 ________________________________________________________________________________
 
 
@@ -114,7 +114,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Move the current tab after tab N. When N is 0 the current tab is made the
 first one. Without N the current tab is made the last one. N can also be
-prefixed with '+' or '-' to indicate a relative movement. If [!] is
+prefixed with "+" or "-" to indicate a relative movement. If [!] is
 specified the movement wraps around the start or end of the tab list.
 ________________________________________________________________________________
 
@@ -201,7 +201,7 @@ ________________________________________________________________________________
 ||:[count]u[ndo][!] [url]|| +
 ________________________________________________________________________________
 Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab. With [url] restores the tab matching the url.
+[count]th last tab. With [url] restores the tab matching the URL.
 ________________________________________________________________________________
 
 

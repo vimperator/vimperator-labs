@@ -272,7 +272,7 @@ ________________________________________________________________________________
 ||:zo[om][!] +{value} | -{value}|| +
 ________________________________________________________________________________
 Set zoom value of current web page. If [value] can be an absolute value
-between 1 and 2000% or a relative value if prefixed with '-' or '+'. If
+between 1 and 2000% or a relative value if prefixed with "-" or "+". If
 [value] is omitted, zoom is reset to 100%.
 
 Normally this command operates on the text zoom, if used with [!] it operates

@@ -450,7 +450,7 @@ ____
 |\'noonline'| |\'online'|
 ||'online'|| boolean (default on)
 ____
-Show and set the 'work offline' behavior.
+Show and set the \'work offline' behavior.
 ____
 
 |\'pageinfo' \'pa'|
@@ -522,7 +522,9 @@ ____
 ____
 Number of lines to scroll with C-u and C-d commands.
 The number of lines scrolled defaults to half the window size.
-When a {count} is specified to the <C-u> or <C-d> commands this is used to set the value of 'scroll' and also used for the current command. The value can be reset to half the window height with :set scroll=0.
+When a {count} is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
+used to set the value of 'scroll' and also used for the current command. The
+value can be reset to half the window height with [c]:set scroll=0[c].
 ____
 
 

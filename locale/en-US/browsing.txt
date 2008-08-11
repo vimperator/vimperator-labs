@@ -240,7 +240,7 @@ ________________________________________________________________________________
 |:re| |:reload| +
 ||:re[load][!]||
 ________________________________________________________________________________
-Reload current page. Forces reloading of the current page. If [c]![c] is
+Reload current page. Forces reloading of the current page. If [!] is
 given, skip the cache.
 ________________________________________________________________________________
 
@@ -248,7 +248,7 @@ ________________________________________________________________________________
 |:reloada| |:reloadall| +
 ||:reloada[ll][!]||
 ________________________________________________________________________________
-Reload all pages. Forces reloading of all pages. If [c]![c] is given, skip the cache.
+Reload all pages. Forces reloading of all pages. If [!] is given, skip the cache.
 ________________________________________________________________________________
 
 section:Stopping[stopping]

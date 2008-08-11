@@ -11,7 +11,7 @@ section:Macros[macros,complex-repeat]
 ____________________________________________________________________________
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
-Type 'q' to stop recording.
+Type [m]q[m] to stop recording.
 ____________________________________________________________________________
 
 
@@ -38,9 +38,9 @@ ____________________________________________________________________________
 
 Plays the contents of macro {0-9a-z}.
 
-@@ replays a previous executed macro.
+[m]@@[m] replays a previous executed macro.
 
-:play {arg} plays a recorded macro.
+[c]:play {arg}[c] plays a recorded macro.
 ____________________________________________________________________________
 
 section:Using{nbsp}scripts[using-scripts]
