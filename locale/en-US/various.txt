@@ -121,39 +121,6 @@ file browser on earth. :)
 ________________________________________________________________________________
 
 
-|gf| +
-||gf||
-________________________________________________________________________________
-View source. Opens the source code of the current website with the internal
-editor in the current tab.
-________________________________________________________________________________
-
-
-|gF| +
-||gF||
-________________________________________________________________________________
-View source with an external editor. Opens the source code of the current
-website with the external editor specified by the 'editor' option. For now the
-external editor must be able to download and open files from a remote URL.
-________________________________________________________________________________
-
-
-|<C-g>| +
-||[count]<C-g>||
-________________________________________________________________________________
-Print the current file name. Also shows some additional file information like
-file size or the last modified date. If {count} is given print the current
-file name with full path.
-________________________________________________________________________________
-
-
-|g<C-g>| +
-||g<C-g>||
-________________________________________________________________________________
-Print file information. Same as [c]:pa[geinfo][c].
-________________________________________________________________________________
-
-
 |/| +
 ||/\\{pattern\\}[/]<CR>|| +
 ________________________________________________________________________________
@@ -247,13 +214,6 @@ when another search command is used or the 'hlsearch' option is set.
 ________________________________________________________________________________
 
 
-|:pa| |:pageinfo|
-||:pa[geinfo]||
-________________________________________________________________________________
-Show various page information. See [c]:help 'pageinfo'[c] for available options.
-________________________________________________________________________________
-
-
 |:pc| |:pclose|
 ||:pc[lose]||
 ________________________________________________________________________________
@@ -294,14 +254,6 @@ support it, currently:
 * [c]:tab help[c]
 * [c]:tab prefs[!][c]
 
-________________________________________________________________________________
-
-
-|:vie| |:viewsource|
-||:vie[wsource][!] [url]|| +
-________________________________________________________________________________
-View source code of current document. When [!] is given, it is opened with the
-external editor.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

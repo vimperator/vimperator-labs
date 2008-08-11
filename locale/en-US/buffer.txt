@@ -5,6 +5,56 @@ HEADER
 Vimperator holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.
 
+section:Buffer{nbsp}information[buffer-information]
+
+|<C-g>| +
+||[count]<C-g>||
+________________________________________________________________________________
+Print the current file name. Also shows some additional file information like
+file size or the last modified date. If {count} is given print the current
+file name with full path.
+________________________________________________________________________________
+
+
+|g<C-g>| +
+||g<C-g>||
+________________________________________________________________________________
+Print file information. Same as [c]:pa[geinfo][c].
+________________________________________________________________________________
+
+
+|:pa| |:pageinfo|
+||:pa[geinfo]||
+________________________________________________________________________________
+Show various page information. See [c]:help 'pageinfo'[c] for available options.
+________________________________________________________________________________
+
+
+|gf| +
+||gf||
+________________________________________________________________________________
+View source. Opens the source code of the current website with the internal
+editor in the current tab.
+________________________________________________________________________________
+
+
+|gF| +
+||gF||
+________________________________________________________________________________
+View source with an external editor. Opens the source code of the current
+website with the external editor specified by the 'editor' option. For now the
+external editor must be able to download and open files from a remote URL.
+________________________________________________________________________________
+
+
+|:vie| |:viewsource|
+||:vie[wsource][!] [url]|| +
+________________________________________________________________________________
+View source code of current document. When [!] is given, it is opened with the
+external editor.
+________________________________________________________________________________
+
+
 section:Motion{nbsp}commands[motion,scrolling]
 
 |^| |0| +
