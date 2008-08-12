@@ -297,7 +297,6 @@ liberator.Completion = function () //{{{
         },
 
         // TODO: support file:// and \ or / path separators on both platforms
-        // TODO: sort directories first
         // if "tail" is true, only return names without any directory components
         file: function (filter, tail)
         {
@@ -314,7 +313,11 @@ liberator.Completion = function () //{{{
             {
                 files = liberator.io.readDirectory(dir);
                 mapped = files.map(function (file) {
-                    return [[tail ? file.leafName : (dir + file.leafName)], file.isDirectory() ? "Directory" : "File"];
+                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
+                }).sort(function (a, b) {
+                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
+                }).sort(function (a, b) {
+                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0
                 });
             }
             catch (e)
