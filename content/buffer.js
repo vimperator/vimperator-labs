@@ -466,10 +466,9 @@ liberator.Buffer = function () //{{{
         "Select the author style sheet to apply",
         function (args)
         {
-            // TODO: move alternate stylesheet listing function here
-            var stylesheets = liberator.completion.stylesheet()[1].map(function (s) { return s[0]; });
+            var titles = liberator.buffer.alternateStyleSheets.map(function (stylesheet) { return stylesheet.title; });
 
-            if (args && !stylesheets.some(function (s) { return s == args; }))
+            if (args && !titles.some(function (title) { return title == args; }))
             {
                 liberator.echoerr("Exxx: No matching stylesheet");
                 return;
@@ -556,6 +555,18 @@ liberator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        get alternateStyleSheets()
+        {
+            var stylesheets = getAllStyleSheets(window.content);
+
+            // TODO: how should we handle duplicate titles?
+            stylesheets = stylesheets.filter(function (stylesheet) {
+                return !(!/^(screen|all|)$/i.test(stylesheet.media.mediaText) || /^\s*$/.test(stylesheet.title))
+            });
+
+            return stylesheets;
+        },
 
         // 0 if loading, 1 if loaded or 2 if load failed
         get loaded()
@@ -649,11 +660,165 @@ liberator.Buffer = function () //{{{
             return result;
         },
 
+        // in contrast to vim, returns the selection if one is made,
+        // otherwise tries to guess the current word unter the text cursor
+        // NOTE: might change the selection
+        getCurrentWord: function ()
+        {
+            var selection = window.content.getSelection().toString();
+
+            if (!selection)
+            {
+                var selectionController = getBrowser().docShell
+                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                    .getInterface(Components.interfaces.nsISelectionDisplay)
+                    .QueryInterface(Components.interfaces.nsISelectionController);
+
+                selectionController.setCaretEnabled(true);
+                selectionController.wordMove(false, false);
+                selectionController.wordMove(true, true);
+                selection = window.content.getSelection().toString();
+            }
+
+            return selection;
+        },
+
         // quick function to get elements inside the document reliably
         // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
         getElement: function (args, index)
         {
             return liberator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0);
+        },
+
+        // more advanced than a simple elem.focus() as it also works for iframes
+        // and image maps
+        // TODO: merge with followLink()?
+        focusElement: function (elem)
+        {
+            var doc = window.content.document;
+            var elemTagName = elem.localName.toLowerCase();
+            if (elemTagName == "frame" || elemTagName == "iframe")
+            {
+                elem.contentWindow.focus();
+                return false;
+            }
+            else
+            {
+                elem.focus();
+            }
+
+            var evt = doc.createEvent("MouseEvents");
+            var x = 0;
+            var y = 0;
+            // for imagemap
+            if (elemTagName == "area")
+            {
+                var coords = elem.getAttribute("coords").split(",");
+                x = Number(coords[0]);
+                y = Number(coords[1]);
+            }
+
+            evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+            elem.dispatchEvent(evt);
+        },
+
+        followDocumentRelationship: function (relationship)
+        {
+            function followFrameRelationship(relationship, parsedFrame)
+            {
+                var regexps;
+                var relText;
+                var patternText;
+                var revString;
+                switch (relationship)
+                {
+                    case "next":
+                        regexps = liberator.options["nextpattern"].split(",");
+                        revString = "previous";
+                        break;
+                    case "previous":
+                        // TODO: accept prev\%[ious]
+                        regexps = liberator.options["previouspattern"].split(",");
+                        revString = "next";
+                        break;
+                    default:
+                        liberator.echoerr("Bad document relationship: " + relationship);
+                }
+
+                relText = new RegExp(relationship, "i");
+                revText = new RegExp(revString, "i");
+                var elems = parsedFrame.document.getElementsByTagName("link");
+                // links have higher priority than normal <a> hrefs
+                for (var i = 0; i < elems.length; i++)
+                {
+                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+                    {
+                            liberator.open(elems[i].href);
+                            return true;
+                    }
+                }
+
+                // no links? ok, look for hrefs
+                elems = parsedFrame.document.getElementsByTagName("a");
+                for (var i = 0; i < elems.length; i++)
+                {
+                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
+                    {
+                        liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                        return true;
+                    }
+                }
+
+                for (var pattern = 0; pattern < regexps.length; pattern++)
+                {
+                    patternText = new RegExp(regexps[pattern], "i");
+                    for (var i = 0; i < elems.length; i++)
+                    {
+                        if (patternText.test(elems[i].textContent))
+                        {
+                            liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                            return true;
+                        }
+                        else
+                        {
+                            // images with alt text being href
+                            var children = elems[i].childNodes;
+                            for (var j = 0; j < children.length; j++)
+                            {
+                                if (patternText.test(children[j].alt))
+                                {
+                                    liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            var retVal;
+            if (window.content.frames.length != 0)
+            {
+                retVal = followFrameRelationship(relationship, window.content);
+                if (!retVal)
+                {
+                    // only loop through frames if the main content didnt match
+                    for (var i = 0; i < window.content.frames.length; i++)
+                    {
+                        retVal = followFrameRelationship(relationship, window.content.frames[i]);
+                        if (retVal)
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                retVal = followFrameRelationship(relationship, window.content);
+            }
+
+            if (!retVal)
+                liberator.beep();
         },
 
         // artificially "clicks" a link in order to open it
@@ -700,38 +865,6 @@ liberator.Buffer = function () //{{{
             elem.dispatchEvent(evt);
         },
 
-        // more advanced than a simple elem.focus() as it also works for iframes
-        // and image maps
-        // TODO: merge with followLink()?
-        focusElement: function (elem)
-        {
-            var doc = window.content.document;
-            var elemTagName = elem.localName.toLowerCase();
-            if (elemTagName == "frame" || elemTagName == "iframe")
-            {
-                elem.contentWindow.focus();
-                return false;
-            }
-            else
-            {
-                elem.focus();
-            }
-
-            var evt = doc.createEvent("MouseEvents");
-            var x = 0;
-            var y = 0;
-            // for imagemap
-            if (elemTagName == "area")
-            {
-                var coords = elem.getAttribute("coords").split(",");
-                x = Number(coords[0]);
-                y = Number(coords[1]);
-            }
-
-            evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
-            elem.dispatchEvent(evt);
-        },
-
         saveLink: function (elem, skipPrompt)
         {
             var doc  = elem.ownerDocument;
@@ -749,29 +882,6 @@ liberator.Buffer = function () //{{{
             {
                 liberator.echoerr(e);
             }
-        },
-
-        // in contrast to vim, returns the selection if one is made,
-        // otherwise tries to guess the current word unter the text cursor
-        // NOTE: might change the selection
-        getCurrentWord: function ()
-        {
-            var selection = window.content.getSelection().toString();
-
-            if (!selection)
-            {
-                var selectionController = getBrowser().docShell
-                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                    .getInterface(Components.interfaces.nsISelectionDisplay)
-                    .QueryInterface(Components.interfaces.nsISelectionController);
-
-                selectionController.setCaretEnabled(true);
-                selectionController.wordMove(false, false);
-                selectionController.wordMove(true, true);
-                selection = window.content.getSelection().toString();
-            }
-
-            return selection;
         },
 
         scrollBottom: function ()
@@ -935,16 +1045,6 @@ liberator.Buffer = function () //{{{
 
             // remove the frame indicator
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
-        },
-
-        zoomIn: function (steps, fullZoom)
-        {
-            bumpZoomLevel(steps, fullZoom);
-        },
-
-        zoomOut: function (steps, fullZoom)
-        {
-            bumpZoomLevel(-steps, fullZoom);
         },
 
         // similar to pageInfo
@@ -1204,105 +1304,6 @@ liberator.Buffer = function () //{{{
             liberator.echo(pageInfoText, liberator.commandline.FORCE_MULTILINE);
         },
 
-        followDocumentRelationship: function (relationship)
-        {
-            function followFrameRelationship(relationship, parsedFrame)
-            {
-                var regexps;
-                var relText;
-                var patternText;
-                var revString;
-                switch (relationship)
-                {
-                    case "next":
-                        regexps = liberator.options["nextpattern"].split(",");
-                        revString = "previous";
-                        break;
-                    case "previous":
-                        // TODO: accept prev\%[ious]
-                        regexps = liberator.options["previouspattern"].split(",");
-                        revString = "next";
-                        break;
-                    default:
-                        liberator.echoerr("Bad document relationship: " + relationship);
-                }
-
-                relText = new RegExp(relationship, "i");
-                revText = new RegExp(revString, "i");
-                var elems = parsedFrame.document.getElementsByTagName("link");
-                // links have higher priority than normal <a> hrefs
-                for (var i = 0; i < elems.length; i++)
-                {
-                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-                    {
-                            liberator.open(elems[i].href);
-                            return true;
-                    }
-                }
-
-                // no links? ok, look for hrefs
-                elems = parsedFrame.document.getElementsByTagName("a");
-                for (var i = 0; i < elems.length; i++)
-                {
-                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-                    {
-                        liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
-                        return true;
-                    }
-                }
-
-                for (var pattern = 0; pattern < regexps.length; pattern++)
-                {
-                    patternText = new RegExp(regexps[pattern], "i");
-                    for (var i = 0; i < elems.length; i++)
-                    {
-                        if (patternText.test(elems[i].textContent))
-                        {
-                            liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
-                            return true;
-                        }
-                        else
-                        {
-                            // images with alt text being href
-                            var children = elems[i].childNodes;
-                            for (var j = 0; j < children.length; j++)
-                            {
-                                if (patternText.test(children[j].alt))
-                                {
-                                    liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-
-            var retVal;
-            if (window.content.frames.length != 0)
-            {
-                retVal = followFrameRelationship(relationship, window.content);
-                if (!retVal)
-                {
-                    // only loop through frames if the main content didnt match
-                    for (var i = 0; i < window.content.frames.length; i++)
-                    {
-                        retVal = followFrameRelationship(relationship, window.content.frames[i]);
-                        if (retVal)
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                retVal = followFrameRelationship(relationship, window.content);
-            }
-
-            if (!retVal)
-                liberator.beep();
-        },
-
         viewSelectionSource: function ()
         {
             // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
@@ -1348,6 +1349,16 @@ liberator.Buffer = function () //{{{
             {
                 liberator.open("view-source:" + url);
             }
+        },
+
+        zoomIn: function (steps, fullZoom)
+        {
+            bumpZoomLevel(steps, fullZoom);
+        },
+
+        zoomOut: function (steps, fullZoom)
+        {
+            bumpZoomLevel(-steps, fullZoom);
         }
     };
     //}}}
