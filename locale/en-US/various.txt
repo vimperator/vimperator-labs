@@ -162,16 +162,4 @@ View->Sidebar menu. Add-ons, Preferences and Downloads are also available in
 the sidebar.
 ________________________________________________________________________________
 
-
-|:tab| +
-||:tab {cmd}||
-________________________________________________________________________________
-Execute {cmd} and tell it to output in a new tab. Works only for commands that
-support it, currently:
-
-* [c]:tab help[c]
-* [c]:tab prefs[!][c]
-
-________________________________________________________________________________
-
 // vim: set syntax=asciidoc:

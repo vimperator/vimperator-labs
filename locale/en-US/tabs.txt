@@ -21,6 +21,23 @@ the buffer list in a persistent preview window. Call the special version of
 this command again to close the window.
 ________________________________________________________________________________
 
+section:Opening{nbsp}tabs[listing-tabs]
+
+|:tab| +
+||:tab {cmd}||
+________________________________________________________________________________
+Execute {cmd} and tell it to output in a new tab. Works only for commands that
+support it, currently:
+
+* [c]:tab help[c]
+* [c]:tab prefs[!][c]
+* [c]:tab addons[c]
+* [c]:tab downloads[c]
+________________________________________________________________________________
+
+//TODO: should the tab commands be moved back here?
+See help::open[browsing.html#opening] for other ways to open new tabs.
+
 section:Changing{nbsp}tabs[changing-tabs]
 
 |b| +

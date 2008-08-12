@@ -10,7 +10,7 @@ _make doc_. Please refer to the
 http://www.methods.co.nz/asciidoc/userguide.html[asciidoc documentation] above
 for details.  Usually you can just write text as is, and mostly it will be
 interpreted correctly. The only difficult part is to write special sections
-like for help::help[various.html#:help].
+like for help::help[various.html#online-help].
 
 ----------------------------------------------------------------------------------
 |<F1>| |:help| |:h| |help|
