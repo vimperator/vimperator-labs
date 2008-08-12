@@ -304,31 +304,56 @@ liberator.Tabs = function () //{{{
         "Switch to the last tab",
         function () { liberator.tabs.select("$", false); });
 
-    // TODO: count support
+    // TODO: "Zero count" if 0 specified as arg
     liberator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]", "bp[revious]", "bN[ext]"],
         "Switch to the previous tab or go [count] tabs back",
-        function (args)
+        function (args, special, count)
         {
-            if (!args)
-                liberator.tabs.select("-1", true);
-            else if (/^\d+$/.test(args))
-                liberator.tabs.select("-" + args, true); // FIXME: urgh!
+            // count is ignored if an arg is specified, as per Vim
+            if (args)
+            {
+                if (/^\d+$/.test(args))
+                    liberator.tabs.select("-" + args, true); // FIXME: urgh!
+                else
+                    liberator.echoerr("E488: Trailing characters");
+            }
+            else if (count > 0)
+            {
+                liberator.tabs.select("-" + count, true);
+            }
             else
-                liberator.echoerr("E488: Trailing characters");
+            {
+                liberator.tabs.select("-1", true);
+            }
         });
 
-    // TODO: count support
+    // TODO: "Zero count" if 0 specified as arg
     liberator.commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
         "Switch to the next or [count]th tab",
-        function (args)
+        function (args, special, count)
         {
-            if (!args)
+            if (args || count > 0)
             {
-                liberator.tabs.select("+1", true);
-            }
-            else if (/^\d+$/.test(args))
-            {
-                var index = parseInt(args, 10) - 1;
+                var index;
+
+                // count is ignored if an arg is specified, as per Vim
+                if (args)
+                {
+                    if (/^\d+$/.test(args))
+                    {
+                        index = args - 1;
+                    }
+                    else
+                    {
+                        liberator.echoerr("E488: Trailing characters");
+                        return;
+                    }
+                }
+                else
+                {
+                    index = count - 1;
+                }
+
                 if (index < liberator.tabs.count)
                     liberator.tabs.select(index, true);
                 else
@@ -336,7 +361,7 @@ liberator.Tabs = function () //{{{
             }
             else
             {
-                liberator.echoerr("E488: Trailing characters");
+                liberator.tabs.select("+1", true);
             }
         });
 
@@ -347,6 +372,7 @@ liberator.Tabs = function () //{{{
 
     if (liberator.config.name == "Vimperator")
     {
+        // TODO: add count support
         liberator.commands.add(["b[uffer]"],
             "Switch to a buffer",
             function (args, special) { liberator.tabs.switchTo(args, special); },
@@ -373,6 +399,7 @@ liberator.Tabs = function () //{{{
             "Reload all tab pages",
             function (args, special) { liberator.tabs.reloadAll(special); });
 
+        // TODO: add count support
         liberator.commands.add(["tabm[ove]"],
             "Move the current tab after tab N",
             function (args, special)
