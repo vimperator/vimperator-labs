@@ -286,7 +286,7 @@ liberator.Events = function () //{{{
             liberator.modes.show();
         }, null);
     }
-    catch (e) { }
+    catch (e) {}
 
 //    getBrowser().addEventListener("submit", function (event)
 //    {
@@ -727,7 +727,8 @@ liberator.Events = function () //{{{
                 try
                 {
                     getWebNavigation().stop(nsIWebNavigation.STOP_ALL);
-                } catch (ex) { }
+                }
+                catch (e) {}
 
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
                 liberator.events.feedkeys(macros[lastMacro], true); // true -> noremap
@@ -1066,7 +1067,7 @@ liberator.Events = function () //{{{
                         { // a simple if (selection) does not seem to work
                             selection.collapseToStart();
                         }
-                        catch (e) { }
+                        catch (e) {}
                         liberator.commandline.clear();
 
                         liberator.modes.reset();
@@ -1526,7 +1527,7 @@ liberator.Events = function () //{{{
     {
         getBrowser().addProgressListener(eventManager.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
     }
-    catch(e) { }
+    catch (e) {}
 
     eventManager.prefObserver.register();
 

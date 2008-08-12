@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.config = {
+liberator.config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
@@ -171,8 +171,8 @@ liberator.config = {
                     }
 
                 },
-                NotifyDocumentCreated: function () { },
-                NotifyDocumentWillBeDestroyed: function () { }
+                NotifyDocumentCreated: function () {},
+                NotifyDocumentWillBeDestroyed: function () {}
             }
 
 
@@ -204,6 +204,6 @@ liberator.config = {
             liberator.loadModule("hints",       liberator.Hints);
         }
     }
-};
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

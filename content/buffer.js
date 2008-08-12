@@ -199,7 +199,7 @@ liberator.Buffer = function () //{{{
                 {
                     getMarkupDocumentViewer().authorStyleDisabled = value;
                 }
-                catch (e) { }
+                catch (e) {}
             },
             getter: function ()
             {
@@ -207,7 +207,7 @@ liberator.Buffer = function () //{{{
                 {
                     return getMarkupDocumentViewer().authorStyleDisabled;
                 }
-                catch (e) { }
+                catch (e) {}
             }
         });
 
@@ -1145,7 +1145,7 @@ liberator.Buffer = function () //{{{
                 {
                     cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
                 }
-                catch (e) { }
+                catch (e) {}
             }
 
             var pageSize = []; // [0] bytes; [1] kbytes

@@ -68,8 +68,7 @@ liberator.Map.prototype = {
         return this.action.apply(this, args);
     }
 
-};
-//}}}
+}; //}}}
 
 liberator.Mappings = function () //{{{
 {

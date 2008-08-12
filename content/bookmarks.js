@@ -345,7 +345,7 @@ liberator.Bookmarks = function () //{{{
         getSearchEngines: function ()
         {
             var searchEngines = [];
-            var firefoxEngines = searchService.getVisibleEngines({ });
+            var firefoxEngines = searchService.getVisibleEngines({});
             for (var i in firefoxEngines)
             {
                 var alias = firefoxEngines[i].alias;

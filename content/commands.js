@@ -129,8 +129,7 @@ liberator.Command.prototype = {
         return false;
     }
 
-};
-//}}}
+}; //}}}
 
 liberator.Commands = function () //{{{
 {

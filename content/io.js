@@ -487,7 +487,7 @@ lookup:
                             }
                         }
                     }
-                    catch (e) { }
+                    catch (e) {}
                 }
             }
 

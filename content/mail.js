@@ -38,13 +38,13 @@ liberator.Mail = function () //{{{
     var selectMessageReverse = false;
 
     var folderListener = {
-        OnItemAdded: function (parentItem, item) { },
-        OnItemRemoved: function (parentItem, item) { },
-        OnItemPropertyChanged: function (item, property, oldValue, newValue) { },
-        OnItemIntPropertyChanged: function (item, property, oldValue, newValue) { },
-        OnItemBoolPropertyChanged: function (item, property, oldValue, newValue) { },
-        OnItemUnicharPropertyChanged: function (item, property, oldValue, newValue) { },
-        OnItemPropertyFlagChanged: function (item, property, oldFlag, newFlag) { },
+        OnItemAdded: function (parentItem, item) {},
+        OnItemRemoved: function (parentItem, item) {},
+        OnItemPropertyChanged: function (item, property, oldValue, newValue) {},
+        OnItemIntPropertyChanged: function (item, property, oldValue, newValue) {},
+        OnItemBoolPropertyChanged: function (item, property, oldValue, newValue) {},
+        OnItemUnicharPropertyChanged: function (item, property, oldValue, newValue) {},
+        OnItemPropertyFlagChanged: function (item, property, oldFlag, newFlag) {},
 
         OnItemEvent: function (folder, event)
         {
@@ -73,13 +73,13 @@ liberator.Mail = function () //{{{
                     }
                 }
             }
-            /*else if (eventType == "ImapHdrDownloaded") { }
-            else if (eventType == "DeleteOrMoveMsgCompleted") { }
-            else if (eventType == "DeleteOrMoveMsgFailed") { }
-            else if (eventType == "AboutToCompact") { }
-            else if (eventType == "CompactCompleted") { }
-            else if (eventType == "RenameCompleted") { }
-            else if (eventType == "JunkStatusChanged") { }*/
+            /*else if (eventType == "ImapHdrDownloaded") {}
+            else if (eventType == "DeleteOrMoveMsgCompleted") {}
+            else if (eventType == "DeleteOrMoveMsgFailed") {}
+            else if (eventType == "AboutToCompact") {}
+            else if (eventType == "CompactCompleted") {}
+            else if (eventType == "RenameCompleted") {}
+            else if (eventType == "JunkStatusChanged") {}*/
         }
     };
 

@@ -58,7 +58,7 @@ const liberator = (function () //{{{
                             {
                                 document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
                             }
-                            catch (e) { }
+                            catch (e) {}
                         });
                     }
                 },
@@ -421,7 +421,7 @@ const liberator = (function () //{{{
                 {
                     document.getElementById(elem).collapsed = true;
                 }
-                catch (e) { }
+                catch (e) {}
             });
         }
     }
@@ -560,7 +560,7 @@ const liberator = (function () //{{{
                     gDBView.selection.select(i);
                 }
             }
-            catch (e) { }
+            catch (e) {}
 
             var elem = liberator.config.mainWidget || window.content;
             if (elem && (elem != document.commandDispatcher.focusedElement))
@@ -699,7 +699,7 @@ const liberator = (function () //{{{
                 liberator.echoerr("E149: Sorry, no help for " + topic);
         },
 
-        globalVariables: { },
+        globalVariables: {},
 
         loadModule: function (name, func) { loadModule(name, func); },
 
@@ -804,7 +804,7 @@ const liberator = (function () //{{{
         // v.plugins.mode = <str> string to show on v.modes.CUSTOM
         // v.plugins.stop = <func> hooked on a v.modes.reset()
         // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
-        plugins: { },
+        plugins: {},
 
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession)

@@ -241,7 +241,7 @@ liberator.util = { //{{{
                     string += i + ": " + value + "\n";
             }
         }
-        catch (e) { }
+        catch (e) {}
 
         return string;
     },
@@ -269,7 +269,7 @@ liberator.util = { //{{{
                 url = data.data.substring(0, dataLen.value / 2);
             }
         }
-        catch (ex) { }
+        catch (e) {}
 
         return url;
     },

@@ -117,7 +117,7 @@ liberator.modes = (function () //{{{
                     { // a simple if (selection) does not work
                         selection.collapseToStart();
                     }
-                    catch (e) { }
+                    catch (e) {}
                 }
                 else
                     liberator.editor.unselectText();
