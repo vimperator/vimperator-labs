@@ -288,6 +288,7 @@ liberator.Tabs = function () //{{{
         },
         { completer: function (filter) { return liberator.completion.buffer(filter); } });
 
+    // TODO: this should open in a new tab positioned directly after the current one, not at the end
     liberator.commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
         function (args)
