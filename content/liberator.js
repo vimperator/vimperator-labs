@@ -380,9 +380,11 @@ const liberator = (function () //{{{
         var res = [];
         // they are sorted by relevance, not alphabetically
         // TODO: move files to liberator.config
-        var files = ["intro.html", "tutorial.html", "starting.html", "browsing.html", "buffer.html",
-                     "options.html", "tabs.html", "hints.html", "map.html", "eval.html", "marks.html",
-                     "repeat.html", "autocommands.html", "print.html", "developer.html", "various.html"];
+        var files = ["intro.html", "tutorial.html", "starting.html",
+            "browsing.html", "buffer.html", "pattern.html", "options.html",
+            "tabs.html", "hints.html", "map.html", "eval.html", "marks.html",
+            "repeat.html", "autocommands.html", "print.html", "developer.html",
+            "various.html"];
 
         for (var file in files)
         {

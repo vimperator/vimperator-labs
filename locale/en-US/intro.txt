@@ -46,22 +46,26 @@ it, recommend it and like it :)
 section:Help{nbsp}topics[overview]
 
 - help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
-- help:Initialization[starting.html]: How Vimperator starts up, where it reads the config file...
-- help:Browsing[browsing.html]: Basic mappings and commands needed for
-  a browsing session (how to open a web page or go back in history).
-- help:Buffer{nbsp}commands[buffer.html]: Operations on the current document like
-  scrolling or copying text.
-- help:Tabs[tabs.html]: Manage your tabbed browsing session.
-- help:Hints[hints.html]: Select hyperlinks.
-- help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Define new key mappings.
-- help:Expression{nbsp}evaluation[eval.html]: Execute JavaScript.
+- help:Initialization[starting.html]: How Vimperator starts up, where it reads
+  the config file...
+- help:Browsing[browsing.html]: Basic mappings and commands needed for a
+  browsing session (how to open a web page or go back in history).
+- help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
+  like scrolling or copying text.
+- help:Search{nbsp}commands[pattern.html]: Searching for text in the
+  current buffer.
 - help:Options[options.html]: A description of all options.
-- help:Marks[marks.html]: Usage of bookmarks, QuickMarks, and history.
-- help:Repeating{nbsp}commands[repeat.html]: Usage of macros to repeat
-  recurring workflows.
-- help:Autocommands[autocommands.html]: Automatically execute code on certain
+- help:Tabs[tabs.html]: Managing your tabbed browsing session.
+- help:Hints[hints.html]: Selecting hyperlinks.
+- help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Defining new key
+  mappings.
+- help:Expression{nbsp}evaluation[eval.html]: Executing JavaScript.
+- help:Marks[marks.html]: Using bookmarks, QuickMarks, history and local marks.
+- help:Repeating{nbsp}commands[repeat.html]: Using macros and user commands to
+  repeat recurring workflows.
+- help:Autocommands[autocommands.html]: Automatically executing code on certain
   events.
-- help:Print[print.html]: Printing commands.
+- help:Print[print.html]: Printing pages.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other category.
