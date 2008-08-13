@@ -528,10 +528,26 @@ value can be reset to half the window height with [c]:set scroll=0[c].
 ____
 
 
-|\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
-||'showmode' 'smd'|| boolean (default: on)
+|\'shell'| |\'sh'|
+||'shell' 'sh'|| string (default: on)
 ____
 Show the current mode in the command line.
+____
+
+
+|\'shellcmdflag'| |\'shcf'|
+||'shellcmdflag' 'shcf'|| string (default: $SHELL or "sh", Win32: "cmd.exe")
+____
+Shell to use for executing :! and :run commands.
+____
+
+
+|\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
+||'showmode' 'smd'|| boolean (default: "-c", Win32: "/c")
+____
+Flag passed to shell when executing :! and :run commands.
+
+E.g. bash -c gvim
 ____
 
 

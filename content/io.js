@@ -42,6 +42,34 @@ liberator.IO = function () //{{{
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var shell, shellcmdflag;
+
+    if (WINDOWS)
+    {
+        shell = "cmd.exe";
+        // TODO: does setting 'shell' to "something containing sh"
+        // automatically update 'shellcmdflag' on Windows in Vim?
+        shellcmdflag = "/c";
+    }
+    else
+    {
+        shell = environmentService.get("SHELL") || "sh";
+        shellcmdflag = "-c";
+    }
+
+    // TODO: setter should expand environment variables
+    liberator.options.add(["shell", "sh"],
+        "Shell to use for executing :! and :run commands",
+        "string", shell);
+
+    liberator.options.add(["shellcmdflag", "shcf"],
+        "Flag passed to shell when executing :! and :run commands",
+        "string", shellcmdflag);
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -507,7 +535,6 @@ lookup:
 
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
-        // TODO: add shell/shellcmdflag options to replace "sh" and "-c"
         system: function (str, input)
         {
             var fileout = ioManager.createTempFile();
@@ -527,11 +554,8 @@ lookup:
                 command += " < \"" + filein.path.replace('"', '\\"') + "\"";
             }
 
-            var res;
-            if (WINDOWS)
-                res = ioManager.run("cmd.exe", ["/C", command], true);
-            else
-                res = ioManager.run("sh", ["-c", command], true);
+            // FIXME: why is this return value being ignored?
+            var res = ioManager.run(liberator.options["shell"], [liberator.options["shellcmdflag"], command], true);
 
             var output = ioManager.readFile(fileout);
             fileout.remove(false);

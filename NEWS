@@ -15,6 +15,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * add 'shell' and 'shellcmdflag' options
     * :tabprevious, :bprevious, :tabnext, :bnext and friends now accept a prefix count
     * add :comclear and :delcommand
     * add a special version to :hardcopy to skip the Print dialog
