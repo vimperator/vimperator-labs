@@ -380,23 +380,23 @@ const liberator = (function () //{{{
         var files = liberator.config.helpFiles;
         var res = [];
 
-        for (var file in files)
+        for (var i = 0; i < files.length; i++)
         {
             try
             {
                 var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], false);
+                xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], false);
                 xmlhttp.send(null);
             }
             catch (e)
             {
-                liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], 1);
+                liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], 1);
                 continue;
             }
             var doc = xmlhttp.responseXML;
             var elems = doc.getElementsByClassName("tag");
-            for (var i = 0; i < elems.length; i++)
-                res.push([elems[i].textContent, files[file]]);
+            for (var j = 0; j < elems.length; j++)
+                res.push([elems[j].textContent, files[i]]);
         }
 
         return [0, liberator.completion.filter(res, filter)];
