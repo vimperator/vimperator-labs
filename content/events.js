@@ -1514,7 +1514,7 @@ liberator.Events = function () //{{{
                 }
              }
         }
-    };
+    }; //}}}
 
     window.XULBrowserWindow = eventManager.progressListener;
     window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
@@ -1536,7 +1536,7 @@ liberator.Events = function () //{{{
     window.addEventListener("keyup",    eventManager.onKeyUpOrDown, true);
 
     return eventManager;
-    //}}}
+
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

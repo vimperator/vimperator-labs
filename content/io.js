@@ -81,7 +81,7 @@ liberator.IO = function () //{{{
             else
             {
                 filename = (navigator.platform == "Win32") ? "~/_" : "~/.";
-                filename += extname+ "rc";
+                filename += extname + "rc";
             }
 
             var file = liberator.io.getFile(filename);
@@ -620,9 +620,10 @@ lookup:
                     liberator.echoerr(e);
             }
         }
-    };
+    }; //}}}
+
     return ioManager;
-    //}}}
+
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
