@@ -325,7 +325,7 @@ liberator.config = { //{{{
                 {
                     if (menu.childNodes[i].label == args)
                     {
-                        eval(menu.childNodes[i].getAttribute("oncommand"));
+                        menu.childNodes[i].doCommand();
                         break;
                     }
                 }
