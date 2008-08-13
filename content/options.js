@@ -65,36 +65,52 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         }
     }
 
-    this.__defineGetter__("value",
-        function ()
+    this.get = function(scope)
+    {
+        if (scope)
         {
-            var aValue;
+            if ((scope & this.scope) == 0) // option doesn't exist in this scope
+                return null;
+        }    
+        else
+            scope = this.scope;
 
-            if (this.scope & liberator.options.OPTION_SCOPE_LOCAL)
-                aValue = liberator.tabs.options[this.name]; // TODO: does that work without has("tabs")?
-            if ((this.scope & liberator.options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
-                aValue = value;
+        var aValue;
 
-            if (this.getter)
-                this.getter.call(this, aValue);
+        if (scope & liberator.options.OPTION_SCOPE_LOCAL)
+            aValue = liberator.tabs.options[this.name]; // TODO: does that work without has("tabs")?
+        if ((scope & liberator.options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
+            aValue = value;
 
-            return aValue;
-        }
-    );
+        if (this.getter)
+            this.getter.call(this, aValue);
 
-    this.__defineSetter__("value",
-        function (newValue)
+        return aValue;
+    };
+
+    this.set = function(newValue, scope)
+    {
+        if (scope)
         {
-            if (this.scope & liberator.options.OPTION_SCOPE_LOCAL)
-                liberator.buffer.options[this.name] = newValue;
-            if (this.scope & liberator.options.OPTION_SCOPE_GLOBAL)
-                value = newValue;
+            if ((scope & this.scope) == 0) // option doesn't exist in this scope
+                return null;
+        }    
+        else
+            scope = this.scope;
 
-            this.hasChanged = true;
-            if (this.setter)
-                this.setter.call(this, newValue);
-        }
-    );
+        if (scope & liberator.options.OPTION_SCOPE_LOCAL)
+            liberator.tabs.options[this.name] = newValue;
+        if (scope & liberator.options.OPTION_SCOPE_GLOBAL)
+            value = newValue;
+
+        this.hasChanged = true;
+        if (this.setter)
+            this.setter.call(this, newValue);
+    };
+
+    this.__defineGetter__("value", this.get);
+
+    this.__defineSetter__("value", this.set);
 
     this.hasName = function (name)
     {
@@ -445,11 +461,6 @@ liberator.Options = function () //{{{
                 return;
             }
 
-            var oldOptionScope = option.scope;
-            var newOptionScope = option.scope;
-            if (scope != liberator.options.OPTION_SCOPE_BOTH)
-                newOptionScope = scope;
-
             var valueGiven = !!matches[4];
 
             var get = false;
@@ -492,12 +503,10 @@ liberator.Options = function () //{{{
                 }
                 else
                 {
-                    option.scope = newOptionScope;
                     if (option.type == "boolean")
-                        liberator.echo((option.value ? "  " : "no") + option.name);
+                        liberator.echo((option.get(scope) ? "  " : "no") + option.name);
                     else
-                        liberator.echo("  " + option.name + "=" + option.value);
-                    option.scope = oldOptionScope;
+                        liberator.echo("  " + option.name + "=" + option.get(scope));
                 }
             }
             // write access
@@ -505,9 +514,7 @@ liberator.Options = function () //{{{
             // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
-                option.scope = newOptionScope;
-                var currentValue = option.value;
-                option.scope = oldOptionScope;
+                var currentValue = option.get(scope);
 
                 var newValue;
 
@@ -604,9 +611,7 @@ liberator.Options = function () //{{{
 
                 if (option.isValidValue(newValue))
                 {
-                    option.scope = newOptionScope;
-                    option.value = newValue;
-                    option.scope = oldOptionScope;
+                    option.set(newValue, scope);
                 }
                 else
                     // FIXME: need to be able to specify more specific errors
