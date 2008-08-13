@@ -139,7 +139,7 @@ ________________________________________________________________________________
 |:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
 ||:[count]tabn[ext] [count]|| +
 ||:[count]tn[ext] [count]|| +
-||:[count]bn[ext] [count]||
+||:[count]bn[ext] [count]|| +
 ________________________________________________________________________________
 Switch to the next or [count]th tab. Cycles to the first tab when the last is
 selected and {count} is not specified.
@@ -153,12 +153,12 @@ Close all other tabs.
 ________________________________________________________________________________
 
 
-|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious|
+|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious| +
 ||:[count]tabp[revious] [count]|| +
 ||:[count]tp[revious] [count]|| +
 ||:[count]tabN[ext] [count]|| +
 ||:[count]bp[revious] [count]|| +
-||:[count]bN[ext] [count]||
+||:[count]bN[ext] [count]|| +
 ________________________________________________________________________________
 Switch to the previous tab or go [count] tabs back. Wraps around from the
 first tab to the last tab.
