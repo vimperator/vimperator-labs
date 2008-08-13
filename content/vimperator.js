@@ -292,45 +292,35 @@ liberator.config = { //{{{
             "Close the sidebar window",
             function (args)
             {
-                if (args)
-                {
-                    liberator.echoerr("E488: Trailing characters");
-                    return;
-                }
-
                 if (document.getElementById("sidebar-box").hidden == false)
                     toggleSidebar();
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
             "Open the sidebar window",
             function (args)
             {
-                if (!args)
-                {
-                    liberator.echoerr("E471: Argument required");
-                    return;
-                }
-
                 // do nothing if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == args)
+                if (document.getElementById("sidebar-title").value == args.string)
                 {
                     document.getElementById("sidebar-box").contentWindow.focus();
                     return;
                 }
 
                 var menu = document.getElementById("viewSidebarMenu");
-
                 for (var i = 0; i < menu.childNodes.length; i++)
                 {
-                    if (menu.childNodes[i].label == args)
+                    if (menu.childNodes[i].label == args.string)
                     {
                         menu.childNodes[i].doCommand();
-                        break;
+                        return;
                     }
                 }
+                liberator.echoerr("No sidebar " + args.string + " found");
             },
             {
+                argCount: "+",
                 completer: function (filter)
                 {
                     var menu = document.getElementById("viewSidebarMenu");

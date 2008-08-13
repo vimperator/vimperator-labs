@@ -91,11 +91,9 @@ liberator.IO = function () //{{{
         "Print the current directory name",
         function (args)
         {
-            if (args)
-                liberator.echoerr("E488: Trailing characters");
-            else
-                liberator.echo(liberator.io.getCurrentDirectory());
-        });
+            liberator.echo(liberator.io.getCurrentDirectory());
+        },
+        { argCount: "0" });
 
     // mkv[imperatorrc] or mkm[uttatorrc]
     liberator.commands.add(["mk" + extname.substr(0, 1) + "[" + extname.substr(1) + "rc]"],
@@ -105,7 +103,9 @@ liberator.IO = function () //{{{
             // TODO: "E172: Only one file name allowed"
             var filename;
             if (args)
+            {
                 filename = args;
+            }
             else
             {
                 filename = (navigator.platform == "Win32") ? "~/_" : "~/.";

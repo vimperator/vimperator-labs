@@ -213,38 +213,28 @@ liberator.Mappings = function () //{{{
             "Remove all mappings" + modeDescription,
             function (args)
             {
-                if (args)
-                {
-                    liberator.echoerr("E474: Invalid argument");
-                    return;
-                }
-
                 for (let i = 0; i < modes.length; i++)
                     liberator.mappings.removeAll(modes[i]);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add([ch + "unm[ap]"],
             "Remove a mapping" + modeDescription,
             function (args)
             {
-                if (!args)
-                {
-                    liberator.echoerr("E474: Invalid argument");
-                    return;
-                }
-
-                var flag = false;
+                var found = false;
                 for (let i = 0; i < modes.length; i++)
                 {
-                    if (liberator.mappings.hasMap(modes[i], args))
+                    if (liberator.mappings.hasMap(modes[i], args.arguments[0]))
                     {
-                        liberator.mappings.remove(modes[i], args);
-                        flag = true;
+                        liberator.mappings.remove(modes[i], args.arguments[0]);
+                        found = true;
                     }
                 }
-                if (!flag)
+                if (!found)
                     liberator.echoerr("E31: No such mapping");
-            });
+            },
+            { argCount: "1" });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

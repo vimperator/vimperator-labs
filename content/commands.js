@@ -397,6 +397,7 @@ liberator.Commands = function () //{{{
 
             var args = {};       // parsed options
             args.arguments = []; // remaining arguments
+            args.string = str;   // for access to the unparsed string
 
             var invalid = false;
             var onlyArgumentsRemaining = allowUnknownOptions || false; // after a -- has been found
@@ -571,11 +572,15 @@ liberator.Commands = function () //{{{
             }
 
             // check for correct number of arguments
-            if ((args.arguments.length == 0 && (argCount == "1" || argCount == "+")) ||
-                (args.arguments.length == 1 && (argCount == "0"))                    ||
-                (args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?")))
+            if (args.arguments.length == 0 && (argCount == "1" || argCount == "+"))
             {
-                liberator.echoerr("Invalid number of arguments: " + args.arguments.length);
+                liberator.echoerr("E471: Argument required");
+                return null;
+            }
+            else if (args.arguments.length == 1 && (argCount == "0") ||
+                     args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?"))
+            {
+                liberator.echoerr("E488: Trailing characters");
                 return null;
             }
 
@@ -685,41 +690,26 @@ liberator.Commands = function () //{{{
         "Delete all user-defined commands",
         function (args)
         {
-            if (args)
-            {
-                liberator.echoerr("E488: Trailing characters");
-                return;
-            }
-
             var commands = getUserCommands();
             for (var i = 0; i < commands.length; i++)
                 removeUserCommand(commands[i].name);
-        });
+        },
+        { argCount: "0" });
 
     // TODO: complete with user-defined commands
     commandManager.add(["delc[ommand]"],
         "Delete the specified user-defined command",
         function (args)
         {
-            if (!args)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
-
             // TODO: add getUserCommand, removeUserCommands, or similar, and make them 'public'?
-            var commands = getUserCommands(args);
-
-            if (commands.length == 1 && args == commands[0].name)
+            var cmd = args.arguments[0];
+            var commands = getUserCommands(cmd);
+            if (commands.length == 1 && cmd == commands[0].name)
                 removeUserCommand(commands[0].name);
             else
-                liberator.echoerr("E184: No such user-defined command: " + args);
-        });
-
-    // TODO: remove preview window, or change it at least
-    // commandManager.add(["pc[lose]"],
-    //     "Close preview window on bottom of screen",
-    //     function () { liberator.previewwindow.hide(); });
+                liberator.echoerr("E184: No such user-defined command: " + cmd);
+        },
+        { argCount: "1" });
 
     //}}}
 

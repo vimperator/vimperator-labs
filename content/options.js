@@ -307,25 +307,19 @@ liberator.Options = function () //{{{
         "Show " + liberator.config.hostApplication + " preferences",
         function (args, special, count, modifiers)
         {
-            if (!args)
+            if (special) // open Firefox settings GUI dialog
             {
-                if (special) // open firefox settings gui dialog
-                {
-                    liberator.open("about:config",
-                        (liberator.options.newtab &&
-                            (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("prefs") != -1)) ?
-                                liberator.NEW_TAB : liberator.CURRENT_TAB);
-                }
-                else
-                {
-                    openPreferences();
-                }
+                liberator.open("about:config",
+                    (liberator.options.newtab &&
+                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("prefs") != -1)) ?
+                            liberator.NEW_TAB : liberator.CURRENT_TAB);
             }
             else
             {
-                liberator.echoerr("E488: Trailing characters");
+                openPreferences();
             }
-        });
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["setl[ocal]"],
         "Set local option",
@@ -334,12 +328,10 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
         },
         {
-
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
             }
-
         }
     );
 
@@ -350,12 +342,10 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
         },
         {
-
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
             }
-
         }
     );
 
@@ -372,6 +362,7 @@ liberator.Options = function () //{{{
                     args = "all";
                     onlyNonDefault = true;
                 }
+
                 //                                1                    2       3  4       5
                 var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
                 var name = matches[1];
@@ -384,7 +375,7 @@ liberator.Options = function () //{{{
                     invertBoolean = true;
 
                 if (name == "all" && reset)
-                    liberator.echoerr("You can't reset all the firefox options, it could make your browser unusable.");
+                    liberator.echoerr("You can't reset all options, it could make " + liberator.config.hostApplication + " unusable.");
                 else if (name == "all")
                     liberator.options.listPrefs(onlyNonDefault, "");
                 else if (reset)
@@ -510,9 +501,8 @@ liberator.Options = function () //{{{
                 }
             }
             // write access
-            // NOTE: the behaviour is generally Vim compatible but could be
-            // improved. i.e. Vim's behaviour is pretty sloppy to no real
-            // benefit
+            // NOTE: the behavior is generally Vim compatible but could be
+            // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
                 option.scope = newOptionScope;
@@ -721,17 +711,14 @@ liberator.Options = function () //{{{
         "Delete a variable",
         function (args, special)
         {
-            if (!args)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
+            //var names = args.split(/ /);
+            //if (typeof names == "string") names = [names];
 
-            var names = args.split(/ /);
-            if (typeof names == "string") names = [names];
-            var length = names.length;
-            for (var i = 0, name = names[i]; i < length; name = names[++i])
+            //var length = names.length;
+            //for (var i = 0, name = names[i]; i < length; name = names[++i])
+            for (var i = 0; i < args.arguments.length; i++)
             {
+                var name = args.arguments[i];
                 var reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
@@ -742,7 +729,8 @@ liberator.Options = function () //{{{
 
                 delete reference[0][reference[1]];
             }
-        });
+        },
+        { argCount: "+" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

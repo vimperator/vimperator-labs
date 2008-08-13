@@ -230,14 +230,9 @@ const liberator = (function () //{{{
             "Execute Normal mode commands",
             function (args, special)
             {
-                if (!args)
-                {
-                    liberator.echoerr("E471: Argument required");
-                    return;
-                }
-
-                liberator.events.feedkeys(args, special);
-            });
+                liberator.events.feedkeys(args.string, special);
+            },
+            { argCount: "+" });
 
         liberator.commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",

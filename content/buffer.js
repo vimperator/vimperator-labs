@@ -1535,24 +1535,21 @@ liberator.Marks = function () //{{{
         "Mark current location within the web page",
         function (args)
         {
-            if (!args)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
-            if (args.length > 1)
+            var mark = args.arguments[0];
+            if (mark.length > 1)
             {
                 liberator.echoerr("E488: Trailing characters");
                 return;
             }
-            if (!/[a-zA-Z]/.test(args))
+            if (!/[a-zA-Z]/.test(mark))
             {
                 liberator.echoerr("E191: Argument must be a letter or forward/backward quote");
                 return;
             }
 
-            liberator.marks.add(args);
-        });
+            liberator.marks.add(mark);
+        },
+        { argCount: "1" });
 
     liberator.commands.add(["marks"],
         "Show all location marks of current web page",

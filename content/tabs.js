@@ -383,14 +383,9 @@ liberator.Tabs = function () //{{{
             "Show a list of all buffers",
             function (args, special)
             {
-                if (args)
-                {
-                    liberator.echoerr("E488: Trailing characters");
-                    return;
-                }
-
                 liberator.tabs.list(special);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + liberator.config.appName,

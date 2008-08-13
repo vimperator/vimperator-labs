@@ -833,20 +833,15 @@ liberator.QuickMarks = function () //{{{
         "Mark a URL with a letter for quick access",
         function (args)
         {
-            if (!args)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
-
-            var matches = args.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
+            var matches = args.string.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
             if (!matches)
                 liberator.echoerr("E488: Trailing characters");
             else if (!matches[2])
                 liberator.quickmarks.add(matches[1], liberator.buffer.URL);
             else
                 liberator.quickmarks.add(matches[1], matches[2]);
-        });
+        },
+        { argCount: "+" });
 
     liberator.commands.add(["qmarks"],
         "Show all QuickMarks",

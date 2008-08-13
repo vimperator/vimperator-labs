@@ -727,27 +727,17 @@ liberator.Mail = function () //{{{
         "Empty trash of the current account",
         function (args, special)
         {
-            if (args)
-            {
-                liberator.echoerr("E488: Trailing characters");
-                return;
-            }
-
             goDoCommand("cmd_emptyTrash");
-        });
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["get[messages]"],
         "Check for new messages",
         function (args, special)
         {
-            if (args)
-            {
-                liberator.echoerr("E488: Trailing characters");
-                return;
-            }
-
             liberator.mail.getNewMessages(!special);
-        });
+        },
+        { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
