@@ -77,8 +77,8 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
 
         var aValue;
 
-        if (scope & liberator.options.OPTION_SCOPE_LOCAL)
-            aValue = liberator.tabs.options[this.name]; // TODO: does that work without has("tabs")?
+        if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
+            aValue = liberator.tabs.options[this.name];
         if ((scope & liberator.options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
             aValue = value;
 
@@ -98,7 +98,7 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         else
             scope = this.scope;
 
-        if (scope & liberator.options.OPTION_SCOPE_LOCAL)
+        if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             liberator.tabs.options[this.name] = newValue;
         if (scope & liberator.options.OPTION_SCOPE_GLOBAL)
             value = newValue;
