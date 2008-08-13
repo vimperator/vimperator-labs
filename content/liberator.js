@@ -377,7 +377,10 @@ const liberator = (function () //{{{
 
     function getHelpCompletions(filter)
     {
-        for (var file in liberator.config.helpFiles)
+        var files = liberator.config.helpFiles;
+        var res = [];
+
+        for (var file in files)
         {
             try
             {
@@ -390,7 +393,6 @@ const liberator = (function () //{{{
                 liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[file], 1);
                 continue;
             }
-            var res = [];
             var doc = xmlhttp.responseXML;
             var elems = doc.getElementsByClassName("tag");
             for (var i = 0; i < elems.length; i++)
