@@ -372,7 +372,7 @@ const liberator = (function () //{{{
 
     function getHelpCompletions(filter)
     {
-        var files = liberator.config.helpFiles;
+        var files = liberator.config.helpFiles || [];
         var res = [];
 
         for (var i = 0; i < files.length; i++)
