@@ -627,13 +627,6 @@ liberator.Buffer = function () //{{{
             return window.content.document.title;
         },
 
-        get options()
-        {
-            if (!window.content.document.liberatorOptions)
-                window.content.document.liberatorOptions = {};
-            return window.content.document.liberatorOptions;
-        },
-
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)
         {

@@ -538,6 +538,16 @@ liberator.Tabs = function () //{{{
 
         get count() { return getBrowser().mTabs.length; },
 
+        // used for :setlocal
+        get options()
+        {
+            var tab = this.getTab();
+            if (!tab.liberatorOptions)
+                tab.liberatorOptions = {};
+
+            return tab.liberatorOptions;
+        },
+
         get tabStrip()
         {
             if (liberator.config.hostApplication == "Firefox")
