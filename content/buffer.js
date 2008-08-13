@@ -105,7 +105,7 @@ liberator.Buffer = function () //{{{
     function findScrollableWindow()
     {
         var win = window.document.commandDispatcher.focusedWindow;
-        if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
+        if (win && (win.scrollMaxX > 0 || win.scrollMaxY > 0))
             return win;
 
         win = window.content;

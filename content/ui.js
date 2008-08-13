@@ -1454,6 +1454,8 @@ liberator.StatusLine = function () //{{{
             if (!percent || typeof percent != "number")
             {
                 var win = document.commandDispatcher.focusedWindow;
+                if (!win)
+                    return;
                 percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
             }
 
