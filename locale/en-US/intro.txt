@@ -90,7 +90,7 @@ section:Features[features]
   with support for Firefox keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
-* Marks support ([m]ma[m] to set mark a on a webpage, [m]'a[m] to go there)
+* Marks support ([m]ma[m] to set mark a on a web page, [m]'a[m] to go there)
 * QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
 * [c]:map[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling

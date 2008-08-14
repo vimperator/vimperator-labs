@@ -7,14 +7,12 @@ Vimperator supports a number of different marks:
 - Bookmarks which allow you to mark a web page as one of your favorites for
   easy access.
 - QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or group of
-  websites) which you really visit most often
-- Local marks to store the position with a webpage
+  web sites) which you really visit most often
+- Local marks to store the position with a web page
 - History is also a special type of marks, as Vimperator automatically
   remembers sites which you have visited in the past.
 
 section:Bookmarks[bookmarks]
-
-INTRO TO BE WRITTEN...
 
 |a| |:bma| |:bmark|
 ||:bm[ark] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
@@ -48,8 +46,10 @@ ________________________________________________________________________________
 |:bma| |:bmark|
 ||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
 ________________________________________________________________________________
-Add a bookmark. If you don't add a custom title, either the title of the web page or the URL is taken as the title. +
-You can omit the optional [url] argument, so just do [c]:bmark[c] to bookmark the currently loaded web page with a default title and without any tags. +
+Add a bookmark. If you don't add a custom title, either the title of the web
+page or the URL is taken as the title. +
+You can omit the optional [url] argument, so just do [c]:bmark[c] to bookmark
+the currently loaded web page with a default title and without any tags. +
 
 The following options are interpreted: +
  -title="custom title" +
@@ -84,8 +84,6 @@ The following options WILL be interpreted in the future:
 ________________________________________________________________________________
 
 section:History[history]
-
-TO BE WRITTEN...
 
 |<C-o>| +
 ||[count]<C-o>||
@@ -146,9 +144,6 @@ ________________________________________________________________________________
 
 section:QuickMarks[quickmarks]
 
-INTRO TO BE WRITTEN...
-
-
 |go| +
 ||go\\{a-zA-Z0-9\\}||
 ________________________________________________________________________________
@@ -208,11 +203,6 @@ Show all QuickMarks. If [arg] is specified then limit the list to those QuickMar
 ________________________________________________________________________________
 
 section:Local{nbsp}marks[localmarks]
-
-Local marks are used to ...
-We differentiate between  two types ...
-
-TO BE WRITTEN...
 
 |m| +
 ||m\\{a-zA-Z\\}||

@@ -33,7 +33,7 @@ ________________________________________________________________________________
 |gf| +
 ||gf||
 ________________________________________________________________________________
-View source. Opens the source code of the current website with the internal
+View source. Opens the source code of the current web site with the internal
 editor in the current tab.
 ________________________________________________________________________________
 
@@ -41,8 +41,8 @@ ________________________________________________________________________________
 |gF| +
 ||gF||
 ________________________________________________________________________________
-View source with an external editor. Opens the source code of the current
-website with the external editor specified by the 'editor' option. For now the
+View source with an external editor. Opens the source code of the current web
+site with the external editor specified by the 'editor' option. For now the
 external editor must be able to download and open files from a remote URL.
 ________________________________________________________________________________
 

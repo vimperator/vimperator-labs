@@ -214,7 +214,7 @@ ________________________________________________________________________________
 |gU|
 ||gU||
 ________________________________________________________________________________
-Go to the root of the website. +
+Go to the root of the web site. +
 
 [m]gU[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
 _http://www.example.com/_.
