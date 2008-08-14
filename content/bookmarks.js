@@ -552,7 +552,9 @@ liberator.History = function () //{{{
         function (args, special, count)
         {
             if (special)
+            {
                 liberator.history.goToStart();
+            }
             else
             {
                 if (args)
@@ -566,8 +568,12 @@ liberator.History = function () //{{{
                             return;
                         }
                     }
+                    liberator.echoerr("Exxx: URL not found in history");
                 }
-                liberator.history.stepTo(count > 0 ? -1 * count : -1);
+                else
+                {
+                    liberator.history.stepTo(count > 0 ? -1 * count : -1);
+                }
             }
         },
         {
@@ -592,7 +598,9 @@ liberator.History = function () //{{{
         function (args, special, count)
         {
             if (special)
+            {
                 liberator.history.goToEnd();
+            }
             else
             {
                 if (args)
@@ -606,8 +614,12 @@ liberator.History = function () //{{{
                             return;
                         }
                     }
+                    liberator.echoerr("Exxx: URL not found in history");
                 }
-                liberator.history.stepTo(count > 0 ? count : 1);
+                else
+                {
+                    liberator.history.stepTo(count > 0 ? count : 1);
+                }
             }
         },
         {
