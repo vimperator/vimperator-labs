@@ -41,4 +41,9 @@ Enable _passthrough_ mode on *some* Google sites:
 
   :au LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)
 
+Set the filetype to mail when editing email at Gmail:
+
+  :au LocationChange .* :set editor=gvim -f
+  :au LocationChange mail\.google\.com :set editor=gvim -f -c 'set ft=mail'
+
 // vim: set syntax=asciidoc:
