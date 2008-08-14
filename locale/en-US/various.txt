@@ -51,6 +51,7 @@ The default section is shown unless {subject} is specified.
 If you need help for a specific topic, try [c]:help overview[c].
 ____________________________________________________________________________
 
+
 |:exu| |:exusage|
 ||:exu[sage]||
 ________________________________________________________________________________
@@ -156,13 +157,12 @@ Close the sidebar window.
 ________________________________________________________________________________
 
 
-|:sbope| |:sbopen| |:sb| |:sbar| |:sideb| |:sidebar|
+|:sbope| |:sbopen| |:sb| |:sbar| |:sideb| |:sidebar| +
 ||:sidebar {name}||
 ________________________________________________________________________________
-Open the sidebar window. +
-{name} is any of the menu items listed under the standard Firefox
-View->Sidebar menu. Add-ons, Preferences and Downloads are also available in
-the sidebar.
+Open the sidebar window.  {name} is any of the menu items listed under the
+standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
+also available in the sidebar.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:
