@@ -155,7 +155,7 @@ const liberator = (function () //{{{
         // TODO: move this
         function getMenuItems()
         {
-            var menubar = document.getElementById("main-menubar");
+            var menubar = document.getElementById(liberator.config.guioptions["m"]);
             var items = [];
 
             for (var i = 0; i < menubar.childNodes.length; i++)
