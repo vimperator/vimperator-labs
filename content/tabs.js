@@ -373,10 +373,29 @@ liberator.Tabs = function () //{{{
 
     if (liberator.config.name == "Vimperator")
     {
-        // TODO: add count support
+        // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
         liberator.commands.add(["b[uffer]"],
             "Switch to a buffer",
-            function (args, special) { liberator.tabs.switchTo(args, special); },
+            function (args, special, count)
+            {
+                // if a numeric arg is specified any count is ignored; if a
+                // count and non-numeric arg are both specified then E488
+                if (args && count > 0)
+                {
+                    if (/^\d+$/.test(args))
+                        liberator.tabs.switchTo(args, special);
+                    else
+                        liberator.echoerr("E488: Trailing characters");
+                }
+                else if (count > 0)
+                {
+                    liberator.tabs.switchTo(count.toString(), special);
+                }
+                else
+                {
+                    liberator.tabs.switchTo(args, special);
+                }
+            },
             { completer: function (filter) { return liberator.completion.buffer(filter); } });
 
         liberator.commands.add(["buffers", "files", "ls", "tabs"],
