@@ -15,6 +15,7 @@
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
+    * add :emenu for accessing the Firefox main menu items from the command line
     * add 'shell' and 'shellcmdflag' options
     * :tabprevious, :bprevious, :tabnext, :bnext and friends now accept a prefix count
     * add :comclear and :delcommand

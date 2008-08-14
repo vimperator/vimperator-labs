@@ -152,6 +152,66 @@ const liberator = (function () //{{{
                 }
             });
 
+        // TODO: move this
+        function getMenuItems()
+        {
+            var menubar = document.getElementById("main-menubar");
+            var items = [];
+
+            for (var i = 0; i < menubar.childNodes.length; i++)
+            {
+                (function (item, path)
+                {
+                    if (item.childNodes.length == 0 && item.localName == "menuitem"
+                        && !/rdf:http:/.test(item.label)) // FIXME
+                    {
+                        item.fullMenuPath = path += item.label;
+                        items.push(item);
+                    }
+                    else
+                    {
+                        if (item.localName == "menu")
+                            path += item.label + "."; 
+
+                        for (var j = 0; j < item.childNodes.length; j++)
+                            arguments.callee(item.childNodes[j], path);
+                    }
+                })(menubar.childNodes[i], "");
+            }
+
+            return items;
+        }
+
+        liberator.commands.addUserCommand(["em[enu]"],
+            "Execute the specified menu item from the command line",
+            function (args)
+            {
+                var item = args.string;
+                var items = getMenuItems();
+
+                if (!items.some(function (i) { return i.fullMenuPath == item; }))
+                {
+                    liberator.echoerr("E334: Menu not found: " + item);
+                    return;
+                }
+
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i].fullMenuPath == item)
+                        items[i].doCommand(); 
+                }
+            },
+            {
+                argCount: "+", // NOTE: single arg may contain unescaped whitespace
+                completer: function (filter)
+                {
+                    var completions = getMenuItems().map(function (item) {
+                        return [item.fullMenuPath, item.label];
+                    });
+                    return [0, liberator.completion.filter(completions, filter)];	
+                }
+            });
+
         liberator.commands.add(["exe[cute]"],
             "Execute the argument as an Ex command",
             function (args) { liberator.execute(args); });

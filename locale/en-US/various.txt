@@ -116,6 +116,16 @@ Play a system beep.
 ________________________________________________________________________________
 
 
+|:emenu| +
+||:emenu {menu}||
+________________________________________________________________________________
+Execute {menu} from the command line.  This command provides command line
+access to all menu items available from the main Firefox menubar.  {menu} is a
+hierachical path to the menu item with each submenu separated by a period.
+E.g. :emenu File.Open File...
+________________________________________________________________________________
+
+
 |:dia| |:dialog|
 ||:dia[log] [firefox-dialog]|| +
 ________________________________________________________________________________
