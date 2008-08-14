@@ -607,12 +607,12 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["delmac[ros]"],
         "Delete macros",
-        function (arg)
+        function (args)
         {
-            if (!arg)
+            if (!args)
                 liberator.echoerr("E474: Invalid argument");
             else
-                liberator.events.deleteMacros(arg);
+                liberator.events.deleteMacros(args);
         },
         {
             completer: function (filter) { return getMacroCompletions(filter); }
@@ -620,10 +620,10 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["macros"],
         "List all macros",
-        function (arg)
+        function (args)
         {
             var str = "<table>";
-            var macroRef = liberator.events.getMacros(arg);
+            var macroRef = liberator.events.getMacros(args);
             for (var item in macroRef)
                str += "<tr><td> " + item + " &nbsp; </td><td>" +
                       liberator.util.escapeHTML(macroRef[item]) + "</td></tr>";
@@ -638,12 +638,12 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["pl[ay]"],
         "Replay a recorded macro",
-        function (arg)
+        function (args)
         {
-            if (!arg)
+            if (!args)
                 liberator.echoerr("E474: Invalid argument");
             else
-                liberator.events.playMacro(arg);
+                liberator.events.playMacro(args);
         },
         {
             completer: function (filter) { return getMacroCompletions(filter); }
