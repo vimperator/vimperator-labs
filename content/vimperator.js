@@ -256,7 +256,8 @@ liberator.config = { //{{{
                 liberator.open("chrome://mozapps/content/downloads/downloads.xul",
                     (liberator.options["newtab"] == "all" || liberator.options["newtab"].split(",").indexOf("downloads") != -1) ?
                         liberator.NEW_TAB : liberator.CURRENT_TAB);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["o[pen]", "e[dit]"],
             "Open one or more URLs in the current tab",
@@ -285,12 +286,13 @@ liberator.config = { //{{{
                 var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
                                 getInterface(Components.interfaces.nsIDOMWindowUtils);
                 wu.redraw();
-            });
+            },
+            { argCount: "0" });
 
         // TODO: move sidebar commands to ui.js?
         liberator.commands.add(["sbcl[ose]"],
             "Close the sidebar window",
-            function (args)
+            function ()
             {
                 if (document.getElementById("sidebar-box").hidden == false)
                     toggleSidebar();
@@ -335,7 +337,11 @@ liberator.config = { //{{{
 
         liberator.commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
-            function (args) { window.close(); });
+            function ()
+            {
+                window.close();
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
             "Open one or more URLs in a new window",

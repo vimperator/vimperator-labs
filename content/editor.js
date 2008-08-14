@@ -178,7 +178,11 @@ liberator.Editor = function () //{{{
 
         liberator.commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
-            function (args) { liberator.editor.removeAllAbbreviations(mode); });
+            function ()
+            {
+                liberator.editor.removeAllAbbreviations(mode);
+            },
+            { argCount: "0" });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

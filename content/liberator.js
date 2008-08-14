@@ -120,11 +120,16 @@ const liberator = (function () //{{{
                     (liberator.options["newtab"] &&
                         (liberator.options["newtab"] == "all" || liberator.options["newtab"].split(",").indexOf("addons") != -1)) ?
                             liberator.NEW_TAB: liberator.CURRENT_TAB);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["beep"],
             "Play a system beep",
-            function () { liberator.beep(); });
+            function ()
+            {
+                liberator.beep();
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["dia[log]"],
             "Open a " + liberator.config.appName + " dialog",
@@ -230,7 +235,8 @@ const liberator = (function () //{{{
                 usage += "</table>";
 
                 liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["h[elp]"],
             "Display help",
@@ -302,11 +308,16 @@ const liberator = (function () //{{{
                     liberator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
                     liberator.quit(false);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["res[tart]"],
             "Force " + liberator.config.appName + " to restart",
-            function () { liberator.restart(); });
+            function ()
+            {
+                liberator.restart();
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
@@ -411,7 +422,8 @@ const liberator = (function () //{{{
                     liberator.echo(":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "\n" +
                                     liberator.config.name + " " + liberator.version +
                                     " running on:\n" + navigator.userAgent);
-            });
+            },
+            { argCount: "0" });
 
         liberator.commands.add(["viu[sage]"],
             "List all mappings with a short description",
@@ -427,7 +439,8 @@ const liberator = (function () //{{{
                 usage += "</table>";
 
                 liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
-            });
+            },
+            { argCount: "0" });
     }
 
     function getHelpCompletions(filter)

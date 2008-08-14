@@ -211,7 +211,7 @@ liberator.Mappings = function () //{{{
 
         liberator.commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
-            function (args)
+            function ()
             {
                 for (let i = 0; i < modes.length; i++)
                     liberator.mappings.removeAll(modes[i]);

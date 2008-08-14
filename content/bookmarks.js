@@ -154,8 +154,7 @@ liberator.Bookmarks = function () //{{{
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
-        {}
-    );
+        { argCount: "0" });
 
     liberator.commands.add(["bma[rk]"],
         "Add a bookmark",

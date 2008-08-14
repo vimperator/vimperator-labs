@@ -321,7 +321,7 @@ liberator.Options = function () //{{{
 
     liberator.commands.add(["pref[erences]", "prefs"],
         "Show " + liberator.config.hostApplication + " preferences",
-        function (args, special, count, modifiers)
+        function (args, special)
         {
             if (special) // open Firefox settings GUI dialog
             {

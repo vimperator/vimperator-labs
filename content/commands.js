@@ -281,8 +281,8 @@ liberator.Commands = function () //{{{
         // @param argCount can be:
         //            "0": no arguments
         //            "1": exactly one argument
-        //            "+": one or more aguments
-        //            "*": zero or more arguments
+        //            "+": one or more arguments
+        //            "*": zero or more arguments (default if unspecified)
         //            "?": zero or one arguments
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
@@ -688,7 +688,7 @@ liberator.Commands = function () //{{{
 
     commandManager.add(["comc[lear]"],
         "Delete all user-defined commands",
-        function (args)
+        function ()
         {
             var commands = getUserCommands();
             for (var i = 0; i < commands.length; i++)

@@ -725,7 +725,7 @@ liberator.Mail = function () //{{{
 
     liberator.commands.add(["empty[trash]"],
         "Empty trash of the current account",
-        function (args, special)
+        function ()
         {
             goDoCommand("cmd_emptyTrash");
         },

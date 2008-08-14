@@ -460,7 +460,11 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
-        function () { liberator.buffer.showPageInfo(true); });
+        function ()
+        {
+            liberator.buffer.showPageInfo(true);
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["pagest[yle]"],
         "Select the author style sheet to apply",
@@ -485,7 +489,11 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["re[load]"],
         "Reload current page",
-        function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); });
+        function (args, special)
+        {
+            liberator.tabs.reload(getBrowser().mCurrentTab, special);
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
@@ -505,7 +513,11 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["st[op]"],
         "Stop loading",
-        function () { BrowserStop(); });
+        function ()
+        {
+            BrowserStop();
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
