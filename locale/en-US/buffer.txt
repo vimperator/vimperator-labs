@@ -50,8 +50,9 @@ ________________________________________________________________________________
 |:vie| |:viewsource|
 ||:vie[wsource][!] [url]|| +
 ________________________________________________________________________________
-View source code of current document. When [!] is given, it is opened with the
-external editor.
+View source code of current document.  If [url] is specified then view the
+source of that document.  When [!] is given, it is opened with the external
+editor.
 ________________________________________________________________________________
 
 section:Motion{nbsp}commands[motion,scrolling]
