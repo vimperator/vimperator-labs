@@ -274,7 +274,7 @@ ________________________________________________________________________________
 Save current web page to disk. Opens the original Firefox "Save page as..."
 dialog.  There, you can save the current web page to disk with various
 options. Use [!] to save the file with a default filename to the current working
-directory, skipping the Save as... prompt
+directory, skipping the "Save as..." prompt
 ________________________________________________________________________________
 
 section:Quitting[quitting,save-session]
@@ -297,7 +297,7 @@ ________________________________________________________________________________
 
 
 |:wc| |:wclose| |:winc| |:winclose|
-||:winc[lose] [url] [, url]|| +
+||:winc[lose]|| +
 ________________________________________________________________________________
 Close window.
 ________________________________________________________________________________
