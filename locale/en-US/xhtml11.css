@@ -321,6 +321,7 @@ fieldset.paypal {
 .command {
     font-weight: bold;
     color: #632610;
+    white-space: nowrap;
 }
 .mapping {
     font-weight: bold;
