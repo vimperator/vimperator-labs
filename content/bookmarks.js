@@ -505,12 +505,9 @@ liberator.History = function () //{{{
         for (var i = 0; i < rootNode.childCount; i++)
         {
             var node = rootNode.getChild(i);
+            dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-            {
-                history.push([node.uri, node.title]);
-            }
-            else
-                dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
+                history.push([node.uri, node.title || "[No title]"]);
         }
 
         // close a container after using it!
@@ -655,7 +652,7 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
-                return liberator.completion.filterURLArray(history, filter);
+            return liberator.completion.filterURLArray(history, filter);
         },
 
         // the history is automatically added to the Places global history
@@ -669,7 +666,7 @@ liberator.History = function () //{{{
                 return elem[0] != url;
             });
 
-            history.unshift([url, title]);
+            history.unshift([url, title || "[No title]"]);
             return true;
         },
 

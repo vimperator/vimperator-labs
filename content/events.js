@@ -452,7 +452,7 @@ liberator.Events = function () //{{{
             var url = doc.defaultView.location.href;
             var title = doc.defaultView.title;
 
-            //update history
+            // update history
             if (url && liberator.history)
                 liberator.history.add(url, title);
 
