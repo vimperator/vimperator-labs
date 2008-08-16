@@ -47,7 +47,7 @@ sessions, make sure you put them in your vimperatorrc file!
 ________________________________________________________________________________
 
 
-|:mapc| |:mapclear|
+|:mapc| |:mapclear| +
 ||:mapc[lear]||
 ________________________________________________________________________________
 Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
@@ -55,7 +55,7 @@ Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
 ________________________________________________________________________________
 
 
-|:cmapc| |:cmapclear|
+|:cmapc| |:cmapclear| +
 ||:cmapc[lear]||
 ________________________________________________________________________________
 Remove all mappings (in command-line mode). All user-defined mappings which

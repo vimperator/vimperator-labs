@@ -431,7 +431,7 @@ ____
 |\'newtab'|
 ||'newtab'|| stringlist (default: "")
 ____
-Define which ex commands output the result in a new tab automatically. You can
+Define which Ex commands output the result in a new tab automatically. You can
 also use [c]:tab command[c] to manually output a command in a new tab.
 
 The possible values:
