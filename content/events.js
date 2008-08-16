@@ -447,10 +447,8 @@ liberator.Events = function () //{{{
 
             // code which should happen for all (also background) newly loaded tabs goes here:
 
-            // loaded page can be not current (e.g. background tab loaded)
-            // so we should use defaultView from event object, not liberator.buffer.
-            var url = doc.defaultView.location.href;
-            var title = doc.defaultView.title;
+            var url = doc.location.href;
+            var title = doc.title;
 
             // update history
             if (url && liberator.history)
@@ -479,7 +477,7 @@ liberator.Events = function () //{{{
             }
             else // background tab
             {
-                liberator.commandline.echo("Background tab loaded: " + doc.title || doc.location.href, liberator.commandline.HL_INFOMSG);
+                liberator.commandline.echo("Background tab loaded: " + title || url, liberator.commandline.HL_INFOMSG);
             }
         }
     }
