@@ -15,7 +15,7 @@ bare-looking window.  The menubar, navigation bar, and bookmark bars are
 hidden.  In case you missed the notice in the help:Introduction[intro.html],
 you can regain these by issuing the command
 
-  [c]:set go+=mTb<cr>[c]
+  :set go+=mTb<cr>
 
 where [m]cr[m] represents pressing the <Enter> or <Return> key.
 If you're a veteran Vim user, this may look familiar.  It should.
@@ -51,7 +51,7 @@ later.  Most of the documentation for Vimperator's features are easily found
 using the [c]:help[c] command.  For example, you can find help on the
 [c]:help[c] command by typing
 
-  [c]:help :help<cr>[c]
+  :help :help<cr>
 
 Similarly, help on configurable options is available with [c]:help
 '{option_name}'[c]. (Note the single quotes around the option name as in Vim.)
@@ -59,8 +59,8 @@ Information on all available options is, predictably, [c]:help options[c].
 
 and you can find out about the [m]gt[m] and [m]gT[m] mapping with
 
-  [c]:help gt<cr>[c]
-  [c]:help gT<cr>[c]
+  :help gt<cr>
+  :help gT<cr>
 
 Finally, in addition to the help system itself, [c]:exusage[c] and
 [c]:viusage[c] are useful quick-reference commands.
@@ -183,7 +183,7 @@ This will create the file *$HOME/.vimperatorrc* containing your settings.
 It is a simple text file, just like a vimrc file and can be easily
 edited to suit your preferences.
 
-section:Find{nbsp}the{nbsp}exit{nbsp}nearest{nbsp}you[quitting_without_menus]
+section:Find{nbsp}the{nbsp}exit{nbsp}nearest{nbsp}to{nbsp}you[quitting_without_menus]
 
 Vimperator supports all of Vim's classic methods of exiting.
 
