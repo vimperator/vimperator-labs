@@ -8,16 +8,9 @@ result many buffer and tab commands are interchangeable.
 
 section:Listing{nbsp}tabs[listing-tabs]
 
-|B| +
+|B| |:tabs| |:ls| |:files| |:buffers|
+||:buffers[!]|| +
 ||B||
-________________________________________________________________________________
-Toggle buffer list. Toggles the display of the buffer list which shows all opened tabs. +
-Warning: This mapping may be removed/changed in future.
-________________________________________________________________________________
-
-
-|:tabs| |:ls| |:files| |:buffers| +
-||:buffers[!]||
 ________________________________________________________________________________
 Show a list of all buffers (=tabs). The special version [c]:buffers![c] opens
 the buffer list in a persistent preview window. Call the special version of
@@ -43,14 +36,6 @@ See help::open[browsing.html#opening] for other ways to open new tabs.
 
 section:Changing{nbsp}tabs[changing-tabs]
 
-|b| +
-||b||
-________________________________________________________________________________
-Open a prompt to switch buffers. Typing the corresponding number switches to
-this buffer.
-________________________________________________________________________________
-
-
 |gb| +
 ||[count]gb||
 ________________________________________________________________________________
@@ -64,20 +49,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Repeat last [c]:buffer[!][c] command in reverse direction. Just like [m]gb[m]
 but in the other direction.
-________________________________________________________________________________
-
-
-|g^| |g0|
-||g0||
-________________________________________________________________________________
-Go to the first tab. TODO: Unify with :tabfirst.
-________________________________________________________________________________
-
-
-|g$|
-||g$||
-________________________________________________________________________________
-Go to the last tab. TODO: Unify with :tablast.
 ________________________________________________________________________________
 
 
@@ -105,8 +76,9 @@ provides a quick method of toggling between two tabs.
 ________________________________________________________________________________
 
 
-|:b| |:buffer|
+|b| |:b| |:buffer|
 ||[count]:b[uffer][!] {url|index}|| +
+||b||
 ________________________________________________________________________________
 Go to the specified buffer from the buffer list. Argument can be either the
 buffer index or the full URL.
@@ -120,9 +92,22 @@ If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-6>[m]).
 ________________________________________________________________________________
 
 
-|:bl| |:blast| |:tabl| |:tablast|
+|g^| |g0| |:bf| |:bfirst| |:br| |:brewind| |:tabfir| |:tabfirst| |:tabr| |:tabrewind|
+||:tabr[ewind]|| +
+||:tabfir[st]|| +
+||:br[ewind]|| +
+||:bf[irst]|| +
+||g0|| +
+||g^||
+________________________________________________________________________________
+Switch to the first tab.
+________________________________________________________________________________
+
+
+|g$| |:bl| |:blast| |:tabl| |:tablast|
 ||:tabl[ast]|| +
-||:bl[ast]||
+||:bl[ast]|| +
+||g$||
 ________________________________________________________________________________
 Switch to the last tab.
 ________________________________________________________________________________
@@ -168,40 +153,16 @@ first tab to the last tab.
 ________________________________________________________________________________
 
 
-|:bf| |:bfirst| |:br| |:brewind| |:tabfir| |:tabfirst| |:tabr| |:tabrewind|
-||:tabr[ewind]|| +
-||:tabfir[st]|| +
-||:br[ewind]|| +
-||:bf[irst]||
-________________________________________________________________________________
-Switch to the first tab.
-________________________________________________________________________________
 
 section:Closing{nbsp}tabs[closing-tabs]
 
-|d| +
+|d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
+||:[count]bd[elete][!] [arg]|| +
 ||[count]d||
 ________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [m]2d[m] removes the current
-and next tab and the one to the right is selected. Does not wrap if [count] is
-larger than available tabs to the right.
-________________________________________________________________________________
-
-
-|D| +
-||[count]D||
-________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [m]2D[m] removes the current
-and previous tab and the one to the left is selected. Does not wrap if [count]
-is larger than available tabs to the left.
-________________________________________________________________________________
-
-
-|:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
-||:[count]bd[elete][!] [arg]|| +
-________________________________________________________________________________
 Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
-and the one to the right is selected.
+and the one to the right is selected. Afterwards, the tab to the right of the 
+deleted one is selected.
 
 When used with [arg], remove all tabs which contain [arg] in the hostname.
 [!] forces this command to also search for [arg] in the full URL and also
@@ -209,16 +170,16 @@ the title of the tab. Use with care.
 ________________________________________________________________________________
 
 
-|u| +
-||[count]u||
+|D|
+||[count]D||
 ________________________________________________________________________________
-Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab.
+Like [m]d[m] but selects the tab to the left of the deleted tab.
 ________________________________________________________________________________
 
 
-|:u| |:undo|
+|u| |:u| |:undo|
 ||:[count]u[ndo][!] [url]|| +
+||[count]u||
 ________________________________________________________________________________
 Undo closing of a tab. If a count is given, don't close the last but the
 [count]th last tab. With [url] restores the tab matching the URL.
