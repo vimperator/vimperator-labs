@@ -1,13 +1,14 @@
 <pre>
-2008-06-xx:
+2008-08-16:
     * version 1.2
     * IMPORTANT: changed :command to behave like Vim's version.
       Eg. An alert command specified previously as
           :command AlertMe alert(args)
       should now be defined as
           :command AlertMe :js alert(<args>)
-    * IMPORTANT: changed the default keybinding to temporarily disable all
-      Vimperator keybindings from <C-Q> to <C-Z>
+    * IMPORTANT: changed (again) the default keybinding to temporarily disable all
+      Vimperator keybindings from ctrl-q to ctrl-z since many users complained
+      about hitting ctrl-q twice and exiting vimperator
     * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
       use "B" or :buffers instead
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded
@@ -33,7 +34,8 @@
     * show informative message when a background tab was loaded, especially useful
       with a hidden tab bar.
     * new "l" flag for 'complete' to reuse the Firefox awesome bar for getting better
-      completions for :open. Works only when 'wildoptions' contains "auto"
+      completions for :open. Works only when 'wildoptions' contains "auto" and can
+      be a little buggy if you are typing too fast.
     * new wildoptions=auto option (default off for now), to automatically list
       completions without the need to press the tab key
     * new argument parser for ex commands, should tell better error messages when
