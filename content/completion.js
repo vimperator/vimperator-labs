@@ -226,7 +226,7 @@ liberator.Completion = function () //{{{
         {
             var completions = [];
             var start = 0;
-            var skip = filter.match(/^(.*,\s+)(.*)/); // start after the last ", "
+            var skip = filter.match("^(.*" + liberator.options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
             if (skip)
             {
                 start += skip[1].length;
