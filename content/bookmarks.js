@@ -483,7 +483,8 @@ liberator.History = function () //{{{
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                            .getService(Components.interfaces.nsINavHistoryService);
 
-    var history = null;
+    var history = [];
+    var cachedHistory = []; // add pages here after loading the initial Places history
 
     if (liberator.options["preload"])
         setTimeout(function () { load(); }, 100);
@@ -652,7 +653,8 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
-            return liberator.completion.filterURLArray(history, filter);
+            return liberator.completion.filterURLArray(cachedHistory, filter).concat(
+                   liberator.completion.filterURLArray(history, filter));
         },
 
         // the history is automatically added to the Places global history
@@ -662,11 +664,16 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
-            history = history.filter(function (elem) {
-                return elem[0] != url;
-            });
+            // don' let cachedHistory grow too large
+            if (cachedHistory.length > 1000)
+            {
+                history = cachedHistory.concat(history);
+                cachedHistory = [];
+            }
+            else
+                cachedHistory = cachedHistory.filter(function (elem) { return elem[0] != url; });
 
-            history.unshift([url, title || "[No title]"]);
+            cachedHistory.unshift([url, title || "[No title]"]);
             return true;
         },
 
@@ -740,7 +747,6 @@ liberator.History = function () //{{{
             }
             else
             {
-
                 var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
@@ -755,7 +761,6 @@ liberator.History = function () //{{{
                 liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         }
-
     };
     //}}}
 }; //}}}
