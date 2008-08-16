@@ -183,7 +183,7 @@ This will create the file *$HOME/.vimperatorrc* containing your settings.
 It is a simple text file, just like a vimrc file and can be easily
 edited to suit your preferences.
 
-section:Find{nbsp}the{nbsp}exit{nbsp}nearest{nbsp}to{nbsp}you[quitting_without_menus]
+section:Find{nbsp}the{nbsp}exit{nbsp}nearest{nbsp}you[quitting_without_menus]
 
 Vimperator supports all of Vim's classic methods of exiting.
 
