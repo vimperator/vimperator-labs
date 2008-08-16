@@ -1,10 +1,10 @@
-LOGO
+HEADER
 
 // Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu)
 
 +++<center>+++
 *This is a quickstart tutorial to help get new users up and running in
-Vimperator.*
+Vimperator. It is not indented as a full reference explaining all features.*
 +++</center>+++
 
 section:Quick-start{nbsp}tutorial[tutorial]
