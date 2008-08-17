@@ -223,9 +223,11 @@ ____
 ____
 Set the external text editor.
 Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
-modes. +
-Warning: Vimperator will not behave correctly if the editor forks its own process,
-such as with gvim without the -f argument.
+modes.
+
+Warning: Vimperator will not behave correctly if the editor forks its own
+process, such as with gvim without the -f argument.  The specified path should
+not contain spaces.
 ____
 
 
@@ -522,7 +524,7 @@ ____
 ____
 Number of lines to scroll with C-u and C-d commands.
 The number of lines scrolled defaults to half the window size.
-When a {count} is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
+When a [count] is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
 used to set the value of 'scroll' and also used for the current command. The
 value can be reset to half the window height with [c]:set scroll=0[c].
 ____
