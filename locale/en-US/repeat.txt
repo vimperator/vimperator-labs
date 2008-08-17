@@ -2,12 +2,12 @@ HEADER
 
 |repeat| +
 
-Vimperator can repeat a number of commands or record macros...
+Vimperator can repeat a number of commands and record macros.
 
 section:Macros[macros,complex-repeat]
 
 |q|
-||q {arg}|| +
+||q {0-9a-zA-Z}|| +
 ____________________________________________________________________________
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
@@ -15,33 +15,36 @@ Type [m]q[m] to stop recording.
 ____________________________________________________________________________
 
 
-|:macros| +
-||:mac[ros] [regex]||
+|:macros|
+||:mac[ros] [args]|| +
 ________________________________________________________________________________
-List recorded macros matching the optional regular expression. If no regex is
-given, list all.
+List recorded macros matching the optional regular expression [args]. If no regex is
+given, list all macros.
 ________________________________________________________________________________
 
 
 |:delmac| |:delmacros|
-||:delmac[ros] [regex]|| +
+||:delmac[ros] [args]|| +
 ________________________________________________________________________________
-Delete recorded macros matching a regular expression.
+Delete recorded macros matching the regular expression [args].
 ________________________________________________________________________________
 
 
-|@| |@@| |:play|
-||[count]@ {arg}|| +
-||[count]@@|| +
+|@| |:play|
 ||:pl[ay] {arg}|| +
+||[count]@{arg}||
+____________________________________________________________________________
+Plays the contents of macro with name {arg} [count] times. The [m]@[m] mapping
+only accepts {0-9a-z} as {arg}.
 ____________________________________________________________________________
 
-Plays the contents of macro {0-9a-z}.
 
-[m]@@[m] replays a previous executed macro.
-
-[c]:play {arg}[c] plays a recorded macro.
+|@@|
+||[count]@@||
 ____________________________________________________________________________
+Replay the last executed macro [count] times.
+____________________________________________________________________________
+
 
 section:Using{nbsp}scripts[using-scripts]
 
