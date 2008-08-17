@@ -12,6 +12,7 @@ Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
  
 Patches (in no special order):
+  * Daniel Schaffrath (;b support)
   * Dominik Meister (:b# support and other buffer related commands)
   * Konstantin Stepanov (:%foo support, :tabduplicate)
   * Lukas Mai

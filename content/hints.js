@@ -333,6 +333,7 @@ liberator.Hints = function () //{{{
             case "o": liberator.buffer.followLink(elem, liberator.CURRENT_TAB); break;
             case "O": liberator.commandline.open(":", "open " + loc, liberator.modes.EX); break;
             case "t": liberator.buffer.followLink(elem, liberator.NEW_TAB); break;
+            case "b": liberator.buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB); break;
             case "T": liberator.commandline.open(":", "tabopen " + loc, liberator.modes.EX); break;
             case "v": liberator.buffer.viewSource(loc, false); break;
             case "V": liberator.buffer.viewSource(loc, true); break;
@@ -634,7 +635,7 @@ liberator.Hints = function () //{{{
 
         show: function (mode, minor, filter)
         {
-            if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtTvVwWyY]$/.test(minor))
+            if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
             {
                 liberator.beep();
                 return;

@@ -852,6 +852,7 @@ liberator.Buffer = function () //{{{
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
                     newTab = true;
+                    newWindow = (where == liberator.NEW_BACKGROUND_TAB);
                     break;
                 case liberator.NEW_WINDOW:
                     newWindow = true;

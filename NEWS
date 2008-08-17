@@ -1,5 +1,10 @@
 <pre>
 2008-08-16:
+    * version 2.0 (probably)
+    * new ;b extended hint mode (thanks Daniel Schaffrath)
+    * many bug fixes
+
+2008-08-16:
     * version 1.2
     * IMPORTANT: changed :command to behave like Vim's version.
       Eg. An alert command specified previously as
