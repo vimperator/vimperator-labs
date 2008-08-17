@@ -68,10 +68,11 @@ section:Help{nbsp}topics[overview]
 - help:Print[print.html]: Printing pages.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
-- help:Various[various.html]: Other help which didn't fit into any other category.
+- help:Various[various.html]: Other help which didn't fit into any other
+  category.
 
-You can also jump directly to the help of a specific command with [c]:help
-o[c] or [c]:help :set[c].
+You can also jump directly to the help of a specific command with [c]:help o[c]
+or [c]:help :set[c].
 
 section:Features[features]
 
@@ -92,9 +93,12 @@ section:Features[features]
 * Beep on errors
 * Marks support ([m]ma[m] to set mark a on a web page, [m]'a[m] to go there)
 * QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
-* [c]:map[c] support (and feedkeys() for script writers)
+* [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
 * Move the text cursor and select text with Vim keys and a visual mode
+* External editor support
+* Macros to replay key strokes
+* AutoCommands to execute action on certain events
 * A comprehensive help file, explaining all commands, mappings and options.
 
 section:Contact[contact]
