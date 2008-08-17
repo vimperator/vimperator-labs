@@ -437,7 +437,7 @@ liberator.Buffer = function () //{{{
 
     liberator.mappings.add(modes, ["g<C-g>"],
         "Print file information",
-        function (count) { liberator.buffer.showPageInfo(true); });
+        function () { liberator.buffer.showPageInfo(true); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -856,6 +856,8 @@ liberator.Buffer = function () //{{{
                     break;
                 case liberator.NEW_WINDOW:
                     newWindow = true;
+                    break;
+                case liberator.CURRENT_TAB:
                     break;
                 default:
                     liberator.log("Invalid where argument for followLink()", 0);
