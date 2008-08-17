@@ -693,11 +693,11 @@ Possible words:
 ____
 
 
-|\'wsp'| |\'wordseparators'|
+|\'wsp'| |\'wordseparators'| +
 ||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
 ____
 A regex which defines the word separators which are used for the 'hintmatching' types
-'wordstartswith' and 'firstletters' to split the words in the text of a link.
+"wordstartswith" and "firstletters" to split the words in the text of a link.
 ____
 
 // vim: set syntax=asciidoc:
