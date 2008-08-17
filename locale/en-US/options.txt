@@ -226,8 +226,7 @@ Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
 modes.
 
 Warning: Vimperator will not behave correctly if the editor forks its own
-process, such as with gvim without the -f argument.  The specified path should
-not contain spaces.
+process, such as with gvim without the -f argument.
 ____
 
 
