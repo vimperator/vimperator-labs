@@ -171,8 +171,7 @@ liberator.Buffer = function () //{{{
         "number", 0,
         {
             validator: function (value) { return value >= 0; }
-        }
-    );
+        });
 
     liberator.options.add(["showstatuslinks", "ssli"],
         "Show the destination of the link under the cursor in the status bar",
@@ -474,7 +473,7 @@ liberator.Buffer = function () //{{{
 
             if (args && !titles.some(function (title) { return title == args; }))
             {
-                liberator.echoerr("Exxx: No matching stylesheet");
+                liberator.echoerr("E475: Invalid argument: " + args);
                 return;
             }
 
