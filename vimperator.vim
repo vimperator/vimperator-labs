@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Latest Revision:  2008 July 21
+" Latest Revision:  2008 August 19
 
 if exists("b:current_syntax")
   finish
