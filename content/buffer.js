@@ -1645,7 +1645,7 @@ liberator.Marks = function () //{{{
                     {
                         pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
-                        // non-unique URLs, like liberator's help :(
+                        // non-unique URLs :(
                         liberator.open(slice.location, liberator.NEW_TAB);
                         return;
                     }
