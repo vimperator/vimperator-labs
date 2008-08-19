@@ -1458,16 +1458,7 @@ liberator.Marks = function () //{{{
 
         for (var mark in urlMarks)
             umarks.push([mark, urlMarks[mark]]);
-        // FIXME: why does umarks.sort() cause a "Component is not available =
-        // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        umarks.sort(function (a, b) {
-            if (a[0] < b[0])
-                return -1;
-            else if (a[0] > b[0])
-                return 1;
-            else
-                return 0;
-        });
+        umarks.sort();
 
         return lmarks.concat(umarks);
     }
@@ -1536,7 +1527,7 @@ liberator.Marks = function () //{{{
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
                         start > end)
                     {
-                        liberator.echoerr("E475: Invalid argument: " + args.match(new RegExp(matches[i] + ".*"))[0]);
+                        liberator.echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
                         return;
                     }
                 }
