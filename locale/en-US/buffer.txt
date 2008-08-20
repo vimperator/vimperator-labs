@@ -8,11 +8,10 @@ Vimperator holds exactly one buffer object for each tab. It is usually an
 section:Buffer{nbsp}information[buffer-information]
 
 |<C-g>| +
-||[count]<C-g>||
+||<C-g>||
 ________________________________________________________________________________
-Print the current file name. Also shows some additional file information like
-file size or the last modified date. If {count} is given print the current
-file name with full path.
+Print the current file name.  Also shows some additional file information like
+file size or the last modified date.
 ________________________________________________________________________________
 
 
@@ -23,7 +22,7 @@ Print file information. Same as [c]:pa[geinfo][c].
 ________________________________________________________________________________
 
 
-|:pa| |:pageinfo|
+|:pa| |:pageinfo| +
 ||:pa[geinfo]||
 ________________________________________________________________________________
 Show various page information. See [c]:help 'pageinfo'[c] for available options.
@@ -64,7 +63,7 @@ Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] 
 ________________________________________________________________________________
 
 
-|$|
+|$| +
 ||$||
 ________________________________________________________________________________
 Scroll to the absolute right of the document
@@ -152,14 +151,14 @@ ________________________________________________________________________________
 
 section:Jumping{nbsp}to{nbsp}elements[jumping]
 
-|<Tab>|
+|<Tab>| +
 ||<Tab>||
 ________________________________________________________________________________
 Advance keyboard focus to the next element.
 ________________________________________________________________________________
 
 
-|<S-Tab>|
+|<S-Tab>| +
 ||<S-Tab>||
 ________________________________________________________________________________
 Rewind keyboard focus to the previous element.
@@ -210,14 +209,14 @@ ________________________________________________________________________________
 
 section:Zooming[zooming]
 
-|+| |zi|
+|+| |zi| +
 ||[count]zi||
 ________________________________________________________________________________
 Enlarge text zoom of current web page. Mnemonic: zoom in
 ________________________________________________________________________________
 
 
-|zm|
+|zm| +
 ||[count]zm||
 ________________________________________________________________________________
 Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more
@@ -231,14 +230,14 @@ Reduce text zoom of current web page. Mnemonic: zoom out
 ________________________________________________________________________________
 
 
-|zr|
+|zr| +
 ||[count]zr||
 ________________________________________________________________________________
 Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce
 ________________________________________________________________________________
 
 
-|zz|
+|zz| +
 ||[count]zz||
 ________________________________________________________________________________
 Set text zoom value of current web page. Zoom value can be between 1 and
@@ -246,35 +245,35 @@ Set text zoom value of current web page. Zoom value can be between 1 and
 ________________________________________________________________________________
 
 
-|zI|
+|zI| +
 ||[count]zI||
 ________________________________________________________________________________
 Enlarge full zoom of current web page. Mnemonic: zoom in
 ________________________________________________________________________________
 
 
-|zM|
+|zM| +
 ||[count]zM||
 ________________________________________________________________________________
 Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more
 ________________________________________________________________________________
 
 
-|zO|
+|zO| +
 ||[count]zO||
 ________________________________________________________________________________
 Reduce full zoom of current web page. Mnemonic: zoom out
 ________________________________________________________________________________
 
 
-|zR|
+|zR| +
 ||[count]zR||
 ________________________________________________________________________________
 Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce
 ________________________________________________________________________________
 
 
-|zZ|
+|zZ| +
 ||[count]zZ||
 ________________________________________________________________________________
 Set full zoom value of current web page. Zoom value can be between 1 and
@@ -308,7 +307,7 @@ also put into the selection, which can be pasted with the middle mouse button.
 ________________________________________________________________________________
 
 
-|Y|
+|Y| +
 ||Y||
 ________________________________________________________________________________
 Copy currently selected text to the system clipboard.
