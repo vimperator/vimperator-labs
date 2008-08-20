@@ -234,7 +234,18 @@ liberator.Mappings = function () //{{{
                 if (!found)
                     liberator.echoerr("E31: No such mapping");
             },
-            { argCount: "1" });
+            {
+                argCount: "1",
+                completer: function (filter)
+                {
+                    var mappings = []
+
+                    for (var map in liberator.mappings.getUserIterator(modes))
+                        mappings.push([map.names[0], ""]);
+
+                    return [0, liberator.completion.filter(mappings, filter)];
+                }
+            });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
