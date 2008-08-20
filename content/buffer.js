@@ -1451,14 +1451,20 @@ liberator.Marks = function () //{{{
                     lmarks.push([mark, localMarks[mark][i]]);
             }
         }
+
         lmarks.sort();
 
         // URL marks
         var umarks = [];
 
+        // FIXME: why does umarks.sort() cause a "Component is not available =
+        // NS_ERROR_NOT_AVAILABLE" exception when used here?
         for (var mark in urlMarks)
             umarks.push([mark, urlMarks[mark]]);
-        umarks.sort();
+
+        umarks.sort(function (a, b) {
+            return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
+        });
 
         return lmarks.concat(umarks);
     }
