@@ -187,7 +187,7 @@ const liberator = (function () //{{{
             return items;
         }
 
-        liberator.commands.addUserCommand(["em[enu]"],
+        liberator.commands.add(["em[enu]"],
             "Execute the specified menu item from the command line",
             function (args)
             {
