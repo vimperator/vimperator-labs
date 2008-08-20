@@ -2,15 +2,43 @@ HEADER
 
 |key-mapping| |abbreviations| |user-commands| +
 
-INTRO TO BE WRITTEN...
-
 section:Key{nbsp}mapping[key-mapping,mapping,macro]
+
+The key mapping commands can be used to either redefine the standard key
+bindings or define new ones.  A mapping consists of a key, or sequence of keys,
+which are translated to a string of characters.  Example:
+
+  :map <F2> :echo new Date().toDateString()<CR>
+
+will echo the current date to the command line when [m]<F2>[m] is pressed.
+
+There are separate key mapping tables for each of the Normal, and Insert,
+Command-line modes.
+
+|:map-special-chars| +
 
 |<Nop>| +
 ||<Nop>||
 ________________________________________________________________________________
-Do nothing. This command is useful for disabling a specific mapping. [c]:map
+Do nothing.  This command is useful for disabling a specific mapping.  [c]:map
 <C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
+________________________________________________________________________________
+
+
+|<CR>| |map_return| +
+||<CR>||
+________________________________________________________________________________
+Expand to a line terminator in a key mapping.  An Ex command in the {rhs} of a
+mapping requires a a line terminator after it so that it is executed when the
+mapping is expanded.  [m]<CR>[m] should be used for this purpose.
+________________________________________________________________________________
+
+
+|<Leader>| |mapleader| +
+||<Leader>||
+________________________________________________________________________________
+Expands to the value of the "mapleader" variable in key mapping.  If
+"mapleader" is unset or empty then "\" is used.
 ________________________________________________________________________________
 
 
@@ -30,7 +58,7 @@ ________________________________________________________________________________
 ||:cmap {lhs}|| +
 ||:cmap||
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in command-line mode). The {rhs} is
+Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
 remapped, allowing for nested and recursive mappings. Mappings are NOT saved
 during sessions, make sure you put them in your vimperatorrc file!
 ________________________________________________________________________________
@@ -58,7 +86,7 @@ ________________________________________________________________________________
 |:cmapc| |:cmapclear| +
 ||:cmapc[lear]||
 ________________________________________________________________________________
-Remove all mappings (in command-line mode). All user-defined mappings which
+Remove all mappings (in Command-line mode). All user-defined mappings which
 were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
 ________________________________________________________________________________
 
@@ -85,7 +113,7 @@ ________________________________________________________________________________
 ||:cno[remap] {lhs}|| +
 ||:cno[remap]||
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in command-line mode). No remapping of
+Map the key sequence {lhs} to {rhs} (in Command-line mode). No remapping of
 the {rhs} is performed.
 ________________________________________________________________________________
 
@@ -100,21 +128,21 @@ Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
 ________________________________________________________________________________
 
 
-|:unm| |:unmap|
+|:unm| |:unmap| +
 ||:unm[ap] {lhs}||
 ________________________________________________________________________________
 Remove the mapping of {lhs}.
 ________________________________________________________________________________
 
 
-|:cunm| |:cunmap|
+|:cunm| |:cunmap| +
 ||:cunm[ap] {lhs}||
 ________________________________________________________________________________
-Remove the mapping of {lhs} (in command-line mode).
+Remove the mapping of {lhs} (in Command-line mode).
 ________________________________________________________________________________
 
 
-|:iunm| |:iunmap|
+|:iunm| |:iunmap| +
 ||:iunm[ap] {lhs}||
 ________________________________________________________________________________
 Remove the mapping of {lhs} (in insert mode).
@@ -130,7 +158,6 @@ ________________________________________________________________________________
 Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
 If only {lhs} given, list that particular abbreviation.
 List all abbreviations, if no arguments to are given.
-
 ________________________________________________________________________________
 
 
@@ -140,7 +167,7 @@ ________________________________________________________________________________
 ||:ca[bbrev]||
 ________________________________________________________________________________
 Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
-but for command-line mode only.
+but for Command-line mode only.
 ________________________________________________________________________________
 
 
@@ -177,21 +204,21 @@ Insert mode only.
 ________________________________________________________________________________
 
 
-|:abc| |:abclear|
+|:abc| |:abclear| +
 ||:abc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations.
 ________________________________________________________________________________
 
 
-|:cabc| |:cabclear|
+|:cabc| |:cabclear| +
 ||:cabc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations for Command-line mode.
 ________________________________________________________________________________
 
 
-|:iabc| |:iabclear|
+|:iabc| |:iabclear| +
 ||:iabc[lear]||
 ________________________________________________________________________________
 Remove all abbreviations for Insert mode.
@@ -226,14 +253,14 @@ is then executed as an Ex command.
 The valid escape sequences are:
 `--------`----------------------------------------------------------------------
 *<args>* The command arguments exactly as supplied
-*<lt>*   A literal '<' character to allow for a literal copy of one of the escape sequences.  Eg. <lt>args> will expand to a literal <args>
+*<lt>*   A literal '<' character to allow for a literal copy of one of the escape sequences.  E.g. <lt>args> will expand to a literal <args>
 --------------------------------------------------------------------------------
 
 Note: {attr} not implemented yet.
 ________________________________________________________________________________
 
 
-|:comc| |:comclear|
+|:comc| |:comclear| +
 ||:comc[lear]||
 ________________________________________________________________________________
 Delete all user-defined commands.
