@@ -203,7 +203,13 @@ liberator.Mappings = function () //{{{
 
         liberator.commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
-            function (args) { map(args, modes, false); });
+            function (args) { map(args, modes, false); },
+            {
+                completer: function (filter)
+                {
+                    return liberator.completion.userMapping(filter, modes);
+                }
+            });
 
         liberator.commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
@@ -238,12 +244,7 @@ liberator.Mappings = function () //{{{
                 argCount: "1",
                 completer: function (filter)
                 {
-                    var mappings = []
-
-                    for (var map in liberator.mappings.getUserIterator(modes))
-                        mappings.push([map.names[0], ""]);
-
-                    return [0, liberator.completion.filter(mappings, filter)];
+                    return liberator.completion.userMapping(filter, modes);
                 }
             });
     }

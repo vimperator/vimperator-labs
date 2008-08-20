@@ -315,9 +315,9 @@ liberator.Completion = function () //{{{
                 mapped = files.map(function (file) {
                     return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
                 }).sort(function (a, b) {
-                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
+                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
                 }).sort(function (a, b) {
-                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0
+                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
                 });
             }
             catch (e)
@@ -558,6 +558,17 @@ liberator.Completion = function () //{{{
             }
 
             return filtered.concat(additionalCompletions);
+        },
+
+        userMapping: function (filter, modes)
+        {
+            // TODO: add appropriate getters to l.mappings
+            var mappings = [];
+
+            for (var map in liberator.mappings.getUserIterator(modes))
+                mappings.push([map.names[0], ""]);
+
+            return [0, this.filter(mappings, filter)];
         },
 
         // generic helper function which checks if the given "items" array pass "filter"
