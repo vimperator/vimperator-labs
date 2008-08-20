@@ -164,173 +164,7 @@ liberator.Completion = function () //{{{
             else
                 return buildLongestCommonSubstring(array, filter);
         },
-
-        // XXX: Move to bookmarks.js?
-        searchEngineSuggest: function (filter, engineAliases)
-        {
-            if (!filter)
-                return [0, []];
-
-        	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
-        	var responseType = "application/x-suggestions+json";
-        	var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-        	               .getService(Components.interfaces.nsIBrowserSearchService);
-
-        	var completions = [];
-        	engineList.forEach (function (name)
-        	{
-        		var query = filter;
-        		var queryURI;
-        		var engine = ss.getEngineByAlias(name);
-        		var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
-        		var matches = query.match(reg);
-        		if (matches)
-            		query = matches[2];
-
-            	if (engine && engine.supportsResponseType(responseType))
-                    queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
-                else
-                    return [0, []];
-
-            	var xhr = new XMLHttpRequest();
-            	xhr.open("GET", queryURI, false);
-            	xhr.send(null);
-
-                var json = Components.classes["@mozilla.org/dom/json;1"]
-                           .createInstance(Components.interfaces.nsIJSON);
-                var results = json.decode(xhr.responseText)[1];
-                if (!results)
-                    return [0, []];
-
-            	results.forEach(function (item)
-            	{
-                    // make sure we receive strings, otherwise a man-in-the-middle attack
-                    // could return objects which toString() method could be called to
-                    // execute untrusted code
-                    if (typeof item != "string")
-                        return [0, []];
-
-            	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
-            	});
-        	});
-
-        	return [0, completions];
-        },
-
-        // filter a list of urls
-        //
-        // may consist of search engines, filenames, bookmarks and history,
-        // depending on the 'complete' option
-        // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
-        url: function (filter, complete)
-        {
-            var completions = [];
-            var start = 0;
-            var skip = filter.match("^(.*" + liberator.options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
-            if (skip)
-            {
-                start += skip[1].length;
-                filter = skip[2];
-            }
-
-            var cpt = complete || liberator.options["complete"];
-            var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
-            var suggestEngineAlias = liberator.options["suggestengines"] || "google";
-            // join all completion arrays together
-            for (var i = 0; i < cpt.length; i++)
-            {
-                if (cpt[i] == "s")
-                    completions = completions.concat(this.search(filter)[1]);
-                else if (cpt[i] == "f")
-                    completions = completions.concat(this.file(filter, false)[1]);
-                else if (!autoCompletions && cpt[i] == "b")
-                    completions = completions.concat(liberator.bookmarks.get(filter));
-                else if (!autoCompletions && cpt[i] == "h")
-                    completions = completions.concat(liberator.history.get(filter));
-                else if (cpt[i] == "S")
-                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
-                else if (autoCompletions && cpt[i] == "l") // add completions like Firefox's smart location bar
-                {
-                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"].
-                                            getService(Components.interfaces.nsIAutoCompleteSearch);
-                    completionService.startSearch(filter, "", urlResultsCache, {
-                        onSearchResult: function (search, result) {
-                            //if (result.searchResult != result.RESULT_SUCCESS)
-                            //    return;
-                            //liberator.log(result.searchResult);
-                            //var res = "";// + util.objectToString(result) + "\n---\n";
-                            //liberator.log(result.matchCount + " matches: " + result.searchResult);
-                            var comp = [];
-                            //if (result.searchResult == result.RESULT_SUCCESS)
-                            //    urlResultsCache = result;
-
-                            for (var i = 0; i < result.matchCount; i++)
-                            {
-                                comp.push([result.getValueAt(i), result.getCommentAt(i)]);
-                            }
-                            urlCompletionCache = comp;
-                            if (comp.length > 0 || result.searchResult == result.RESULT_SUCCESS)
-                                liberator.commandline.setCompletions(completions.concat(comp));
-                        }
-                    });
-                }
-            }
-
-            return [start, completions.concat(urlCompletionCache)];
-        },
-
-        search: function (filter)
-        {
-            var engines = liberator.bookmarks.getSearchEngines().concat(liberator.bookmarks.getKeywords());
-            return [0, this.filter(engines, filter)];
-        },
-
-        stylesheet: function (filter)
-        {
-            var stylesheets = getAllStyleSheets(window.content);
-
-            stylesheets = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
-                return [stylesheet.title, stylesheet.href || "inline"];
-            });
-
-            return [0, this.filter(stylesheets, filter)];
-        },
-
-        // TODO: support file:// and \ or / path separators on both platforms
-        // if "tail" is true, only return names without any directory components
-        file: function (filter, tail)
-        {
-            var dir = "", compl = "";
-            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
-            if (matches)
-            {
-                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
-                compl = matches[2] || "";
-            }
-
-            var files = [], mapped = [];
-            try
-            {
-                files = liberator.io.readDirectory(dir);
-                mapped = files.map(function (file) {
-                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
-                }).sort(function (a, b) {
-                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
-                }).sort(function (a, b) {
-                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
-                });
-            }
-            catch (e)
-            {
-                return [0, []];
-            }
-
-            if (tail)
-                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
-            else
-                return [0, buildLongestStartingSubstring(mapped, filter)];
-        },
-
+  
         command: function (filter)
         {
             var completions = [];
@@ -463,6 +297,193 @@ liberator.Completion = function () //{{{
             return [offset, buildLongestStartingSubstring(completions, filter)];
         },
 
+        // TODO: support file:// and \ or / path separators on both platforms
+        // if "tail" is true, only return names without any directory components
+        file: function (filter, tail)
+        {
+            var dir = "", compl = "";
+            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
+            if (matches)
+            {
+                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
+                compl = matches[2] || "";
+            }
+
+            var files = [], mapped = [];
+            try
+            {
+                files = liberator.io.readDirectory(dir);
+                mapped = files.map(function (file) {
+                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
+                }).sort(function (a, b) {
+                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
+                }).sort(function (a, b) {
+                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
+                });
+            }
+            catch (e)
+            {
+                return [0, []];
+            }
+
+            if (tail)
+                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
+            else
+                return [0, buildLongestStartingSubstring(mapped, filter)];
+        },
+
+        macro: function (filter)
+        {
+            var macros = [];
+            var tmp = liberator.events.getMacros();
+            for (var item in tmp)
+                macros.push([item, tmp[item]]);
+        
+            return [0, liberator.completion.filter(macros, filter)];
+        },
+
+        search: function (filter)
+        {
+            var engines = liberator.bookmarks.getSearchEngines().concat(liberator.bookmarks.getKeywords());
+            return [0, this.filter(engines, filter)];
+        },
+
+        // XXX: Move to bookmarks.js?
+        searchEngineSuggest: function (filter, engineAliases)
+        {
+            if (!filter)
+                return [0, []];
+
+        	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
+        	var responseType = "application/x-suggestions+json";
+        	var ss = Components.classes["@mozilla.org/browser/search-service;1"]
+        	               .getService(Components.interfaces.nsIBrowserSearchService);
+
+        	var completions = [];
+        	engineList.forEach (function (name)
+        	{
+        		var query = filter;
+        		var queryURI;
+        		var engine = ss.getEngineByAlias(name);
+        		var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
+        		var matches = query.match(reg);
+        		if (matches)
+            		query = matches[2];
+
+            	if (engine && engine.supportsResponseType(responseType))
+                    queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
+                else
+                    return [0, []];
+
+            	var xhr = new XMLHttpRequest();
+            	xhr.open("GET", queryURI, false);
+            	xhr.send(null);
+
+                var json = Components.classes["@mozilla.org/dom/json;1"]
+                           .createInstance(Components.interfaces.nsIJSON);
+                var results = json.decode(xhr.responseText)[1];
+                if (!results)
+                    return [0, []];
+
+            	results.forEach(function (item)
+            	{
+                    // make sure we receive strings, otherwise a man-in-the-middle attack
+                    // could return objects which toString() method could be called to
+                    // execute untrusted code
+                    if (typeof item != "string")
+                        return [0, []];
+
+            	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
+            	});
+        	});
+
+        	return [0, completions];
+        },
+
+        // filter a list of urls
+        //
+        // may consist of search engines, filenames, bookmarks and history,
+        // depending on the 'complete' option
+        // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
+        url: function (filter, complete)
+        {
+            var completions = [];
+            var start = 0;
+            var skip = filter.match("^(.*" + liberator.options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
+            if (skip)
+            {
+                start += skip[1].length;
+                filter = skip[2];
+            }
+
+            var cpt = complete || liberator.options["complete"];
+            var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
+            var suggestEngineAlias = liberator.options["suggestengines"] || "google";
+            // join all completion arrays together
+            for (var i = 0; i < cpt.length; i++)
+            {
+                if (cpt[i] == "s")
+                    completions = completions.concat(this.search(filter)[1]);
+                else if (cpt[i] == "f")
+                    completions = completions.concat(this.file(filter, false)[1]);
+                else if (!autoCompletions && cpt[i] == "b")
+                    completions = completions.concat(liberator.bookmarks.get(filter));
+                else if (!autoCompletions && cpt[i] == "h")
+                    completions = completions.concat(liberator.history.get(filter));
+                else if (cpt[i] == "S")
+                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
+                else if (autoCompletions && cpt[i] == "l") // add completions like Firefox's smart location bar
+                {
+                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"].
+                                            getService(Components.interfaces.nsIAutoCompleteSearch);
+                    completionService.startSearch(filter, "", urlResultsCache, {
+                        onSearchResult: function (search, result) {
+                            //if (result.searchResult != result.RESULT_SUCCESS)
+                            //    return;
+                            //liberator.log(result.searchResult);
+                            //var res = "";// + util.objectToString(result) + "\n---\n";
+                            //liberator.log(result.matchCount + " matches: " + result.searchResult);
+                            var comp = [];
+                            //if (result.searchResult == result.RESULT_SUCCESS)
+                            //    urlResultsCache = result;
+
+                            for (var i = 0; i < result.matchCount; i++)
+                            {
+                                comp.push([result.getValueAt(i), result.getCommentAt(i)]);
+                            }
+                            urlCompletionCache = comp;
+                            if (comp.length > 0 || result.searchResult == result.RESULT_SUCCESS)
+                                liberator.commandline.setCompletions(completions.concat(comp));
+                        }
+                    });
+                }
+            }
+
+            return [start, completions.concat(urlCompletionCache)];
+        },
+
+        stylesheet: function (filter)
+        {
+            var stylesheets = getAllStyleSheets(window.content);
+
+            stylesheets = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
+                return [stylesheet.title, stylesheet.href || "inline"];
+            });
+
+            return [0, this.filter(stylesheets, filter)];
+        },
+
+        userMapping: function (filter, modes)
+        {
+            // TODO: add appropriate getters to l.mappings
+            var mappings = [];
+
+            for (var map in liberator.mappings.getUserIterator(modes))
+                mappings.push([map.names[0], ""]);
+
+            return [0, this.filter(mappings, filter)];
+        },
+
         // discard all entries in the 'urls' array, which don't match 'filter
         // urls must be of type [["url", "title"], [...]] or optionally
         //                      [["url", "title", keyword, [tags]], [...]]
@@ -558,17 +579,6 @@ liberator.Completion = function () //{{{
             }
 
             return filtered.concat(additionalCompletions);
-        },
-
-        userMapping: function (filter, modes)
-        {
-            // TODO: add appropriate getters to l.mappings
-            var mappings = [];
-
-            for (var map in liberator.mappings.getUserIterator(modes))
-                mappings.push([map.names[0], ""]);
-
-            return [0, this.filter(mappings, filter)];
         },
 
         // generic helper function which checks if the given "items" array pass "filter"

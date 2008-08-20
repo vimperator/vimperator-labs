@@ -394,16 +394,6 @@ liberator.Events = function () //{{{
         return 0;
     }
 
-    function getMacroCompletions(filter)
-    {
-        var macros = [];
-        var tmp = liberator.events.getMacros();
-        for (var item in tmp)
-            macros.push([item, tmp[item]]);
-
-        return [0, liberator.completion.filter(macros, filter)];
-    }
-
     function isFormElemFocused()
     {
         var elt = window.document.commandDispatcher.focusedElement;
@@ -613,7 +603,7 @@ liberator.Events = function () //{{{
                 liberator.events.deleteMacros(args);
         },
         {
-            completer: function (filter) { return getMacroCompletions(filter); }
+            completer: function (filter) { return liberator.completion.macro(filter); }
         });
 
     liberator.commands.add(["macros"],
@@ -631,7 +621,7 @@ liberator.Events = function () //{{{
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {
-            completer: function (filter) { return getMacroCompletions(filter); }
+            completer: function (filter) { return liberator.completion.macro(filter); }
         });
 
     liberator.commands.add(["pl[ay]"],
@@ -644,7 +634,7 @@ liberator.Events = function () //{{{
                 liberator.events.playMacro(args);
         },
         {
-            completer: function (filter) { return getMacroCompletions(filter); }
+            completer: function (filter) { return liberator.completion.macro(filter); }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
