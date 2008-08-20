@@ -122,13 +122,13 @@ liberator.IO = function () //{{{
             var line = "\" " + liberator.version + "\n";
             line += "\" Mappings\n";
 
-            var mode = [[[liberator.modes.NORMAL], ""], [[liberator.modes.COMMAND_LINE], "c"],
+            var modes = [[[liberator.modes.NORMAL], ""], [[liberator.modes.COMMAND_LINE], "c"],
                          [[liberator.modes.INSERT, liberator.modes.TEXTAREA], "i"]];
-            for (var y = 0; y < mode.length; y++)
+            for (var i = 0; i < modes.length; i++)
             {
                 // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
-                for (var map in liberator.mappings.getUserIterator(mode[y][0]))
-                        line += mode[y][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
+                for (var map in liberator.mappings.getUserIterator(modes[i][0]))
+                        line += modes[i][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
             }
 
             line += "\n\" Options\n";
