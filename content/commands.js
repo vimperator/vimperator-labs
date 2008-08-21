@@ -139,7 +139,7 @@ liberator.Commands = function () //{{{
 
     var exCommands = [];
 
-    function getUserCommands(name)
+    function getMatchingUserCommands(name)
     {
         var matches = [];
         for (var i = 0; i < exCommands.length; i++)
@@ -158,18 +158,6 @@ liberator.Commands = function () //{{{
             }
         }
         return matches;
-    }
-
-    function removeUserCommand(name)
-    {
-        for (var i = 0; i < exCommands.length; i++)
-        {
-            if (exCommands[i].isUserCommand && exCommands[i].name == name)
-            {
-                exCommands.splice(i, 1);
-                break;
-            }
-        }
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -244,7 +232,7 @@ liberator.Commands = function () //{{{
                     }
                     else
                     {
-                        removeUserCommand(command.name);
+                        this.removeUserCommand(command.name);
                         break;
                     }
                 }
@@ -263,6 +251,30 @@ liberator.Commands = function () //{{{
             }
 
             return null;
+        },
+
+        getUserCommand: function (name)
+        {
+            for (var i = 0; i < exCommands.length; i++)
+            {
+                if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
+                    return exCommands[i];
+            }
+
+            return null;
+        },
+
+        getUserCommands: function ()
+        {
+            var userCommands = [];
+
+            for (var i = 0; i < exCommands.length; i++)
+            {
+                if (exCommands[i].isUserCommand)
+                    userCommands.push(exCommands[i]);
+            }
+
+            return userCommands;
         },
 
         // in '-quoted strings, only ' and \ itself are escaped
@@ -287,7 +299,7 @@ liberator.Commands = function () //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function (str, options, argCount, allowUnknownOptions)
+        parseArgs: function (str, options, argCount, allowUnknownOptions) //{{{
         {
             // returns [count, parsed_argument]
             function getNextArg(str)
@@ -585,7 +597,7 @@ liberator.Commands = function () //{{{
             }
 
             return args;
-        },
+        }, //}}}
 
         // return [null, null, null, null, heredoc_tag || false];
         //        [count, cmd, special, args] = match;
@@ -626,7 +638,20 @@ liberator.Commands = function () //{{{
                 matches[3] = "";
 
             return matches;
+        },
+
+        removeUserCommand: function (name)
+        {
+            for (var i = 0; i < exCommands.length; i++)
+            {
+                if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
+                {
+                    exCommands.splice(i, 1);
+                    break;
+                }
+            }
         }
+
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -664,7 +689,7 @@ liberator.Commands = function () //{{{
             }
             else
             {
-                var cmdlist = getUserCommands(cmd);
+                var cmdlist = getMatchingUserCommands(cmd);
                 if (cmdlist.length > 0)
                 {
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
@@ -688,32 +713,47 @@ liberator.Commands = function () //{{{
             /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
+            completer: function (filter)
+            {
+                return liberator.completion.userCommand(filter);
+            }
         });
 
     commandManager.add(["comc[lear]"],
         "Delete all user-defined commands",
         function ()
         {
-            var commands = getUserCommands();
-            for (var i = 0; i < commands.length; i++)
-                removeUserCommand(commands[i].name);
+            liberator.commands.getUserCommands().forEach(function (cmd) {
+                liberator.commands.removeUserCommand(cmd.name);
+            });
         },
         { argCount: "0" });
 
-    // TODO: complete with user-defined commands
     commandManager.add(["delc[ommand]"],
         "Delete the specified user-defined command",
         function (args)
         {
-            // TODO: add getUserCommand, removeUserCommands, or similar, and make them 'public'?
-            var cmd = args.arguments[0];
-            var commands = getUserCommands(cmd);
-            if (commands.length == 1 && cmd == commands[0].name)
-                removeUserCommand(commands[0].name);
-            else
-                liberator.echoerr("E184: No such user-defined command: " + cmd);
+            var name = args.arguments[0];
+            var cmdlist = liberator.commands.getUserCommands();
+                
+            for (var i = 0; i < cmdlist.length; i++)
+            {
+                if (cmdlist[i].name == name)
+                {
+                    liberator.commands.removeUserCommand(name);
+                    return;
+                }
+            }
+
+            liberator.echoerr("E184: No such user-defined command: " + name);
         },
-        { argCount: "1" });
+        {
+            argCount: "1",
+            completer: function (filter)
+            {
+                return liberator.completion.userCommand(filter);
+            }
+        });
 
     //}}}
 

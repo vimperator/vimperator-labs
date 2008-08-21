@@ -165,23 +165,6 @@ liberator.Completion = function () //{{{
                 return buildLongestCommonSubstring(array, filter);
         },
   
-        command: function (filter)
-        {
-            var completions = [];
-
-            if (!filter)
-            {
-                for (var command in liberator.commands)
-                    completions.push([command.name, command.description]);
-                return [0, completions];
-            }
-
-            for (var command in liberator.commands)
-                completions.push([command.longNames, command.description]);
-
-            return [0, buildLongestStartingSubstring(completions, filter)];
-        },
-
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function (filter)
         {
@@ -217,6 +200,58 @@ liberator.Completion = function () //{{{
                 return [0, items.map(function ($_) { return [$_[0][0], $_[1]]; })];
 
             return [0, buildLongestCommonSubstring(items, filter)];
+        },
+
+        command: function (filter)
+        {
+            var completions = [];
+
+            if (!filter)
+            {
+                for (var command in liberator.commands)
+                    completions.push([command.name, command.description]);
+                return [0, completions];
+            }
+
+            for (var command in liberator.commands)
+                completions.push([command.longNames, command.description]);
+
+            return [0, buildLongestStartingSubstring(completions, filter)];
+        },
+
+        // TODO: support file:// and \ or / path separators on both platforms
+        // if "tail" is true, only return names without any directory components
+        file: function (filter, tail)
+        {
+            var dir = "", compl = "";
+            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
+            if (matches)
+            {
+                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
+                compl = matches[2] || "";
+            }
+
+            var files = [], mapped = [];
+            try
+            {
+                files = liberator.io.readDirectory(dir);
+                mapped = files.map(function (file) {
+                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
+                }).sort(function (a, b) {
+                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
+                }).sort(function (a, b) {
+                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
+                });
+            }
+            catch (e)
+            {
+                return [0, []];
+            }
+
+            if (tail)
+                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
+            else
+                return [0, buildLongestStartingSubstring(mapped, filter)];
         },
 
         javascript: function (str)
@@ -297,41 +332,6 @@ liberator.Completion = function () //{{{
             return [offset, buildLongestStartingSubstring(completions, filter)];
         },
 
-        // TODO: support file:// and \ or / path separators on both platforms
-        // if "tail" is true, only return names without any directory components
-        file: function (filter, tail)
-        {
-            var dir = "", compl = "";
-            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
-            if (matches)
-            {
-                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
-                compl = matches[2] || "";
-            }
-
-            var files = [], mapped = [];
-            try
-            {
-                files = liberator.io.readDirectory(dir);
-                mapped = files.map(function (file) {
-                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
-                }).sort(function (a, b) {
-                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
-                }).sort(function (a, b) {
-                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
-                });
-            }
-            catch (e)
-            {
-                return [0, []];
-            }
-
-            if (tail)
-                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
-            else
-                return [0, buildLongestStartingSubstring(mapped, filter)];
-        },
-
         macro: function (filter)
         {
             var macros = [];
@@ -400,6 +400,17 @@ liberator.Completion = function () //{{{
         	return [0, completions];
         },
 
+        stylesheet: function (filter)
+        {
+            var stylesheets = getAllStyleSheets(window.content);
+
+            stylesheets = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
+                return [stylesheet.title, stylesheet.href || "inline"];
+            });
+
+            return [0, this.filter(stylesheets, filter)];
+        },
+
         // filter a list of urls
         //
         // may consist of search engines, filenames, bookmarks and history,
@@ -462,15 +473,11 @@ liberator.Completion = function () //{{{
             return [start, completions.concat(urlCompletionCache)];
         },
 
-        stylesheet: function (filter)
+        userCommand: function (filter)
         {
-            var stylesheets = getAllStyleSheets(window.content);
-
-            stylesheets = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
-                return [stylesheet.title, stylesheet.href || "inline"];
-            });
-
-            return [0, this.filter(stylesheets, filter)];
+            var commands = liberator.commands.getUserCommands();
+            commands = commands.map(function (command) { return [command.name, ""]; });
+            return [0, this.filter(commands, filter)];
         },
 
         userMapping: function (filter, modes)
