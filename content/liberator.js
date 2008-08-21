@@ -219,7 +219,21 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["exe[cute]"],
             "Execute the argument as an Ex command",
-            function (args) { liberator.execute(args); });
+            // FIXME: this should evaluate each arg separately then join
+            // with " " before executing.
+            function (args)
+            {
+                try
+                {
+                    var cmd = eval("with (liberator) {" + args + "}");
+                    liberator.execute(cmd);
+                }
+                catch (e)
+                {
+                    liberator.echoerr(e);
+                    return;
+                }
+            });
 
         liberator.commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
