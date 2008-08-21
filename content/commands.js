@@ -431,7 +431,7 @@ liberator.Commands = function () //{{{
                 if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub))
                 {
                     onlyArgumentsRemaining = true;
-                    i+=2;
+                    i += 2;
                     continue;
                 }
 

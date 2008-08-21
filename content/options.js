@@ -65,7 +65,7 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         }
     }
 
-    this.get = function(scope)
+    this.get = function (scope)
     {
         if (scope)
         {
@@ -88,7 +88,7 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         return aValue;
     };
 
-    this.set = function(newValue, scope)
+    this.set = function (newValue, scope)
     {
         if (scope)
         {
