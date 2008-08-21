@@ -670,8 +670,12 @@ liberator.Commands = function () //{{{
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                               "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
-                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + liberator.util.escapeHTML(cmdlist[i].replacementText) + "</td></tr>";
+                    {
+                        // programmatically added user commands have a null replacementText
+                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + liberator.util.escapeHTML(cmdlist[i].replacementText || "function () { ... }") + "</td></tr>";
+                    }
                     str += "</table>";
+
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else
