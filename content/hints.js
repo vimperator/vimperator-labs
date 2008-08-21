@@ -31,6 +31,7 @@ liberator.Hints = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
@@ -183,7 +184,7 @@ liberator.Hints = function () //{{{
                 span = hints[i][2];
                 imgspan = hints[i][3];
 
-                if (! validHint(text))
+                if (!validHint(text))
                 {
                     span.style.display = "none";
                     if (imgspan)
@@ -471,7 +472,7 @@ liberator.Hints = function () //{{{
 
                         if (prevCharIdx == charIdx)
                         {
-                            if (! allowWordOverleaping)
+                            if (!allowWordOverleaping)
                                 return false;
                         }
                         else
@@ -499,7 +500,7 @@ liberator.Hints = function () //{{{
                         strIdx++;
                     else if (word.indexOf(str) == 0)
                         strIdx++;
-                    else if (! allowWordOverleaping)
+                    else if (!allowWordOverleaping)
                         return false;
 
                     if (strIdx == strings.length)

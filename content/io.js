@@ -587,7 +587,7 @@ lookup:
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    eval("with(liberator){" + str + "}");
+                    eval("with (liberator) {" + str + "}");
                 }
                 else
                 {
@@ -599,7 +599,7 @@ lookup:
                         {
                             if (heredocEnd.test(line))
                             {
-                                eval("with(liberator){" + heredoc + "}");
+                                eval("with (liberator) {" + heredoc + "}");
                                 heredoc = "";
                                 heredocEnd = null;
                             }

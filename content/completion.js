@@ -312,7 +312,7 @@ liberator.Completion = function () //{{{
                         "var comp = [];" +
                         "var type = '';" +
                         "var value = '';" +
-                        "var obj = eval('with(liberator){" + objects[o] + "}');" +
+                        "var obj = eval('with (liberator) {" + objects[o] + "}');" +
                         "for (var i in obj) {" +
                         "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
                         "     if (type == 'number' || type == 'string' || type == 'boolean') {" +

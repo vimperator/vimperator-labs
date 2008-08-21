@@ -293,7 +293,7 @@ const liberator = (function () //{{{
                     {
                         try
                         {
-                            eval("with(liberator) {" + args + "}");
+                            eval("with (liberator) {" + args + "}");
                         }
                         catch (e)
                         {
@@ -352,7 +352,7 @@ const liberator = (function () //{{{
                         else
                         {
                             while (i--)
-                                eval("with(liberator) {" + args + "}");
+                                eval("with (liberator) {" + args + "}");
                         }
 
                         if (special)
@@ -398,7 +398,7 @@ const liberator = (function () //{{{
                         if (args && args[0] == ":")
                             liberator.execute(args);
                         else
-                            eval("with(liberator){" + args + "}");
+                            eval("with (liberator) {" + args + "}");
 
                         if (special)
                             return;
