@@ -1301,7 +1301,7 @@ liberator.StatusLine = function () //{{{
                 else
                     document.getElementById("status-bar").collapsed = false;
             },
-            validator: function (value) { return (value in [0, 1, 2]); },
+            validator: function (value) { return (value >= 0 && value <= 2); },
             completer: function (filter)
             {
                 return [
