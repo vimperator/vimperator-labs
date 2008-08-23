@@ -181,7 +181,7 @@ liberator.config = { //{{{
                 },
                 NotifyDocumentCreated: function () {},
                 NotifyDocumentWillBeDestroyed: function () {}
-            }
+            };
 
 
             // XXX: Hack!
