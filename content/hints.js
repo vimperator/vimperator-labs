@@ -107,6 +107,10 @@ liberator.Hints = function () //{{{
             if (!rect)
                 continue;
 
+            var computedStyle = doc.defaultView.getComputedStyle(elem, null);
+            if (computedStyle.getPropertyValue("visibility") == "hidden" || computedStyle.getPropertyValue("display") == "none")
+                continue;
+
             // TODO: mozilla docs recommend localName instead of tagName
             tagname = elem.tagName.toLowerCase();
             if (tagname == "input" || tagname == "textarea")
