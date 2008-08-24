@@ -94,6 +94,18 @@ liberator.Tabs = function () //{{{
         return position;
     }
 
+    function copyTab(to, from)
+    {
+        var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
+                 getService(Components.interfaces.nsISessionStore);
+
+        if (!from)
+            from = getBrowser().mTabContainer.selectedItem;
+
+        var tabState = ss.getTabState(from);
+        ss.setTabState(to, tabState);
+    }
+
     // hide tabs initially
     if (liberator.config.name == "Vimperator")
         getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
@@ -471,6 +483,15 @@ liberator.Tabs = function () //{{{
             },
             { completer: function (filter) { return liberator.completion.url(filter); } });
 
+
+        liberator.commands.add(["tabde[tach]"],
+            "Detach current tab to its own window",
+            function (args, special, count)
+            {
+                liberator.tabs.detachTab(null);
+            },
+            { argCount: "0" });
+
         liberator.commands.add(["tabd[uplicate]"],
             "Duplicate current tab",
             function (args, special, count)
@@ -526,7 +547,6 @@ liberator.Tabs = function () //{{{
                     var completions = [];
                     for (var i = 0; i < undoItems.length; i++)
                     {
-                        // undoItems[i].image is also available if needed for favicons
                         var url = undoItems[i].state.entries[0].url;
                         var title = undoItems[i].title;
                         if (liberator.completion.match([url, title], filter, false))
@@ -879,42 +899,48 @@ liberator.Tabs = function () //{{{
 
         cloneTab: function (tab, activate)
         {
-            var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
-                     getService(Components.interfaces.nsISessionStore);
-
-            if (!tab)
-                tab = getBrowser().mTabContainer.selectedItem;
-
-            var tabState = ss.getTabState(tab);
             var newTab = getBrowser().addTab();
-            ss.setTabState(newTab, tabState);
+            copyTab(newTab, tab);
+
             if (activate)
                 getBrowser().mTabContainer.selectedItem = newTab;
 
             return newTab;
         },
 
+        detachTab: function (tab)
+        {
+            if (!tab)
+                tab = getBrowser().mTabContainer.selectedItem;
+
+            window.open();
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                .getService(Components.interfaces.nsIWindowMediator);
+            var win = wm.getMostRecentWindow("navigator:browser");
+
+            copyTab(win.getBrowser().mCurrentTab, tab);
+            this.remove(tab, 1, false, 1);
+        },
+
         selectAlternateTab: function ()
         {
-          if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
-          {
-            liberator.echoerr("E23: No alternate page");
-            return;
-          }
+            if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
+            {
+                liberator.echoerr("E23: No alternate page");
+                return;
+            }
 
-          // NOTE: this currently relies on v.tabs.index() returning the
-          // currently selected tab index when passed null
-          var index = liberator.tabs.index(liberator.tabs.alternate);
+            // NOTE: this currently relies on v.tabs.index() returning the
+            // currently selected tab index when passed null
+            var index = liberator.tabs.index(liberator.tabs.alternate);
 
-          // TODO: since a tab close is more like a bdelete for us we
-          // should probably reopen the closed tab when a 'deleted'
-          // alternate is selected
-          if (index == -1)
-            liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-          else
-            liberator.tabs.select(index);
-
-          return;
+            // TODO: since a tab close is more like a bdelete for us we
+            // should probably reopen the closed tab when a 'deleted'
+            // alternate is selected
+            if (index == -1)
+                liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+            else
+                liberator.tabs.select(index);
         },
 
         // NOTE: when restarting a session FF selects the first tab and then the

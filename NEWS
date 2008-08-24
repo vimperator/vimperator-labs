@@ -1,6 +1,7 @@
 <pre>
 2008-08-16:
     * version 2.0 (probably)
+    * add :tabdetach command
     * new ;b extended hint mode (thanks Daniel Schaffrath)
     * many bug fixes
 

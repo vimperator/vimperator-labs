@@ -31,6 +31,13 @@ support it, currently:
 * [c]:tab downloads[c]
 ________________________________________________________________________________
 
+|:tabd[uplicate]| +
+|:[count]:tab[duplicate]
+________________________________________________________________________________
+Duplicate the current tab and switch to the duplicate. If [count] is given,
+duplicate the tab [count] times.
+________________________________________________________________________________
+
 //TODO: should the tab commands be moved back here?
 See help::open[browsing.html#opening] for other ways to open new tabs.
 
@@ -113,13 +120,20 @@ Switch to the last tab.
 ________________________________________________________________________________
 
 
+|:tabde[tach]| +
+||:tabde[tach]||
+________________________________________________________________________________
+Detach the current tab, and open it in its own window.
+________________________________________________________________________________
+
+
 |:tabm| |:tabmove|
 ||:tabm[ove] [N]|| +
 ||:tabm[ove][!] +N | -N|| +
 ________________________________________________________________________________
-Move the current tab after tab N. When N is 0 the current tab is made the
-first one. Without N the current tab is made the last one. N can also be
-prefixed with "+" or "-" to indicate a relative movement. If [!] is
+Move the current tab to a position after tab N. When N is 0, the current tab
+is made the first one. Without N the current tab is made the last one. N can
+also be prefixed with "+" or "-" to indicate a relative movement. If [!] is
 specified the movement wraps around the start or end of the tab list.
 ________________________________________________________________________________
 
