@@ -127,11 +127,13 @@ liberator.AutoCommands = function () //{{{
                 var flag = true;
                 for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
                 {
-                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
+                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds) {
                         flag = false;
+                        break;
+                    }
                 }
                 if (flag)
-                    autoCommands[eventsIter[i]].push([regex, cmds]);
+                    autoCommands[eventsIter[i]].push([regex, cmds, new RegExp(regex)]);
             }
         },
 
@@ -221,8 +223,7 @@ liberator.AutoCommands = function () //{{{
             {
                 for (var i = 0; i < autoCommands[auEvent].length; i++)
                 {
-                    var regex = new RegExp(autoCommands[auEvent][i][0]);
-                    if (regex.test(url))
+                    if (autoCommands[auEvent][i][2].test(url))
                         liberator.execute(autoCommands[auEvent][i][1]);
                 }
             }
