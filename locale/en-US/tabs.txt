@@ -31,8 +31,9 @@ support it, currently:
 * [c]:tab downloads[c]
 ________________________________________________________________________________
 
-|:tabd[uplicate]| +
-|:[count]:tab[duplicate]
+
+|:tabd| |:tabduplicate|
+||:[count]tab[duplicate]|| +
 ________________________________________________________________________________
 Duplicate the current tab and switch to the duplicate. If [count] is given,
 duplicate the tab [count] times.
@@ -120,7 +121,7 @@ Switch to the last tab.
 ________________________________________________________________________________
 
 
-|:tabde[tach]| +
+|:tabde| |:tabdetach| +
 ||:tabde[tach]||
 ________________________________________________________________________________
 Detach the current tab, and open it in its own window.
