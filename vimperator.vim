@@ -27,10 +27,10 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] au[tocmd] b[uffer]
     \ iuna[bbrev] iu[nmap] javas[cript] ju[mps] js let ls macros ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap]
     \ noh[lsearch] norm[al] o[pen] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences] prefs pwd q[uit] qa[ll] qma[rk] qmarks
     \ quita[ll] re[draw] re[load] reloada[ll] res[tart] run sav[eas] sb[ar] sb[open] sbcl[ose] se[t] setg[lobal] setl[ocal]
-    \ sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabd[uplicate] tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast] tabm[ove]
-    \ tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll]
-    \ unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wqa[ll] wq xa[ll]
-    \ zo[om]
+    \ sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabde[tach] tabd[uplicate] tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast]
+    \ tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate]
+    \ undoa[ll] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wqa[ll]
+    \ wq xa[ll] zo[om]
 	\ contained
 
 syn match vimperatorCommand "!" contained
