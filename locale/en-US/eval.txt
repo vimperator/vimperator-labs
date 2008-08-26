@@ -25,11 +25,13 @@ ________________________________________________________________________________
 
 
 |:exe| |:execute|
-||:exe[cute] {expr1} [ ... ]|| +
+||:exe[cute] {expr}|| +
 ________________________________________________________________________________
-Execute the string that results from the evaluation of {expr1} as an Ex
-command. Example: [c]:execute echo "test"[c] shows a message with the text
-"test".
+Execute the string that results from the evaluation of {expr} as an Ex command.
+Example: [c]:execute "source " + io.getRCFile().path[c] sources the appropriate
+RC file.
+
+Note: Unlike Vim this currently only supports a single argument.
 ________________________________________________________________________________
 
 

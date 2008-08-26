@@ -221,6 +221,9 @@ const liberator = (function () //{{{
             "Execute the argument as an Ex command",
             // FIXME: this should evaluate each arg separately then join
             // with " " before executing.
+            // E.g. :execute "source" io.getRCFile().path
+            // Need to fix commands.parseArgs which currently strips the quotes
+            // from quoted args
             function (args)
             {
                 try
