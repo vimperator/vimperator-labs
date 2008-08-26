@@ -471,6 +471,39 @@ liberator.Editor = function () //{{{
         },
         { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
+        // textarea and visual mode
+    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+        ["~"], "Switch case of the character under the cursor and move the cursor to the right",
+        function (count)
+        {
+            if (liberator.modes.main == liberator.modes.VISUAL)
+            {
+                count = editor().selectionEnd - editor().selectionStart;
+            }
+            if (typeof count != "number" || count < 1)
+            {
+                count = 1;
+            }
+
+            while (count-- > 0)
+            {
+                var text = editor().value;
+                var pos = editor().selectionStart;
+                if (pos >= text.length)
+                {
+                    liberator.beep();
+                    return;
+                }
+                var chr = text[pos];
+                editor().value = text.substring(0, pos) +
+                    (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
+                    text.substring(pos + 1);
+                liberator.editor.moveToPosition(pos + 1, true, false);
+            }
+            liberator.modes.set(liberator.modes.TEXTAREA);
+        },
+        { flags: liberator.Mappings.flags.COUNT });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
