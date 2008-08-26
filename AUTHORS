@@ -7,6 +7,7 @@ Developers:
   * Marco Candrian (mac@calmar.ws)
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
   * Tim Hammerquist (penryu@gmail.com)
+  * Konstantin Stepanov (milezv@yandex.ru)
 
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
@@ -14,7 +15,6 @@ Inactive/former developers:
 Patches (in no special order):
   * Daniel Schaffrath (;b support)
   * Dominik Meister (:b# support and other buffer related commands)
-  * Konstantin Stepanov (:%foo support, :tabduplicate)
   * Lukas Mai
   * Guido Van Hoecke
   * Daniel Trstenjak (various things with hints)
