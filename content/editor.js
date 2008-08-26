@@ -342,6 +342,16 @@ liberator.Editor = function () //{{{
             liberator.editor.executeCommand("cmd_linePrevious", 1);
         });
 
+    liberator.mappings.add([liberator.modes.TEXTAREA],
+        ["X"], "Delete character to the left",
+        function (count) { liberator.editor.executeCommand("cmd_deleteCharBackward", count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add([liberator.modes.TEXTAREA],
+        ["x"], "Delete character to the right",
+        function (count) { liberator.editor.executeCommand("cmd_deleteCharForward", count); },
+        { flags: liberator.Mappings.flags.COUNT });
+
     // visual mode
     liberator.mappings.add([liberator.modes.CARET, liberator.modes.TEXTAREA, liberator.modes.VISUAL],
         ["v"], "Start visual mode",
