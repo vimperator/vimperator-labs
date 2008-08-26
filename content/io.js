@@ -195,8 +195,9 @@ liberator.IO = function () //{{{
             lastRunCommand = args;
 
             var output = liberator.io.system(args);
-            if (output)
-                liberator.echo(liberator.util.escapeHTML(output));
+            var command = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>";
+
+            liberator.echo(command + liberator.util.escapeHTML(output));
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
