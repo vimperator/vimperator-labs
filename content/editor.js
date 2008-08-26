@@ -324,6 +324,10 @@ liberator.Editor = function () //{{{
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.TEXTAREA],
+        ["D"], "Delete the characters under the cursor until the end of the line",
+        function () { liberator.editor.executeCommand("cmd_deleteToEndOfLine"); });
+
+    liberator.mappings.add([liberator.modes.TEXTAREA],
         ["o"], "Open line below current",
         function (count)
         {
