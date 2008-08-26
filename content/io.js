@@ -522,46 +522,56 @@ lookup:
 
             if (!file.exists())
             {
+                // XXX
                 liberator.echoerr("Command not found: " + program);
                 return -1;
             }
 
             var process = Components.classes["@mozilla.org/process/util;1"].
                           createInstance(Components.interfaces.nsIProcess);
-            process.init(file);
 
-            var ec = process.run(blocking, args, args.length);
-            return ec;
+            process.init(file);
+            process.run(blocking, args, args.length);
+
+            return process.exitValue;
         },
 
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
         system: function (str, input)
         {
-            var fileout = ioManager.createTempFile();
-            if (!fileout)
+            var stdoutFile = ioManager.createTempFile();
+            var stderrFile = ioManager.createTempFile();
+
+            if (!stdoutFile || !stderrFile) // FIXME: error reporting
                 return "";
 
             if (WINDOWS)
-                var command = str + " > " + fileout.path;
+                var command = str + " > " + stdoutFile.path + " 2> " + stderrFile.path;
             else
-                var command = str + " > \"" + fileout.path.replace('"', '\\"') + "\"";
+                var command = str + " > \"" + stdoutFile.path.replace('"', '\\"') + "\"" + " 2> \"" + stderrFile.path.replace('"', '\\"') + "\"";
 
-            var filein = null;
+            var stdinFile = null;
+
             if (input)
             {
-                filein = ioManager.createTempFile();
-                ioManager.writeFile(filein, input);
-                command += " < \"" + filein.path.replace('"', '\\"') + "\"";
+                stdinFile = ioManager.createTempFile(); // FIXME: no returned file?
+                ioManager.writeFile(stdinFile, input);
+                command += " < \"" + stdinFile.path.replace('"', '\\"') + "\"";
             }
 
-            // FIXME: why is this return value being ignored?
             var res = ioManager.run(liberator.options["shell"], [liberator.options["shellcmdflag"], command], true);
 
-            var output = ioManager.readFile(fileout);
-            fileout.remove(false);
-            if (filein)
-                filein.remove(false);
+            if (res > 0)
+                var output = ioManager.readFile(stderrFile) + "\nshell returned " + res;
+            else
+                var output = ioManager.readFile(stdoutFile);
+
+            stdoutFile.remove(false);
+            stderrFile.remove(false);
+
+            if (stdinFile)
+                stdinFile.remove(false);
 
             // if there is only one \n at the end, chop it off
             if (output && output.indexOf("\n") == output.length - 1)
