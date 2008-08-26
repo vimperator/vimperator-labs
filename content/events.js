@@ -127,7 +127,8 @@ liberator.AutoCommands = function () //{{{
                 var flag = true;
                 for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
                 {
-                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds) {
+                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
+                    {
                         flag = false;
                         break;
                     }
