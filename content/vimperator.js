@@ -62,7 +62,7 @@ liberator.config = { //{{{
         ["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],
         ["dominspector",     "DOM Inspector",
-            function () { inspectDOMDocument(content.document); }],
+            function () { try { inspectDOMDocument(content.document); } catch (e) { liberator.echoerr("DOM Inspector extension not installed"); } }],
         ["downloads",        "Manage Downloads",
             function () { toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); }],
         ["history",          "List your history",
