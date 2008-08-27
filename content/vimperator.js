@@ -99,8 +99,8 @@ liberator.config = { //{{{
     helpFiles: ["intro.html", "tutorial.html", "starting.html",
         "browsing.html", "buffer.html", "pattern.html", "options.html",
         "tabs.html", "hints.html", "map.html", "eval.html", "marks.html",
-        "repeat.html", "autocommands.html", "print.html", "developer.html",
-        "various.html"
+        "repeat.html", "autocommands.html", "print.html", "gui.html",
+        "developer.html", "various.html"
     ],
 
     init: function ()

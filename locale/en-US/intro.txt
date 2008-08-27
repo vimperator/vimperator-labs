@@ -66,6 +66,7 @@ section:Help{nbsp}topics[overview]
 - help:Autocommands[autocommands.html]: Automatically executing code on certain
   events.
 - help:Print[print.html]: Printing pages.
+- help:GUI[gui.html]: Accessing Firefox menus, dialogs and the sidebar.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other

@@ -1,0 +1,61 @@
+HEADER
+
+|gui| +
+
+Although Vimperator offers the most frequently used Firefox functionality via
+Ex and normal-mode commands there may be times when directly accessing the GUI
+is required. There are commands for accessing the menu system, standard dialogs
+and the sidebar.
+
+|:emenu| +
+||:emenu {menu}||
+________________________________________________________________________________
+Execute {menu} from the command line. This command provides command line access
+to all menu items available from the main Firefox menubar. {menu} is a
+hierachical path to the menu item with each submenu separated by a period. E.g.
+:emenu File.Open File...
+________________________________________________________________________________
+
+
+|:addo| |:addons| +
+||:addo[ns]||
+________________________________________________________________________________
+Show available Browser Extensions and Themes.
+You can add/remove/disable browser extensions from this dialog.
+Be aware that not all Firefox extensions work, because Vimperator overrides
+some key bindings and changes Firefox's GUI.
+________________________________________________________________________________
+
+
+|:dia| |:dialog|
+||:dia[log] [firefox-dialog]|| +
+________________________________________________________________________________
+Open a firefox-dialog. Available dialogs: use completion on [c]:dialog[c]
+[m]<Tab>[m]
+________________________________________________________________________________
+
+
+|:dl| |:downl| |:downloads| +
+||:downl[oads]||
+________________________________________________________________________________
+Show progress of current downloads. Open the original Firefox download dialog
+in a new tab. Here, downloads can be paused, canceled and resumed.
+________________________________________________________________________________
+
+
+|:sbcl| |:sbclose| +
+||:sbcl[ose]||
+________________________________________________________________________________
+Close the sidebar window.
+________________________________________________________________________________
+
+
+|:sbope| |:sbopen| |:sb| |:sbar| |:sideb| |:sidebar| +
+||:sidebar {name}||
+________________________________________________________________________________
+Open the sidebar window. {name} is any of the menu items listed under the
+standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
+also available in the sidebar.
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:
