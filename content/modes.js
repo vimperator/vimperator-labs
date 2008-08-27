@@ -92,7 +92,7 @@ liberator.modes = (function () //{{{
     }
 
     // NOTE: Pay attention that you don't run into endless loops
-    // Usually you should only indicate to leave a special mode linke HINTS
+    // Usually you should only indicate to leave a special mode like HINTS
     // by calling liberator.modes.reset() and adding the stuff which is needed
     // for its cleanup here
     function handleModeChange(oldMode, newMode)
