@@ -251,9 +251,10 @@ replaced with values from the user entered command line.  The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:
-`--------`----------------------------------------------------------------------
-*<args>* The command arguments exactly as supplied
-*<lt>*   A literal '<' character to allow for a literal copy of one of the escape sequences.  E.g. <lt>args> will expand to a literal <args>
+`----------`--------------------------------------------------------------------
+*<args>*   The command arguments exactly as supplied
+*<q-args>* The command arguments quoted as a single value in a manner suitable for expression evaluation
+*<lt>*     A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
 --------------------------------------------------------------------------------
 
 Note: {attr} not implemented yet.

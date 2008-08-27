@@ -679,7 +679,10 @@ liberator.Commands = function () //{{{
                         "User defined command",
                         function (args, special, count, modifiers)
                         {
-                            var replaced = rep.replace("<args>", args).replace("<lt>", "<");
+                            var replaced = rep.replace("<args>", args);
+                            replaced = replaced.replace("<q-args>", '"' + args.replace('"', '\\"', "g") + '"');
+                            replaced = replaced.replace("<lt>", "<");
+
                             liberator.execute(replaced);
                         },
                         { replacementText: rep }, special))
@@ -735,7 +738,7 @@ liberator.Commands = function () //{{{
         {
             var name = args.arguments[0];
             var cmdlist = liberator.commands.getUserCommands();
-                
+
             for (var i = 0; i < cmdlist.length; i++)
             {
                 if (cmdlist[i].name == name)
