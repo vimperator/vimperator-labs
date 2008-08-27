@@ -868,6 +868,8 @@ liberator.Buffer = function () //{{{
             var evt = doc.createEvent("MouseEvents");
             evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
+            evt.initMouseEvent("mouseup", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
+            elem.dispatchEvent(evt);
             evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
             elem.dispatchEvent(evt);
         },
