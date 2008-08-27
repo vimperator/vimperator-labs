@@ -358,6 +358,11 @@ liberator.CommandLine = function () //{{{
 
     var modes = [liberator.modes.COMMAND_LINE];
 
+    // TODO: move "<Esc>", "<C-[" here from mappings
+    liberator.mappings.add(modes,
+        ["<C-c>"], "Focus content",
+        function () { liberator.events.onEscape(); });
+
     liberator.mappings.add(modes,
         ["<Space>"], "Expand command line abbreviation",
         function ()
