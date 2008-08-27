@@ -2,6 +2,13 @@ HEADER
 
 section:Various{nbsp}commands[various]
 
+|:beep| +
+||:beep||
+________________________________________________________________________________
+Play a system beep.
+________________________________________________________________________________
+
+
 |<C-l>| |CTRL-L| |:redr| |:redraw| +
 ||:redr[aw]||
 ____
@@ -97,13 +104,6 @@ ________________________________________________________________________________
 Start caret mode. This mode resembles the Vim normal mode where you see a text
 cursor and can move around. If you want to select text in this mode, press
 [m]v[m] to start its Visual mode.
-________________________________________________________________________________
-
-
-|:beep| +
-||:beep||
-________________________________________________________________________________
-Play a system beep.
 ________________________________________________________________________________
 
 
