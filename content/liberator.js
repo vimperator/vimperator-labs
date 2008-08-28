@@ -888,8 +888,6 @@ const liberator = (function () //{{{
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession)
         {
-            liberator.autocommands.trigger("Quit", "");
-
             if (saveSession)
                 liberator.options.setPref("browser.startup.page", 3); // start with saved session
             else
@@ -912,8 +910,6 @@ const liberator = (function () //{{{
             // something aborted the quit process.
             if (cancelQuit.data)
                 return;
-
-            liberator.autocommands.trigger("Quit", "");
 
             // notify all windows that an application quit has been granted.
             os.notifyObservers(null, "quit-application-granted", null);
@@ -1038,6 +1034,8 @@ const liberator = (function () //{{{
                 liberator.quickmarks.destroy();
 
             window.dump("All liberator modules destroyed\n");
+
+            liberator.autocommands.trigger("Quit", "");
         },
 
         sleep: function (ms)
