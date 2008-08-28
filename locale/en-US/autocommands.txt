@@ -27,8 +27,8 @@ Available {events}:
 *Startup*        Triggered after Firefox starts
 --------------------------------------------------------------
 
-{pat} is a regular expression, use .* if you want to match all URLs.
-
+{pat} is a regular expression, use .* if you want to match all URLs. Note: This
+differs from Vim which uses a glob rather than a regexp for {pat}.
 ________________________________________________________________________________
 
 section:Examples[autocmd_examples]
