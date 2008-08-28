@@ -1026,6 +1026,8 @@ const liberator = (function () //{{{
 
         shutdown: function ()
         {
+            liberator.autocommands.trigger("QuitPre", "");
+
             // save our preferences
             liberator.commandline.destroy();
             liberator.options.destroy();

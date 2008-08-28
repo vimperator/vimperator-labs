@@ -198,6 +198,8 @@ liberator.IO = function () //{{{
             var command = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>";
 
             liberator.echo(command + liberator.util.escapeHTML(output));
+
+            liberator.autocommands.trigger("ShellCmdPost", "");
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
