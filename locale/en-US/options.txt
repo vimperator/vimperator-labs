@@ -245,6 +245,14 @@ The XPath string of hintable elements activated by [m];[m].
 ____
 
 
+|\'ei'| |\'eventignore'|
+||'eventignore'|| stringlist (default: "")
+____
+A list of autocommand event names which should be ignored. If the list contains
+the value "all" then all events are ignored.
+____
+
+
 |\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____

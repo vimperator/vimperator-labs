@@ -46,6 +46,10 @@ liberator.AutoCommands = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.options.add(["eventignore", "ei"],
+        "List of autocommand event names which should be ignored",
+        "stringlist", "");
+
     liberator.options.add(["focuscontent", "fc"],
         "Try to stay in normal mode after loading a web page",
         "boolean", false);
@@ -220,6 +224,13 @@ liberator.AutoCommands = function () //{{{
 
         trigger: function (auEvent, url)
         {
+            if (liberator.options["eventignore"].split(",").some(function (event) {
+                    return event == "all" || event == auEvent;
+                }))
+            {
+                return;
+            }
+
             if (autoCommands[auEvent])
             {
                 for (var i = 0; i < autoCommands[auEvent].length; i++)
