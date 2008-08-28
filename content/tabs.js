@@ -639,7 +639,7 @@ liberator.Tabs = function () //{{{
         {
             var buffers = [];
             var browsers = getBrowser().browsers;
-            for (var i in browsers)
+            for (var i = 0; i < browsers.length; i++)
             {
                 var title = browsers[i].contentTitle || "(Untitled)";
                 var uri = browsers[i].currentURI.spec;
