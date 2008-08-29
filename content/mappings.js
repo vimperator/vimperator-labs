@@ -228,12 +228,18 @@ liberator.Mappings = function () //{{{
             "Remove a mapping" + modeDescription,
             function (args)
             {
+                if (!args)
+                {
+                    liberator.echoerr("E474: Invalid argument");
+                    return;
+                }
+
                 var found = false;
                 for (let i = 0; i < modes.length; i++)
                 {
-                    if (liberator.mappings.hasMap(modes[i], args.arguments[0]))
+                    if (liberator.mappings.hasMap(modes[i], args))
                     {
-                        liberator.mappings.remove(modes[i], args.arguments[0]);
+                        liberator.mappings.remove(modes[i], args);
                         found = true;
                     }
                 }
@@ -241,7 +247,6 @@ liberator.Mappings = function () //{{{
                     liberator.echoerr("E31: No such mapping");
             },
             {
-                argCount: "1",
                 completer: function (filter)
                 {
                     return liberator.completion.userMapping(filter, modes);
