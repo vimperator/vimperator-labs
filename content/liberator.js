@@ -1049,6 +1049,7 @@ const liberator = (function () //{{{
             var then = new Date().getTime(), now = then;
             for (; now - then < ms; now = new Date().getTime())
                 mainThread.processNextEvent(true);
+            return true;
         },
 
         get windows()
