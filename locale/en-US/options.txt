@@ -14,28 +14,51 @@ achieve special effects.  These options come in 5 forms:
 
 section:Setting{nbsp}options[set-option,E764]
 
-|:set| |:se|
-||:se[t]|| Show all options that differ from their default value.
-
-||:se[t] all|| Show all options.
-
-||:se[t] {option}?|| Show value of {option}.
-
-||:se[t] {option}|| Toggle option: set, switch it on.
+|:set| |:se| +
+||:se[t]||
 ____
+Show all options that differ from their default value.
+____
+
+||:se[t] all||
+____
+Show all options. Show all options.
+____
+
+|E518| |E519|
+||:se[t] {option}?||
+____
+Show value of {option}.
+____
+
+||:se[t] {option}||
+____
+Toggle option: set, switch it on. +
 Number option: show value. +
 String option: show value.
 ____
 
-||:se[t] no{option} +++<br/>+++ :se[t] {option}!|| Toggle option: Reset, switch it off.
+||:se[t] no((option))|| +
+____
+Toggle option: Reset, switch it off.
+____
 
-// :se[t] {option}!   or
-||:se[t] inv{option}|| Toggle option: Invert value.
+||:se[t] {option}!|| +
+||:se[t] inv((option))|| +
+____
+Toggle option: Invert value.
+____
 
 |:set-default|
-||:se[t] {option}&|| Reset option to its default value.
+||:se[t] {option}&||
+____
+Reset option to its default value.
+____
 
-||:se[t] all&|| Set all options to their default value.
+||:se[t] all&||
+____
+Set all options to their default value.
+____
 
 |:set-args| |E487| |E521|
 ||:se[t] {option}={value}|| +
