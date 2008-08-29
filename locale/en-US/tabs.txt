@@ -77,10 +77,10 @@ ________________________________________________________________________________
 
 
 |<C-6>| |<C-^>| +
-||<C-^>||
+||[count]<C-^>||
 ________________________________________________________________________________
-Select the alternate tab. The alternate tab is the last selected tab. This
-provides a quick method of toggling between two tabs.
+Select the alternate tab or the [count]th tab. The alternate tab is the last
+selected tab. This provides a quick method of toggling between two tabs.
 ________________________________________________________________________________
 
 

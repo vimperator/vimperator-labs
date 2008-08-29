@@ -250,8 +250,15 @@ liberator.Tabs = function () //{{{
             { flags: liberator.Mappings.flags.COUNT });
 
         liberator.mappings.add([liberator.modes.NORMAL], ["<C-^>", "<C-6>"],
-            "Select the alternate tab",
-            function () { liberator.tabs.selectAlternateTab(); });
+            "Select the alternate tab or the [count]th tab",
+            function (count)
+            {
+                if (count < 1)
+                    liberator.tabs.selectAlternateTab();
+                else
+                    liberator.tabs.switchTo(count.toString(), false);
+            },
+            { flags: liberator.Mappings.flags.COUNT });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
