@@ -15,14 +15,14 @@ bare-looking window.  The menubar, navigation bar, and bookmark bars are
 hidden.  In case you missed the notice in the help:Introduction[intro.html],
 you can regain these by issuing the command
 
-  :set go+=mTb<cr>
+  :set go+=mTb<CR>
 
-where [m]cr[m] represents pressing the <Enter> or <Return> key.
+where [m]<CR>[m] represents pressing the <Enter> or <Return> key.
 If you're a veteran Vim user, this may look familiar.  It should.
 
 However, in this author's opinion, the best way to get familiar with
 Vimperator is to leave these disabled for now. (The above action can be
-reversed with [c]:set go=<cr>[c])  You can look at the entry for
+reversed with [c]:set go=<CR>[c])  You can look at the entry for
 [o]guioptions[o] in help:options[options.html] for more information on this.
 
 section:Vimperator's{nbsp}modal{nbsp}interface[modal]
@@ -36,8 +36,8 @@ When Vimperator starts, it is in normal mode by default.  This is probably
 where you will spend the majority of your time.
 
 The other core mode of Vimperator, command-line mode, can be entered from
-normal mode by typing a ':' (colon).  You will frequently see Vimperator
-commands start with a ':', indicating that what follows is a command.
+normal mode by typing a \':' (colon).  You will frequently see Vimperator
+commands start with a \':', indicating that what follows is a command.
 
 To return to normal mode command-line mode, type [m]<Esc>[m].  Pressing
 [m]<Esc>[m] will also return you to normal mode from most other modes in
@@ -51,7 +51,7 @@ later.  Most of the documentation for Vimperator's features are easily found
 using the [c]:help[c] command.  For example, you can find help on the
 [c]:help[c] command by typing
 
-  :help :help<cr>
+  :help :help<CR>
 
 Similarly, help on configurable options is available with [c]:help
 '{option_name}'[c]. (Note the single quotes around the option name as in Vim.)
@@ -59,8 +59,8 @@ Information on all available options is, predictably, [c]:help options[c].
 
 and you can find out about the [m]gt[m] and [m]gT[m] mapping with
 
-  :help gt<cr>
-  :help gT<cr>
+  :help gt<CR>
+  :help gT<CR>
 
 Finally, in addition to the help system itself, [c]:exusage[c] and
 [c]:viusage[c] are useful quick-reference commands.
@@ -119,11 +119,11 @@ in the current tab, use [c]:open[c]. The normal mode
 mappings [m]t[m] and [m]o[m], respectively, map to these commands, so the
 following pairs sequences are equivalent:
 
-  :open my.webmail.com<cr>
-  omy.webmail.com<cr>
+  :open my.webmail.com<CR>
+  omy.webmail.com<CR>
 
-  :tabopen vimperator.mozdev.org<cr>
-  tvimperator.mozdev.org<cr>
+  :tabopen vimperator.mozdev.org<CR>
+  tvimperator.mozdev.org<CR>
 
 section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints.html]
 
@@ -215,7 +215,7 @@ how to make the best use of them.
 Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
 remember to use the [m]gt[m]/[m]gT[m] mappings to get back to this page.  If
 using the [c]:open[c] command, use the history keys (e.g., [m]H[m]) to return.
-If you get hopelessly lost, just type [c]:help<cr>[c] and click the
+If you get hopelessly lost, just type [c]:help<CR>[c] and click the
 ``Tutorial'' link to return.
 
 
