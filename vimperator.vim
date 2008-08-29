@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Aug 28
+" Last Change:      2008 Aug 29
 
 if exists("b:current_syntax")
   finish
@@ -43,10 +43,11 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ extendedhinttags eht eventignore ei focuscontent fc nofocuscontent nofc fullscreen fs nofullscreen nofs guioptions go
     \ hintmatching hm hintstyle hs hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss
     \ incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc
-    \ linkfgcolor lfc linksearch lks nolinksearch nolks more newtab nextpattern nomore pageinfo pa popups pps preload nopreload
-    \ previewheight pvh previouspattern online noonline scroll scr shell sh shellcmdflag shcf showmode smd noshowmode nosmd
-    \ showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs suggestengines titlestring usermode um nousermode noum
-    \ urlseparator verbose vbs visualbell vb novisualbell novb visualbellstyle wildmode wim wildoptions wop wordseparators wsp
+    \ linkfgcolor lfc linksearch lks nolinksearch nolks loadplugins noloadplugins lpl nolpl more newtab nextpattern nomore
+    \ pageinfo pa popups pps preload nopreload previewheight pvh previouspattern online noonline scroll scr shell sh shellcmdflag
+    \ shcf showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs suggestengines
+    \ titlestring usermode um nousermode noum urlseparator verbose vbs visualbell vb novisualbell novb visualbellstyle wildmode
+    \ wim wildoptions wop wordseparators wsp
     \ contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline

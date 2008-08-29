@@ -72,6 +72,10 @@ const liberator = (function () //{{{
                 }
             });
 
+        liberator.options.add(["loadplugins", "lpl"],
+            "Load plugin scripts when starting up",
+            "boolean", true);
+
         liberator.options.add(["verbose", "vbs"],
             "Define which type of messages are logged",
             "number", 0,
@@ -983,28 +987,31 @@ const liberator = (function () //{{{
                 else
                     liberator.log("No user RC file found", 3);
 
-                // also source plugins in ~/.vimperator/plugin/
-                try
+                if (liberator.options["loadplugins"])
                 {
-                    var pluginDir = liberator.io.getSpecialDirectory("plugin");
-                    if (pluginDir)
+                    // also source plugins in ~/.vimperator/plugin/
+                    try
                     {
-                        var files = liberator.io.readDirectory(pluginDir.path);
-                        liberator.log("Sourcing plugin directory...", 3);
-                        files.forEach(function (file) {
-                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
-                                liberator.io.source(file.path, false);
-                        });
+                        var pluginDir = liberator.io.getSpecialDirectory("plugin");
+                        if (pluginDir)
+                        {
+                            var files = liberator.io.readDirectory(pluginDir.path);
+                            liberator.log("Sourcing plugin directory...", 3);
+                            files.forEach(function (file) {
+                                if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
+                                    liberator.io.source(file.path, false);
+                            });
+                        }
+                        else
+                        {
+                            liberator.log("No user plugin directory found", 3);
+                        }
                     }
-                    else
+                    catch (e)
                     {
-                        liberator.log("No user plugin directory found", 3);
+                        // thrown if directory does not exist
+                        //liberator.log("Error sourcing plugin directory: " + e);
                     }
-                }
-                catch (e)
-                {
-                    // thrown if directory does not exist
-                    //liberator.log("Error sourcing plugin directory: " + e);
                 }
 
                 // after sourcing the initialization files, this function will set
