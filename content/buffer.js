@@ -678,10 +678,12 @@ liberator.Buffer = function () //{{{
                     .getInterface(Components.interfaces.nsISelectionDisplay)
                     .QueryInterface(Components.interfaces.nsISelectionController);
 
+                var caretmode = selectionController.getCaretEnabled();
                 selectionController.setCaretEnabled(true);
                 selectionController.wordMove(false, false);
                 selectionController.wordMove(true, true);
                 selection = window.content.getSelection().toString();
+                selectionController.setCaretEnabled(caretmode);
             }
 
             return selection;
