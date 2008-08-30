@@ -1,6 +1,7 @@
 <pre>
 2008-08-16:
     * version 2.0 (probably)
+    * allow :dialog to open the cookies manager
     * add 'loadplugins' option
     * add count support to C-^ (Kazuo)
     * add 'eventignore' option
