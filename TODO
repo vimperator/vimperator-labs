@@ -35,6 +35,7 @@ FEATURES:
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
 6 add [count] support to :b* and :tab* commands where missing
+6 registers
 6 allow for multiple ex commands separated with |
 6 check/correct spellings in insert mode with some mappings
 6 add more autocommands (TabClose, TabOpen, TabChanged, any more?)
