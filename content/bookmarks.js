@@ -775,7 +775,7 @@ liberator.QuickMarks = function () //{{{
     // TODO: move to a storage module
     var savedMarks = liberator.options.getPref("extensions.vimperator.quickmarks", "").split("\n");
 
-    // load the saved quickmarks -- TODO: change to sqlite
+    // load the saved quickmarks
     for (var i = 0; i < savedMarks.length - 1; i += 2)
     {
         qmarks[savedMarks[i]] = savedMarks[i + 1];
@@ -830,6 +830,7 @@ liberator.QuickMarks = function () //{{{
                 liberator.echoerr("E471: Argument required");
                 return;
             }
+
             if (special && args)
             {
                 liberator.echoerr("E474: Invalid argument");
@@ -860,7 +861,7 @@ liberator.QuickMarks = function () //{{{
         "Show all QuickMarks",
         function (args)
         {
-            // ignore invalid mark characters unless there are no valid mark chars
+            // ignore invalid qmark characters unless there are no valid qmark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
             {
                 liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
@@ -910,12 +911,21 @@ liberator.QuickMarks = function () //{{{
 
         list: function (filter)
         {
-            var marks = [];
+            var lowercaseMarks = [];
+            var uppercaseMarks = [];
+            var numberMarks    = [];
 
-            // TODO: should we sort these in a-zA-Z0-9 order?
-            for (var mark in qmarks)
-                marks.push([mark, qmarks[mark]]);
-            marks.sort();
+            for (var qmark in qmarks)
+            {
+                if (/[a-z]/.test(qmark))
+                    lowercaseMarks.push(qmark);
+                else if (/[A-Z]/.test(qmark))
+                    uppercaseMarks.push(qmark);
+                else
+                    numberMarks.push(qmark);
+            }
+
+            var marks = lowercaseMarks.sort().concat(uppercaseMarks.sort()).concat(numberMarks.sort());
 
             if (marks.length == 0)
             {
@@ -925,10 +935,11 @@ liberator.QuickMarks = function () //{{{
 
             if (filter.length > 0)
             {
-                marks = marks.filter(function (mark) {
-                        if (filter.indexOf(mark[0]) > -1)
-                            return mark;
+                marks = marks.filter(function (qmark) {
+                    if (filter.indexOf(qmark) > -1)
+                        return qmark;
                 });
+
                 if (marks.length == 0)
                 {
                     liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
@@ -938,11 +949,13 @@ liberator.QuickMarks = function () //{{{
 
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
+
             for (var i = 0; i < marks.length; i++)
             {
-                list += "<tr><td>    " + marks[i][0] +
-                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(marks[i][1]) + "</td></tr>";
+                list += "<tr><td>    " + marks[i] +
+                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(qmarks[marks[i]]) + "</td></tr>";
             }
+
             list += "</table>";
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
