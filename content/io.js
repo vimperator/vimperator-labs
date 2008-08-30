@@ -78,7 +78,21 @@ liberator.IO = function () //{{{
         function (args)
         {
             if (!args)
+            {
                 args = "~";
+            }
+            else if (args == "-")
+            {
+                if (oldcwd)
+                {
+                    args = oldcwd;
+                }
+                else
+                {
+                    liberator.echoerr("E186: No previous directory");
+                    return;
+                }
+            }
 
             if (liberator.io.setCurrentDirectory(args))
                 liberator.echo(liberator.io.getCurrentDirectory());
@@ -297,7 +311,7 @@ liberator.IO = function () //{{{
 
             if (newdir == "-")
             {
-                [cwd, oldcwd] = [oldcwd, cwd];
+                [cwd, oldcwd] = [oldcwd, this.getCurrentDirectory()];
             }
             else
             {
@@ -308,7 +322,7 @@ liberator.IO = function () //{{{
                     liberator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
                     return null;
                 }
-                [cwd, oldcwd] = [newdir, cwd];
+                [cwd, oldcwd] = [newdir, this.getCurrentDirectory()];
             }
             return ioManager.getCurrentDirectory();
         },
