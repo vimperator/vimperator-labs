@@ -45,6 +45,13 @@ liberator.IO = function () //{{{
     ////////////////////// OPTIONS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    var cdpath = "," + (environmentService.get("CDPATH").replace(/[:;]/g, ",") || ",");
+
+    // TODO: setter should expand environment variables
+    liberator.options.add(["cdpath", "cd"],
+        "List of directories searched when executing :cd",
+        "stringlist", cdpath);
+
     var shell, shellcmdflag;
 
     if (WINDOWS)
@@ -94,8 +101,45 @@ liberator.IO = function () //{{{
                 }
             }
 
-            if (liberator.io.setCurrentDirectory(args))
-                liberator.echo(liberator.io.getCurrentDirectory());
+            // go directly to an absolute path or look for a relative path
+            // match in 'cdpath'
+            if (/^(~|\/|\.\/|\.\.\/)/.test(args))
+            {
+                // TODO: apparently we don't handle ../ or ./ paths yet
+                if (liberator.io.setCurrentDirectory(args))
+                    liberator.echo(liberator.io.getCurrentDirectory());
+            }
+            else
+            {
+                var directories = liberator.options["cdpath"].replace(/^,$|^,,|,,$/, "").split(",");
+
+                // empty 'cdpath' items mean the current directory
+                directories = directories.map(function (directory) {
+                    return directory == "" ? liberator.io.getCurrentDirectory() : directory;
+                });
+
+                var directoryFound = false;
+
+                for (let i = 0; i < directories.length; i++)
+                {
+                    var dir = directories[i] + liberator.io.directorySeperator + args;
+                    if (liberator.io.setCurrentDirectory(dir))
+                    {
+                        // FIXME: we're just overwriting the error message from
+                        // setCurrentDirectory here
+                        liberator.echo(liberator.io.getCurrentDirectory());
+                        directoryFound = true;
+                        break;
+                    }
+                }
+
+                if (!directoryFound)
+                {
+                    liberator.echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
+                                    + "\n"
+                                    + "E472: Command failed");
+                }
+            }
         },
         {
             completer: function (filter) { return liberator.completion.file(filter, true); }
@@ -324,6 +368,7 @@ liberator.IO = function () //{{{
                 }
                 [cwd, oldcwd] = [newdir, this.getCurrentDirectory()];
             }
+
             return ioManager.getCurrentDirectory();
         },
 

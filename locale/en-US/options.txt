@@ -203,6 +203,15 @@ Foreground color of the current active link during hint mode.
 ____
 
 
+|\'cd'| |\'cdpath'|
+||'cdpath' 'cd'|| string (default: black)
+____
+List of directories searched when executing the :cd command. This is only used
+for relative paths, if an absolute path is specified then the option is
+ignored. 
+____
+
+
 |\'cpt'| |\'complete'|
 ||'complete' 'cpt'|| charlist (default: sfbh)
 ____
@@ -444,8 +453,8 @@ This includes (X)HTML elements with an "href" atrribute and XLink "simple" links
 ____
 
 
-|\'noloadplugins'| |\'loadplugins'|
-||'loadplugins'|| boolean (default on)
+|\'nolpl'| |\'lpl'||\'noloadplugins'| |\'loadplugins'|
+||'loadplugins' 'lpl'|| boolean (default on)
 ____
 Load plugin scripts when starting up.
 ____
