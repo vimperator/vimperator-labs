@@ -571,9 +571,8 @@ liberator.Buffer = function () //{{{
         {
             var stylesheets = getAllStyleSheets(window.content);
 
-            // TODO: how should we handle duplicate titles?
             stylesheets = stylesheets.filter(function (stylesheet) {
-                return !(!/^(screen|all|)$/i.test(stylesheet.media.mediaText) || /^\s*$/.test(stylesheet.title));
+                return /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title);
             });
 
             return stylesheets;

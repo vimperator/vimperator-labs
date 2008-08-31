@@ -164,7 +164,7 @@ liberator.Completion = function () //{{{
             else
                 return buildLongestCommonSubstring(array, filter);
         },
-  
+
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function (filter)
         {
@@ -338,7 +338,7 @@ liberator.Completion = function () //{{{
             var tmp = liberator.events.getMacros();
             for (var item in tmp)
                 macros.push([item, tmp[item]]);
-        
+
             return [0, liberator.completion.filter(macros, filter)];
         },
 
@@ -402,13 +402,22 @@ liberator.Completion = function () //{{{
 
         stylesheet: function (filter)
         {
-            var stylesheets = getAllStyleSheets(window.content);
-
-            stylesheets = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
+            var completions = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
                 return [stylesheet.title, stylesheet.href || "inline"];
             });
 
-            return [0, this.filter(stylesheets, filter)];
+            // unify split style sheets
+            completions.forEach(function (stylesheet) {
+                for (let i = 0; i < completions.length; i++) {
+                    if (stylesheet[0] == completions[i][0] && stylesheet[1] != completions[i][1])
+                    {
+                        stylesheet[1] += ", " + completions[i][1];
+                        completions.splice(i, 1);
+                    }
+                }
+            });
+
+            return [0, this.filter(completions, filter)];
         },
 
         // filter a list of urls
