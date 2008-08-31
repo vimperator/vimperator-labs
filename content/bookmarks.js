@@ -267,6 +267,9 @@ liberator.Bookmarks = function () //{{{
 
             //also update bookmark cache
             bookmarks.unshift([url, title, keyword, tags || []]);
+
+            liberator.autocommands.trigger("BookmarkPost", "");
+
             return true;
         },
 

@@ -1,6 +1,7 @@
 <pre>
 2008-08-16:
     * version 2.0 (probably)
+    * new events BookmarkPost, ShellCmdPost, QuitPre
     * add 'cdpath' option
     * allow :dialog to open the cookies manager
     * add 'loadplugins' option
