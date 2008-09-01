@@ -319,8 +319,13 @@ liberator.Buffer = function () //{{{
         "Focus last used input field",
         function (count)
         {
-            if (count < 1 && liberator.buffer.lastInputField)
-                liberator.buffer.lastInputField.focus();
+            if (count < 1)
+            {
+                if (liberator.buffer.lastInputField)
+                    liberator.buffer.lastInputField.focus();
+                else
+                    liberator.beep();
+            }
             else
             {
                 var first = liberator.buffer.evaluateXPath(
