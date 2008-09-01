@@ -709,6 +709,10 @@ lookup:
                             }
                         }
                     });
+
+                    // if no heredoc-end delimiter is found before EOF then
+                    // process the heredoc anyway - Vim compatible ;-)
+                    liberator.eval(heredoc);
                 }
 
                 liberator.log("Sourced: " + filename, 3);
