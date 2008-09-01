@@ -1303,6 +1303,8 @@ liberator.StatusLine = function () //{{{
                     liberator.echo("show status line only with > 1 window not implemented yet");
                 else
                     document.getElementById("status-bar").collapsed = false;
+
+                return value;
             },
             validator: function (value) { return (value >= 0 && value <= 2); },
             completer: function (filter)

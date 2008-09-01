@@ -47,10 +47,26 @@ liberator.IO = function () //{{{
 
     var cdpath = "," + (environmentService.get("CDPATH").replace(/[:;]/g, ",") || ",");
 
-    // TODO: setter should expand environment variables
     liberator.options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
-        "stringlist", cdpath);
+        "stringlist", cdpath,
+        {
+            setter: function (value)
+            {
+                var values = value.split(",");
+                var expanded = "";
+
+                for (let i = 0; i < values.length; i++)
+                {
+                    expanded += liberator.io.expandPath(values[i]);
+                    if (i < values.length - 1)
+                        expanded += ",";
+                }
+
+                return expanded;
+            }
+        });
+        
 
     var shell, shellcmdflag;
 
@@ -67,10 +83,15 @@ liberator.IO = function () //{{{
         shellcmdflag = "-c";
     }
 
-    // TODO: setter should expand environment variables
     liberator.options.add(["shell", "sh"],
         "Shell to use for executing :! and :run commands",
-        "string", shell);
+        "string", shell,
+        {
+            setter: function (value)
+            {
+                return liberator.io.expandPath(value);
+            }
+        });
 
     liberator.options.add(["shellcmdflag", "shcf"],
         "Flag passed to shell when executing :! and :run commands",

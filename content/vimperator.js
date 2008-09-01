@@ -376,6 +376,8 @@ liberator.config = { //{{{
 
                     ioService.offline = !value;
                     gPrefService.setBoolPref("browser.offline", ioService.offline);
+
+                    return value;
                 },
 
                 getter: function ()
@@ -404,6 +406,8 @@ liberator.config = { //{{{
                     {
                         liberator.log("Couldn't set titlestring", 3);
                     }
+
+                    return value;
                 }
             });
 

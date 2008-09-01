@@ -149,7 +149,11 @@ liberator.Buffer = function () //{{{
         "Show the current window fullscreen",
         "boolean", false,
         {
-            setter: function (value) { window.fullScreen = value; },
+            setter: function (value)
+            {
+                window.fullScreen = value;
+                return value;
+            },
             getter: function () { return window.fullScreen; }
         });
 
@@ -199,6 +203,8 @@ liberator.Buffer = function () //{{{
                     getMarkupDocumentViewer().authorStyleDisabled = value;
                 }
                 catch (e) {}
+
+                return value;
             },
             getter: function ()
             {

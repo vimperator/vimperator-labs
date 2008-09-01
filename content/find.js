@@ -123,6 +123,8 @@ liberator.Search = function () //{{{
                     liberator.search.highlight();
                 else
                     liberator.search.clear();
+
+                return value;
             }
         });
 

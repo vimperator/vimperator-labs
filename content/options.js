@@ -28,6 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // Do NOT create instances of this class yourself, use the helper method
 // liberator.options.add() instead
+// FIXME: why is this arg list not reflecting that of Command, or vice versa?
 liberator.Option = function (names, description, type, defaultValue, scope, getter, setter, validator, completer) //{{{
 {
     if (!names || !type)
@@ -73,7 +74,9 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
                 return null;
         }
         else
+        {
             scope = this.scope;
+        }
 
         var aValue;
 
@@ -96,7 +99,21 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
                 return null;
         }
         else
+        {
             scope = this.scope;
+        }
+
+        if (this.setter)
+        {
+            var tmpValue = newValue;
+            var newValue = this.setter.call(this, newValue);
+
+            if (!newValue === "undefined")
+            {
+                newValue = tmpValue;
+                liberator.log("DEPRECATED: option setters should return a value");
+            }
+        }
 
         if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             liberator.tabs.options[this.name] = newValue;
@@ -104,8 +121,6 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
             value = newValue;
 
         this.hasChanged = true;
-        if (this.setter)
-            this.setter.call(this, newValue);
     };
 
     this.__defineGetter__("value", this.get);

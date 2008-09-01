@@ -50,6 +50,7 @@ const liberator = (function () //{{{
                 setter: function (value)
                 {
                     var guioptions = liberator.config.guioptions || {};
+
                     for (let option in guioptions)
                     {
                         guioptions[option].forEach(function (elem)
@@ -61,10 +62,13 @@ const liberator = (function () //{{{
                             catch (e) {}
                         });
                     }
+
+                    return value;
                 },
                 validator: function (value)
                 {
                     var regex = "[^";
+
                     for (let option in liberator.config.guioptions)
                         regex += option.toString();
 
@@ -87,7 +91,11 @@ const liberator = (function () //{{{
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
-                setter: function (value) { liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value); }
+                setter: function (value)
+                {
+                    liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value);
+                    return value;
+                }
             });
 
         liberator.options.add(["visualbellstyle", "t_vb"],

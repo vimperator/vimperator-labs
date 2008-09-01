@@ -121,6 +121,7 @@ liberator.Tabs = function () //{{{
             setter: function (value)
             {
                 var tabs = liberator.tabs.tabStrip;
+
                 if (!tabs)
                     return;
 
@@ -138,6 +139,8 @@ liberator.Tabs = function () //{{{
                     liberator.options.setPref("browser.tabs.autoHide", false);
                     tabs.collapsed = false;
                 }
+
+                return value;
             },
             validator: function (value) { return (value >= 0 && value <= 2); },
             completer: function (filter)
@@ -184,8 +187,11 @@ liberator.Tabs = function () //{{{
                                   [2, 3], // in a new window if it has specified sizes
                                   [1, 2], // always in new window
                                   [2, 1]];// current tab unless it has specified sizes
+
                     liberator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
                     liberator.options.setPref("browser.link.open_newwindow", values[value][1]);
+
+                    return value;
                 },
                 validator: function (value) { return (value >= 0 && value <= 4); }
             });

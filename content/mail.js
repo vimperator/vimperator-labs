@@ -216,6 +216,8 @@ liberator.Mail = function () //{{{
                     case "vertical": ChangeMailLayout(2); break;
                     // case "inherit" just does nothing
                 }
+
+                return value;
             }
         });
 
@@ -229,6 +231,8 @@ liberator.Mail = function () //{{{
                     MsgSortThreaded();
                 else
                     MsgSortUnthreaded();
+
+                return value;
             }
         });*/
 
