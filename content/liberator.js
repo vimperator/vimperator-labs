@@ -659,7 +659,8 @@ const liberator = (function () //{{{
         // partial sixth level expression evaluation
         // TODO: what is that really needed for, and where could it be used?
         //       Or should it be removed? (c) Viktor
-        eval: function (string)
+        //       Better name?  See other liberator.eval()
+        evalExpression: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
             var matches = string.match(/^&(\w+)/);

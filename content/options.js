@@ -268,7 +268,7 @@ liberator.Options = function () //{{{
                         return;
                     }
 
-                    var expr = liberator.eval(matches[4]);
+                    var expr = liberator.evalExpression(matches[4]);
                     if (typeof expr === undefined)
                     {
                         liberator.echoerr("E15: Invalid expression: " + matches[4]);
