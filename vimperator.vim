@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Aug 29
+" Last Change:      2008 Sep 01
 
 if exists("b:current_syntax")
   finish
@@ -39,7 +39,7 @@ syn match vimperatorCommand "!" contained
 syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
-syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc complete cpt defsearch ds editor
+syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc cdpath cd complete cpt defsearch ds editor
     \ extendedhinttags eht eventignore ei focuscontent fc nofocuscontent nofc fullscreen fs nofullscreen nofs guioptions go
     \ hintmatching hm hintstyle hs hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls hlsearchstyle hlss
     \ incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor lbc
