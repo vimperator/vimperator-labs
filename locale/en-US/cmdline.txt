@@ -1,0 +1,15 @@
+HEADER
+
+|Command-line-mode| |Command-line| +
+
+Command-line mode is used to enter Ex commands (":") and text search patterns
+("/" and "?").
+
+|:| +
+||:||
+________________________________________________________________________________
+Start Command-line mode. In Command-line mode, you can perform extended
+commands, which may require arguments.
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

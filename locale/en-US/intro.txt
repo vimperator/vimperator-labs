@@ -52,9 +52,10 @@ section:Help{nbsp}topics[overview]
   browsing session (how to open a web page or go back in history).
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
   like scrolling or copying text.
+- help:Command-line[cmdline.html]: Command-line editing.
+- help:Options[options.html]: A description of all options.
 - help:Search{nbsp}commands[pattern.html]: Searching for text in the
   current buffer.
-- help:Options[options.html]: A description of all options.
 - help:Tabs[tabs.html]: Managing your tabbed browsing session.
 - help:Hints[hints.html]: Selecting hyperlinks.
 - help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Defining new key
