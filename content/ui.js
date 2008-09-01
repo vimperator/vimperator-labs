@@ -259,9 +259,7 @@ liberator.CommandLine = function () //{{{
 
         try
         {
-            // TODO: move to liberator.eval()?
-            // with (liberator) means, liberator is the default namespace "inside" eval
-            arg = eval("with (liberator) {" + arg + "}");
+            arg = liberator.eval(arg);
         }
         catch (e)
         {

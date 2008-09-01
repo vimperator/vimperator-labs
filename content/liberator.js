@@ -232,7 +232,7 @@ const liberator = (function () //{{{
             {
                 try
                 {
-                    var cmd = eval("with (liberator) {" + args + "}");
+                    var cmd = liberator.eval(args);
                     liberator.execute(cmd);
                 }
                 catch (e)
@@ -300,7 +300,7 @@ const liberator = (function () //{{{
                     {
                         try
                         {
-                            eval("with (liberator) {" + args + "}");
+                            liberator.eval(args);
                         }
                         catch (e)
                         {
@@ -359,7 +359,7 @@ const liberator = (function () //{{{
                         else
                         {
                             while (i--)
-                                eval("with (liberator) {" + args + "}");
+                                liberator.eval(args);
                         }
 
                         if (special)
@@ -405,7 +405,7 @@ const liberator = (function () //{{{
                         if (args && args[0] == ":")
                             liberator.execute(args);
                         else
-                            eval("with (liberator) {" + args + "}");
+                            liberator.eval(args);
 
                         if (special)
                             return;
@@ -588,6 +588,12 @@ const liberator = (function () //{{{
                 soundService.beep();
             }
             return false; // so you can do: if (...) return liberator.beep();
+        },
+
+        // with (liberator) means, liberator is the default namespace "inside" eval
+        eval: function (str)
+        {
+            return eval("with (liberator) {" + str + "}");
         },
 
         // Execute an ex command like str=":zoom 300"
