@@ -655,7 +655,8 @@ liberator.Hints = function () //{{{
             generate();
 
             // get all keys from the input queue
-            var mt = Components.classes["@mozilla.org/thread-manager;1"].getService().mainThread;
+            var mt = Components.classes["@mozilla.org/thread-manager;1"]
+                               .getService().mainThread;
             while (mt.hasPendingEvents())
                 mt.processNextEvent(true);
 

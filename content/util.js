@@ -82,7 +82,7 @@ liberator.util = { //{{{
     copyToClipboard: function (str, verbose)
     {
         var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-            .getService(Components.interfaces.nsIClipboardHelper);
+                                        .getService(Components.interfaces.nsIClipboardHelper);
         clipboardHelper.copyString(str);
 
         if (verbose)
@@ -252,8 +252,10 @@ liberator.util = { //{{{
         var url;
         try
         {
-            var clipboard = Components.classes['@mozilla.org/widget/clipboard;1'].getService(Components.interfaces.nsIClipboard);
-            var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+            var clipboard = Components.classes['@mozilla.org/widget/clipboard;1']
+                                      .getService(Components.interfaces.nsIClipboard);
+            var trans = Components.classes['@mozilla.org/widget/transferable;1']
+                                  .createInstance(Components.interfaces.nsITransferable);
             trans.addDataFlavor("text/unicode");
             if (clipboard.supportsSelectionClipboard())
                 clipboard.getData(trans, clipboard.kSelectionClipboard);

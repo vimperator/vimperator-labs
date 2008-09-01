@@ -96,8 +96,8 @@ liberator.Tabs = function () //{{{
 
     function copyTab(to, from)
     {
-        var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
-                 getService(Components.interfaces.nsISessionStore);
+        var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                           .getService(Components.interfaces.nsISessionStore);
 
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
@@ -530,8 +530,8 @@ liberator.Tabs = function () //{{{
 
                 if (args)
                 {
-                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
-                             getService(Components.interfaces.nsISessionStore);
+                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                                       .getService(Components.interfaces.nsISessionStore);
                     var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                     for (var i = 0; i < undoItems.length; i++)
                     {
@@ -548,8 +548,8 @@ liberator.Tabs = function () //{{{
                 completer: function (filter)
                 {
                     // get closed-tabs from nsSessionStore
-                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
-                             getService(Components.interfaces.nsISessionStore);
+                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                                       .getService(Components.interfaces.nsISessionStore);
                     var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                     var completions = [];
                     for (var i = 0; i < undoItems.length; i++)
@@ -578,8 +578,8 @@ liberator.Tabs = function () //{{{
                     return;
                 }
 
-                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"].
-                         getService(Components.interfaces.nsISessionStore);
+                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                                   .getService(Components.interfaces.nsISessionStore);
                 var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                 for (var i = 0; i < undoItems.length; i++)
                     undoCloseTab(); // doesn't work with i as the index to undoCloseTab
@@ -922,7 +922,7 @@ liberator.Tabs = function () //{{{
 
             window.open();
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                .getService(Components.interfaces.nsIWindowMediator);
+                               .getService(Components.interfaces.nsIWindowMediator);
             var win = wm.getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);

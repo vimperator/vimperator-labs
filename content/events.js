@@ -489,8 +489,8 @@ liberator.Events = function () //{{{
     function waitForPageLoaded()
     {
         dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
-        var mainThread = Components.classes["@mozilla.org/thread-manager;1"].
-                         getService(Components.interfaces.nsIThreadManager).mainThread;
+        var mainThread = Components.classes["@mozilla.org/thread-manager;1"]
+                                   .getService(Components.interfaces.nsIThreadManager).mainThread;
         while (mainThread.hasPendingEvents()) // clear queue
             mainThread.processNextEvent(true);
 
@@ -1487,7 +1487,7 @@ liberator.Events = function () //{{{
             register: function ()
             {
                 var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefService);
+                                            .getService(Components.interfaces.nsIPrefService);
                   this._branch = prefService.getBranch(""); // better way to monitor all changes?
                   this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
                   this._branch.addObserver("", this, false);

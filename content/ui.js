@@ -306,7 +306,7 @@ liberator.CommandLine = function () //{{{
          	validator: function (value)
          	{
          		var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-         		           .getService(Components.interfaces.nsIBrowserSearchService);
+         		                   .getService(Components.interfaces.nsIBrowserSearchService);
          		return value.split(",").every(function (item)
          		{
          			var e = ss.getEngineByAlias(item);
@@ -481,8 +481,8 @@ liberator.CommandLine = function () //{{{
         {
             // if we are modifing the GUI while we are not in the main thread
             // Firefox will hang up
-            var threadManager = Components.classes["@mozilla.org/thread-manager;1"].
-                                getService(Components.interfaces.nsIThreadManager);
+            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
+                                          .getService(Components.interfaces.nsIThreadManager);
             if (!threadManager.isMainThread)
                 return false;
 

@@ -371,8 +371,8 @@ liberator.config = { //{{{
             {
                 setter: function (value)
                 {
-                    var ioService = Components.classes['@mozilla.org/network/io-service;1'].
-                                    getService(Components.interfaces.nsIIOService2);
+                    var ioService = Components.classes['@mozilla.org/network/io-service;1']
+                                              .getService(Components.interfaces.nsIIOService2);
 
                     ioService.offline = !value;
                     gPrefService.setBoolPref("browser.offline", ioService.offline);
@@ -380,8 +380,8 @@ liberator.config = { //{{{
 
                 getter: function ()
                 {
-                    return Components.classes['@mozilla.org/network/io-service;1'].
-                           getService(Components.interfaces.nsIIOService2).offline;
+                    return Components.classes['@mozilla.org/network/io-service;1']
+                                     .getService(Components.interfaces.nsIIOService2).offline;
                 }
             });
 

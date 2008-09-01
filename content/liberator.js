@@ -180,7 +180,7 @@ const liberator = (function () //{{{
                     else
                     {
                         if (item.localName == "menu")
-                            path += item.label + "."; 
+                            path += item.label + ".";
 
                         for (var j = 0; j < item.childNodes.length; j++)
                             arguments.callee(item.childNodes[j], path);
@@ -207,7 +207,7 @@ const liberator = (function () //{{{
                 for (var i = 0; i < items.length; i++)
                 {
                     if (items[i].fullMenuPath == item)
-                        items[i].doCommand(); 
+                        items[i].doCommand();
                 }
             },
             {
@@ -217,7 +217,7 @@ const liberator = (function () //{{{
                     var completions = getMenuItems().map(function (item) {
                         return [item.fullMenuPath, item.label];
                     });
-                    return [0, liberator.completion.filter(completions, filter)];	
+                    return [0, liberator.completion.filter(completions, filter)];
                 }
             });
 
@@ -583,8 +583,8 @@ const liberator = (function () //{{{
             }
             else
             {
-                var soundService = Components.classes["@mozilla.org/sound;1"].
-                                   getService(Components.interfaces.nsISound);
+                var soundService = Components.classes["@mozilla.org/sound;1"]
+                                   .getService(Components.interfaces.nsISound);
                 soundService.beep();
             }
             return false; // so you can do: if (...) return liberator.beep();
@@ -632,8 +632,8 @@ const liberator = (function () //{{{
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
         {
-            var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
-                     getService(Components.interfaces.nsIWindowWatcher);
+            var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                     .getService(Components.interfaces.nsIWindowWatcher);
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
@@ -811,8 +811,8 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = liberator.util.objectToString(msg, false);
 
-            var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
-                                 getService(Components.interfaces.nsIConsoleService);
+            var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                           .getService(Components.interfaces.nsIConsoleService);
             consoleService.logStringMessage("vimperator: " + msg);
         },
 
@@ -865,7 +865,7 @@ const liberator = (function () //{{{
                 case liberator.NEW_WINDOW:
                     window.open();
                     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
+                                       .getService(Components.interfaces.nsIWindowMediator);
                     whichwindow = wm.getMostRecentWindow("navigator:browser");
                     whichwindow.loadURI(url, null, postdata);
                     break;
@@ -913,9 +913,9 @@ const liberator = (function () //{{{
 
             // notify all windows that an application quit has been requested.
             var os = Components.classes["@mozilla.org/observer-service;1"]
-                .getService(Components.interfaces.nsIObserverService);
+                               .getService(Components.interfaces.nsIObserverService);
             var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-                .createInstance(Components.interfaces.nsISupportsPRBool);
+                                       .createInstance(Components.interfaces.nsISupportsPRBool);
             os.notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
@@ -927,7 +927,7 @@ const liberator = (function () //{{{
 
             // enumerate all windows and call shutdown handlers
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                .getService(Components.interfaces.nsIWindowMediator);
+                               .getService(Components.interfaces.nsIWindowMediator);
             var windows = wm.getEnumerator(null);
             while (windows.hasMoreElements())
             {
@@ -935,8 +935,9 @@ const liberator = (function () //{{{
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-                .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+            Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                      .getService(nsIAppStartup)
+                      .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
 
@@ -1056,8 +1057,8 @@ const liberator = (function () //{{{
 
         sleep: function (ms)
         {
-            var threadManager = Components.classes["@mozilla.org/thread-manager;1"].
-                                getService(Components.interfaces.nsIThreadManager);
+            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
+                                .getService(Components.interfaces.nsIThreadManager);
             var mainThread = threadManager.mainThread;
 
             var then = new Date().getTime(), now = then;
@@ -1069,7 +1070,7 @@ const liberator = (function () //{{{
         get windows()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
+                               .getService(Components.interfaces.nsIWindowMediator);
             var wa = [];
             var enumerator = wm.getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())

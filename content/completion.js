@@ -357,7 +357,7 @@ liberator.Completion = function () //{{{
         	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
         	var responseType = "application/x-suggestions+json";
         	var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-        	               .getService(Components.interfaces.nsIBrowserSearchService);
+        	                   .getService(Components.interfaces.nsIBrowserSearchService);
 
         	var completions = [];
         	engineList.forEach (function (name)
@@ -380,7 +380,7 @@ liberator.Completion = function () //{{{
             	xhr.send(null);
 
                 var json = Components.classes["@mozilla.org/dom/json;1"]
-                           .createInstance(Components.interfaces.nsIJSON);
+                                     .createInstance(Components.interfaces.nsIJSON);
                 var results = json.decode(xhr.responseText)[1];
                 if (!results)
                     return [0, []];
@@ -454,8 +454,8 @@ liberator.Completion = function () //{{{
                     completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (autoCompletions && cpt[i] == "l") // add completions like Firefox's smart location bar
                 {
-                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"].
-                                            getService(Components.interfaces.nsIAutoCompleteSearch);
+                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
+                                                      .getService(Components.interfaces.nsIAutoCompleteSearch);
                     completionService.startSearch(filter, "", urlResultsCache, {
                         onSearchResult: function (search, result) {
                             //if (result.searchResult != result.RESULT_SUCCESS)

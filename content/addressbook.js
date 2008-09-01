@@ -33,9 +33,9 @@ liberator.Addressbook = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const abManager = Components.classes["@mozilla.org/abmanager;1"]
-                       .getService(Components.interfaces.nsIAbManager);
+                                .getService(Components.interfaces.nsIAbManager);
     const rdf = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                       .getService(Components.interfaces.nsIRDFService);
+                          .getService(Components.interfaces.nsIRDFService);
 
     const kPersonalAddressbookURI = "moz-abmdbdirectory://abook.mab";
 
@@ -146,7 +146,7 @@ liberator.Addressbook = function () //{{{
 		{
 			var directory = getDirectoryFromURI(kPersonalAddressbookURI);
 			var card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
-					   .createInstance(Components.interfaces.nsIAbCard);
+					             .createInstance(Components.interfaces.nsIAbCard);
 
 			if (!address || !directory || !card)
 				return false;

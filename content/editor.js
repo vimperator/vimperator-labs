@@ -836,7 +836,8 @@ liberator.Editor = function () //{{{
                 textBox.style.backgroundColor = "#bbbbbb";
             }
 
-            var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+            var newThread = Components.classes["@mozilla.org/thread-manager;1"]
+                                      .getService().newThread(0);
             // TODO: save return value in v:shell_error
             liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
 

@@ -1139,7 +1139,8 @@ liberator.Buffer = function () //{{{
             // get file size
             const nsICacheService = Components.interfaces.nsICacheService;
             const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
-            const cacheService = Components.classes["@mozilla.org/network/cache-service;1"].getService(nsICacheService);
+            const cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
+                                           .getService(nsICacheService);
             var httpCacheSession = cacheService.createSession("HTTP", 0, true);
             var ftpCacheSession = cacheService.createSession("FTP", 0, true);
             httpCacheSession.doomEntriesIfExpired = false;
@@ -1342,7 +1343,8 @@ liberator.Buffer = function () //{{{
             {
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
-                var newThread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+                var newThread = Components.classes["@mozilla.org/thread-manager;1"]
+                                          .getService().newThread(0);
                 var editor = liberator.options["editor"];
                 var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)

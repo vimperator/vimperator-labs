@@ -34,7 +34,7 @@ liberator.IO = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var environmentService = Components.classes["@mozilla.org/process/environment;1"]
-        .getService(Components.interfaces.nsIEnvironment);
+                                       .getService(Components.interfaces.nsIEnvironment);
 
     const WINDOWS = navigator.platform == "Win32";
     var cwd = null, oldcwd = null;
@@ -321,8 +321,8 @@ liberator.IO = function () //{{{
 
         getCurrentDirectory: function ()
         {
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                                  createInstance(Components.interfaces.nsILocalFile);
+            var file = Components.classes["@mozilla.org/file/local;1"]
+                                 .createInstance(Components.interfaces.nsILocalFile);
 
             var dirs = [cwd, "$PWD", "~"];
             for (var i = 0; i < dirs.length; i++)
@@ -407,8 +407,8 @@ liberator.IO = function () //{{{
         // also expands relative paths
         getFile: function (path)
         {
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                                  createInstance(Components.interfaces.nsILocalFile);
+            var file = Components.classes["@mozilla.org/file/local;1"]
+                                 .createInstance(Components.interfaces.nsILocalFile);
 
             // convert relative to absolute pathname
             path = ioManager.expandPath(path);
@@ -425,8 +425,8 @@ liberator.IO = function () //{{{
         // returns a nsILocalFile or null if it could not be created
         createTempFile: function ()
         {
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                                  createInstance(Components.interfaces.nsILocalFile);
+            var file = Components.classes["@mozilla.org/file/local;1"]
+                                 .createInstance(Components.interfaces.nsILocalFile);
 
             var tmpname = liberator.config.name.toLowerCase() + ".tmp";
             if (liberator.config.name == "Muttator")
@@ -479,9 +479,9 @@ liberator.IO = function () //{{{
         readFile: function (file)
         {
             var ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
-                           .createInstance(Components.interfaces.nsIFileInputStream);
+                                     .createInstance(Components.interfaces.nsIFileInputStream);
             var icstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
-                           .createInstance(Components.interfaces.nsIConverterInputStream);
+                                     .createInstance(Components.interfaces.nsIConverterInputStream);
 
             var charset = "UTF-8";
             if (typeof file == "string")
@@ -510,9 +510,9 @@ liberator.IO = function () //{{{
         writeFile: function (file, buf, mode, perms)
         {
             var ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                           .createInstance(Components.interfaces.nsIFileOutputStream);
+                                     .createInstance(Components.interfaces.nsIFileOutputStream);
             var ocstream = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
-                           .createInstance(Components.interfaces.nsIConverterOutputStream);
+                                     .createInstance(Components.interfaces.nsIConverterOutputStream);
 
             var charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
             if (typeof file == "string")
@@ -538,8 +538,8 @@ liberator.IO = function () //{{{
 
         run: function (program, args, blocking)
         {
-            var file = Components.classes["@mozilla.org/file/local;1"].
-                       createInstance(Components.interfaces.nsILocalFile);
+            var file = Components.classes["@mozilla.org/file/local;1"]
+                                 .createInstance(Components.interfaces.nsILocalFile);
 
             if (!args)
                 args = [];
@@ -588,8 +588,8 @@ lookup:
                 return -1;
             }
 
-            var process = Components.classes["@mozilla.org/process/util;1"].
-                          createInstance(Components.interfaces.nsIProcess);
+            var process = Components.classes["@mozilla.org/process/util;1"]
+                                    .createInstance(Components.interfaces.nsIProcess);
 
             process.init(file);
             process.run(blocking, args, args.length);
@@ -648,12 +648,14 @@ lookup:
             try
             {
                 var file = ioManager.getFile(filename);
+
                 if (!file.exists())
                 {
                     if (!silent)
                         liberator.echoerr("E484: Can't open file " + filename);
                     return false;
                 }
+
                 var str = ioManager.readFile(filename);
 
                 // handle pure javascript files specially
@@ -665,6 +667,7 @@ lookup:
                 {
                     var heredoc = "";
                     var heredocEnd = null; // the string which ends the heredoc
+
                     str.split("\n").forEach(function (line)
                     {
                         if (heredocEnd) // we already are in a heredoc

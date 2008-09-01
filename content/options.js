@@ -71,7 +71,7 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         {
             if ((scope & this.scope) == 0) // option doesn't exist in this scope
                 return null;
-        }    
+        }
         else
             scope = this.scope;
 
@@ -94,7 +94,7 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
         {
             if ((scope & this.scope) == 0) // option doesn't exist in this scope
                 return null;
-        }    
+        }
         else
             scope = this.scope;
 
@@ -139,7 +139,7 @@ liberator.Options = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                     .getService(Components.interfaces.nsIPrefBranch);
+                                .getService(Components.interfaces.nsIPrefBranch);
     var options = [];
 
     function storePreference(name, value)
@@ -630,7 +630,7 @@ liberator.Options = function () //{{{
                 if (special) // list completions for about:config entries
                 {
                     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch);
+                                          .getService(Components.interfaces.nsIPrefBranch);
                     var prefArray = prefs.getChildList("", { value: 0 });
                     prefArray.sort();
 

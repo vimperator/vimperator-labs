@@ -84,7 +84,7 @@ liberator.Mail = function () //{{{
     };
 
     var mailSession = Components.classes[mailSessionContractID]
-                      .getService(Components.interfaces.nsIMsgMailSession);
+                                .getService(Components.interfaces.nsIMsgMailSession);
     var nsIFolderListener = Components.interfaces.nsIFolderListener;
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
@@ -756,9 +756,9 @@ liberator.Mail = function () //{{{
         composeNewMail: function (args)
         {
             var params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
-                         .createInstance(Components.interfaces.nsIMsgComposeParams);
+                                   .createInstance(Components.interfaces.nsIMsgComposeParams);
             params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-                                   .createInstance(Components.interfaces.nsIMsgCompFields);
+                                             .createInstance(Components.interfaces.nsIMsgCompFields);
 
             if (args)
             {
@@ -790,7 +790,7 @@ liberator.Mail = function () //{{{
                         }
 
                         attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
-                            .createInstance(Components.interfaces.nsIMsgAttachment);
+                                               .createInstance(Components.interfaces.nsIMsgAttachment);
                         attachment.url = "file://" + file.path;
                         params.composeFields.addAttachment(attachment);
                     }

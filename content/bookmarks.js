@@ -34,15 +34,15 @@ liberator.Bookmarks = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const historyService   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-                             .getService(Components.interfaces.nsINavHistoryService);
+                                       .getService(Components.interfaces.nsINavHistoryService);
     const bookmarksService = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
-                             .getService(Components.interfaces.nsINavBookmarksService);
+                                       .getService(Components.interfaces.nsINavBookmarksService);
     const taggingService   = Components.classes["@mozilla.org/browser/tagging-service;1"]
-                              .getService(Components.interfaces.nsITaggingService);
+                                       .getService(Components.interfaces.nsITaggingService);
     const searchService    = Components.classes["@mozilla.org/browser/search-service;1"]
-                              .getService(Components.interfaces.nsIBrowserSearchService);
+                                       .getService(Components.interfaces.nsIBrowserSearchService);
     const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
-                              .getService(Components.interfaces.nsIIOService);
+                                       .getService(Components.interfaces.nsIIOService);
 
     var bookmarks = null;
     var keywords = null;
@@ -484,7 +484,7 @@ liberator.History = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-                           .getService(Components.interfaces.nsINavHistoryService);
+                                     .getService(Components.interfaces.nsINavHistoryService);
 
     var history = [];
     var cachedHistory = []; // add pages here after loading the initial Places history
