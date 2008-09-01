@@ -52,7 +52,7 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
 syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
-	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
+	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
 
 syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<map\>" end="$" keepend oneline contains=vimperatorKeySym
 
