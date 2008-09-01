@@ -471,7 +471,7 @@ liberator.Buffer = function () //{{{
         {
             var titles = liberator.buffer.alternateStyleSheets.map(function (stylesheet) { return stylesheet.title; });
 
-            if (args && !titles.some(function (title) { return title == args; }))
+            if (args && titles.indexOf(args) == -1)
             {
                 liberator.echoerr("E475: Invalid argument: " + args);
                 return;
