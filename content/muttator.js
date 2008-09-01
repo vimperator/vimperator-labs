@@ -62,7 +62,7 @@ liberator.config = { //{{{
         ["checkupdates",     "Check for updates",
             function () { checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
-         function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
+         function () { Components.classes[GLUE_CID].getService(Components.interfaces.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
             function () { toJavaScriptConsole(); }],
         /*["customizetoolbar", "Customize the Toolbar",

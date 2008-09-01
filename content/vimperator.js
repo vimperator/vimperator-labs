@@ -59,7 +59,7 @@ liberator.config = { //{{{
         ["checkupdates",     "Check for updates",
             function () { checkForUpdates(); }],
         ["cleardata",        "Clear private data",
-            function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
+            function () { Components.classes[GLUE_CID].getService(Components.interfaces.nsIBrowserGlue).sanitize(window || null); }],
         ["cookies",          "List your cookies",
             function () { toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["console",          "JavaScript console",
