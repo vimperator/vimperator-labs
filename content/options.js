@@ -108,10 +108,10 @@ liberator.Option = function (names, description, type, defaultValue, scope, gett
             var tmpValue = newValue;
             var newValue = this.setter.call(this, newValue);
 
-            if (!newValue === "undefined")
+            if (typeof newValue == "undefined")
             {
                 newValue = tmpValue;
-                liberator.log("DEPRECATED: option setters should return a value");
+                liberator.log("DEPRECATED: '" + this.name + "' setter should return a value");
             }
         }
 
