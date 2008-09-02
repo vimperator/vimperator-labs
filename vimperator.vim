@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Sep 01
+" Last Change:      2008 Sep 02
 
 if exists("b:current_syntax")
   finish
@@ -23,8 +23,8 @@ syn match   vimperatorLineComment +^\s*".*$+ contains=vimperatorTodo,@Spell
 syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] au[tocmd] b[uffer] ba[ck] bd[elete] beep bma[rk] bmarks buffers
     \ bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd cuna[bbrev] cm[ap] cmapc[lear] cno[remap] comc[lear] com[mand] cu[nmap]
     \ delbm[arks] delc[ommand] delmac[ros] delm[arks] delqm[arks] dia[log] dl downl[oads] e[dit] ec[ho] echoe[rr] em[enu]
-    \ exe[cute] exu[sage] files fo[rward] fw h[elp] ha[rdcopy] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap]
-    \ iuna[bbrev] iu[nmap] javas[cript] ju[mps] js let ls macros ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap]
+    \ exe[cute] exu[sage] fini[sh] files fo[rward] fw h[elp] ha[rdcopy] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear]
+    \ ino[remap] iuna[bbrev] iu[nmap] javas[cript] ju[mps] js let ls macros ma[rk] map mapc[lear] marks mkv[imperatorrc] no[remap]
     \ noh[lsearch] norm[al] o[pen] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences] prefs pwd q[uit] qa[ll] qma[rk] qmarks
     \ quita[ll] re[draw] re[load] reloada[ll] res[tart] run sav[eas] sb[ar] sb[open] sbcl[ose] se[t] setg[lobal] setl[ocal]
     \ sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabde[tach] tabd[uplicate] tabN[ext] tabc[lose] tabe[dit] tabfir[st] tabl[ast]
