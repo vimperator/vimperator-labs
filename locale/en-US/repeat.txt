@@ -74,9 +74,17 @@ function hello2() {
 are only available within the scope of the script.
 
 The _.vimperatorrc_ file in your home directory and any files in
-_\~/.vimperator/plugin/_ are always sourced at startup.
-\~ is supported as a shortcut for the _$HOME_ directory.  If [!] is
-specified, errors are not printed.
+_\~/.vimperator/plugin/_ are always sourced at startup. \~ is supported as a
+shortcut for the _$HOME_ directory. If [!] is specified, errors are not
+printed.
+________________________________________________________________________________
+
+
+|:fini| |:finish|
+||:fini[sh]|| +
+________________________________________________________________________________
+Stop sourcing a script file. This can only be called from within a Vimperator
+script file.
 ________________________________________________________________________________
 
 section:Profiling[profile,profiling]

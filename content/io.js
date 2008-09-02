@@ -166,6 +166,15 @@ liberator.IO = function () //{{{
             completer: function (filter) { return liberator.completion.file(filter, true); }
         });
 
+    liberator.commands.add(["fini[sh]"],
+        "Stop sourcing a script file",
+        function ()
+        {
+            // this command is only used in :source
+            liberator.echoerr("E168: :finish used outside of a sourced file");
+        },
+        { argCount: "0" });
+
     liberator.commands.add(["pw[d]"],
         "Print the current directory name",
         function ()
@@ -689,8 +698,12 @@ lookup:
                     var heredoc = "";
                     var heredocEnd = null; // the string which ends the heredoc
 
-                    str.split("\n").forEach(function (line)
+                    var lines = str.split("\n");
+
+                    for (let i = 0; i < lines.length; i++)
                     {
+                        let line = lines[i];
+
                         if (heredocEnd) // we already are in a heredoc
                         {
                             if (heredocEnd.test(line))
@@ -706,12 +719,18 @@ lookup:
                         }
                         else
                         {
-                            // check for a heredoc
                             var [count, cmd, special, args] = liberator.commands.parseCommand(line);
                             var command = liberator.commands.get(cmd);
-                            if (command && command.name == "javascript")
+
+                            if (command && command.name == "finish")
                             {
+                                break;
+                            }
+                            else if (command && command.name == "javascript")
+                            {
+                                // check for a heredoc
                                 var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+
                                 if (matches)
                                 {
                                     heredocEnd = new RegExp("^" + matches[2] + "$", "m");
@@ -729,7 +748,7 @@ lookup:
                                 liberator.execute(line);
                             }
                         }
-                    });
+                    }
 
                     // if no heredoc-end delimiter is found before EOF then
                     // process the heredoc anyway - Vim compatible ;-)
