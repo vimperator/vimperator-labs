@@ -453,7 +453,7 @@ This includes (X)HTML elements with an "href" atrribute and XLink "simple" links
 ____
 
 
-|\'nolpl'| |\'lpl'||\'noloadplugins'| |\'loadplugins'|
+|\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
 ||'loadplugins' 'lpl'|| boolean (default on)
 ____
 Load plugin scripts when starting up.
