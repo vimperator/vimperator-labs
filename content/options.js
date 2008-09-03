@@ -26,36 +26,38 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-// Do NOT create instances of this class yourself, use the helper method
+// do NOT create instances of this class yourself, use the helper method
 // liberator.options.add() instead
-// FIXME: why is this arg list not reflecting that of Command, or vice versa?
-liberator.Option = function (names, description, type, defaultValue, scope, getter, setter, validator, completer) //{{{
+liberator.Option = function (names, description, type, defaultValue, extraInfo) //{{{
 {
     if (!names || !type)
         return null;
+
+    if (!extraInfo)
+        extraInfo = {};
 
     var value = null;
 
     this.name = names[0];
     this.names = names;
     this.type = type;
-    this.scope = (scope & liberator.options.OPTION_SCOPE_BOTH) || liberator.options.OPTION_SCOPE_GLOBAL; // XXX set to BOTH by default someday? - kstep
+    this.scope = (extraInfo.scope & liberator.options.OPTION_SCOPE_BOTH) || liberator.options.OPTION_SCOPE_GLOBAL; // XXX set to BOTH by default someday? - kstep
     this.description = description || "";
 
     // "", 0 are valid default values
     this.defaultValue = (defaultValue === undefined) ? null : defaultValue;
     value = this.defaultValue;
 
-    this.setter = setter || null;
-    this.getter = getter || null;
-    this.completer = completer || null;
-    this.validator = validator || null;
+    this.setter = extraInfo.setter || null;
+    this.getter = extraInfo.getter || null;
+    this.completer = extraInfo.completer || null;
+    this.validator = extraInfo.validator || null;
 
     // this property is set to true whenever the option is first set
     // useful to see whether it was changed by some rc file
     this.hasChanged = false;
 
-    // add noOPTION variant of boolean OPTION to this.names
+    // add no{option} variant of boolean {option} to this.names
     if (this.type == "boolean")
     {
         this.names = []; // reset since order is important
@@ -203,7 +205,7 @@ liberator.Options = function () //{{{
             {
                 case prefService.PREF_STRING:
                     var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
-                    // Try in case it's a localized string (will throw an exception if not)
+                    // try in case it's a localized string (will throw an exception if not)
                     if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
                             value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
@@ -775,8 +777,7 @@ liberator.Options = function () //{{{
             if (!extraInfo)
                 extraInfo = {};
 
-            var option = new liberator.Option(names, description, type, defaultValue, extraInfo.scope,
-                                              extraInfo.getter, extraInfo.setter, extraInfo.validator, extraInfo.completer);
+            var option = new liberator.Option(names, description, type, defaultValue, extraInfo);
 
             if (!option)
                 return false;
