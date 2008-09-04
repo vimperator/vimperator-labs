@@ -240,10 +240,10 @@ liberator.Completion = function () //{{{
 
                 if (liberator.options["wildignore"])
                 {
-                    var wimRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
+                    var wigRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
 
                     files = files.filter(function (f) {
-                        return f.isDirectory() || !wimRegexp.test(f.leafName);
+                        return f.isDirectory() || !wigRegexp.test(f.leafName);
                     });
                 }
 
