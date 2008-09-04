@@ -225,6 +225,7 @@ liberator.Completion = function () //{{{
         {
             var dir = "", compl = "";
             var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
+
             if (matches)
             {
                 dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
@@ -232,9 +233,20 @@ liberator.Completion = function () //{{{
             }
 
             var files = [], mapped = [];
+
             try
             {
                 files = liberator.io.readDirectory(dir);
+
+                if (liberator.options["wildignore"])
+                {
+                    var wimRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
+
+                    files = files.filter(function (f) {
+                        return f.isDirectory() || !wimRegexp.test(f.leafName);
+                    });
+                }
+
                 mapped = files.map(function (file) {
                     return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
                 }).sort(function (a, b) {

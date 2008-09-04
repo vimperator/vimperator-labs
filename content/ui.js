@@ -340,6 +340,25 @@ liberator.CommandLine = function () //{{{
             },
         });
 
+    liberator.options.add(["wildignore", "wig"],
+        "List of file patterns to ignore when completing files",
+        "stringlist", "",
+        {
+            validator: function (value)
+            {
+                // TODO: allow for escaping the ","
+                try
+                {
+                    new RegExp("^(" + value.replace(",", "|", "g") + ")$");
+                    return true;
+                }
+                catch (e)
+                {
+                    return false;
+                }
+            }
+        });
+
     liberator.options.add(["wildoptions", "wop"],
         "Change how command line completion is done",
         "stringlist", "",

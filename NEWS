@@ -1,6 +1,7 @@
 <pre>
 2008-XX-XX:
     * version 2.0 (probably)
+    * add 'wildignore' option
     * add :finish command
     * new events BookmarkPost, ShellCmdPost, QuitPre
     * add 'cdpath' option

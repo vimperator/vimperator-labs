@@ -705,6 +705,16 @@ want no bell at all.
 ____
 
 
+|\'wildignore'| |\'wig'|
+||'wildignore' 'wig'|| stringlist (default: "")
+____
+List of file patterns to ignore when completing files. E.g. to ignore object
+files and Vim swap files [c]:set wildignore=.*\.o,\..*\.s[a-z]{2}[c]
+
+Note: Unlike Vim each pattern is a regexp rather than a glob.
+____
+
+
 |\'wim'| |\'wildmode'|
 ||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
