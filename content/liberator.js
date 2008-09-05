@@ -560,8 +560,8 @@ const liberator = (function () //{{{
 
         triggerCallback: function (type, mode, data)
         {
-            // dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
-            for (var i in callbacks)
+            //dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
+            for (let i = 0; i < callbacks.length; i++)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
                 if (mode == thismode && type == thistype)
