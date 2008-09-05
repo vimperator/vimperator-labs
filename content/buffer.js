@@ -325,7 +325,6 @@ liberator.Buffer = function () //{{{
         "Focus last used input field",
         function (count)
         {
-        liberator.log(count)
             if (count < 1 && liberator.buffer.lastInputField)
             {
                 liberator.buffer.lastInputField.focus();
