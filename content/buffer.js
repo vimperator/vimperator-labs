@@ -453,14 +453,18 @@ liberator.Buffer = function () //{{{
         "Print current document",
         function (args, special)
         {
-            // TODO: Hide the progress bar ("print.show_print_progress") when
-            // the special version is called?
-            var value = liberator.options.getPref("print.always_print_silent");
+            var aps = liberator.options.getPref("print.always_print_silent");
+            var spp = liberator.options.getPref("print.show_print_progress");
+
+            liberator.echo("Sending to printer...");
             liberator.options.setPref("print.always_print_silent", special);
+            liberator.options.setPref("print.show_print_progress", !special);
 
             getBrowser().contentWindow.print();
 
-            liberator.options.setPref("print.always_print_silent", value);
+            liberator.options.setPref("print.always_print_silent", aps);
+            liberator.options.setPref("print.show_print_progress", spp);
+            liberator.echo("Print job sent.");
         });
 
     liberator.commands.add(["pa[geinfo]"],
