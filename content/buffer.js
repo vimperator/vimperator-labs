@@ -325,18 +325,42 @@ liberator.Buffer = function () //{{{
         "Focus last used input field",
         function (count)
         {
+        liberator.log(count)
             if (count < 1 && liberator.buffer.lastInputField)
+            {
                 liberator.buffer.lastInputField.focus();
+            }
             else
             {
-                var first = liberator.buffer.evaluateXPath(
-                    "//*[@type='text'] | //textarea | //xhtml:textarea")
-                    .snapshotItem(count > 0 ? (count - 1) : 0);
+                var elements = [];
+                var matches = liberator.buffer.evaluateXPath(
+                    // TODO: type="file"
+                    "//input[not(@type) or @type='text' or @type='password'] | //textarea[not(@disabled) and not(@readonly)] |" +
+                    "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
+                );
 
-                if (first)
-                    first.focus();
+                for (let i = 0; i < matches.snapshotLength; i++)
+                {
+                    let match = matches.snapshotItem(i);
+                    let computedStyle = window.content.getComputedStyle(match, null);
+
+                    if (computedStyle.getPropertyValue("visibility") != "hidden" && computedStyle.getPropertyValue("display") != "none")
+                        elements.push(match)
+                }
+
+                if (elements.length > 0)
+                {
+                    if (count > elements.length)
+                        count = elements.length; 
+                    else if (count < 1)
+                        count = 1;
+
+                    elements[count - 1].focus();
+                }
                 else
+                {
                     liberator.beep();
+                }
             }
         },
         { flags: liberator.Mappings.flags.COUNT });
