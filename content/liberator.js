@@ -76,6 +76,10 @@ const liberator = (function () //{{{
                 }
             });
 
+        liberator.options.add(["helpfile", "hf"],
+            "Name of the main help file",
+            "string", "intro.html");
+
         liberator.options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",
             "boolean", true);
@@ -757,6 +761,18 @@ const liberator = (function () //{{{
                          liberator.options["newtab"].split(",").indexOf("help") != -1)) ?
                             liberator.NEW_TAB : liberator.CURRENT_TAB;
 
+            if (!topic)
+            {
+                var helpFile = liberator.options["helpfile"];
+
+                if (liberator.config.helpFiles.indexOf(helpFile) != -1)
+                    liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + helpFile, where);
+                else
+                    liberator.echo("Sorry, help file \"" + helpFile + "\" not found");
+
+                return;
+            }
+
             function jumpToTag(file, tag)
             {
                 liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file, where);
@@ -770,14 +786,9 @@ const liberator = (function () //{{{
                 }, 500);
             }
 
-            if (!topic)
-            {
-                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/intro.html", where);
-                return;
-            }
-
             var [, items] = getHelpCompletions(topic);
             var partialMatch = -1;
+
             for (var i = 0; i < items.length; i++)
             {
                 if (items[i][0] == topic)

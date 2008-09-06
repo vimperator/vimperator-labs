@@ -319,6 +319,14 @@ You can also hide the tab bar with [c]:set showtabline=0[c].
 ____
 
 
+|\'hf'| |\'helpfile'|
+||'helpfile' 'hf'|| string (default: "intro.html")
+____
+Name of the main help file. This is the tail component of the chrome URL as
+displayed in the status line when viewing the page.
+____
+
+
 |\'hm'| |\'hintmatching'|
 ||'hintmatching' 'hm'|| string (default: contains)
 ____
