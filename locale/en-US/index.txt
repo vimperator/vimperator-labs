@@ -1,0 +1,297 @@
+HEADER
+
+|index| +
+
+This file contains a list of all available commands.
+
+section:Normal{nbsp}mode[normal-index]
+
+||<C-^>|| Select the alternate tab or the [count]th tab +
+||<C-a>|| Increment last number in URL +
+||<C-b>|| Scroll up a full page +
+||<C-c>|| Stop loading +
+||<C-d>|| Scroll window downwards in the buffer +
+||<C-f>|| Scroll down a full page +
+||<C-g>|| Print the current file name +
+||<C-i>|| Go to a newer position in the jump list +
+||<C-l>|| Redraw the screen +
+||<C-o>|| Go to an older position in the jump list +
+||<C-u>|| Scroll window upwards in the buffer +
+||<C-v>|| Pass through next key +
+||<C-x>|| Decrement last number in URL +
+||<C-z>|| Temporarily ignore all Vimperator key bindings +
+
+||<Esc>|| Focus content +
+
+||<F1>|| Open help window +
+
+||<S-Tab>|| Rewind keyboard focus +
+||<Tab>|| Advance keyboard focus +
+
+||0|| Scroll to the absolute left of the document +
+||$|| Scroll to the absolute right of the document +
+
+||A|| Toggle bookmarked state of current URL +
+||B|| Show buffer list +
+||D|| Delete current buffer, focus tab to the left +
+||F|| Start QuickHint mode, but open link in a new tab +
+||G|| Goto the end of the document +
+||H|| Go back in the browser history +
+||L|| Go forward in the browser history +
+||M|| Add new QuickMark for current URL +
+||N|| Find previous +
+||O|| Open one or more URLs, based on current location +
+||P|| Open (put) a URL based on the current clipboard contents in a new buffer +
+||R|| Reload while skipping the cache +
+||T|| Open one or more URLs in a new tab, based on current location +
+||Y|| Copy selected text or current word +
+
+||a|| Open a prompt to bookmark the current URL +
+||b|| Open a prompt to switch buffers +
+||d|| Delete current buffer +
+||f|| Start QuickHint mode +
+||h|| Scroll document to the left +
+||i|| Start caret mode +
+||j|| Scroll document down +
+||k|| Scroll document up +
+||l|| Scroll document to the right +
+||m|| Set mark at the cursor position +
+||n|| Find next +
+||o|| Open one or more URLs +
+||p|| Open (put) a URL based on the current clipboard contents in the current buffer +
+||q|| Record a key sequence into a macro +
+||r|| Reload current page +
+||t|| Open one or more URLs in a new tab +
+||u|| Undo closing of a tab +
+||y|| Yank current location to the clipboard +
+
+||;|| Start an extended hint mode +
+
+||:|| Enter command line mode +
+
+||~|| Open home directory +
+
+||/|| Search forward for a pattern +
+||?|| Search backwards for a pattern +
+||*|| Find word under cursor +
+||#|| Find word under cursor backwards +
+
+||'|| Jump to the mark in the current buffer +
+
+||@|| Play a macro +
+
+||]f|| Focus next frame +
+||[f|| Focus previous frame +
+||]]|| Follow a link labeled to 'next' or '>' if it exists +
+||[[|| Follow a link labeled to 'prev', 'previous' or '<' if it exists +
+
+||g$|| Go to the last tab +
+||g0|| Go to the first tab +
+||g<C-g>|| Print file information +
+||gB|| Repeat last :buffer[!] command in reverse direction +
+||gF|| View source with an external editor +
+||gH|| Open homepage in a new tab +
+||gP|| Open (put) a URL based on the current clipboard contents in a new buffer +
+||gT|| Go to previous tab +
+||gU|| Go to the root of the website +
+||gb|| Repeat last :buffer[!] command +
+||gf|| View source +
+||gg|| Goto the top of the document +
+||gh|| Open homepage +
+||gi|| Focus last used input field +
+||gn|| Jump to a QuickMark in a new tab +
+||go|| Jump to a QuickMark +
+||gt|| Go to the next tab +
+||gu|| Go to parent directory +
+
+||ZQ|| Quit and don't save the session +
+||ZZ|| Quit and save the session +
+||zI|| Enlarge full zoom of current web page +
+||zM|| Enlarge full zoom of current web page by a larger amount +
+||zO|| Reduce full zoom of current web page +
+||zR|| Reduce full zoom of current web page by a larger amount +
+||zZ|| Set full zoom value of current web page +
+||zi|| Enlarge text zoom of current web page +
+||zm|| Enlarge text zoom of current web page by a larger amount +
+||zo|| Reduce text zoom of current web page +
+||zr|| Reduce text zoom of current web page by a larger amount +
+||zz|| Set text zoom value of current web page +
+
+section:Command-line{nbsp}editing[ex-edit-index]
+
+||<C-c>|| Quit command-line mode without executing +
+
+||<C-]>|| Expand a command-line abbreviation +
+
+||<Up>|| Recall the previous command-line from the history list which matches the current command-line +
+||<Down>|| Recall the next command-line from the history list which matches the current command-line +
+
+||<Tab>|| Complete the word in front of the cursor according to the behavior specified in 'wildmode' +
+||<S-Tab>|| Complete the previous full match when 'wildmode' contains "full" +
+
+section:Ex{nbsp}commands[ex-cmd-index,:index]
+
+||:!|| Run a command +
+||:abbreviate|| Abbreviate a key sequence +
+||:abclear|| Remove all abbreviations +
+||:addons|| Manage available Extensions and Themes +
+||:autocmd|| Execute commands automatically on events +
+||:back|| Go back in the browser history +
+||:bdelete|| Delete current buffer +
+||:beep|| Play a system beep +
+||:bmark|| Add a bookmark +
+||:bmarks|| List or open multiple bookmarks +
+||:buffer|| Switch to a buffer +
+||:buffers|| Show a list of all buffers +
+||:cabbrev|| Abbreviate a key sequence in command line mode +
+||:cabclear|| Remove all abbreviations in command line mode +
+||:cd|| Change the current directory +
+||:cmap|| Map a key sequence in command line mode +
+||:cmapclear|| Remove all mappings in command line mode +
+||:cnoremap|| Map a key sequence without remapping keys in command line mode +
+||:comclear|| Delete all user-defined commands +
+||:command|| List and define commands +
+||:cunabbrev|| Remove an abbreviation in command line mode +
+||:cunmap|| Remove a mapping in command line mode +
+||:delbmarks|| Delete a bookmark +
+||:delcommand|| Delete the specified user-defined command +
+||:delmacros|| Delete macros +
+||:delmarks|| Delete the specified marks +
+||:delqmarks|| Delete the specified QuickMarks +
+||:dialog|| Open a undefined dialog +
+||:downloads|| Show progress of current downloads +
+||:echo|| Display a string at the bottom of the window +
+||:echoerr|| Display an error string at the bottom of the window +
+||:emenu|| Execute the specified menu item from the command line +
+||:execute|| Execute the argument as an Ex command +
+||:exusage|| List all Ex commands with a short description +
+||:finish|| Stop sourcing a script file +
+||:forward|| Go forward in the browser history +
+||:hardcopy|| Print current document +
+||:help|| Display help +
+||:history|| Show recently visited URLs +
+||:iabbrev|| Abbreviate a key sequence in insert mode +
+||:iabclear|| Remove all abbreviations in insert mode +
+||:imap|| Map a key sequence in insert mode +
+||:imapclear|| Remove all mappings in insert mode +
+||:inoremap|| Map a key sequence without remapping keys in insert mode +
+||:iunabbrev|| Remove an abbreviation in insert mode +
+||:iunmap|| Remove a mapping in insert mode +
+||:javascript|| Run a JavaScript command through eval() +
+||:jumps|| Show jumplist +
+||:let|| Set or list a variable +
+||:macros|| List all macros +
+||:map|| Map a key sequence +
+||:mapclear|| Remove all mappings +
+||:mark|| Mark current location within the web page +
+||:marks|| Show all location marks of current web page +
+||:mkvimperatorrc|| Write current key mappings and changed options to the config file +
+||:nohlsearch|| Remove the search highlighting +
+||:noremap|| Map a key sequence without remapping keys +
+||:normal|| Execute Normal mode commands +
+||:open|| Open one or more URLs in the current tab +
+||:pageinfo|| Show various page information +
+||:pagestyle|| Select the author style sheet to apply +
+||:play|| Replay a recorded macro +
+||:preferences|| Show Firefox preferences +
+||:pwd|| Print the current directory name +
+||:qmark|| Mark a URL with a letter for quick access +
+||:qmarks|| Show all QuickMarks +
+||:quit|| Quit current tab +
+||:quitall|| Quit undefined +
+||:redraw|| Redraw the screen +
+||:reload|| Reload current page +
+||:reloadall|| Reload all tab pages +
+||:restart|| Force undefined to restart +
+||:saveas|| Save current document to disk +
+||:sbclose|| Close the sidebar window +
+||:set|| Set an option +
+||:setglobal|| Set global option +
+||:setlocal|| Set local option +
+||:sidebar|| Open the sidebar window +
+||:source|| Read Ex commands from a file +
+||:stop|| Stop loading +
+||:tab|| Execute a command and tell it to output in a new tab +
+||:tabdetach|| Detach current tab to its own window +
+||:tabduplicate|| Duplicate current tab +
+||:tablast|| Switch to the last tab +
+||:tabmove|| Move the current tab after tab N +
+||:tabnext|| Switch to the next or [count]th tab +
+||:tabonly|| Close all other tabs +
+||:tabopen|| Open one or more URLs in a new tab +
+||:tabprevious|| Switch to the previous tab or go [count] tabs back +
+||:tabrewind|| Switch to the first tab +
+||:time|| Profile a piece of code or run a command multiple times +
+||:unabbreviate|| Remove an abbreviation +
+||:undo|| Undo closing of a tab +
+||:undoall|| Undo closing of all closed tabs +
+||:unlet|| Delete a variable +
+||:unmap|| Remove a mapping +
+||:version|| Show version information +
+||:viewsource|| View source code of current document +
+||:viusage|| List all mappings with a short description +
+||:winclose|| Close window +
+||:winopen|| Open one or more URLs in a new window +
+||:wqall|| Save the session and quit +
+||:zoom|| Set zoom value of current web page +
+
+section:Options[option-index]
+
+||'activate'|| Define when tabs are automatically activated +
+||'activelinkbgcolor'|| Background color of the current active link during hint mode +
+||'activelinkfgcolor'|| Foreground color of the current active link during hint mode +
+||'autodetector'|| set auto detect character encoding +
+||'cdpath'|| List of directories searched when executing :cd +
+||'complete'|| Items which are completed at the :[tab]open prompt +
+||'defsearch'|| Set the default search engine +
+||'disabledcssheets'|| Set disabled CSS stylesheets +
+||'editor'|| Set the external text editor +
+||'eventignore'|| List of autocommand event names which should be ignored +
+||'extendedhinttags'|| XPath string of hintable elements activated by ';' +
+||'fileencoding'|| set the charactor encoding for the current page +
+||'focuscontent'|| Try to stay in normal mode after loading a web page +
+||'fullscreen'|| Show the current window fullscreen +
+||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
+||'hintmatching'|| How links are matched +
+||'hintstyle'|| CSS specification of unfocused hints +
+||'hinttags'|| XPath string of hintable elements activated by 'f' and 'F' +
+||'hinttimeout'|| Automatically follow non unique numerical hint +
+||'history'|| Number of Ex commands and search patterns to store in the commandline history +
+||'hlsearch'|| Highlight previous search pattern matches +
+||'hlsearchstyle'|| CSS specification of highlighted search items +
+||'ignorecase'|| Ignore case in search patterns +
+||'incsearch'|| Show where the search pattern matches as it is typed +
+||'insertmode'|| Use Insert mode as the default for text areas +
+||'laststatus'|| Show the status line +
+||'linkbgcolor'|| Background color of a link during hint mode +
+||'linkfgcolor'|| Foreground color of a link during hint mode +
+||'linksearch'|| Limit the search to hyperlink text +
+||'loadplugins'|| Load plugin scripts when starting up +
+||'more'|| Pause the message list window when more than one screen of listings is displayed +
+||'newtab'|| Define which commands should output in a new tab by default +
+||'nextpattern'|| Patterns to use when guessing the 'next' page in a document sequence +
+||'online'|| Set the 'work offline' option +
+||'pageinfo'|| Desired info on :pa[geinfo] +
+||'popups'|| Where to show requested popup windows +
+||'preload'|| Speed up first time history/bookmark completion +
+||'previouspattern'|| Patterns to use when guessing the 'previous' page in a document sequence +
+||'scroll'|| Number of lines to scroll with and commands +
+||'shell'|| Shell to use for executing :! and :run commands +
+||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
+||'showmode'|| Show the current mode in the command line +
+||'showstatuslinks'|| Show the destination of the link under the cursor in the status bar +
+||'showtabline'|| Control when to show the tab bar of opened web pages +
+||'smartcase'|| Override the 'ignorecase' option if the pattern contains uppercase characters +
+||'suggestengines'|| Engine Alias which has a feature of suggest +
+||'titlestring'|| Change the title of the window +
+||'urlseparator'|| Set the separator regexp used to separate multiple URL args +
+||'usermode'|| Show current website with a minimal style sheet to make it easily accessible +
+||'verbose'|| Define which type of messages are logged +
+||'visualbell'|| Use visual bell instead of beeping on errors +
+||'visualbellstyle'|| CSS specification of the visual bell +
+||'wildignore'|| List of file patterns to ignore when completing files +
+||'wildmode'|| Define how command line completion works +
+||'wildoptions'|| Change how command line completion is done +
+||'wordseparators'|| How words are splitted for hintmatching +
+
+// vim: set syntax=asciidoc:

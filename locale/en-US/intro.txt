@@ -72,6 +72,7 @@ section:Help{nbsp}topics[overview]
   plugins.
 - help:Various[various.html]: Other help which didn't fit into any other
   category.
+- help:Index[index.html]: An index of all commands and options.
 
 You can also jump directly to the help of a specific command with [c]:help o[c]
 or [c]:help :set[c].
