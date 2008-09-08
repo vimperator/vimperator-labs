@@ -1007,7 +1007,7 @@ liberator.Mail = function () //{{{
                     }
                     catch (e)
                     {
-                        dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
+                        liberator.dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
                         continue;
                     }
 

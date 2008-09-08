@@ -509,7 +509,7 @@ liberator.History = function () //{{{
         for (var i = 0; i < rootNode.childCount; i++)
         {
             var node = rootNode.getChild(i);
-            // dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
+            //liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
                 history.push([node.uri, node.title || "[No title]"]);
         }

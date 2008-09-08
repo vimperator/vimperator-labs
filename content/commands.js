@@ -427,7 +427,7 @@ liberator.Commands = function () //{{{
                 }
 
                 var sub = str.substr(i);
-                // dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
+                //liberator.dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
                 if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub))
                 {
                     onlyArgumentsRemaining = true;

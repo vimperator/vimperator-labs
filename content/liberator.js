@@ -564,7 +564,7 @@ const liberator = (function () //{{{
 
         triggerCallback: function (type, mode, data)
         {
-            //dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
+            //liberator.dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
             for (let i = 0; i < callbacks.length; i++)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
@@ -600,6 +600,12 @@ const liberator = (function () //{{{
                 soundService.beep();
             }
             return false; // so you can do: if (...) return liberator.beep();
+        },
+
+        // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
+        dump: function (message)
+        {
+            dump(liberator.config.name.toLowerCase() + ": " + message);
         },
 
         // with (liberator) means, liberator is the default namespace "inside" eval
@@ -782,7 +788,7 @@ const liberator = (function () //{{{
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
-                        dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
+                        liberator.dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
                 }, 500);
             }
 
@@ -1069,7 +1075,7 @@ const liberator = (function () //{{{
             if (liberator.has("quickmarks"))
                 liberator.quickmarks.destroy();
 
-            window.dump("All liberator modules destroyed\n");
+            liberator.dump("All liberator modules destroyed\n");
 
             liberator.autocommands.trigger("Quit", "");
         },

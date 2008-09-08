@@ -488,7 +488,7 @@ liberator.Events = function () //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
-        dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
+        liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
         var mainThread = Components.classes["@mozilla.org/thread-manager;1"]
                                    .getService(Components.interfaces.nsIThreadManager).mainThread;
         while (mainThread.hasPendingEvents()) // clear queue
@@ -503,7 +503,7 @@ liberator.Events = function () //{{{
         {
             mainThread.processNextEvent(true);
             if ((now - then) % 1000 < 10)
-                dump("waited: " + (now - then) + " ms\n");
+                liberator.dump("waited: " + (now - then) + " ms\n");
 
             if (liberator.buffer.loaded > 0)
             {
@@ -519,7 +519,7 @@ liberator.Events = function () //{{{
         var ret = (liberator.buffer.loaded == 1);
         if (!ret)
             liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
-        dump("done waiting: " + ret + "\n");
+        liberator.dump("done waiting: " + ret + "\n");
 
         // sometimes the input widget had focus when replaying a macro
         // maybe this call should be moved somewhere else?
@@ -661,7 +661,7 @@ liberator.Events = function () //{{{
         destroy: function ()
         {
             // removeEventListeners() to avoid mem leaks
-            window.dump("TODO: remove all eventlisteners\n");
+            liberator.dump("TODO: remove all eventlisteners\n");
 
             if (typeof(getBrowser) != "undefined")
                 getBrowser().removeProgressListener(this.progressListener);
@@ -957,9 +957,9 @@ liberator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
-            // liberator.log("onFocusChange: " + elem);
-            // dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
-            // dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
+            //liberator.log("onFocusChange: " + elem);
+            //liberator.dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
+            //liberator.dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
             if (elem && (
                    (elem instanceof HTMLInputElement && (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password")) ||
@@ -993,7 +993,7 @@ liberator.Events = function () //{{{
                 {
                     if (liberator.config.isComposeWindow)
                     {
-                        dump("Compose editor got focus\n");
+                        liberator.dump("Compose editor got focus\n");
                         liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
                     }
                     else if (liberator.mode != liberator.modes.MESSAGE)
@@ -1011,7 +1011,7 @@ liberator.Events = function () //{{{
                // this.wantsModeReset = true;
                // setTimeout(function ()
                // {
-               //     dump("cur: " + liberator.mode + "\n");
+               //     liberator.dump("cur: " + liberator.mode + "\n");
                //     if (liberator.events.wantsModeReset)
                //     {
                //         liberator.events.wantsModeReset = false;
@@ -1115,8 +1115,8 @@ liberator.Events = function () //{{{
             if (!key)
                  return true;
 
-            // liberator.log(key + " in mode: " + liberator.mode);
-            // dump(key + " in mode: " + liberator.mode + "\n");
+            //liberator.log(key + " in mode: " + liberator.mode);
+            //liberator.dump(key + " in mode: " + liberator.mode + "\n");
 
             if (liberator.modes.isRecording)
             {

@@ -98,8 +98,8 @@ liberator.modes = (function () //{{{
     function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work with verbosity level
-        // liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
-        // dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
+        //liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        //liberator.dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
