@@ -192,7 +192,7 @@ liberator.AutoCommands = function () //{{{
         list: function (auEvent, regex) // arguments are filters (NULL = all)
         {
             var flag;
-            var list = "<table><tr><td style='font-weight: bold;'  colspan='2'>---- Auto-Commands ----</td></tr>";
+            var list = "<table><tr><td class=\"hl-Title\" colspan=\"2\">---- Auto-Commands ----</td></tr>";
             for (var item in autoCommands)
             {
                 flag = true;
@@ -204,7 +204,7 @@ liberator.AutoCommands = function () //{{{
                         {
                             if (flag == true)
                             {
-                                list += "<tr><td style='font-weight: bold;'  colspan='2'>" +
+                                list += "<tr><td class=\"hl-Title\" colspan=\"2\">" +
                                         liberator.util.escapeHTML(item) + "</td></tr>";
                                 flag = false;
                             }

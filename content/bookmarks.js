@@ -136,7 +136,7 @@ liberator.Bookmarks = function () //{{{
         {
             var sh = getWebNavigation().sessionHistory;
             var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "jumps") + "<br/>" + "<table>";
-            list += "<tr style=\"text-align: left; color: magenta; font-weight: bold;\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
+            list += "<tr style=\"text-align: left;\" class=\"hl-Title\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
             var num = -sh.index;
 
             for (var i = 0; i < sh.count; i++)

@@ -261,7 +261,7 @@ const liberator = (function () //{{{
                 var usage = "<table>";
                 for (let command in liberator.commands)
                 {
-                    usage += "<tr><td style='color: magenta; padding-right: 20px'> :" +
+                    usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> :" +
                              liberator.util.escapeHTML(command.name) + "</td><td>" +
                              liberator.util.escapeHTML(command.description) + "</td></tr>";
                 }
@@ -465,7 +465,7 @@ const liberator = (function () //{{{
                 var usage = "<table>";
                 for (let mapping in liberator.mappings)
                 {
-                    usage += "<tr><td style='color: magenta; padding-right: 20px'> " +
+                    usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> " +
                              liberator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
                              liberator.util.escapeHTML(mapping.description) + "</td></tr>";
                 }
