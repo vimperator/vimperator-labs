@@ -37,7 +37,7 @@ Warning: Autocommand events are, in general, currently only fired when
 Vimperator commands are executed.
 ________________________________________________________________________________
 
-section:Examples[autocmd_examples]
+section:Examples[autocmd-examples]
 
 Enable _passthrough_ mode on all Google sites:
 
