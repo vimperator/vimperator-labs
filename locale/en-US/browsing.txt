@@ -23,7 +23,7 @@ ________________________________________________________________________________
 If you only need to pass a single key to a JavaScript form field or another
 extension prefix the key with <C-v>.
 Also works to unshadow Firefox shortcuts like <C-o> which are otherwise hidden
-in Vimperator.  When Vimperator mode is temporarily disabled with <C-q>, <C-v>
+in Vimperator.  When Vimperator mode is temporarily disabled with <C-z>, <C-v>
 will pass the next key to Vimperator instead of the web page.
 ________________________________________________________________________________
 
