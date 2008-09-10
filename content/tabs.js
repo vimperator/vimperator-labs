@@ -160,6 +160,15 @@ liberator.Tabs = function () //{{{
             "Define when tabs are automatically activated",
             "stringlist", "homepage,quickmark,tabopen,paste",
             {
+                completer: function (filter)
+                {
+                    return [
+                        ["homepage", "gH mapping"],
+                        ["quickmark", "go and gn mappings"],
+                        ["tabopen", ":tabopen[!] command"],
+                        ["paste", "P and gP mappings"]
+                    ];
+                },
                 validator: function (value)
                 {
                     return value.split(",").every(function (item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
@@ -170,6 +179,17 @@ liberator.Tabs = function () //{{{
             "Define which commands should output in a new tab by default",
             "stringlist", "",
             {
+                completer: function (filter)
+                {
+                    return [
+                        ["all", "All commands"],
+                        ["addons", ":addo[ns] command"],
+                        ["downloads", ":downl[oads] command"],
+                        ["help", ":h[elp] command"],
+                        ["javascript", ":javascript! or :js! command"],
+                        ["prefs", ":pref[erences]! or :prefs! command"]
+                    ];
+                },
                 validator: function (value)
                 {
                     return value == "all" || value.split(",").every(function (item) { return /^(addons|downloads|help|javascript|prefs|)$/.test(item); });
@@ -192,6 +212,16 @@ liberator.Tabs = function () //{{{
                     liberator.options.setPref("browser.link.open_newwindow", values[value][1]);
 
                     return value;
+                },
+                completer: function (filter)
+                {
+                    return [
+                        ["0", "Force to open in the current tab"],
+                        ["1", "Always open in a new tab"],
+                        ["2", "Open in a new window if it has a specific requested size (default in Firefox)"],
+                        ["3", "Always open in a new window"],
+                        ["4", "Open in the same tab unless it has a specific requested size"]
+                    ];
                 },
                 validator: function (value) { return (value >= 0 && value <= 4); }
             });

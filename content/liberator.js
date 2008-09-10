@@ -66,6 +66,14 @@ const liberator = (function () //{{{
 
                     return value;
                 },
+                completer: function (filter)
+                {
+                    return [
+                        ["m", "Menubar"],
+                        ["T", "Toolbar"],
+                        ["b", "Bookmark bar"]
+                    ];
+                },
                 validator: function (value)
                 {
                     var regex = "[^";

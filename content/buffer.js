@@ -167,6 +167,14 @@ liberator.Buffer = function () //{{{
 
     liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
+            completer: function (filter)
+            {
+                return [
+                    ["g", "General info"],
+                    ["f", "Feeds"],
+                    ["m", "Meta tags"]
+                ];
+            },
             validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
         });
 
