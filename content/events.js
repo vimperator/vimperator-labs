@@ -679,9 +679,11 @@ liberator.Events = function () //{{{
         {
             if (!/[a-zA-Z0-9]/.test(macro))
             {
-                liberator.echoerr("Register must be [a-zA-z0-9]");
-                return false;
+                // TODO: ignore this like Vim?
+                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+                return;
             }
+
             liberator.modes.isRecording = true;
 
             if (/[A-Z]/.test(macro)) // uppercase (append)
@@ -701,21 +703,22 @@ liberator.Events = function () //{{{
         {
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
-                liberator.echoerr("Register must be [a-z0-9]");
-                return false;
+                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+                return;
             }
+
             if (macro == "@") // use lastMacro if it's set
             {
                 if (!lastMacro)
                 {
                     liberator.echoerr("E748: No previously used register");
-                    return false;
+                    return;
                 }
             }
             else
             {
                 if (macro.length == 1)
-                    lastMacro = macro.toLowerCase(); // XXX: sets last playerd macro, even if it does not yet exist
+                    lastMacro = macro.toLowerCase(); // XXX: sets last played macro, even if it does not yet exist
                 else
                     lastMacro = macro; // e.g. long names are case sensitive
             }
@@ -736,7 +739,13 @@ liberator.Events = function () //{{{
                 liberator.modes.isReplaying = false;
             }
             else
-                liberator.echoerr("Register " + lastMacro + " not set");
+            {
+                if (lastMacro.length == 1)
+                    // TODO: ignore this like Vim?
+                    liberator.echoerr("Exxx: Register " + lastMacro + " not set");
+                else
+                    liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
+            }
         },
 
         getMacros: function (filter)
