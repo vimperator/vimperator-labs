@@ -83,6 +83,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: black;
     */
 }
+#liberator-commandline-prompt {
+    margin: 0px;
+    padding: 0px;
+}
 #liberator-commandline-prompt, #liberator-commandline-command {
     background-color: inherit;
     color: inherit;
@@ -106,33 +110,33 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 .hl-ErrorMsg {
     background-color: red;
-    color: white;
+    color: white !important;
     font-weight: bold;
 }
 .hl-InfoMsg {
     background-color: white;
-    color: magenta;
+    color: magenta !important;
 }
 .hl-ModeMsg {
     background-color: white;
-    color: black;
+    color: black !important;
 }
 .hl-MoreMsg {
     background-color: white;
-    color: green;
+    color: green !important;
 }
 .hl-Question {
     background-color: white;
-    color: green;
+    color: green !important;
 }
 .hl-Title {
     background-color: white;
-    color: magenta;
+    color: magenta !important;
     font-weight: bold;
 }
 .hl-Warning {
     background-color: white;
-    color: red;
+    color: red !important;
 }
 .hl-StatusLine {
     background: none !important;
