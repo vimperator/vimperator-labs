@@ -679,11 +679,17 @@ lookup:
             {
                 var file = ioManager.getFile(filename);
 
-                if (!file.exists())
+                if (!file.exists() || !file.isReadable() || file.isDirectory())
                 {
                     if (!silent)
+                    {
+                        if (file.isDirectory())
+                            liberator.echo("Cannot source a directory: \"" + filename + "\"\n");
+
                         liberator.echoerr("E484: Can't open file " + filename);
-                    return false;
+                    }
+
+                    return;
                 }
 
                 var str = ioManager.readFile(filename);
