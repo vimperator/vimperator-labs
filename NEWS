@@ -1,7 +1,7 @@
 <pre>
 2008-XX-XX:
     * version 2.0 (probably)
-    * renamed Startup and Quit autocmd events to VimperatorEnter and
+    * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
     * add 'helpfile' option
     * add 'wildignore' option
