@@ -1178,7 +1178,7 @@ liberator.InformationList = function (id, options) //{{{
 
         if (!incrementalFill)
         {
-            for (i in completions)
+            for (let i = 0; i < completions.length; i++)
                 addItem(completions[i], false);
             return complength;
         }
@@ -1197,7 +1197,7 @@ liberator.InformationList = function (id, options) //{{{
             addItem(completions[i], false);
         }
 
-        return (i-startindex);
+        return (i - startindex);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

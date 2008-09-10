@@ -394,16 +394,18 @@ liberator.Events = function () //{{{
     function getKeyCode(str)
     {
         str = str.toLowerCase();
-        for (var i in keyTable)
+
+        for (let i = 0; i < keyTable.length; i++)
         {
-            for (var k in keyTable[i][1])
+            for (let j = 0; j < keyTable[i][1].length; j++)
             {
                 // we don't store lowercase keys in the keyTable, because we
                 // also need to get good looking strings for the reverse action
-                if (keyTable[i][1][k].toLowerCase() == str)
+                if (keyTable[i][1][j].toLowerCase() == str)
                     return keyTable[i][0];
             }
         }
+
         return 0;
     }
 
@@ -881,7 +883,7 @@ liberator.Events = function () //{{{
                     if (event.shiftKey)
                         modifier += "S-";
 
-                    for (var i in keyTable)
+                    for (let i = 0; i < keyTable.length; i++)
                     {
                         if (keyTable[i][0] == event.keyCode)
                         {

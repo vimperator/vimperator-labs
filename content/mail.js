@@ -93,7 +93,8 @@ liberator.Mail = function () //{{{
     {
         var completions = [];
         var folders = liberator.mail.getFolders();
-        for (var folder in folders)
+
+        for (let folder = 0; folder < folders.length; folder++)
         {
             completions.push([folders[folder].server.prettyName + ": "
                               + folders[folder].name,

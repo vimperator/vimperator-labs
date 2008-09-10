@@ -1216,10 +1216,7 @@ liberator.Buffer = function () //{{{
                 var rel = link.rel && link.rel.toLowerCase();
                 var rels = {};
                 if (rel)
-                {
-                    for each (let relVal in rel.split(/\s+/))
-                        rels[relVal] = true;
-                }
+                    rels[rel] = true;
 
                 if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
                 {
@@ -1234,7 +1231,7 @@ liberator.Buffer = function () //{{{
 
             var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
             var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
-            // FIXME: probably unportable across different language versions
+            // FIXME: probably not portable across different language versions
             if (lastModVerbose == "Invalid Date" || new Date(window.content.document.lastModified).getFullYear() == 1970)
                 lastModVerbose = lastMod = null;
 
