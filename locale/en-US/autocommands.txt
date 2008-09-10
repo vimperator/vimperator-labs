@@ -20,7 +20,7 @@ Add {cmd} to the list of commands Vimperator will execute on {event} for a URL m
 Available {events}:
 
 `----------------`--------------------------------------------
-*BookmarkPost*   Triggered after a page is bookmarked
+*BookmarkAdd*    Triggered after a page is bookmarked
 *LocationChange* Triggered when changing tabs or when navigating to a new location
 *PageLoadPre*    Triggered after a page load is initiated.
 *PageLoad*       Triggered when a page gets (re)loaded/opened
