@@ -38,14 +38,14 @@ liberator.config = { //{{{
 
     get visualbellWindow() { return getBrowser().mPanelContainer; },
 
-    autocommands: [["BookmarkAdd",   "Triggered after a page is bookmarked"],
-                   ["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
-                   ["PageLoadPre",    "Triggered after a page load is initiated"],
-                   ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
-                   ["QuitPre",        "Triggered before exiting Firefox, just before destroying each module"],
-                   ["Quit",           "Triggered before exiting Firefox"],
-                   ["ShellCmdPost",   "Triggered after executing a shell command with :!cmd"],
-                   ["Startup",        "Triggered after Firefox starts"]],
+    autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
+                   ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["PageLoadPre",        "Triggered after a page load is initiated"],
+                   ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
+                   ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
+                   ["VimperatorEnter",    "Triggered after Firefox starts"],
+                   ["VimperatorLeavePre", "Triggered before exiting Firefox, just before destroying each module"],
+                   ["VimperatorLeave",    "Triggered before exiting Firefox"]],
 
     dialogs: [
         ["about",            "About Firefox",

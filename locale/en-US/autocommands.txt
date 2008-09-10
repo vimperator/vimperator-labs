@@ -19,15 +19,15 @@ Add {cmd} to the list of commands Vimperator will execute on {event} for a URL m
 
 Available {events}:
 
-`----------------`--------------------------------------------
-*BookmarkAdd*    Triggered after a page is bookmarked
-*LocationChange* Triggered when changing tabs or when navigating to a new location
-*PageLoadPre*    Triggered after a page load is initiated.
-*PageLoad*       Triggered when a page gets (re)loaded/opened
-*QuitPre*        Triggered before exiting Firefox, just before destroying each module
-*Quit*           Triggered before exiting Firefox
-*ShellCmdPost*   Triggered after executing a shell command with :!cmd
-*Startup*        Triggered after Firefox starts
+`--------------------`----------------------------------------
+*BookmarkAdd*        Triggered after a page is bookmarked
+*LocationChange*     Triggered when changing tabs or when navigating to a new location
+*PageLoadPre*        Triggered after a page load is initiated.
+*PageLoad*           Triggered when a page gets (re)loaded/opened
+*ShellCmdPost*       Triggered after executing a shell command with :!cmd
+*VimperatorEnter*    Triggered after Firefox starts
+*VimperatorLeavePre* Triggered before exiting Firefox, just before destroying each module
+*VimperatorLeave*    Triggered before exiting Firefox
 --------------------------------------------------------------
 
 {pat} is a regular expression, use .* if you want to match all URLs. Note: This

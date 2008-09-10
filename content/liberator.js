@@ -1075,7 +1075,7 @@ const liberator = (function () //{{{
                         option.reset();
                 }
 
-                liberator.autocommands.trigger("Startup", "");
+                liberator.autocommands.trigger(liberator.config.name + "Enter", "");
             }, 0);
 
             liberator.statusline.update();
@@ -1085,7 +1085,7 @@ const liberator = (function () //{{{
 
         shutdown: function ()
         {
-            liberator.autocommands.trigger("QuitPre", "");
+            liberator.autocommands.trigger(liberator.config.name + "LeavePre", "");
 
             // save our preferences
             liberator.commandline.destroy();
@@ -1096,7 +1096,7 @@ const liberator = (function () //{{{
 
             liberator.dump("All liberator modules destroyed\n");
 
-            liberator.autocommands.trigger("Quit", "");
+            liberator.autocommands.trigger(liberator.config.name + "Leave", "");
         },
 
         sleep: function (ms)
