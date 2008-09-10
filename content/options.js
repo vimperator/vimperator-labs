@@ -700,7 +700,7 @@ liberator.Options = function () //{{{
                         if (option.hasName(filter))
                         {
                             if (option.completer)
-                                return [filter.length + 1, option.completer(filter)];
+                                return [filter.length + 1, option.completer(filter)]; // FIXME: filter should be component after "option="
                             return [filter.length + 1, [[option.value + "", ""]]];
                         }
                     }

@@ -3,6 +3,7 @@
     * version 2.0 (probably)
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add commandline completion to 'defsearch'
     * add 'helpfile' option
     * add 'wildignore' option
     * add :finish command
