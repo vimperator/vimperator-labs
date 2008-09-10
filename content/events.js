@@ -192,7 +192,9 @@ liberator.AutoCommands = function () //{{{
         list: function (auEvent, regex) // arguments are filters (NULL = all)
         {
             var flag;
-            var list = "<table><tr><td class=\"hl-Title\" colspan=\"2\">---- Auto-Commands ----</td></tr>";
+            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
+                "<table><tr><td class=\"hl-Title\" colspan=\"2\">---- Auto-Commands ----</td></tr>";
+
             for (var item in autoCommands)
             {
                 flag = true;
