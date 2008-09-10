@@ -429,16 +429,7 @@ liberator.Bookmarks = function () //{{{
             }
 
             if (openItems)
-            {
-                // FIXME: use yes/no question
-                if (items.length > 50)
-                    return liberator.echoerr("For now, you can only open a hard limit of 50 items at once");
-
-                for (var i = 0; i < items.length; i++)
-                    liberator.open(items[i][0], liberator.NEW_TAB);
-
-                return;
-            }
+                return liberator.openTabs((i[0] for (i in items)), items.length);
 
             var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
@@ -739,14 +730,7 @@ liberator.History = function () //{{{
 
             if (openItems)
             {
-                // FIXME: use yes/no question
-                if (items.length > 50)
-                    return liberator.echoerr("For now, you can only open a hard limit of 50 items at once");
-
-                for (var i = 0; i < items.length; i++)
-                    liberator.open(items[i][0], liberator.NEW_TAB);
-
-                return;
+                return liberator.openTabs((i[0] for (i in items)), items.length);
             }
             else
             {

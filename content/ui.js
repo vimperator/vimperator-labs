@@ -123,12 +123,14 @@ liberator.CommandLine = function () //{{{
     var currentExtendedMode = null;     // the extended mode which we last openend the command line for
     var currentPrompt = null;
     var currentCommand = null;
-    var oldMode = null; // when we leave the command prompt this mode is restored
-    var oldExtendedMode = null;
 
     // save the arguments for the inputMultiline method which are needed in the event handler
     var multilineRegexp = null;
     var multilineCallback = null;
+
+    // callback for prompt mode
+    var promptCallback = null;
+    var promptCompleter = null;
 
     liberator.registerCallback("change", liberator.modes.EX, function (command) {
         if (liberator.options["wildoptions"].indexOf("auto") >= 0)
@@ -138,13 +140,26 @@ liberator.CommandLine = function () //{{{
         }
     });
 
+    function closePrompt(value)
+    {
+        let callback = promptCallback;
+        promptCallback = null;
+        currentExtendedMode = null;
+        liberator.commandline.clear();
+        callback(value);
+    }
+    liberator.registerCallback("cancel", liberator.modes.PROMPT, closePrompt);
+    liberator.registerCallback("submit", liberator.modes.PROMPT, closePrompt);
+    liberator.registerCallback("complete", liberator.modes.PROMPT,
+        function (str) { if (promptCompleter) return promptCompleter(str); });
+
     function setHighlightGroup(group)
     {
         commandlineWidget.setAttribute("class", group);
     }
 
     // sets the prompt - for example, : or /
-    function setPrompt(pmt)
+    function setPrompt(pmt, highlightGroup)
     {
         promptWidget.value = pmt;
 
@@ -157,6 +172,7 @@ liberator.CommandLine = function () //{{{
         {
             promptWidget.collapsed = true;
         }
+        promptWidget.setAttribute("class", highlightGroup || liberator.commandline.HL_QUESTION);
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
@@ -232,7 +248,7 @@ liberator.CommandLine = function () //{{{
 
         multilineOutputWidget.contentWindow.focus();
 
-        liberator.modes.set(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
+        liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
     }
 
     function autosizeMultilineInputWidget()
@@ -439,6 +455,8 @@ liberator.CommandLine = function () //{{{
                                            // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // will show the string in :messages
 
+        get mode() (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search",
+
         getCommand: function ()
         {
             return commandWidget.value;
@@ -455,10 +473,7 @@ liberator.CommandLine = function () //{{{
             historyIndex = UNINITIALIZED;
             completionIndex = UNINITIALIZED;
 
-            // save the mode, because we need to restore it
-            oldMode = liberator.mode;
-            oldExtendedMode = liberator.mode.extended;
-            liberator.modes.set(liberator.modes.COMMAND_LINE, currentExtendedMode);
+            liberator.modes.push(liberator.modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
             setPrompt(currentPrompt);
             setCommand(currentCommand);
@@ -536,13 +551,17 @@ liberator.CommandLine = function () //{{{
 
         // this will prompt the user for a string
         // liberator.commandline.input("(s)ave or (o)pen the file?")
-        input: function (str)
+        input: function (prompt, callback, extra)
         {
-            // TODO: unfinished, need to find out how/if we can block the execution of code
-            // to make this code synchronous or at least use a callback
-            setLine(str, this.HL_QUESTION);
+            extra = extra || {};
+
+            promptCallback = callback;
+            promptCompleter = extra.completer;
+            liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.PROMPT);
+            currentExtendedMode = liberator.modes.PROMPT;
+            setPrompt(prompt + " ", this.HL_QUESTION);
+            setCommand(extra.default || "");
             commandWidget.focus();
-            return "not implemented";
         },
 
         // reads a multi line input and returns the string once the last line matches
@@ -550,9 +569,7 @@ liberator.CommandLine = function () //{{{
         inputMultiline: function (untilRegexp, callbackFunc)
         {
             // save the mode, because we need to restore it
-            oldMode = liberator.mode;
-            oldExtendedMode = liberator.mode.extended;
-            liberator.modes.set(liberator.modes.COMMAND_LINE, liberator.modes.INPUT_MULTILINE);
+            liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.INPUT_MULTILINE);
 
             // save the arguments, they are needed in the event handler onEvent
             multilineRegexp = untilRegexp;
@@ -600,11 +617,12 @@ liberator.CommandLine = function () //{{{
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
+                //   FIXME: <Esc> should trigger "cancel" event
                 if (liberator.events.isAcceptKey(key))
                 {
                     var mode = currentExtendedMode; // save it here, as setMode() resets it
                     history.add(command);
-                    liberator.modes.reset(true); //FIXME: use mode stack
+                    liberator.modes.pop();
                     completionlist.hide();
                     liberator.focusContent(false);
                     liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
@@ -790,7 +808,7 @@ liberator.CommandLine = function () //{{{
                     if (command.length == 0)
                     {
                         liberator.triggerCallback("cancel", currentExtendedMode);
-                        liberator.modes.reset(); // FIXME: use mode stack
+                        liberator.modes.pop(); // FIXME: use mode stack
                     }
                 }
                 else // any other key
@@ -812,14 +830,14 @@ liberator.CommandLine = function () //{{{
                     if (text.match(multilineRegexp))
                     {
                         text = text.replace(multilineRegexp, "");
-                        liberator.modes.set(oldMode, oldExtendedMode);
+                        liberator.modes.pop();
                         multilineInputWidget.collapsed = true;
                         multilineCallback.call(this, text);
                     }
                 }
                 else if (liberator.events.isCancelKey(key))
                 {
-                    liberator.modes.set(oldMode, oldExtendedMode);
+                    liberator.modes.pop();
                     multilineInputWidget.collapsed = true;
                 }
             }
@@ -1016,7 +1034,7 @@ liberator.CommandLine = function () //{{{
             if (passEvent || closeWindow)
             {
                 // FIXME: use mode stack
-                liberator.modes.reset();
+                liberator.modes.pop();
                 this.clear();
 
                 if (passEvent)

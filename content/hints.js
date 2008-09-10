@@ -96,7 +96,7 @@ liberator.Hints = function () //{{{
 
         var fragment = doc.createDocumentFragment();
         var start = hints.length;
-        while ((elem = res.iterateNext()) != null)
+        for (let elem in res)
         {
             // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
@@ -604,8 +604,8 @@ liberator.Hints = function () //{{{
         });
 
     liberator.options.add(["wordseparators", "wsp"],
-        "How words are splitted for hintmatching",
-        "string", '[\\.,!\\?:;/\\\"\\^\\$%&§\\(\\)\\[\\]\\{\\}<>#\\*\\+\\|=~ _\\-]');
+        "How words are split for hintmatching",
+        "string", '[\\.,!\\?:;/\\\"\\^\\$%&?\\(\\)\\[\\]\\{\\}<>#\\*\\+\\|=~ _\\-]');
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////

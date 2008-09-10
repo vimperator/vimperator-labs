@@ -759,8 +759,9 @@ lookup:
             }
             catch (e)
             {
+                Components.utils.reportError("Sourcing file: " + filename + ": " + e);
                 if (!silent)
-                    liberator.echoerr(e);
+                    liberator.echoerr("Sourcing file: " + filename + ": " + e);
             }
         }
     }; //}}}

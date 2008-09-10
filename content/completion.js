@@ -242,18 +242,12 @@ liberator.Completion = function () //{{{
                 {
                     var wigRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
 
-                    files = files.filter(function (f) {
-                        return f.isDirectory() || !wigRegexp.test(f.leafName);
-                    });
+                    files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
                 }
 
-                mapped = files.map(function (file) {
-                    return [tail ? file.leafName : (dir + file.leafName), file.isDirectory() ? "Directory" : "File"];
-                }).sort(function (a, b) {
-                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
-                }).sort(function (a, b) {
-                    return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
-                });
+                mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
+                                                    file.isDirectory() ? "Directory" : "File"])
+                              .sort(function (a, b) a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]))
             }
             catch (e)
             {

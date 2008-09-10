@@ -37,6 +37,7 @@ const liberator = (function () //{{{
     function loadModule(name, func)
     {
         liberator.log("Loading module " + name + "...", 0);
+        liberator.dump("Loading module " + name + "...");
         liberator[name] = func();
     }
 
@@ -915,6 +916,24 @@ const liberator = (function () //{{{
             return true;
         },
 
+        /* Not really ideal. I'd like open to do this. */
+        openTabs: function(uris, length)
+        {
+            let open = function()
+            {
+                for each (let uri in uris)
+                    liberator.open(uri, liberator.NEW_TAB);
+            }
+            if ((length || uris.length) > 50)
+                liberator.commandline.input("This will open " + (length || uris.length) + " new tabs. Would you like to continue? (yes/[no])",
+                    function(resp) { if(resp.match(/^y(es)?$/i)) open() },
+                    {
+                        completer: function(filter) [0, [["yes", "Open all in tabs"], ["no", "Cancel"]]],
+                    });
+            else
+                open();
+        },
+
         // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
         // v.plugins.mode = <str> string to show on v.modes.CUSTOM
         // v.plugins.stop = <func> hooked on a v.modes.reset()
@@ -967,7 +986,7 @@ const liberator = (function () //{{{
 
 
         // TODO: move to {muttator,vimperator,...}.js
-        // this function is called, when the chrome is ready
+        // this function is called when the chrome is ready
         startup: function ()
         {
             liberator.log("Initializing liberator object...", 0);
@@ -1030,7 +1049,7 @@ const liberator = (function () //{{{
                         {
                             var files = liberator.io.readDirectory(pluginDir.path);
                             liberator.log("Sourcing plugin directory...", 3);
-                            files.forEach(function (file) {
+                            files.sort(function(a, b) String(a.path).localeCompare(b.path)).forEach(function (file) {
                                 if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                     liberator.io.source(file.path, false);
                             });

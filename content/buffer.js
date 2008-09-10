@@ -338,9 +338,8 @@ liberator.Buffer = function () //{{{
                     "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
                 );
 
-                for (let i = 0; i < matches.snapshotLength; i++)
+                for (match in matches)
                 {
-                    let match = matches.snapshotItem(i);
                     let computedStyle = window.content.getComputedStyle(match, null);
 
                     if (computedStyle.getPropertyValue("visibility") != "hidden" && computedStyle.getPropertyValue("display") != "none")
@@ -692,6 +691,10 @@ liberator.Buffer = function () //{{{
                 asIterator ? XPathResult.UNORDERED_NODE_ITERATOR_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
                 null
             );
+
+            result.__iterator__ = asIterator
+                                ? function() { let elem; while((elem = this.iterateNext())) yield elem }
+                                : function() { for(let i = 0; i < this.snapshotLength; i++) yield this.snapshotItem(i) };
 
             return result;
         },

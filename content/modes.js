@@ -40,6 +40,8 @@ liberator.modes = (function () //{{{
     var isRecording = false;
     var isReplaying = false; // playing a macro
 
+    var modeStack = [];
+
     function getModeMessage()
     {
         if (passNextKey && !passAllKeys)
@@ -179,6 +181,7 @@ liberator.modes = (function () //{{{
         MENU:             1 << 19, // a popupmenu is active
         LINE:             1 << 20, // linewise visual mode
         RECORDING:        1 << 21,
+        PROMPT:           1 << 22,
 
         __iterator__: function ()
         {
@@ -237,6 +240,18 @@ liberator.modes = (function () //{{{
                 this.show();
         },
 
+        push: function(mainMode, extendedMode, silent)
+        {
+            modeStack.push([main, extended]);
+            this.set(mainMode, extendedMode, silent);
+        },
+
+        pop: function() {
+            var a = modeStack.pop();
+            if (a)
+                [main, extended] = a;
+        },
+
         setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
             // TODO this.plugin[id]... ('id' maybe submode or what..)
@@ -248,6 +263,7 @@ liberator.modes = (function () //{{{
         // keeps recording state
         reset: function (silent)
         {
+            modeStack = [];
             if (liberator.config.isComposeWindow)
                 this.set(liberator.modes.COMPOSE, liberator.modes.NONE, silent);
             else
@@ -260,19 +276,19 @@ liberator.modes = (function () //{{{
             this.show();
         },
 
-        get passNextKey() { return passNextKey; },
+        get passNextKey() passNextKey,
         set passNextKey(value) { passNextKey = value; this.show(); },
 
-        get passAllKeys() { return passAllKeys; },
+        get passAllKeys() passAllKeys,
         set passAllKeys(value) { passAllKeys = value; this.show(); },
 
-        get isRecording() { return isRecording; },
+        get isRecording()  isRecording,
         set isRecording(value) { isRecording = value; this.show(); },
 
-        get isReplaying() { return isReplaying; },
+        get isReplaying() isReplaying,
         set isReplaying(value) { isReplaying = value; },
 
-        get main()      { return main; },
+        get main() main,
         set main(value) {
             if (value != main)
                 handleModeChange(main, value);
@@ -283,7 +299,7 @@ liberator.modes = (function () //{{{
             this.show();
         },
 
-        get extended()      { return extended; },
+        get extended() extended,
         set extended(value) {
             extended = value; this.show();
         }
