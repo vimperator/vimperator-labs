@@ -250,7 +250,7 @@ schwarzenegger[c]. Therefore, you need to add a keyword or search engine
 ____
 
 
-|\'editor'|
+|\'editor'| |i_<Ctrl-i>|
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
