@@ -102,15 +102,15 @@ liberator.Bookmarks = function () //{{{
     }
 
     var observer = {
-        onBeginUpdateBatch: function() {},
-        onEndUpdateBatch:   function() {},
-        onItemVisited:      function() {},
+        onBeginUpdateBatch: function () {},
+        onEndUpdateBatch:   function () {},
+        onItemVisited:      function () {},
         /* FIXME: Should probably just update the given bookmark. */
         onItemMoved:        flush,
         onItemAdded:        flush,
         onItemRemoved:      flush,
         onItemChanged:      flush,
-        QueryInterface: function(iid) {
+        QueryInterface: function (iid) {
             if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
                 return this;
             throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -492,7 +492,7 @@ liberator.Bookmarks = function () //{{{
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
-        destroy: function()
+        destroy: function ()
         {
             bookmarksService.removeObserver(observer, false);
         },
