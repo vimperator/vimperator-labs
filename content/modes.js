@@ -240,13 +240,14 @@ liberator.modes = (function () //{{{
                 this.show();
         },
 
-        push: function(mainMode, extendedMode, silent)
+        push: function (mainMode, extendedMode, silent)
         {
             modeStack.push([main, extended]);
             this.set(mainMode, extendedMode, silent);
         },
 
-        pop: function() {
+        pop: function ()
+        {
             var a = modeStack.pop();
             if (a)
                 [main, extended] = a;

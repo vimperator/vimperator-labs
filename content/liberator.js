@@ -917,18 +917,18 @@ const liberator = (function () //{{{
         },
 
         /* Not really ideal. I'd like open to do this. */
-        openTabs: function(uris, length)
+        openTabs: function (uris, length)
         {
-            let open = function()
+            let open = function ()
             {
                 for each (let uri in uris)
                     liberator.open(uri, liberator.NEW_TAB);
             }
             if ((length || uris.length) > 50)
                 liberator.commandline.input("This will open " + (length || uris.length) + " new tabs. Would you like to continue? (yes/[no])",
-                    function(resp) { if(resp.match(/^y(es)?$/i)) open() },
+                    function (resp) { if (resp.match(/^y(es)?$/i)) open() },
                     {
-                        completer: function(filter) [0, [["yes", "Open all in tabs"], ["no", "Cancel"]]],
+                        completer: function (filter) [0, [["yes", "Open all in tabs"], ["no", "Cancel"]]],
                     });
             else
                 open();
@@ -1049,7 +1049,7 @@ const liberator = (function () //{{{
                         {
                             var files = liberator.io.readDirectory(pluginDir.path);
                             liberator.log("Sourcing plugin directory...", 3);
-                            files.sort(function(a, b) String(a.path).localeCompare(b.path)).forEach(function (file) {
+                            files.sort(function (a, b) String(a.path).localeCompare(b.path)).forEach(function (file) {
                                 if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                     liberator.io.source(file.path, false);
                             });
