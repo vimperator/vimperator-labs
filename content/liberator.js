@@ -1093,6 +1093,8 @@ const liberator = (function () //{{{
             liberator.events.destroy();
             if (liberator.has("quickmarks"))
                 liberator.quickmarks.destroy();
+            if (liberator.has("bookmarks"))
+                liberator.bookmarks.destroy();
 
             liberator.dump("All liberator modules destroyed\n");
 

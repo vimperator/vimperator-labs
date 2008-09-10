@@ -94,6 +94,31 @@ liberator.Bookmarks = function () //{{{
         }
     }
 
+    function flush()
+    {
+        bookmarks = null;
+        if (liberator.options["preload"])
+            load();
+    }
+
+    var observer = {
+        onBeginUpdateBatch: function() {},
+        onEndUpdateBatch:   function() {},
+        onItemVisited:      function() {},
+        /* FIXME: Should probably just update the given bookmark. */
+        onItemMoved:        flush,
+        onItemAdded:        flush,
+        onItemRemoved:      flush,
+        onItemChanged:      flush,
+        QueryInterface: function(iid) {
+            if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
+                return this;
+            throw Components.results.NS_ERROR_NO_INTERFACE;
+        }
+    };
+
+    bookmarksService.addObserver(observer, false);
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -275,9 +300,6 @@ liberator.Bookmarks = function () //{{{
             // update the display of our "bookmarked" symbol
             liberator.statusline.updateUrl();
 
-            //also update bookmark cache
-            bookmarks.unshift([url, title, keyword, tags || []]);
-
             liberator.autocommands.trigger("BookmarkAdd", "");
 
             return true;
@@ -341,10 +363,6 @@ liberator.Bookmarks = function () //{{{
                 liberator.log(e, 0);
                 return i;
             }
-
-            // also update bookmark cache, if we removed at least one bookmark
-            if (count.value > 0)
-                load();
 
             // update the display of our "bookmarked" symbol
             liberator.statusline.updateUrl();
@@ -472,8 +490,12 @@ liberator.Bookmarks = function () //{{{
             list += "</table>";
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
-        }
+        },
 
+        destroy: function()
+        {
+            bookmarksService.removeObserver(observer, false);
+        },
     };
     //}}}
 }; //}}}
