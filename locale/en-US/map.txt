@@ -12,7 +12,7 @@ which are translated to a string of characters.  Example:
 
 will echo the current date to the command line when [m]<F2>[m] is pressed.
 
-There are separate key mapping tables for each of the Normal, and Insert,
+There are separate key mapping tables for each of the Normal, Insert,
 Command-line modes.
 
 |:map-special-chars| +
@@ -37,8 +37,15 @@ ________________________________________________________________________________
 |<Leader>| |mapleader| +
 ||<Leader>||
 ________________________________________________________________________________
-Expands to the value of the "mapleader" variable in key mapping.  If
-"mapleader" is unset or empty then "\" is used.
+Expands to the value of the "mapleader" variable in key mapping. If
+"mapleader" is unset or empty then "\" is used. Example: +
+\{nbsp}[c]:map <Leader>h :echo "Hello"<CR>[c] +
+works like +
+\{nbsp}[c]:map \h :echo "Hello"<CR>[c] +
+but after +
+\{nbsp}[c]let mapleader = ","[c] +
+it works like +
+\{nbsp}[c]:map ,h :echo "Hello"<CR>[c]
 ________________________________________________________________________________
 
 

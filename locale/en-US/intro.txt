@@ -59,11 +59,10 @@ section:Help{nbsp}topics[overview]
 - help:Tabs[tabs.html]: Managing your tabbed browsing session.
 - help:Hints[hints.html]: Selecting hyperlinks.
 - help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Defining new key
-  mappings.
+  mappings, abbreviations and user commands.
 - help:Expression{nbsp}evaluation[eval.html]: Executing JavaScript.
 - help:Marks[marks.html]: Using bookmarks, QuickMarks, history and local marks.
-- help:Repeating{nbsp}commands[repeat.html]: Using macros and user commands to
-  repeat recurring workflows.
+- help:Repeating{nbsp}commands[repeat.html]: Using macros to repeat recurring workflows.
 - help:Autocommands[autocommands.html]: Automatically executing code on certain
   events.
 - help:Print[print.html]: Printing pages.
