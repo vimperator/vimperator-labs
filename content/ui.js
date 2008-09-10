@@ -312,6 +312,17 @@ liberator.CommandLine = function () //{{{
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
+            completer: function (filter)
+            {
+                return [
+                    ["s", "Search engines and keyword URLs"],
+                    ["f", "Local files"],
+                    ["b", "Bookmarks"],
+                    ["h", "History"],
+                    ["l", "Firefox location bar entries (bookmarks and history sorted in an intelligent way)"],
+                    ["S", "Suggest engines"]
+                ];
+            },
             validator: function (value) { return !/[^sfbhSl]/.test(value); }
         });
 
