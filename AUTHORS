@@ -8,6 +8,7 @@ Developers:
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
   * Tim Hammerquist (penryu@gmail.com)
   * Konstantin Stepanov (milezv@yandex.ru)
+  * Kris Maglione
 
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
@@ -25,7 +26,6 @@ Patches (in no special order):
   * Lee Hinman (:open ./.. support)
   * Bart Trojanowski (Makefile)
   * Hannes Rist (:set titlestring support)
-  * Kris Maglione
   * Nikolai Weibull ($VIMPERATOR_HOME)
   * Joseph Xu (supporting multiple top level windows better)
   * Raimon Grau Cuscó (document relationship navigation - ]], [[)
