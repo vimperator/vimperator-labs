@@ -151,8 +151,8 @@ function ArrayStore(name, store)
             if(fromEnd)
                 array.splice(0, array.length - length);
             array.length = length;
+            this.fireEvent("truncate", length);
         }
-        this.fireEvent("truncate", length);
         return ret;
     };
 
