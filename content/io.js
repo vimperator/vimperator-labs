@@ -458,19 +458,20 @@ liberator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
 
-            var tmpname = liberator.config.name.toLowerCase() + ".tmp";
+            var tmpname = liberator.config.name.toLowerCase() + "-" + 
+                window.content.document.location.hostname + ".tmp";
             if (liberator.config.name == "Muttator")
                 tmpname = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
 
             if (WINDOWS)
             {
                 var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";
-                file.initWithPath(dir + "\\" + tmpname);
+                file.initWithPath(dir + tmpname);
             }
             else
             {
                 var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "/tmp/";
-                file.initWithPath(dir + "/" + tmpname);
+                file.initWithPath(dir + tmpname);
             }
 
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
