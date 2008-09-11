@@ -357,7 +357,7 @@ liberator.Buffer = function () //{{{
                 if (elements.length > 0)
                 {
                     if (count > elements.length)
-                        count = elements.length; 
+                        count = elements.length;
                     else if (count < 1)
                         count = 1;
 

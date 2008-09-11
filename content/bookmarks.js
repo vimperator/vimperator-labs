@@ -129,7 +129,7 @@ liberator.Bookmarks = function () //{{{
         {
             completer: function (filter)
             {
-                return liberator.completion.url("", "s")[1]; 
+                return liberator.completion.url("", "s")[1];
             },
             validator: function (value)
             {

@@ -50,7 +50,8 @@ function getCharPref(name)
     }
 }
 
-function prefName(key) {
+function prefName(key)
+{
     return "extensions.liberator.datastore." + key;
 }
 
@@ -65,10 +66,10 @@ function loadPref(name, store, type)
 }
 
 var prototype = {
-    fireEvent: function(event, arg) { storage.fireEvent(this.name, event, arg) },
-    save: function()
+    fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg) },
+    save: function ()
     {
-        if(this.store)
+        if (this.store)
             prefService.setCharPref(prefName(this.name), this.serial)
     },
 };
@@ -77,9 +78,9 @@ function ObjectStore(name, store)
 {
     var object = loadPref(name, store, Object) || {};
 
-    this.__defineGetter__("store", function() store);
-    this.__defineGetter__("name", function() name);
-    this.__defineGetter__("serial", function() json.encode(object));
+    this.__defineGetter__("store", function () store);
+    this.__defineGetter__("name", function () name);
+    this.__defineGetter__("serial", function () json.encode(object));
 
     this.set = function set(key, val)
     {
@@ -102,12 +103,13 @@ function ObjectStore(name, store)
 
     this.get = function get(val) object[val];
 
-    this.clear = function()
+    this.clear = function ()
     {
         object = {};
     };
 
-    this.__iterator__ = function() {
+    this.__iterator__ = function ()
+    {
         for (let key in object)
             yield [key, object[key]];
     };
@@ -118,10 +120,10 @@ function ArrayStore(name, store)
 {
     var array = loadPref(name, store, Array) || {};
 
-    this.__defineGetter__("store", function() store);
-    this.__defineGetter__("name", function() name);
-    this.__defineGetter__("serial", function() json.encode(array));
-    this.__defineGetter__("length", function() array.length);
+    this.__defineGetter__("store",  function () store);
+    this.__defineGetter__("name",   function () name);
+    this.__defineGetter__("serial", function () json.encode(array));
+    this.__defineGetter__("length", function () array.length);
 
     this.set = function set(index, value)
     {
@@ -148,7 +150,7 @@ function ArrayStore(name, store)
         var ret = array.length;
         if (array.length > length)
         {
-            if(fromEnd)
+            if (fromEnd)
                 array.splice(0, array.length - length);
             array.length = length;
             this.fireEvent("truncate", length);
@@ -169,8 +171,9 @@ function ArrayStore(name, store)
         return index >= 0 ? array[index] : array[array.length + index];
     };
 
-    this.__iterator__ = function() {
-        for(let i = 0; i < array.length; i++)
+    this.__iterator__ = function ()
+    {
+        for (let i = 0; i < array.length; i++)
             yield [i, array[i]];
     };
 }
@@ -182,16 +185,16 @@ var observers = {};
 var storage = {
     _addKey: function addKey(key, val)
     {
-        if(key in this)
+        if (key in this)
             throw Error; // TODO: Find a better error.
         keys[key] = val;
-        this.__defineGetter__(key, function() keys[key]);
+        this.__defineGetter__(key, function () keys[key]);
     },
 
     newObject: function newObject(key, store)
     {
         // TODO: Add type checking.
-        if(key in keys)
+        if (key in keys)
             return;
         this._addKey(key, new ObjectStore(key, store));
     },
@@ -199,26 +202,26 @@ var storage = {
     newArray: function newArray(key, store)
     {
         // TODO: Add type checking.
-        if(key in keys)
+        if (key in keys)
             return;
         this._addKey(key, new ArrayStore(key, store));
     },
 
     addObserver: function addObserver(key, callback)
     {
-        if(!(key in observers))
+        if (!(key in observers))
             observers[key] = [];
-        if(observers[key].indexOf(callback) >= 0)
+        if (observers[key].indexOf(callback) >= 0)
             return;
         observers[key].push(callback);
     },
 
-    removeObserver: function(key, callback)
+    removeObserver: function (key, callback)
     {
-        if(!(key in observers))
+        if (!(key in observers))
             return;
-        observers[key] = observers[key].filter(function(elem) elem != callback);
-        if(obsevers[key].length == 0)
+        observers[key] = observers[key].filter(function (elem) elem != callback);
+        if (obsevers[key].length == 0)
             delete obsevers[key];
     },
 
@@ -228,7 +231,8 @@ var storage = {
             callback(key, event, arg);
     },
 
-    saveAll: function storeAll() {
+    saveAll: function storeAll()
+    {
         for each(key in keys)
             key.save();
     }
