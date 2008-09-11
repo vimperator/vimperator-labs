@@ -54,14 +54,14 @@ liberator.CommandLine = function () //{{{
 
         get length() this.store.length,
 
-        get: function(index) this.store.get(index),
+        get: function (index) this.store.get(index),
 
         add: function (str)
         {
             if (!str)
                 return;
 
-            this.store.mutate('filter', function(line) line != str);
+            this.store.mutate('filter', function (line) line != str);
             this.store.push(str);
             this.store.truncate(liberator.options["history"], true);
         }

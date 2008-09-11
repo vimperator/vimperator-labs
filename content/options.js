@@ -68,8 +68,8 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         }
     }
 
-    this.__defineGetter__("globalvalue", function() liberator.options.store.get(cannonName));
-    this.__defineSetter__("globalvalue", function(val) liberator.options.store.set(cannonName, val));
+    this.__defineGetter__("globalvalue", function () liberator.options.store.get(cannonName));
+    this.__defineSetter__("globalvalue", function (val) liberator.options.store.set(cannonName, val));
     this.globalvalue = this.defaultValue;
 
     this.get = function (scope)
@@ -167,7 +167,7 @@ liberator.Options = function () //{{{
     {
         // Trigger any setters.
         let opt = liberator.options.get(option);
-        if(event == "change" && opt)
+        if (event == "change" && opt)
             opt.set(opt.value, liberator.options.OPTION_SCOPE_GLOBAL)
     }
 
