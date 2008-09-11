@@ -878,20 +878,16 @@ liberator.Editor = function () //{{{
                 }
     //        }
 
-            // blink the textbox after returning - TODO: could use setInterval
+            // blink the textbox after returning
             if (textBox)
             {
                 var timeout = 100;
-                textBox.style.backgroundColor = tmpBg;
-                setTimeout(function () {
-                    textBox.style.backgroundColor = oldBg;
-                    setTimeout(function () {
-                        textBox.style.backgroundColor = tmpBg;
-                        setTimeout(function () {
-                            textBox.style.backgroundColor = oldBg;
-                        }, timeout);
-                    }, timeout);
-                }, timeout);
+                var colors = [tmpBg, oldBg, tmpBg, oldBg];
+                (function() {
+                    textBox.style.backgroundColor = colors.shift();
+                    if(colors.length > 0)
+                        setTimeout(arguments.callee, timeout)
+                })();
             }
 
             tmpfile.remove(false);

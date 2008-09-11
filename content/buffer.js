@@ -1486,31 +1486,20 @@ liberator.Marks = function () //{{{
 
     function getSortedMarks()
     {
+        var lmarks, umarks;
+
         // local marks
-        var lmarks = [];
-
-        for (var mark in localMarks)
-        {
-            for (var i = 0; i < localMarks[mark].length; i++)
-            {
-                if (localMarks[mark][i].location == window.content.location.href)
-                    lmarks.push([mark, localMarks[mark][i]]);
-            }
-        }
-
+        lmarks = [[[mark, value[i]] for (i in value)
+                                    if (value[i].location == window.content.location.href)]
+                  for ([mark, value] in Iterator(localMarks))];
+        lmarks = Array.concat.apply(Array, lmarks);
         lmarks.sort();
 
         // URL marks
-        var umarks = [];
-
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        for (var mark in urlMarks)
-            umarks.push([mark, urlMarks[mark]]);
-
-        umarks.sort(function (a, b) {
-            return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
-        });
+        umarks = [[key, mark] for ([key, mark] in Iterator(urlMarks))];
+        umarks.sort(function (a, b) a[0].localeCompare(b[0]));
 
         return lmarks.concat(umarks);
     }
