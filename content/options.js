@@ -123,7 +123,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
 
         if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             liberator.tabs.options[this.name] = newValue;
-        if (scope & liberator.options.OPTION_SCOPE_GLOBAL)
+        if (scope & liberator.options.OPTION_SCOPE_GLOBAL && newValue != this.globalValue)
             this.globalvalue = newValue;
 
         this.hasChanged = true;
@@ -159,11 +159,20 @@ liberator.Options = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.storage.newObject("options", false);
-
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
     var options = [];
+
+    function optionObserver(key, event, option)
+    {
+        // Trigger any setters.
+        let opt = liberator.options.get(option);
+        if(event == "change" && opt)
+            opt.set(opt.value, liberator.options.OPTION_SCOPE_GLOBAL)
+    }
+
+    liberator.storage.newObject("options", false);
+    liberator.storage.addObserver("options", optionObserver);
 
     function storePreference(name, value)
     {
@@ -811,6 +820,7 @@ liberator.Options = function () //{{{
             if (loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit")
                     == popupAllowedEvents + " keypress")
                 storePreference("dom.popup_allowed_events", popupAllowedEvents);
+            liberator.storage.removeObserver("options", optionObserver);
         },
 
         get: function (name, scope)

@@ -83,12 +83,13 @@ function ObjectStore(name, store)
 
     this.set = function set(key, val)
     {
+        var defined = key in object;
         var orig = object[key];
         object[key] = val;
-        if (orig == val)
-            this.fireEvent("change", key);
-        else
+        if (!defined)
             this.fireEvent("add", key);
+        else if (orig != val)
+            this.fireEvent("change", key);
     };
 
     this.remove = function remove(key)
@@ -207,7 +208,7 @@ var storage = {
     {
         if(!(key in observers))
             observers[key] = [];
-        if(observers[key].indexOf(key) >= 0)
+        if(observers[key].indexOf(callback) >= 0)
             return;
         observers[key].push(callback);
     },
