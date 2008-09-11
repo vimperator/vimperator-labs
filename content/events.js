@@ -948,12 +948,6 @@ liberator.Events = function () //{{{
             return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
         },
 
-        getMapLeader: function ()
-        {
-            var leaderRef = liberator.variableReference("mapleader");
-            return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
-        },
-
         // argument "event" is delibarately not used, as i don't seem to have
         // access to the real focus target
         //

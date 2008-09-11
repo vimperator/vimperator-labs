@@ -242,8 +242,8 @@ liberator.IO = function () //{{{
             for (var abbrCmd in liberator.editor.abbreviations)
                 line += abbrCmd;
 
-            // if (liberator.events.getMapLeader() != "\\")
-            //    line += "\nlet mapleader = \"" + liberator.events.getMapLeader() + "\"\n";
+            // if (liberator.mappings.getMapLeader() != "\\")
+            //    line += "\nlet mapleader = \"" + liberator.mappings.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
             line += "\nsource! " + filename + ".local\n";
@@ -458,7 +458,7 @@ liberator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
 
-            var tmpname = liberator.config.name.toLowerCase() + "-" + 
+            var tmpname = liberator.config.name.toLowerCase() + "-" +
                 window.content.document.location.hostname + ".tmp";
             if (liberator.config.name == "Muttator")
                 tmpname = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically

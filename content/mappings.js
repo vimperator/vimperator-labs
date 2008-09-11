@@ -130,7 +130,7 @@ liberator.Mappings = function () //{{{
     function expandLeader(keyString)
     {
         var leaderRegexp = /<Leader>/i;
-        var currentLeader = liberator.events.getMapLeader();
+        var currentLeader = liberator.mappings.getMapLeader();
         return keyString.replace(leaderRegexp, currentLeader);
     }
 
@@ -343,6 +343,12 @@ liberator.Mappings = function () //{{{
             }
 
             return matches;
+        },
+
+        getMapLeader: function ()
+        {
+            var leaderRef = liberator.variableReference("mapleader");
+            return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 
         // returns whether the user added a custom user map

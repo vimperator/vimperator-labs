@@ -71,7 +71,7 @@ liberator.Hints = function () //{{{
 
     function updateStatusline()
     {
-        liberator.statusline.updateInputBuffer((escapeNumbers ? liberator.events.getMapLeader() + " ": "") + // sign for escapeNumbers
+        liberator.statusline.updateInputBuffer((escapeNumbers ? liberator.mappings.getMapLeader() + " " : "") + // sign for escapeNumbers
                 (hintString ? "\"" + hintString + "\"" : "") +
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
@@ -752,7 +752,7 @@ liberator.Hints = function () //{{{
                     hintNumber = 0;
                     break;
 
-               case liberator.events.getMapLeader():
+               case liberator.mappings.getMapLeader():
                    escapeNumbers = !escapeNumbers;
                    if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                        hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
