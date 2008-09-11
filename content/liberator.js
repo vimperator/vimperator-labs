@@ -1154,7 +1154,7 @@ const liberator = (function () //{{{
     //}}}
 })(); //}}}
 
-Components.utils.import("resource://vimperator/storage.jsi", liberator);
+Components.utils.import("resource://vimperator/storage.jsm", liberator);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);
