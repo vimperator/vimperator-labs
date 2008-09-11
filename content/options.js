@@ -36,17 +36,17 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
     if (!extraInfo)
         extraInfo = {};
 
-    var value = null;
-
-    this.name = names[0];
+    let cannonName = names[0];
+    this.name = cannonName;
     this.names = names;
     this.type = type;
-    this.scope = (extraInfo.scope & liberator.options.OPTION_SCOPE_BOTH) || liberator.options.OPTION_SCOPE_GLOBAL; // XXX set to BOTH by default someday? - kstep
+    this.scope = (extraInfo.scope & liberator.options.OPTION_SCOPE_BOTH) ||
+                 liberator.options.OPTION_SCOPE_GLOBAL;
+                 // XXX set to BOTH by default someday? - kstep
     this.description = description || "";
 
     // "", 0 are valid default values
     this.defaultValue = (defaultValue === undefined) ? null : defaultValue;
-    value = this.defaultValue;
 
     this.setter = extraInfo.setter || null;
     this.getter = extraInfo.getter || null;
@@ -68,6 +68,10 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         }
     }
 
+    this.__defineGetter__("globalvalue", function() liberator.options.store.get(cannonName));
+    this.__defineSetter__("globalvalue", function(val) liberator.options.store.set(cannonName, val));
+    this.globalvalue = this.defaultValue;
+
     this.get = function (scope)
     {
         if (scope)
@@ -85,7 +89,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             aValue = liberator.tabs.options[this.name];
         if ((scope & liberator.options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
-            aValue = value;
+            aValue = this.globalvalue;
 
         if (this.getter)
             this.getter.call(this, aValue);
@@ -120,7 +124,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             liberator.tabs.options[this.name] = newValue;
         if (scope & liberator.options.OPTION_SCOPE_GLOBAL)
-            value = newValue;
+            this.globalvalue = newValue;
 
         this.hasChanged = true;
     };
@@ -131,7 +135,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
 
     this.hasName = function (name)
     {
-        return this.names.some(function (e) { return e == name; });
+        return this.names.indexOf(name) >= 0;
     };
 
     this.isValidValue = function (value)
@@ -154,6 +158,8 @@ liberator.Options = function () //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.storage.newObject("options", false);
 
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
@@ -768,8 +774,6 @@ liberator.Options = function () //{{{
         {
             for (var i = 0; i < options.length; i++)
                 yield options[i];
-
-            throw StopIteration;
         },
 
         add: function (names, description, type, defaultValue, extraInfo)
@@ -782,9 +786,9 @@ liberator.Options = function () //{{{
             if (!option)
                 return false;
 
-            for (var i = 0; i < options.length; i++)
+            for (var opt in Iterator(this))
             {
-                if (options[i].name == option.name)
+                if (opt.name == option.name)
                 {
                     // never replace for now
                     liberator.log("Warning: '" + names[0] + "' already exists, NOT replacing existing option.", 1);
@@ -832,19 +836,19 @@ liberator.Options = function () //{{{
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
-            for (var i = 0; i < options.length; i++)
+            for (var opt in Iterator(this))
             {
-                name  = options[i].name;
-                value = options[i].value;
-                def   = options[i].defaultValue;
+                name  = opt.name;
+                value = opt.value;
+                def   = opt.defaultValue;
 
                 if (onlyNonDefault && value == def)
                     continue;
 
-                if (!(options[i].scope & scope))
+                if (!(opt.scope & scope))
                     continue;
 
-                if (options[i].type == "boolean")
+                if (opt.type == "boolean")
                 {
                     name = value ? "  " + name : "no" + name;
                     if (value != def)
@@ -882,12 +886,12 @@ liberator.Options = function () //{{{
                 " Options ---</th></tr>";
             var name, value, defaultValue;
 
-            for (var i = 0; i < prefArray.length; i++)
+            prefArray.forEach(function (pref)
             {
-                var userValue = prefService.prefHasUserValue(prefArray[i]);
-                if ((!onlyNonDefault || userValue) && prefArray[i].indexOf(filter) >= 0)
+                var userValue = prefService.prefHasUserValue(pref);
+                if ((!onlyNonDefault || userValue) && pref.indexOf(filter) >= 0)
                 {
-                    name = prefArray[i];
+                    name = pref;
                     value = this.getPref(name);
                     if (typeof value == "string")
                         value = value.substr(0, 100).replace(/\n/g, " ");
@@ -907,10 +911,12 @@ liberator.Options = function () //{{{
                     else
                         list += "<tr><td>  " + name + "=" + value + "</td></tr>";
                 }
-            }
+            });
             list += "</table>";
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
+
+        get store() liberator.storage.options,
 
         getPref: function (name, forcedDefault)
         {

@@ -43,53 +43,29 @@ liberator.CommandLine = function () //{{{
     var completionlist = new liberator.InformationList("liberator-completion", { minItems: 1, maxItems: 10 });
     var completions = [];
 
+    liberator.storage.newArray("history-search", true);
+    liberator.storage.newArray("history-command", true);
+
     // TODO: clean this up when it's not 3am...
     var history = {
-        get size() { return liberator.options["history"]; },
+        get mode() (liberator.modes.extended == liberator.modes.EX) ? "command" : "search",
 
-        get mode() { return (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search"; },
+        get store() liberator.storage["history-" + this.mode],
 
-        cmd: null,    // ex command history
+        get length() this.store.length,
 
-        search: null, // text search history
-
-        get: function () { return this[this.mode]; },
-
-        set: function (lines) { this[this.mode] = lines; },
-
-        load: function ()
-        {
-            // TODO: move to storage module
-            this.cmd = liberator.options.getPref("extensions.vimperator.commandline_cmd_history", "").split("\n");
-            this.search = liberator.options.getPref("extensions.vimperator.commandline_search_history", "").split("\n");
-        },
-
-        save: function ()
-        {
-            liberator.options.setPref("extensions.vimperator.commandline_cmd_history", this.cmd.join("\n"));
-            liberator.options.setPref("extensions.vimperator.commandline_search_history", this.search.join("\n"));
-        },
+        get: function(index) this.store.get(index),
 
         add: function (str)
         {
             if (!str)
                 return;
 
-            var lines = this.get();
-
-            // remove all old history lines which have this string
-            lines = lines.filter(function (line) {
-                    return line != str;
-            });
-
-            // add string to the command line history
-            if (lines.push(str) > this.size) // remove the first 10% of the history
-                lines = lines.slice(this.size / 10);
-
-            this.set(lines);
+            this.store.mutate('filter', function(line) line != str);
+            this.store.push(str);
+            this.store.truncate(liberator.options["history"], true);
         }
     };
-    history.load();
 
     var historyIndex = UNINITIALIZED;
     var historyStart = "";
@@ -643,8 +619,6 @@ liberator.CommandLine = function () //{{{
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (key == "<Up>" || key == "<Down>")
                 {
-                    var lines = history.get();
-
                     event.preventDefault();
                     event.stopPropagation();
 
@@ -654,18 +628,18 @@ liberator.CommandLine = function () //{{{
                     // save 'start' position for iterating through the history
                     if (historyIndex == UNINITIALIZED)
                     {
-                        historyIndex = lines.length;
+                        historyIndex = history.length;
                         historyStart = command;
                     }
 
                     // search the history for the first item matching the current
                     // commandline string
-                    while (historyIndex >= -1 && historyIndex <= lines.length)
+                    while (historyIndex >= -1 && historyIndex <= history.length)
                     {
                         key == "<Up>" ? historyIndex-- : historyIndex++;
 
                         // user pressed DOWN when there is no newer history item
-                        if (historyIndex == lines.length)
+                        if (historyIndex == history.length)
                         {
                             setCommand(historyStart);
                             liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
@@ -679,16 +653,16 @@ liberator.CommandLine = function () //{{{
                             liberator.beep();
                             break;
                         }
-                        else if (historyIndex >= lines.length + 1)
+                        else if (historyIndex >= history.length + 1)
                         {
-                            historyIndex = lines.length;
+                            historyIndex = history.length;
                             liberator.beep();
                             break;
                         }
 
-                        if (lines[historyIndex].indexOf(historyStart) == 0)
+                        if (history.get(historyIndex).indexOf(historyStart) == 0)
                         {
-                            setCommand(lines[historyIndex]);
+                            setCommand(history.get(historyIndex));
                             liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
                             break;
                         }
@@ -1094,13 +1068,6 @@ liberator.CommandLine = function () //{{{
         {
             completionIndex = historyIndex = UNINITIALIZED;
         },
-
-        // it would be better if we had a destructor in javascript ...
-        destroy: function ()
-        {
-            history.save();
-        }
-
     };
     //}}}
 }; //}}}

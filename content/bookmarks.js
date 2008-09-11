@@ -790,15 +790,8 @@ liberator.QuickMarks = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var qmarks = {};
-    // TODO: move to a storage module
-    var savedMarks = liberator.options.getPref("extensions.vimperator.quickmarks", "").split("\n");
-
-    // load the saved quickmarks
-    for (var i = 0; i < savedMarks.length - 1; i += 2)
-    {
-        qmarks[savedMarks[i]] = savedMarks[i + 1];
-    }
+    liberator.storage.newObject("quickmarks", true);
+    var qmarks = liberator.storage.quickmarks;
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
@@ -899,28 +892,28 @@ liberator.QuickMarks = function () //{{{
 
         add: function (qmark, location)
         {
-            qmarks[qmark] = location;
+            qmarks.set(qmark, location);
         },
 
         remove: function (filter)
         {
             var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
-            for (var qmark in qmarks)
+            for (var [qmark,] in qmarks)
             {
                 if (pattern.test(qmark))
-                    delete qmarks[qmark];
+                    qmarks.remove(qmark);
             }
         },
 
         removeAll: function ()
         {
-            qmarks = {};
+            qmarks.clear();
         },
 
         jumpTo: function (qmark, where)
         {
-            var url = qmarks[qmark];
+            var url = qmarks.get(qmark);
 
             if (url)
                 liberator.open(url, where);
@@ -934,7 +927,7 @@ liberator.QuickMarks = function () //{{{
             var uppercaseMarks = [];
             var numberMarks    = [];
 
-            for (var qmark in qmarks)
+            for (var [qmark,] in qmarks)
             {
                 if (/[a-z]/.test(qmark))
                     lowercaseMarks.push(qmark);
@@ -972,28 +965,13 @@ liberator.QuickMarks = function () //{{{
             for (var i = 0; i < marks.length; i++)
             {
                 list += "<tr><td>    " + marks[i] +
-                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(qmarks[marks[i]]) + "</td></tr>";
+                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(qmarks.get(marks[i])) + "</td></tr>";
             }
 
             list += "</table>";
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
-
-        destroy: function ()
-        {
-            // save the quickmarks
-            var savedQuickMarks = "";
-
-            for (var i in qmarks)
-            {
-                savedQuickMarks += i + "\n";
-                savedQuickMarks += qmarks[i] + "\n";
-            }
-
-            liberator.options.setPref("extensions.vimperator.quickmarks", savedQuickMarks);
-        }
-
     };
     //}}}
 }; //}}}

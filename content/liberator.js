@@ -1095,12 +1095,11 @@ const liberator = (function () //{{{
         {
             liberator.autocommands.trigger(liberator.config.name + "LeavePre", "");
 
+            liberator.storage.saveAll();
+
             // save our preferences
-            liberator.commandline.destroy();
             liberator.options.destroy();
             liberator.events.destroy();
-            if (liberator.has("quickmarks"))
-                liberator.quickmarks.destroy();
             if (liberator.has("bookmarks"))
                 liberator.bookmarks.destroy();
 
@@ -1166,6 +1165,8 @@ const liberator = (function () //{{{
     };
     //}}}
 })(); //}}}
+
+Components.utils.import("resource://vimperator/storage.jsi", liberator);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);
