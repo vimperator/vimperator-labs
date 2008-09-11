@@ -858,15 +858,21 @@ const liberator = (function () //{{{
         //              [["url1", postdata1], ["url2", postdata2], ...]
         // @param where: if ommited, CURRENT_TAB is assumed
         //                  but NEW_TAB is set when liberator.forceNewTab is true.
-        // @param callback: not implemented, will be allowed to specify a callback function
-        //                  which is called, when the page finished loading
+        // @param force: Don't prompt whether to open more than 20 tabs.
         // @returns true when load was initiated, or false on error
-        open: function (urls, where)
+        open: function (urls, where, force)
         {
             // convert the string to an array of converted URLs
             // -> see liberator.util.stringToURLArray for more details
             if (typeof urls == "string")
                 urls = liberator.util.stringToURLArray(urls);
+
+            if (urls.length > 20 && !force)
+            {
+                liberator.commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no])",
+                    function (resp) { if (resp.match(/^y(es)?$/i)) liberator.open(urls, where, true) });
+                return true;
+            }
 
             if (urls.length == 0)
                 return false;
@@ -922,24 +928,6 @@ const liberator = (function () //{{{
             }
 
             return true;
-        },
-
-        /* Not really ideal. I'd like open to do this. */
-        openTabs: function (uris, length)
-        {
-            let open = function ()
-            {
-                for each (let uri in uris)
-                    liberator.open(uri, liberator.NEW_TAB);
-            }
-            if ((length || uris.length) > 50)
-                liberator.commandline.input("This will open " + (length || uris.length) + " new tabs. Would you like to continue? (yes/[no])",
-                    function (resp) { if (resp.match(/^y(es)?$/i)) open() },
-                    {
-                        completer: function (filter) [0, [["yes", "Open all in tabs"], ["no", "Cancel"]]],
-                    });
-            else
-                open();
         },
 
         // namespace for plugins/scripts. Actually (only) the active plugin must/can set a

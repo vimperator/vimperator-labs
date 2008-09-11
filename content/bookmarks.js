@@ -457,7 +457,7 @@ liberator.Bookmarks = function () //{{{
             }
 
             if (openItems)
-                return liberator.openTabs((i[0] for (i in items)), items.length);
+                return liberator.open([i[0] for (i in items)], liberator.NEW_TAB);
 
             var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
@@ -762,7 +762,7 @@ liberator.History = function () //{{{
 
             if (openItems)
             {
-                return liberator.openTabs((i[0] for (i in items)), items.length);
+                return liberator.open([i[0] for (i in items)], liberator.NEW_TAB);
             }
             else
             {

@@ -110,7 +110,7 @@ function ObjectStore(name, store)
     this.__iterator__ = function() {
         for (let key in object)
             yield [key, object[key]];
-    }
+    };
 }
 ObjectStore.prototype = prototype;
 
@@ -162,7 +162,7 @@ function ArrayStore(name, store)
         var funcName = aFuncName;
         arguments[0] = array;
         array = Array[funcName].apply(Array, arguments);
-    },
+    };
 
     this.get = function get(index)
     {
@@ -172,7 +172,7 @@ function ArrayStore(name, store)
     this.__iterator__ = function() {
         for(let i = 0; i < array.length; i++)
             yield [i, array[i]];
-    }
+    };
 }
 ArrayStore.prototype = prototype;
 
@@ -230,7 +230,7 @@ var storage = {
 
     saveAll: function storeAll() {
         for each(key in keys)
-            key.store();
+            key.save();
     }
 };
 
