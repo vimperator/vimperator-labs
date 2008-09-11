@@ -340,10 +340,7 @@ liberator.Completion = function () //{{{
 
         macro: function (filter)
         {
-            var macros = [];
-
-            for (var item in liberator.events.getMacros())
-                macros.push([item, tmp[item]]);
+            var macros = [item for (item in liberator.events.getMacros())]
 
             return [0, liberator.completion.filter(macros, filter)];
         },

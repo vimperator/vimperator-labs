@@ -255,7 +255,9 @@ liberator.Events = function () //{{{
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
-    var macros = {};
+    liberator.storage.newObject('macros', false);
+
+    var macros = liberator.storage.macros;
     var currentMacro = "";
     var lastMacro = "";
 
@@ -546,8 +548,8 @@ liberator.Events = function () //{{{
                         continue;
 
                 var name = file.leafName.replace(/\.vimp$/i, "");
-                macros[name] = liberator.io.readFile(file).split(/\n/)[0];
-                liberator.log("Macro " + name + " added: " + macros[name], 5);
+                macros.set(name, liberator.io.readFile(file).split(/\n/)[0]);
+                liberator.log("Macro " + name + " added: " + macros.get(name), 5);
             }
         }
         catch (e)
@@ -629,9 +631,9 @@ liberator.Events = function () //{{{
         {
             var str = "<table>";
             var macroRef = liberator.events.getMacros(args);
-            for (var item in macroRef)
-               str += "<tr><td> " + item + " &nbsp; </td><td>" +
-                      liberator.util.escapeHTML(macroRef[item]) + "</td></tr>";
+            for (var [macro, keys] in macroRef)
+               str += "<tr><td> " + macro + " &nbsp; </td><td>" +
+                      liberator.util.escapeHTML(keys) + "</td></tr>";
 
             str += "</table>";
 
@@ -693,13 +695,13 @@ liberator.Events = function () //{{{
             if (/[A-Z]/.test(macro)) // uppercase (append)
             {
                 currentMacro = macro.toLowerCase();
-                if (!macros[currentMacro])
-                    macros[currentMacro] = ""; // initialize if it does not yet exist
+                if (!macros.get(currentMacro))
+                    macros.set(currentMacro, ""); // initialize if it does not yet exist
             }
             else
             {
                 currentMacro = macro;
-                macros[currentMacro] = "";
+                macros.set(currentMacro, "");
             }
         },
 
@@ -727,7 +729,7 @@ liberator.Events = function () //{{{
                     lastMacro = macro; // e.g. long names are case sensitive
             }
 
-            if (macros[lastMacro])
+            if (macros.get(lastMacro))
             {
                 liberator.modes.isReplaying = true;
 
@@ -739,7 +741,7 @@ liberator.Events = function () //{{{
                 catch (e) {}
 
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                liberator.events.feedkeys(macros[lastMacro], true); // true -> noremap
+                liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
                 liberator.modes.isReplaying = false;
             }
             else
@@ -757,25 +759,18 @@ liberator.Events = function () //{{{
             if (!filter)
                 return macros;
 
-            var filtered = {};
             var re = new RegExp(filter);
-
-            for (var item in macros)
-            {
-                if (re.test(item))
-                    filtered[item] = macros[item];
-            }
-            return filtered; //XXX: returns a real copy, since this is only a 'var ..'?
+            return ([macro, keys] for ([macro, keys] in macros) if (re.test(macro)));
         },
 
         deleteMacros: function (filter)
         {
             var re = new RegExp(filter);
 
-            for (var item in macros)
+            for (var [item,] in macros)
             {
                 if (re.test(item))
-                    delete macros[item];
+                    macros.remove(item);
             }
         },
 
@@ -1130,7 +1125,7 @@ liberator.Events = function () //{{{
                 if (key == "q") // TODO: should not be hardcoded
                 {
                     liberator.modes.isRecording = false;
-                    liberator.log("Recorded " + currentMacro + ": " + macros[currentMacro], 9);
+                    liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1138,7 +1133,7 @@ liberator.Events = function () //{{{
                 else if (!(liberator.modes.extended & liberator.modes.INACTIVE_HINT) &&
                          !liberator.mappings.hasMap(liberator.mode, liberator.input.buffer + key))
                 {
-                    macros[currentMacro] += key;
+                    macros.set(currentMacro, macros.get(currentMacro) + key);
                 }
             }
 
