@@ -987,6 +987,9 @@ const liberator = (function () //{{{
         {
             liberator.log("Initializing liberator object...", 0);
 
+            // components which should be shared across all windows
+            Components.utils.import("resource://" + liberator.config.name.toLowerCase() + "/storage.jsm", liberator);
+
             // commands must always be the first module to be initialized
             loadModule("commands",     liberator.Commands); addCommands();
             loadModule("options",      liberator.Options);  addOptions();
@@ -1153,8 +1156,6 @@ const liberator = (function () //{{{
     };
     //}}}
 })(); //}}}
-
-Components.utils.import("resource://" + liberator.config.name.toLowerCase() + "/storage.jsm", liberator);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);
