@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Sep 06
+" Last Change:      2008 Sep 11
 
 if exists("b:current_syntax")
   finish
@@ -38,23 +38,32 @@ syn match vimperatorCommand "!" contained
 " FIXME
 syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
 
-syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline contains=vimperatorOption
+syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline
+    \ contains=vimperatorOption
+
 syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc cdpath cd complete cpt defsearch ds editor
-    \ extendedhinttags eht eventignore ei focuscontent fc nofocuscontent nofc fullscreen fs nofullscreen nofs guioptions go
-    \ helpfile hf hintmatching hm hintstyle hs hinttags ht hinttimeout hto history hi hlsearch hls nohlsearch nohls hlsearchstyle
-    \ hlss incsearch is noincsearch nois ignorecase ic noignorecase noic insertmode im noinsertmode noim laststatus ls linkbgcolor
-    \ lbc linkfgcolor lfc linksearch lks nolinksearch nolks loadplugins noloadplugins lpl nolpl more newtab nextpattern nomore
-    \ pageinfo pa popups pps preload nopreload previewheight pvh previouspattern online noonline scroll scr shell sh shellcmdflag
-    \ shcf showmode smd noshowmode nosmd showstatuslinks ssli showtabline stal smartcase scs nosmartcase noscs suggestengines
-    \ titlestring usermode um nousermode noum urlseparator verbose vbs visualbell vb novisualbell novb visualbellstyle wildignore
-    \ wig wildmode wim wildoptions wop wordseparators wsp
-    \ contained
+    \ extendedhinttags eht eventignore ei guioptions go helpfile hf hintmatching hm hintstyle hs hinttags ht hinttimeout hto
+    \ history hi hlsearchstyle hlss incsearch is laststatus ls linkbgcolor lbc linkfgcolor lfc newtab nextpattern pageinfo pa
+    \ popups pps previewheight pvh previouspattern scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal
+    \ suggestengines titlestring urlseparator verbose vbs visualbellstyle wildignore wig wildmode wim wildoptions wop
+    \ wordseparators wsp
+    \ contained nextgroup=vimperatorSetDefaultModifier
+
+syn match vimperatorOption "\%(no\|inv\)\=\%(focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\|insertmode\|im\|hlsearch\|hls\)\>!\="
+    \ contained nextgroup=vimperatorSetDefaultModifier
+syn match vimperatorOption "\%(no\|inv\)\=\%(linksearch\|lks\|loadplugins\|lpl\|more\|online\|preload\|showmode\|smd\)\>!\="
+    \ contained nextgroup=vimperatorSetDefaultModifier
+syn match vimperatorOption "\%(no\|inv\)\=\%(smartcase\|scs\|online \|visualbell\|vb\|usermode\|um\)\>!\="
+    \ contained nextgroup=vimperatorSetDefaultModifier
+
+syn match vimperatorSetDefaultModifier "\%(\<\l\+\)\@<=&" contained
 
 syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
 syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
 	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
 
-syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<map\>" end="$" keepend oneline contains=vimperatorKeySym
+syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<map\>" end="$" keepend oneline
+    \ contains=vimperatorKeySym
 
 syn match vimperatorKeySym "<[0-9A-Za-z-]\+>"
 
@@ -65,7 +74,8 @@ hi def link vimperatorJavascriptDelimiter	Delimiter
 hi def link vimperatorKeySym			    Special
 hi def link vimperatorLineComment		    Comment
 hi def link vimperatorOption			    PreProc
-hi def link vimperatorString			    String 
+hi def link vimperatorSetDefaultModifier    vimperatorOption
+hi def link vimperatorString			    String
 hi def link vimperatorTodo                  Todo
 
 let b:current_syntax = "vimperator"
