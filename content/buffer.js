@@ -911,12 +911,13 @@ liberator.Buffer = function () //{{{
             elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
-            evt.initMouseEvent("mousedown", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
-            elem.dispatchEvent(evt);
-            evt.initMouseEvent("mouseup", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
-            elem.dispatchEvent(evt);
-            evt.initMouseEvent("click", true, true, view, 1, offsetX, offsetY, 0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow, /*event.metaKey*/ newTab, 0, null);
-            elem.dispatchEvent(evt);
+            for each (event in ["mousedown", "mouseup", "click"])
+            {
+                evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY,
+                        0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow,
+                        /*event.metaKey*/ newTab, 0, null);
+                elem.dispatchEvent(evt);
+            }
         },
 
         saveLink: function (elem, skipPrompt)
@@ -1423,8 +1424,9 @@ liberator.Marks = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = {};
-    var urlMarks = {};
+    var localMarks = liberator.storage.newMap('local-marks', true);
+    var urlMarks = liberator.storage.newMap('url-marks', true);
+
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");
 
@@ -1437,7 +1439,7 @@ liberator.Marks = function () //{{{
         for (var i = 0, length = pendingJumps.length; i < length; i++)
         {
             var mark = pendingJumps[i];
-            if (win.location.href == mark.location)
+            if (win && win.location.href == mark.location)
             {
                 win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
                 pendingJumps.splice(i, 1);
@@ -1446,19 +1448,27 @@ liberator.Marks = function () //{{{
         }
     }
 
+    function markToString(name, mark)
+    {
+        return name + " | " + mark.location +
+                " | (" + mark.position.x + ", " + mark.position.y + ")" +
+                ('tab' in mark) ? " | tab: " + liberator.tabs.index(mark.tab) : "";
+    }
+
     function removeLocalMark(mark)
     {
-        if (mark in localMarks)
+        var localmark = localMarks.get(mark);
+        if (localmark)
         {
             var win = window.content;
-            for (var i = 0; i < localMarks[mark].length; i++)
+            for (var [i,] in Iterator(localmark))
             {
-                if (localMarks[mark][i].location == win.location.href)
+                if (localmark[i].location == win.location.href)
                 {
-                    liberator.log("Deleting local mark: " + mark + " | " + localMarks[mark][i].location + " | (" + localMarks[mark][i].position.x + ", " + localMarks[mark][i].position.y + ") | tab: " + liberator.tabs.index(localMarks[mark][i].tab), 5);
-                    localMarks[mark].splice(i, 1);
-                    if (localMarks[mark].length == 0)
-                        delete localMarks[mark];
+                    liberator.log("Deleting local mark: " + markToString(mark, localmark[i]), 5);
+                    localmark.splice(i, 1);
+                    if (localmark.length == 0)
+                        localMarks.remove(mark);
                     break;
                 }
             }
@@ -1467,10 +1477,11 @@ liberator.Marks = function () //{{{
 
     function removeURLMark(mark)
     {
-        if (mark in urlMarks)
+        var urlmark = urlMarks.get(mark);
+        if (urlmark)
         {
-            liberator.log("Deleting URL mark: " + mark + " | " + urlMarks[mark].location + " | (" + urlMarks[mark].position.x + ", " + urlMarks[mark].position.y + ") | tab: " + liberator.tabs.index(urlMarks[mark].tab), 5);
-            delete urlMarks[mark];
+            liberator.log("Deleting URL mark: " + markToString(mark, urlmark), 5);
+            urlMarks.remove(mark);
         }
     }
 
@@ -1491,14 +1502,14 @@ liberator.Marks = function () //{{{
         // local marks
         lmarks = [[[mark, value[i]] for (i in value)
                                     if (value[i].location == window.content.location.href)]
-                  for ([mark, value] in Iterator(localMarks))];
+                  for ([mark, value] in localMarks)];
         lmarks = Array.concat.apply(Array, lmarks);
         lmarks.sort();
 
         // URL marks
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        umarks = [[key, mark] for ([key, mark] in Iterator(urlMarks))];
+        umarks = [[key, mark] for ([key, mark] in urlMarks)];
         umarks.sort(function (a, b) a[0].localeCompare(b[0]));
 
         return lmarks.concat(umarks);
@@ -1635,17 +1646,18 @@ liberator.Marks = function () //{{{
 
             if (isURLMark(mark))
             {
-                liberator.log("Adding URL mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ") | tab: " + liberator.tabs.index(liberator.tabs.getTab()), 5);
-                urlMarks[mark] = { location: win.location.href, position: position, tab: liberator.tabs.getTab() };
+                urlMarks.set(mark, { location: win.location.href, position: position, tab: liberator.tabs.getTab() });
+                liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
             }
             else if (isLocalMark(mark))
             {
                 // remove any previous mark of the same name for this location
                 removeLocalMark(mark);
-                if (!localMarks[mark])
-                    localMarks[mark] = [];
-                liberator.log("Adding local mark: " + mark + " | " + win.location.href + " | (" + position.x + ", " + position.y + ")", 5);
-                localMarks[mark].push({ location: win.location.href, position: position });
+                if (!localMarks.get(mark))
+                    localMarks.set(mark, []);
+                let vals = { location: win.location.href, position: position };
+                localMarks.get(mark).push(vals);
+                liberator.log("Adding local mark: " + markToString(mark, vals), 5);
             }
         },
 
@@ -1654,18 +1666,18 @@ liberator.Marks = function () //{{{
             if (special)
             {
                 // :delmarks! only deletes a-z marks
-                for (var mark in localMarks)
+                for (var [mark,] in localMarks)
                     removeLocalMark(mark);
             }
             else
             {
                 var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
-                for (var mark in urlMarks)
+                for (var [mark,] in urlMarks)
                 {
                     if (pattern.test(mark))
                         removeURLMark(mark);
                 }
-                for (var mark in localMarks)
+                for (var [mark,] in localMarks)
                 {
                     if (pattern.test(mark))
                         removeLocalMark(mark);
@@ -1679,10 +1691,10 @@ liberator.Marks = function () //{{{
 
             if (isURLMark(mark))
             {
-                var slice = urlMarks[mark];
+                var slice = urlMarks.get(mark);
                 if (slice && slice.tab && slice.tab.linkedBrowser)
                 {
-                    if (!slice.tab.parentNode)
+                    if (slice.tab.parentNode != getBrowser().tabContainer)
                     {
                         pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
@@ -1701,7 +1713,7 @@ liberator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        liberator.log("Jumping to URL mark: " + mark + " | " + slice.location + " | (" + slice.position.x + ", " + slice.position.y + ") | tab: " + liberator.tabs.index(slice.tab), 5);
+                        liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -1710,13 +1722,13 @@ liberator.Marks = function () //{{{
             else if (isLocalMark(mark))
             {
                 var win = window.content;
-                var slice = localMarks[mark] || [];
+                var slice = localMarks.get(mark) || [];
 
                 for (var i = 0; i < slice.length; i++)
                 {
                     if (win.location.href == slice[i].location)
                     {
-                        liberator.log("Jumping to local mark: " + mark + " | " + slice[i].location + " | (" + slice[i].position.x + ", " + slice[i].position.y + ")", 5);
+                        liberator.log("Jumping to local mark: " + markToString(mark, slice), 5);
                         win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
                         ok = true;
                     }

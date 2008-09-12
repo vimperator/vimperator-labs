@@ -255,9 +255,8 @@ liberator.Events = function () //{{{
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
-    liberator.storage.newObject('macros', false);
+    var macros = liberator.storage.newMap('macros', true);
 
-    var macros = liberator.storage.macros;
     var currentMacro = "";
     var lastMacro = "";
 

@@ -171,7 +171,7 @@ liberator.Options = function () //{{{
             opt.set(opt.value, liberator.options.OPTION_SCOPE_GLOBAL)
     }
 
-    liberator.storage.newObject("options", false);
+    liberator.storage.newMap("options", false);
     liberator.storage.addObserver("options", optionObserver);
 
     function storePreference(name, value)

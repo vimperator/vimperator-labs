@@ -191,20 +191,20 @@ var storage = {
         this.__defineGetter__(key, function () keys[key]);
     },
 
-    newObject: function newObject(key, store)
+    newMap: function newMap(key, store)
     {
         // TODO: Add type checking.
-        if (key in keys)
-            return;
-        this._addKey(key, new ObjectStore(key, store));
+        if (!(key in keys))
+            this._addKey(key, new ObjectStore(key, store));
+        return this[key];
     },
 
     newArray: function newArray(key, store)
     {
         // TODO: Add type checking.
-        if (key in keys)
-            return;
-        this._addKey(key, new ArrayStore(key, store));
+        if (!(key in keys))
+            this._addKey(key, new ArrayStore(key, store));
+        return this[key];
     },
 
     addObserver: function addObserver(key, callback)
