@@ -85,7 +85,7 @@ ________________________________________________________________________________
 
 
 |b| |:b| |:buffer|
-||[count]:b[uffer][!] {url|index}|| +
+||:[count]b[uffer][!] {url|index}|| +
 ||b||
 ________________________________________________________________________________
 Go to the specified buffer from the buffer list. Argument can be either the
