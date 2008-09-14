@@ -205,6 +205,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:restart|| Force undefined to restart +
 ||:saveas|| Save current document to disk +
 ||:sbclose|| Close the sidebar window +
+||:scriptnames|| List all sourced script names +
 ||:set|| Set an option +
 ||:setglobal|| Set global option +
 ||:setlocal|| Set local option +
@@ -252,6 +253,7 @@ section:Options[option-index]
 ||'focuscontent'|| Try to stay in normal mode after loading a web page +
 ||'fullscreen'|| Show the current window fullscreen +
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
+||'helpfile'|| Name of the main help file +
 ||'hintmatching'|| How links are matched +
 ||'hintstyle'|| CSS specification of unfocused hints +
 ||'hinttags'|| XPath string of hintable elements activated by 'f' and 'F' +

@@ -3,6 +3,7 @@
     * version 2.0 (probably)
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add :scriptnames
     * add commandline completion to 'activate', 'cpt', 'defsearch', 'pageinfo',
       'newtab' and 'popups'
     * add 'helpfile' option

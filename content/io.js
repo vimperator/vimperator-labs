@@ -40,6 +40,7 @@ liberator.IO = function () //{{{
     var cwd = null, oldcwd = null;
     var extname = liberator.config.name.toLowerCase(); // "vimperator" or "muttator"
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
+    var scriptNames = [];
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS ////////////////////////////////////////////////
@@ -251,6 +252,21 @@ liberator.IO = function () //{{{
 
             liberator.io.writeFile(file, line);
         });
+
+    liberator.commands.add(["scrip[tnames]"],
+        "List all sourced script names",
+        function ()
+        {
+            var list = "<table>"; 
+
+            for (var i = 0; i < scriptNames.length; i++)
+                list += "<tr><td style=\"text-align: right\">" + (i + 1) + ".</td><td>" + scriptNames[i] + "</td></tr>";
+
+            list += "</table>";
+            
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+        },
+        { argCount: "0" });
 
     liberator.commands.add(["so[urce]"],
         "Read Ex commands from a file",
@@ -676,9 +692,11 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
+            var file;
+
             try
             {
-                var file = ioManager.getFile(filename);
+                file = ioManager.getFile(filename);
 
                 if (!file.exists() || !file.isReadable() || file.isDirectory())
                 {
@@ -693,7 +711,7 @@ lookup:
                     return;
                 }
 
-                var str = ioManager.readFile(filename);
+                var str = ioManager.readFile(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -704,7 +722,6 @@ lookup:
                 {
                     var heredoc = "";
                     var heredocEnd = null; // the string which ends the heredoc
-
                     var lines = str.split("\n");
 
                     for (let i = 0; i < lines.length; i++)
@@ -762,13 +779,17 @@ lookup:
                     liberator.eval(heredoc);
                 }
 
-                liberator.log("Sourced: " + filename, 3);
+                if (scriptNames.indexOf(file.path) == -1)
+                    scriptNames.push(file.path);
+
+                liberator.log("Sourced: " + file.path, 3);
             }
             catch (e)
             {
-                Components.utils.reportError("Sourcing file: " + filename + ": " + e);
+                var message = "Sourcing file: " + file.path + ": " + e;
+                Components.utils.reportError(message);
                 if (!silent)
-                    liberator.echoerr("Sourcing file: " + filename + ": " + e);
+                    liberator.echoerr(message);
             }
         }
     }; //}}}
