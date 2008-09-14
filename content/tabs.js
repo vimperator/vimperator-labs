@@ -470,7 +470,7 @@ liberator.Tabs = function () //{{{
             { argCount: "0" });
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
-            "Quit " + liberator.config.appName,
+            "Quit " + liberator.config.name,
             function ()
             {
                 liberator.quit(false);

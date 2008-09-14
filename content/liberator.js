@@ -157,7 +157,7 @@ const liberator = (function () //{{{
             { argCount: "0" });
 
         liberator.commands.add(["dia[log]"],
-            "Open a " + liberator.config.appName + " dialog",
+            "Open a " + liberator.config.name + " dialog",
             function (args, special)
             {
                 try
@@ -354,7 +354,7 @@ const liberator = (function () //{{{
             { argCount: "0" });
 
         liberator.commands.add(["res[tart]"],
-            "Force " + liberator.config.appName + " to restart",
+            "Force " + liberator.config.name + " to restart",
             function ()
             {
                 liberator.restart();
