@@ -510,6 +510,9 @@ liberator.Events = function () //{{{
             if ((now - then) % 1000 < 10)
                 liberator.dump("waited: " + (now - then) + " ms\n");
 
+            if (!liberator.modes.isReplaying)
+                return false;
+
             if (liberator.buffer.loaded > 0)
             {
                 liberator.sleep(250);
@@ -842,13 +845,12 @@ liberator.Events = function () //{{{
                 evt.noremap = noremap;
                 elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
-                if (liberator.modes.isReplaying)
-                {
-                    if (!waitForPageLoaded())
-                        return;
-                    // else // a short break between keys often helps
-                    //     liberator.sleep(50);
-                }
+                if (!liberator.modes.isReplaying)
+                    return false;
+                if (!waitForPageLoaded())
+                    return;
+                // else // a short break between keys often helps
+                //     liberator.sleep(50);
             }
             return true;
         },
@@ -1125,6 +1127,7 @@ liberator.Events = function () //{{{
                 {
                     liberator.modes.isRecording = false;
                     liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
+                    liberator.echo("Recorded macro '" + currentMacro + "'");
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1133,6 +1136,19 @@ liberator.Events = function () //{{{
                          !liberator.mappings.hasMap(liberator.mode, liberator.input.buffer + key))
                 {
                     macros.set(currentMacro, macros.get(currentMacro) + key);
+                }
+            }
+
+            if (liberator.modes.isReplaying)
+            {
+                // XXX: Prevents using <C-c> in a macro.
+                if (key == "<C-c>")
+                {
+                    liberator.modes.isReplaying = false;
+                    liberator.echo("Canceled playback of macro '" + lastMacro + "'");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return true;
                 }
             }
 
