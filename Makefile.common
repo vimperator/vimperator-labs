@@ -13,6 +13,7 @@ JAR_TXT_FILES = ${shell find -L content skin locale	\
 			-a ! -path '*CVS*'	\
 			-a \(			\
 				-path '*.js'	\
+			     -o -path '*.jsm'	\
 			     -o -path '*.css'	\
 			     -o -path '*.xul'	\
 			     -o -path '*.html'	\

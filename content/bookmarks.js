@@ -93,7 +93,7 @@ liberator.Bookmarks = function () //{{{
 
         this.load = function load()
         {
-            liberator.dump("cache.load()\n");
+            // liberator.dump("cache.load()\n");
             // update our bookmark cache
             bookmarks = [];
             this.__defineGetter__("bookmarks", function () bookmarks);
