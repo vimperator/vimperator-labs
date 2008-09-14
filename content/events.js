@@ -605,8 +605,8 @@ liberator.Events = function () //{{{
         function (count, arg)
         {
             if (count < 1) count = 1;
-            while (count--)
-                liberator.events.playMacro(arg);
+            while (count-- && liberator.events.playMacro(arg))
+                ;
         },
         { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
 
@@ -709,10 +709,11 @@ liberator.Events = function () //{{{
 
         playMacro: function (macro)
         {
+            var res = false;
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
                 liberator.echoerr("E354: Invalid register name: '" + macro + "'");
-                return;
+                return false;
             }
 
             if (macro == "@") // use lastMacro if it's set
@@ -720,7 +721,7 @@ liberator.Events = function () //{{{
                 if (!lastMacro)
                 {
                     liberator.echoerr("E748: No previously used register");
-                    return;
+                    return false;
                 }
             }
             else
@@ -743,7 +744,7 @@ liberator.Events = function () //{{{
                 catch (e) {}
 
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
+                res = liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
                 liberator.modes.isReplaying = false;
             }
             else
@@ -754,6 +755,7 @@ liberator.Events = function () //{{{
                 else
                     liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
             }
+            return res;
         },
 
         getMacros: function (filter)
@@ -848,7 +850,7 @@ liberator.Events = function () //{{{
                 if (!liberator.modes.isReplaying)
                     return false;
                 if (!waitForPageLoaded())
-                    return;
+                    return false;
                 // else // a short break between keys often helps
                 //     liberator.sleep(50);
             }
