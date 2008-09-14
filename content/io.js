@@ -692,11 +692,9 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
-            var file;
-
             try
             {
-                file = ioManager.getFile(filename);
+                var file = ioManager.getFile(filename);
 
                 if (!file.exists() || !file.isReadable() || file.isDirectory())
                 {
