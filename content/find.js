@@ -295,7 +295,8 @@ liberator.Search = function () //{{{
                 command = lastSearchPattern;
 
             this.clear();
-            this.find(command, backwards);
+            if (!liberator.options["incsearch"])
+                this.find(command, backwards);
 
             lastSearchBackwards = backwards;
             //lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
