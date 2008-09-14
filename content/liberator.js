@@ -36,8 +36,9 @@ const liberator = (function () //{{{
 
     function loadModule(name, func)
     {
-        liberator.log("Loading module " + name + "...", 0);
-        liberator.dump("Loading module " + name + "...\n");
+        var message = "Loading module " + name + "...";
+        liberator.log(message, 0);
+        liberator.dump(message + "\n");
         liberator[name] = func();
     }
 
