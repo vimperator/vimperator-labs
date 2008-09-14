@@ -60,18 +60,20 @@ function loadPref(name, store, type)
     if (store)
         var pref = getCharPref(prefName(name));
     if (pref)
-        var obj = json.decode(pref);
-    if (obj instanceof type)
-        return obj;
+        var result = json.decode(pref);
+    if (result instanceof type)
+        return result;
+}
+
+function savePref(obj)
+{
+    if (obj.store)
+        prefService.setCharPref(prefName(obj.name), obj.serial)
 }
 
 var prototype = {
     fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg) },
-    save: function ()
-    {
-        if (this.store)
-            prefService.setCharPref(prefName(this.name), this.serial)
-    },
+    save: function () { savePref(this) },
 };
 
 function ObjectStore(name, store)
@@ -207,6 +209,13 @@ var storage = {
         return this[key];
     },
 
+    newObject: function newObject(key, constructor, store)
+    {
+        if(!(key in keys))
+            this._addKey(key, new constructor(key, store, loadPref(key, store, Object)));
+        return this[key];
+    },
+
     addObserver: function addObserver(key, callback)
     {
         if (!(key in observers))
@@ -227,15 +236,20 @@ var storage = {
 
     fireEvent: function fireEvent(key, event, arg)
     {
-        for each(callback in observers[key])
+        for each (callback in observers[key])
             callback(key, event, arg);
+    },
+
+    save: function save(key)
+    {
+        savePref(keys[key]);
     },
 
     saveAll: function storeAll()
     {
-        for each(key in keys)
-            key.save();
-    }
+        for each (obj in keys)
+            savePref(obj);
+    },
 };
 
 // vim: set fdm=marker sw=4 sts=4 et ft=javascript:

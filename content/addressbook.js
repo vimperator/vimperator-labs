@@ -206,9 +206,7 @@ liberator.Addressbook = function () //{{{
 						   "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Address</th></tr>";
 				for (var i = 0; i < addresses.length; i++)
 				{
-                    var displayName = liberator.util.escapeHTML(addresses[i][0]);
-                    if (displayName.length > 50)
-                        displayName = displayName.substr(0, 47) + "...";
+                    var displayName = liberator.util.escapeHTML(liberator.util.clip(addresses[i][0], 50));
                     var mailAddr = liberator.util.escapeHTML(addresses[i][1]);
                     list += "<tr><td>" + displayName + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + mailAddr + "</a></td></tr>";
                 }

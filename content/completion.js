@@ -506,7 +506,7 @@ liberator.Completion = function () //{{{
         // discard all entries in the 'urls' array, which don't match 'filter
         // urls must be of type [["url", "title"], [...]] or optionally
         //                      [["url", "title", keyword, [tags]], [...]]
-        filterURLArray: function (urls, filter, tags)
+        filterURLArray: function (urls, filter, filterTags)
         {
             var filtered = [];
             // completions which don't match the url but just the description
@@ -518,48 +518,39 @@ liberator.Completion = function () //{{{
 
             var hasTags = urls[0].length >= 4;
             // TODO: create a copy of urls?
-            if (!filter && (!hasTags || !tags))
+            if (!filter && (!hasTags || !filterTags))
                 return urls;
 
-            tags = tags || [];
+            filterTags = filterTags || [];
 
             // TODO: use ignorecase and smartcase settings
-            var ignorecase = true;
-            if (filter != filter.toLowerCase() || tags.join(",") != tags.join(",").toLowerCase())
-                ignorecase = false;
+            var ignorecase = (filter == filter.toLowerCase() && filterTags.join(",") == filterTags.join(",").toLowerCase());
 
             if (ignorecase)
             {
                 filter = filter.toLowerCase();
-                tags = tags.map(function (t) { return t.toLowerCase(); });
+                filterTags = filterTags.map(String.toLowerCase);
             }
 
             // Longest Common Subsequence
             // This shouldn't use buildLongestCommonSubstring for performance
             // reasons, so as not to cycle through the urls twice
-            outer:
-            for (var i = 0; i < urls.length; i++)
+            for each (elem in urls)
             {
-                var url   = urls[i][0] || "";
-                var title = urls[i][1] || "";
-                var tag   = urls[i][3] || [];
+                var url   = elem[0] || "";
+                var title = elem[1] || "";
+                var tags  = elem[3] || [];
 
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
                     title = title.toLowerCase();
-                    tag = tag.map(function (t) { return t.toLowerCase(); });
+                    tags = tags.map(String.toLowerCase);
                 }
 
                 // filter on tags
-                for (var j = 0; j < tags.length; j++)
-                {
-                    if (!tags[j])
+                if(filterTags.some(function (tag) tag && tags.indexOf(tag) == -1))
                         continue;
-
-                    if (tag.indexOf(tags[j]) == -1)
-                        continue outer;
-                }
 
                 if (url.indexOf(filter) == -1)
                 {
@@ -568,7 +559,7 @@ liberator.Completion = function () //{{{
                     if (filter.split(/\s+/).every(function (token) {
                         return (url.indexOf(token) > -1 || title.indexOf(token) > -1);
                     }))
-                        additionalCompletions.push(urls[i]);
+                        additionalCompletions.push(elem);
 
                     continue;
                 }
@@ -594,7 +585,7 @@ liberator.Completion = function () //{{{
                     });
                 }
 
-                filtered.push(urls[i]);
+                filtered.push(elem);
             }
 
             return filtered.concat(additionalCompletions);

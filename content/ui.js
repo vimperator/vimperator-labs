@@ -1402,7 +1402,7 @@ liberator.StatusLine = function () //{{{
                     modified += "+";
                 if (sh.index < sh.count -1)
                     modified += "-";
-                if (liberator.bookmarks.isBookmarked(url))
+                if (liberator.bookmarks.isBookmarked(liberator.buffer.URL))
                     modified += "\u2764"; // a heart symbol: ❤
                     //modified += "\u2665"; // a heart symbol: ♥
 

@@ -891,16 +891,16 @@ liberator.Buffer = function () //{{{
                 offsetY = Number(coords[1]) + 1;
             }
 
-            var newTab = false, newWindow = false;
+            var ctrlKey = false, shiftKey = false;
             switch (where)
             {
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
-                    newTab = true;
-                    newWindow = (where == liberator.NEW_BACKGROUND_TAB);
+                    ctrlKey = true;
+                    shiftKey = (where == liberator.NEW_BACKGROUND_TAB);
                     break;
                 case liberator.NEW_WINDOW:
-                    newWindow = true;
+                    shiftKey = true;
                     break;
                 case liberator.CURRENT_TAB:
                     break;
@@ -913,9 +913,8 @@ liberator.Buffer = function () //{{{
             var evt = doc.createEvent("MouseEvents");
             for each (event in ["mousedown", "mouseup", "click"])
             {
-                evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY,
-                        0, 0, /*ctrl*/ newTab, /*event.altKey*/0, /*event.shiftKey*/ newWindow,
-                        /*event.metaKey*/ newTab, 0, null);
+                evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
+                        ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
                 elem.dispatchEvent(evt);
             }
         },
@@ -1016,8 +1015,7 @@ liberator.Buffer = function () //{{{
             {
                 if (frame.document.body.localName.toLowerCase() == "body")
                     frames.push(frame);
-                for (var i = 0; i < frame.frames.length; i++)
-                    arguments.callee(frame.frames[i]);
+                Array.forEach(frame.frames, arguments.callee);
             })(window.content);
 
             if (frames.length == 0) // currently top is always included
@@ -1038,15 +1036,7 @@ liberator.Buffer = function () //{{{
             //       focused.  Since this is not the current FF behaviour,
             //       we initalize current to -1 so the first call takes us to the
             //       first frame.
-            var current = -1;
-            for (var i = 0; i < frames.length; i++)
-            {
-                if (frames[i] == document.commandDispatcher.focusedWindow)
-                {
-                    var current = i;
-                    break;
-                }
-            }
+            var current = frames.indexOf(document.commandDispatcher.focusedWindow);
 
             // calculate the next frame to focus
             var next = current;
@@ -1497,19 +1487,21 @@ liberator.Marks = function () //{{{
 
     function getSortedMarks()
     {
-        var lmarks, umarks;
+        var location = window.content.location.href;
+        var lmarks = [];
 
         // local marks
-        lmarks = [[[mark, value[i]] for (i in value)
-                                    if (value[i].location == window.content.location.href)]
-                  for ([mark, value] in localMarks)];
-        lmarks = Array.concat.apply(Array, lmarks);
+        for (let [mark, value] in Iterator(localMarks))
+        {
+            for each (val in value.filter(function (val) val.location == location))
+                lmarks.push([mark, val]);
+        }
         lmarks.sort();
 
         // URL marks
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        umarks = [[key, mark] for ([key, mark] in urlMarks)];
+        var umarks = [[key, mark] for ([key, mark] in urlMarks)];
         umarks.sort(function (a, b) a[0].localeCompare(b[0]));
 
         return lmarks.concat(umarks);

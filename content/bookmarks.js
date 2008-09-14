@@ -33,91 +33,155 @@ liberator.Bookmarks = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const historyService   = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-                                       .getService(Components.interfaces.nsINavHistoryService);
-    const bookmarksService = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
-                                       .getService(Components.interfaces.nsINavBookmarksService);
-    const taggingService   = Components.classes["@mozilla.org/browser/tagging-service;1"]
-                                       .getService(Components.interfaces.nsITaggingService);
+    const historyService   = PlacesUtils.history;
+    const bookmarksService = PlacesUtils.bookmarks;
+    const taggingService   = PlacesUtils.tagging;
     const searchService    = Components.classes["@mozilla.org/browser/search-service;1"]
                                        .getService(Components.interfaces.nsIBrowserSearchService);
     const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService);
 
-    var bookmarks = null;
-    var keywords = null;
-
-    if (liberator.options["preload"])
-        setTimeout(function () { load(); }, 100);
-
-    function load()
+    function Cache(name, store, serial)
     {
-        // update our bookmark cache
-        bookmarks = [];
-        keywords  = [];
+        const properties = { uri: 0, title: 1, keyword: 2, tags: 3, id: 4 };
+        const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
 
-        var folders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
-        var query = historyService.getNewQuery();
-        var options = historyService.getNewQueryOptions();
-        while (folders.length > 0)
+        var bookmarks = [];
+        var self = this;
+
+        this.__defineGetter__("name",  function () key);
+        this.__defineGetter__("store", function () store);
+        this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks });
+
+        this.__defineGetter__("keywords",
+            function () [[k[2], k[1], k[0]] for each (k in self.bookmarks) if (k[2])]);
+
+        this.__iterator__ = (val for each (val in self.bookmarks));
+
+        function loadBookmark(node)
         {
-            //comment out the next line for now; the bug hasn't been fixed; final version should include the next line
-            //options.setGroupingMode(options.GROUP_BY_FOLDER);
-            query.setFolders(folders, 1);
-            var result = historyService.executeQuery(query, options);
-            //result.sortingMode = options.SORT_BY_DATE_DESCENDING;
-            result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING;
-            var rootNode = result.root;
-            rootNode.containerOpen = true;
+            var keyword = bookmarksService.getKeywordForBookmark(node.itemId);
+            var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null), {});
+            bookmarks.push([node.uri, node.title, keyword, tags, node.itemId]);
+        }
 
-            folders.shift();
-            // iterate over the immediate children of this folder
-            for (var i = 0; i < rootNode.childCount; i++)
-            {
-                var node = rootNode.getChild(i);
-                if (node.type == node.RESULT_TYPE_FOLDER)   // folder
-                    folders.push(node.itemId);
-                else if (node.type == node.RESULT_TYPE_URI) // bookmark
-                {
-                    var kw = bookmarksService.getKeywordForBookmark(node.itemId);
-                    if (kw)
-                        keywords.push([kw, node.title, node.uri]);
-
-                    var count = {};
-                    var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null), count);
-                    bookmarks.push([node.uri, node.title, kw, tags]);
-                }
+        function readBookmark(id)
+        {
+            return {
+                itemId:  id,
+                uri:     bookmarksService.getBookmarkURI(id).spec,
+                title:   bookmarksService.getItemTitle(id),
             }
-
-            // close a container after using it!
-            rootNode.containerOpen = false;
         }
+
+        function deleteBookmark(id)
+        {
+            var length = bookmarks.length;
+            bookmarks = bookmarks.filter(function (item) item[properties.id] != id);
+            return bookmarks.length < length;
+        }
+
+        function findRoot(id)
+        {
+            do
+            {
+                var root = id;
+                id = bookmarksService.getFolderIdForItem(id);
+            } while (id != bookmarksService.placesRoot && id != root);
+            return root;
+        }
+
+        this.load = function load()
+        {
+            liberator.dump("cache.load()\n");
+            // update our bookmark cache
+            bookmarks = [];
+            this.__defineGetter__("bookmarks", function () bookmarks);
+
+            var folders = rootFolders.concat([]);
+            var query = historyService.getNewQuery();
+            var options = historyService.getNewQueryOptions();
+            while (folders.length > 0)
+            {
+                //comment out the next line for now; the bug hasn't been fixed; final version should include the next line
+                //options.setGroupingMode(options.GROUP_BY_FOLDER);
+                query.setFolders(folders, 1);
+                folders.shift();
+                var result = historyService.executeQuery(query, options);
+                result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING; /* This is silly. Results are still sorted by folder first. --Kris */
+                var rootNode = result.root;
+                rootNode.containerOpen = true;
+
+                // iterate over the immediate children of this folder
+                for (var i = 0; i < rootNode.childCount; i++)
+                {
+                    var node = rootNode.getChild(i);
+                    if (node.type == node.RESULT_TYPE_FOLDER)   // folder
+                        folders.push(node.itemId);
+                    else if (node.type == node.RESULT_TYPE_URI) // bookmark
+                        loadBookmark(node);
+                }
+
+                // close a container after using it!
+                rootNode.containerOpen = false;
+            }
+        };
+
+        var observer = {
+            onBeginUpdateBatch: function () {},
+            onEndUpdateBatch:   function () {},
+            onItemVisited:      function () {},
+            onItemMoved:        function () {},
+            onItemAdded: function (itemId, folder, index)
+            {
+                // liberator.dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
+                if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK)
+                {
+                    if (rootFolders.indexOf(findRoot(itemId)) >= 0)
+                    {
+                        loadBookmark(readBookmark(itemId));
+                        liberator.storage.fireEvent(name, "add", itemId);
+                    }
+                }
+            },
+            onItemRemoved: function (itemId, folder, index)
+            {
+                // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
+                if (deleteBookmark(itemId))
+                    liberator.storage.fireEvent(name, "remove", itemId);
+            },
+            onItemChanged: function (itemId, property, isAnnotation, value)
+            {
+                if(isAnnotation)
+                    return;
+                // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
+                var bookmark = bookmarks.filter(function (item) item[properties.id] == itemId)[0];
+                if(bookmark)
+                {
+                    if(property == "tags")
+                        value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.uri], null, null), {});
+                    if(property in properties)
+                        bookmark[properties[property]] = value;
+                    liberator.storage.fireEvent(name, "change", itemId);
+                }
+            },
+            QueryInterface: function (iid) {
+                if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
+                    return this;
+                throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+        };
+
+        bookmarksService.addObserver(observer, false);
     }
 
-    function flush()
+    var cache = liberator.storage.newObject("bookmark-cache", Cache, false);    
+    liberator.storage.addObserver("bookmark-cache", function (key, event, arg)
     {
-        bookmarks = null;
-        if (liberator.options["preload"])
-            load();
-    }
-
-    var observer = {
-        onBeginUpdateBatch: function () {},
-        onEndUpdateBatch:   function () {},
-        onItemVisited:      function () {},
-        /* FIXME: Should probably just update the given bookmark. */
-        onItemMoved:        flush,
-        onItemAdded:        flush,
-        onItemRemoved:      flush,
-        onItemChanged:      flush,
-        QueryInterface: function (iid) {
-            if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
-                return this;
-            throw Components.results.NS_ERROR_NO_INTERFACE;
-        }
-    };
-
-    bookmarksService.addObserver(observer, false);
+        if(event == "add")
+            liberator.autocommands.trigger("BookmarkAdd", "");
+        liberator.statusline.updateUrl();
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -256,38 +320,23 @@ liberator.Bookmarks = function () //{{{
         // takes about 1 sec
         get: function (filter, tags, bypassCache)
         {
-            if (!bookmarks || bypassCache)
-                load();
-
-            return liberator.completion.filterURLArray(bookmarks, filter, tags);
+            return liberator.completion.filterURLArray(cache.bookmarks, filter, tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
         add: function (starOnly, title, url, keyword, tags)
         {
-            if (!bookmarks)
-                load();
-
-            // if no protocol specified, default to http://, isn't there a better way?
-            if (!/^[\w-]+:/.test(url))
-                url = "http://" + url;
-
             try
             {
-                var uri = ioService.newURI(url, null, null);
+                var uri = PlacesUIUtils.createFixedURI(url);
                 var id = bookmarksService.insertBookmark(
-                         starOnly ? bookmarksService.unfiledBookmarksFolder : bookmarksService.bookmarksMenuFolder,
+                         bookmarksService[starOnly ? "unfiledBookmarksFolder" : "bookmarksMenuFolder"],
                          uri, -1, title);
-
                 if (!id)
                     return false;
 
                 if (keyword)
-                {
                     bookmarksService.setKeywordForBookmark(id, keyword);
-                    keywords.unshift([keyword, title, url]);
-                }
-
                 if (tags)
                     taggingService.tagURI(uri, tags);
             }
@@ -296,11 +345,6 @@ liberator.Bookmarks = function () //{{{
                 liberator.log(e, 0);
                 return false;
             }
-
-            // update the display of our "bookmarked" symbol
-            liberator.statusline.updateUrl();
-
-            liberator.autocommands.trigger("BookmarkAdd", "");
 
             return true;
         },
@@ -331,15 +375,12 @@ liberator.Bookmarks = function () //{{{
             try
             {
                 var uri = ioService.newURI(url, null, null);
-                var count = {};
-                bookmarksService.getBookmarkIdsForURI(uri, count);
+                return (bookmarksService.getBookmarkedURIFor(uri) != null)
             }
             catch (e)
             {
                 return false;
             }
-
-            return count.value > 0;
         },
 
         // returns number of deleted bookmarks
@@ -408,10 +449,7 @@ liberator.Bookmarks = function () //{{{
         // [keyword, helptext, url]
         getKeywords: function ()
         {
-            if (!keywords)
-                load();
-
-            return keywords;
+            return cache.keywords;
         },
 
         // full search string including engine name as first word in @param text
@@ -457,16 +495,14 @@ liberator.Bookmarks = function () //{{{
             }
 
             if (openItems)
-                return liberator.open([i[0] for (i in items)], liberator.NEW_TAB);
+                return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
             var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
-                title = liberator.util.escapeHTML(items[i][1]);
-                if (title.length > 50)
-                    title = title.substr(0, 47) + "...";
+                title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
                 url = liberator.util.escapeHTML(items[i][0]);
                 keyword = items[i][2];
                 tags = items[i][3].join(", ");
@@ -762,7 +798,7 @@ liberator.History = function () //{{{
 
             if (openItems)
             {
-                return liberator.open([i[0] for (i in items)], liberator.NEW_TAB);
+                return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
             }
             else
             {
@@ -770,9 +806,7 @@ liberator.History = function () //{{{
                            "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
-                    var title = liberator.util.escapeHTML(items[i][1]);
-                    if (title.length > 50)
-                        title = title.substr(0, 47) + "...";
+                    var title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
                     var url = liberator.util.escapeHTML(items[i][0]);
                     list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
                 }
@@ -922,21 +956,13 @@ liberator.QuickMarks = function () //{{{
 
         list: function (filter)
         {
-            var lowercaseMarks = [];
-            var uppercaseMarks = [];
-            var numberMarks    = [];
+            var marks = [key for ([key,val] in qmarks)];
+            // This was a lot nicer without the lambda...
+            var lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
+            var uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();
+            var numberMarks    = marks.filter(function (x) /[0-9]/.test(x)).sort();
 
-            for (var [qmark,] in qmarks)
-            {
-                if (/[a-z]/.test(qmark))
-                    lowercaseMarks.push(qmark);
-                else if (/[A-Z]/.test(qmark))
-                    uppercaseMarks.push(qmark);
-                else
-                    numberMarks.push(qmark);
-            }
-
-            var marks = lowercaseMarks.sort().concat(uppercaseMarks.sort()).concat(numberMarks.sort());
+            marks = Array.concat(lowercaseMarks, uppercaseMarks, numberMarks);
 
             if (marks.length == 0)
             {
@@ -946,11 +972,7 @@ liberator.QuickMarks = function () //{{{
 
             if (filter.length > 0)
             {
-                marks = marks.filter(function (qmark) {
-                    if (filter.indexOf(qmark) > -1)
-                        return qmark;
-                });
-
+                marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0)
                 if (marks.length == 0)
                 {
                     liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");

@@ -28,6 +28,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 liberator.util = { //{{{
 
+    clip: function (str, length)
+    {
+        return str.length <= length ? str : str.substr(0, length - 3) + "...";
+    },
+
     // TODO: use :highlight color groups
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
