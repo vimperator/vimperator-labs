@@ -283,7 +283,16 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["h[elp]"],
             "Display help",
-            function (args) { liberator.help(args); },
+            function (args, special)
+            {
+                if (special)
+                {
+                    liberator.echoerr("E478: Don't panic!");
+                    return;
+                }
+
+                liberator.help(args);
+            },
             {
                 completer: function (filter) { return getHelpCompletions(filter); }
             });
