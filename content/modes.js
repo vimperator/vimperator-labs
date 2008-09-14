@@ -287,7 +287,7 @@ liberator.modes = (function () //{{{
         set isRecording(value) { isRecording = value; this.show(); },
 
         get isReplaying() isReplaying,
-        set isReplaying(value) { isReplaying = value; },
+        set isReplaying(value) { isReplaying = value; this.show(); },
 
         get main() main,
         set main(value) {
