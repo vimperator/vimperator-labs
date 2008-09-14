@@ -61,11 +61,14 @@ liberator.modes = (function () //{{{
         if (extended & liberator.modes.MENU) // TODO: desirable?
             ext += " (menu)";
 
-        ext += " --";
-
         // when recording a macro
+        var macromode = "";
         if (liberator.modes.isRecording)
-            ext += "recording";
+            macromode = "recording";
+        else if (liberator.modes.isReplaying)
+            macromode = "replaying";
+
+        ext += " --" + macromode;
 
         switch (main)
         {
@@ -86,10 +89,7 @@ liberator.modes = (function () //{{{
             case liberator.modes.CUSTOM:
                 return "-- " + liberator.plugins.mode + ext;
             default: // NORMAL mode
-                if (liberator.modes.isRecording)
-                    return "recording";
-                else
-                    return "";
+                return macromode;
         }
     }
 
