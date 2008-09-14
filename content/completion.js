@@ -535,7 +535,7 @@ liberator.Completion = function () //{{{
             // Longest Common Subsequence
             // This shouldn't use buildLongestCommonSubstring for performance
             // reasons, so as not to cycle through the urls twice
-            for each (elem in urls)
+            for (let [,elem] in Iterator(urls))
             {
                 var url   = elem[0] || "";
                 var title = elem[1] || "";

@@ -911,7 +911,7 @@ liberator.Buffer = function () //{{{
             elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
-            for each (event in ["mousedown", "mouseup", "click"])
+            for ([,event] in Iterator(["mousedown", "mouseup", "click"]))
             {
                 evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
                         ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
@@ -1493,7 +1493,7 @@ liberator.Marks = function () //{{{
         // local marks
         for (let [mark, value] in Iterator(localMarks))
         {
-            for each (val in value.filter(function (val) val.location == location))
+            for (let [,val] in Iterator(value.filter(function (val) val.location == location)))
                 lmarks.push([mark, val]);
         }
         lmarks.sort();
