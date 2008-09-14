@@ -13,7 +13,6 @@ JAR_TXT_FILES = ${shell find -L content skin locale	\
 			-a ! -path '*CVS*'	\
 			-a \(			\
 				-path '*.js'	\
-			     -o -path '*.jsm'	\
 			     -o -path '*.css'	\
 			     -o -path '*.xul'	\
 			     -o -path '*.html'	\
@@ -28,7 +27,12 @@ JAR_BIN_FILES = ${shell find content skin	\
 JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES} ${DOC_FILES}
 JAR           = chrome/${NAME}.jar
 
-XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.txt
+XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.txt \
+		${shell find -L modules		\
+			-type f			\
+			-a ! -path '*CVS*'	\
+			-a -path '*.jsm'	\
+		}
 XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
 XPI_BIN_FILES = ${JAR} Makefile.common Makefile
 XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
