@@ -152,15 +152,15 @@ liberator.Bookmarks = function () //{{{
             },
             onItemChanged: function (itemId, property, isAnnotation, value)
             {
-                if(isAnnotation)
+                if (isAnnotation)
                     return;
                 // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
                 var bookmark = bookmarks.filter(function (item) item[properties.id] == itemId)[0];
-                if(bookmark)
+                if (bookmark)
                 {
-                    if(property == "tags")
+                    if (property == "tags")
                         value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.uri], null, null), {});
-                    if(property in properties)
+                    if (property in properties)
                         bookmark[properties[property]] = value;
                     liberator.storage.fireEvent(name, "change", itemId);
                 }
@@ -175,10 +175,10 @@ liberator.Bookmarks = function () //{{{
         bookmarksService.addObserver(observer, false);
     }
 
-    var cache = liberator.storage.newObject("bookmark-cache", Cache, false);    
+    var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
     liberator.storage.addObserver("bookmark-cache", function (key, event, arg)
     {
-        if(event == "add")
+        if (event == "add")
             liberator.autocommands.trigger("BookmarkAdd", "");
         liberator.statusline.updateUrl();
     });
@@ -956,7 +956,7 @@ liberator.QuickMarks = function () //{{{
 
         list: function (filter)
         {
-            var marks = [key for ([key,val] in qmarks)];
+            var marks = [key for ([key, val] in qmarks)];
             // This was a lot nicer without the lambda...
             var lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
             var uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();

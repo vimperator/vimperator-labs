@@ -549,7 +549,7 @@ liberator.Completion = function () //{{{
                 }
 
                 // filter on tags
-                if(filterTags.some(function (tag) tag && tags.indexOf(tag) == -1))
+                if (filterTags.some(function (tag) tag && tags.indexOf(tag) == -1))
                         continue;
 
                 if (url.indexOf(filter) == -1)
