@@ -58,16 +58,18 @@ ____________________________________________________________________________
 
 
 |:exu| |:exusage| +
-||:exu[sage]||
+||:exu[sage][!]||
 ________________________________________________________________________________
-Show help on Ex commands. Added to simulate the Nvi command.
+Show help on Ex commands. Added to simulate the Nvi command. If [!] is given
+then the help is listed in the command output window.
 ________________________________________________________________________________
 
 
 |:viu| |:viusage| +
-||:viu[sage]||
+||:viu[sage][!]||
 ________________________________________________________________________________
-Show help on Normal mode commands. Added to simulate the Nvi command.
+Show help on Normal mode commands. Added to simulate the Nvi command. If [!] is
+given then the help is listed in the command output window.
 ________________________________________________________________________________
 
 

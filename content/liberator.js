@@ -266,18 +266,26 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
-            function ()
+            function (args, special)
             {
-                var usage = "<table>";
-                for (let command in liberator.commands)
+                if (!special)
                 {
-                    usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> :" +
-                             liberator.util.escapeHTML(command.name) + "</td><td>" +
-                             liberator.util.escapeHTML(command.description) + "</td></tr>";
+                    liberator.help("ex-cmd-index");
                 }
-                usage += "</table>";
+                else
+                {
+                    // TODO: clicking on these should open the help
+                    var usage = "<table>";
+                    for (let command in liberator.commands)
+                    {
+                        usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> :" +
+                                 liberator.util.escapeHTML(command.name) + "</td><td>" +
+                                 liberator.util.escapeHTML(command.description) + "</td></tr>";
+                    }
+                    usage += "</table>";
 
-                liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                }
             },
             { argCount: "0" });
 
@@ -479,18 +487,26 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["viu[sage]"],
             "List all mappings with a short description",
-            function (args, special, count, modifiers)
+            function (args, special)
             {
-                var usage = "<table>";
-                for (let mapping in liberator.mappings)
+                if (!special)
                 {
-                    usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> " +
-                             liberator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
-                             liberator.util.escapeHTML(mapping.description) + "</td></tr>";
+                    liberator.help("normal-index");
                 }
-                usage += "</table>";
+                else
+                {
+                    // TODO: clicking on these should open the help
+                    var usage = "<table>";
+                    for (let mapping in liberator.mappings)
+                    {
+                        usage += "<tr><td style=\"padding-right: 20px\" class=\"hl-Title\"> " +
+                                 liberator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
+                                 liberator.util.escapeHTML(mapping.description) + "</td></tr>";
+                    }
+                    usage += "</table>";
 
-                liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                }
             },
             { argCount: "0" });
     }
