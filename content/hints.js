@@ -157,10 +157,6 @@ liberator.Hints = function () //{{{
 
     function showHints()
     {
-        var win = window.content;
-        var height = win.innerHeight;
-        var width  = win.innerWidth;
-
         var linkfgcolor       = liberator.options["linkfgcolor"];
         var linkbgcolor       = liberator.options["linkbgcolor"];
         var activelinkfgcolor = liberator.options["activelinkfgcolor"];
@@ -180,7 +176,7 @@ liberator.Hints = function () //{{{
             var scrollX = doc.defaultView.scrollX;
             var scrollY = doc.defaultView.scrollY;
 
-        outer:
+        inner:
             for (var i = start; i <= end; i++)
             {
                 elem = hints[i][0];
@@ -197,7 +193,7 @@ liberator.Hints = function () //{{{
                     // reset background color
                     elem.style.backgroundColor = hints[i][4];
                     elem.style.color = hints[i][5];
-                    continue outer;
+                    continue inner;
                 }
 
                 if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
@@ -318,7 +314,7 @@ liberator.Hints = function () //{{{
             var firstHref = validHints[0].getAttribute("href") || null;
             if (firstHref)
             {
-                if (validHints.some(function (e) { return e.getAttribute("href") != firstHref; }))
+                if (validHints.some(function (e) e.getAttribute("href") != firstHref))
                     return false;
             }
             else if (validHints.length > 1)
@@ -374,7 +370,7 @@ liberator.Hints = function () //{{{
                 liberator.modes.add(liberator.modes.INACTIVE_HINT);
                 setTimeout(function () {
                     if (liberator.mode == liberator.modes.HINTS)
-                        liberator.modes.reset(false);
+                        liberator.modes.pop();
                 }, timeout);
             }
         }
@@ -638,7 +634,7 @@ liberator.Hints = function () //{{{
 
     return {
 
-        show: function (mode, minor, filter)
+        show: function (mode, minor, filter, win)
         {
             if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
             {
@@ -646,13 +642,13 @@ liberator.Hints = function () //{{{
                 return;
             }
 
-            liberator.modes.set(liberator.modes.HINTS, mode);
+            liberator.modes.push(liberator.modes.HINTS, mode, win != undefined);
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
             hintNumber = 0;
             canUpdate = false;
 
-            generate();
+            generate(win);
 
             // get all keys from the input queue
             var mt = Components.classes["@mozilla.org/thread-manager;1"]

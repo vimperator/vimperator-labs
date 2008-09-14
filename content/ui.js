@@ -77,6 +77,7 @@ liberator.CommandLine = function () //{{{
 
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var completionIndex = UNINITIALIZED;
+    var startHints = false; // whether we're waiting to start hints mode
 
     // the containing box for the promptWidget and commandWidget
     var commandlineWidget = document.getElementById("liberator-commandline");
@@ -224,6 +225,7 @@ liberator.CommandLine = function () //{{{
 
         multilineOutputWidget.contentWindow.focus();
 
+        startHints = false;
         liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
     }
 
@@ -855,6 +857,14 @@ liberator.CommandLine = function () //{{{
 
             var key = liberator.events.toString(event);
 
+            if (startHints)
+            {
+                liberator.statusline.updateInputBuffer("");
+                startHints = false;
+                liberator.hints.show(liberator.modes.EXTENDED_HINT, key, undefined, win);
+                return;
+            }
+
             switch (key)
             {
                 case "<Esc>":
@@ -1006,6 +1016,11 @@ liberator.CommandLine = function () //{{{
                 // close the window
                 case "q":
                     closeWindow = true;
+                    break;
+
+                case ";":
+                    liberator.statusline.updateInputBuffer(";");
+                    startHints = true;
                     break;
 
                 // unmapped key
