@@ -89,6 +89,11 @@ liberator.CommandLine = function () //{{{
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
     multilineOutputWidget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multilineOutputWidget.contentDocument.body.innerHTML = "";
+    var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
+    stylesheet.setAttribute("rel", "stylesheet");
+    stylesheet.setAttribute("type", "text/css");
+    stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
+    multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
 
     // the widget used for multiline intput
     var multilineInputWidget = document.getElementById("liberator-multiline-input");
@@ -184,13 +189,8 @@ liberator.CommandLine = function () //{{{
         var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
         multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
 
-        multilineOutputWidget.contentDocument.body.innerHTML = output;
         multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
-
-        var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
-        stylesheet.setAttribute("rel", "Stylesheet");
-        stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
-        multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
+        multilineOutputWidget.contentDocument.body.innerHTML = output;
 
         var availableHeight = 250;
         try
