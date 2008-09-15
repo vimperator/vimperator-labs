@@ -244,11 +244,13 @@ liberator.modes = (function () //{{{
             this.set(mainMode, extendedMode, silent);
         },
 
-        pop: function ()
+        pop: function (silent)
         {
             var a = modeStack.pop();
             if (a)
-                [main, extended] = a;
+                this.set(a[0], a[1], silent);
+            else
+                this.reset(silent);
         },
 
         setCustomMode: function (modestr, oneventfunc, stopfunc)
