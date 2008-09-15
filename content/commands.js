@@ -188,8 +188,6 @@ liberator.Commands = function () //{{{
             var sorted = exCommands.sort(function (cmd1, cmd2) { return cmd1.name > cmd2.name; });
             for (var i = 0; i < sorted.length; i++)
                 yield sorted[i];
-
-            throw StopIteration;
         },
 
         add: function (names, description, action, extra)

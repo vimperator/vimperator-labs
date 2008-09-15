@@ -39,7 +39,6 @@ liberator.AutoCommands = function () //{{{
         for (var item in autoCommands)
             for (var i = 0; i < autoCommands[item].length; i++)
                 yield item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
-        throw StopIteration;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

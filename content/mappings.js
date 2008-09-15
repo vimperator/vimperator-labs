@@ -160,7 +160,6 @@ liberator.Mappings = function () //{{{
             if (output)
                 yield maps[i];
         }
-        throw StopIteration;
     }
 
     function addMapCommands(ch, modes, modeDescription)

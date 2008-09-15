@@ -189,8 +189,6 @@ liberator.modes = (function () //{{{
 
             for (var i = 0; i < modes.length; i++)
                 yield modes[i];
-
-            throw StopIteration;
         },
 
         get all() { return [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
