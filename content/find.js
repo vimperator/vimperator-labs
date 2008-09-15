@@ -109,6 +109,172 @@ liberator.Search = function () //{{{
         searchString = pattern;
     }
 
+    /* Stolen from toolkit.jar in Firefox, for the time being. The private
+     * methods were unstable, and changed. The new version is not remotely
+     * compatible with what we do.
+     *   The following only applies to this object, and may not be
+     * necessary, or accurate, but, just in case:
+     *   The Original Code is mozilla.org viewsource frontend.
+     *
+     *   The Initial Developer of the Original Code is
+     *   Netscape Communications Corporation.
+     *   Portions created by the Initial Developer are Copyright (C) 2003
+     *   the Initial Developer. All Rights Reserved.
+     *
+     *   Contributor(s):
+     *       Blake Ross <blake@cs.stanford.edu> (Original Author)
+     *       Masayuki Nakano <masayuki@d-toybox.com>
+     *       Ben Basson <contact@cusser.net>
+     *       Jason Barnabe <jason_barnabe@fastmail.fm>
+     *       Asaf Romano <mano@mozilla.com>
+     *       Ehsan Akhgari <ehsan.akhgari@gmail.com>
+     *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
+     */
+    var highlightObj = {
+        search: function (aWord, matchCase)
+        {
+            var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
+                                   .createInstance()
+                                   .QueryInterface(Components.interfaces.nsIFind);
+            if (matchCase !== undefined)
+                finder.caseSensitive = matchCase;
+
+            var range;
+            while ((range = finder.Find(aWord,
+                                        this._searchRange,
+                                        this._startPt,
+                                        this._endPt)))
+                yield range;
+        },
+
+        highlightDoc: function highlightDoc(win, aWord)
+        {
+            var textFound = false;
+            Array.forEach(win.frames, function (frame)
+            {
+                if (highlightDoc(aWord, frame))
+                    textFound = true;
+            });
+
+            var doc = win.document;
+            if (!doc || !(doc instanceof HTMLDocument))
+                return textFound;
+
+            var body = doc.body;
+
+            var count = body.childNodes.length;
+            this._searchRange = doc.createRange();
+            this._startPt = doc.createRange();
+            this._endPt = doc.createRange();
+
+            this._searchRange.setStart(body, 0);
+            this._searchRange.setEnd(body, count);
+
+            this._startPt.setStart(body, 0);
+            this._startPt.setEnd(body, 0);
+            this._endPt.setStart(body, count);
+            this._endPt.setEnd(body, count);
+
+            if (!aWord) {
+                // Remove highlighting.  We use the find API again rather than
+                // searching for our span elements so that we gain access to the
+                // anonymous content that nsIFind searches.
+
+                if (!this._lastHighlightString)
+                    return textFound;
+
+                var retRange = null;
+                var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
+                                       .createInstance(Components.interfaces.nsIFind);
+
+                for (let retRange in this.search(this._lastHighlightString))
+                {
+                    var startContainer = retRange.startContainer;
+                    var elem = null;
+                    try
+                    {
+                        elem = startContainer.parentNode;
+                    }
+                    catch (ex) {}
+
+                    if (elem && elem.className == "__liberator-search")
+                    {
+                        var child = null;
+                        var docfrag = doc.createDocumentFragment();
+                        var next = elem.nextSibling;
+                        var parent = elem.parentNode;
+
+                        while ((child = elem.firstChild)) {
+                            docfrag.appendChild(child);
+                        }
+
+                        this._startPt = doc.createRange();
+                        this._startPt.setStartAfter(elem);
+
+                        parent.removeChild(elem);
+                        parent.insertBefore(docfrag, next);
+                        parent.normalize();
+                    }
+                    else
+                    {
+                        // Somehow we didn't highlight this instance; just skip it.
+                        this._startPt = doc.createRange();
+                        this._startPt.setStart(retRange.endContainer,
+                        retRange.endOffset);
+                    }
+
+                    this._startPt.collapse(true);
+
+                    textFound = true;
+                }
+                return textFound;
+            }
+
+            var baseNode = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
+            baseNode.setAttribute("style", liberator.options["hlsearchstyle"]);
+            baseNode.style.display = "inline";
+            baseNode.style.fontSize = "inherit";
+            baseNode.style.padding = "0";
+            baseNode.className = "__liberator-search";
+
+            return this.highlightText(aWord, baseNode) || textFound;
+        },
+
+        highlightText: function highlightText(aWord, aBaseNode)
+        {
+            var retRange = null;
+
+            for(let retRange in this.search(aWord, caseSensitive)) {
+                var textFound = false;
+                // Highlight
+                var nodeSurround = aBaseNode.cloneNode(true);
+                var node = this.highlight(retRange, nodeSurround);
+                this._startPt = node.ownerDocument.createRange();
+                this._startPt.setStart(node, node.childNodes.length);
+                this._startPt.setEnd(node, node.childNodes.length);
+
+                textFound = true;
+            }
+
+            this._lastHighlightString = aWord;
+
+            return textFound;
+        },
+
+        highlight: function highlight(aRange, aNode)
+        {
+            var startContainer = aRange.startContainer;
+            var startOffset = aRange.startOffset;
+            var endOffset = aRange.endOffset;
+            var docfrag = aRange.extractContents();
+            var before = startContainer.splitText(startOffset);
+            var parent = before.parentNode;
+            aNode.appendChild(docfrag);
+            parent.insertBefore(aNode, before);
+            return aNode;
+        },
+    };
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -330,24 +496,13 @@ liberator.Search = function () //{{{
                 return;
 
             // already highlighted?
-            if (window.content.document.getElementsByClassName("__mozilla-findbar-search").length > 0)
+            if (window.content.document.getElementsByClassName("__liberator-search").length > 0)
                 return;
 
             if (!text)
                 text = lastSearchString;
 
-            gFindBar._setCaseSensitivity(caseSensitive);
-            gFindBar._highlightDoc("white", "black", text);
-
-            // TODO: seems fast enough for now...just
-            (function (win)
-            {
-                for (var i = 0; i < win.frames.length; i++)
-                    arguments.callee(win.frames[i]);
-                var spans = window.content.document.getElementsByClassName("__mozilla-findbar-search");
-                for (var i = 0; i < spans.length; i++)
-                    spans[i].setAttribute("style", liberator.options["hlsearchstyle"]);
-            })(window.content);
+            highlightObj.highlightDoc(window.content, text);
 
             // recreate selection since _highlightDoc collapses the selection backwards
             getBrowser().fastFind.findAgain(false, linksOnly);
@@ -357,7 +512,7 @@ liberator.Search = function () //{{{
 
         clear: function ()
         {
-            gFindBar._highlightDoc();
+            highlightObj.highlightDoc(window.content);
             // need to manually collapse the selection if the document is not
             // highlighted
             getBrowser().fastFind.collapseSelection();
