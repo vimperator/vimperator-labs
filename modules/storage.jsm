@@ -11,6 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
+ © 2008: Kris Maglione <maglione.k at Gmail>
 (c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
@@ -29,7 +30,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 var EXPORTED_SYMBOLS = ["storage"];
 
 var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch);
+                            .getService(Components.interfaces.nsIPrefService)
+                            .getBranch("extensions.liberator.datastore.");
 var json = Components.classes["@mozilla.org/dom/json;1"]
                      .createInstance(Components.interfaces.nsIJSON);
 
@@ -50,15 +52,10 @@ function getCharPref(name)
     }
 }
 
-function prefName(key)
-{
-    return "extensions.liberator.datastore." + key;
-}
-
 function loadPref(name, store, type)
 {
     if (store)
-        var pref = getCharPref(prefName(name));
+        var pref = getCharPref(name);
     if (pref)
         var result = json.decode(pref);
     if (result instanceof type)
@@ -68,7 +65,7 @@ function loadPref(name, store, type)
 function savePref(obj)
 {
     if (obj.store)
-        prefService.setCharPref(prefName(obj.name), obj.serial)
+        prefService.setCharPref(obj.name, obj.serial)
 }
 
 var prototype = {
