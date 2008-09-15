@@ -733,6 +733,7 @@ liberator.Events = function () //{{{
 
             if (macros.get(lastMacro))
             {
+                liberator.modes.isReplaying = true;
                 // make sure the page is stopped before starting to play the macro
                 try
                 {
@@ -742,6 +743,7 @@ liberator.Events = function () //{{{
 
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
                 res = liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
+                liberator.modes.isReplaying = false;
             }
             else
             {
@@ -785,6 +787,7 @@ liberator.Events = function () //{{{
             var doc = window.document;
             var view = window.document.defaultView;
             var escapeKey = false; // \ to escape some special keys
+            var wasReplaying = liberator.modes.isReplaying;
 
             noremap = !!noremap;
 
@@ -794,7 +797,6 @@ liberator.Events = function () //{{{
                 var keyCode = 0;
                 var shift = false, ctrl = false, alt = false, meta = false;
 
-                liberator.modes.isReplaying = true;
                 //if (charCode == 92) // the '\' key FIXME: support the escape key
                 if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
                 {
@@ -846,14 +848,15 @@ liberator.Events = function () //{{{
                 evt.isMacro = true;
                 elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
-                if (!liberator.modes.isReplaying)
-                    break;
-                if (!waitForPageLoaded())
-                    break;
+                if (wasReplaying) {
+                    if (!liberator.modes.isReplaying)
+                        break;
+                    if (!waitForPageLoaded())
+                        break;
+                }
                 // else // a short break between keys often helps
                 //     liberator.sleep(50);
             }
-            liberator.modes.isReplaying = false;
             return i == keys.length;
         },
 
