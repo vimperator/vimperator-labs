@@ -141,93 +141,38 @@ liberator.Search = function () //{{{
 
             var range;
             while ((range = finder.Find(aWord,
-                                        this._searchRange,
-                                        this._startPt,
-                                        this._endPt)))
+                                        this.searchRange,
+                                        this.startPt,
+                                        this.endPt)))
                 yield range;
         },
 
         highlightDoc: function highlightDoc(win, aWord)
         {
-            var textFound = false;
-            Array.forEach(win.frames, function (frame)
-            {
-                if (highlightDoc(aWord, frame))
-                    textFound = true;
-            });
+            Array.forEach(win.frames, function (frame) highlightDoc(aWord, frame));
 
             var doc = win.document;
             if (!doc || !(doc instanceof HTMLDocument))
-                return textFound;
-
-            var body = doc.body;
-
-            var count = body.childNodes.length;
-            this._searchRange = doc.createRange();
-            this._startPt = doc.createRange();
-            this._endPt = doc.createRange();
-
-            this._searchRange.setStart(body, 0);
-            this._searchRange.setEnd(body, count);
-
-            this._startPt.setStart(body, 0);
-            this._startPt.setEnd(body, 0);
-            this._endPt.setStart(body, count);
-            this._endPt.setEnd(body, count);
+                return;
 
             if (!aWord) {
-                // Remove highlighting.  We use the find API again rather than
-                // searching for our span elements so that we gain access to the
-                // anonymous content that nsIFind searches.
-
-                if (!this._lastHighlightString)
-                    return textFound;
-
-                var retRange = null;
-                var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
-                                       .createInstance(Components.interfaces.nsIFind);
-
-                for (let retRange in this.search(this._lastHighlightString))
+                let elems = doc.getElementsByClassName("__liberator-search");
+                for (let i=elems.length; --i >= 0;)
                 {
-                    var startContainer = retRange.startContainer;
-                    var elem = null;
-                    try
-                    {
-                        elem = startContainer.parentNode;
-                    }
-                    catch (ex) {}
+                    let elem = elems[i];
+                    let docfrag = doc.createDocumentFragment();
+                    let next = elem.nextSibling;
+                    let parent = elem.parentNode;
 
-                    if (elem && elem.className == "__liberator-search")
-                    {
-                        var child = null;
-                        var docfrag = doc.createDocumentFragment();
-                        var next = elem.nextSibling;
-                        var parent = elem.parentNode;
+                    let child;
+                    while (child = elem.firstChild)
+                        docfrag.appendChild(child);
 
-                        while ((child = elem.firstChild)) {
-                            docfrag.appendChild(child);
-                        }
-
-                        this._startPt = doc.createRange();
-                        this._startPt.setStartAfter(elem);
-
-                        parent.removeChild(elem);
-                        parent.insertBefore(docfrag, next);
-                        parent.normalize();
-                    }
-                    else
-                    {
-                        // Somehow we didn't highlight this instance; just skip it.
-                        this._startPt = doc.createRange();
-                        this._startPt.setStart(retRange.endContainer,
-                        retRange.endOffset);
-                    }
-
-                    this._startPt.collapse(true);
-
-                    textFound = true;
+                    parent.removeChild(elem);
+                    parent.insertBefore(docfrag, next);
+                    parent.normalize();
                 }
-                return textFound;
+                return;
             }
 
             var baseNode = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
@@ -237,28 +182,28 @@ liberator.Search = function () //{{{
             baseNode.style.padding = "0";
             baseNode.className = "__liberator-search";
 
-            return this.highlightText(aWord, baseNode) || textFound;
-        },
+            var body = doc.body;
+            var count = body.childNodes.length;
+            this.searchRange = doc.createRange();
+            this.startPt = doc.createRange();
+            this.endPt = doc.createRange();
 
-        highlightText: function highlightText(aWord, aBaseNode)
-        {
-            var retRange = null;
+            this.searchRange.setStart(body, 0);
+            this.searchRange.setEnd(body, count);
+
+            this.startPt.setStart(body, 0);
+            this.startPt.setEnd(body, 0);
+            this.endPt.setStart(body, count);
+            this.endPt.setEnd(body, count);
 
             for(let retRange in this.search(aWord, caseSensitive)) {
-                var textFound = false;
                 // Highlight
-                var nodeSurround = aBaseNode.cloneNode(true);
+                var nodeSurround = baseNode.cloneNode(true);
                 var node = this.highlight(retRange, nodeSurround);
-                this._startPt = node.ownerDocument.createRange();
-                this._startPt.setStart(node, node.childNodes.length);
-                this._startPt.setEnd(node, node.childNodes.length);
-
-                textFound = true;
+                this.startPt = node.ownerDocument.createRange();
+                this.startPt.setStart(node, node.childNodes.length);
+                this.startPt.setEnd(node, node.childNodes.length);
             }
-
-            this._lastHighlightString = aWord;
-
-            return textFound;
         },
 
         highlight: function highlight(aRange, aNode)
