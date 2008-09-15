@@ -196,7 +196,7 @@ liberator.Search = function () //{{{
             this.endPt.setStart(body, count);
             this.endPt.setEnd(body, count);
 
-            for(let retRange in this.search(aWord, caseSensitive)) {
+            for (let retRange in this.search(aWord, caseSensitive)) {
                 // Highlight
                 var nodeSurround = baseNode.cloneNode(true);
                 var node = this.highlight(retRange, nodeSurround);

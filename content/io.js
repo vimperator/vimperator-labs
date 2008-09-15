@@ -257,13 +257,13 @@ liberator.IO = function () //{{{
         "List all sourced script names",
         function ()
         {
-            var list = "<table>"; 
+            var list = "<table>";
 
             for (var i = 0; i < scriptNames.length; i++)
                 list += "<tr><td style=\"text-align: right\">" + (i + 1) + ".</td><td>" + scriptNames[i] + "</td></tr>";
 
             list += "</table>";
-            
+
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
