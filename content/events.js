@@ -843,7 +843,7 @@ liberator.Events = function () //{{{
                 var evt = doc.createEvent("KeyEvents");
                 evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                 evt.noremap = noremap;
-                evt.ismacro = true;
+                evt.isMacro = true;
                 elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
                 if (!liberator.modes.isReplaying)
@@ -1144,7 +1144,7 @@ liberator.Events = function () //{{{
             if (liberator.modes.isReplaying)
             {
                 // XXX: Prevents using <C-c> in a macro.
-                if (key == "<C-c>" && !event.ismacro)
+                if (key == "<C-c>" && !event.isMacro)
                 {
                     liberator.modes.isReplaying = false;
                     liberator.echo("Canceled playback of macro '" + lastMacro + "'");
