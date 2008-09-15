@@ -471,9 +471,9 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + liberator.config.name,
-            function ()
+            function (args, special)
             {
-                liberator.quit(false);
+                liberator.quit(false, special);
             },
             { argCount: "0" });
 
@@ -743,11 +743,8 @@ liberator.Tabs = function () //{{{
         // quitOnLastTab = 2: quit and save session
         remove: function (tab, count, focusLeftTab, quitOnLastTab)
         {
-            var removeOrBlankTab = (function ()
-            {
-                if (liberator.config.hostApplication == "Firefox")
-                {
-                    return function (tab)
+            var removeOrBlankTab = {
+                    Firefox: function (tab)
                     {
                         if (getBrowser().mTabs.length > 1)
                             getBrowser().removeTab(tab);
@@ -762,20 +759,15 @@ liberator.Tabs = function () //{{{
                             else
                                 liberator.beep();
                         }
-                    };
-                }
-                else if (liberator.config.hostApplication == "Thunderbird")
-                {
-                    return function (tab)
+                    },
+                    Thunderbird: function (tab)
                     {
                         if (getBrowser().mTabs.length > 1)
                             getBrowser().removeTab(tab);
                         else
                             liberator.beep();
-                    };
-                }
-                return function () { return null; };
-            })();
+                    }
+                }[liberator.config.hostApplication] || function () {};
 
             if (typeof count != "number" || count < 1)
                 count = 1;

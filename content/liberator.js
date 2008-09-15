@@ -362,12 +362,12 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
-            function ()
+            function (args, special)
             {
                 if (liberator.has("tabs"))
                     liberator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
-                    liberator.quit(false);
+                    liberator.quit(false, special);
             },
             { argCount: "0" });
 
@@ -963,14 +963,20 @@ const liberator = (function () //{{{
         plugins: {},
 
         // quit liberator, no matter how many tabs/windows are open
-        quit: function (saveSession)
+        quit: function (saveSession, force)
         {
             if (saveSession)
                 liberator.options.setPref("browser.startup.page", 3); // start with saved session
             else
                 liberator.options.setPref("browser.startup.page", 1); // start with default homepage session
 
-            goQuitApplication();
+            const nsIAppStartup = Components.interfaces.nsIAppStartup;
+            if (force)
+                Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                          .getService(nsIAppStartup)
+                          .quit(nsIAppStartup.eForceQuit);
+            else
+                goQuitApplication();
         },
 
         restart: function ()
