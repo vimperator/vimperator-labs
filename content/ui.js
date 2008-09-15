@@ -128,7 +128,8 @@ liberator.CommandLine = function () //{{{
         promptCallback = null;
         currentExtendedMode = null;
         liberator.commandline.clear();
-        callback(value);
+        if (callback)
+            callback(value);
     }
     liberator.registerCallback("cancel", liberator.modes.PROMPT, closePrompt);
     liberator.registerCallback("submit", liberator.modes.PROMPT, closePrompt);
@@ -610,6 +611,7 @@ liberator.CommandLine = function () //{{{
                 if (liberator.events.isAcceptKey(key))
                 {
                     var mode = currentExtendedMode; // save it here, as setMode() resets it
+                    currentExtendedMode = null;
                     history.add(command);
                     liberator.modes.pop();
                     completionlist.hide();
