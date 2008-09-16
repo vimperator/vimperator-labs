@@ -59,6 +59,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 #liberator-statusline {
     font-family: monospace;
+    height: 10px;
     margin: 0px;
 }
 #liberator-statusline > label {
@@ -70,6 +71,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 #liberator-statusline-field-url {
     background-color: inherit;
     color: inherit;
+}
+
+liberator-statusline-field-progress {
+    width: 200px;
 }
 
 /* no longer at the window's bottom right corner */
@@ -172,6 +177,14 @@ a.hl-URL:hover {
 
 /* MOW */
 
+#liberator-completions {
+    height: 250px;
+}
+
+#liberator-multiline-output {
+    height: 10px;
+}
+
 #liberator-completions, #liberator-multiline-output {
     overflow: hidden;
     background-color: white;
@@ -202,6 +215,5 @@ a.hl-URL:hover {
 #content-frame, #appcontent {
     border: 0px;
 }
-
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

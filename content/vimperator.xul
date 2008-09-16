@@ -81,12 +81,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="false"
+            <iframe id="liberator-multiline-output" src="about:blank" flex="1" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-completions" src="about:blank" flex="1" height="250px" hidden="false" collapsed="false"
+            <iframe id="liberator-completions" src="about:blank" flex="1" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
@@ -108,10 +108,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     </window>
 
     <statusbar id="status-bar" class="hl-StatusLine">
-        <hbox insertbefore="statusbar-display" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
+        <hbox insertbefore="statusbar-display" id="liberator-statusline" flex="1" hidden="false" align="center">
             <textbox class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
             <label class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
-            <label class="plain" id="liberator-statusline-field-progress"       flex="0" width="200px"/>
+            <label class="plain" id="liberator-statusline-field-progress"       flex="0"/>
             <label class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
             <label class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
         </hbox>
