@@ -72,10 +72,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: inherit;
 }
 
-#liberator-statusline-field-progress {
-    width: 200px;
-}
-
 /* no longer at the window's bottom right corner */
 .statusbar-resizerpanel {
     display: none;
