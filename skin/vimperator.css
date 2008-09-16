@@ -59,7 +59,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 #liberator-statusline {
     font-family: monospace;
-    height: 10px;
     margin: 0px;
 }
 #liberator-statusline > label {
@@ -73,7 +72,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: inherit;
 }
 
-liberator-statusline-field-progress {
+#liberator-statusline-field-progress {
     width: 200px;
 }
 
@@ -176,14 +175,6 @@ a.hl-URL:hover {
 }
 
 /* MOW */
-
-#liberator-completions {
-    height: 250px;
-}
-
-#liberator-multiline-output {
-    height: 10px;
-}
 
 #liberator-completions, #liberator-multiline-output {
     overflow: hidden;
