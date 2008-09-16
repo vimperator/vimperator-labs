@@ -611,9 +611,9 @@ liberator.CommandLine = function () //{{{
                 if (liberator.events.isAcceptKey(key))
                 {
                     var mode = currentExtendedMode; // save it here, as setMode() resets it
-                    currentExtendedMode = null;
+                    currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
                     history.add(command);
-                    liberator.modes.pop();
+                    liberator.modes.pop(true);
                     completionlist.hide();
                     liberator.focusContent(false);
                     liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
