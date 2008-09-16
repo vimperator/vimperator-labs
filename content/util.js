@@ -289,7 +289,6 @@ liberator.util = { //{{{
 
         begin: for (var url = 0; url < urls.length; url++)
         {
-
             var file = liberator.io.getFile(urls[url]);
             if (file.exists() && file.isReadable())
             {

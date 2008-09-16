@@ -20,7 +20,6 @@ BUGS:
 
 FEATURES:
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
-8 ;?<hint> should show more information
 8 all search commands should start searching from the top of the visible viewport 
 7 adaptive learning for tab-completions
   (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
@@ -34,6 +33,7 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
+6 :tabdetach
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
 6 allow for multiple ex commands separated with |
@@ -45,6 +45,7 @@ FEATURES:
 6 pipe selected text/link/website to an external command
 6 :set wildoptions=auto mode, which would list completions on each keystroke (maybe performance problems)
 6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
+6 ;?<hint> should show more information
 5 Favicons in completion windows and some other places?
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)

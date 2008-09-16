@@ -30,11 +30,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
     font-family: monospace;
 }
 
-#liberator-bufferwindow, #liberator-completion, #liberator-previewwindow {
+#liberator-completions {
     -moz-user-focus: ignore;
     overflow: -moz-scrollbars-none !important; /* does not seem to work fully */
     border-width: 0px !important;
-    -moz-appearance: none !important; /* prevent an ugly 3D border */
+    /*-moz-appearance: none !important; /* prevent an ugly 3D border */
 }
 
 /* the selected item in listboxes is hardly readable without this */
@@ -44,6 +44,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
    background-color: Highlight !important;
    color: HighlightText !important;
 }
+
+/*.liberator-compitem {
+    min-height: 16px;
+}*/
 
 /* fixes the min-height: 22px from firefox */
 #status-bar, statusbarpanel {
@@ -78,6 +82,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 #liberator-commandline {
     padding: 1px;
+    font-family: monospace;
     /*
     background-color: white;
     color: black;
@@ -155,7 +160,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: black !important;
 }
 .hl-URL {
-    background-color: white;
+    background-color: inherit;
     color: green;
     text-decoration: none;
 }
@@ -167,30 +172,36 @@ a.hl-URL:hover {
 
 /* MOW */
 
-#liberator-multiline-output {
+#liberator-completions, #liberator-multiline-output {
     overflow: hidden;
     background-color: white;
     color: black;
 }
 
-#liberator-multiline-output-content {
-    white-space: pre; /* -moz-pre-wrap FIXME: Should lines wrap like Vim? */
+#liberator-completions-content, #liberator-multiline-output-content {
+    white-space: pre;
     font-family: -moz-fixed;
     margin: 0px;
 }
 
-#liberator-multiline-output-content * {
+#liberator-completions-content *, #liberator-multiline-output-content * {
     font: inherit;
 }
 
-#liberator-multiline-output-content table {
+#liberator-completions-content table, #liberator-multiline-output-content table {
     white-space: inherit;
     border-spacing: 0px;
 }
 
-#liberator-multiline-output-content td,
-#liberator-multiline-output-content th {
+#liberator-completions-content td, #liberator-multiline-output-content td,
+#liberator-completions-content th, #liberator-multiline-output-content th {
     padding: 0px 2px;
 }
+
+/* for muttator's composer */
+#content-frame, #appcontent {
+    border: 0px;
+}
+
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

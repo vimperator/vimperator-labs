@@ -78,35 +78,27 @@ the terms of any one of the MPL, the GPL or the LGPL.
             events="select"
             oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
 
-        <vbox id="liberator-container" hidden="false">
-            <!--listbox id="liberator-previewwindow" class="plain" rows="10" flex="1" hidden="true"
-                onclick=   "liberator.previewwindow.onEvent(event);"
-                ondblclick="liberator.previewwindow.onEvent(event);"
-                onkeydown= "liberator.previewwindow.onEvent(event);">
-                <listcols>
-                    <listcol flex="1" width="50%"/>
-                    <listcol flex="1" width="50%"/>
-                </listcols>
-            </listbox-->
-
-            <iframe id="liberator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="true"
+        <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
+             therefore we need to put them into a <vbox> for which that works just fine -->
+        <vbox class="liberator-container" hidden="false" collapsed="true">
+            <iframe id="liberator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
+        </vbox>
 
-            <listbox id="liberator-completion" class="plain" rows="1" flex="1" hidden="true">
-                <listcols>
-                    <listcol flex="1" width="50%"/>
-                    <listcol flex="1" width="50%"/>
-                </listcols>
-            </listbox>
+        <vbox class="liberator-container" hidden="false" collapsed="true">
+            <iframe id="liberator-completions" src="about:blank" flex="1" height="250px" hidden="false" collapsed="false"
+                onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
+        </vbox>
 
-            <hbox id="liberator-commandline" hidden="false" class="hl-Normal">
-                <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-                <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
-                    oninput="liberator.commandline.onEvent(event);"
-                    onfocus="liberator.commandline.onEvent(event);"
-                    onblur="liberator.commandline.onEvent(event);"/>
-            </hbox>
+        <hbox id="liberator-commandline" hidden="false" class="hl-Normal">
+            <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+            <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                oninput="liberator.commandline.onEvent(event);"
+                onfocus="liberator.commandline.onEvent(event);"
+                onblur="liberator.commandline.onEvent(event);"/>
+        </hbox>
 
+        <vbox class="liberator-container" hidden="false" collapsed="false">
             <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
                 onkeypress="liberator.commandline.onMultilineInputEvent(event);"
                 oninput="liberator.commandline.onMultilineInputEvent(event);"
@@ -119,7 +111,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <hbox insertbefore="statusbar-display" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
             <textbox class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
             <label class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
-            <label class="plain" id="liberator-statusline-field-progress"       flex="0"/>
+            <label class="plain" id="liberator-statusline-field-progress"       flex="0" width="200px"/>
             <label class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
             <label class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
         </hbox>

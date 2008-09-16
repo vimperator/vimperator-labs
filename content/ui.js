@@ -40,9 +40,6 @@ liberator.CommandLine = function () //{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
 
-    var completionlist = new liberator.InformationList("liberator-completion", { minItems: 1, maxItems: 10 });
-    var completions = [];
-
     liberator.storage.newArray("history-search", true);
     liberator.storage.newArray("history-command", true);
 
@@ -70,13 +67,15 @@ liberator.CommandLine = function () //{{{
     var historyIndex = UNINITIALIZED;
     var historyStart = "";
 
+    var completionList = new liberator.ItemList("liberator-completions");
+    var completions = [];
     // for the example command "open sometext| othertext" (| is the cursor pos):
     var completionStartIndex = 0;  // will be 5 because we want to complete arguments for the :open command
-    var completionPrefix = "";      // will be: "open sometext"
-    var completionPostfix = "";     // will be: " othertext"
+    var completionPrefix = "";     // will be: "open sometext"
+    var completionPostfix = "";    // will be: " othertext"
+    var completionIndex = UNINITIALIZED;
 
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
-    var completionIndex = UNINITIALIZED;
     var startHints = false; // whether we're waiting to start hints mode
 
     // the containing box for the promptWidget and commandWidget
@@ -88,6 +87,7 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
+    var outputContainer = multilineOutputWidget.parentNode;
     multilineOutputWidget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
     multilineOutputWidget.contentDocument.body.innerHTML = "";
     var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
@@ -176,21 +176,20 @@ liberator.CommandLine = function () //{{{
     //     : echoed lines longer than v-c-c.width should wrap and use MOW
     function setMultiline(str, highlightGroup)
     {
-        multilineInputWidget.collapsed = true;
+        //outputContainer.collapsed = true;
 
         var output = "<div class=\"ex-command-output " + highlightGroup + "\">" + str + "</div>";
-        if (!multilineOutputWidget.collapsed)
+        if (!outputContainer.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
             //        that don't generate output are executed
             output = multilineOutputWidget.contentDocument.body.innerHTML + output;
-            multilineOutputWidget.collapsed = true;
+            //outputContainer.collapsed = true;
         }
 
         var id = liberator.config.mainWindowID || "main-window";
         var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
         multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
-
         multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
         multilineOutputWidget.contentDocument.body.innerHTML = output;
 
@@ -204,8 +203,8 @@ liberator.CommandLine = function () //{{{
         var contentHeight = multilineOutputWidget.contentDocument.height;
         var height = contentHeight < availableHeight ? contentHeight : availableHeight;
 
-        multilineOutputWidget.height = height + "px";
-        multilineOutputWidget.collapsed = false;
+        outputContainer.height = height + "px";
+        outputContainer.collapsed = false;
 
         if (liberator.options["more"] && multilineOutputWidget.contentWindow.scrollMaxY > 0)
         {
@@ -232,17 +231,15 @@ liberator.CommandLine = function () //{{{
 
     function autosizeMultilineInputWidget()
     {
-        // XXX: faster/better method?
-
         var lines = 0;
         var str = multilineInputWidget.value;
         for (var i = 0; i < str.length; i++)
-        {
             if (str[i] == "\n")
                 lines++;
-        }
+
         if (lines == 0)
             lines = 1;
+
         multilineInputWidget.setAttribute("rows", lines.toString());
     }
 
@@ -440,9 +437,9 @@ liberator.CommandLine = function () //{{{
         // not yet used
         FORCE_MULTILINE    : 1 << 0,
         FORCE_SINGLELINE   : 1 << 1,
-        DISALLOW_MULTILINE : 1 << 2, // if an echo() should try to use the single line,
-                                           // but output nothing when the MOW is open; when also
-                                           // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
+        DISALLOW_MULTILINE : 1 << 2, // if an echo() should try to use the single line
+                                     // but output nothing when the MOW is open; when also
+                                     // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // will show the string in :messages
 
         get mode() (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search",
@@ -492,8 +489,10 @@ liberator.CommandLine = function () //{{{
         clear: function ()
         {
             multilineInputWidget.collapsed = true;
-            multilineOutputWidget.collapsed = true;
-            completionlist.hide();
+            outputContainer.collapsed = true;
+            completionList.hide();
+            //htmllist.hide();
+            //htmllist.clear();
             completions = [];
 
             setLine("", this.HL_NORMAL);
@@ -521,7 +520,7 @@ liberator.CommandLine = function () //{{{
                 where = setMultiline;
             else if (flags & this.FORCE_SINGLELINE)
                 where = setLine;
-            else if (!multilineOutputWidget.collapsed)
+            else if (!outputContainer.collapsed)
             {
                 if (flags & this.DISALLOW_MULTILINE)
                     where = null;
@@ -614,7 +613,7 @@ liberator.CommandLine = function () //{{{
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
                     history.add(command);
                     liberator.modes.pop(true);
-                    completionlist.hide();
+                    completionList.hide();
                     liberator.focusContent(false);
                     liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
                     return liberator.triggerCallback("submit", mode, command);
@@ -676,8 +675,21 @@ liberator.CommandLine = function () //{{{
                 // user pressed TAB to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {
-                    //always reset our completion history so up/down keys will start with new values
+                    // always reset our completion history so up/down keys will start with new values
                     historyIndex = UNINITIALIZED;
+
+                    // TODO: call just once, and not on each <Tab>
+                    var wim = liberator.options["wildmode"].split(/,/);
+                    var hasList = false;
+                    var longest = false;
+                    var full = false;
+                    var wildType = wim[wildIndex++] || wim[wim.length - 1];
+                    if (wildType == "list" || wildType == "list:full" || wildType == "list:longest")
+                        hasList = true;
+                    if (wildType == "longest" || wildType == "list:longest")
+                        longest = true;
+                    else if (wildType == "full" || wildType == "list:full")
+                        full = true;
 
                     // we need to build our completion list first
                     if (completionIndex == UNINITIALIZED)
@@ -704,6 +716,9 @@ liberator.CommandLine = function () //{{{
                                         return 0;
                             });
                         }
+
+                        if (hasList)
+                            completionList.setItems(completions, -1);
                     }
 
                     if (completions.length == 0)
@@ -715,27 +730,8 @@ liberator.CommandLine = function () //{{{
                         return false;
                     }
 
-                    var wim = liberator.options["wildmode"].split(/,/);
-                    var hasList = false;
-                    var longest = false;
-                    var full = false;
-                    var wildType = wim[wildIndex++] || wim[wim.length - 1];
-                    if (wildType == "list" || wildType == "list:full" || wildType == "list:longest")
-                        hasList = true;
-                    if (wildType == "longest" || wildType == "list:longest")
-                        longest = true;
-                    else if (wildType == "full" || wildType == "list:full")
-                        full = true;
-
-                    // show the list
                     if (hasList)
-                    {
-                        if (completionIndex < 0)
-                            completionlist.show(completions);
-                        else
-                            completionlist.show();
-                    }
-
+                        completionList.show();
 
                     if (full)
                     {
@@ -743,21 +739,25 @@ liberator.CommandLine = function () //{{{
                         {
                             completionIndex--;
                             if (completionIndex < -1)
-                                completionIndex = completions.length -1;
+                                completionIndex = completions.length - 1;
                         }
                         else
                         {
                             completionIndex++;
-                            if (completionIndex >= completions.length)
-                                completionIndex = -1;
+                            if (completionIndex > completions.length)
+                                completionIndex = 0;
                         }
 
-                        liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+                        // FIXME: this innocent looking line is the source of a big performance
+                        // problem, when keeping <Tab> pressed down, so disable it for now
+                        // liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+
+                        liberator.statusline.updateProgress(res);
                         // if the list is hidden, this function does nothing
-                        completionlist.selectItem(completionIndex);
+                        completionList.selectItem(completionIndex);
                     }
 
-                    if (completionIndex == -1 && !longest) // wrapped around matches, reset command line
+                    if ((completionIndex == -1 || completionIndex >= completions.length) && !longest) // wrapped around matches, reset command line
                     {
                         if (full && completions.length > 1)
                             setCommand(completionPrefix + completionPostfix);
@@ -787,6 +787,7 @@ liberator.CommandLine = function () //{{{
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
+                    return false;
                 }
                 else if (key == "<BS>")
                 {
@@ -854,7 +855,6 @@ liberator.CommandLine = function () //{{{
             var passEvent = false;
 
             function isScrollable() { return !win.scrollMaxY == 0; }
-
             function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
 
             var key = liberator.events.toString(event);
@@ -1053,13 +1053,14 @@ liberator.CommandLine = function () //{{{
             }
         },
 
-        // to allow asynchronous adding of completions
+        // to allow asynchronous adding of completions, broken
+        // since the completion -> ItemList rewrite
         setCompletions: function (compl, start)
         {
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
 
-            // liberator.log(compl);
+            completionList.setItems(compl, -1);
 
             if (completionIndex >= 0 && completionIndex < compl.length && completionIndex < completions.length)
             {
@@ -1070,8 +1071,8 @@ liberator.CommandLine = function () //{{{
                 completionIndex = -1;
 
             completions = compl;
-            completionlist.show(compl);
-            completionlist.selectItem(completionIndex);
+            completionList.selectItem(completionIndex);
+            completionList.show();
 
             var command = this.getCommand();
             completionPrefix = command.substring(0, commandWidget.selectionStart);
@@ -1084,104 +1085,207 @@ liberator.CommandLine = function () //{{{
         resetCompletions: function ()
         {
             completionIndex = historyIndex = UNINITIALIZED;
+            wildIndex = 0;
         },
     };
     //}}}
 }; //}}}
 
 /**
- * The list which is used for the completion box, the preview window and the buffer preview window
+ * The list which is used for the completion box (and QuickFix window in future)
  *
- * @param id: the id of the the XUL widget which we want to fill
- * @param options: an optional hash which modifies the behavior of the list
+ * @param id: the id of the the XUL <iframe> which we want to fill
+ *            it MUST be inside a <vbox> (or any other html element,
+ *            because otherwise setting the height does not work properly
+ *
+ * TODO: get rid off "completion" variables, we are dealing with variables after all
  */
-liberator.InformationList = function (id, options) //{{{
+liberator.ItemList = function (id) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
     const CONTEXT_LINES = 3;
-    var maxItems = 10;
-    var minItems = 1;
+    var maxItems = 20;
+    var minItems = 2;
     var incrementalFill = true; // make display faster, but does not show scrollbar
+    var completionElements = [];
 
-    if (options)
+    var iframe = document.getElementById(id);
+    if (!iframe)
     {
-        if (options.maxItems) maxItems = options.maxItems;
-        if (options.minItems) minItems = options.minItems;
-        if (options.incrementalFill) incrementalFill = options.incrementalFill;
+        liberator.log("No iframe with id: " + id + " found, strange things may happen!")
+        return;
     }
 
-    var widget = document.getElementById(id);
-    var completions = null; // a reference to the Array of completions
-    var listOffset = 0; // how many items is the displayed list shifted from the internal tab index
-    var listIndex = 0;  // listOffset + listIndex = completions[item]
+    var doc = iframe.contentDocument;
+    var container = iframe.parentNode;
 
-    // add a single completion item to the list
-    function addItem(completionItem, atBeginning)
+    var stylesheet = doc.createElement("link");
+    stylesheet.setAttribute("rel", "Stylesheet");
+    stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
+    doc.body.id = id + "-content";
+    doc.getElementsByTagName("head")[0].appendChild(stylesheet);
+
+    var completions = []; // a reference to the Array of completions
+    var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
+    var listIndex = -1;   // listOffset + listIndex = completions[item]
+    var selectedElement = null;
+
+    // FIXME: ItemList shouldn't know of favicons of course, so also temporary
+    try {
+        var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"].getService(Components.interfaces.nsIFaviconService);
+        const ioService    = Components.classes["@mozilla.org/network/io-service;1"]
+                                       .getService(Components.interfaces.nsIIOService);
+    } catch (e) { } // for muttator!
+
+
+    // TODO: temporary, to be changed/removed
+    function createRow(a, b, c)
     {
-        var item  = document.createElement("listitem");
-        var cell1 = document.createElement("listcell");
-        var cell2 = document.createElement("listcell");
-
-        cell1.setAttribute("label", completionItem[0]);
-        cell2.setAttribute("label", completionItem[1]);
-        cell2.setAttribute("style", "color:green; font-family: sans");
-
-        item.appendChild(cell1);
-        item.appendChild(cell2);
-        if (atBeginning == true)
+        var row = doc.createElement("tr");
+        row.setAttribute("class", "liberator-compitem");
+        var icon = doc.createElement("td");
+        icon.setAttribute("style", "width: 16px");
+        if (a)
         {
-            var items = widget.getElementsByTagName("listitem");
-            if (items.length > 0)
-                widget.insertBefore(item, items[0]);
-            else
-                widget.appendChild(item);
+            var img = doc.createElement("img");
+            img.setAttribute("width", "16px");
+            img.setAttribute("height", "16px");
+            img.setAttribute("src", a);
+            icon.appendChild(img);
         }
+        row.appendChild(icon);
+
+        var title = doc.createElement("td");
+        title.appendChild(doc.createTextNode(b));
+        title.setAttribute("style", "width: 45%; overflow:hidden");
+        row.appendChild(title);
+
+        var url = doc.createElement("td");
+        url.setAttribute("style", "color: gray");
+        url.appendChild(doc.createTextNode(c));
+        row.appendChild(url);
+
+        return row;
+
+        var row = doc.createElement("tr");
+        row.setAttribute("class", "liberator-compitem");
+        var icon = doc.createElement("td");
+        icon.innerHTML = '<td style="vertical-align: middle"><img src="' + a + '" width="16px" height="16px"/></td><td style="vertical-align:middle">' + b + '  <br/><span style="color: green">' + c + '</span></td>';
+        row.appendChild(icon);
+
+        return row;
+    }
+
+    function autoSize()
+    {
+        function getHeight()
+        {
+            if (completionElements.length == 0)
+                return doc.height;
+
+            var wanted = maxItems + listOffset;
+            if (wanted > completionElements.length)
+                wanted = completionElements.length;
+            return completionElements[wanted - 1].getBoundingClientRect().bottom;
+        }
+
+        var height = getHeight();
+        if (height == 0) // sometimes we don't have the correct size at this point
+            setTimeout(function() { container.height = getHeight(); }, 10);
         else
-            widget.appendChild(item);
+            container.height = height;
     }
 
     /**
      * uses the entries in completions to fill the listbox
+     * does incremental filling to speed up things
      *
-     * @param startindex: start at this index and show maxItems
-     * @returns the number of items
+     * @param offset: start at this index and show maxItems
      */
-    function fill(startindex)
+    function fill(offset)
     {
-        var complength = completions.length;
-
-        // remove all old items first
-        var items = widget.getElementsByTagName("listitem");
-        while (items.length > 0)
+        if (listOffset == offset || offset < 0 || offset >= completions.length)
+            return;
+    
+        if (listIndex > -1 && offset == listOffset + 1)
         {
-            widget.removeChild(items[0]);
-        }
+            listOffset = offset;
+            var icon = "";
+            try {
+                var uri = ioService.newURI(completions[offset][0], null, null);
+                icon = faviconService.getFaviconImageForPage(uri).spec;
+            } catch (e) {  }
 
-        if (!incrementalFill)
+            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]); 
+            var e = doc.getElementsByTagName("tbody");
+            e[e.length - 1].removeChild(e[e.length - 1].firstElementChild);
+            e[e.length - 1].appendChild(row);
+            completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
+            return;
+        }
+        else if (listIndex > -1 && offset == listOffset - 1)
         {
-            for (let i = 0; i < completions.length; i++)
-                addItem(completions[i], false);
-            return complength;
+            listOffset = offset;
+            var icon = "";
+            try {
+                var uri = ioService.newURI(completions[offset][0], null, null);
+                icon = faviconService.getFaviconImageForPage(uri).spec;
+            } catch (e) {  }
+            var row = createRow(icon, completions[offset][0], completions[offset][1]); 
+            var e = doc.getElementsByTagName("tbody");
+            e[e.length - 1].removeChild(e[e.length - 1].lastElementChild);
+            e[e.length - 1].insertBefore(row, e[e.length - 1].firstElementChild);
+            completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
+            return;
         }
+        listOffset = offset;
 
-        // find start index
-        if (startindex + maxItems > complength)
-            startindex = complength - maxItems;
-        if (startindex < 0)
-            startindex = 0;
+        // do a full refill of the list:
+        doc.body.innerHTML = "";
 
-        listOffset = startindex;
-        listIndex = -1;
+        var div = doc.createElement("div");
+        div.setAttribute("class", "ex-command-output hl-Normal");
+        div.innerHTML = "<span style=\"color: magenta; font-weight: bold\">Completions:</span>";
+        var table = doc.createElement("table");
+        table.setAttribute("width", "100%");
+        table.setAttribute("style", "table-layout: fixed; width: 100%");
+        //div.appendChild(table);
+        var tbody = doc.createElement("tbody");
+        table.appendChild(tbody);
 
-        for (var i = startindex; i < complength && i < startindex + maxItems; i++)
+        for (var i = 0; i < completions.length; i++)
         {
-            addItem(completions[i], false);
-        }
+            var elem = completions[i];
+            if (i >= listOffset && i - listOffset < maxItems)
+            {
+                var icon = "";
+                try {
+                    var uri = ioService.newURI(elem[0], null, null);
+                    icon = faviconService.getFaviconImageForPage(uri).spec;
+                    //dump(icon + "\n");
+                } catch (e) {  }
 
-        return (i - startindex);
+                if (i == -132434)
+                {
+                    var row = doc.createElement("tr");
+                    row.setAttribute("align", "center");
+                    row.innerHTML = '<th width="16px"></th><th style="background-color: gray !important;"><span style="font-weight: bold;">Bookmarks</span></th>';
+                    tbody.appendChild(row);
+                }
+                else
+                {
+                    tbody.appendChild(createRow(icon, elem[0], elem[1]));
+                }
+            }
+        };
+
+        doc.body.appendChild(div);
+        doc.body.appendChild(table);
+
+        completionElements = doc.getElementsByClassName("liberator-compitem");
+        autoSize();
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1190,60 +1294,33 @@ liberator.InformationList = function (id, options) //{{{
 
     return {
 
-        /**
-         * Show the completion list window
-         *
-         * @param compl: if null, only show the list with current entries, otherwise
-         *          use entries of 'compl' to fill the list.
-         *          Required format: [["left", "right"], ["another"], ["completion"]]
-         */
-        show: function (compl, rows)
+        clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
+        hide: function () { container.collapsed = true; },
+        show: function () { container.collapsed = false; },
+        visible: function () { return !container.collapsed; },
+
+        setItems: function (items, selectedItem)
         {
-            //maxItems = liberator.options["previewheight"];
+            listOffset = listIndex = -1;
+            completions = items || [];
+            if (typeof(selectedItem) != "number")
+                selectedItem = -1;
 
-            if (compl)
-            {
-                completions = compl;
-                fill(0);
-            }
-
-            var length = completions.length;
-            if (length > maxItems)
-                length = maxItems;
-            if (length >= minItems)
-            {
-                widget.setAttribute("rows", rows ? rows : length.toString());
-                widget.hidden = false;
-                return true;
-            }
-            else
-            {
-                widget.hidden = true;
-                return false;
-            }
+            this.selectItem(selectedItem);
         },
 
-        hide: function ()
-        {
-            widget.hidden = true;
-        },
-
-        visible: function ()
-        {
-            return !widget.hidden;
-        },
-
-        /**
-         * select index, refill list if necessary
-         */
+        // select index, refill list if necessary
         selectItem: function (index)
         {
-            if (widget.hidden)
+            if (container.collapsed) // fixme
                 return;
 
-            if (!incrementalFill)
+            if (index == -1 || index == completions.length) // wrapped around
             {
-                widget.selectedIndex = index;
+                if (listIndex >= 0)
+                    completionElements[listIndex - listOffset].style.backgroundColor = "";
+
+                listIndex = index;
                 return;
             }
 
@@ -1261,46 +1338,26 @@ liberator.InformationList = function (id, options) //{{{
             if (newOffset < 0)
                 newOffset = 0;
 
-            // for speed reason: just remove old item, and add the new one at the end of the list
-            var items = widget.getElementsByTagName("listitem");
-            if (newOffset == listOffset + 1)
-            {
-                widget.removeChild(items[0]);
-                addItem(completions[index + CONTEXT_LINES], false);
-            }
-            else if (newOffset == listOffset - 1)
-            {
-                widget.removeChild(items[items.length-1]);
-                addItem(completions[index - CONTEXT_LINES], true);
-            }
-            else if (newOffset == listOffset)
-            {
-                // do nothing
-            }
-            else
-                fill(newOffset);
+            fill(newOffset);
 
-            listOffset = newOffset;
-            widget.selectedIndex = index - listOffset;
+            if (selectedElement)
+                selectedElement.style.backgroundColor = "";
+            selectedElement = completionElements[index - newOffset];
+            selectedElement.style.backgroundColor = "yellow";
+
+            listIndex = index;
+            return;
         },
 
         onEvent: function (event)
         {
-            var listcells = document.getElementsByTagName("listcell");
-            // 2 columns for now, use the first column
-            var index = (widget.selectedIndex * 2) + 0;
-            var val = listcells[index].getAttribute("label");
-            if (val && event.button == 0 && event.type == "dblclick") // left double click
-                liberator.open(val);
-            else if (val && event.button == 1) // middle click
-                liberator.open(val, liberator.NEW_TAB);
-            else
-                return false;
+            return false;
         }
 
     };
     //}}}
 }; //}}}
+
 
 liberator.StatusLine = function () //{{{
 {
@@ -1444,7 +1501,9 @@ liberator.StatusLine = function () //{{{
                 progress = "";
 
             if (typeof progress == "string")
+            {
                 progressWidget.value = progress;
+            }
             else if (typeof progress == "number")
             {
                 var progressStr = "";
