@@ -1,6 +1,6 @@
 # Thunderbird
 content	muttator content/
-resource muttator content/
+resource muttator modules/
 locale	muttator en-US locale/en-US/
 skin muttator classic/1.0 skin/
 overlay chrome://messenger/content/messenger.xul chrome://muttator/content/muttator.xul
