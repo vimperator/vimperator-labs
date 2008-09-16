@@ -1,11 +1,11 @@
 <pre>
 2008-XX-XX:
     * version 2.0 (probably)
-    * allow ; hints to work in the multiline output widget
     * IMPORTANT: :viusage and :exusage now jump to the help index, use the
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * allow ; hints to work in the multiline output widget
     * add :scriptnames
     * add commandline completion to 'activate', 'cpt', 'defsearch', 'pageinfo',
       'newtab' and 'popups'
