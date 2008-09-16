@@ -143,7 +143,7 @@ liberator-statusline-field-progress {
 .hl-Title {
     background-color: white;
     color: magenta;
-    font-weight: bold;
+    font-weight: bold !important;
 }
 .hl-Warning {
     background-color: white;

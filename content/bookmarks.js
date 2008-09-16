@@ -235,7 +235,7 @@ liberator.Bookmarks = function () //{{{
         {
             var sh = getWebNavigation().sessionHistory;
             var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "jumps") + "<br/>" + "<table>";
-            list += "<tr style=\"text-align: left;\" class=\"hl-Title\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
+            list += "<tr class=\"hl-Title\" align=\"left\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
             var num = -sh.index;
 
             for (var i = 0; i < sh.count; i++)
@@ -501,7 +501,7 @@ liberator.Bookmarks = function () //{{{
 
             var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+                "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
             for (var i = 0; i < items.length; i++)
             {
                 title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
@@ -805,7 +805,7 @@ liberator.History = function () //{{{
             else
             {
                 var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr align=\"left\" class=\"hl-Title\"><th>title</th><th>URL</th></tr>";
+                           "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
                 for (var i = 0; i < items.length; i++)
                 {
                     var title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
@@ -983,7 +983,7 @@ liberator.QuickMarks = function () //{{{
             }
 
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>QuickMark</th><th>URL</th></tr>";
+                       "<table><tr class=\"hl-Title\" align=\"left\"><th>QuickMark</th><th>URL</th></tr>";
 
             for (var i = 0; i < marks.length; i++)
             {

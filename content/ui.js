@@ -1247,7 +1247,7 @@ liberator.ItemList = function (id) //{{{
 
         var div = doc.createElement("div");
         div.setAttribute("class", "ex-command-output hl-Normal");
-        div.innerHTML = "<span style=\"color: magenta; font-weight: bold\">Completions:</span>";
+        div.innerHTML = "<span class=\"hl-Title\">Completions:</span>";
         var table = doc.createElement("table");
         table.setAttribute("width", "100%");
         table.setAttribute("style", "table-layout: fixed; width: 100%");

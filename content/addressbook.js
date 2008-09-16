@@ -203,7 +203,7 @@ liberator.Addressbook = function () //{{{
 			else
 			{
 				var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-						   "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Address</th></tr>";
+						   "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
 				for (var i = 0; i < addresses.length; i++)
 				{
                     var displayName = liberator.util.escapeHTML(liberator.util.clip(addresses[i][0], 50));

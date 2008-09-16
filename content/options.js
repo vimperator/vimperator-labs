@@ -841,7 +841,7 @@ liberator.Options = function () //{{{
         list: function (onlyNonDefault, scope)
         {
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>--- Options ---</th></tr>";
+                       "<table><tr class=\"hl-Title\" align=\"left\"><th>--- Options ---</th></tr>";
             var name, value, def;
 
             if (!scope)
@@ -893,7 +893,7 @@ liberator.Options = function () //{{{
             var prefArray = prefService.getChildList("", { value: 0 });
             prefArray.sort();
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                "<table><tr align=\"left\" class=\"hl-Title\"><th>--- " + liberator.config.hostApplication +
+                "<table><tr class=\"hl-Title\" align=\"left\"><th>--- " + liberator.config.hostApplication +
                 " Options ---</th></tr>";
             var name, value, defaultValue;
 

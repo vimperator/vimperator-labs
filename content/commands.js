@@ -694,7 +694,7 @@ liberator.Commands = function () //{{{
                 if (cmdlist.length > 0)
                 {
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                              "<table><tr align=\"left\" class=\"hl-Title\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
+                              "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
                     for (var i = 0; i < cmdlist.length; i++)
                     {
                         // programmatically added user commands have a null replacementText

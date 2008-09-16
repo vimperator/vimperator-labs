@@ -1151,7 +1151,7 @@ liberator.Buffer = function () //{{{
             // TODO: could this be useful for other commands?
             function createTable(data)
             {
-                var ret = "<table><tr><th class='hl-Title' style='font-weight: bold;' align='left' colspan='2'>" +
+                var ret = "<table><tr><th class='hl-Title' align='left' colspan='2'>" +
                           data[data.length - 1][0] + "</th></tr>";
 
                 if (data.length - 1)
@@ -1755,7 +1755,7 @@ liberator.Marks = function () //{{{
             }
 
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr align=\"left\" class=\"hl-Title\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
+                       "<table><tr class=\"hl-Title\" align=\"left\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
             for (var i = 0; i < marks.length; i++)
             {
                 list += "<tr>" +
