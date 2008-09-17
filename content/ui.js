@@ -1110,6 +1110,7 @@ liberator.ItemList = function (id) //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
     const CONTEXT_LINES = 3;
     var maxItems = 20;
     var minItems = 2;
@@ -1144,11 +1145,13 @@ liberator.ItemList = function (id) //{{{
     var selectedElement = null;
 
     // FIXME: ItemList shouldn't know of favicons of course, so also temporary
-    try {
+    try
+    {
         var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"].getService(Components.interfaces.nsIFaviconService);
         const ioService    = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService);
-    } catch (e) { } // for muttator!
+    }
+    catch (e) { } // for muttator!
 
 
     // TODO: temporary, to be changed/removed
@@ -1219,17 +1222,19 @@ liberator.ItemList = function (id) //{{{
     {
         if (listOffset == offset || offset < 0 || offset >= completions.length)
             return;
-    
+
         if (listIndex > -1 && offset == listOffset + 1)
         {
             listOffset = offset;
             var icon = "";
-            try {
+            try
+            {
                 var uri = ioService.newURI(completions[offset][0], null, null);
                 icon = faviconService.getFaviconImageForPage(uri).spec;
-            } catch (e) {  }
+            }
+            catch (e) {  }
 
-            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]); 
+            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]);
             var e = doc.getElementsByTagName("tbody");
             e[e.length - 1].removeChild(e[e.length - 1].firstElementChild);
             e[e.length - 1].appendChild(row);
@@ -1240,11 +1245,13 @@ liberator.ItemList = function (id) //{{{
         {
             listOffset = offset;
             var icon = "";
-            try {
+            try
+            {
                 var uri = ioService.newURI(completions[offset][0], null, null);
                 icon = faviconService.getFaviconImageForPage(uri).spec;
-            } catch (e) {  }
-            var row = createRow(icon, completions[offset][0], completions[offset][1]); 
+            }
+            catch (e) {  }
+            var row = createRow(icon, completions[offset][0], completions[offset][1]);
             var e = doc.getElementsByTagName("tbody");
             e[e.length - 1].removeChild(e[e.length - 1].lastElementChild);
             e[e.length - 1].insertBefore(row, e[e.length - 1].firstElementChild);
@@ -1258,7 +1265,7 @@ liberator.ItemList = function (id) //{{{
 
         var div = doc.createElement("div");
         div.setAttribute("class", "ex-command-output hl-Normal");
-        div.innerHTML = "<span class=\"hl-Title\">Completions:</span>";
+        div.innerHTML = "<span class=\"hl-Title\" style=\"font-weight: bold\">Completions:</span>";
         var table = doc.createElement("table");
         table.setAttribute("width", "100%");
         table.setAttribute("style", "table-layout: fixed; width: 100%");
@@ -1272,11 +1279,13 @@ liberator.ItemList = function (id) //{{{
             if (i >= listOffset && i - listOffset < maxItems)
             {
                 var icon = "";
-                try {
+                try
+                {
                     var uri = ioService.newURI(elem[0], null, null);
                     icon = faviconService.getFaviconImageForPage(uri).spec;
                     //dump(icon + "\n");
-                } catch (e) {  }
+                }
+                catch (e) {  }
 
                 if (i == -132434)
                 {
