@@ -87,14 +87,23 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    var outputContainer = multilineOutputWidget.parentNode;
-    multilineOutputWidget.contentDocument.body.setAttribute("style", "margin: 0px; font-family: -moz-fixed;"); // get rid of the default border
-    multilineOutputWidget.contentDocument.body.innerHTML = "";
+
     var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
     stylesheet.setAttribute("rel", "stylesheet");
     stylesheet.setAttribute("type", "text/css");
     stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
     multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
+
+    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
+
+    // TODO: is there a better way to determine and set the UI font, 'guifont' perhaps?
+    var id = liberator.config.mainWindowID || "main-window";
+    var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
+    multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
+
+    multilineOutputWidget.contentDocument.body.innerHTML = "";
+
+    var outputContainer = multilineOutputWidget.parentNode;
 
     // the widget used for multiline intput
     var multilineInputWidget = document.getElementById("liberator-multiline-input");
@@ -187,10 +196,6 @@ liberator.CommandLine = function () //{{{
             //outputContainer.collapsed = true;
         }
 
-        var id = liberator.config.mainWindowID || "main-window";
-        var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
-        multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
-        multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
         multilineOutputWidget.contentDocument.body.innerHTML = output;
 
         var availableHeight = 250;
@@ -1114,7 +1119,7 @@ liberator.ItemList = function (id) //{{{
     var iframe = document.getElementById(id);
     if (!iframe)
     {
-        liberator.log("No iframe with id: " + id + " found, strange things may happen!")
+        liberator.log("No iframe with id: " + id + " found, strange things may happen!") // "The truth is out there..." -- djk
         return;
     }
 
@@ -1122,10 +1127,16 @@ liberator.ItemList = function (id) //{{{
     var container = iframe.parentNode;
 
     var stylesheet = doc.createElement("link");
-    stylesheet.setAttribute("rel", "Stylesheet");
+    stylesheet.setAttribute("rel", "stylesheet");
+    stylesheet.setAttribute("type", "text/css");
     stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
-    doc.body.id = id + "-content";
     doc.getElementsByTagName("head")[0].appendChild(stylesheet);
+
+    doc.body.id = id + "-content";
+
+    var id = liberator.config.mainWindowID || "main-window";
+    var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
+    doc.body.setAttribute("style", "font-size: " + fontSize);
 
     var completions = []; // a reference to the Array of completions
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
