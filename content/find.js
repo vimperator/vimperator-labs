@@ -149,7 +149,7 @@ liberator.Search = function () //{{{
 
         highlightDoc: function highlightDoc(win, aWord)
         {
-            Array.forEach(win.frames, function (frame) highlightDoc(aWord, frame));
+            Array.forEach(win.frames, function (frame) highlightObj.highlightDoc(frame, aWord));
 
             var doc = win.document;
             if (!doc || !(doc instanceof HTMLDocument))
@@ -157,7 +157,7 @@ liberator.Search = function () //{{{
 
             if (!aWord) {
                 let elems = doc.getElementsByClassName("__liberator-search");
-                for (let i=elems.length; --i >= 0;)
+                for (let i = elems.length; --i >= 0;)
                 {
                     let elem = elems[i];
                     let docfrag = doc.createDocumentFragment();
