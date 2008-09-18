@@ -1442,7 +1442,7 @@ liberator.Marks = function () //{{{
     {
         return name + " | " + mark.location +
                 " | (" + mark.position.x + ", " + mark.position.y + ")" +
-                ('tab' in mark) ? " | tab: " + liberator.tabs.index(mark.tab) : "";
+                (('tab' in mark) ? " | tab: " + liberator.tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)
@@ -1705,7 +1705,7 @@ liberator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        liberator.log("Jumping to URL mark: " + markToString(mark, slice[i]), 5);
+                        liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
