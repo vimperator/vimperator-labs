@@ -1705,7 +1705,7 @@ liberator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
+                        liberator.log("Jumping to URL mark: " + markToString(mark, slice[i]), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -1720,7 +1720,7 @@ liberator.Marks = function () //{{{
                 {
                     if (win.location.href == slice[i].location)
                     {
-                        liberator.log("Jumping to local mark: " + markToString(mark, slice), 5);
+                        liberator.log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
                         win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
                         ok = true;
                     }
