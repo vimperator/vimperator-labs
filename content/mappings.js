@@ -51,7 +51,7 @@ liberator.Map.prototype = {
 
     hasName: function (name)
     {
-        return this.names.some(function (e) e == name);
+        return this.names.indexOf(name) >= 0;
     },
 
     execute: function (motion, count, argument)
