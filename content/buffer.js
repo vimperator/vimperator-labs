@@ -1440,9 +1440,10 @@ liberator.Marks = function () //{{{
 
     function markToString(name, mark)
     {
-        return name + " | " + mark.location +
-                " | (" + mark.position.x + ", " + mark.position.y + ")" +
-                (('tab' in mark) ? " | tab: " + liberator.tabs.index(mark.tab) : "");
+        return name + ", " + mark.location +
+                ", (" + Math.round(mark.position.x * 100) +
+                "%, " + Math.round(mark.position.y * 100) + "%)" +
+                (('tab' in mark) ? ", tab: " + liberator.tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)
