@@ -886,7 +886,7 @@ liberator.Editor = function () //{{{
                 (function () {
                     textBox.style.backgroundColor = colors.shift();
                     if (colors.length > 0)
-                        setTimeout(arguments.callee, timeout)
+                        setTimeout(arguments.callee, timeout);
                 })();
             }
 

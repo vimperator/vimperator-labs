@@ -51,7 +51,7 @@ liberator.Bookmarks = function () //{{{
 
         this.__defineGetter__("name",  function () key);
         this.__defineGetter__("store", function () store);
-        this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks });
+        this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks; });
 
         this.__defineGetter__("keywords",
             function () [[k[2], k[1], k[0]] for each (k in self.bookmarks) if (k[2])]);
@@ -71,7 +71,7 @@ liberator.Bookmarks = function () //{{{
                 itemId:  id,
                 uri:     bookmarksService.getBookmarkURI(id).spec,
                 title:   bookmarksService.getItemTitle(id),
-            }
+            };
         }
 
         function deleteBookmark(id)
@@ -377,7 +377,7 @@ liberator.Bookmarks = function () //{{{
             try
             {
                 var uri = ioService.newURI(url, null, null);
-                return (bookmarksService.getBookmarkedURIFor(uri) != null)
+                return (bookmarksService.getBookmarkedURIFor(uri) != null);
             }
             catch (e)
             {
@@ -533,7 +533,7 @@ liberator.Bookmarks = function () //{{{
         destroy: function ()
         {
             bookmarksService.removeObserver(observer, false);
-        },
+        }
     };
     //}}}
 }; //}}}
@@ -994,7 +994,7 @@ liberator.QuickMarks = function () //{{{
             list += "</table>";
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
-        },
+        }
     };
     //}}}
 }; //}}}

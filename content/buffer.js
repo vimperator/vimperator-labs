@@ -351,7 +351,7 @@ liberator.Buffer = function () //{{{
                     let computedStyle = window.content.getComputedStyle(match, null);
 
                     if (computedStyle.getPropertyValue("visibility") != "hidden" && computedStyle.getPropertyValue("display") != "none")
-                        elements.push(match)
+                        elements.push(match);
                 }
 
                 if (elements.length > 0)

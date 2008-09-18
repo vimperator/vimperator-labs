@@ -247,7 +247,7 @@ liberator.Completion = function () //{{{
 
                 mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
                                                     file.isDirectory() ? "Directory" : "File"])
-                              .sort(function (a, b) a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]))
+                              .sort(function (a, b) a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]));
             }
             catch (e)
             {
@@ -340,7 +340,7 @@ liberator.Completion = function () //{{{
 
         macro: function (filter)
         {
-            var macros = [item for (item in liberator.events.getMacros())]
+            var macros = [item for (item in liberator.events.getMacros())];
 
             return [0, liberator.completion.filter(macros, filter)];
         },
@@ -411,7 +411,8 @@ liberator.Completion = function () //{{{
 
             // unify split style sheets
             completions.forEach(function (stylesheet) {
-                for (let i = 0; i < completions.length; i++) {
+                for (let i = 0; i < completions.length; i++)
+                {
                     if (stylesheet[0] == completions[i][0] && stylesheet[1] != completions[i][1])
                     {
                         stylesheet[1] += ", " + completions[i][1];

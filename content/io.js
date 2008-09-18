@@ -438,7 +438,7 @@ liberator.IO = function () //{{{
             var rcFile2 = ioManager.getFile("~/_" + liberator.config.name.toLowerCase() + "rc");
 
             if (WINDOWS)
-                [rcFile1, rcFile2] = [rcFile2, rcFile1]
+                [rcFile1, rcFile2] = [rcFile2, rcFile1];
 
             if (rcFile1.exists() && rcFile1.isFile())
                 return rcFile1;
