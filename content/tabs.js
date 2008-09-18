@@ -548,7 +548,7 @@ liberator.Tabs = function () //{{{
                 if (count < 1)
                     count = 1;
 
-                for (var i = 0; i < count; i++)
+                for (let i = 0; i < count; i++)
                     liberator.tabs.cloneTab(tab, activate);
             },
             { argCount: "0" });
@@ -569,7 +569,7 @@ liberator.Tabs = function () //{{{
                     var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
                                        .getService(Components.interfaces.nsISessionStore);
                     var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
-                    for (var i = 0; i < undoItems.length; i++)
+                    for (let i = 0; i < undoItems.length; i++)
                     {
                         if (undoItems[i].state.entries[0].url == args)
                         {
@@ -588,7 +588,7 @@ liberator.Tabs = function () //{{{
                                        .getService(Components.interfaces.nsISessionStore);
                     var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
                     var completions = [];
-                    for (var i = 0; i < undoItems.length; i++)
+                    for (let i = 0; i < undoItems.length; i++)
                     {
                         var url = undoItems[i].state.entries[0].url;
                         var title = undoItems[i].title;
@@ -617,7 +617,7 @@ liberator.Tabs = function () //{{{
                 var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
                                    .getService(Components.interfaces.nsISessionStore);
                 var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
-                for (var i = 0; i < undoItems.length; i++)
+                for (let i = 0; i < undoItems.length; i++)
                     undoCloseTab(); // doesn't work with i as the index to undoCloseTab
             },
             { argCount: "0" });
@@ -665,7 +665,7 @@ liberator.Tabs = function () //{{{
             if (tab)
             {
                 var length = getBrowser().mTabs.length;
-                for (var i = 0; i < length; i++)
+                for (let i = 0; i < length; i++)
                 {
                     if (getBrowser().mTabs[i] == tab)
                         return i;
@@ -682,7 +682,7 @@ liberator.Tabs = function () //{{{
         {
             var buffers = [];
             var browsers = getBrowser().browsers;
-            for (var i = 0; i < browsers.length; i++)
+            for (let i = 0; i < browsers.length; i++)
             {
                 var title = browsers[i].contentTitle || "(Untitled)";
                 var uri = browsers[i].currentURI.spec;
@@ -708,7 +708,7 @@ liberator.Tabs = function () //{{{
             var number, indicator, title, url;
 
             var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
-            for (var i = 0; i < items.length; i++)
+            for (let i = 0; i < items.length; i++)
             {
                 if (i == liberator.tabs.index())
                    indicator = " <span style=\"color: blue\">%</span> ";
@@ -786,7 +786,7 @@ liberator.Tabs = function () //{{{
             if (focusLeftTab)
             {
                 var lastRemovedTab = 0;
-                for (var i = index; i > index - count && i >= 0; i--)
+                for (let i = index; i > index - count && i >= 0; i--)
                 {
                     removeOrBlankTab(this.getTab(i));
                     lastRemovedTab = i > 0 ? i : 1;
@@ -839,7 +839,7 @@ liberator.Tabs = function () //{{{
         {
             if (bypassCache)
             {
-                for (var i = 0; i < getBrowser().mTabs.length; i++)
+                for (let i = 0; i < getBrowser().mTabs.length; i++)
                 {
                     try
                     {
@@ -899,7 +899,7 @@ liberator.Tabs = function () //{{{
             var matches = [];
             var lowerBuffer = buffer.toLowerCase();
             var first = liberator.tabs.index() + (reverse ? 0 : 1);
-            for (var i = 0; i < getBrowser().browsers.length; i++)
+            for (let i = 0; i < getBrowser().browsers.length; i++)
             {
                 var index = (i + first) % getBrowser().browsers.length;
                 var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;

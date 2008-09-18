@@ -216,7 +216,7 @@ liberator.config = { //{{{
                     count = 1;
 
                 var url = liberator.buffer.URL;
-                for (var i = 0; i < count; i++)
+                for (let i = 0; i < count; i++)
                 {
                     if (isDirectory(url))
                         url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/");
@@ -317,7 +317,7 @@ liberator.config = { //{{{
                 }
 
                 var menu = document.getElementById("viewSidebarMenu");
-                for (var i = 0; i < menu.childNodes.length; i++)
+                for (let i = 0; i < menu.childNodes.length; i++)
                 {
                     if (menu.childNodes[i].label == args.string)
                     {
@@ -334,7 +334,7 @@ liberator.config = { //{{{
                     var menu = document.getElementById("viewSidebarMenu");
                     var nodes = [];
 
-                    for (var i = 0; i < menu.childNodes.length; i++)
+                    for (let i = 0; i < menu.childNodes.length; i++)
                         nodes.push([menu.childNodes[i].label, ""]);
 
                     return [0, liberator.completion.filter(nodes, filter)];

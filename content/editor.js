@@ -522,7 +522,7 @@ liberator.Editor = function () //{{{
         {
             var line = 1;
             var text = editor().value;
-            for (var i = 0; i < editor().selectionStart; i++)
+            for (let i = 0; i < editor().selectionStart; i++)
                 if (text[i] == "\n")
                     line++;
             return line;
@@ -532,7 +532,7 @@ liberator.Editor = function () //{{{
         {
             var col = 1;
             var text = editor().value;
-            for (var i = 0; i < editor().selectionStart; i++)
+            for (let i = 0; i < editor().selectionStart; i++)
             {
                 col++;
                 if (text[i] == "\n")
@@ -742,7 +742,7 @@ liberator.Editor = function () //{{{
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
-            for (var i = editor().selectionEnd + 1; i < text.length; i++)
+            for (let i = editor().selectionEnd + 1; i < text.length; i++)
             {
                 if (text[i] == "\n")
                     break;
@@ -769,7 +769,7 @@ liberator.Editor = function () //{{{
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
-            for (var i = editor().selectionStart - 1; i >= 0; i--)
+            for (let i = editor().selectionStart - 1; i >= 0; i--)
             {
                 if (text[i] == "\n")
                     break;
@@ -900,9 +900,9 @@ liberator.Editor = function () //{{{
             __iterator__: function ()
             {
                 var tmpCmd;
-                for (var lhs in abbrev)
+                for (let lhs in abbrev)
                 {
-                    for (var i = 0; i < abbrev[lhs].length; i++)
+                    for (let i = 0; i < abbrev[lhs].length; i++)
                     {
                         tmpCmd = (abbrev[lhs][i][0] == "!") ? "abbreviate" : abbrev[lhs][i][0] + "abbrev";
                         yield (tmpCmd + " " + lhs + " " + abbrev[lhs][i][1] + "\n");
@@ -918,7 +918,7 @@ liberator.Editor = function () //{{{
             {
                 if (abbrev[lhs])
                 {
-                    for (var i = 0; i < abbrev[lhs].length; i++)
+                    for (let i = 0; i < abbrev[lhs].length; i++)
                     {
                         if (abbrev[lhs][i][0] == filter)
                             liberator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
@@ -933,9 +933,9 @@ liberator.Editor = function () //{{{
                 var flagFound = false;
                 var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
                 var list = "<table>";
-                for (var tmplhs in abbrev)
+                for (let tmplhs in abbrev)
                 {
-                    for (var i = 0; i < abbrev[tmplhs].length; i++)
+                    for (let i = 0; i < abbrev[tmplhs].length; i++)
                     {
                         if (searchFilter.indexOf(abbrev[tmplhs][i][0]) > -1)
                         {
@@ -1003,7 +1003,7 @@ liberator.Editor = function () //{{{
                 return;
             }
 
-            for (var i = 0; i < abbrev[lhs].length; i++)
+            for (let i = 0; i < abbrev[lhs].length; i++)
             {
                 if (abbrev[lhs][i][1] == rhs)
                 {
@@ -1097,9 +1097,9 @@ liberator.Editor = function () //{{{
             }
             else
             {
-                for (var lhs in abbrev)
+                for (let lhs in abbrev)
                 {
-                    for (var i = 0; i < abbrev[lhs].length; i++)
+                    for (let i = 0; i < abbrev[lhs].length; i++)
                     {
                         if (abbrev[lhs][i][0] == "!" || abbrev[lhs][i][0] == filter)
                             this.removeAbbreviation(filter, lhs);
@@ -1118,9 +1118,9 @@ liberator.Editor = function () //{{{
             if (!foundWord)
                 return true;
 
-            for (var lhs in abbrev)
+            for (let lhs in abbrev)
             {
-                for (var i = 0; i < abbrev[lhs].length; i++)
+                for (let i = 0; i < abbrev[lhs].length; i++)
                 {
                     if (lhs == foundWord && (abbrev[lhs][i][0] == filter || abbrev[lhs][i][0] == "!"))
                     {

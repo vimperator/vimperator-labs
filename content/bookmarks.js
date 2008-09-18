@@ -113,7 +113,7 @@ liberator.Bookmarks = function () //{{{
                 rootNode.containerOpen = true;
 
                 // iterate over the immediate children of this folder
-                for (var i = 0; i < rootNode.childCount; i++)
+                for (let i = 0; i < rootNode.childCount; i++)
                 {
                     var node = rootNode.getChild(i);
                     if (node.type == node.RESULT_TYPE_FOLDER)   // folder
@@ -238,7 +238,7 @@ liberator.Bookmarks = function () //{{{
             list += "<tr class=\"hl-Title\" align=\"left\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
             var num = -sh.index;
 
-            for (var i = 0; i < sh.count; i++)
+            for (let i = 0; i < sh.count; i++)
             {
                 var entry = sh.getEntryAtIndex(i, false);
                 var uri = entry.URI.spec;
@@ -419,7 +419,7 @@ liberator.Bookmarks = function () //{{{
         {
             var searchEngines = [];
             var firefoxEngines = searchService.getVisibleEngines({});
-            for (var i in firefoxEngines)
+            for (let i in firefoxEngines)
             {
                 var alias = firefoxEngines[i].alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))
@@ -429,7 +429,7 @@ liberator.Bookmarks = function () //{{{
 
                 // make sure we can use search engines which would have the same alias (add numbers at the end)
                 var newAlias = alias;
-                for (var j = 1; j <= 10; j++) // <=10 is intentional
+                for (let j = 1; j <= 10; j++) // <=10 is intentional
                 {
                     if (!searchEngines.some(function (item) { return (item[0] == newAlias); }))
                         break;
@@ -502,7 +502,7 @@ liberator.Bookmarks = function () //{{{
             var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
-            for (var i = 0; i < items.length; i++)
+            for (let i = 0; i < items.length; i++)
             {
                 title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
                 url = liberator.util.escapeHTML(items[i][0]);
@@ -567,7 +567,7 @@ liberator.History = function () //{{{
         var rootNode = result.root;
         rootNode.containerOpen = true;
         // iterate over the immediate children of this folder
-        for (var i = 0; i < rootNode.childCount; i++)
+        for (let i = 0; i < rootNode.childCount; i++)
         {
             var node = rootNode.getChild(i);
             //liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
@@ -622,7 +622,7 @@ liberator.History = function () //{{{
                 if (args)
                 {
                     var sh = getWebNavigation().sessionHistory;
-                    for (var i = sh.index - 1; i >= 0; i--)
+                    for (let i = sh.index - 1; i >= 0; i--)
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
                         {
@@ -643,7 +643,7 @@ liberator.History = function () //{{{
             {
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
-                for (var i = sh.index - 1; i >= 0; i--)
+                for (let i = sh.index - 1; i >= 0; i--)
                 {
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
@@ -668,7 +668,7 @@ liberator.History = function () //{{{
                 if (args)
                 {
                     var sh = getWebNavigation().sessionHistory;
-                    for (var i = sh.index + 1; i < sh.count; i++)
+                    for (let i = sh.index + 1; i < sh.count; i++)
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
                         {
@@ -689,7 +689,7 @@ liberator.History = function () //{{{
             {
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
-                for (var i = sh.index + 1; i < sh.count; i++)
+                for (let i = sh.index + 1; i < sh.count; i++)
                 {
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
@@ -806,7 +806,7 @@ liberator.History = function () //{{{
             {
                 var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                            "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
-                for (var i = 0; i < items.length; i++)
+                for (let i = 0; i < items.length; i++)
                 {
                     var title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
                     var url = liberator.util.escapeHTML(items[i][0]);
@@ -934,7 +934,7 @@ liberator.QuickMarks = function () //{{{
         {
             var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
-            for (var [qmark,] in qmarks)
+            for (let [qmark,] in qmarks)
             {
                 if (pattern.test(qmark))
                     qmarks.remove(qmark);
@@ -985,7 +985,7 @@ liberator.QuickMarks = function () //{{{
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr class=\"hl-Title\" align=\"left\"><th>QuickMark</th><th>URL</th></tr>";
 
-            for (var i = 0; i < marks.length; i++)
+            for (let i = 0; i < marks.length; i++)
             {
                 list += "<tr><td>    " + marks[i] +
                         "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(qmarks.get(marks[i])) + "</td></tr>";

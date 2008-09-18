@@ -67,7 +67,7 @@ liberator.Buffer = function () //{{{
         var index = -1;
         if (steps <= 0)
         {
-            for (var i = zoomLevels.length - 1; i >= 0; i--)
+            for (let i = zoomLevels.length - 1; i >= 0; i--)
             {
                 if ((zoomLevels[i] + 0.01) < value) // 0.01 for float comparison
                 {
@@ -78,7 +78,7 @@ liberator.Buffer = function () //{{{
         }
         else
         {
-            for (var i = 0; i < zoomLevels.length; i++)
+            for (let i = 0; i < zoomLevels.length; i++)
             {
                 if ((zoomLevels[i] - 0.01) > value) // 0.01 for float comparison
                 {
@@ -112,7 +112,7 @@ liberator.Buffer = function () //{{{
         if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
             return win;
 
-        for (var i = 0; i < win.frames.length; i++)
+        for (let i = 0; i < win.frames.length; i++)
             if (win.frames[i].scrollMaxX > 0 || win.frames[i].scrollMaxY > 0)
                 return win.frames[i];
 
@@ -798,7 +798,7 @@ liberator.Buffer = function () //{{{
                 revText = new RegExp(revString, "i");
                 var elems = parsedFrame.document.getElementsByTagName("link");
                 // links have higher priority than normal <a> hrefs
-                for (var i = 0; i < elems.length; i++)
+                for (let i = 0; i < elems.length; i++)
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
@@ -809,7 +809,7 @@ liberator.Buffer = function () //{{{
 
                 // no links? ok, look for hrefs
                 elems = parsedFrame.document.getElementsByTagName("a");
-                for (var i = 0; i < elems.length; i++)
+                for (let i = 0; i < elems.length; i++)
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
@@ -818,10 +818,10 @@ liberator.Buffer = function () //{{{
                     }
                 }
 
-                for (var pattern = 0; pattern < regexps.length; pattern++)
+                for (let pattern = 0; pattern < regexps.length; pattern++)
                 {
                     patternText = new RegExp(regexps[pattern], "i");
-                    for (var i = 0; i < elems.length; i++)
+                    for (let i = 0; i < elems.length; i++)
                     {
                         if (patternText.test(elems[i].textContent))
                         {
@@ -832,7 +832,7 @@ liberator.Buffer = function () //{{{
                         {
                             // images with alt text being href
                             var children = elems[i].childNodes;
-                            for (var j = 0; j < children.length; j++)
+                            for (let j = 0; j < children.length; j++)
                             {
                                 if (patternText.test(children[j].alt))
                                 {
@@ -853,7 +853,7 @@ liberator.Buffer = function () //{{{
                 if (!retVal)
                 {
                     // only loop through frames if the main content didnt match
-                    for (var i = 0; i < window.content.frames.length; i++)
+                    for (let i = 0; i < window.content.frames.length; i++)
                     {
                         retVal = followFrameRelationship(relationship, window.content.frames[i]);
                         if (retVal)
@@ -1156,7 +1156,7 @@ liberator.Buffer = function () //{{{
 
                 if (data.length - 1)
                 {
-                    for (var i = 0; i < data.length - 1; i++)
+                    for (let i = 0; i < data.length - 1; i++)
                         ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
                 }
                 else
@@ -1206,7 +1206,7 @@ liberator.Buffer = function () //{{{
             // put feeds rss into pageFeeds[]
             var linkNodes = window.content.document.getElementsByTagName("link");
             var length = linkNodes.length;
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
             {
                 var link = linkNodes[i];
                 if (!link.href)
@@ -1292,7 +1292,7 @@ liberator.Buffer = function () //{{{
                 var tmpSort = [];
                 var tmpDict = [];
 
-                for (var i = 0; i < length; i++)
+                for (let i = 0; i < length; i++)
                 {
                     var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// +
                     var tmpTagNr = tmpTag + "-" + i; // allows multiple (identical) meta names
@@ -1302,7 +1302,7 @@ liberator.Buffer = function () //{{{
 
                 // sort: ignore-case
                 tmpSort.sort(function (a, b) { return a.toLowerCase() > b.toLowerCase() ? 1 : -1; });
-                for (var i = 0; i < tmpSort.length; i++)
+                for (let i = 0; i < tmpSort.length; i++)
                     pageMeta.push([tmpDict[tmpSort[i]][0], liberator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
             }
 
@@ -1314,9 +1314,9 @@ liberator.Buffer = function () //{{{
             var option = liberator.options["pageinfo"];
             var br = "";
 
-            for (var z = 0; z < option.length; z++)
+            for (let i = 0; i < option.length; i++)
             {
-                switch (option[z])
+                switch (option[i])
                 {
                     case "g":
                         if (pageGeneral.length > 1)
@@ -1426,7 +1426,7 @@ liberator.Marks = function () //{{{
     function onPageLoad(event)
     {
         var win = event.originalTarget.defaultView;
-        for (var i = 0, length = pendingJumps.length; i < length; i++)
+        for (let i = 0, length = pendingJumps.length; i < length; i++)
         {
             var mark = pendingJumps[i];
             if (win && win.location.href == mark.location)
@@ -1451,7 +1451,7 @@ liberator.Marks = function () //{{{
         if (localmark)
         {
             var win = window.content;
-            for (var [i,] in Iterator(localmark))
+            for (let [i,] in Iterator(localmark))
             {
                 if (localmark[i].location == win.location.href)
                 {
@@ -1562,7 +1562,7 @@ liberator.Marks = function () //{{{
             // check for illegal ranges - only allow a-z A-Z 0-9
             if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))
             {
-                for (var i = 0; i < matches.length; i++)
+                for (let i = 0; i < matches.length; i++)
                 {
                     var start = matches[i][0];
                     var end   = matches[i][2];
@@ -1658,18 +1658,18 @@ liberator.Marks = function () //{{{
             if (special)
             {
                 // :delmarks! only deletes a-z marks
-                for (var [mark,] in localMarks)
+                for (let [mark,] in localMarks)
                     removeLocalMark(mark);
             }
             else
             {
                 var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
-                for (var [mark,] in urlMarks)
+                for (let [mark,] in urlMarks)
                 {
                     if (pattern.test(mark))
                         removeURLMark(mark);
                 }
-                for (var [mark,] in localMarks)
+                for (let [mark,] in localMarks)
                 {
                     if (pattern.test(mark))
                         removeLocalMark(mark);
@@ -1716,7 +1716,7 @@ liberator.Marks = function () //{{{
                 var win = window.content;
                 var slice = localMarks.get(mark) || [];
 
-                for (var i = 0; i < slice.length; i++)
+                for (let i = 0; i < slice.length; i++)
                 {
                     if (win.location.href == slice[i].location)
                     {
@@ -1756,7 +1756,7 @@ liberator.Marks = function () //{{{
 
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                        "<table><tr class=\"hl-Title\" align=\"left\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
-            for (var i = 0; i < marks.length; i++)
+            for (let i = 0; i < marks.length; i++)
             {
                 list += "<tr>" +
                         "<td> "                        + marks[i][0]                              +  "</td>" +

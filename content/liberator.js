@@ -189,7 +189,7 @@ const liberator = (function () //{{{
             var menubar = document.getElementById(liberator.config.guioptions["m"]);
             var items = [];
 
-            for (var i = 0; i < menubar.childNodes.length; i++)
+            for (let i = 0; i < menubar.childNodes.length; i++)
             {
                 (function (item, path)
                 {
@@ -204,7 +204,7 @@ const liberator = (function () //{{{
                         if (item.localName == "menu")
                             path += item.label + ".";
 
-                        for (var j = 0; j < item.childNodes.length; j++)
+                        for (let j = 0; j < item.childNodes.length; j++)
                             arguments.callee(item.childNodes[j], path);
                     }
                 })(menubar.childNodes[i], "");
@@ -226,7 +226,7 @@ const liberator = (function () //{{{
                     return;
                 }
 
-                for (var i = 0; i < items.length; i++)
+                for (let i = 0; i < items.length; i++)
                 {
                     if (items[i].fullMenuPath == item)
                         items[i].doCommand();
@@ -516,7 +516,7 @@ const liberator = (function () //{{{
         var files = liberator.config.helpFiles || [];
         var res = [];
 
-        for (var i = 0; i < files.length; i++)
+        for (let i = 0; i < files.length; i++)
         {
             try
             {
@@ -531,7 +531,7 @@ const liberator = (function () //{{{
             }
             var doc = xmlhttp.responseXML;
             var elems = doc.getElementsByClassName("tag");
-            for (var j = 0; j < elems.length; j++)
+            for (let j = 0; j < elems.length; j++)
                 res.push([elems[j].textContent, files[i]]);
         }
 
@@ -830,7 +830,7 @@ const liberator = (function () //{{{
             var [, items] = getHelpCompletions(topic);
             var partialMatch = -1;
 
-            for (var i = 0; i < items.length; i++)
+            for (let i = 0; i < items.length; i++)
             {
                 if (items[i][0] == topic)
                 {
@@ -946,7 +946,7 @@ const liberator = (function () //{{{
                 return true;
 
             // all other URLs are always loaded in background
-            for (var i = 1; i < urls.length; i++)
+            for (let i = 1; i < urls.length; i++)
             {
                 url = typeof urls[i] == "string" ? urls[i] : urls[i][0];
                 postdata = typeof urls[i] == "string" ? null : urls[i][1];

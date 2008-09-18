@@ -60,7 +60,7 @@ liberator.Mail = function () //{{{
                     var indices = [];
                     if (selectMessageKeys.length > 0)
                     {
-                        for (var j = 0; j < selectMessageKeys.length; j++)
+                        for (let j = 0; j < selectMessageKeys.length; j++)
                             indices.push([gDBView.findIndexFromKey(selectMessageKeys[j], true), selectMessageKeys[j]]);
 
                         indices.sort();
@@ -861,7 +861,7 @@ liberator.Mail = function () //{{{
                                               : this.getFolders("", true, false);
 
             var unreadCount = 0, totalCount = 0, newCount = 0;
-            for (var i = 0; i < accounts.length; i++)
+            for (let i = 0; i < accounts.length; i++)
             {
                 var account = accounts[i];
                 unreadCount += account.getNumUnread(true); // true == deep (includes subfolders)
@@ -935,7 +935,7 @@ liberator.Mail = function () //{{{
             // first try to find in current folder
             if (gDBView)
             {
-                for (var i = currentIndex() + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
+                for (let i = currentIndex() + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
                     reverse ? (i >= 0) : (i < gDBView.rowCount);
                     reverse ? i-- : i++)
                 {
@@ -987,7 +987,7 @@ liberator.Mail = function () //{{{
 
                 var folders = this.getFolders("", true, true);
                 var ci = GetFolderTree().currentIndex;
-                for (var i = 1; i < folders.length; i++)
+                for (let i = 1; i < folders.length; i++)
                 {
                     let index = (i + ci) % folders.length;
                     if (reverse)

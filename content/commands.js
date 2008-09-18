@@ -44,7 +44,7 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
         var shortNames = [];
         var longNames  = [];
         var names = [];
-        for (var i = 0; i < specs.length; i++)
+        for (let i = 0; i < specs.length; i++)
         {
             var match;
             if (match = specs[i].match(/(\w+|!)\[(\w+)\]/))
@@ -114,7 +114,7 @@ liberator.Command.prototype = {
                 return false;
         }
 
-        for (var i = 0; i < this.specs.length; i++)
+        for (let i = 0; i < this.specs.length; i++)
         {
             if (this.specs[i] == name)                       // literal command name
             {
@@ -142,7 +142,7 @@ liberator.Commands = function () //{{{
     function getMatchingUserCommands(name)
     {
         var matches = [];
-        for (var i = 0; i < exCommands.length; i++)
+        for (let i = 0; i < exCommands.length; i++)
         {
             if (exCommands[i].isUserCommand)
             {
@@ -186,7 +186,7 @@ liberator.Commands = function () //{{{
         __iterator__: function ()
         {
             var sorted = exCommands.sort(function (cmd1, cmd2) { return cmd1.name > cmd2.name; });
-            for (var i = 0; i < sorted.length; i++)
+            for (let i = 0; i < sorted.length; i++)
                 yield sorted[i];
         },
 
@@ -196,7 +196,7 @@ liberator.Commands = function () //{{{
             if (!command)
                 return false;
 
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].name == command.name)
                 {
@@ -220,7 +220,7 @@ liberator.Commands = function () //{{{
             if (!command)
                 return false;
 
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].name == command.name)
                 {
@@ -242,7 +242,7 @@ liberator.Commands = function () //{{{
 
         get: function (name)
         {
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].hasName(name))
                     return exCommands[i];
@@ -253,7 +253,7 @@ liberator.Commands = function () //{{{
 
         getUserCommand: function (name)
         {
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
                     return exCommands[i];
@@ -266,7 +266,7 @@ liberator.Commands = function () //{{{
         {
             var userCommands = [];
 
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].isUserCommand)
                     userCommands.push(exCommands[i]);
@@ -309,7 +309,7 @@ liberator.Commands = function () //{{{
                 var arg = "";
 
                 outer:
-                for (var i = 0; i < str.length; i++)
+                for (let i = 0; i < str.length; i++)
                 {
                     switch (str[i])
                     {
@@ -436,9 +436,9 @@ liberator.Commands = function () //{{{
                 var optname = "";
                 if (!onlyArgumentsRemaining)
                 {
-                    for (var opt = 0; opt < options.length; opt++)
+                    for (let opt = 0; opt < options.length; opt++)
                     {
-                        for (var name = 0; name < options[opt][0].length; name++)
+                        for (let name = 0; name < options[opt][0].length; name++)
                         {
                             optname = options[opt][0][name];
                             if (sub.indexOf(optname) == 0)
@@ -640,7 +640,7 @@ liberator.Commands = function () //{{{
 
         removeUserCommand: function (name)
         {
-            for (var i = 0; i < exCommands.length; i++)
+            for (let i = 0; i < exCommands.length; i++)
             {
                 if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
                 {
@@ -695,7 +695,7 @@ liberator.Commands = function () //{{{
                 {
                     var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                               "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
-                    for (var i = 0; i < cmdlist.length; i++)
+                    for (let i = 0; i < cmdlist.length; i++)
                     {
                         // programmatically added user commands have a null replacementText
                         str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + liberator.util.escapeHTML(cmdlist[i].replacementText || "function () { ... }") + "</td></tr>";
@@ -737,7 +737,7 @@ liberator.Commands = function () //{{{
             var name = args.arguments[0];
             var cmdlist = liberator.commands.getUserCommands();
 
-            for (var i = 0; i < cmdlist.length; i++)
+            for (let i = 0; i < cmdlist.length; i++)
             {
                 if (cmdlist[i].name == name)
                 {

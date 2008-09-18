@@ -129,7 +129,7 @@ liberator.util = { //{{{
                 strNum[1] += "0";
         }
 
-        for (var u = strNum[0].length - 3; u > 0; u -= 3) // make a 10000 a 10,000
+        for (let u = strNum[0].length - 3; u > 0; u -= 3) // make a 10000 a 10,000
             strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
 
         if (unitIndex) // decimalPlaces only when > Bytes
@@ -153,7 +153,7 @@ liberator.util = { //{{{
             longHelp = true;
 
         // the tags which are printed on the top right
-        for (var j = command.names.length - 1; j >= 0; j--)
+        for (let j = command.names.length - 1; j >= 0; j--)
             ret += "|" + start + command.names[j] + end + "| ";
 
         if (longHelp)
@@ -225,7 +225,7 @@ liberator.util = { //{{{
 
         try // window.content often does not want to be queried with "var i in object"
         {
-            for (var i in object)
+            for (let i in object)
             {
                 var value;
                 try
@@ -287,7 +287,7 @@ liberator.util = { //{{{
     {
         var urls = str.split(new RegExp("\s*" + liberator.options["urlseparator"] + "\s*"));
 
-        begin: for (var url = 0; url < urls.length; url++)
+        begin: for (let url = 0; url < urls.length; url++)
         {
             var file = liberator.io.getFile(urls[url]);
             if (file.exists() && file.isReadable())

@@ -51,10 +51,10 @@ liberator.Completion = function () //{{{
         if (liberator.options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
-        for (var i = 0; i < list.length; i++)
+        for (let i = 0; i < list.length; i++)
         {
             var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
-            for (var j = 0; j < complist.length; j++)
+            for (let j = 0; j < complist.length; j++)
             {
                 var item = complist[j];
                 if (ignorecase)
@@ -71,9 +71,9 @@ liberator.Completion = function () //{{{
                     {
                         var lastIndex = item.lastIndexOf(filter);
                         var length = item.length;
-                        for (var k = item.indexOf(filter); k != -1 && k <= lastIndex; k = item.indexOf(filter, k + 1))
+                        for (let k = item.indexOf(filter); k != -1 && k <= lastIndex; k = item.indexOf(filter, k + 1))
                         {
-                            for (var l = k + filter.length; l <= length; l++)
+                            for (let l = k + filter.length; l <= length; l++)
                                 substrings.push(complist[j].substring(k, l));
                         }
                     }
@@ -99,10 +99,10 @@ liberator.Completion = function () //{{{
         if (liberator.options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
-        for (var i = 0; i < list.length; i++)
+        for (let i = 0; i < list.length; i++)
         {
             var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
-            for (var j = 0; j < complist.length; j++)
+            for (let j = 0; j < complist.length; j++)
             {
                 if (complist[j].indexOf(filter) != 0)
                     continue;
@@ -114,7 +114,7 @@ liberator.Completion = function () //{{{
                     if (substrings.length == 0)
                     {
                         var length = complist[j].length;
-                        for (var k = filter.length; k <= length; k++)
+                        for (let k = filter.length; k <= length; k++)
                             substrings.push(complist[j].substring(0, k));
                     }
                     else
@@ -144,7 +144,7 @@ liberator.Completion = function () //{{{
                 return "";
 
             var longest = substrings[0];
-            for (var i = 1; i < substrings.length; i++)
+            for (let i = 1; i < substrings.length; i++)
             {
                 if (substrings[i].length > longest.length)
                     longest = substrings[i];
@@ -172,7 +172,7 @@ liberator.Completion = function () //{{{
             var num = getBrowser().browsers.length;
             var title, url;
 
-            for (var i = 0; i < num; i++)
+            for (let i = 0; i < num; i++)
             {
                 try
                 {
@@ -208,12 +208,12 @@ liberator.Completion = function () //{{{
 
             if (!filter)
             {
-                for (var command in liberator.commands)
+                for (let command in liberator.commands)
                     completions.push([command.name, command.description]);
                 return [0, completions];
             }
 
-            for (var command in liberator.commands)
+            for (let command in liberator.commands)
                 completions.push([command.longNames, command.description]);
 
             return [0, buildLongestStartingSubstring(completions, filter)];
@@ -312,7 +312,7 @@ liberator.Completion = function () //{{{
             var completions = [];
             try
             {
-                for (var o = 0; o < objects.length; o++)
+                for (let o = 0; o < objects.length; o++)
                 {
                     completions = completions.concat(eval(
                         "var comp = [];" +
@@ -443,7 +443,7 @@ liberator.Completion = function () //{{{
             var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
             var suggestEngineAlias = liberator.options["suggestengines"] || "google";
             // join all completion arrays together
-            for (var i = 0; i < cpt.length; i++)
+            for (let i = 0; i < cpt.length; i++)
             {
                 if (cpt[i] == "s")
                     completions = completions.concat(this.search(filter)[1]);
@@ -470,7 +470,7 @@ liberator.Completion = function () //{{{
                             //if (result.searchResult == result.RESULT_SUCCESS)
                             //    urlResultsCache = result;
 
-                            for (var i = 0; i < result.matchCount; i++)
+                            for (let i = 0; i < result.matchCount; i++)
                             {
                                 comp.push([result.getValueAt(i), result.getCommentAt(i)]);
                             }
@@ -497,7 +497,7 @@ liberator.Completion = function () //{{{
             // TODO: add appropriate getters to l.mappings
             var mappings = [];
 
-            for (var map in liberator.mappings.getUserIterator(modes))
+            for (let map in liberator.mappings.getUserIterator(modes))
                 mappings.push([map.names[0], ""]);
 
             return [0, this.filter(mappings, filter)];
@@ -571,9 +571,9 @@ liberator.Completion = function () //{{{
                     var urlLength = url.length;
                     if (lastIndex >= 0 && lastIndex < urlLength) // do not build substrings, if we don't match filter
                     {
-                        for (var k = url.indexOf(filter); k != -1 && k <= lastIndex; k = url.indexOf(filter, k + 1))
+                        for (let k = url.indexOf(filter); k != -1 && k <= lastIndex; k = url.indexOf(filter, k + 1))
                         {
-                            for (var l = k + filter.length; l <= urlLength; l++)
+                            for (let l = k + filter.length; l <= urlLength; l++)
                                 substrings.push(url.substring(k, l));
                         }
                     }

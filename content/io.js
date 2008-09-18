@@ -213,15 +213,15 @@ liberator.IO = function () //{{{
 
             var modes = [[[liberator.modes.NORMAL], ""], [[liberator.modes.COMMAND_LINE], "c"],
                          [[liberator.modes.INSERT, liberator.modes.TEXTAREA], "i"]];
-            for (var i = 0; i < modes.length; i++)
+            for (let i = 0; i < modes.length; i++)
             {
                 // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
-                for (var map in liberator.mappings.getUserIterator(modes[i][0]))
+                for (let map in liberator.mappings.getUserIterator(modes[i][0]))
                         line += modes[i][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
             }
 
             line += "\n\" Options\n";
-            for (var option in liberator.options)
+            for (let option in liberator.options)
             {
                 // TODO: options should be queried for this info
                 // TODO: string/list options might need escaping in future
@@ -236,11 +236,11 @@ liberator.IO = function () //{{{
 
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
             // line += "\n\" Auto-Commands\n";
-            // for (var item in liberator.autocommands)
+            // for (let item in liberator.autocommands)
             //     line += "autocmd " + item + "\n";
 
             line += "\n\" Abbreviations\n";
-            for (var abbrCmd in liberator.editor.abbreviations)
+            for (let abbrCmd in liberator.editor.abbreviations)
                 line += abbrCmd;
 
             // if (liberator.mappings.getMapLeader() != "\\")
@@ -259,7 +259,7 @@ liberator.IO = function () //{{{
         {
             var list = "<table>";
 
-            for (var i = 0; i < scriptNames.length; i++)
+            for (let i = 0; i < scriptNames.length; i++)
                 list += "<tr><td style=\"text-align: right\">" + (i + 1) + ".</td><td>" + scriptNames[i] + "</td></tr>";
 
             list += "</table>";
@@ -354,7 +354,7 @@ liberator.IO = function () //{{{
             {
                 var expansion;
 
-                for (var i = 0; i < envVars.length; i++)
+                for (let i = 0; i < envVars.length; i++)
                 {
                     expansion = environmentService.get(envVars[i].replace("$", ""));
                     if (expansion)
@@ -371,7 +371,7 @@ liberator.IO = function () //{{{
                                  .createInstance(Components.interfaces.nsILocalFile);
 
             var dirs = [cwd, "$PWD", "~"];
-            for (var i = 0; i < dirs.length; i++)
+            for (let i = 0; i < dirs.length; i++)
             {
                 if (!dirs[i])
                     continue;
@@ -603,7 +603,7 @@ liberator.IO = function () //{{{
             {
                 var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
 lookup:
-                for (var i = 0; i < dirs.length; i++)
+                for (let i = 0; i < dirs.length; i++)
                 {
                     var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
                     try

@@ -79,7 +79,7 @@ liberator.Mappings = function () //{{{
     var main = []; // default mappings
     var user = []; // user created mappings
 
-    for (var mode in liberator.modes)
+    for (let mode in liberator.modes)
     {
         main[mode] = [];
         user[mode] = [];
@@ -95,7 +95,7 @@ liberator.Mappings = function () //{{{
     {
         var maps = stack[mode];
 
-        for (var i = 0; i < maps.length; i++)
+        for (let i = 0; i < maps.length; i++)
         {
             if (maps[i].hasName(cmd))
                 return maps[i];
@@ -109,10 +109,10 @@ liberator.Mappings = function () //{{{
         var maps = user[mode];
         var names;
 
-        for (var i = 0; i < maps.length; i++)
+        for (let i = 0; i < maps.length; i++)
         {
             names = maps[i].names;
-            for (var j = 0; j < names.length; j++)
+            for (let j = 0; j < names.length; j++)
             {
                 if (names[j] == cmd)
                 {
@@ -139,17 +139,17 @@ liberator.Mappings = function () //{{{
         var output;
         var maps = stack[modes[0]];
 
-        for (var i = 0; i < maps.length; i++)
+        for (let i = 0; i < maps.length; i++)
         {
             output = true;
-            for (var index = 1; index < modes.length; index++) // check other modes
+            for (let index = 1; index < modes.length; index++) // check other modes
             {
                 output = false; // toggle false, only true whan also found in this mode
-                for (var z = 0; z < user[modes[index]].length; z++) // maps
+                for (let j = 0; j < user[modes[index]].length; j++) // maps
                 {
                     // NOTE: when other than user maps, there might be more than only one names[x].
                     //       since only user mappings gets queried here, only names[0] gets checked for equality.
-                    if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
+                    if (maps[i].rhs == user[modes[index]][j].rhs && maps[i].names[0] == user[modes[index]][j].names[0])
                     {
                         output = true;
                         break; // found on this mode - check next mode, if there is one, where it could still fail...
@@ -184,7 +184,7 @@ liberator.Mappings = function () //{{{
             }
             else
             {
-                for (var index = 0; index < mode.length; index++)
+                for (let index = 0; index < mode.length; index++)
                 {
                     liberator.mappings.addUserMap([mode[index]], [lhs],
                             "User defined mapping",
@@ -300,9 +300,9 @@ liberator.Mappings = function () //{{{
             var map = new liberator.Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
-            for (var i = 0; i < map.names.length; i++)
+            for (let i = 0; i < map.names.length; i++)
             {
-                for (var j = 0; j < map.modes.length; j++)
+                for (let j = 0; j < map.modes.length; j++)
                     removeMap(map.modes[j], map.names[i]);
             }
 
@@ -327,10 +327,10 @@ liberator.Mappings = function () //{{{
             var mappings = user[mode].concat(main[mode]);
             var matches = [];
 
-            for (var i = 0; i < mappings.length; i++)
+            for (let i = 0; i < mappings.length; i++)
             {
                 var map = mappings[i];
-                for (var j = 0; j < map.names.length; j++)
+                for (let j = 0; j < map.names.length; j++)
                 {
                     if (map.names[j].indexOf(cmd) == 0 && map.names[j].length > cmd.length)
                     {
@@ -378,7 +378,7 @@ liberator.Mappings = function () //{{{
                 return;
             }
 
-            for (var i = 0; i < maps.length; i++) // check on maps items (first mode)
+            for (let i = 0; i < maps.length; i++) // check on maps items (first mode)
             {
                 output.push(true);
                 if (filter && maps[i].names[0] != filter) // does it match the filter first of all?
@@ -386,14 +386,14 @@ liberator.Mappings = function () //{{{
                     output[output.length - 1] = false;
                     continue;
                 }
-                for (var index = 1; index < modes.length; index++) // check if found in the other modes (1(2nd)-last)
+                for (let j = 1; j < modes.length; j++) // check if found in the other modes (1(2nd)-last)
                 {
                     output[output.length - 1] = false; // toggle false, only true whan also found in this mode
-                    for (var z = 0; z < user[modes[index]].length; z++) // maps on the other modes
+                    for (let k = 0; k < user[modes[j]].length; k++) // maps on the other modes
                     {
                         // NOTE: when other than user maps, there might be more than only one names[x].
                         //       since only user mappings gets queried here, only names[0] gets checked for equality.
-                        if (maps[i].rhs == user[modes[index]][z].rhs && maps[i].names[0] == user[modes[index]][z].names[0])
+                        if (maps[i].rhs == user[modes[j]][k].rhs && maps[i].names[0] == user[modes[j]][k].names[0])
                         {
                             output[output.length - 1] = true;
                             break; // found on this mode - ok, check next mode...
@@ -405,7 +405,7 @@ liberator.Mappings = function () //{{{
 
             // anything found?
             var flag = false;
-            for (var i = 0; i < output.length; i++)
+            for (let i = 0; i < output.length; i++)
                 if (output[i])
                     flag = true;
 
@@ -416,7 +416,7 @@ liberator.Mappings = function () //{{{
             }
 
             var modeSign = "";
-            for (var i = 0; i < modes.length; i++)
+            for (let i = 0; i < modes.length; i++)
             {
                 if (modes[i] == liberator.modes.NORMAL)
                     modeSign += "n";
@@ -429,11 +429,11 @@ liberator.Mappings = function () //{{{
             }
 
             var list = "<table>";
-            for (i = 0; i < maps.length; i++)
+            for (let i = 0; i < maps.length; i++)
             {
                 if (!output[i])
                     continue;
-                for (var j = 0; j < maps[i].names.length; j++)
+                for (let j = 0; j < maps[i].names.length; j++)
                 {
                     list += "<tr>";
                     list += "<td> " + modeSign + "   " + liberator.util.escapeHTML(maps[i].names[j]) + "</td>";

@@ -187,7 +187,7 @@ liberator.modes = (function () //{{{
         {
             var modes = this.all;
 
-            for (var i = 0; i < modes.length; i++)
+            for (let i = 0; i < modes.length; i++)
                 yield modes[i];
         },
 

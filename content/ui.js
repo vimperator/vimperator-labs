@@ -1269,7 +1269,7 @@ liberator.ItemList = function (id) //{{{
         var tbody = doc.createElement("tbody");
         table.appendChild(tbody);
 
-        for (var i = 0; i < completions.length; i++)
+        for (let i = 0; i < completions.length; i++)
         {
             var elem = completions[i];
             if (i >= listOffset && i - listOffset < maxItems)
@@ -1529,12 +1529,12 @@ liberator.StatusLine = function () //{{{
                 {
                     progressStr = "[";
                     var done = Math.floor(progress * 20);
-                    for (var i = 0; i < done; i++)
+                    for (let i = 0; i < done; i++)
                         progressStr += "=";
 
                     progressStr += ">";
 
-                    for (var i = 19; i > done; i--)
+                    for (let i = 19; i > done; i--)
                         progressStr += " ";
 
                     progressStr += "]";

@@ -36,8 +36,8 @@ liberator.AutoCommands = function () //{{{
 
     function autoCommandsIterator()
     {
-        for (var item in autoCommands)
-            for (var i = 0; i < autoCommands[item].length; i++)
+        for (let item in autoCommands)
+            for (let i = 0; i < autoCommands[item].length; i++)
                 yield item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
     }
 
@@ -122,15 +122,15 @@ liberator.AutoCommands = function () //{{{
         add: function (auEvent, regex, cmds)
         {
             var eventsIter = auEvent.split(",");
-            for (var i = 0; i < eventsIter.length; i++)
+            for (let i = 0; i < eventsIter.length; i++)
             {
                 if (!autoCommands[eventsIter[i]])
                     autoCommands[eventsIter[i]] = [];
 
                 var flag = true;
-                for (var y = 0; y < autoCommands[eventsIter[i]].length; y++)
+                for (let j = 0; j < autoCommands[eventsIter[i]].length; j++)
                 {
-                    if (autoCommands[eventsIter[i]][y][0] == regex && autoCommands[eventsIter[i]][y][1] == cmds)
+                    if (autoCommands[eventsIter[i]][j][0] == regex && autoCommands[eventsIter[i]][j][1] == cmds)
                     {
                         flag = false;
                         break;
@@ -149,7 +149,7 @@ liberator.AutoCommands = function () //{{{
             }
             else if (!regex) // remove all on this auEvent
             {
-                for (var item in autoCommands)
+                for (let item in autoCommands)
                 {
                     if (item == auEvent)
                         delete autoCommands[item];
@@ -157,7 +157,7 @@ liberator.AutoCommands = function () //{{{
             }
             else if (!auEvent) // delete all matches to this regex
             {
-                for (var item in autoCommands)
+                for (let item in autoCommands)
                 {
                     var i = 0;
                     while (i < autoCommands[item].length)
@@ -174,11 +174,11 @@ liberator.AutoCommands = function () //{{{
             }
             else // delete matching `auEvent && regex' items
             {
-                for (var item in autoCommands)
+                for (let item in autoCommands)
                 {
                     if (item == auEvent)
                     {
-                        for (var i = 0; i < autoCommands[item].length; i++)
+                        for (let i = 0; i < autoCommands[item].length; i++)
                         {
                             if (regex == autoCommands[item][i][0])
                                 autoCommands[item].splice(i, 1); // remove array
@@ -194,12 +194,12 @@ liberator.AutoCommands = function () //{{{
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr><td class=\"hl-Title\" colspan=\"2\">---- Auto-Commands ----</td></tr>";
 
-            for (var item in autoCommands)
+            for (let item in autoCommands)
             {
                 flag = true;
                 if (!auEvent || item == auEvent) // filter event
                 {
-                    for (var i = 0; i < autoCommands[item].length; i++)
+                    for (let i = 0; i < autoCommands[item].length; i++)
                     {
                         if (!regex || regex == autoCommands[item][i][0]) // filter regex
                         {
@@ -234,7 +234,7 @@ liberator.AutoCommands = function () //{{{
 
             if (autoCommands[auEvent])
             {
-                for (var i = 0; i < autoCommands[auEvent].length; i++)
+                for (let i = 0; i < autoCommands[auEvent].length; i++)
                 {
                     if (autoCommands[auEvent][i][2].test(url))
                         liberator.execute(autoCommands[auEvent][i][1]);
@@ -503,7 +503,7 @@ liberator.Events = function () //{{{
 
         var ms = 25000; // maximum time to wait - TODO: add option
         var then = new Date().getTime();
-        for (var now = then; now - then < ms; now = new Date().getTime())
+        for (let now = then; now - then < ms; now = new Date().getTime())
         {
             mainThread.processNextEvent(true);
             if ((now - then) % 1000 < 10)
@@ -541,7 +541,7 @@ liberator.Events = function () //{{{
         try
         {
             var files = liberator.io.readDirectory(liberator.io.getSpecialDirectory("macros"));
-            for (var i = 0; i < files.length; i++)
+            for (let i = 0; i < files.length; i++)
             {
                 var file = files[i];
                 if (!file.exists() || file.isDirectory() ||
@@ -632,7 +632,7 @@ liberator.Events = function () //{{{
         {
             var str = "<table>";
             var macroRef = liberator.events.getMacros(args);
-            for (var [macro, keys] in macroRef)
+            for (let [macro, keys] in macroRef)
                str += "<tr><td> " + macro + " &nbsp; </td><td>" +
                       liberator.util.escapeHTML(keys) + "</td></tr>";
 
@@ -769,7 +769,7 @@ liberator.Events = function () //{{{
         {
             var re = new RegExp(filter);
 
-            for (var [item,] in macros)
+            for (let [item,] in macros)
             {
                 if (re.test(item))
                     macros.remove(item);

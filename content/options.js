@@ -61,7 +61,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
     if (this.type == "boolean")
     {
         this.names = []; // reset since order is important
-        for (var i = 0; i < names.length; i++)
+        for (let i = 0; i < names.length; i++)
         {
             this.names.push(names[i]);
             this.names.push("no" + names[i]);
@@ -269,7 +269,7 @@ liberator.Options = function () //{{{
             if (!args)
             {
                 var str = "";
-                for (var i in liberator.globalVariables)
+                for (let i in liberator.globalVariables)
                 {
                     var value = liberator.globalVariables[i];
                     if (typeof value == "number")
@@ -669,7 +669,7 @@ liberator.Options = function () //{{{
 
                     if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
                     {
-                        for (var i = 0; i < prefArray.length; i++)
+                        for (let i = 0; i < prefArray.length; i++)
                         {
                             var name = prefArray[i];
                             if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
@@ -681,7 +681,7 @@ liberator.Options = function () //{{{
                         return [0, []];
                     }
 
-                    for (var i = 0; i < prefArray.length; i++)
+                    for (let i = 0; i < prefArray.length; i++)
                         optionCompletions.push([prefArray[i], liberator.options.getPref(prefArray[i])]);
 
                     return [0, liberator.completion.filter(optionCompletions, filter)];
@@ -695,7 +695,7 @@ liberator.Options = function () //{{{
                 {
                     var options = [];
 
-                    for (var option in liberator.options)
+                    for (let option in liberator.options)
                     {
                         if (!(option.scope & scope))
                             continue;
@@ -709,7 +709,7 @@ liberator.Options = function () //{{{
                 else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
                 {
                     filter = filter.substr(0, filter.length - 1);
-                    for (var option in liberator.options)
+                    for (let option in liberator.options)
                     {
                         if (!(option.scope & scope))
                             continue;
@@ -724,14 +724,14 @@ liberator.Options = function () //{{{
                 }
 
                 var filterLength = filter.length;
-                for (var option in liberator.options)
+                for (let option in liberator.options)
                 {
                     if (!(option.scope & scope))
                         continue;
                     if (prefix && option.type != "boolean")
                         continue;
 
-                    for (var j = 0; j < option.names.length; j++)
+                    for (let j = 0; j < option.names.length; j++)
                     {
                         if (option.names[j].indexOf(filter) != 0)
                             continue;
@@ -753,8 +753,8 @@ liberator.Options = function () //{{{
             //if (typeof names == "string") names = [names];
 
             //var length = names.length;
-            //for (var i = 0, name = names[i]; i < length; name = names[++i])
-            for (var i = 0; i < args.arguments.length; i++)
+            //for (let i = 0, name = names[i]; i < length; name = names[++i])
+            for (let i = 0; i < args.arguments.length; i++)
             {
                 var name = args.arguments[i];
                 var reference = liberator.variableReference(name);
@@ -782,7 +782,7 @@ liberator.Options = function () //{{{
 
         __iterator__: function ()
         {
-            for (var i = 0; i < options.length; i++)
+            for (let i = 0; i < options.length; i++)
                 yield options[i];
         },
 
@@ -796,7 +796,7 @@ liberator.Options = function () //{{{
             if (!option)
                 return false;
 
-            for (var opt in Iterator(this))
+            for (let opt in Iterator(this))
             {
                 if (opt.name == option.name)
                 {
@@ -829,7 +829,7 @@ liberator.Options = function () //{{{
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
-            for (var i = 0; i < options.length; i++)
+            for (let i = 0; i < options.length; i++)
             {
                 if (options[i].hasName(name) && (options[i].scope & scope))
                     return options[i];
@@ -847,7 +847,7 @@ liberator.Options = function () //{{{
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
-            for (var opt in Iterator(this))
+            for (let opt in Iterator(this))
             {
                 name  = opt.name;
                 value = opt.value;

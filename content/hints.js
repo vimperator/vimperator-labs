@@ -137,7 +137,7 @@ liberator.Hints = function () //{{{
         docs.push({ doc: doc, start: start, end: hints.length - 1 });
 
         // also generate hints for frames
-        for (var i = 0; i < win.frames.length; i++)
+        for (let i = 0; i < win.frames.length; i++)
             generate(win.frames[i]);
 
         return true;
@@ -168,7 +168,7 @@ liberator.Hints = function () //{{{
         var activeHint = hintNumber || 1;
         validHints = [];
 
-        for (var j = 0; j < docs.length; j++)
+        for (let j = 0; j < docs.length; j++)
         {
             var doc = docs[j].doc;
             var start = docs[j].start;
@@ -177,7 +177,7 @@ liberator.Hints = function () //{{{
             var scrollY = doc.defaultView.scrollY;
 
         inner:
-            for (var i = start; i <= end; i++)
+            for (let i = start; i <= end; i++)
             {
                 elem = hints[i][0];
                 text = hints[i][1];
@@ -238,13 +238,13 @@ liberator.Hints = function () //{{{
         var firstElemBgColor = "";
         var firstElemColor = "";
 
-        for (var j = 0; j < docs.length; j++)
+        for (let j = 0; j < docs.length; j++)
         {
             var doc = docs[j].doc;
             var start = docs[j].start;
             var end = docs[j].end;
 
-            for (var i = start; i <= end; i++)
+            for (let i = start; i <= end; i++)
             {
                 // remove the span for the numeric display part
                 doc.body.removeChild(hints[i][2]);
@@ -386,7 +386,7 @@ liberator.Hints = function () //{{{
 
             function contains(textOfLink)
             {
-                for (var i = 0; i < tokens.length; i++)
+                for (let i = 0; i < tokens.length; i++)
                 {
                     if (textOfLink.indexOf(tokens[i]) < 0)
                         return false;
@@ -407,7 +407,7 @@ liberator.Hints = function () //{{{
             {
                 var charIdx         = 0;
                 var numMatchedWords = 0;
-                for (var wIdx = 0; wIdx < words.length; wIdx++)
+                for (let wIdx = 0; wIdx < words.length; wIdx++)
                 {
                     var word = words[wIdx];
                     if (word.length == 0)
@@ -419,7 +419,7 @@ liberator.Hints = function () //{{{
                     if (charIdx > numMatchedWords)
                     {
                         var matchingStarted = false;
-                        for (var i = numMatchedWords; i < charIdx; i++)
+                        for (let i = numMatchedWords; i < charIdx; i++)
                         {
                             if (chars[i] == word[wcIdx])
                             {
@@ -450,7 +450,7 @@ liberator.Hints = function () //{{{
                         // if yes, then consume them
                         if (prevCharIdx == charIdx)
                         {
-                            for (var i = 0; i < wcIdx && charIdx < chars.length; i++, charIdx++)
+                            for (let i = 0; i < wcIdx && charIdx < chars.length; i++, charIdx++)
                             {
                                 if (word[i] != chars[charIdx])
                                     break;
@@ -464,7 +464,7 @@ liberator.Hints = function () //{{{
                     else
                     {
                         var prevCharIdx = charIdx;
-                        for (var i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
+                        for (let i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
                         {
                             if (word[i] != chars[charIdx])
                                 break;
@@ -489,7 +489,7 @@ liberator.Hints = function () //{{{
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
                 var strIdx = 0;
-                for (var wIdx = 0; wIdx < words.length; wIdx++)
+                for (let wIdx = 0; wIdx < words.length; wIdx++)
                 {
                     var word = words[wIdx];
                     if (word.length == 0)
