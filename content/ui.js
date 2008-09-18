@@ -236,11 +236,7 @@ liberator.CommandLine = function () //{{{
 
     function autosizeMultilineInputWidget()
     {
-        var lines = 0;
-        var str = multilineInputWidget.value;
-        for (var i = 0; i < str.length; i++)
-            if (str[i] == "\n")
-                lines++;
+        let lines = multilineInputWidget.value.split("\n").length - 1;
 
         if (lines == 0)
             lines = 1;
