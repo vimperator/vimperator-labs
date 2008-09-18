@@ -863,7 +863,7 @@ liberator.Options = function () //{{{
                 {
                     name = value ? "  " + name : "no" + name;
                     if (value != def)
-                        name = "<span style=\"font-weight: bold\">" + name + "</span><span style=\"color: gray\">  (default: " + (def ? "" : "no") + options[i].name + ")</span>";
+                        name = "<span style=\"font-weight: bold\">" + name + "</span><span style=\"color: gray\">  (default: " + (def ? "" : "no") + opt.name + ")</span>";
                     list += "<tr><td>" + name + "</td></tr>";
                 }
                 else
