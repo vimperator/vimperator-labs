@@ -492,9 +492,8 @@ liberator.CommandLine = function () //{{{
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
             completionList.hide();
-            //htmllist.hide();
-            //htmllist.clear();
             completions = [];
+            this.resetCompletions();
 
             setLine("", this.HL_NORMAL);
         },
@@ -697,8 +696,6 @@ liberator.CommandLine = function () //{{{
                     {
                         completionStartIndex = 0;
                         completionIndex = -1;
-                        wildIndex = 0;
-
                         completionPrefix = command.substring(0, commandWidget.selectionStart);
                         completionPostfix = command.substring(commandWidget.selectionStart);
                         var res = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
@@ -709,8 +706,7 @@ liberator.CommandLine = function () //{{{
                         if (/\bsort\b/.test(liberator.options["wildoptions"]))
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
-                        if (hasList)
-                            completionList.setItems(completions, -1);
+                        completionList.setItems(completions);
                     }
 
                     if (completions.length == 0)
@@ -721,9 +717,6 @@ liberator.CommandLine = function () //{{{
                         event.stopPropagation();
                         return false;
                     }
-
-                    if (hasList)
-                        completionList.show();
 
                     if (full)
                     {
@@ -743,11 +736,12 @@ liberator.CommandLine = function () //{{{
                         // FIXME: this innocent looking line is the source of a big performance
                         // problem, when keeping <Tab> pressed down, so disable it for now
                         // liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
-
-                        liberator.statusline.updateProgress(res);
-                        // if the list is hidden, this function does nothing
-                        completionList.selectItem(completionIndex);
                     }
+
+                    // the following line is not inside if (hasList) for list:longest,full
+                    completionList.selectItem(completionIndex);
+                    if (hasList)
+                        completionList.show();
 
                     if ((completionIndex == -1 || completionIndex >= completions.length) && !longest) // wrapped around matches, reset command line
                     {
@@ -1303,29 +1297,33 @@ liberator.ItemList = function (id) //{{{
 
         clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
-        show: function () { container.collapsed = false; this.selectItem(0); /* fixme? */ },
+        show: function () { container.collapsed = false; },
         visible: function () { return !container.collapsed; },
 
+        // if @param selectedItem is given, show the list and select that item
         setItems: function (items, selectedItem)
         {
             listOffset = listIndex = -1;
             completions = items || [];
-            if (typeof(selectedItem) != "number")
-                selectedItem = -1;
-
-            this.selectItem(selectedItem);
+            if (typeof(selectedItem) == "number")
+            {
+                this.selectItem(selectedItem);
+                this.show();
+            }
         },
 
         // select index, refill list if necessary
         selectItem: function (index)
         {
-            if (container.collapsed) // fixme
-                return;
+            //if (container.collapsed) // fixme
+            //    return;
 
             if (index == -1 || index == completions.length) // wrapped around
             {
                 if (listIndex >= 0)
                     completionElements[listIndex - listOffset].style.backgroundColor = "";
+                else // list is shown the first time
+                    fill(0);
 
                 listIndex = index;
                 return;
