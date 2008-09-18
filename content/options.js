@@ -903,7 +903,7 @@ liberator.Options = function () //{{{
                 if ((!onlyNonDefault || userValue) && pref.indexOf(filter) >= 0)
                 {
                     name = pref;
-                    value = this.getPref(name);
+                    value = liberator.options.getPref(name);
                     if (typeof value == "string")
                         value = value.substr(0, 100).replace(/\n/g, " ");
 
