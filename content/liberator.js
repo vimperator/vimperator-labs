@@ -1080,7 +1080,9 @@ const liberator = (function () //{{{
                         {
                             var files = liberator.io.readDirectory(pluginDir.path);
                             liberator.log("Sourcing plugin directory...", 3);
-                            files.sort(function (a, b) String(a.path).localeCompare(b.path)).forEach(function (file) {
+                            files.sort(function (a, b) String.localeCompare(a.path, b.path))
+                                 .forEach(function (file)
+                            {
                                 if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                     liberator.io.source(file.path, false);
                             });

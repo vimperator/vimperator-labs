@@ -707,16 +707,7 @@ liberator.CommandLine = function () //{{{
 
                         // sort the completion list
                         if (/\bsort\b/.test(liberator.options["wildoptions"]))
-                        {
-                            completions.sort(function (a, b) {
-                                    if (a[0] < b[0])
-                                        return -1;
-                                    else if (a[0] > b[0])
-                                        return 1;
-                                    else
-                                        return 0;
-                            });
-                        }
+                            completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         if (hasList)
                             completionList.setItems(completions, -1);
@@ -1312,7 +1303,7 @@ liberator.ItemList = function (id) //{{{
 
         clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
-        show: function () { container.collapsed = false; },
+        show: function () { container.collapsed = false; this.selectItem(0); /* fixme? */ },
         visible: function () { return !container.collapsed; },
 
         setItems: function (items, selectedItem)
@@ -1478,9 +1469,7 @@ liberator.StatusLine = function () //{{{
             }
             else
             {
-                var matches = url.match(/^chrome:\/\/vimperator\/locale\/(\S+)$/);
-                if (matches && matches[1])
-                    url = matches[1] + " [Help]";
+                url = url.replace(new RegExp("^chrome://" + liberator.config.name.toLowerCase() + "/locale/(\\S+)\\.html$"), "$1 [Help]");
             }
 
             // when session information is available, add [+] when we can go backwards

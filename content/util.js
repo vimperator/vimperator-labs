@@ -287,14 +287,18 @@ liberator.util = { //{{{
     {
         var urls = str.split(new RegExp("\s*" + liberator.options["urlseparator"] + "\s*"));
 
-        begin: for (let url = 0; url < urls.length; url++)
+        for (let url = 0; url < urls.length; url++)
         {
-            var file = liberator.io.getFile(urls[url]);
-            if (file.exists() && file.isReadable())
+            try
             {
-                urls[url] = file.path;
-                continue;
+                var file = liberator.io.getFile(urls[url]);
+                if (file.exists() && file.isReadable())
+                {
+                    urls[url] = file.path;
+                    continue;
+                }
             }
+            catch (e) {}
 
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
