@@ -125,7 +125,7 @@ following pairs sequences are equivalent:
   :tabopen vimperator.mozdev.org<CR>
   tvimperator.mozdev.org<CR>
 
-section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints.html]
+section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints]
 
 So now you can navigate around in Vimperator.  But wait... how do you *open* a
 page or tab linked in a web page?  How do you ``click'' on all those links
