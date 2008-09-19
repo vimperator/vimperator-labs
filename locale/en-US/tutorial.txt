@@ -210,6 +210,8 @@ how to make the best use of them.
   * [c]:history[c] --
     It's exactly what it sounds like.  This command will display a colorized,
     scrollable and clickable list of the locations in Vimperator's history.
+  * [c]:emenu[c] --
+    Access the Firefox menus through the Vimperator commandline.
 
 
 Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
