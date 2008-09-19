@@ -144,7 +144,7 @@ liberator.IO = function () //{{{
 
                 for (let i = 0; i < directories.length; i++)
                 {
-                    var dir = directories[i] + liberator.io.directorySeperator + args;
+                    var dir = directories[i] + liberator.io.directorySeparator + args;
                     if (liberator.io.setCurrentDirectory(dir))
                     {
                         // FIXME: we're just overwriting the error message from
@@ -321,7 +321,7 @@ liberator.IO = function () //{{{
         MODE_SYNC: 0x40,
         MODE_EXCL: 0x80,
 
-        get directorySeperator()
+        get directorySeparator()
         {
             return WINDOWS ? "\\" : "/";
         },
