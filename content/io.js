@@ -475,8 +475,11 @@ liberator.IO = function () //{{{
                                  .createInstance(Components.interfaces.nsILocalFile);
 
             var tmpname = liberator.config.name.toLowerCase() + "-";
-            if (window.content.document.location.hostname)
-                tmpname += window.content.document.location.hostname;
+            try {
+                if (window.content.document.location.hostname)
+                    tmpname += window.content.document.location.hostname;
+            }
+            catch (e) {}
             tmpname += ".tmp";
 
             if (liberator.config.name == "Muttator")
