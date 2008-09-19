@@ -4,7 +4,7 @@ HEADER
 
 INTRO TO BE WRITTEN...
 
-|f| |hints| +
+|f| +
 ||f\\{hint\\}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
