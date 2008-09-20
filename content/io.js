@@ -471,36 +471,38 @@ liberator.IO = function () //{{{
         // returns a nsILocalFile or null if it could not be created
         createTempFile: function ()
         {
-            var file = Components.classes["@mozilla.org/file/local;1"]
+            let file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
+            let tmpName = extname + ".tmp";
 
-            var tmpname = liberator.config.name.toLowerCase() + "-";
-            try {
-                if (window.content.document.location.hostname)
-                    tmpname += window.content.document.location.hostname;
-            }
-            catch (e) {}
-            tmpname += ".tmp";
-
-            if (liberator.config.name == "Muttator")
-                tmpname = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
-
-            if (WINDOWS)
+            switch (extname)
             {
-                var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "C:\\";
-                file.initWithPath(dir + tmpname);
-            }
-            else
-            {
-                var dir = environmentService.get("TMP") || environmentService.get("TEMP") || "/tmp/";
-                file.initWithPath(dir + tmpname);
+                case "muttator":
+                    tmpName = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
+                    break;
+                case "vimperator":
+                    try
+                    {
+                        if (window.content.document.location.hostname)
+                            tmpName = extname + "-" + window.content.document.location.hostname + ".tmp";
+                    }
+                    catch (e) {}
+                    break;
             }
 
+            // TODO: Should we by trying /tmp first like Vim?
+            let dir = environmentService.get("TMPDIR") || environmentService.get("TMP")
+                          || environmentService.get("TEMP") || (WINDOWS ? "C:\\" : "/tmp/");
+
+            file.initWithPath(dir)
+            file.appendRelativePath(tmpName);
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
-            if (!file.exists())
-                return null;
 
-            return file;
+            if (file.exists())
+                return file;
+            else
+                return null; // XXX
+
         },
 
         // file is either a full pathname or an instance of file instanceof nsILocalFile
