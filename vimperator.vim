@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Sep 16
+" Last Change:      2008 Sep 21
 
 if exists("b:current_syntax")
   finish
@@ -36,7 +36,13 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] au[tocmd] b[uffer]
 syn match vimperatorCommand "!" contained
 
 " FIXME
-syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand
+syn match vimperatorCommandWrapper "\%(^\s*:\=\)\@<=\%(!\|\h\w*\>\)" contains=vimperatorCommand nextgroup=vimperatorAutocmdEventList
+    \ skipwhite
+
+syn keyword vimperatorAutocmdEvent BookmarkAdd LocationChange PageLoadPre PageLoad ShellCmdPost VimperatorEnter VimperatorLeavePre
+    \ VimperatorLeave contained
+
+syn match vimperatorAutocmdEventList contained "\(\a\+,\)*\a\+" contains=vimperatorAutocmdEvent
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<set\=\>" end="$" keepend oneline
     \ contains=vimperatorOption
@@ -49,13 +55,13 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ wordseparators wsp
     \ contained nextgroup=vimperatorSetDefaultModifier
 
-syn match vimperatorOption "\%(no\|inv\)\=\%(focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\|incsearch\|is\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\|incsearch\|is\)\>!\="
     \ contained nextgroup=vimperatorSetDefaultModifier
-syn match vimperatorOption "\%(no\|inv\)\=\%(insertmode\|im\|hlsearch\|hls\|linksearch\|lks\|loadplugins\|lpl\|more\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(insertmode\|im\|hlsearch\|hls\|linksearch\|lks\|loadplugins\|lpl\|more\)\>!\="
     \ contained nextgroup=vimperatorSetDefaultModifier
-syn match vimperatorOption "\%(no\|inv\)\=\%(online\|preload\|showmode\|smd\|smartcase\|scs\|online \|visualbell\|vb\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(online\|preload\|showmode\|smd\|smartcase\|scs\|online \|visualbell\|vb\)\>!\="
     \ contained nextgroup=vimperatorSetDefaultModifier
-syn match vimperatorOption "\%(no\|inv\)\=\%(usermode\|um\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(usermode\|um\)\>!\="
     \ contained nextgroup=vimperatorSetDefaultModifier
 
 syn match vimperatorSetDefaultModifier "\%(\<[a-z_]\+\)\@<=&" contained
@@ -70,6 +76,7 @@ syn region vimperatorMap matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<m
 syn match vimperatorKeySym "<[0-9A-Za-z-]\+>"
 
 " Note: match vim.vim highlighting groups
+hi def link vimperatorAutocmdEvent          Type
 hi def link vimperatorCommand			    Statement
 hi def link vimperatorComment			    Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
