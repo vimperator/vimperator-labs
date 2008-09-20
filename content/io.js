@@ -469,6 +469,7 @@ liberator.IO = function () //{{{
 
         // TODO: make secure
         // returns a nsILocalFile or null if it could not be created
+        // FIXME: is there a reason the "TmpD" special file isn't being used? -- djk
         createTempFile: function ()
         {
             let file = Components.classes["@mozilla.org/file/local;1"]
