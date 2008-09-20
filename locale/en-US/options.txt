@@ -734,7 +734,7 @@ the second part for the second use, etc.
 
 These are the possible values for each part:
 `---------------`------------------------
-""              Complete only the first match
+""              Complete only the first match.
 "full"          Complete the next full match. After the last, the original string is used.
 "longest"       Complete till the longest common string.
 "list"          When more than one match, list all matches.
@@ -753,8 +753,8 @@ A list of words that change how command line completion is done.
 
 Possible words:
 `--------`-------------------------------
-*auto*   Automatically show completions while you are typing
-*sort*   Always sorts completion list, overriding the 'complete' option.
+*auto*   Automatically show completions while you are typing.
+*sort*   Always sort the completion list, overriding the 'complete' option.
 -----------------------------------------
 
 ____

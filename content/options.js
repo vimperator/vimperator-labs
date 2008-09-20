@@ -715,6 +715,10 @@ liberator.Options = function () //{{{
                             continue;
                         if (option.hasName(filter))
                         {
+                            // TODO: the starting value should be the current
+                            // value, for compatibility with Vim (also the most
+                            // useful approach in this case) while still
+                            // offering much better completion
                             if (option.completer)
                                 return [filter.length + 1, option.completer(filter)]; // FIXME: filter should be component after "option="
                             return [filter.length + 1, [[option.value + "", ""]]];

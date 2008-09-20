@@ -367,6 +367,13 @@ liberator.CommandLine = function () //{{{
         "Change how command line completion is done",
         "stringlist", "",
         {
+            completer: function (value)
+            {
+                return [
+                    ["auto", "Automatically show completions while you are typing"],
+                    ["sort", "Always sort the completion list"]
+                ];
+            },
             validator: function (value)
             {
                 return value.split(",").every(function (item) { return /^(sort|auto|)$/.test(item); });
