@@ -10,7 +10,7 @@ which are translated to a string of characters.  Example:
 
   :map <F2> :echo new Date().toDateString()<CR>
 
-will echo the current date to the command line when [m]<F2>[m] is pressed.
+will echo the current date to the command-line when [m]<F2>[m] is pressed.
 
 There are separate key mapping tables for each of the Normal, Insert,
 Command-line modes.
@@ -254,7 +254,7 @@ the command is redefined.  Unlike Vim, the command may start with a lowercase
 letter.
 
 The replacement text {rep} is scanned for escape sequences and these are
-replaced with values from the user entered command line.  The resulting string
+replaced with values from the user entered command-line.  The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:

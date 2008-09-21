@@ -379,7 +379,7 @@ ____
 |\'hi'| |\'history'|
 ||'history' 'hi'|| number (default: 500)
 ____
-Number of Ex commands and search patterns to store in the commandline history.
+Number of Ex commands and search patterns to store in the command-line history.
 ____
 
 
@@ -588,7 +588,7 @@ ____
 |\'shell'| |\'sh'|
 ||'shell' 'sh'|| string (default: on)
 ____
-Show the current mode in the command line.
+Show the current mode in the command-line.
 ____
 
 
@@ -617,7 +617,7 @@ Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Po
 .---`--------------------------------------
 *0* Don't show link destination
 *1* Show the link in the status line
-*2* Show the link in the command line
+*2* Show the link in the command-line
 -------------------------------------------
 
 ____
@@ -726,7 +726,7 @@ ____
 |\'wim'| |\'wildmode'|
 ||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
-Define how command line completion works.
+Define how command-line completion works.
 It is a comma-separated list of parts, where each part specifies
 what to do for each consecutive use of the completion key.
 The first part specifies the behavior for the first use of the completion key,
@@ -749,7 +749,7 @@ ____
 |\'wop'| |\'wildoptions'|
 ||'wildoptions' 'wop'|| stringlist (default: "")
 ____
-A list of words that change how command line completion is done.
+A list of words that change how command-line completion is done.
 
 Possible words:
 `--------`-------------------------------

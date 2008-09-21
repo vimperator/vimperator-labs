@@ -67,7 +67,7 @@ section:Normal{nbsp}mode[normal-index]
 
 ||;|| Start an extended hint mode +
 
-||:|| Enter command line mode +
+||:|| Enter command-line mode +
 
 ||~|| Open home directory +
 
@@ -143,16 +143,16 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:bmarks|| List or open multiple bookmarks +
 ||:buffer|| Switch to a buffer +
 ||:buffers|| Show a list of all buffers +
-||:cabbrev|| Abbreviate a key sequence in command line mode +
-||:cabclear|| Remove all abbreviations in command line mode +
+||:cabbrev|| Abbreviate a key sequence in command-line mode +
+||:cabclear|| Remove all abbreviations in command-line mode +
 ||:cd|| Change the current directory +
-||:cmap|| Map a key sequence in command line mode +
-||:cmapclear|| Remove all mappings in command line mode +
-||:cnoremap|| Map a key sequence without remapping keys in command line mode +
+||:cmap|| Map a key sequence in command-line mode +
+||:cmapclear|| Remove all mappings in command-line mode +
+||:cnoremap|| Map a key sequence without remapping keys in command-line mode +
 ||:comclear|| Delete all user-defined commands +
 ||:command|| List and define commands +
-||:cunabbrev|| Remove an abbreviation in command line mode +
-||:cunmap|| Remove a mapping in command line mode +
+||:cunabbrev|| Remove an abbreviation in command-line mode +
+||:cunmap|| Remove a mapping in command-line mode +
 ||:delbmarks|| Delete a bookmark +
 ||:delcommand|| Delete the specified user-defined command +
 ||:delmacros|| Delete macros +
@@ -162,7 +162,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:downloads|| Show progress of current downloads +
 ||:echo|| Display a string at the bottom of the window +
 ||:echoerr|| Display an error string at the bottom of the window +
-||:emenu|| Execute the specified menu item from the command line +
+||:emenu|| Execute the specified menu item from the command-line +
 ||:execute|| Execute the argument as an Ex command +
 ||:exusage|| List all Ex commands with a short description +
 ||:finish|| Stop sourcing a script file +
@@ -258,7 +258,7 @@ section:Options[option-index]
 ||'hintstyle'|| CSS specification of unfocused hints +
 ||'hinttags'|| XPath string of hintable elements activated by 'f' and 'F' +
 ||'hinttimeout'|| Automatically follow non unique numerical hint +
-||'history'|| Number of Ex commands and search patterns to store in the commandline history +
+||'history'|| Number of Ex commands and search patterns to store in the command-line history +
 ||'hlsearch'|| Highlight previous search pattern matches +
 ||'hlsearchstyle'|| CSS specification of highlighted search items +
 ||'ignorecase'|| Ignore case in search patterns +
@@ -280,7 +280,7 @@ section:Options[option-index]
 ||'scroll'|| Number of lines to scroll with and commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
 ||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
-||'showmode'|| Show the current mode in the command line +
+||'showmode'|| Show the current mode in the command-line +
 ||'showstatuslinks'|| Show the destination of the link under the cursor in the status bar +
 ||'showtabline'|| Control when to show the tab bar of opened web pages +
 ||'smartcase'|| Override the 'ignorecase' option if the pattern contains uppercase characters +
@@ -292,8 +292,8 @@ section:Options[option-index]
 ||'visualbell'|| Use visual bell instead of beeping on errors +
 ||'visualbellstyle'|| CSS specification of the visual bell +
 ||'wildignore'|| List of file patterns to ignore when completing files +
-||'wildmode'|| Define how command line completion works +
-||'wildoptions'|| Change how command line completion is done +
+||'wildmode'|| Define how command-line completion works +
+||'wildoptions'|| Change how command-line completion is done +
 ||'wordseparators'|| How words are splitted for hintmatching +
 
 // vim: set syntax=asciidoc:

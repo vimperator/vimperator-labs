@@ -1,6 +1,6 @@
 HEADER
 
-Vimperator does not yet read any command line options. When it does, they will
+Vimperator does not yet read any command-line options. When it does, they will
 be documented here.
 
 section:Initialization[initialization,startup]
