@@ -327,7 +327,7 @@ liberator.IO = function () //{{{
 
         expandPath: function (path)
         {
-            // TODO: proper pathname separator translation like Vim
+            // TODO: proper pathname separator translation like Vim - this should be done elsewhere
             if (WINDOWS)
                 path = path.replace("/", "\\", "g");
 
@@ -452,17 +452,25 @@ liberator.IO = function () //{{{
         // also expands relative paths
         getFile: function (path)
         {
-            var file = Components.classes["@mozilla.org/file/local;1"]
+            let file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
+            let protocolHandler = Components.classes["@mozilla.org/network/protocol;1?name=file"]
+                                            .createInstance(Components.interfaces.nsIFileProtocolHandler);
 
-            // convert relative to absolute pathname
-            path = ioManager.expandPath(path);
-            if (!/^(file:|[a-zA-Z]:|\/)/.test(path)) // starts not with either /, C: or file:
-                path = ioManager.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + path; // TODO: for now homedir, later relative to current dir?
+            if (/file:\/\//.test(path))
+            {
+                file = protocolHandler.getFileFromURLSpec(path);
+            }
             else
-                path = path.replace(/^file:(\/\/)?/, "");
+            {
+                let expandedPath = ioManager.expandPath(path);
 
-            file.initWithPath(path);
+                if (!/^([a-zA-Z]:|\/)/.test(expandedPath)) // doesn't start with /, C:
+                    expandedPath = ioManager.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + expandedPath;
+
+                file.initWithPath(expandedPath);
+            }
+
             return file;
         },
 
