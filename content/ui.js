@@ -908,6 +908,7 @@ liberator.CommandLine = function () //{{{
                         passEvent = true;
                     break;
 
+                // TODO: <LeftMouse> on the prompt line should scroll one page
                 case "<LeftMouse>":
                     if (event.originalTarget.className == "hl-URL buffer-list")
                     {
@@ -935,13 +936,6 @@ liberator.CommandLine = function () //{{{
                 case "<RightMouse>":
                 case "<C-S-LeftMouse>":
                     break;
-
-                // XXX: what's that for? --mst
-                case "<S-LeftMouse>":
-                    if (/^(end|more(-help)?)-prompt$/.test(event.target.id))
-                        ; // fall through
-                    else
-                        break;
 
                 // page down
                 case "f":
