@@ -14,7 +14,7 @@ Disable all Vimperator keys except [m]<Esc>[m] and pass them to the next event
 handler. This is especially useful, if JavaScript controlled forms like the
 RichEdit form fields of Gmail don't work anymore. To exit this mode, press
 [m]<Esc>[m]. If you also need to pass [m]<Esc>[m] in this mode to the web page,
-prepend it with help:CTRL-V[browsing.html,CTRL-V].
+prepend it with [m]<C-v>[m].
 ________________________________________________________________________________
 
 |send-key| |<C-v>| |CTRL-V| +
