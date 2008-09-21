@@ -538,7 +538,7 @@ liberator.Buffer = function () //{{{
         "Save current document to disk",
         function (args, special)
         {
-            var file = liberator.io.getFile(args || "");
+            //var file = liberator.io.getFile(args || "");
             // we always want to save that link relative to the current working directory
             liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
             //if (args)
