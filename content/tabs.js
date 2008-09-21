@@ -153,7 +153,6 @@ liberator.Tabs = function () //{{{
             },
         });
 
-
     if (liberator.config.name == "Vimperator")
     {
         liberator.options.add(["activate", "act"],
@@ -248,7 +247,6 @@ liberator.Tabs = function () //{{{
        "Go to previous tab",
         function (count) { liberator.tabs.select("-" + (count < 1 ? 1 : count), true); },
         { flags: liberator.Mappings.flags.COUNT });
-
 
     if (liberator.config.name == "Vimperator")
     {
@@ -433,7 +431,6 @@ liberator.Tabs = function () //{{{
         },
         { argCount: "0" });
 
-
     if (liberator.config.name == "Vimperator")
     {
         // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
@@ -525,7 +522,6 @@ liberator.Tabs = function () //{{{
                     liberator.open("about:blank", where);
             },
             { completer: function (filter) { return liberator.completion.url(filter); } });
-
 
         liberator.commands.add(["tabde[tach]"],
             "Detach current tab to its own window",

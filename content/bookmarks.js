@@ -320,7 +320,7 @@ liberator.Bookmarks = function () //{{{
         // takes about 1 sec
         get: function (filter, tags, bypassCache)
         {
-            if(bypassCache) // Is this really necessary anymore?
+            if (bypassCache) // Is this really necessary anymore?
                 cache.load();
             return liberator.completion.filterURLArray(cache.bookmarks, filter, tags);
         },

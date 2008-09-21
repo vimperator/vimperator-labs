@@ -189,7 +189,7 @@ liberator.Completion = function () //{{{
                         (i + 1).toString().indexOf(filter) == -1)
                     continue;
 
-                if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1 || 
+                if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1 ||
                         (i + 1).toString().indexOf(filter) != -1)
                 {
                     if (title == "")

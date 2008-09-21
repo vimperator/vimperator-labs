@@ -182,7 +182,6 @@ liberator.Commands = function () //{{{
         COUNT_NONE: -1,
         COUNT_ALL:  -2, // :%...
 
-
         __iterator__: function ()
         {
             var sorted = exCommands.sort(function (cmd1, cmd2) { return cmd1.name > cmd2.name; });

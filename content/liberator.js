@@ -1012,7 +1012,6 @@ const liberator = (function () //{{{
                       .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
-
         // TODO: move to {muttator,vimperator,...}.js
         // this function is called when the chrome is ready
         startup: function ()

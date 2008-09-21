@@ -119,7 +119,6 @@ liberator.config = { //{{{
             "Edit message with external editor by default",
             "boolean", false);
 
-
         // load Muttator specific modules
         if (this.isComposeWindow)
         {
@@ -183,7 +182,6 @@ liberator.config = { //{{{
                 NotifyDocumentCreated: function () {},
                 NotifyDocumentWillBeDestroyed: function () {}
             };
-
 
             // XXX: Hack!
             window.document.addEventListener("load", function ()

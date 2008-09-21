@@ -330,7 +330,6 @@ liberator.Mail = function () //{{{
         },
         { flags: liberator.Mappings.flags.COUNT });
 
-
     // SENDING MESSAGES
     liberator.mappings.add(modes, ["m"],
         "Compose a new message",

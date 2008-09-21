@@ -1139,8 +1139,7 @@ liberator.ItemList = function (id) //{{{
         const ioService    = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService);
     }
-    catch (e) { } // for muttator!
-
+    catch (e) {} // for muttator!
 
     // TODO: temporary, to be changed/removed
     function createRow(a, b, c)
@@ -1195,7 +1194,7 @@ liberator.ItemList = function (id) //{{{
 
         var height = getHeight();
         if (height == 0) // sometimes we don't have the correct size at this point
-            setTimeout(function() { container.height = getHeight(); }, 10);
+            setTimeout(function () { container.height = getHeight(); }, 10);
         else
             container.height = height;
     }
@@ -1220,7 +1219,7 @@ liberator.ItemList = function (id) //{{{
                 var uri = ioService.newURI(completions[offset][0], null, null);
                 icon = faviconService.getFaviconImageForPage(uri).spec;
             }
-            catch (e) {  }
+            catch (e) {}
 
             var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]);
             var e = doc.getElementsByTagName("tbody");
@@ -1238,7 +1237,7 @@ liberator.ItemList = function (id) //{{{
                 var uri = ioService.newURI(completions[offset][0], null, null);
                 icon = faviconService.getFaviconImageForPage(uri).spec;
             }
-            catch (e) {  }
+            catch (e) {}
             var row = createRow(icon, completions[offset][0], completions[offset][1]);
             var e = doc.getElementsByTagName("tbody");
             e[e.length - 1].removeChild(e[e.length - 1].lastElementChild);
@@ -1273,7 +1272,7 @@ liberator.ItemList = function (id) //{{{
                     icon = faviconService.getFaviconImageForPage(uri).spec;
                     //dump(icon + "\n");
                 }
-                catch (e) {  }
+                catch (e) {}
 
                 if (i == -132434)
                 {
@@ -1369,7 +1368,6 @@ liberator.ItemList = function (id) //{{{
     };
     //}}}
 }; //}}}
-
 
 liberator.StatusLine = function () //{{{
 {

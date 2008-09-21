@@ -68,7 +68,6 @@ liberator.IO = function () //{{{
             }
         });
 
-
     var shell, shellcmdflag;
 
     if (WINDOWS)
