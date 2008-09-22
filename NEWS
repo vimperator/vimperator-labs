@@ -5,6 +5,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add 'runtimepath'
     * allow ; hints to work in the multiline output widget
     * add :scriptnames
     * add commandline completion to 'activate', 'cpt', 'defsearch', 'pageinfo',

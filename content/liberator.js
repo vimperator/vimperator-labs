@@ -1059,11 +1059,12 @@ const liberator = (function () //{{{
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
 
-            // finally, read a ~/.vimperatorrc
+            // finally, read a ~/.vimperatorrc and plugin/**.{vimp,js}
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
                 var rcFile = liberator.io.getRCFile();
+
                 if (rcFile)
                     liberator.io.source(rcFile.path, true);
                 else
@@ -1071,20 +1072,28 @@ const liberator = (function () //{{{
 
                 if (liberator.options["loadplugins"])
                 {
-                    // also source plugins in ~/.vimperator/plugin/
+                    // FIXME: largely duplicated for loading macros
                     try
                     {
-                        var pluginDir = liberator.io.getSpecialDirectory("plugin");
-                        if (pluginDir)
+                        let dirs = liberator.io.getRuntimeDirectories("plugin");
+
+                        if (dirs.length > 0)
                         {
-                            var files = liberator.io.readDirectory(pluginDir.path);
-                            liberator.log("Sourcing plugin directory...", 3);
-                            files.sort(function (a, b) String.localeCompare(a.path, b.path))
-                                 .forEach(function (file)
+                            for (let [,dir] in Iterator(dirs))
                             {
-                                if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
-                                    liberator.io.source(file.path, false);
-                            });
+                                // TODO: search plugins/**/* for plugins
+                                if (liberator.options["verbose"] >= 2)
+                                    liberator.echo("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"\n");
+
+                                liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+
+                                let files = liberator.io.readDirectory(dir.path);
+
+                                files.sort(function (a, b) String.localeCompare(a.path, b.path)).forEach(function (file) {
+                                    if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
+                                        liberator.io.source(file.path, false);
+                                });
+                            }
                         }
                         else
                         {
@@ -1094,7 +1103,7 @@ const liberator = (function () //{{{
                     catch (e)
                     {
                         // thrown if directory does not exist
-                        //liberator.log("Error sourcing plugin directory: " + e);
+                        liberator.log("Error sourcing plugin directory: " + e, 9);
                     }
                 }
 

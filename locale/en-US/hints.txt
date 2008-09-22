@@ -8,13 +8,13 @@ INTRO TO BE WRITTEN...
 ||f\\{hint\\}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
-'hinttags' XPath query) is assigned a unique number.  You can now either type
+'hinttags' XPath query) is assigned a unique number. You can now either type
 this number or type any part of the URL which you want to follow, and it is
-followed as soon as it can be uniquely identified. Often it is can be useful
-to combine these techniques to narrow down results with some letters, and then
-typing a single digit to make the match unique.  Pressing [m]<Leader>[m]
-(defaults to :let mapleader = "\") toggles "escape-mode", where numbers are
-treated as normal text. +
+followed as soon as it can be uniquely identified. Often it can be useful to
+combine these techniques to narrow down results with some letters, and then
+typing a single digit to make the match unique. Pressing [m]<Leader>[m]
+(defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode", where numbers
+are treated as normal text. +
 [m]<Esc>[m] stops this mode at any time.
 ________________________________________________________________________________
 

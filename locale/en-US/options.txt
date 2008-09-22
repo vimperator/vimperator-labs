@@ -391,10 +391,10 @@ ____
 
 
 |\'hlss'| |\'hlsearchstyle'|
-||'hlsearchstyle' 'hlss'||
+||'hlsearchstyle' 'hlss'|| string
 ____
-string (default: color: black; background-color: yellow; padding: 0; display:
-inline;) +
+(default: color: black; background-color: yellow; padding: 0; display:
+inline;)
 
 CSS specification of highlighted search items
 ____
@@ -476,8 +476,10 @@ ____
 
 
 |\'nextpattern'|
-||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
+||'nextpattern'|| stringlist
 ____
+(default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
+
 Patterns to use when guessing the 'next' page in a document sequence.
 Each pattern, in order, is matched against all links in the page with the first match being used.
 The patterns are case insensitive regular expressions.
@@ -566,11 +568,28 @@ ____
 //____
 
 |\'previouspattern'|
-||'previouspattern'|| stringlist (default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
+||'previouspattern'|| stringlist
 ____
+(default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
+
 Patterns to use when guessing the 'previous' page in a document sequence
 Each pattern, in order, is matched against all links in the page with the first match being used.
 The patterns are case insensitive regular expressions.
+____
+
+
+|\'rtp'| |\'runtimepath'|
+||'runtimepath' 'rtp'|| stringlist
+____
+(default: Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+
+List of directories searched for runtime files: +
+macros/ +
+plugin/ +
+
+Example: [c]:set runtimepath=\~/myvimperator,\~/.vimperator[c] +
+This will search for plugins in both "\~/myvimperator/plugin" and
+"\~/.vimperator/plugin"
 ____
 
 
@@ -761,8 +780,10 @@ ____
 
 
 |\'wsp'| |\'wordseparators'| +
-||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+||'wordseparators' 'wsp'|| string
 ____
+(default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+
 A regex which defines the word separators which are used for the 'hintmatching' types
 "wordstartswith" and "firstletters" to split the words in the text of a link.
 ____

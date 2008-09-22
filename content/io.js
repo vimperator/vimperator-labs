@@ -33,41 +33,19 @@ liberator.IO = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const WINDOWS = navigator.platform == "Win32";
+    const EXTENSION_NAME = liberator.config.name.toLowerCase(); // "vimperator" or "muttator"
+
     var environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                        .getService(Components.interfaces.nsIEnvironment);
 
-    const WINDOWS = navigator.platform == "Win32";
     var cwd = null, oldcwd = null;
-    var extname = liberator.config.name.toLowerCase(); // "vimperator" or "muttator"
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
     var scriptNames = [];
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
+    // default option values
     var cdpath = "," + (environmentService.get("CDPATH").replace(/[:;]/g, ",") || ",");
-
-    liberator.options.add(["cdpath", "cd"],
-        "List of directories searched when executing :cd",
-        "stringlist", cdpath,
-        {
-            setter: function (value)
-            {
-                var values = value.split(",");
-                var expanded = "";
-
-                for (let i = 0; i < values.length; i++)
-                {
-                    expanded += liberator.io.expandPath(values[i]);
-                    if (i < values.length - 1)
-                        expanded += ",";
-                }
-
-                return expanded;
-            }
-        });
-
+    var runtimepath = "~/" + (WINDOWS ? "" : ".") + EXTENSION_NAME;
     var shell, shellcmdflag;
 
     if (WINDOWS)
@@ -82,6 +60,48 @@ liberator.IO = function () //{{{
         shell = environmentService.get("SHELL") || "sh";
         shellcmdflag = "-c";
     }
+
+    function expandPathList(list)
+    {
+        var expanded = [];
+
+        for (let [,path] in Iterator(list.split(",")))
+            expanded.push(liberator.io.expandPath(path));
+
+        return expanded.join(",");
+    }
+
+    // TODO: why are we passing around so many strings? I know that the XPCOM
+    // file API is limited but...
+    function joinPaths(head, tail)
+    {
+        let pathSeparator = WINDOWS ? "\\" : "/";
+        let sep = pathSeparator.replace("\\", "\\\\");
+
+        head = head.replace(RegExp(sep + "$"), "");
+        tail = tail.replace(RegExp("^" + sep), "");
+
+        return head + pathSeparator + tail;
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.options.add(["cdpath", "cd"],
+        "List of directories searched when executing :cd",
+        "stringlist", cdpath,
+        {
+            setter: function (value) expandPathList(value)
+        });
+
+    liberator.options.add(["runtimepath", "rtp"],
+        "List of directories searched for runtime files",
+        "stringlist", runtimepath,
+        {
+            setter: function (value) expandPathList(value)
+        });
 
     liberator.options.add(["shell", "sh"],
         "Shell to use for executing :! and :run commands",
@@ -143,7 +163,7 @@ liberator.IO = function () //{{{
 
                 for (let i = 0; i < directories.length; i++)
                 {
-                    var dir = directories[i] + liberator.io.directorySeparator + args;
+                    var dir = joinPaths(directories[i], args);
                     if (liberator.io.setCurrentDirectory(dir))
                     {
                         // FIXME: we're just overwriting the error message from
@@ -184,7 +204,7 @@ liberator.IO = function () //{{{
         { argCount: "0" });
 
     // mkv[imperatorrc] or mkm[uttatorrc]
-    liberator.commands.add(["mk" + extname.substr(0, 1) + "[" + extname.substr(1) + "rc]"],
+    liberator.commands.add(["mk" + EXTENSION_NAME.substr(0, 1) + "[" + EXTENSION_NAME.substr(1) + "rc]"],
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
@@ -193,7 +213,7 @@ liberator.IO = function () //{{{
             if (args)
                 filename = args;
             else
-                filename = "~/" + (WINDOWS ? "_" : ".") + extname + "rc";
+                filename = "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
 
             var file = liberator.io.getFile(filename);
             if (file.exists() && !special)
@@ -315,11 +335,6 @@ liberator.IO = function () //{{{
         MODE_SYNC: 0x40,
         MODE_EXCL: 0x80,
 
-        get directorySeparator()
-        {
-            return WINDOWS ? "\\" : "/";
-        },
-
         expandPath: function (path)
         {
             // TODO: proper pathname separator translation like Vim - this should be done elsewhere
@@ -364,6 +379,7 @@ liberator.IO = function () //{{{
             var file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
 
+            // FIXME: why aren't we using the "CurWorkD" special directory -- djk
             var dirs = [cwd, "$PWD", "~"];
             for (let i = 0; i < dirs.length; i++)
             {
@@ -385,7 +401,7 @@ liberator.IO = function () //{{{
             }
 
             // just make sure we return something which always is a directory
-            return WINDOWS ? "C:\\" : "/";
+            return WINDOWS ? "C:\\" : "/"; // XXX
         },
 
         setCurrentDirectory: function (newdir)
@@ -412,24 +428,20 @@ liberator.IO = function () //{{{
             return ioManager.getCurrentDirectory();
         },
 
-        getSpecialDirectory: function (directory)
+        getRuntimeDirectories: function (specialDirectory)
         {
-            var pluginDir;
+            let dirs = liberator.options["runtimepath"].split(",");
 
-            if (WINDOWS)
-                pluginDir = "~/" + liberator.config.name.toLowerCase() + "/" + directory;
-            else
-                pluginDir = "~/." + liberator.config.name.toLowerCase() + "/" + directory;
+            dirs = dirs.map(function (dir) liberator.io.getFile(joinPaths(dir, specialDirectory)))
+                       .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
 
-            pluginDir = ioManager.getFile(ioManager.expandPath(pluginDir));
-
-            return pluginDir.exists() && pluginDir.isDirectory() ? pluginDir : null;
+            return dirs;
         },
 
         getRCFile: function ()
         {
-            var rcFile1 = ioManager.getFile("~/." + liberator.config.name.toLowerCase() + "rc");
-            var rcFile2 = ioManager.getFile("~/_" + liberator.config.name.toLowerCase() + "rc");
+            var rcFile1 = ioManager.getFile("~/." + EXTENSION_NAME + "rc");
+            var rcFile2 = ioManager.getFile("~/_" + EXTENSION_NAME + "rc");
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1];
@@ -461,7 +473,7 @@ liberator.IO = function () //{{{
                 let expandedPath = ioManager.expandPath(path);
 
                 if (!/^([a-zA-Z]:|\/)/.test(expandedPath)) // doesn't start with /, C:
-                    expandedPath = ioManager.getCurrentDirectory() + (WINDOWS ? "\\" : "/") + expandedPath;
+                    expandedPath = joinPaths(ioManager.getCurrentDirectory(), expandedPath);
 
                 file.initWithPath(expandedPath);
             }
@@ -471,14 +483,14 @@ liberator.IO = function () //{{{
 
         // TODO: make secure
         // returns a nsILocalFile or null if it could not be created
-        // FIXME: is there a reason the "TmpD" special file isn't being used? -- djk
+        // FIXME: is there a reason the "TmpD" special directory isn't being used? -- djk
         createTempFile: function ()
         {
             let file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
-            let tmpName = extname + ".tmp";
+            let tmpName = EXTENSION_NAME + ".tmp";
 
-            switch (extname)
+            switch (EXTENSION_NAME)
             {
                 case "muttator":
                     tmpName = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
@@ -487,7 +499,7 @@ liberator.IO = function () //{{{
                     try
                     {
                         if (window.content.document.location.hostname)
-                            tmpName = extname + "-" + window.content.document.location.hostname + ".tmp";
+                            tmpName = EXTENSION_NAME + "-" + window.content.document.location.hostname + ".tmp";
                     }
                     catch (e) {}
                     break;
@@ -615,20 +627,21 @@ liberator.IO = function () //{{{
 lookup:
                 for (let i = 0; i < dirs.length; i++)
                 {
-                    var path = dirs[i] + (WINDOWS ? "\\" : "/") + program;
+                    var path = joinPaths(dirs[i], program);
                     try
                     {
                         file.initWithPath(path);
                         if (file.exists())
                             break;
 
+                        // TODO: couldn't we just palm this off to the start command?
                         // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
                             var extensions = environmentService.get("PATHEXT").split(";");
                             for (let j = 0; j < extensions.length; j++)
                             {
-                                path = dirs[i] + "\\" + program + extensions[j];
+                                path = joinPaths(dirs[i], program) + extensions[j];
                                 file.initWithPath(path);
                                 if (file.exists())
                                     break lookup;

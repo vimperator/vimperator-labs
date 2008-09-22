@@ -538,24 +538,43 @@ liberator.Events = function () //{{{
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since liberator.io. is loaded after liberator.events.
     setTimeout (function () {
+        // FIXME: largely duplicated for loading plugins
         try
         {
-            var files = liberator.io.readDirectory(liberator.io.getSpecialDirectory("macros"));
-            for (let i = 0; i < files.length; i++)
-            {
-                var file = files[i];
-                if (!file.exists() || file.isDirectory() ||
-                    !file.isReadable() || !/^[\w_-]+(\.vimp)?$/i.test(file.leafName))
-                        continue;
+            let dirs = liberator.io.getRuntimeDirectories("macros");
 
-                var name = file.leafName.replace(/\.vimp$/i, "");
-                macros.set(name, liberator.io.readFile(file).split(/\n/)[0]);
-                liberator.log("Macro " + name + " added: " + macros.get(name), 5);
+            if (dirs.length > 0)
+            {
+                for (let [,dir] in Iterator(dirs))
+                {
+                    if (liberator.options["verbose"] >= 2)
+                        liberator.echo("Searching for \"macros/*\" in \"" + dir.path + "\"\n");
+
+                    liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
+
+                    let files = liberator.io.readDirectory(dir.path);
+
+                    files.forEach(function (file) {
+                        if (!file.exists() || file.isDirectory() ||
+                            !file.isReadable() || !/^[\w_-]+(\.vimp)?$/i.test(file.leafName))
+                                return;
+
+                        let name = file.leafName.replace(/\.vimp$/i, "");
+                        macros.set(name, liberator.io.readFile(file).split(/\n/)[0]);
+
+                        liberator.log("Macro " + name + " added: " + macros.get(name), 5);
+                    });
+                }
+            }
+            else
+            {
+                liberator.log("No user macros directory found", 3);
             }
         }
         catch (e)
         {
-            liberator.log("Macro directory not found or error reading macro file", 9);
+            // thrown if directory does not exist
+            liberator.log("Error sourcing macros directory: " + e, 9);
         }
     }, 100);
 

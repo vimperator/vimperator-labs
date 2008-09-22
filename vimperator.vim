@@ -46,11 +46,12 @@ syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<\
 syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc cdpath cd complete cpt defsearch ds editor
     \ extendedhinttags eht eventignore ei guioptions go helpfile hf hintmatching hm hintstyle hs hinttags ht hinttimeout hto
     \ history hi hlsearchstyle hlss laststatus ls linkbgcolor lbc linkfgcolor lfc newtab nextpattern pageinfo pa
-    \ popups pps previewheight pvh previouspattern scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal
-    \ suggestengines titlestring urlseparator verbose vbs visualbellstyle t_vb wildignore wig wildmode wim wildoptions wop
-    \ wordseparators wsp
+    \ popups pps previewheight pvh previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli
+    \ showtabline stal suggestengines titlestring urlseparator verbose vbs visualbellstyle t_vb wildignore wig wildmode wim
+    \ wildoptions wop wordseparators wsp
     \ contained nextgroup=vimperatorSetMod
 
+" toggle options
 syn match vimperatorOption "\<\%(no\|inv\)\=\%(focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\|incsearch\|is\)\>!\="
     \ contained nextgroup=vimperatorSetMod
 syn match vimperatorOption "\<\%(no\|inv\)\=\%(insertmode\|im\|hlsearch\|hls\|linksearch\|lks\|loadplugins\|lpl\|more\)\>!\="
