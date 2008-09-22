@@ -277,6 +277,7 @@ section:Options[option-index]
 ||'popups'|| Where to show requested popup windows +
 ||'preload'|| Speed up first time history/bookmark completion +
 ||'previouspattern'|| Patterns to use when guessing the 'previous' page in a document sequence +
+||'runtimepath'|| List of directories searched for runtime files +
 ||'scroll'|| Number of lines to scroll with and commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
 ||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
