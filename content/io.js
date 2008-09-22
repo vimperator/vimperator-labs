@@ -191,14 +191,9 @@ liberator.IO = function () //{{{
             // TODO: "E172: Only one file name allowed"
             var filename;
             if (args)
-            {
                 filename = args;
-            }
             else
-            {
-                filename = (navigator.platform == "Win32") ? "~/_" : "~/.";
-                filename += extname + "rc";
-            }
+                filename = "~/" + (WINDOWS ? "_" : ".") + extname + "rc";
 
             var file = liberator.io.getFile(filename);
             if (file.exists() && !special)
