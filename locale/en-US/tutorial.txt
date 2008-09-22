@@ -151,7 +151,7 @@ To activate QuickHint mode, press either [m]f[m] or [m]F[m].  The lower-case
 
 To test it, try this link: http://vimperator.mozdev.org/[Vimperator Homepage].
 Activate QuickHint mode with [m]f[m] or [m]F[m] to highlight all currently
-visible links.  The start typing the text of the link.  The link should be
+visible links.  Then start typing the text of the link.  The link should be
 uniquely identified soon, and Vimperator will open it.  Once you're done,
 remember to use [m]<C-o>[m] (``History Back'') or [m]d[m] (``Delete Buffer'')
 to return here, depending on which key you used to activate QuickHint mode.
