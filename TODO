@@ -41,7 +41,6 @@ FEATURES:
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
 6 pipe selected text/link/website to an external command
-6 :set wildoptions=auto mode, which would list completions on each keystroke (maybe performance problems)
 6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
 6 ;?<hint> should show more information
 5 Favicons in completion windows and some other places?
