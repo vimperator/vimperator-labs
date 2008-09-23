@@ -248,14 +248,14 @@ liberator.Mail = function () //{{{
         function () { content.focus(); });
 
     liberator.mappings.add(modes, ["I"],
-	    "Open the message in new tab",
-	    function ()
-	    {
-	    	if (gDBView && gDBView.selection.count < 1)
-	    		return liberator.beep();
+        "Open the message in new tab",
+        function ()
+        {
+            if (gDBView && gDBView.selection.count < 1)
+                return liberator.beep();
 
-	    	MsgOpenNewTabForMessage();
-	    });
+            MsgOpenNewTabForMessage();
+        });
 
     /*liberator.mappings.add([liberator.modes.NORMAL],
         ["o"], "Open a message",

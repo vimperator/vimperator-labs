@@ -1190,7 +1190,7 @@ const liberator = (function () //{{{
                 thread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
-			thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
+            thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
         }
 
     };

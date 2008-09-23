@@ -355,29 +355,29 @@ liberator.Completion = function () //{{{
             if (!filter)
                 return [0, []];
 
-        	var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
-        	var responseType = "application/x-suggestions+json";
-        	var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-        	                   .getService(Components.interfaces.nsIBrowserSearchService);
+            var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
+            var responseType = "application/x-suggestions+json";
+            var ss = Components.classes["@mozilla.org/browser/search-service;1"]
+                               .getService(Components.interfaces.nsIBrowserSearchService);
 
-        	var completions = [];
-        	engineList.forEach(function (name) {
-        		var query = filter;
-        		var queryURI;
-        		var engine = ss.getEngineByAlias(name);
-        		var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
-        		var matches = query.match(reg);
-        		if (matches)
-            		query = matches[2];
+            var completions = [];
+            engineList.forEach(function (name) {
+                var query = filter;
+                var queryURI;
+                var engine = ss.getEngineByAlias(name);
+                var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
+                var matches = query.match(reg);
+                if (matches)
+                    query = matches[2];
 
-            	if (engine && engine.supportsResponseType(responseType))
+                if (engine && engine.supportsResponseType(responseType))
                     queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
                 else
                     return [0, []];
 
-            	var xhr = new XMLHttpRequest();
-            	xhr.open("GET", queryURI, false);
-            	xhr.send(null);
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", queryURI, false);
+                xhr.send(null);
 
                 var json = Components.classes["@mozilla.org/dom/json;1"]
                                      .createInstance(Components.interfaces.nsIJSON);
@@ -385,18 +385,18 @@ liberator.Completion = function () //{{{
                 if (!results)
                     return [0, []];
 
-            	results.forEach(function (item) {
+                results.forEach(function (item) {
                     // make sure we receive strings, otherwise a man-in-the-middle attack
                     // could return objects which toString() method could be called to
                     // execute untrusted code
                     if (typeof item != "string")
                         return [0, []];
 
-            	    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
-            	});
-        	});
+                    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
+                });
+            });
 
-        	return [0, completions];
+            return [0, completions];
         },
 
         stylesheet: function (filter)

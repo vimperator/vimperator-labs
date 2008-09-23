@@ -142,26 +142,26 @@ liberator.Addressbook = function () //{{{
 
     return {
 
-		add: function (address, firstname, lastname, displayName)
-		{
-			var directory = getDirectoryFromURI(kPersonalAddressbookURI);
-			var card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
-					             .createInstance(Components.interfaces.nsIAbCard);
+        add: function (address, firstname, lastname, displayName)
+        {
+            var directory = getDirectoryFromURI(kPersonalAddressbookURI);
+            var card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
+                                 .createInstance(Components.interfaces.nsIAbCard);
 
-			if (!address || !directory || !card)
-				return false;
+            if (!address || !directory || !card)
+                return false;
 
-			card.primaryEmail = address;
-			card.firstName = firstname;
-			card.lastName = lastname;
-			card.displayName = displayName;
+            card.primaryEmail = address;
+            card.firstName = firstname;
+            card.lastName = lastname;
+            card.displayName = displayName;
 
-			return directory.addCard(card);
-		},
+            return directory.addCard(card);
+        },
 
         // TODO: add telephone number support
-		list: function (filter, newMail)
-		{
+        list: function (filter, newMail)
+        {
             var addresses = [];
             var dirs = abManager.directories;
             var lowerFilter = filter.toLowerCase();
@@ -189,22 +189,22 @@ liberator.Addressbook = function () //{{{
                 return false;
             }
 
-			if (newMail)
-			{
-				// Now we have to create a new message
-				var args = {};
-				args.to = addresses.map(
+            if (newMail)
+            {
+                // Now we have to create a new message
+                var args = {};
+                args.to = addresses.map(
                     function (address) "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""
                 ).join(", ");
 
-				liberator.mail.composeNewMail(args);
-			}
-			else
-			{
-				var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-						   "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
-				for (let i = 0; i < addresses.length; i++)
-				{
+                liberator.mail.composeNewMail(args);
+            }
+            else
+            {
+                var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
+                           "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
+                for (let i = 0; i < addresses.length; i++)
+                {
                     var displayName = liberator.util.escapeHTML(liberator.util.clip(addresses[i][0], 50));
                     var mailAddr = liberator.util.escapeHTML(addresses[i][1]);
                     list += "<tr><td>" + displayName + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + mailAddr + "</a></td></tr>";

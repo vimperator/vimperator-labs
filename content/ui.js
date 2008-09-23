@@ -307,15 +307,15 @@ liberator.CommandLine = function () //{{{
          "Engine Alias which has a feature of suggest",
          "stringlist", "google",
          {
-         	validator: function (value)
-         	{
-         		var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-         		                   .getService(Components.interfaces.nsIBrowserSearchService);
-         		return value.split(",").every(function (item) {
-         			var e = ss.getEngineByAlias(item);
-         			return (e && e.supportsResponseType("application/x-suggestions+json")) ? true : false;
-         		});
-         	}
+            validator: function (value)
+            {
+                var ss = Components.classes["@mozilla.org/browser/search-service;1"]
+                                   .getService(Components.interfaces.nsIBrowserSearchService);
+                return value.split(",").every(function (item) {
+                    var e = ss.getEngineByAlias(item);
+                    return (e && e.supportsResponseType("application/x-suggestions+json")) ? true : false;
+                });
+            }
          });
 
     liberator.options.add(["showmode", "smd"],
