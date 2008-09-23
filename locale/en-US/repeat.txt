@@ -80,6 +80,16 @@ printed.
 ________________________________________________________________________________
 
 
+|:ru| |:runtime|
+||:ru[ntime][!]| {file} ...|| +
+________________________________________________________________________________
+Source the specified file from each directory in 'runtimepath'. Example: +
+[c]:runtime plugin/foobar.vimp[c] +
+Only the first found file is sourced. When [!] is given, all found files are
+sourced.
+________________________________________________________________________________
+
+
 |:scrip| |:scriptnames|
 ||:scrip[tnames]|| +
 ________________________________________________________________________________

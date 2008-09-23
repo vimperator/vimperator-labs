@@ -267,6 +267,36 @@ liberator.IO = function () //{{{
             liberator.io.writeFile(file, line);
         });
 
+    liberator.commands.add(["ru[ntime]"],
+        "Source the specified file from each directory in 'runtimepath'",
+        function (args, special)
+        {
+            // TODO: support backslash escaped whitespace in filenames
+            //     : wildcards/regexp
+            //     : unify with startup sourcing loop
+            let paths = args.arguments;
+            let runtimeDirs = liberator.options["runtimepath"].split(",");
+
+            outer:
+            for (let [,runtimeDir] in Iterator(runtimeDirs))
+            {
+                for (let [,path] in Iterator(paths))
+                {
+                    let file = liberator.io.getFile(joinPaths(runtimeDir, path));
+
+                    if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
+                    {
+                        liberator.io.source(file.path, false);
+
+                        if (!special)
+                            break outer;
+                    }
+                }
+            }
+        },
+        { argCount: "+" }
+    );
+
     liberator.commands.add(["scrip[tnames]"],
         "List all sourced script names",
         function ()

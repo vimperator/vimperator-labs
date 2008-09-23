@@ -203,6 +203,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:reload|| Reload current page +
 ||:reloadall|| Reload all tab pages +
 ||:restart|| Force undefined to restart +
+||:runtime|| Source the specified file from each directory in 'runtimepath' +
 ||:saveas|| Save current document to disk +
 ||:sbclose|| Close the sidebar window +
 ||:scriptnames|| List all sourced script names +
