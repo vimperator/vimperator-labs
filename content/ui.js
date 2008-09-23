@@ -1047,7 +1047,7 @@ liberator.CommandLine = function () //{{{
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
 
-            completionList.setItems(compl, -1);
+            completionList.setItems(compl);
 
             if (completionIndex >= 0 && completionIndex < compl.length && completionIndex < completions.length)
             {

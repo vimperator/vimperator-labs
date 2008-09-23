@@ -52,6 +52,14 @@ function getCharPref(name)
     }
 }
 
+function setCharPref(name, value)
+{
+    var str = Components.classes['@mozilla.org/supports-string;1']
+                        .createInstance(Components.interfaces.nsISupportsString);
+    str.data = value;
+    return prefService.setComplexValue(name, Components.interfaces.nsISupportsString, str);
+}
+
 function loadPref(name, store, type)
 {
     if (store)
@@ -65,7 +73,7 @@ function loadPref(name, store, type)
 function savePref(obj)
 {
     if (obj.store)
-        prefService.setCharPref(obj.name, obj.serial)
+        setCharPref(obj.name, obj.serial)
 }
 
 var prototype = {
