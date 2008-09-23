@@ -654,7 +654,6 @@ lookup:
 
             if (!file.exists())
             {
-                // XXX
                 liberator.echoerr("Command not found: " + program);
                 return -1;
             }
@@ -675,13 +674,16 @@ lookup:
             var stdoutFile = ioManager.createTempFile();
             var stderrFile = ioManager.createTempFile();
 
+            function escapeQuotes(str) str.replace('"', '\\"');
+
             if (!stdoutFile || !stderrFile) // FIXME: error reporting
                 return "";
 
             if (WINDOWS)
                 var command = str + " > " + stdoutFile.path + " 2> " + stderrFile.path;
             else
-                var command = str + " > \"" + stdoutFile.path.replace('"', '\\"') + "\"" + " 2> \"" + stderrFile.path.replace('"', '\\"') + "\"";
+                var command = str + " > \"" + escapeQuotes(stdoutFile.path) + "\""
+                                  + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
 
             var stdinFile = null;
 
@@ -689,7 +691,7 @@ lookup:
             {
                 stdinFile = ioManager.createTempFile(); // FIXME: no returned file?
                 ioManager.writeFile(stdinFile, input);
-                command += " < \"" + stdinFile.path.replace('"', '\\"') + "\"";
+                command += " < \"" + escapeQuotes(stdinFile.path) + "\"";
             }
 
             var res = ioManager.run(liberator.options["shell"], [liberator.options["shellcmdflag"], command], true);
