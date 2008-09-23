@@ -282,7 +282,7 @@ liberator.config = { //{{{
                 }
             },
             {
-                completer: function (filter) { return liberator.completion.url(filter); }
+                completer: function (filter) liberator.completion.url(filter)
             });
 
         liberator.commands.add(["redr[aw]"],
@@ -359,7 +359,7 @@ liberator.config = { //{{{
                     liberator.open("about:blank", liberator.NEW_WINDOW);
             },
             {
-                completer: function (filter) { return liberator.completion.url(filter); }
+                completer: function (filter) liberator.completion.url(filter)
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}

@@ -139,12 +139,12 @@ liberator.Mail = function () //{{{
         if (copy)
         {
             MsgCopyMessage(folders[0]);
-            setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
+            setTimeout(function () liberator.echo(count + " message(s) copied to " + folders[0].prettyName), 100);
         }
         else
         {
             MsgMoveMessage(folders[0]);
-            setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
+            setTimeout(function () liberator.echo(count + " message(s) moved to " + folders[0].prettyName), 100);
         }
         return true;
     }
@@ -207,7 +207,7 @@ liberator.Mail = function () //{{{
         "Set the layout of the mail window",
         "string", "inherit",
         {
-            validator: function (value) { return /^(classic|wide|vertical|inherit)$/.test(value); },
+            validator: function (value) /^(classic|wide|vertical|inherit)$/.test(value),
             setter:    function (value)
             {
                 switch (value)
@@ -276,32 +276,32 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add(modes, ["j", "<Right>"],
         "Select next message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["gj"],
         "Select next message, including closed threads",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["J", "<Tab>"],
         "Select next unread message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) !msg.isRead, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["k", "<Left>"],
         "Select previous message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["gk"],
         "Select previous message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["K"],
         "Select previous unread message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return !msg.isRead; }, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) !msg.isRead, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["*"],
@@ -311,7 +311,7 @@ liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                liberator.mail.selectMessage(function (msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, false, count);
+                liberator.mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, false, count);
             }
             catch (e) { liberator.beep(); }
         },
@@ -324,7 +324,7 @@ liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                liberator.mail.selectMessage(function (msg) { return msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0; }, true, true, true, count);
+                liberator.mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, true, count);
             }
             catch (e) { liberator.beep(); }
         },
@@ -376,12 +376,12 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add([liberator.modes.MESSAGE], ["<Left>"],
         "Select previous message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add([liberator.modes.MESSAGE], ["<Right>"],
         "Select next message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return true; }, false, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     // UNDO/REDO
@@ -432,22 +432,22 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add(modes, ["]s"],
         "Select next starred message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return msg.isFlagged; }, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) msg.isFlagged, true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[s"],
         "Select previous starred message",
-        function (count) { liberator.mail.selectMessage(function (msg) { return msg.isFlagged; }, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) msg.isFlagged, true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["]a"],
         "Select next message with an attachment",
-        function (count) { liberator.mail.selectMessage(function (msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, false, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[a"],
         "Select previous message with an attachment",
-        function (count) { liberator.mail.selectMessage(function (msg) { return gDBView.db.HasAttachments(msg.messageKey); }, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, true, count); },
         { flags: liberator.Mappings.flags.COUNT });
 
     // FOLDER SWITCHING
@@ -591,9 +591,7 @@ liberator.Mail = function () //{{{
         "Mark all messages as read",
         function ()
         {
-            liberator.mail.getFolders("", false).forEach(function (folder) {
-                folder.markAllMessagesRead();
-            });
+            liberator.mail.getFolders("", false).forEach(function (folder) folder.markAllMessagesRead());
         });
 
     // DISPLAY OPTIONS
@@ -675,7 +673,7 @@ liberator.Mail = function () //{{{
                 SelectFolder(folder.URI);
         },
         {
-            completer: function (filter) { return getFolderCompletions(filter); }
+            completer: function (filter) getFolderCompletions(filter)
         });
 
     liberator.commands.add(["m[essage]"],
@@ -697,7 +695,7 @@ liberator.Mail = function () //{{{
                 addresses = addresses.concat(mailargs.cc);
 
             // TODO: is there a better way to check for validity?
-            if (addresses.some(function (recipient) { return !(/\S@\S+\.\S/.test(recipient)); }))
+            if (addresses.some(function (recipient) !(/\S@\S+\.\S/.test(recipient))))
             {
                 liberator.echoerr("Exxx: Invalid e-mail address");
                 return;
@@ -717,14 +715,14 @@ liberator.Mail = function () //{{{
         "Copy selected messages",
         function (args, special) { moveOrCopy(true, args); },
         {
-            completer: function (filter) { return getFolderCompletions(filter); }
+            completer: function (filter) getFolderCompletions(filter)
         });
 
     liberator.commands.add(["move[to]"],
         "Move selected messages",
         function (args, special) { moveOrCopy(false, args); },
         {
-            completer: function (filter) { return getFolderCompletions(filter); }
+            completer: function (filter) getFolderCompletions(filter)
         });
 
     liberator.commands.add(["empty[trash]"],

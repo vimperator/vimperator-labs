@@ -154,7 +154,7 @@ liberator.Buffer = function () //{{{
                 window.fullScreen = value;
                 return value;
             },
-            getter: function () { return window.fullScreen; }
+            getter: function () window.fullScreen
         });
 
     liberator.options.add(["nextpattern"],
@@ -175,21 +175,21 @@ liberator.Buffer = function () //{{{
                     ["m", "Meta tags"]
                 ];
             },
-            validator: function (value) { return !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1); }
+            validator: function (value) !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1)
         });
 
     liberator.options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
         "number", 0,
         {
-            validator: function (value) { return value >= 0; }
+            validator: function (value) value >= 0
         });
 
     liberator.options.add(["showstatuslinks", "ssli"],
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            validator: function (value) { return (value >= 0 && value <= 2); },
+            validator: function (value) value >= 0 && value <= 2,
             completer: function (filter)
             {
                 return [
@@ -509,7 +509,7 @@ liberator.Buffer = function () //{{{
         "Select the author style sheet to apply",
         function (args)
         {
-            var titles = liberator.buffer.alternateStyleSheets.map(function (stylesheet) { return stylesheet.title; });
+            var titles = liberator.buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
             if (args && titles.indexOf(args) == -1)
             {
@@ -523,7 +523,7 @@ liberator.Buffer = function () //{{{
             stylesheetSwitchAll(window.content, args);
         },
         {
-            completer: function (filter) { return liberator.completion.stylesheet(filter); }
+            completer: function (filter) liberator.completion.stylesheet(filter)
         });
 
     liberator.commands.add(["re[load]"],
@@ -611,9 +611,9 @@ liberator.Buffer = function () //{{{
         {
             var stylesheets = getAllStyleSheets(window.content);
 
-            stylesheets = stylesheets.filter(function (stylesheet) {
-                return /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title);
-            });
+            stylesheets = stylesheets.filter(
+                function (stylesheet) /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title)
+            );
 
             return stylesheets;
         },
@@ -1011,8 +1011,7 @@ liberator.Buffer = function () //{{{
             var frames = [];
 
             // find all frames - depth-first search
-            (function (frame)
-            {
+            (function (frame) {
                 if (frame.document.body.localName.toLowerCase() == "body")
                     frames.push(frame);
                 Array.forEach(frame.frames, arguments.callee);
@@ -1025,9 +1024,9 @@ liberator.Buffer = function () //{{{
             // TODO: find a better way to do this - walking the tree is too slow
             var start = document.commandDispatcher.focusedWindow;
             frames = frames.filter(function (frame) {
-                    frame.focus();
-                    if (document.commandDispatcher.focusedWindow == frame)
-                        return frame;
+                frame.focus();
+                if (document.commandDispatcher.focusedWindow == frame)
+                    return frame;
             });
             start.focus();
 
@@ -1089,7 +1088,7 @@ liberator.Buffer = function () //{{{
             doc.body.appendChild(indicator);
 
             // remove the frame indicator
-            setTimeout(function () { doc.body.removeChild(indicator); }, 500);
+            setTimeout(function () doc.body.removeChild(indicator), 500);
         },
 
         // similar to pageInfo
@@ -1301,7 +1300,7 @@ liberator.Buffer = function () //{{{
                 }
 
                 // sort: ignore-case
-                tmpSort.sort(function (a, b) { return a.toLowerCase() > b.toLowerCase() ? 1 : -1; });
+                tmpSort.sort(function (a, b) a.toLowerCase() > b.toLowerCase() ? 1 : -1);
                 for (let i = 0; i < tmpSort.length; i++)
                     pageMeta.push([tmpDict[tmpSort[i]][0], liberator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
             }
@@ -1745,8 +1744,8 @@ liberator.Marks = function () //{{{
             if (filter.length > 0)
             {
                 marks = marks.filter(function (mark) {
-                        if (filter.indexOf(mark[0]) > -1)
-                            return mark;
+                    if (filter.indexOf(mark[0]) > -1)
+                        return mark;
                 });
                 if (marks.length == 0)
                 {

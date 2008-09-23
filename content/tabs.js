@@ -142,7 +142,7 @@ liberator.Tabs = function () //{{{
 
                 return value;
             },
-            validator: function (value) { return (value >= 0 && value <= 2); },
+            validator: function (value) (value >= 0 && value <= 2),
             completer: function (filter)
             {
                 return [
@@ -170,7 +170,9 @@ liberator.Tabs = function () //{{{
                 },
                 validator: function (value)
                 {
-                    return value.split(",").every(function (item) { return /^(homepage|quickmark|tabopen|paste|)$/.test(item); });
+                    return value.split(",").every(
+                        function (item) /^(homepage|quickmark|tabopen|paste|)$/.test(item)
+                    );
                 }
             });
 
@@ -191,7 +193,9 @@ liberator.Tabs = function () //{{{
                 },
                 validator: function (value)
                 {
-                    return value == "all" || value.split(",").every(function (item) { return /^(addons|downloads|help|javascript|prefs|)$/.test(item); });
+                    return value == "all" || value.split(",").every(
+                        function (item) /^(addons|downloads|help|javascript|prefs|)$/.test(item)
+                    );
                 }
             });
 
@@ -222,7 +226,7 @@ liberator.Tabs = function () //{{{
                         ["4", "Open in the same tab unless it has a specific requested size"]
                     ];
                 },
-                validator: function (value) { return (value >= 0 && value <= 4); }
+                validator: function (value) value >= 0 && value <= 4
             });
     }
 
@@ -339,7 +343,9 @@ liberator.Tabs = function () //{{{
             else // just remove the current tab
                 liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         },
-        { completer: function (filter) { return liberator.completion.buffer(filter); } });
+        {
+            completer: function (filter) liberator.completion.buffer(filter)
+        });
 
     // TODO: this should open in a new tab positioned directly after the current one, not at the end
     liberator.commands.add(["tab"],
@@ -351,7 +357,7 @@ liberator.Tabs = function () //{{{
             liberator.forceNewTab = false;
         },
         {
-            completer: function (filter) { return liberator.completion.ex(filter); }
+            completer: function (filter) liberator.completion.ex(filter)
         });
 
     liberator.commands.add(["tabl[ast]", "bl[ast]"],
@@ -456,7 +462,9 @@ liberator.Tabs = function () //{{{
                     liberator.tabs.switchTo(args, special);
                 }
             },
-            { completer: function (filter) { return liberator.completion.buffer(filter); } });
+            {
+                completer: function (filter) liberator.completion.buffer(filter)
+            });
 
         liberator.commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
@@ -521,7 +529,9 @@ liberator.Tabs = function () //{{{
                 else
                     liberator.open("about:blank", where);
             },
-            { completer: function (filter) { return liberator.completion.url(filter); } });
+            {
+                completer: function (filter) liberator.completion.url(filter)
+            });
 
         liberator.commands.add(["tabde[tach]"],
             "Detach current tab to its own window",

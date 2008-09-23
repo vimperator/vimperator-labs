@@ -88,7 +88,7 @@ liberator.Mappings = function () //{{{
     function addMap(map, userMap)
     {
         var where = userMap ? user : main;
-        map.modes.forEach(function (mode) { where[mode].push(map); });
+        map.modes.forEach(function (mode) where[mode].push(map));
     }
 
     function getMap(mode, cmd, stack)
@@ -204,10 +204,7 @@ liberator.Mappings = function () //{{{
             "Map a key sequence" + modeDescription,
             function (args) { map(args, modes, false); },
             {
-                completer: function (filter)
-                {
-                    return liberator.completion.userMapping(filter, modes);
-                }
+                completer: function (filter) liberator.completion.userMapping(filter, modes)
             });
 
         liberator.commands.add([ch + "no[remap]"],
@@ -246,10 +243,7 @@ liberator.Mappings = function () //{{{
                     liberator.echoerr("E31: No such mapping");
             },
             {
-                completer: function (filter)
-                {
-                    return liberator.completion.userMapping(filter, modes);
-                }
+                completer: function (filter) liberator.completion.userMapping(filter, modes)
             });
     }
 
@@ -291,12 +285,12 @@ liberator.Mappings = function () //{{{
 
         add: function (modes, keys, description, action, extra)
         {
-            addMap (new liberator.Map(modes, keys, description, action, extra), false);
+            addMap(new liberator.Map(modes, keys, description, action, extra), false);
         },
 
         addUserMap: function (modes, keys, description, action, extra)
         {
-            keys = keys.map(function (key) { return expandLeader(key); });
+            keys = keys.map(function (key) expandLeader(key));
             var map = new liberator.Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
@@ -306,7 +300,7 @@ liberator.Mappings = function () //{{{
                     removeMap(map.modes[j], map.names[i]);
             }
 
-            addMap (map, true);
+            addMap(map, true);
         },
 
         get: function (mode, cmd)
@@ -353,7 +347,7 @@ liberator.Mappings = function () //{{{
         // returns whether the user added a custom user map
         hasMap: function (mode, cmd)
         {
-            return user[mode].some(function (map) { return map.hasName(cmd); });
+            return user[mode].some(function (map) map.hasName(cmd));
         },
 
         remove: function (mode, cmd)

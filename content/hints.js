@@ -292,8 +292,8 @@ liberator.Hints = function () //{{{
                 //                    }
                 //                }, 100);
                 setTimeout(function () {
-                        firstElem.style.backgroundColor = firstElemBgColor;
-                        firstElem.style.color = firstElemColor;
+                    firstElem.style.backgroundColor = firstElemBgColor;
+                    firstElem.style.color = firstElemColor;
                 }, timeout);
             }
         }
@@ -340,8 +340,8 @@ liberator.Hints = function () //{{{
             case "V": liberator.buffer.viewSource(loc, true); break;
             case "w": liberator.buffer.followLink(elem, liberator.NEW_WINDOW);  break;
             case "W": liberator.commandline.open(":", "winopen " + loc, liberator.modes.EX); break;
-            case "y": setTimeout(function () { liberator.util.copyToClipboard(loc, true); }, timeout + 50); break;
-            case "Y": setTimeout(function () { liberator.util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
+            case "y": setTimeout(function () liberator.util.copyToClipboard(loc, true), timeout + 50); break;
+            case "Y": setTimeout(function () liberator.util.copyToClipboard(elem.textContent || "", true), timeout + 50); break;
             default:
                 liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
@@ -568,7 +568,7 @@ liberator.Hints = function () //{{{
         "Automatically follow non unique numerical hint",
         "number", 0,
         {
-            validator: function (value) { return value >= 0; }
+            validator: function (value) value >= 0
         });
 
     liberator.options.add(["linkfgcolor", "lfc"],
@@ -591,11 +591,10 @@ liberator.Hints = function () //{{{
         "How links are matched",
         "string", "contains",
         {
-            validator: function (value) { return /^(?:contains|wordstartswith|firstletters|custom)$/.test(value); },
+            validator: function (value) /^(?:contains|wordstartswith|firstletters|custom)$/.test(value),
             completer: function (filter)
             {
-                return ["contains", "wordstartswith", "firstletters", "custom"]
-                  .map(function (m){ return [m, ""]; });
+                return ["contains", "wordstartswith", "firstletters", "custom"].map(function (m) [m, ""]);
             }
         });
 
@@ -807,7 +806,7 @@ liberator.Hints = function () //{{{
                         {
                             var timeout = liberator.options["hinttimeout"];
                             if (timeout > 0)
-                                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+                                activeTimeout = setTimeout(function () processHints(true), timeout);
 
                             return false;
                         }

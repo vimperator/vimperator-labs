@@ -300,7 +300,7 @@ liberator.CommandLine = function () //{{{
                     ["S", "Suggest engines"]
                 ];
             },
-            validator: function (value) { return !/[^sfbhSl]/.test(value); }
+            validator: function (value) !/[^sfbhSl]/.test(value)
         });
 
     liberator.options.add(["suggestengines"],
@@ -311,8 +311,7 @@ liberator.CommandLine = function () //{{{
          	{
          		var ss = Components.classes["@mozilla.org/browser/search-service;1"]
          		                   .getService(Components.interfaces.nsIBrowserSearchService);
-         		return value.split(",").every(function (item)
-         		{
+         		return value.split(",").every(function (item) {
          			var e = ss.getEngineByAlias(item);
          			return (e && e.supportsResponseType("application/x-suggestions+json")) ? true : false;
          		});
@@ -329,7 +328,9 @@ liberator.CommandLine = function () //{{{
         {
             validator: function (value)
             {
-                return value.split(",").every(function (item) { return /^(full|longest|list|list:full|list:longest|)$/.test(item); });
+                return value.split(",").every(
+                    function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
+                );
             },
             completer: function (filter)
             {
@@ -376,7 +377,7 @@ liberator.CommandLine = function () //{{{
             },
             validator: function (value)
             {
-                return value.split(",").every(function (item) { return /^(sort|auto|)$/.test(item); });
+                return value.split(",").every(function (item) /^(sort|auto|)$/.test(item));
             }
         });
 
@@ -416,7 +417,9 @@ liberator.CommandLine = function () //{{{
             if (res != null)
                 liberator.echo(res);
         },
-        { completer: function (filter) { return liberator.completion.javascript(filter); } });
+        {
+            completer: function (filter) liberator.completion.javascript(filter)
+        });
 
     liberator.commands.add(["echoe[rr]"],
         "Display an error string at the bottom of the window",
@@ -426,7 +429,9 @@ liberator.CommandLine = function () //{{{
             if (res != null)
                 liberator.echoerr(res);
         },
-        { completer: function (filter) { return liberator.completion.javascript(filter); } });
+        {
+            completer: function (filter) liberator.completion.javascript(filter)
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -575,9 +580,7 @@ liberator.CommandLine = function () //{{{
             multilineInputWidget.value = "";
             autosizeMultilineInputWidget();
 
-            setTimeout(function () {
-                multilineInputWidget.focus();
-            }, 10);
+            setTimeout(function () multilineInputWidget.focus(), 10);
         },
 
         onEvent: function (event)
@@ -827,7 +830,7 @@ liberator.CommandLine = function () //{{{
             else if (event.type == "blur")
             {
                 if (liberator.modes.extended & liberator.modes.INPUT_MULTILINE)
-                    setTimeout(function () { multilineInputWidget.inputField.focus(); }, 0);
+                    setTimeout(function () multilineInputWidget.inputField.focus(), 0);
             }
             else if (event.type == "input")
             {
@@ -1188,7 +1191,7 @@ liberator.ItemList = function (id) //{{{
 
         var height = getHeight();
         if (height == 0) // sometimes we don't have the correct size at this point
-            setTimeout(function () { container.height = getHeight(); }, 10);
+            setTimeout(function () container.height = getHeight(), 10);
         else
             container.height = height;
     }
@@ -1399,7 +1402,7 @@ liberator.StatusLine = function () //{{{
 
                 return value;
             },
-            validator: function (value) { return (value >= 0 && value <= 2); },
+            validator: function (value) value >= 0 && value <= 2,
             completer: function (filter)
             {
                 return [

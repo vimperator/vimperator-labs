@@ -184,7 +184,7 @@ liberator.Commands = function () //{{{
 
         __iterator__: function ()
         {
-            var sorted = exCommands.sort(function (cmd1, cmd2) { return cmd1.name > cmd2.name; });
+            var sorted = exCommands.sort(function (cmd1, cmd2) cmd1.name > cmd2.name);
             for (let i = 0; i < sorted.length; i++)
                 yield sorted[i];
         },
@@ -713,19 +713,14 @@ liberator.Commands = function () //{{{
             /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
-            completer: function (filter)
-            {
-                return liberator.completion.userCommand(filter);
-            }
+            completer: function (filter) liberator.completion.userCommand(filter)
         });
 
     commandManager.add(["comc[lear]"],
         "Delete all user-defined commands",
         function ()
         {
-            liberator.commands.getUserCommands().forEach(function (cmd) {
-                liberator.commands.removeUserCommand(cmd.name);
-            });
+            liberator.commands.getUserCommands().forEach(function (cmd) liberator.commands.removeUserCommand(cmd.name));
         },
         { argCount: "0" });
 
@@ -749,10 +744,7 @@ liberator.Commands = function () //{{{
         },
         {
             argCount: "1",
-            completer: function (filter)
-            {
-                return liberator.completion.userCommand(filter);
-            }
+            completer: function (filter) liberator.completion.userCommand(filter)
         });
 
     //}}}

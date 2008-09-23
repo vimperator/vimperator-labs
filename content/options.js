@@ -901,8 +901,7 @@ liberator.Options = function () //{{{
                 " Options ---</th></tr>";
             var name, value, defaultValue;
 
-            prefArray.forEach(function (pref)
-            {
+            prefArray.forEach(function (pref) {
                 var userValue = prefService.prefHasUserValue(pref);
                 if ((!onlyNonDefault || userValue) && pref.indexOf(filter) >= 0)
                 {

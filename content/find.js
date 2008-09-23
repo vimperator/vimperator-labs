@@ -346,7 +346,7 @@ liberator.Search = function () //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
+                setTimeout(function () liberator.echoerr("E486: Pattern not found: " + searchPattern), 0);
 
             return found;
         },
@@ -417,7 +417,7 @@ liberator.Search = function () //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () { liberator.search.findAgain(false); }, 0);
+                setTimeout(function () liberator.search.findAgain(false), 0);
 
             if (liberator.options["hlsearch"])
                 this.highlight(searchString);

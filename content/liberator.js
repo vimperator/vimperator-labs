@@ -55,8 +55,7 @@ const liberator = (function () //{{{
 
                     for (let option in guioptions)
                     {
-                        guioptions[option].forEach(function (elem)
-                        {
+                        guioptions[option].forEach(function (elem) {
                             try
                             {
                                 document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
@@ -98,7 +97,7 @@ const liberator = (function () //{{{
             "Define which type of messages are logged",
             "number", 0,
             {
-                validator: function (value) { return (value >= 0 && value <= 9); }
+                validator: function (value) value >= 0 && value <= 9
             });
 
         liberator.options.add(["visualbell", "vb"],
@@ -220,7 +219,7 @@ const liberator = (function () //{{{
                 var item = args.string;
                 var items = getMenuItems();
 
-                if (!items.some(function (i) { return i.fullMenuPath == item; }))
+                if (!items.some(function (i) i.fullMenuPath == item))
                 {
                     liberator.echoerr("E334: Menu not found: " + item);
                     return;
@@ -236,9 +235,9 @@ const liberator = (function () //{{{
                 argCount: "+", // NOTE: single arg may contain unescaped whitespace
                 completer: function (filter)
                 {
-                    var completions = getMenuItems().map(function (item) {
-                        return [item.fullMenuPath, item.label];
-                    });
+                    var completions = getMenuItems().map(
+                        function (item) [item.fullMenuPath, item.label]
+                    );
                     return [0, liberator.completion.filter(completions, filter)];
                 }
             });
@@ -302,7 +301,7 @@ const liberator = (function () //{{{
                 liberator.help(args);
             },
             {
-                completer: function (filter) { return getHelpCompletions(filter); }
+                completer: function (filter) getHelpCompletions(filter)
             });
 
         liberator.commands.add(["javas[cript]", "js"],
@@ -349,7 +348,7 @@ const liberator = (function () //{{{
                 }
             },
             {
-                completer: function (filter) { return liberator.completion.javascript(filter); }
+                completer: function (filter) liberator.completion.javascript(filter)
             });
 
         liberator.commands.add(["norm[al]"],
@@ -545,8 +544,7 @@ const liberator = (function () //{{{
         var guioptions = liberator.config.guioptions || {};
         for (let option in guioptions)
         {
-            guioptions[option].forEach(function (elem)
-            {
+            guioptions[option].forEach(function (elem) {
                 try
                 {
                     document.getElementById(elem).collapsed = true;
@@ -625,7 +623,7 @@ const liberator = (function () //{{{
                     popup.height = box.height;
                     popup.width = box.width;
                     popup.openPopup(win, "overlap", 0, 0, false, false);
-                    setTimeout(function () { popup.hidePopup(); }, 50);
+                    setTimeout(function () popup.hidePopup(), 50);
                 }
             }
             else
@@ -793,7 +791,7 @@ const liberator = (function () //{{{
         has: function (feature)
         {
             var features = liberator.config.features || [];
-            return features.some (function (feat) { return feat == feature; });
+            return features.some(function (feat) feat == feature);
         },
 
         help: function (topic)

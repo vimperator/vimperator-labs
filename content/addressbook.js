@@ -193,10 +193,9 @@ liberator.Addressbook = function () //{{{
 			{
 				// Now we have to create a new message
 				var args = {};
-				args.to = addresses.map(function (address)
-				{
-					return "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\"";
-				}).join(", ");
+				args.to = addresses.map(
+                    function (address) "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""
+                ).join(", ");
 
 				liberator.mail.composeNewMail(args);
 			}

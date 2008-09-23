@@ -191,10 +191,7 @@ liberator.Bookmarks = function () //{{{
         "Set the default search engine",
         "string", "google",
         {
-            completer: function (filter)
-            {
-                return liberator.completion.url("", "s")[1];
-            },
+            completer: function (filter) liberator.completion.url("", "s")[1],
             validator: function (value)
             {
                 return liberator.completion.url("", "s")[1].some(function (s) s[0] == value);
@@ -290,7 +287,7 @@ liberator.Bookmarks = function () //{{{
             liberator.bookmarks.list(args.arguments.join(" "), args["-tags"] || [], special);
         },
         {
-            completer: function (filter) { return [0, liberator.bookmarks.get(filter)]; },
+            completer: function (filter) [0, liberator.bookmarks.get(filter)],
             options: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
 
@@ -306,7 +303,7 @@ liberator.Bookmarks = function () //{{{
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", liberator.commandline.FORCE_SINGLELINE);
         },
         {
-            completer: function (filter) { return [0, liberator.bookmarks.get(filter)]; }
+            completer: function (filter) [0, liberator.bookmarks.get(filter)]
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -431,7 +428,7 @@ liberator.Bookmarks = function () //{{{
                 var newAlias = alias;
                 for (let j = 1; j <= 10; j++) // <=10 is intentional
                 {
-                    if (!searchEngines.some(function (item) { return (item[0] == newAlias); }))
+                    if (!searchEngines.some(function (item) (item[0] == newAlias)))
                         break;
 
                     newAlias = alias + j;
@@ -551,7 +548,7 @@ liberator.History = function () //{{{
     var cachedHistory = []; // add pages here after loading the initial Places history
 
     if (liberator.options["preload"])
-        setTimeout(function () { load(); }, 100);
+        setTimeout(function () load(), 100);
 
     function load()
     {
@@ -704,7 +701,9 @@ liberator.History = function () //{{{
     liberator.commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
         function (args, special) { liberator.history.list(args, special); },
-        { completer: function (filter) { return [0, liberator.history.get(filter)]; } });
+        {
+            completer: function (filter) [0, liberator.history.get(filter)]
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -735,7 +734,7 @@ liberator.History = function () //{{{
                 cachedHistory = [];
             }
             else
-                cachedHistory = cachedHistory.filter(function (elem) { return elem[0] != url; });
+                cachedHistory = cachedHistory.filter(function (elem) elem[0] != url);
 
             cachedHistory.unshift([url, title || "[No title]"]);
             return true;

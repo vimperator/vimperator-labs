@@ -79,9 +79,7 @@ liberator.Completion = function () //{{{
                     }
                     else
                     {
-                        substrings = substrings.filter(function ($_) {
-                            return complist[j].indexOf($_) >= 0;
-                        });
+                        substrings = substrings.filter(function ($_) complist[j].indexOf($_) >= 0);
                     }
                 }
                 break;
@@ -119,9 +117,7 @@ liberator.Completion = function () //{{{
                     }
                     else
                     {
-                        substrings = substrings.filter(function ($_) {
-                            return complist[j].indexOf($_) == 0;
-                        });
+                        substrings = substrings.filter(function ($_) complist[j].indexOf($_) == 0);
                     }
                 }
                 break;
@@ -199,7 +195,7 @@ liberator.Completion = function () //{{{
             }
 
             if (!filter)
-                return [0, items.map(function ($_) { return [$_[0][0], $_[1]]; })];
+                return [0, items.map(function ($_) [$_[0][0], $_[1]])];
 
             return [0, buildLongestCommonSubstring(items, filter)];
         },
@@ -365,8 +361,7 @@ liberator.Completion = function () //{{{
         	                   .getService(Components.interfaces.nsIBrowserSearchService);
 
         	var completions = [];
-        	engineList.forEach (function (name)
-        	{
+        	engineList.forEach(function (name) {
         		var query = filter;
         		var queryURI;
         		var engine = ss.getEngineByAlias(name);
@@ -390,8 +385,7 @@ liberator.Completion = function () //{{{
                 if (!results)
                     return [0, []];
 
-            	results.forEach(function (item)
-            	{
+            	results.forEach(function (item) {
                     // make sure we receive strings, otherwise a man-in-the-middle attack
                     // could return objects which toString() method could be called to
                     // execute untrusted code
@@ -407,9 +401,9 @@ liberator.Completion = function () //{{{
 
         stylesheet: function (filter)
         {
-            var completions = liberator.buffer.alternateStyleSheets.map(function (stylesheet) {
-                return [stylesheet.title, stylesheet.href || "inline"];
-            });
+            var completions = liberator.buffer.alternateStyleSheets.map(
+                function (stylesheet) [stylesheet.title, stylesheet.href || "inline"]
+            );
 
             // unify split style sheets
             completions.forEach(function (stylesheet) {
@@ -491,7 +485,7 @@ liberator.Completion = function () //{{{
         userCommand: function (filter)
         {
             var commands = liberator.commands.getUserCommands();
-            commands = commands.map(function (command) { return [command.name, ""]; });
+            commands = commands.map(function (command) [command.name, ""]);
             return [0, this.filter(commands, filter)];
         },
 
@@ -559,9 +553,9 @@ liberator.Completion = function () //{{{
                 {
                     // no direct match of filter in the url, but still accept this item
                     // if _all_ tokens of filter match either the url or the title
-                    if (filter.split(/\s+/).every(function (token) {
-                        return (url.indexOf(token) > -1 || title.indexOf(token) > -1);
-                    }))
+                    if (filter.split(/\s+/).every(
+                        function (token) url.indexOf(token) > -1 || title.indexOf(token) > -1
+                    ))
                         additionalCompletions.push(elem);
 
                     continue;
@@ -583,9 +577,7 @@ liberator.Completion = function () //{{{
                 }
                 else
                 {
-                    substrings = substrings.filter(function ($_) {
-                        return url.indexOf($_) >= 0;
-                    });
+                    substrings = substrings.filter(function ($_) url.indexOf($_) >= 0);
                 }
 
                 filtered.push(elem);
@@ -608,7 +600,7 @@ liberator.Completion = function () //{{{
                 itemsStr = itemsStr.toLowerCase();
             }
 
-            if (filter.split(/\s+/).every(function (str) { return itemsStr.indexOf(str) > -1; }))
+            if (filter.split(/\s+/).every(function (str) itemsStr.indexOf(str) > -1))
                 return true;
 
             return false;

@@ -225,12 +225,10 @@ liberator.AutoCommands = function () //{{{
 
         trigger: function (auEvent, url)
         {
-            if (liberator.options["eventignore"].split(",").some(function (event) {
-                    return event == "all" || event == auEvent;
-                }))
-            {
+            let events = liberator.options["eventignore"].split(",");
+
+            if (events.some(function (event) event == "all" || event == auEvent))
                 return;
-            }
 
             if (autoCommands[auEvent])
             {
@@ -286,7 +284,7 @@ liberator.Events = function () //{{{
                 liberator.tabs.updateSelectionHistory();
 
                 if (liberator.options["focuscontent"])
-                    setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
+                    setTimeout(function () liberator.focusContent(true), 10); // just make sure, that no widget has focus
             }, false);
         }
 
@@ -642,7 +640,7 @@ liberator.Events = function () //{{{
                 liberator.events.deleteMacros(args);
         },
         {
-            completer: function (filter) { return liberator.completion.macro(filter); }
+            completer: function (filter) liberator.completion.macro(filter)
         });
 
     liberator.commands.add(["macros"],
@@ -660,7 +658,7 @@ liberator.Events = function () //{{{
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {
-            completer: function (filter) { return liberator.completion.macro(filter); }
+            completer: function (filter) liberator.completion.macro(filter)
         });
 
     liberator.commands.add(["pl[ay]"],
@@ -673,7 +671,7 @@ liberator.Events = function () //{{{
                 liberator.events.playMacro(args);
         },
         {
-            completer: function (filter) { return liberator.completion.macro(filter); }
+            completer: function (filter) liberator.completion.macro(filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1036,8 +1034,7 @@ liberator.Events = function () //{{{
             {
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
-               // setTimeout(function ()
-               // {
+               // setTimeout(function () {
                //     liberator.dump("cur: " + liberator.mode + "\n");
                //     if (liberator.events.wantsModeReset)
                //     {
@@ -1450,7 +1447,7 @@ liberator.Events = function () //{{{
                         // is not the focused frame
                         if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)
                         {
-                            setTimeout (function () { liberator.modes.reset(false); },
+                            setTimeout(function () liberator.modes.reset(false),
                                 liberator.mode == liberator.modes.HINTS ? 500 : 0);
                         }
                     }
@@ -1489,7 +1486,7 @@ liberator.Events = function () //{{{
                 liberator.autocommands.trigger("LocationChange", liberator.buffer.URL);
 
                 // if this is not delayed we get the position of the old buffer
-                setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);
+                setTimeout(function () liberator.statusline.updateBufferPosition(), 100);
             },
             // called at the very end of a page load
             asyncUpdateUI: function ()

@@ -51,8 +51,8 @@ liberator.IO = function () //{{{
     if (WINDOWS)
     {
         shell = "cmd.exe";
-        // TODO: does setting 'shell' to "something containing sh"
-        // automatically update 'shellcmdflag' on Windows in Vim?
+        // TODO: setting 'shell' to "something containing sh" updates
+        // 'shellcmdflag' appropriately at startup on Windows in Vim
         shellcmdflag = "/c";
     }
     else
@@ -107,10 +107,7 @@ liberator.IO = function () //{{{
         "Shell to use for executing :! and :run commands",
         "string", shell,
         {
-            setter: function (value)
-            {
-                return liberator.io.expandPath(value);
-            }
+            setter: function (value) liberator.io.expandPath(value)
         });
 
     liberator.options.add(["shellcmdflag", "shcf"],
@@ -155,9 +152,9 @@ liberator.IO = function () //{{{
                 var directories = liberator.options["cdpath"].replace(/^,$|^,,|,,$/, "").split(",");
 
                 // empty 'cdpath' items mean the current directory
-                directories = directories.map(function (directory) {
-                    return directory == "" ? liberator.io.getCurrentDirectory() : directory;
-                });
+                directories = directories.map(
+                    function (directory) directory == "" ? liberator.io.getCurrentDirectory() : directory
+                );
 
                 var directoryFound = false;
 
@@ -183,7 +180,7 @@ liberator.IO = function () //{{{
             }
         },
         {
-            completer: function (filter) { return liberator.completion.file(filter, true); }
+            completer: function (filter) liberator.completion.file(filter, true)
         });
 
     liberator.commands.add(["fini[sh]"],
@@ -326,7 +323,7 @@ liberator.IO = function () //{{{
             liberator.io.source(args, special);
         },
         {
-            completer: function (filter) { return liberator.completion.file(filter, true); }
+            completer: function (filter) liberator.completion.file(filter, true)
         });
 
     liberator.commands.add(["!", "run"],
