@@ -71,7 +71,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
         <keyset id="mainKeyset">
             <key id="key_open_vimbar" key=":" oncommand="liberator.commandline.open(':', '', liberator.modes.EX);" modifiers=""/>
-            <key id="key_send" key="y" oncommand="alert('y');" modifiers=""/>
             <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.events.onEscape();"/>
             <!-- other keys are handled inside the event loop in events.js -->
         </keyset>

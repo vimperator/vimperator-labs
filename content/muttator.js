@@ -36,6 +36,7 @@ liberator.config = { //{{{
     defaults: { guioptions: "f" },
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
 
+    get isComposeWindow() { return window.wintype == "msgcompose"; },
     get browserModes() { return [liberator.modes.MESSAGE]; },
     get mainWidget() { // focusContent() focuses this widget
         return this.isComposeWindow ?
@@ -44,7 +45,6 @@ liberator.config = { //{{{
     },
     get mainWindowID() { return this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow"; },
     get visualbellWindow() { return document.getElementById(this.mainWindowID); },
-    isComposeWindow: false,
 
     autocommands: [["FolderLoaded",  "Triggered after switching folders in Thunderbird"],
                    ["PageLoadPre",   "Triggered after a page load is initiated"],
@@ -110,7 +110,6 @@ liberator.config = { //{{{
     {
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
-        this.isComposeWindow = window.wintype == "msgcompose";
 
         // 0: never automatically edit externally
         // 1: automatically edit externally when message window is shown the first time
