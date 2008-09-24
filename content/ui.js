@@ -439,13 +439,13 @@ liberator.CommandLine = function () //{{{
 
     return {
 
-        HL_NORMAL   : "hl-Normal",
-        HL_ERRORMSG : "hl-ErrorMsg",
-        HL_MODEMSG  : "hl-ModeMsg",
-        HL_MOREMSG  : "hl-MoreMsg",
-        HL_QUESTION : "hl-Question",
-        HL_INFOMSG  : "hl-InfoMsg",
-        HL_WARNING  : "hl-Warning",
+        HL_NORMAL     : "hl-Normal",
+        HL_ERRORMSG   : "hl-ErrorMsg",
+        HL_MODEMSG    : "hl-ModeMsg",
+        HL_MOREMSG    : "hl-MoreMsg",
+        HL_QUESTION   : "hl-Question",
+        HL_INFOMSG    : "hl-InfoMsg",
+        HL_WARNINGMSG : "hl-WarningMsg",
 
         // not yet used
         FORCE_MULTILINE    : 1 << 0,

@@ -140,7 +140,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: magenta;
     font-weight: bold !important;
 }
-.hl-Warning {
+.hl-WarningMsg {
     background-color: white;
     color: red;
 }
