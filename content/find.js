@@ -239,6 +239,8 @@ liberator.Search = function () //{{{
             }
         });
 
+    // TODO: use Search highlight group instead when we have proper highlight
+    // support
     liberator.options.add(["hlsearchstyle", "hlss"],
         "CSS specification of highlighted search items",
         "string", "color: black; background-color: yellow; padding: 0; display: inline;");
