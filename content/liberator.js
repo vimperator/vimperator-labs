@@ -560,8 +560,8 @@ const liberator = (function () //{{{
 
     return {
 
-        get mode()      { return liberator.modes.main; },
-        set mode(value) { liberator.modes.main = value; },
+        get mode()      liberator.modes.main,
+        set mode(value) liberator.modes.main = value,
 
         // Global constants
         CURRENT_TAB: 1,

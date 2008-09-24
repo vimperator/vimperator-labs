@@ -36,7 +36,7 @@ liberator.config = { //{{{
     defaults: { guioptions: "" },
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
-    get visualbellWindow() { return getBrowser().mPanelContainer; },
+    get visualbellWindow() getBrowser().mPanelContainer,
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
                    ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],

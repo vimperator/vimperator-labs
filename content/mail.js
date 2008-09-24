@@ -747,7 +747,7 @@ liberator.Mail = function () //{{{
 
         return {
 
-        get currentAccount() { return this.currentFolder.rootFolder; },
+        get currentAccount() this.currentFolder.rootFolder,
 
         get currentFolder() {
             var tree = GetFolderTree();

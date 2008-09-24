@@ -643,9 +643,9 @@ liberator.Tabs = function () //{{{
 
     return {
 
-        get alternate() { return alternates[1]; },
+        get alternate() alternates[1],
 
-        get count() { return getBrowser().mTabs.length; },
+        get count() getBrowser().mTabs.length,
 
         // used for :setlocal
         get options()

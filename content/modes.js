@@ -191,9 +191,9 @@ liberator.modes = (function () //{{{
                 yield modes[i];
         },
 
-        get all() { return [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
-                            this.HINTS, this.COMMAND_LINE, this.CARET,
-                            this.TEXTAREA, this.MESSAGE, this.COMPOSE, this.CUSTOM]; },
+        get all() [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
+                   this.HINTS, this.COMMAND_LINE, this.CARET,
+                   this.TEXTAREA, this.MESSAGE, this.COMPOSE, this.CUSTOM],
 
         // show the current mode string in the command line
         show: function ()
@@ -301,9 +301,7 @@ liberator.modes = (function () //{{{
         },
 
         get extended() extended,
-        set extended(value) {
-            extended = value; this.show();
-        }
+        set extended(value) { extended = value; this.show(); }
 
     };
     //}}}

@@ -36,15 +36,12 @@ liberator.config = { //{{{
     defaults: { guioptions: "f" },
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
 
-    get isComposeWindow() { return window.wintype == "msgcompose"; },
-    get browserModes() { return [liberator.modes.MESSAGE]; },
-    get mainWidget() { // focusContent() focuses this widget
-        return this.isComposeWindow ?
-               document.getElementById("content-frame") :
-               GetThreadTree();
-    },
-    get mainWindowID() { return this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow"; },
-    get visualbellWindow() { return document.getElementById(this.mainWindowID); },
+    get isComposeWindow() window.wintype == "msgcompose",
+    get browserModes() [liberator.modes.MESSAGE],
+    // focusContent() focuses this widget
+    get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
+    get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
+    get visualbellWindow() document.getElementById(this.mainWindowID),
 
     autocommands: [["FolderLoaded",  "Triggered after switching folders in Thunderbird"],
                    ["PageLoadPre",   "Triggered after a page load is initiated"],
