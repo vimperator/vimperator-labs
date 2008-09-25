@@ -15,7 +15,7 @@ Vimperator supports a number of different marks:
 section:Bookmarks[bookmarks]
 
 |a| |:bma| |:bmark|
-||:bm[ark] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
 ||a||
 ____________________________________________________________________________
 Add a bookmark. +
@@ -28,7 +28,7 @@ The following options are interpreted:
 
 If you don't add a custom title, either the title of the web page or the URL
 is taken as the title. You can omit the optional [url] argument, so just do
-:bmark to bookmark the currently loaded web page with a default title and
+[c]:bmark[c] to bookmark the currently loaded web page with a default title and
 without any tags.
 ____________________________________________________________________________
 
@@ -40,21 +40,6 @@ Toggle bookmarked state of current URL. Add/remove a bookmark for the current
 location, depending if it already is bookmarked or not. In contrast to the
 [c]:bmark[c] command, the bookmark is just _starred_ which means it is placed
 in the _Unfiled Bookmarks Folder_ instead of the bookmarks menu.
-________________________________________________________________________________
-
-
-|:bma| |:bmark|
-||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
-________________________________________________________________________________
-Add a bookmark. If you don't add a custom title, either the title of the web
-page or the URL is taken as the title. +
-You can omit the optional [url] argument, so just do [c]:bmark[c] to bookmark
-the currently loaded web page with a default title and without any tags. +
-
-The following options are interpreted: +
- -title="custom title" +
- -tags=comma,separated,tag,list +
- -keyword=keyword +
 ________________________________________________________________________________
 
 
