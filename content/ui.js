@@ -281,8 +281,7 @@ liberator.CommandLine = function () //{{{
         "number", 500,
         {
             validator: function (value) value >= 0
-        }
-    );
+        });
 
     liberator.options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
@@ -311,15 +310,25 @@ liberator.CommandLine = function () //{{{
          "Engine Alias which has a feature of suggest",
          "stringlist", "google",
          {
-            validator: function (value)
-            {
-                var ss = Components.classes["@mozilla.org/browser/search-service;1"]
-                                   .getService(Components.interfaces.nsIBrowserSearchService);
-                return value.split(",").every(function (item) {
-                    var e = ss.getEngineByAlias(item);
-                    return (e && e.supportsResponseType("application/x-suggestions+json")) ? true : false;
-                });
-            }
+             completer: function (value)
+             {
+                 let ss = Components.classes["@mozilla.org/browser/search-service;1"]
+                                    .getService(Components.interfaces.nsIBrowserSearchService);
+                 let engines = ss.getEngines({})
+                                 .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
+                 
+                 return engines.map(function (engine) [engine.alias, engine.description]);
+             },
+             validator: function (value)
+             {
+                 let ss = Components.classes["@mozilla.org/browser/search-service;1"]
+                                    .getService(Components.interfaces.nsIBrowserSearchService);
+
+                 return value.split(",").every(function (alias) {
+                     let engine = ss.getEngineByAlias(alias);
+                     return engine && engine.supportsResponseType("application/x-suggestions+json");
+                 });
+             }
          });
 
     liberator.options.add(["showmode", "smd"],
@@ -330,12 +339,6 @@ liberator.CommandLine = function () //{{{
         "Define how command line completion works",
         "stringlist", "list:full",
         {
-            validator: function (value)
-            {
-                return value.split(",").every(
-                    function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
-                );
-            },
             completer: function (filter)
             {
                 return [
@@ -347,6 +350,12 @@ liberator.CommandLine = function () //{{{
                     ["list:longest",  "List all and complete common string"],
                 ];
             },
+            validator: function (value)
+            {
+                return value.split(",").every(
+                    function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
+                );
+            }
         });
 
     liberator.options.add(["wildignore", "wig"],
@@ -1406,7 +1415,6 @@ liberator.StatusLine = function () //{{{
 
                 return value;
             },
-            validator: function (value) value >= 0 && value <= 2,
             completer: function (filter)
             {
                 return [
@@ -1414,7 +1422,8 @@ liberator.StatusLine = function () //{{{
                   ["1", "Display status line only if there are multiple windows"],
                   ["2", "Always display status line"],
                 ];
-            }
+            },
+            validator: function (value) value >= 0 && value <= 2
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

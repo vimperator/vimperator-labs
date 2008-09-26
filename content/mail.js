@@ -207,8 +207,7 @@ liberator.Mail = function () //{{{
         "Set the layout of the mail window",
         "string", "inherit",
         {
-            validator: function (value) /^(classic|wide|vertical|inherit)$/.test(value),
-            setter:    function (value)
+            setter: function (value)
             {
                 switch (value)
                 {
@@ -219,7 +218,8 @@ liberator.Mail = function () //{{{
                 }
 
                 return value;
-            }
+            },
+            validator: function (value) /^(classic|wide|vertical|inherit)$/.test(value)
         });
 
     /*liberator.options.add(["threads"],

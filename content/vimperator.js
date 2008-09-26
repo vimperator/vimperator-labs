@@ -380,7 +380,6 @@ liberator.config = { //{{{
 
                     return value;
                 },
-
                 getter: function ()
                 {
                     return Components.classes['@mozilla.org/network/io-service;1']

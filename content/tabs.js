@@ -142,7 +142,6 @@ liberator.Tabs = function () //{{{
 
                 return value;
             },
-            validator: function (value) (value >= 0 && value <= 2),
             completer: function (filter)
             {
                 return [
@@ -151,6 +150,7 @@ liberator.Tabs = function () //{{{
                   ["2", "Always show tab bar"],
                 ];
             },
+            validator: function (value) value >= 0 && value <= 2
         });
 
     if (liberator.config.name == "Vimperator")

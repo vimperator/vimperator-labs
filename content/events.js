@@ -47,7 +47,19 @@ liberator.AutoCommands = function () //{{{
 
     liberator.options.add(["eventignore", "ei"],
         "List of autocommand event names which should be ignored",
-        "stringlist", "");
+        "stringlist", "",
+        {
+            completer: function (value) Array(liberator.config.autocommands).push(["all", "All events"]),
+            validator: function (value)
+            {
+                let values = value.split(",");
+                let events = liberator.config.autocommands.map(function (e) e[0]);
+                
+                events.push("all");
+
+                return values.every(function (event) events.indexOf(event) >= 0);
+            }
+        });
 
     liberator.options.add(["focuscontent", "fc"],
         "Try to stay in normal mode after loading a web page",

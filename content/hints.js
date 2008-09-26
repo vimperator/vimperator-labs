@@ -591,11 +591,11 @@ liberator.Hints = function () //{{{
         "How links are matched",
         "string", "contains",
         {
-            validator: function (value) /^(?:contains|wordstartswith|firstletters|custom)$/.test(value),
             completer: function (filter)
             {
                 return ["contains", "wordstartswith", "firstletters", "custom"].map(function (m) [m, ""]);
-            }
+            },
+            validator: function (value) /^(contains|wordstartswith|firstletters|custom)$/.test(value)
         });
 
     liberator.options.add(["wordseparators", "wsp"],
