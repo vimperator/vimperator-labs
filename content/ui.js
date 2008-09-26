@@ -277,8 +277,12 @@ liberator.CommandLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     liberator.options.add(["history", "hi"],
-        "Number of Ex commands and search patterns to store in the commandline history",
-        "number", 500);
+        "Number of Ex commands and search patterns to store in the command-line history",
+        "number", 500,
+        {
+            validator: function (value) value >= 0
+        }
+    );
 
     liberator.options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
