@@ -428,7 +428,7 @@ liberator.Bookmarks = function () //{{{
                 var newAlias = alias;
                 for (let j = 1; j <= 10; j++) // <=10 is intentional
                 {
-                    if (!searchEngines.some(function (item) (item[0] == newAlias)))
+                    if (!searchEngines.some(function (item) item[0] == newAlias))
                         break;
 
                     newAlias = alias + j;
