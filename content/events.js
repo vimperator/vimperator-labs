@@ -249,7 +249,12 @@ liberator.AutoCommands = function () //{{{
                 for (let i = 0; i < autoCommands[auEvent].length; i++)
                 {
                     if (autoCommands[auEvent][i][2].test(url))
+                    {
+                        liberator.echomsg("Executing " + auEvent + " Auto commands for \""
+                                                       + autoCommands[auEvent][i][2] + "\"", 8);
+                        liberator.echomsg("autocommand " + autoCommands[auEvent][i][1], 9);
                         liberator.execute(autoCommands[auEvent][i][1]);
+                    }
                 }
             }
         }
