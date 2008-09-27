@@ -323,12 +323,12 @@ liberator.IO = function () //{{{
         "Read Ex commands from a file",
         function (args, special)
         {
-            // FIXME: implement proper filename quoting
-            //if (/[^\\]\s/.test(args))
-            //{
-            //    liberator.echoerr("E172: Only one file name allowed");
-            //    return;
-            //}
+            // FIXME: implement proper filename quoting - "E172: Only one file name allowed"
+            if (!args)
+            {
+                liberator.echoerr("E471: Argument required");
+                return;
+            }
 
             liberator.io.source(args, special);
         },
