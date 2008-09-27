@@ -209,7 +209,7 @@ liberator.Options = function () //{{{
 
     function loadPreference(name, forcedDefault, defaultBranch)
     {
-        var defaultValue = null;
+        var defaultValue = null; // XXX
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 

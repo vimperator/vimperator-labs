@@ -43,7 +43,6 @@ liberator.CommandLine = function () //{{{
     liberator.storage.newArray("history-search", true);
     liberator.storage.newArray("history-command", true);
 
-    // TODO: clean this up when it's not 3am...
     var history = {
         get mode() (liberator.modes.extended == liberator.modes.EX) ? "command" : "search",
 
@@ -66,6 +65,34 @@ liberator.CommandLine = function () //{{{
 
     var historyIndex = UNINITIALIZED;
     var historyStart = "";
+
+    var messageHistory = {
+        _messages: [],
+        get messages()
+        {
+            let max = liberator.options["messages"];
+
+            // resize if 'messages' has changed
+            if (this._messages.length > max)
+                this._messages = this._messages.splice(this._messages.length - max);
+
+            return this._messages;
+        },
+
+        get length() this._messages.length,
+
+        add: function (message)
+        {
+            if (!message)
+                return;
+
+            if (this._messages.length >= liberator.options["messages"])
+                this._messages.shift();
+
+            this._messages.push(message);
+        }
+    };
+    var lastMowOutput = null;
 
     var completionList = new liberator.ItemList("liberator-completions");
     var completions = [];
@@ -97,8 +124,8 @@ liberator.CommandLine = function () //{{{
     multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
 
     // TODO: is there a better way to determine and set the UI font, 'guifont' perhaps?
-    var id = liberator.config.mainWindowID || "main-window";
-    var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
+    var mainWindowID = liberator.config.mainWindowID || "main-window";
+    var fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null).getPropertyValue("font-size");
     multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
 
     multilineOutputWidget.contentDocument.body.innerHTML = "";
@@ -188,6 +215,9 @@ liberator.CommandLine = function () //{{{
         //outputContainer.collapsed = true;
 
         var output = "<div class=\"ex-command-output " + highlightGroup + "\">" + str + "</div>";
+
+        lastMowOutput = output;
+
         if (!outputContainer.collapsed)
         {
             // FIXME: need to make sure an open MOW is closed when commands
@@ -276,17 +306,6 @@ liberator.CommandLine = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["history", "hi"],
-        "Number of Ex commands and search patterns to store in the command-line history",
-        "number", 500,
-        {
-            validator: function (value) value >= 0
-        });
-
-    liberator.options.add(["more"],
-        "Pause the message list window when more than one screen of listings is displayed",
-        "boolean", true);
-
     // TODO: doesn't belong in ui.js
     liberator.options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
@@ -306,6 +325,28 @@ liberator.CommandLine = function () //{{{
             validator: function (value) !/[^sfbhSl]/.test(value)
         });
 
+    liberator.options.add(["history", "hi"],
+        "Number of Ex commands and search patterns to store in the command-line history",
+        "number", 500,
+        {
+            validator: function (value) value >= 0
+        });
+
+    liberator.options.add(["messages", "msgs"],
+        "Number of messages to store in the message history",
+        "number", 100,
+        {
+            validator: function (value) value >= 0
+        });
+
+    liberator.options.add(["more"],
+        "Pause the message list window when more than one screen of listings is displayed",
+        "boolean", true);
+
+    liberator.options.add(["showmode", "smd"],
+        "Show the current mode in the command line",
+        "boolean", true);
+
     liberator.options.add(["suggestengines"],
          "Engine Alias which has a feature of suggest",
          "stringlist", "google",
@@ -316,7 +357,7 @@ liberator.CommandLine = function () //{{{
                                     .getService(Components.interfaces.nsIBrowserSearchService);
                  let engines = ss.getEngines({})
                                  .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
-                 
+
                  return engines.map(function (engine) [engine.alias, engine.description]);
              },
              validator: function (value)
@@ -331,9 +372,24 @@ liberator.CommandLine = function () //{{{
              }
          });
 
-    liberator.options.add(["showmode", "smd"],
-        "Show the current mode in the command line",
-        "boolean", true);
+    liberator.options.add(["wildignore", "wig"],
+        "List of file patterns to ignore when completing files",
+        "stringlist", "",
+        {
+            validator: function (value)
+            {
+                // TODO: allow for escaping the ","
+                try
+                {
+                    new RegExp("^(" + value.replace(",", "|", "g") + ")$");
+                    return true;
+                }
+                catch (e)
+                {
+                    return false;
+                }
+            }
+        });
 
     liberator.options.add(["wildmode", "wim"],
         "Define how command line completion works",
@@ -355,25 +411,6 @@ liberator.CommandLine = function () //{{{
                 return value.split(",").every(
                     function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
                 );
-            }
-        });
-
-    liberator.options.add(["wildignore", "wig"],
-        "List of file patterns to ignore when completing files",
-        "stringlist", "",
-        {
-            validator: function (value)
-            {
-                // TODO: allow for escaping the ","
-                try
-                {
-                    new RegExp("^(" + value.replace(",", "|", "g") + ")$");
-                    return true;
-                }
-                catch (e)
-                {
-                    return false;
-                }
             }
         });
 
@@ -418,33 +455,74 @@ liberator.CommandLine = function () //{{{
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
         function () { liberator.editor.expandAbbreviation("c"); });
 
+    // FIXME: Should be "g<" but that doesn't work unless it has a non-null
+    // rhs, getCandidates broken?
+    liberator.mappings.add([liberator.modes.NORMAL],
+        ["gm"], "Redisplay the last command output",
+        function ()
+        {
+            if (lastMowOutput)
+                liberator.commandline.echo(lastMowOutput,
+                    liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE)
+            else
+                liberator.beep();
+        });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["ec[ho]"],
-        "Display a string at the bottom of the window",
-        function (args)
+    var echoCommands = [
         {
-            var res = echoArgumentToString(args, true);
-            if (res != null)
-                liberator.echo(res);
+            name: "ec[ho]",
+            description: "Display a string at the bottom of the window",
+            action: liberator.echo
         },
         {
-            completer: function (filter) liberator.completion.javascript(filter)
-        });
+            name: "echoe[rr]",
+            description: "Display an error string at the bottom of the window",
+            action: liberator.echoerr
+        },
+        {
+            name: "echom[sg]",
+            description: "Display a message at the bottom of the window saving it in the message history",
+            action: liberator.echomsg
+        }
+    ];
 
-    liberator.commands.add(["echoe[rr]"],
-        "Display an error string at the bottom of the window",
-        function (args)
+    echoCommands.forEach(function (command) {
+        liberator.commands.add([command.name],
+            command.description,
+            function (args)
+            {
+                var str = echoArgumentToString(args, true);
+                if (str != null)
+                    command.action(str);
+            },
+            {
+                completer: function (filter) liberator.completion.javascript(filter)
+            });
+    });
+
+    liberator.commands.add(["mes[sages]"],
+        "Display previously given messages",
+        function ()
         {
-            var res = echoArgumentToString(args, false);
-            if (res != null)
-                liberator.echoerr(res);
-        },
-        {
-            completer: function (filter) liberator.completion.javascript(filter)
-        });
+            // TODO: the MOW<->command-line disjoint is really annoying
+            if (messageHistory.length == 1)
+            {
+                liberator.commandline.echo(messageHistory.messages[0], liberator.commandline.HL_NORMAL);
+            }
+            else if (messageHistory.length > 1)
+            {
+                let list = "";
+
+                for (let [,message] in Iterator(messageHistory.messages))
+                    list += message + "<br/>";
+
+                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            }
+        }, { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -466,7 +544,7 @@ liberator.CommandLine = function () //{{{
         DISALLOW_MULTILINE : 1 << 2, // if an echo() should try to use the single line
                                      // but output nothing when the MOW is open; when also
                                      // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
-        APPEND_TO_MESSAGES : 1 << 3, // will show the string in :messages
+        APPEND_TO_MESSAGES : 1 << 3, // add the string to the message history
 
         get mode() (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search",
 
@@ -523,7 +601,6 @@ liberator.CommandLine = function () //{{{
             setLine("", this.HL_NORMAL);
         },
 
-        // TODO: add :messages entry
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function (str, highlightGroup, flags)
         {
@@ -539,6 +616,9 @@ liberator.CommandLine = function () //{{{
                 return false;
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
+
+            if (flags & this.APPEND_TO_MESSAGES)
+                messageHistory.add(str);
 
             var where = setLine;
             if (flags & this.FORCE_MULTILINE)
@@ -1133,8 +1213,8 @@ liberator.ItemList = function (id) //{{{
 
     doc.body.id = id + "-content";
 
-    var id = liberator.config.mainWindowID || "main-window";
-    var fontSize = document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue("font-size");
+    var mainWindowID = liberator.config.mainWindowID || "main-window";
+    var fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null).getPropertyValue("font-size");
     doc.body.setAttribute("style", "font-size: " + fontSize);
 
     var completions = []; // a reference to the Array of completions

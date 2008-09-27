@@ -468,6 +468,13 @@ Load plugin scripts when starting up.
 ____
 
 
+|\'msgs'| |\'messages'|
+||'messages' 'msgs'|| number (default: 100)
+____
+Number of messages to store in the message history.
+____
+
+
 |\'nomore'| |\'more'|
 ||'more'|| boolean (default: on)
 ____
@@ -708,10 +715,12 @@ ____
 |\'verbose', \'vbs'|
 ||'verbose' 'vbs'|| number (default: 0)
 ____
-Define which type of messages are logged.
+Define which info messages are displayed.
 When bigger than zero, Vimperator will give messages about what it is doing.
-They are printed to the error console which can be shown with [c]:javascript![c].
-The highest value is 9, being the most verbose mode.
+These can be viewed at any time with the [c]:messages[c] command. The highest
+value is 15, being the most verbose mode.
+
+TODO: list levels and associated messages
 ____
 
 

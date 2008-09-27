@@ -270,10 +270,11 @@ section:Options[option-index]
 ||'linkfgcolor'|| Foreground color of a link during hint mode +
 ||'linksearch'|| Limit the search to hyperlink text +
 ||'loadplugins'|| Load plugin scripts when starting up +
+||'messages'|| Number of messages to store in the message history +
 ||'more'|| Pause the message list window when more than one screen of listings is displayed +
 ||'newtab'|| Define which commands should output in a new tab by default +
 ||'nextpattern'|| Patterns to use when guessing the 'next' page in a document sequence +
-||'online'|| Set the 'work offline' option +
+||'online'|| Set the \'work offline' option +
 ||'pageinfo'|| Desired info on :pa[geinfo] +
 ||'popups'|| Where to show requested popup windows +
 ||'preload'|| Speed up first time history/bookmark completion +
@@ -290,7 +291,7 @@ section:Options[option-index]
 ||'titlestring'|| Change the title of the window +
 ||'urlseparator'|| Set the separator regexp used to separate multiple URL args +
 ||'usermode'|| Show current website with a minimal style sheet to make it easily accessible +
-||'verbose'|| Define which type of messages are logged +
+||'verbose'|| Define which info messages are displayed +
 ||'visualbell'|| Use visual bell instead of beeping on errors +
 ||'visualbellstyle'|| CSS specification of the visual bell +
 ||'wildignore'|| List of file patterns to ignore when completing files +

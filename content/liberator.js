@@ -94,10 +94,10 @@ const liberator = (function () //{{{
             "boolean", true);
 
         liberator.options.add(["verbose", "vbs"],
-            "Define which type of messages are logged",
+            "Define which info messages are displayed",
             "number", 0,
             {
-                validator: function (value) value >= 0 && value <= 9
+                validator: function (value) value >= 0 && value <= 15
             });
 
         liberator.options.add(["visualbell", "vb"],
@@ -785,7 +785,25 @@ const liberator = (function () //{{{
 
         echo:    function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags); },
 
-        echoerr: function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags); },
+        // TODO: Vim replaces unprintable characters in echoerr/echomsg
+        echoerr: function (str, flags)
+        {
+            flags |= liberator.commandline.APPEND_TO_MESSAGES;
+
+            liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags);
+        },
+
+        // TODO: add proper level constants
+        echomsg: function (str, verbosity, flags)
+        {
+            flags |= liberator.commandline.APPEND_TO_MESSAGES;
+
+            if (verbosity == null)
+                verbosity = 0; // verbosity level is exclusionary
+
+            if (liberator.options["verbose"] >= verbosity)
+                liberator.commandline.echo(str, liberator.commandline.HL_INFOMSG, flags);
+        },
 
         // return true, if this VIM-like extension has a certain feature
         has: function (feature)
@@ -853,15 +871,16 @@ const liberator = (function () //{{{
 
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
+        // TODO: add proper level constants
         log: function (msg, level)
         {
             var verbose = 0;
-            if (typeof level != "number")
+            if (typeof level != "number") // XXX
                 level = 1;
 
             // liberator.options does not exist at the very beginning
             if (liberator.options)
-                verbose = liberator.options["verbose"];
+                verbose = liberator.options.getPref("extensions.liberator.loglevel", 0);
 
             if (level > verbose)
                 return;
@@ -871,7 +890,7 @@ const liberator = (function () //{{{
 
             var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                            .getService(Components.interfaces.nsIConsoleService);
-            consoleService.logStringMessage("vimperator: " + msg);
+            consoleService.logStringMessage(liberator.config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs
@@ -1080,8 +1099,7 @@ const liberator = (function () //{{{
                             for (let [,dir] in Iterator(dirs))
                             {
                                 // TODO: search plugins/**/* for plugins
-                                if (liberator.options["verbose"] >= 2)
-                                    liberator.echo("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"\n");
+                                liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
 
                                 liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
 

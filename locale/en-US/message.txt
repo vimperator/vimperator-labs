@@ -1,0 +1,22 @@
+HEADER
+
+|message-history| +
+
+Vimperator stores all info and error messages in a message history. The type of
+info messages output can be controlled by the 'verbose' option.
+
+|:mes| |:messages| +
+||:mes[sages]||
+________________________________________________________________________________
+Display previously given messages.
+________________________________________________________________________________
+
+
+|gm| +
+||gm||
+________________________________________________________________________________
+Redisplay the last command output. Only the most recent commands output is
+available.
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

@@ -1,10 +1,13 @@
 <pre>
 2008-XX-XX:
     * version 2.0 (probably)
+    * IMPORTANT: 'verbose' is now used for message levels. Logging is
+      controlled by the extensions.liberator.loglevel preference.
     * IMPORTANT: :viusage and :exusage now jump to the help index, use the
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add :messages and 'messages'
     * add :runtime
     * add 'runtimepath'
     * allow ; hints to work in the multiline output widget

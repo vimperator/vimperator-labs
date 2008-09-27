@@ -375,9 +375,11 @@ liberator.Search = function () //{{{
                 // our command line
                 setTimeout(function () {
                     if (up)
-                        liberator.commandline.echo("search hit TOP, continuing at BOTTOM", liberator.commandline.HL_WARNINGMSG);
+                        liberator.commandline.echo("search hit TOP, continuing at BOTTOM",
+                            liberator.commandline.HL_WARNINGMSG, liberator.commandline.APPEND_TO_MESSAGES);
                     else
-                        liberator.commandline.echo("search hit BOTTOM, continuing at TOP", liberator.commandline.HL_WARNINGMSG);
+                        liberator.commandline.echo("search hit BOTTOM, continuing at TOP",
+                            liberator.commandline.HL_WARNINGMSG, liberator.commandline.APPEND_TO_MESSAGES);
                 }, 0);
             }
             else

@@ -273,6 +273,10 @@ liberator.IO = function () //{{{
             //     : unify with startup sourcing loop
             let paths = args.arguments;
             let runtimeDirs = liberator.options["runtimepath"].split(",");
+            let found = false;
+
+            // FIXME: should use original arg string
+            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + liberator.options["runtimepath"] + "\"", 2);
 
             outer:
             for (let [,runtimeDir] in Iterator(runtimeDirs))
@@ -281,8 +285,11 @@ liberator.IO = function () //{{{
                 {
                     let file = liberator.io.getFile(joinPaths(runtimeDir, path));
 
+                    liberator.echomsg("Searching for \"" + file.path + "\" in \"", 3);
+
                     if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
                     {
+                        found = true;
                         liberator.io.source(file.path, false);
 
                         if (!special)
@@ -290,6 +297,9 @@ liberator.IO = function () //{{{
                     }
                 }
             }
+
+            if (!found)
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
         },
         { argCount: "+" }
     );
@@ -696,8 +706,10 @@ lookup:
 
         // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
         // is fixed, should use that instead of a tmpfile
-        system: function (str, input)
+        system: function (command, input)
         {
+            liberator.echomsg("Calling shell to execute: " + command, 4);
+
             var stdoutFile = ioManager.createTempFile();
             var stderrFile = ioManager.createTempFile();
 
@@ -707,10 +719,9 @@ lookup:
                 return "";
 
             if (WINDOWS)
-                var command = str + " > " + stdoutFile.path + " 2> " + stderrFile.path;
+                command += " > " + stdoutFile.path + " 2> " + stderrFile.path;
             else
-                var command = str + " > \"" + escapeQuotes(stdoutFile.path) + "\""
-                                  + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
+                command += " > \"" + escapeQuotes(stdoutFile.path) + "\"" + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
 
             var stdinFile = null;
 
@@ -754,13 +765,17 @@ lookup:
                     if (!silent)
                     {
                         if (file.isDirectory())
-                            liberator.echo("Cannot source a directory: \"" + filename + "\"\n");
+                            liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
+                        else
+                            liberator.echomsg("could not source: \"" + filename + "\"", 1);
 
                         liberator.echoerr("E484: Can't open file " + filename);
                     }
 
                     return;
                 }
+
+                liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 var str = ioManager.readFile(file);
 
@@ -832,6 +847,8 @@ lookup:
 
                 if (scriptNames.indexOf(file.path) == -1)
                     scriptNames.push(file.path);
+
+                liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
 
                 liberator.log("Sourced: " + file.path, 3);
             }

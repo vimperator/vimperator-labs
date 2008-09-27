@@ -54,7 +54,7 @@ liberator.AutoCommands = function () //{{{
             {
                 let values = value.split(",");
                 let events = liberator.config.autocommands.map(function (e) e[0]);
-                
+
                 events.push("all");
 
                 return values.every(function (event) events.indexOf(event) >= 0);
@@ -241,6 +241,8 @@ liberator.AutoCommands = function () //{{{
 
             if (events.some(function (event) event == "all" || event == auEvent))
                 return;
+
+            liberator.echomsg("Executing " + auEvent + " Auto commands for \"*\"", 8);
 
             if (autoCommands[auEvent])
             {
@@ -494,7 +496,7 @@ liberator.Events = function () //{{{
             }
             else // background tab
             {
-                liberator.commandline.echo("Background tab loaded: " + title || url, liberator.commandline.HL_INFOMSG);
+                liberator.echomsg("Background tab loaded: " + title || url, 1);
             }
         }
     }
@@ -557,8 +559,7 @@ liberator.Events = function () //{{{
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    if (liberator.options["verbose"] >= 2)
-                        liberator.echo("Searching for \"macros/*\" in \"" + dir.path + "\"\n");
+                    liberator.echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
 
                     liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
