@@ -546,7 +546,7 @@ liberator.IO = function () //{{{
             let dir = environmentService.get("TMPDIR") || environmentService.get("TMP")
                           || environmentService.get("TEMP") || (WINDOWS ? "C:\\" : "/tmp/");
 
-            file.initWithPath(dir)
+            file.initWithPath(dir);
             file.appendRelativePath(tmpName);
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
 

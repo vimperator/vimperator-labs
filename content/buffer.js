@@ -1025,8 +1025,7 @@ liberator.Buffer = function () //{{{
             var start = document.commandDispatcher.focusedWindow;
             frames = frames.filter(function (frame) {
                 frame.focus();
-                if (document.commandDispatcher.focusedWindow == frame)
-                    return frame;
+                return document.commandDispatcher.focusedWindow == frame;
             });
             start.focus();
 
@@ -1743,10 +1742,7 @@ liberator.Marks = function () //{{{
 
             if (filter.length > 0)
             {
-                marks = marks.filter(function (mark) {
-                    if (filter.indexOf(mark[0]) > -1)
-                        return mark;
-                });
+                marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
                 if (marks.length == 0)
                 {
                     liberator.echoerr("E283: No marks matching \"" + filter + "\"");

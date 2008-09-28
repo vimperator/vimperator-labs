@@ -403,7 +403,7 @@ liberator.CommandLine = function () //{{{
                     ["longest",       "Complete to longest common string"],
                     ["list",          "If more than one match, list all matches"],
                     ["list:full",     "List all and complete first match"],
-                    ["list:longest",  "List all and complete common string"],
+                    ["list:longest",  "List all and complete common string"]
                 ];
             },
             validator: function (value)
@@ -463,7 +463,7 @@ liberator.CommandLine = function () //{{{
         {
             if (lastMowOutput)
                 liberator.commandline.echo(lastMowOutput,
-                    liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE)
+                    liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             else
                 liberator.beep();
         });
@@ -1169,7 +1169,7 @@ liberator.CommandLine = function () //{{{
         {
             completionIndex = historyIndex = UNINITIALIZED;
             wildIndex = 0;
-        },
+        }
     };
     //}}}
 }; //}}}
@@ -1198,7 +1198,7 @@ liberator.ItemList = function (id) //{{{
     var iframe = document.getElementById(id);
     if (!iframe)
     {
-        liberator.log("No iframe with id: " + id + " found, strange things may happen!") // "The truth is out there..." -- djk
+        liberator.log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
         return;
     }
 
@@ -1500,7 +1500,7 @@ liberator.StatusLine = function () //{{{
                 return [
                   ["0", "Never display status line"],
                   ["1", "Display status line only if there are multiple windows"],
-                  ["2", "Always display status line"],
+                  ["2", "Always display status line"]
                 ];
             },
             validator: function (value) value >= 0 && value <= 2

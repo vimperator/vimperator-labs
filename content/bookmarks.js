@@ -68,9 +68,9 @@ liberator.Bookmarks = function () //{{{
         function readBookmark(id)
         {
             return {
-                itemId:  id,
-                uri:     bookmarksService.getBookmarkURI(id).spec,
-                title:   bookmarksService.getItemTitle(id),
+                itemId: id,
+                uri:    bookmarksService.getBookmarkURI(id).spec,
+                title:  bookmarksService.getItemTitle(id)
             };
         }
 
@@ -220,7 +220,7 @@ liberator.Bookmarks = function () //{{{
 
     liberator.mappings.add(modes, ["A"],
         "Toggle bookmarked state of current URL",
-        function () { liberator.bookmarks.toggle(liberator.buffer.URL); });
+        function () liberator.bookmarks.toggle(liberator.buffer.URL));
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -973,7 +973,7 @@ liberator.QuickMarks = function () //{{{
 
             if (filter.length > 0)
             {
-                marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0)
+                marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
                 if (marks.length == 0)
                 {
                     liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
