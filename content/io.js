@@ -764,7 +764,7 @@ lookup:
                 {
                     if (!silent)
                     {
-                        if (file.isDirectory())
+                        if (file.exists() && file.isDirectory())
                             liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
                         else
                             liberator.echomsg("could not source: \"" + filename + "\"", 1);
