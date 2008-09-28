@@ -508,20 +508,11 @@ liberator.CommandLine = function () //{{{
         "Display previously given messages",
         function ()
         {
-            // TODO: the MOW<->command-line disjoint is really annoying
-            if (messageHistory.length == 1)
-            {
-                liberator.commandline.echo(messageHistory.messages[0], liberator.commandline.HL_NORMAL);
-            }
-            else if (messageHistory.length > 1)
-            {
-                let list = "";
+            // TODO: color messages 
+            let list = messageHistory.messages.join("<br/>");
 
-                for (let [,message] in Iterator(messageHistory.messages))
-                    list += message + "<br/>";
-
-                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
-            }
+            // TODO: are messages all single line?
+            liberator.commandline.echo(list);
         }, { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
