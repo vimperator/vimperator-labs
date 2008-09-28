@@ -508,10 +508,11 @@ liberator.CommandLine = function () //{{{
         "Display previously given messages",
         function ()
         {
-            // TODO: color messages 
+            // TODO: color messages
+            //     : are all messages single line? Some display an aggregation
+            //       of single line messages at least. E.g. :source
             let list = messageHistory.messages.join("<br/>");
 
-            // TODO: are messages all single line?
             liberator.commandline.echo(list);
         }, { argCount: "0" });
 
