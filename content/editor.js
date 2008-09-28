@@ -151,8 +151,8 @@ liberator.Editor = function () //{{{
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
     function addAbbreviationCommands(ch, modeDescription)
     {
-        var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
         var mode = ch || "!";
+        modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
         liberator.commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
             "Abbreviate a key sequence" + modeDescription,

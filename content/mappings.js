@@ -198,7 +198,7 @@ liberator.Mappings = function () //{{{
             }
         }
 
-        var modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
+        modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
         liberator.commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,

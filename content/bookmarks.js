@@ -496,15 +496,14 @@ liberator.Bookmarks = function () //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            var title, url, tags, keyword, extra;
             var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
                 "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
             for (let i = 0; i < items.length; i++)
             {
-                title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
-                url = liberator.util.escapeHTML(items[i][0]);
-                keyword = items[i][2];
-                tags = items[i][3].join(", ");
+                let title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
+                let url = liberator.util.escapeHTML(items[i][0]);
+                let keyword = items[i][2];
+                let tags = items[i][3].join(", ");
 
                 extra = "";
                 if (keyword)

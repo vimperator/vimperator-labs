@@ -1368,7 +1368,8 @@ liberator.Buffer = function () //{{{
         // url is optional
         viewSource: function (url, useExternalEditor)
         {
-            var url = url || liberator.buffer.URL;
+            url = url || liberator.buffer.URL;
+
             if (useExternalEditor)
             {
                 // TODO: make that a helper function

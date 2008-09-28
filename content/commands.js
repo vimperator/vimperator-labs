@@ -211,7 +211,7 @@ liberator.Commands = function () //{{{
 
         addUserCommand: function (names, description, action, extra, replace)
         {
-            var extra = extra || {};
+            extra = extra || {};
             extra.isUserCommand = true;
             description = description || "User defined command";
 

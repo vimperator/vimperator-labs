@@ -112,8 +112,8 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
 
         if (this.setter)
         {
-            var tmpValue = newValue;
-            var newValue = this.setter.call(this, newValue);
+            let tmpValue = newValue;
+            newValue = this.setter.call(this, newValue);
 
             if (typeof newValue == "undefined")
             {
