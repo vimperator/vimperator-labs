@@ -191,7 +191,7 @@ liberator.CommandLine = function () //{{{
         {
             promptWidget.collapsed = true;
         }
-        promptWidget.setAttribute("class", highlightGroup || liberator.commandline.HL_QUESTION);
+        promptWidget.setAttribute("class", highlightGroup || liberator.commandline.HL_NORMAL);
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
