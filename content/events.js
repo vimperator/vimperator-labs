@@ -478,8 +478,6 @@ liberator.Events = function () //{{{
             if (url && liberator.history)
                 liberator.history.add(url, title);
 
-            liberator.autocommands.trigger("PageLoad", url);
-
             // mark the buffer as loaded, we can't use liberator.buffer.loaded
             // since that always refers to the current buffer, while doc can be
             // any buffer, even in a background tab
@@ -503,6 +501,8 @@ liberator.Events = function () //{{{
             {
                 liberator.echomsg("Background tab loaded: " + title || url, 1);
             }
+
+            liberator.autocommands.trigger("PageLoad", url);
         }
     }
 
