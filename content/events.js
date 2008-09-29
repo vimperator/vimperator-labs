@@ -309,7 +309,7 @@ liberator.Events = function () //{{{
 
         // this adds an event which is is called on each page load, even if the
         // page is loaded in a background tab
-        getBrowser().addEventListener("DOMContentLoaded", onPageLoad, true);
+        getBrowser().addEventListener("load", onPageLoad, true);
 
         // called when the active document is scrolled
         getBrowser().addEventListener("scroll", function (event)
