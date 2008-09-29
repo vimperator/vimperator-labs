@@ -86,6 +86,11 @@ liberator.Command.prototype = {
 
     execute: function (args, special, count, modifiers)
     {
+        // XXX
+        special = !!special;
+        count = (count === undefined) ? -1 : count;
+        modifiers = modifiers || {};
+
         // whenever the user specifies special options or fixed number of arguments
         // we use our args parser instead of passing a string to the callback
         if (this.options.length > 0 || this.argCount)

@@ -482,10 +482,7 @@ liberator.Options = function () //{{{
             if (name == "all")
                 all = true;
 
-            var scope = liberator.options.OPTION_SCOPE_BOTH;
-            if (modifiers && modifiers.scope)
-                scope = modifiers.scope;
-
+            var scope = modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
             var option = liberator.options.get(name, scope);
 
             if (!option && !all)
