@@ -1305,7 +1305,7 @@ liberator.ItemList = function (id) //{{{
 
             var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]);
             var e = doc.getElementsByTagName("tbody");
-            e[e.length - 1].removeChild(e[e.length - 1].firstElementChild);
+            e[e.length - 1].removeChild(e[e.length - 1].firstChild);
             e[e.length - 1].appendChild(row);
             completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
             return;
@@ -1322,8 +1322,8 @@ liberator.ItemList = function (id) //{{{
             catch (e) {}
             var row = createRow(icon, completions[offset][0], completions[offset][1]);
             var e = doc.getElementsByTagName("tbody");
-            e[e.length - 1].removeChild(e[e.length - 1].lastElementChild);
-            e[e.length - 1].insertBefore(row, e[e.length - 1].firstElementChild);
+            e[e.length - 1].removeChild(e[e.length - 1].lastChild);
+            e[e.length - 1].insertBefore(row, e[e.length - 1].firstChild);
             completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
             return;
         }
