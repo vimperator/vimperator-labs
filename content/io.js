@@ -777,7 +777,7 @@ lookup:
 
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
-                var str = ioManager.readFile(file);
+                let str = ioManager.readFile(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -786,14 +786,12 @@ lookup:
                 }
                 else
                 {
-                    var heredoc = "";
-                    var heredocEnd = null; // the string which ends the heredoc
-                    var lines = str.split("\n");
+                    let heredoc = "";
+                    let heredocEnd = null; // the string which ends the heredoc
+                    let lines = str.split("\n");
 
-                    for (let i = 0; i < lines.length; i++)
+                    for (let [i, line] in Iterator(lines))
                     {
-                        let line = lines[i];
-
                         if (heredocEnd) // we already are in a heredoc
                         {
                             if (heredocEnd.test(line))
@@ -809,33 +807,53 @@ lookup:
                         }
                         else
                         {
-                            var [count, cmd, special, args] = liberator.commands.parseCommand(line);
-                            var command = liberator.commands.get(cmd);
+                            // skip line comments and blank lines
+                            if (/^\s*(".*)?$/.test(line))
+                                continue;
 
-                            if (command && command.name == "finish")
-                            {
-                                break;
-                            }
-                            else if (command && command.name == "javascript")
-                            {
-                                // check for a heredoc
-                                var matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                            let [count, cmd, special, args] = liberator.commands.parseCommand(line);
+                            let command = liberator.commands.get(cmd);
 
-                                if (matches)
-                                {
-                                    heredocEnd = new RegExp("^" + matches[2] + "$", "m");
-                                    if (matches[1])
-                                        heredoc = matches[1] + "\n";
-                                }
-                                else
-                                {
-                                    command.execute(args, special, count);
-                                }
+                            if (!command)
+                            {
+                                let lineNumber = i + 1;
+
+                                // FIXME: messages need to be able to specify
+                                // whether they can be cleared/overwritten or
+                                // should be appended to and the MOW opened
+                                liberator.echoerr("Error detected while processing " + file.path,
+                                    liberator.commandline.FORCE_MULTILINE);
+                                liberator.commandline.echo("line " + lineNumber + ":", liberator.commandline.HL_LINENR,
+                                    liberator.commandline.APPEND_TO_MESSAGES);
+                                liberator.echoerr("E492: Not an editor command: " + line);
                             }
                             else
                             {
-                                // execute a normal liberator command
-                                liberator.execute(line);
+                                if (command.name == "finish")
+                                {
+                                    break;
+                                }
+                                else if (command.name == "javascript")
+                                {
+                                    // check for a heredoc
+                                    let matches = args.match(/(.*)<<\s*([^\s]+)$/);
+
+                                    if (matches)
+                                    {
+                                        heredocEnd = new RegExp("^" + matches[2] + "$", "m");
+                                        if (matches[1])
+                                            heredoc = matches[1] + "\n";
+                                    }
+                                    else
+                                    {
+                                        command.execute(args, special, count);
+                                    }
+                                }
+                                else
+                                {
+                                    // execute a normal liberator command
+                                    liberator.execute(line);
+                                }
                             }
                         }
                     }
@@ -854,7 +872,7 @@ lookup:
             }
             catch (e)
             {
-                var message = "Sourcing file: " + file.path + ": " + e;
+                let message = "Sourcing file: " + file.path + ": " + e;
                 Components.utils.reportError(message);
                 if (!silent)
                     liberator.echoerr(message);

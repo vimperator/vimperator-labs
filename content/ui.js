@@ -529,6 +529,7 @@ liberator.CommandLine = function () //{{{
         HL_QUESTION   : "hl-Question",
         HL_INFOMSG    : "hl-InfoMsg",
         HL_WARNINGMSG : "hl-WarningMsg",
+        HL_LINENR     : "hl-LineNr",
 
         // not yet used
         FORCE_MULTILINE    : 1 << 0,

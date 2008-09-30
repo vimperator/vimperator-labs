@@ -127,6 +127,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     background-color: white;
     color: black;
 }
+.hl-LineNr {
+    background-color: white;
+    color: orange;
+}
 .hl-MoreMsg {
     background-color: white;
     color: green;
