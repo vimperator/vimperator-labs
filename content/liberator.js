@@ -274,15 +274,16 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = "<table>";
-                    for (let command in liberator.commands)
-                    {
-                        usage += "<tr><td class=\"hl-Title\" style=\"padding-right: 20px\"> :" +
-                                 liberator.util.escapeHTML(command.name) + "</td><td>" +
-                                 liberator.util.escapeHTML(command.description) + "</td></tr>";
-                    }
-                    usage += "</table>";
-
+                    XML.prettyPrinting = false;
+                    var usage = <table>
+                        {[
+                            <tr>
+                                <td class="hl-Title" style="padding-right: 20px">{command.name}</td>
+                                <td>{command.description}</td>
+                            </tr>
+                            for each (command in liberator.commands)].reduce(liberator.buffer.template.add)
+                        }
+                        </table>.toXMLString();
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
@@ -427,13 +428,16 @@ const liberator = (function () //{{{
                             var totalUnits = "msec";
                         }
 
-                        var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                                  "<table>" +
-                                  "<tr class=\"hl-Title\" align=\"left\"><th colspan=\"3\">Code execution summary</th></tr>" +
-                                  "<tr><td>  Executed:</td><td align=\"right\"><span style=\"color: green\">" + count + "</span></td><td>times</td></tr>" +
-                                  "<tr><td>  Average time:</td><td align=\"right\"><span style=\"color: green\">" + each.toFixed(2) + "</span></td><td>" + eachUnits + "</td></tr>" +
-                                  "<tr><td>  Total time:</td><td align=\"right\"><span style=\"color: red\">" + total.toFixed(2) + "</span></td><td>" + totalUnits + "</td></tr>" +
-                                  "</table>";
+                        XML.prettyPrinting = false;
+                        var str = liberator.buffer.template.generic(
+                                <table>
+                                    <tr class="hl-Title" align="left">
+                                        <th colspan="3">Code execution summary</th>
+                                    </tr>
+                                    <tr><td>  Executed:</td><td align="right"><span style="color: green">{count}</span></td><td>times</td></tr>
+                                    <tr><td>  Average time:</td><td align="right"><span style="color: green">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>  Total time:</td><td align="right"><span style="color: red">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                 </table>);
 
                         liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                     }
@@ -495,14 +499,16 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = "<table>";
-                    for (let mapping in liberator.mappings)
-                    {
-                        usage += "<tr><td class=\"hl-Title\" style=\"padding-right: 20px\"> " +
-                                 liberator.util.escapeHTML(mapping.names[0]) + "</td><td>" +
-                                 liberator.util.escapeHTML(mapping.description) + "</td></tr>";
-                    }
-                    usage += "</table>";
+                    XML.prettyPrinting = false;
+                    var usage = <table>
+                            {[
+                                <tr>
+                                    <td class="hl-Title" style="padding-right: 20px"> {mapping.names[0]}</td>
+                                    <td>{mapping.description}</td>
+                                </tr>
+                                for each (mapping in liberator.mappings)].reduce(liberator.buffer.template.add)
+                             }
+                             </table>.toXMLString();
 
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }

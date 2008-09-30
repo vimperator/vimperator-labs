@@ -911,12 +911,12 @@ liberator.Buffer = function () //{{{
             elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
-            for ([,event] in Iterator(["mousedown", "mouseup", "click"]))
+            ["mousedown", "mouseup", "click"].forEach(function(event)
             {
                 evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
                         ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
                 elem.dispatchEvent(evt);
-            }
+            })
         },
 
         saveLink: function (elem, skipPrompt)
@@ -1099,6 +1099,8 @@ liberator.Buffer = function () //{{{
 
         showPageInfo: function (verbose)
         {
+            var doc = window.content.document;
+
             const feedTypes = {
                 "application/rss+xml": "RSS",
                 "application/atom+xml": "Atom",
@@ -1146,25 +1148,6 @@ liberator.Buffer = function () //{{{
                 return isFeed;
             }
 
-            // TODO: could this be useful for other commands?
-            function createTable(data)
-            {
-                var ret = "<table><tr><th class='hl-Title' align='left' colspan='2'>" +
-                          data[data.length - 1][0] + "</th></tr>";
-
-                if (data.length - 1)
-                {
-                    for (let i = 0; i < data.length - 1; i++)
-                        ret += "<tr><td style='font-weight: bold; min-width: 150px'>  " + data[i][0] + ": </td><td>" + data[i][1] + "</td></tr>";
-                }
-                else
-                {
-                    ret += "<tr><td colspan='2'>  (" + data[data.length - 1][1] + ")</td></tr>";
-                }
-
-                return ret + "</table>";
-            }
-
             var pageGeneral = [];
             var pageFeeds = [];
             var pageMeta = [];
@@ -1178,7 +1161,7 @@ liberator.Buffer = function () //{{{
             var ftpCacheSession = cacheService.createSession("FTP", 0, true);
             httpCacheSession.doomEntriesIfExpired = false;
             ftpCacheSession.doomEntriesIfExpired = false;
-            var cacheKey = window.content.document.location.toString().replace(/#.*$/, "");
+            var cacheKey = doc.location.toString().replace(/#.*$/, "");
             try
             {
                 var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
@@ -1202,42 +1185,39 @@ liberator.Buffer = function () //{{{
             }
 
             // put feeds rss into pageFeeds[]
-            var linkNodes = window.content.document.getElementsByTagName("link");
-            var length = linkNodes.length;
-            for (let i = 0; i < length; i++)
-            {
-                var link = linkNodes[i];
+            var linkNodes = doc.getElementsByTagName("link");
+            Array.forEach(linkNodes, function(link) {
                 if (!link.href)
-                    continue;
+                    return;
 
+                /* Ok... I don't know what this insanity was trying
+                 * to do, but, as far as I can tell, it was:
+                 */
                 var rel = link.rel && link.rel.toLowerCase();
-                var rels = {};
-                if (rel)
-                    rels[rel] = true;
 
-                if (rels.feed || (link.type && rels.alternate && !rels.stylesheet))
+                if (rel == "feed" || (link.type && rel == "alternate"))
                 {
                     var feed = { title: link.title, href: link.href, type: link.type || "" };
-                    if (isValidFeed(feed, window.content.document.nodePrincipal, rels.feed))
+                    if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
                     {
                         var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
-                        pageFeeds.push([feed.title, liberator.util.highlightURL(feed.href, true) + " <span style='color: gray;'>(" + type + ")</span>"]);
+                        pageFeeds.push([feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>]);
                     }
                 }
-            }
+            });
 
-            var lastModVerbose = new Date(window.content.document.lastModified).toLocaleString();
-            var lastMod = new Date(window.content.document.lastModified).toLocaleFormat("%x %X");
+            var lastModVerbose = new Date(doc.lastModified).toLocaleString();
+            var lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
             // FIXME: probably not portable across different language versions
-            if (lastModVerbose == "Invalid Date" || new Date(window.content.document.lastModified).getFullYear() == 1970)
+            if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
                 lastModVerbose = lastMod = null;
 
             // Ctrl-g single line output
             if (!verbose)
             {
                 var info = []; // tmp array for joining later
-                var file = window.content.document.location.pathname.split("/").pop() || "[No Name]";
-                var title = window.content.document.title || "[No Title]";
+                var file = doc.location.pathname.split("/").pop() || "[No Name]";
+                var title = doc.title || "[No Title]";
 
                 if (pageSize[0])
                     info.push(pageSize[1] || pageSize[0]);
@@ -1261,10 +1241,10 @@ liberator.Buffer = function () //{{{
             }
 
             // get general infos
-            pageGeneral.push(["Title", window.content.document.title]);
-            pageGeneral.push(["URL", liberator.util.highlightURL(window.content.document.location.toString(), true)]);
+            pageGeneral.push(["Title", doc.title]);
+            pageGeneral.push(["URL", liberator.util.highlightURL(doc.location.toString(), true)]);
 
-            var ref = "referrer" in window.content.document && window.content.document.referrer;
+            var ref = "referrer" in doc && doc.referrer;
             if (ref)
                 pageGeneral.push(["Referrer", liberator.util.highlightURL(ref, true)]);
 
@@ -1276,73 +1256,155 @@ liberator.Buffer = function () //{{{
                     pageGeneral.push(["File Size", pageSize[0]]);
             }
 
-            pageGeneral.push(["Mime-Type", content.document.contentType]);
-            pageGeneral.push(["Encoding", content.document.characterSet]);
-            pageGeneral.push(["Compatibility", content.document.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"]);
+            pageGeneral.push(["Mime-Type", doc.contentType]);
+            pageGeneral.push(["Encoding", doc.characterSet]);
+            pageGeneral.push(["Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"]);
             if (lastModVerbose)
                 pageGeneral.push(["Last Modified", lastModVerbose]);
 
             // get meta tag data, sort and put into pageMeta[]
-            var metaNodes = window.content.document.getElementsByTagName("meta");
-            var length = metaNodes.length;
-            if (length)
+            var metaNodes = doc.getElementsByTagName("meta");
+            if (metaNodes.length)
             {
-                var tmpSort = [];
-                var tmpDict = [];
+                let nodes = [];
+                let i = 0;
 
-                for (let i = 0; i < length; i++)
-                {
-                    var tmpTag = metaNodes[i].name || metaNodes[i].httpEquiv;// +
-                    var tmpTagNr = tmpTag + "-" + i; // allows multiple (identical) meta names
-                    tmpDict[tmpTagNr] = [tmpTag, metaNodes[i].content];
-                    tmpSort.push(tmpTagNr); // array for sorting
-                }
+                nodes = Array.map(metaNodes, function(node) [node.name || node.httpEquiv, node.content]);
+                nodes.sort(function(a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
 
-                // sort: ignore-case
-                tmpSort.sort(function (a, b) a.toLowerCase() > b.toLowerCase() ? 1 : -1);
-                for (let i = 0; i < tmpSort.length; i++)
-                    pageMeta.push([tmpDict[tmpSort[i]][0], liberator.util.highlightURL(tmpDict[tmpSort[i]][1], false)]);
+                pageMeta = [[node[0], liberator.util.highlightURL(node[1], false)]
+                                for each (node in nodes)];
             }
-
-            pageMeta.push(["Meta Tags", ""]); // add extra text to the end
-            pageGeneral.push(["General Info", ""]);
-            pageFeeds.push(["Feeds", ""]);
 
             var pageInfoText = "";
             var option = liberator.options["pageinfo"];
             var br = "";
 
-            for (let i = 0; i < option.length; i++)
+            let options = {
+                g: [pageGeneral, "General Info"],
+                f: [pageFeeds, "Feeds"],
+                m: [pageMeta, "Meta Tags"],
+            };
+            Array.forEach(option, function (option)
             {
-                switch (option[i])
-                {
-                    case "g":
-                        if (pageGeneral.length > 1)
-                        {
-                            pageInfoText += br + createTable(pageGeneral);
-                            if (!br)
-                                br = "<br/>";
-                        }
-                        break;
-                    case "f":
-                        if (pageFeeds.length > 1)
-                        {
-                            pageInfoText += br + createTable(pageFeeds);
-                            if (!br)
-                                br = "<br/>";
-                        }
-                        break;
-                    case "m":
-                        if (pageMeta.length > 1)
-                        {
-                            pageInfoText += br + createTable(pageMeta);
-                            if (!br)
-                                br = "<br/>";
-                        }
-                        break;
+                let opt = options[option];
+                if (opt && opt[0].length > 0)
+                        pageInfoText += br + liberator.buffer.template.table(opt[1], opt[0]);
+                        if (!br)
+                            br = "<br/>";
                 }
-            }
+            );
             liberator.echo(pageInfoText, liberator.commandline.FORCE_MULTILINE);
+        },
+
+        template:
+        {
+            add: function (a, b) a + b,
+            maybeXML: function (xml)
+            {
+                try
+                {
+                    return new XML(xml)
+                }
+                catch (e) {}
+                return xml;
+            },
+
+            generic: function (xml)
+            {
+                return (<>:{liberator.commandline.getCommand()}<br/></> + xml).toXMLString();
+            },
+
+            bookmarks: function (header, items)
+            {
+                XML.prettyPrinting = false;
+                return this.generic(
+                    <table>
+                        <tr align="left" class="hl-Title">
+                            <th>{header}</th><th>URL</th>
+                        </tr>
+                        {[
+                            <tr>
+                                <td>{liberator.util.clip(item.title, 50)}</td>
+                                <td style="width: 100%">
+                                    <a href="#" class="hl-URL">{item.url}</a>&#160;
+                                    {
+                                        (item.extra && item.extra.length) ?
+                                            <span style="color: gray;">
+                                                ({
+                                                    [<>{e[0]}: <span color={e[2]}>{e[1]}</span></>
+                                                        for each (e in item.extra)].reduce(this.add, <></>)
+                                                })
+                                            </span>
+                                        : ""
+                                    }
+                                </td>
+                            </tr>
+                            for each (item in items)].reduce(this.add, <></>)
+                        }
+                    </table>);
+            },
+
+            jumps: function (index, elems)
+            {
+                XML.prettyPrinting = false;
+                return this.generic(
+                    <table>
+                        <tr style="text-align: left;" class="hl-Title">
+                            <th colspan="2">jump</th><th>title</th><th>URI</th>
+                        </tr>
+                        {[
+                            <tr>
+                                <td>{idx == index ? <span style="color: blue;">&gt;</span> : ""}</td> <!-- } //vim :( -->
+                                <td>{Math.abs(idx - index)}</td>
+                                <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
+                                <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
+                            </tr>
+                            for ([idx, val] in Iterator(elems))].reduce(this.add, <></>)
+                        }
+                    </table>);
+            },
+
+            marks: function (marks)
+            {
+                XML.prettyPrinting = false;
+                return this.generic(
+                    <table>
+                        <tr class="hl-Title" align="left">
+                            <th>mark</th>
+                            <th>line</th>
+                            <th>col</th>
+                            <th>file</th>
+                        </tr>
+                        {[
+                            <tr>
+                                <td>{mark[0]}</td>
+                                <td align="right">{Math.round(mark[1].position.y & 100)}%</td>
+                                <td align="right">{Math.round(mark[1].position.x & 100)}%</td>
+                                <td style="color: green;">{mark[1].location}</td>
+                            </tr>
+                            for each (mark in marks)].reduce(this.add, <></>)
+                        }
+                    </table>);
+            },
+
+            table: function (title, data)
+            {
+                XML.prettyPrinting = false;
+                return this.generic(
+                    <table>
+                        <tr>
+                            <th class="hl-Title" align="left" colspan="2">{title}</th>
+                        </tr>
+                        {
+                             [<tr>
+                                 <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
+                                 <td>{this.maybeXML(datum[1])}</td>
+                              </tr>
+                              for each (datum in data)].reduce(this.add, <></>)
+                        }
+                    </table>);
+            }
         },
 
         viewSelectionSource: function ()
@@ -1751,19 +1813,7 @@ liberator.Marks = function () //{{{
                 }
             }
 
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr class=\"hl-Title\" align=\"left\"><th>mark</th><th>line</th><th>col</th><th>file</th></tr>";
-            for (let i = 0; i < marks.length; i++)
-            {
-                list += "<tr>" +
-                        "<td> "                        + marks[i][0]                              +  "</td>" +
-                        "<td align=\"right\">"         + Math.round(marks[i][1].position.y * 100) + "%</td>" +
-                        "<td align=\"right\">"         + Math.round(marks[i][1].position.x * 100) + "%</td>" +
-                        "<td style=\"color: green;\">" + liberator.util.escapeHTML(marks[i][1].location) + "</td>" +
-                        "</tr>";
-            }
-            list += "</table>";
-
+            var list = liberator.buffer.template.marks(marks);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 

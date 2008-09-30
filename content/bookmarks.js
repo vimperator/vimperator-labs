@@ -231,23 +231,9 @@ liberator.Bookmarks = function () //{{{
         function ()
         {
             var sh = getWebNavigation().sessionHistory;
-            var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "jumps") + "<br/>" + "<table>";
-            list += "<tr class=\"hl-Title\" align=\"left\"><th colspan=\"2\">jump</th><th>title</th><th>URI</th></tr>";
-            var num = -sh.index;
 
-            for (let i = 0; i < sh.count; i++)
-            {
-                var entry = sh.getEntryAtIndex(i, false);
-                var uri = entry.URI.spec;
-                var title = entry.title;
-                var indicator = i == sh.index? "<span style=\"color: blue;\">&gt;</span>": " ";
-                list += "<tr><td>" + indicator + "<td>" + Math.abs(num) + "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                        "</td><td><a href=\"#\" class=\"hl-URL jump-list\">" + uri + "</a></td></tr>";
-                num++;
-            }
-
-            list += "</table>";
-
+            let entries = [sh.getEntryAtIndex(i, false) for (i in liberator.util.range(0, sh.count))];
+            let list = liberator.buffer.template.jumps(sh.index, entries);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
@@ -496,33 +482,13 @@ liberator.Bookmarks = function () //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
-            for (let i = 0; i < items.length; i++)
-            {
-                let title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
-                let url = liberator.util.escapeHTML(items[i][0]);
-                let keyword = items[i][2];
-                let tags = items[i][3].join(", ");
-
-                extra = "";
-                if (keyword)
+            let list = liberator.buffer.template.bookmarks("title", (
                 {
-                    extra = "<span style=\"color: gray;\"> (keyword: <span style=\"color: red;\">" + liberator.util.escapeHTML(keyword) + "</span>";
-                    if (tags)
-                        extra += " tags: <span style=\"color: blue;\">" + liberator.util.escapeHTML(tags) + ")</span>";
-                    else
-                        extra += ")</span>";
-                }
-                else if (tags)
-                {
-                    extra = "<span style=\"color: gray;\"> (tags: <span style=\"color: blue;\">" + liberator.util.escapeHTML(tags) + "</span>)</span>";
-                }
-
-                list += "<tr><td>" + title + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + url + "</a>" + extra + "</td></tr>";
-            }
-            list += "</table>";
-
+                    url:   item[0],
+                    title: item[1],
+                    extra: [['keyword', item[2],            'red'],
+                            ['tags',    item[3].join(', '), 'blue']].filter(function(i) i[1])
+                } for each (item in items)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
@@ -802,15 +768,11 @@ liberator.History = function () //{{{
             }
             else
             {
-                var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                           "<table><tr class=\"hl-Title\" align=\"left\"><th>title</th><th>URL</th></tr>";
-                for (let i = 0; i < items.length; i++)
-                {
-                    var title = liberator.util.escapeHTML(liberator.util.clip(items[i][1], 50));
-                    var url = liberator.util.escapeHTML(items[i][0]);
-                    list += "<tr><td>" + title + "</td><td><a href=\"#\" class=\"hl-URL\">" + url + "</a></td></tr>";
-                }
-                list += "</table>";
+                let list = liberator.buffer.template.bookmarks("title", (
+                    {
+                        title: item[1],
+                        url:   item[0],
+                    } for each (item in items)));
                 liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         }
@@ -980,17 +942,8 @@ liberator.QuickMarks = function () //{{{
                 }
             }
 
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr class=\"hl-Title\" align=\"left\"><th>QuickMark</th><th>URL</th></tr>";
-
-            for (let i = 0; i < marks.length; i++)
-            {
-                list += "<tr><td>    " + marks[i] +
-                        "</td><td style=\"color: green;\">" + liberator.util.escapeHTML(qmarks.get(marks[i])) + "</td></tr>";
-            }
-
-            list += "</table>";
-
+            let items = ({title: mark, url: qmarks.get(mark)} for each (mark in marks));
+            let list = liberator.buffer.template.bookmarks("QuickMark", items);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
     };

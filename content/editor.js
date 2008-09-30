@@ -930,33 +930,30 @@ liberator.Editor = function () //{{{
             }
             else // list all (for that filter {i,c,!})
             {
-                var flagFound = false;
                 var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
-                var list = "<table>";
+                XML.prettyPrinting = false;
+                let list = <></>;
                 for (let tmplhs in abbrev)
                 {
-                    for (let i = 0; i < abbrev[tmplhs].length; i++)
+                    abbrev[tmplhs].forEach(function (abbr)
                     {
-                        if (searchFilter.indexOf(abbrev[tmplhs][i][0]) > -1)
+                        if (searchFilter.indexOf(abbr[0]) > -1)
                         {
-                            if (!flagFound)
-                                flagFound = true;
-
-                            list += "<tr>";
-                            list += "<td> " + abbrev[tmplhs][i][0] + "</td>";
-                            list += "<td> " + liberator.util.escapeHTML(tmplhs) + "</td>";
-                            list += "<td> " + liberator.util.escapeHTML(abbrev[tmplhs][i][1]) + "</td>";
-                            list += "</tr>";
+                            list += <tr>
+                                        <td>{abbr[0]}</td>
+                                        <td>{tmplhs}</td>
+                                        <td>{abbr[1]}</td>
+                                    </tr>;
                         }
-                    }
+                    });
                 }
 
-                if (!flagFound)
+                if (!list.length())
                 {
                     liberator.echoerr("No abbreviations found");
                     return;
                 }
-                list += "</table>";
+                list = <table>{list}</table>
                 liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         },

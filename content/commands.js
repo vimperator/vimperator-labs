@@ -697,15 +697,23 @@ liberator.Commands = function () //{{{
                 var cmdlist = getMatchingUserCommands(cmd);
                 if (cmdlist.length > 0)
                 {
-                    var str = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                              "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Args</th><th>Definition</th></tr>";
-                    for (let i = 0; i < cmdlist.length; i++)
-                    {
-                        // programmatically added user commands have a null replacementText
-                        str += "<tr><td>" + cmdlist[i].name + "</td><td>" + "*" + "</td><td>" + liberator.util.escapeHTML(cmdlist[i].replacementText || "function () { ... }") + "</td></tr>";
-                    }
-                    str += "</table>";
-
+                    XML.prettyPrinting = false;
+                    var str = liberator.buffer.template.generic(
+                        <table>
+                            <tr class="hl-Title" align="left">
+                                <th>Name</th>
+                                <th>Args</th>
+                                <th>Definition</th>
+                            </tr>
+                            {[
+                                <tr>
+                                    <td>{cmd.name}</td>
+                                    <td>*</td>
+                                    <td>{cmd.replacementText || "function () { ... }"}</td>
+                                </tr>
+                                for each (cmd in cmdlist)].reduce(liberator.buffer.template.add, <></>)
+                            }
+                        </table>);
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else

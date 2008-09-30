@@ -45,22 +45,22 @@ liberator.util = { //{{{
         {
             if (type == "number")
             {
-                return "<span style=\"color: red;\">" + arg + "</span>";
+                return <span style="color: red;">{arg}</span>;
             }
             else if (type == "string")
             {
                 if (processStrings)
-                    arg = '"' + liberator.util.escapeHTML(arg.replace(/\n/, "\\n")) + '"';
+                    arg = <>"{arg.replace(/\n/, "\\n")}"</>;
 
-                return "<span style=\"color: green;\">" + arg + "</span>";
+                return <span style="color: green;">{arg}</span>;
             }
             else if (type == "boolean")
             {
-                return "<span style=\"color: blue;\">" + arg + "</span>";
+                return <span style="color: blue;">{arg}</span>;
             }
             else if (arg == null || arg == "undefined")
             {
-                return "<span style=\"color: blue;\">" + arg + "</span>";
+                return <span style="color: blue;">{arg}</span>;
             }
             else if (type == "object" || type == "function")
             {
@@ -193,7 +193,7 @@ liberator.util = { //{{{
     highlightURL: function (str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return "<a class='hl-URL' href='#'>" + liberator.util.escapeHTML(str) + "</a>";
+            return <a class="hl-URL" href="#">{str}</a>;
         else
             return str;
     },
@@ -249,6 +249,12 @@ liberator.util = { //{{{
         catch (e) {}
 
         return string;
+    },
+
+    range: function (start, end)
+    {
+        while (start < end)
+            yield start++;
     },
 
     // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird

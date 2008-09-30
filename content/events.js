@@ -202,36 +202,29 @@ liberator.AutoCommands = function () //{{{
 
         list: function (auEvent, regex) // arguments are filters (NULL = all)
         {
-            var flag;
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                "<table><tr><td class=\"hl-Title\" colspan=\"2\">---- Auto-Commands ----</td></tr>";
+            let cmds = (item for (item in Iterator(autoCommands))
+                             if ((!auEvent || item[0] == auEvent) && item[1].length));
 
-            for (let item in autoCommands)
-            {
-                flag = true;
-                if (!auEvent || item == auEvent) // filter event
-                {
-                    for (let i = 0; i < autoCommands[item].length; i++)
-                    {
-                        if (!regex || regex == autoCommands[item][i][0]) // filter regex
-                        {
-                            if (flag == true)
-                            {
-                                list += "<tr><td class=\"hl-Title\" colspan=\"2\">" +
-                                        liberator.util.escapeHTML(item) + "</td></tr>";
-                                flag = false;
-                            }
-
-                            list += "<tr>";
-                            list += "<td> &nbsp; " + liberator.util.escapeHTML(autoCommands[item][i][0]) + "</td>";
-                            list += "<td>" + liberator.util.escapeHTML(autoCommands[item][i][1]) + "</td>";
-                            list += "</tr>";
-                        }
+            // Okay, maybe a bit scary. --Kris
+            XML.prettyPrinting = false;
+            var list = liberator.buffer.template.generic(
+                <table>
+                    <tr>
+                        <td class="hl-Title" colspan="2">----- Auto Commands -----</td>
+                    </tr>
+                    {[
+                        <tr>
+                            <td class="hl-Title" colspan="2">{event}</td>
+                        </tr>
+                        + [<tr>
+                               <td>&#160;{item[0]}</td>
+                               <td>{item[1]}</td>
+                           </tr>
+                           for each (item in items)].reduce(liberator.buffer.template.add)
+                        for ([event, items] in cmds)].reduce(liberator.buffer.template.add, <></>)
                     }
-                }
-            }
+                </table>);
 
-            list += "</table>";
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
@@ -665,14 +658,17 @@ liberator.Events = function () //{{{
         "List all macros",
         function (args)
         {
-            var str = "<table>";
-            var macroRef = liberator.events.getMacros(args);
-            for (let [macro, keys] in macroRef)
-               str += "<tr><td> " + macro + " &nbsp; </td><td>" +
-                      liberator.util.escapeHTML(keys) + "</td></tr>";
-
-            str += "</table>";
-
+            XML.prettyPrinting = false;
+            var str = <table>
+                {[
+                    <tr>
+                        <td>{macro}</td>
+                        <td>{keys}</td>
+                    </tr>
+                    for ([macro, keys] in Iterator(liberator.events.getMacros(args)))
+                    ].reduce(liberator.buffer.template.add, <></>)
+                }
+            </table>.toXMLString();
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {

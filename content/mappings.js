@@ -372,24 +372,21 @@ liberator.Mappings = function () //{{{
                 return;
             }
 
-            for (let i = 0; i < maps.length; i++) // check on maps items (first mode)
+            for (let [i, map] in Iterator(maps)) // check on maps items (first mode)
             {
-                output.push(true);
-                if (filter && maps[i].names[0] != filter) // does it match the filter first of all?
-                {
-                    output[output.length - 1] = false;
+                output[i] = !filter || map.names[0] == filter;
+                if (!output[i]) // does it match the filter first of all?
                     continue;
-                }
-                for (let j = 1; j < modes.length; j++) // check if found in the other modes (1(2nd)-last)
+                for (let [, mode] in Iterator(modes))
                 {
-                    output[output.length - 1] = false; // toggle false, only true whan also found in this mode
-                    for (let k = 0; k < user[modes[j]].length; k++) // maps on the other modes
+                    output[i] = false; // toggle false, only true whan also found in this mode
+                    for (let [, usermode] in Iterator(user[mode]))
                     {
                         // NOTE: when other than user maps, there might be more than only one names[x].
                         //       since only user mappings gets queried here, only names[0] gets checked for equality.
-                        if (maps[i].rhs == user[modes[j]][k].rhs && maps[i].names[0] == user[modes[j]][k].names[0])
+                        if (map.rhs == usermode.rhs && map.names[0] == usermode.names[0])
                         {
-                            output[output.length - 1] = true;
+                            output[i] = true;
                             break; // found on this mode - ok, check next mode...
                         }
                     }
@@ -398,11 +395,7 @@ liberator.Mappings = function () //{{{
             }
 
             // anything found?
-            var flag = false;
-            for (let i = 0; i < output.length; i++)
-                if (output[i])
-                    flag = true;
-
+            var flag = output.some(function (x) x);
             if (!flag)
             {
                 liberator.echo("No mappings found");
@@ -410,33 +403,33 @@ liberator.Mappings = function () //{{{
             }
 
             var modeSign = "";
-            for (let i = 0; i < modes.length; i++)
+            modes.forEach(function (mode)
             {
-                if (modes[i] == liberator.modes.NORMAL)
+                if (mode == liberator.modes.NORMAL)
                     modeSign += "n";
-                if ((modes[i] == liberator.modes.INSERT || modes[i] == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1)
+                if ((mode == liberator.modes.INSERT || mode == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1)
                     modeSign += "i";
-                if (modes[i] == liberator.modes.COMMAND_LINE)
+                if (mode == liberator.modes.COMMAND_LINE)
                     modeSign += "c";
-                if (modes[i] == liberator.modes.MESSAGRE)
+                if (mode == liberator.modes.MESSAGRE)
                     modeSign += "m";
-            }
+            });
 
-            var list = "<table>";
-            for (let i = 0; i < maps.length; i++)
-            {
-                if (!output[i])
-                    continue;
-                for (let j = 0; j < maps[i].names.length; j++)
-                {
-                    list += "<tr>";
-                    list += "<td> " + modeSign + "   " + liberator.util.escapeHTML(maps[i].names[j]) + "</td>";
-                    list += "<td> " + (maps[i].noremap ? "*" : " ") + "</td>";
-                    list += "<td>" + liberator.util.escapeHTML(maps[i].rhs || "function () { ... }") + "</td>";
-                    list += "</tr>";
-                }
-            }
-            list += "</table>";
+            let _maps = (map for ([i, map] in Iterator(maps))
+                             if (output[i]));
+            XML.prettyPrinting = false;
+            let list = <table>
+                    {[
+                        [
+                            <tr>
+                                <td>{modeSign} {name}</td>
+                                <td>{map.noremap ? "*" : " "}</td>
+                                <td>{map.rhs || "function () { ... }"}</td>
+                            </tr>
+                            for each (name in map.names)].reduce(liberator.buffer.template.add)
+                        for each (map in _maps)].reduce(liberator.buffer.template.add)
+                    }
+                    </table>
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }

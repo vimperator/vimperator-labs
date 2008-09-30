@@ -841,47 +841,54 @@ liberator.Options = function () //{{{
 
         list: function (onlyNonDefault, scope)
         {
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                       "<table><tr class=\"hl-Title\" align=\"left\"><th>--- Options ---</th></tr>";
-            var name, value, def;
-
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
+            let opts = []
             for (let opt in Iterator(this))
             {
-                name  = opt.name;
-                value = opt.value;
-                def   = opt.defaultValue;
+                let option = {
+                    isDefault: opt.value == opt.defaultValue,
+                    name:      opt.name,
+                    default:   opt.defaultValue,
+                    pre:       <>&#160;&#160;</>,
+                    value:     <></>,
+                };
 
-                if (onlyNonDefault && value == def)
+                if (onlyNonDefault && option.isDefault)
                     continue;
-
                 if (!(opt.scope & scope))
                     continue;
 
                 if (opt.type == "boolean")
                 {
-                    name = value ? "  " + name : "no" + name;
-                    if (value != def)
-                        name = "<span style=\"font-weight: bold\">" + name + "</span><span style=\"color: gray\">  (default: " + (def ? "" : "no") + opt.name + ")</span>";
-                    list += "<tr><td>" + name + "</td></tr>";
+                    if (!opt.value)
+                        option.pre = "no";
+                    option.default = (option.default ? "" : "no") + opt.name;
                 }
                 else
                 {
-                    if (value != def)
-                    {
-                        name  = "<span style=\"font-weight: bold\">" + name + "</span>";
-                        value = liberator.util.colorize(value, false) + "<span style=\"color: gray\">  (default: " + def + ")</span>";
-                    }
-                    else
-                        value = liberator.util.colorize(value, false);
-
-                    list += "<tr><td>" + "  " + name + "=" + value + "</td></tr>";
+                    option.value = <>={liberator.util.colorize(opt.value, false)}</>;
                 }
+                opts.push(option);
             }
 
-            list += "</table>";
+            XML.prettyPrinting = false;
+            let list = liberator.buffer.template.generic(
+                    <table>
+                        <tr class="hl-Title" align="left">
+                            <th>--- Options ---</th>
+                        </tr>
+                        {[
+                            <tr>
+                                <td>
+                                    <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
+                                    {opt.isDefault ? "" : <span style="color: gray"> (default: {opt.default})</span>}
+                                </td>
+                            </tr>
+                            for each (opt in opts)].reduce(liberator.buffer.template.add, <></>)
+                        }
+                    </table>);
 
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
@@ -890,6 +897,8 @@ liberator.Options = function () //{{{
         {
             if (!filter)
                 filter = "";
+
+            /* Argh. Later. */
 
             var prefArray = prefService.getChildList("", { value: 0 });
             prefArray.sort();

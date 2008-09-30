@@ -63,12 +63,7 @@ liberator.IO = function () //{{{
 
     function expandPathList(list)
     {
-        var expanded = [];
-
-        for (let [,path] in Iterator(list.split(",")))
-            expanded.push(liberator.io.expandPath(path));
-
-        return expanded.join(",");
+        return list.split(",").map(liberator.io.expandPath).join(",");
     }
 
     // TODO: why are we passing around so many strings? I know that the XPCOM
@@ -308,13 +303,17 @@ liberator.IO = function () //{{{
         "List all sourced script names",
         function ()
         {
-            var list = "<table>";
-
-            for (let i = 0; i < scriptNames.length; i++)
-                list += "<tr><td style=\"text-align: right\">" + (i + 1) + ".</td><td>" + scriptNames[i] + "</td></tr>";
-
-            list += "</table>";
-
+            XML.prettyPrinting = false;
+            var list = 
+                <table>
+                {[
+                    <tr>
+                        <td style="text-align: right">{i+1}</td>
+                        <td>{name}</td>
+                    </tr>
+                    for ([i, name] in Iterator(striptNames))].reduce(liberator.buffer.template.add, <></>)
+                }
+                 </table>.toXMLString();
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
