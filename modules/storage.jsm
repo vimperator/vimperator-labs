@@ -39,17 +39,9 @@ function getCharPref(name)
 {
     try
     {
-        var value = prefService.getComplexValue(name, Components.interfaces.nsISupportsString).data;
-        // try in case it's a localized string (will throw an exception if not)
-        if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
-            /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
-                value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
-        return value;
+        return prefService.getComplexValue(name, Components.interfaces.nsISupportsString).data;
     }
-    catch (e)
-    {
-        return undefined;
-    }
+    catch (e) {}
 }
 
 function setCharPref(name, value)
@@ -235,7 +227,7 @@ var storage = {
         if (!(key in observers))
             return;
         observers[key] = observers[key].filter(function (elem) elem != callback);
-        if (obsevers[key].length == 0)
+        if (observers[key].length == 0)
             delete obsevers[key];
     },
 
