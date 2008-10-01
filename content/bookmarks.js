@@ -494,7 +494,6 @@ liberator.Bookmarks = function () //{{{
 
         destroy: function ()
         {
-            bookmarksService.removeObserver(observer, false);
         }
     };
     //}}}
