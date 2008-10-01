@@ -1355,7 +1355,7 @@ liberator.Buffer = function () //{{{
                         </tr>
                         {[
                             <tr>
-                                <td>{idx == index ? <span style="color: blue;">&gt;</span> : ""}</td> <!-- } //vim :( -->
+                                <td>{idx == index ? <span style="color: blue;">{">"}</span> : ""}</td> <!-- } //vim :( -->
                                 <td>{Math.abs(idx - index)}</td>
                                 <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
                                 <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
@@ -1436,8 +1436,6 @@ liberator.Buffer = function () //{{{
             {
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
-                var newThread = Components.classes["@mozilla.org/thread-manager;1"]
-                                          .getService().newThread(0);
                 var editor = liberator.options["editor"];
                 var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)
@@ -1448,7 +1446,7 @@ liberator.Buffer = function () //{{{
 
                 var prog = args.shift();
                 args.push(url);
-                liberator.callFunctionInThread(newThread, liberator.io.run, [prog, args, true]);
+                liberator.callFunctionInThread(null, liberator.io.run, [prog, args, true]);
             }
             else
             {
