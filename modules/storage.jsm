@@ -117,7 +117,7 @@ ObjectStore.prototype = prototype;
 
 function ArrayStore(name, store)
 {
-    var array = loadPref(name, store, Array) || {};
+    var array = loadPref(name, store, Array) || [];
 
     this.__defineGetter__("store",  function () store);
     this.__defineGetter__("name",   function () name);
