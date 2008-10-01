@@ -240,6 +240,27 @@ liberator.Options = function () //{{{
         }
     }
 
+    function echoOptions(title, opts) {
+        XML.prettyPrinting = false;
+        let list = liberator.buffer.template.generic(
+                <table>
+                    <tr class="hl-Title" align="left">
+                        <th>--- {title} ---</th>
+                    </tr>
+                    {[
+                        <tr>
+                            <td>
+                                <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
+                                {opt.isDefault || opt.default == null ? "" : <span style="color: gray"> (default: {opt.default})</span>}
+                            </td>
+                        </tr>
+                        for each (opt in opts)].reduce(liberator.buffer.template.add, <></>)
+                    }
+                </table>);
+
+        liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+    }
+
     //
     // firefox preferences which need to be changed to work well with vimperator
     //
@@ -844,53 +865,37 @@ liberator.Options = function () //{{{
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
-            let opts = []
-            for (let opt in Iterator(this))
-            {
-                let option = {
-                    isDefault: opt.value == opt.defaultValue,
-                    name:      opt.name,
-                    default:   opt.defaultValue,
-                    pre:       <>&#160;&#160;</>,
-                    value:     <></>,
-                };
-
-                if (onlyNonDefault && option.isDefault)
-                    continue;
-                if (!(opt.scope & scope))
-                    continue;
-
-                if (opt.type == "boolean")
+            let opts = function (opt) {
+                for (let opt in Iterator(liberator.options))
                 {
-                    if (!opt.value)
-                        option.pre = "no";
-                    option.default = (option.default ? "" : "no") + opt.name;
+                    let option = {
+                        isDefault: opt.value == opt.defaultValue,
+                        name:      opt.name,
+                        default:   opt.defaultValue,
+                        pre:       <>&#160;&#160;</>,
+                        value:     <></>,
+                    };
+
+                    if (onlyNonDefault && option.isDefault)
+                        continue;
+                    if (!(opt.scope & scope))
+                        continue;
+
+                    if (opt.type == "boolean")
+                    {
+                        if (!opt.value)
+                            option.pre = "no";
+                        option.default = (option.default ? "" : "no") + opt.name;
+                    }
+                    else
+                    {
+                        option.value = <>={liberator.util.colorize(opt.value, false)}</>;
+                    }
+                    yield option;
                 }
-                else
-                {
-                    option.value = <>={liberator.util.colorize(opt.value, false)}</>;
-                }
-                opts.push(option);
             }
 
-            XML.prettyPrinting = false;
-            let list = liberator.buffer.template.generic(
-                    <table>
-                        <tr class="hl-Title" align="left">
-                            <th>--- Options ---</th>
-                        </tr>
-                        {[
-                            <tr>
-                                <td>
-                                    <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
-                                    {opt.isDefault ? "" : <span style="color: gray"> (default: {opt.default})</span>}
-                                </td>
-                            </tr>
-                            for each (opt in opts)].reduce(liberator.buffer.template.add, <></>)
-                        }
-                    </table>);
-
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            echoOptions("Options", opts());
         },
 
         listPrefs: function (onlyNonDefault, filter)
@@ -898,42 +903,32 @@ liberator.Options = function () //{{{
             if (!filter)
                 filter = "";
 
-            /* Argh. Later. */
-
             var prefArray = prefService.getChildList("", { value: 0 });
             prefArray.sort();
-            var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
-                "<table><tr class=\"hl-Title\" align=\"left\"><th>--- " + liberator.config.hostApplication +
-                " Options ---</th></tr>";
-            var name, value, defaultValue;
-
-            prefArray.forEach(function (pref) {
-                var userValue = prefService.prefHasUserValue(pref);
-                if ((!onlyNonDefault || userValue) && pref.indexOf(filter) >= 0)
+            let prefs = function () {
+                for each (let pref in prefArray)
                 {
-                    name = pref;
-                    value = liberator.options.getPref(name);
+                    var userValue = prefService.prefHasUserValue(pref);
+                    if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
+                        continue;
+
+                    value = liberator.options.getPref(pref);
                     if (typeof value == "string")
                         value = value.substr(0, 100).replace(/\n/g, " ");
 
-                    value = liberator.util.colorize(value, true);
-                    defaultValue = loadPreference(name, null, true);
+                    let option = {
+                        isDefault: !userValue,
+                        default:   loadPreference(pref, null, true),
+                        value:     <>={liberator.util.colorize(value, false)}</>,
+                        name:      pref,
+                        pre:       <>&#160;&#160;</>,
+                    };
 
-                    if (defaultValue == null)
-                        defaultValue = "no default";
-                    else
-                        defaultValue = "default: " + defaultValue;
-
-                    if (userValue)
-                    {
-                        list += "<tr><td>  <span style=\"font-weight: bold\">" + name + "</span>=" + value + "<span style=\"color: gray\">  (" + defaultValue + ")</span></td></tr>";
-                    }
-                    else
-                        list += "<tr><td>  " + name + "=" + value + "</td></tr>";
+                    yield option;
                 }
-            });
-            list += "</table>";
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            }
+
+            echoOptions(liberator.config.hostApplication + " Options", prefs());
         },
 
         get store() liberator.storage.options,
