@@ -1332,7 +1332,7 @@ liberator.Buffer = function () //{{{
                                         (item.extra && item.extra.length) ?
                                             <span style="color: gray;">
                                                 ({
-                                                    [<>{e[0]}: <span color={e[2]}>{e[1]}</span></>
+                                                    [<>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>
                                                         for each (e in item.extra)].reduce(this.add, <></>)
                                                 })
                                             </span>

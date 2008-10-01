@@ -716,13 +716,13 @@ liberator.Tabs = function () //{{{
             for (let [i, item] in Iterator(liberator.completion.buffer("")[1]))
             {
                 if (i == liberator.tabs.index())
-                   indicator = " <span style=\"color: blue\">%</span> ";
+                   indicator = "%"
                 else if (i == liberator.tabs.index(liberator.tabs.alternate))
-                   indicator = " <span style=\"color: blue\">#</span> ";
+                   indicator = "#";
                 else
-                   indicator = "   ";
+                   indicator = " ";
 
-                let [number, title] = items[i][0].split(/:\s+/, 2);
+                let [number, title] = item[0].split(/:\s+/, 2);
                 items +=
                     <tr>
                         <td align="right">  {number}</td>
