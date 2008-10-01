@@ -1300,6 +1300,7 @@ liberator.Buffer = function () //{{{
         template:
         {
             add: function (a, b) a + b,
+            join: function (c) function (a, b) a + c + b,
             maybeXML: function (xml)
             {
                 try
@@ -1333,7 +1334,7 @@ liberator.Buffer = function () //{{{
                                             <span style="color: gray;">
                                                 ({
                                                     [<>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>
-                                                        for each (e in item.extra)].reduce(this.add, <></>)
+                                                        for each (e in item.extra)].reduce(this.join(<>&#160;</>))
                                                 })
                                             </span>
                                         : ""
