@@ -789,11 +789,8 @@ const liberator = (function () //{{{
             }
         },
 
-        echo: function (str, flags) {
-
-            var commandlineHandler = Components.classes["@mozilla.org/commandlinehandler/general-startup;1?type=vimperator"]
-                                               .createInstance(Components.interfaces.nsICommandlineHandler);
-            alert(commandlineHandler.handle)
+        echo: function (str, flags)
+        {
             liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags);
         },
 
