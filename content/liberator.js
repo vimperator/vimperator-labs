@@ -789,7 +789,13 @@ const liberator = (function () //{{{
             }
         },
 
-        echo:    function (str, flags) { liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags); },
+        echo: function (str, flags) {
+
+            var commandlineHandler = Components.classes["@mozilla.org/commandlinehandler/general-startup;1?type=vimperator"]
+                                               .createInstance(Components.interfaces.nsICommandlineHandler);
+            alert(commandlineHandler.handle)
+            liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags);
+        },
 
         // TODO: Vim replaces unprintable characters in echoerr/echomsg
         echoerr: function (str, flags)

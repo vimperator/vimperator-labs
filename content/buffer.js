@@ -1379,8 +1379,8 @@ liberator.Buffer = function () //{{{
                         {[
                             <tr>
                                 <td>{mark[0]}</td>
-                                <td align="right">{Math.round(mark[1].position.y & 100)}%</td>
-                                <td align="right">{Math.round(mark[1].position.x & 100)}%</td>
+                                <td align="right">{Math.round(mark[1].position.y * 100)}%</td>
+                                <td align="right">{Math.round(mark[1].position.x * 100)}%</td>
                                 <td style="color: green;">{mark[1].location}</td>
                             </tr>
                             for each (mark in marks)].reduce(this.add, <></>)
