@@ -522,8 +522,6 @@ liberator.IO = function () //{{{
         // FIXME: is there a reason the "TmpD" special directory isn't being used? -- djk
         createTempFile: function ()
         {
-            let file = Components.classes["@mozilla.org/file/local;1"]
-                                 .createInstance(Components.interfaces.nsILocalFile);
             let tmpName = EXTENSION_NAME + ".tmp";
 
             switch (EXTENSION_NAME)
@@ -541,12 +539,10 @@ liberator.IO = function () //{{{
                     break;
             }
 
-            // TODO: Should we by trying /tmp first like Vim?
-            let dir = environmentService.get("TMPDIR") || environmentService.get("TMP")
-                          || environmentService.get("TEMP") || (WINDOWS ? "C:\\" : "/tmp/");
-
-            file.initWithPath(dir);
-            file.appendRelativePath(tmpName);
+            let file = Components.classes["@mozilla.org/file/directory_service;1"]
+                                 .getService(Components.interfaces.nsIProperties)
+                                 .get("TmpD", Components.interfaces.nsIFile);
+            file.append(tmpName);
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
 
             if (file.exists())
