@@ -289,10 +289,9 @@ liberator.Options = function () //{{{
         {
             if (!args)
             {
-                var str = "";
-                for (let i in liberator.globalVariables)
+                var str = <></>;
+                for (let [i, value] in Iterator(liberator.globalVariables))
                 {
-                    var value = liberator.globalVariables[i];
                     if (typeof value == "number")
                         var prefix = "#";
                     else if (typeof value == "function")
@@ -300,10 +299,10 @@ liberator.Options = function () //{{{
                     else
                         var prefix = "";
 
-                    str += "<tr><td style=\"width: 200px;\">" + i + "</td><td>" + prefix + value + "</td>\n";
+                    str += <tr><td style="width: 200px;">{i}</td><td>{prefix}{value}</td></tr>;
                 }
-                if (str)
-                    liberator.echo("<table>" + str + "</table>", liberator.commandline.FORCE_MULTILINE);
+                if (str.length())
+                    liberator.echo(<table>{str}</table>, liberator.commandline.FORCE_MULTILINE);
                 else
                     liberator.echo("No variables found");
                 return;

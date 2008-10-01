@@ -71,17 +71,17 @@ liberator.util = { //{{{
 
                 var str = arg.toString();
                 if (typeof str == "string")  // can be "undefined"
-                    return liberator.util.escapeHTML(str);
+                    return <>{str}</>;
                 else
                     return "undefined";
             }
         }
         catch (e)
         {
-            return "&lt;unknown&gt;";
+            return <><![CDATA[<unknown>]]></>;
         }
 
-        return "&lt;unknown type&gt;";
+        return <><![CDATA[<unknown type>]]></>;
     },
 
     copyToClipboard: function (str, verbose)
