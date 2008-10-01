@@ -911,7 +911,7 @@ liberator.Buffer = function () //{{{
             elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
-            ["mousedown", "mouseup", "click"].forEach(function(event)
+            ["mousedown", "mouseup", "click"].forEach(function (event)
             {
                 evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
                         ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
@@ -1186,7 +1186,7 @@ liberator.Buffer = function () //{{{
 
             // put feeds rss into pageFeeds[]
             var linkNodes = doc.getElementsByTagName("link");
-            Array.forEach(linkNodes, function(link) {
+            Array.forEach(linkNodes, function (link) {
                 if (!link.href)
                     return;
 
@@ -1269,8 +1269,8 @@ liberator.Buffer = function () //{{{
                 let nodes = [];
                 let i = 0;
 
-                nodes = Array.map(metaNodes, function(node) [node.name || node.httpEquiv, node.content]);
-                nodes.sort(function(a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
+                nodes = Array.map(metaNodes, function (node) [node.name || node.httpEquiv, node.content]);
+                nodes.sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
 
                 pageMeta = [[node[0], liberator.util.highlightURL(node[1], false)]
                                 for each (node in nodes)];

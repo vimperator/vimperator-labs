@@ -487,7 +487,7 @@ liberator.Bookmarks = function () //{{{
                     url:   item[0],
                     title: item[1],
                     extra: [['keyword', item[2],            'red'],
-                            ['tags',    item[3].join(', '), 'blue']].filter(function(i) i[1])
+                            ['tags',    item[3].join(', '), 'blue']].filter(function (i) i[1])
                 } for each (item in items)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
