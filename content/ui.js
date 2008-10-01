@@ -1256,7 +1256,11 @@ liberator.ItemList = function (id) //{{{
         var row = doc.createElement("tr");
         row.setAttribute("class", "liberator-compitem");
         var icon = doc.createElement("td");
-        icon.innerHTML = '<td style="vertical-align: middle"><img src="' + a + '" width="16px" height="16px"/></td><td style="vertical-align:middle">' + b + '  <br/><span style="color: green">' + c + '</span></td>';
+        XML.prettyPrinting = false;
+        icon.innerHTML = <>
+                <td style="vertical-align: middle"><img src={a} width="16px" height="16px"/></td>
+                <td style="vertical-align:middle">{b}<br/><span style="color: green">{c}</span></td>;
+            </>;
         row.appendChild(icon);
 
         return row;

@@ -67,13 +67,13 @@ liberator.util = { //{{{
                 // for java packages value.toString() would crash so badly
                 // that we cannot even try/catch it
                 if (/^\[JavaPackage.*\]$/.test(arg))
-                    return "[JavaPackage]";
+                    return <>[JavaPackage]</>;
 
                 var str = arg.toString();
                 if (typeof str == "string")  // can be "undefined"
                     return <>{str}</>;
                 else
-                    return "undefined";
+                    return <>undefined</>;
             }
         }
         catch (e)
@@ -201,6 +201,13 @@ liberator.util = { //{{{
     // if color = true it uses HTML markup to color certain items
     objectToString: function (object, color)
     {
+        /* Use E4X literals so html is automatically quoted
+         * only when it's asked for. Noone wants to see &lt;
+         * on their console or :map :foo in their buffer
+         * when they expect :map <C-f> :foo.
+         */
+        XML.prettyPrinting = false;
+
         if (object === null)
             return "null";
 
@@ -215,13 +222,12 @@ liberator.util = { //{{{
         }
         catch (e)
         {
-            obj = "&lt;Object&gt;";
+            obj = "<Object>";
         }
 
         if (color)
-            string += "<span class=\"hl-Title\">" + obj + "</span>::\n";
-        else
-            string += obj + "::\n";
+            obj = <span class="hl-Title">{obj}</span>.toXMLString();
+        string += obj + "::\n";
 
         try // window.content often does not want to be queried with "var i in object"
         {
@@ -234,16 +240,14 @@ liberator.util = { //{{{
                 }
                 catch (e)
                 {
-                    value = "&lt;no value&gt;";
+                    value = "<no value>";
                 }
 
-                if (color)
-                {
-                    value = this.colorize(value, true);
-                    string += "<span style=\"font-weight: bold;\">" + i + "</span>: " + value + "\n";
+                if (color) {
+                    value = this.colorize(value, true).toXMLString();
+                    i = <span style="font-weight: bold;">{i}</span>.toXMLString();
                 }
-                else
-                    string += i + ": " + value + "\n";
+                string += i + ": " + value + "\n";
             }
         }
         catch (e) {}

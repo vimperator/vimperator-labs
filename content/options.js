@@ -289,16 +289,13 @@ liberator.Options = function () //{{{
         {
             if (!args)
             {
+                XML.prettyPrinting = false;
                 var str = <></>;
                 for (let [i, value] in Iterator(liberator.globalVariables))
                 {
-                    if (typeof value == "number")
-                        var prefix = "#";
-                    else if (typeof value == "function")
-                        var prefix = "*";
-                    else
-                        var prefix = "";
-
+                    let prefix = typeof value == "number"   ? "#" :
+                                 typeof value == "function" ? "*" :
+                                                              " ";
                     str += <tr><td style="width: 200px;">{i}</td><td>{prefix}{value}</td></tr>;
                 }
                 if (str.length())
@@ -362,12 +359,9 @@ liberator.Options = function () //{{{
                 }
 
                 var value = reference[0][reference[1]];
-                if (typeof value == "number")
-                    var prefix = "#";
-                else if (typeof value == "function")
-                    var prefix = "*";
-                else
-                    var prefix = "";
+                let prefix = typeof value == "number"   ? "#" :
+                             typeof value == "function" ? "*" :
+                                                          " ";
                 liberator.echo(reference[1] + "\t\t" + prefix + value);
             }
         });

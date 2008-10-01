@@ -710,11 +710,10 @@ liberator.Tabs = function () //{{{
         list: function ()
         {
             // TODO: move this to liberator.tabs.get()
-            var items = liberator.completion.buffer("")[1];
-            var number, indicator, title, url;
 
-            var list = ":" + (liberator.util.escapeHTML(liberator.commandline.getCommand()) || "buffers") + "<br/>" + "<table>";
-            for (let i = 0; i < items.length; i++)
+            XML.prettyPrinting = false;
+            let items = <></>;
+            for (let [i, item] in Iterator(liberator.completion.buffer("")[1]))
             {
                 if (i == liberator.tabs.index())
                    indicator = " <span style=\"color: blue\">%</span> ";
@@ -723,17 +722,17 @@ liberator.Tabs = function () //{{{
                 else
                    indicator = "   ";
 
-                [number, title] = items[i][0].split(/:\s+/, 2);
-                url = items[i][1];
-                url = liberator.util.escapeHTML(url);
-                title = liberator.util.escapeHTML(title);
-
-                list += "<tr><td align=\"right\">  " + number + "</td><td>" + indicator +
-                        "</td><td style=\"width: 250px; max-width: 500px; overflow: hidden;\">" + title +
-                        "</td><td><a href=\"#\" class=\"hl-URL buffer-list\">" + url + "</a></td></tr>";
+                let [number, title] = items[i][0].split(/:\s+/, 2);
+                items +=
+                    <tr>
+                        <td align="right">  {number}</td>
+                        <td><span style="color: blue"> {indicator} </span></td>
+                        <td style="width:250px; max-width: 500px; overflow: hidden">{title}</td>
+                        <td><a href="#" class="hl-URL buffer-list">{item[1]}</a></td>
+                    </tr>;
             }
-            list += "</table>";
 
+            let list = liberator.buffer.template.generic(<table>{items}</table>);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
