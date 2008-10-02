@@ -1846,6 +1846,8 @@ liberator.template = {
 
     table: function (title, data)
     {
+        let self = this;
+
         return this.generic(
             <table>
                 <tr>
@@ -1855,7 +1857,7 @@ liberator.template = {
                     this.map(data, function (datum)
                     <tr>
                        <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
-                       <td>{this.maybeXML(datum[1])}</td>
+                       <td>{self.maybeXML(datum[1])}</td>
                     </tr>)
                 }
             </table>);
