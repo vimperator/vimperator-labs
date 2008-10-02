@@ -27,6 +27,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+// TODO: why are we passing around strings rather than file objects?
 liberator.IO = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -38,8 +39,13 @@ liberator.IO = function () //{{{
 
     var environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                        .getService(Components.interfaces.nsIEnvironment);
+    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"]
+                                     .getService(Components.interfaces.nsIProperties);
 
-    var cwd = null, oldcwd = null;
+    var processDir = directoryService.get("CurWorkD", Components.interfaces.nsIFile);
+    var cwd = processDir.path;
+    var oldcwd = null;
+
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
     var scriptNames = [];
 
@@ -421,40 +427,23 @@ liberator.IO = function () //{{{
             return path;
         },
 
+        // TODO: there seems to be no way, short of a new component, to change
+        // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
         getCurrentDirectory: function ()
         {
-            var file = Components.classes["@mozilla.org/file/local;1"]
-                                 .createInstance(Components.interfaces.nsILocalFile);
+            let dir = ioManager.getFile(cwd);
 
-            // FIXME: why aren't we using the "CurWorkD" special directory -- djk
-            var dirs = [cwd, "$PWD", "~"];
-            for (let i = 0; i < dirs.length; i++)
-            {
-                if (!dirs[i])
-                    continue;
-
-                var fullname = ioManager.expandPath(dirs[i]);
-                try
-                {
-                    file.initWithPath(fullname);
-                }
-                catch (e)
-                {
-                    continue;
-                }
-
-                if (file.exists() && file.isDirectory())
-                    return fullname;
-            }
-
-            // just make sure we return something which always is a directory
-            return WINDOWS ? "C:\\" : "/"; // XXX
+            // NOTE: the directory could have been deleted underneath us so
+            // fallback to Firefox's CWD
+            if (dir.exists() && dir.isDirectory())
+                return dir.path;
+            else
+                return processDir.path;
         },
 
         setCurrentDirectory: function (newdir)
         {
-            if (!newdir)
-                newdir = "~";
+            newdir = newdir || "~";
 
             if (newdir == "-")
             {
@@ -462,14 +451,15 @@ liberator.IO = function () //{{{
             }
             else
             {
-                newdir = ioManager.expandPath(newdir);
-                var file = ioManager.getFile(newdir);
-                if (!file.exists() || !file.isDirectory())
+                let dir = ioManager.getFile(newdir);
+
+                if (!dir.exists() || !dir.isDirectory())
                 {
-                    liberator.echoerr("E344: Can't find directory \"" + newdir + "\" in path");
+                    liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
                     return null;
                 }
-                [cwd, oldcwd] = [newdir, this.getCurrentDirectory()];
+
+                [cwd, oldcwd] = [dir.path, this.getCurrentDirectory()];
             }
 
             return ioManager.getCurrentDirectory();
@@ -530,7 +520,6 @@ liberator.IO = function () //{{{
 
         // TODO: make secure
         // returns a nsILocalFile or null if it could not be created
-        // FIXME: is there a reason the "TmpD" special directory isn't being used? -- djk
         createTempFile: function ()
         {
             let tmpName = EXTENSION_NAME + ".tmp";
@@ -550,9 +539,7 @@ liberator.IO = function () //{{{
                     break;
             }
 
-            let file = Components.classes["@mozilla.org/file/directory_service;1"]
-                                 .getService(Components.interfaces.nsIProperties)
-                                 .get("TmpD", Components.interfaces.nsIFile);
+            let file = directoryService.get("TmpD", Components.interfaces.nsIFile);
             file.append(tmpName);
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
 
