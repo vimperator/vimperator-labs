@@ -712,9 +712,11 @@ lookup:
                 return "";
 
             if (WINDOWS)
-                command += " > " + stdoutFile.path + " 2> " + stderrFile.path;
+                command = "cd /D " + cwd + " && " + command + " > " + stdoutFile.path + " 2> " + stderrFile.path;
             else
-                command += " > \"" + escapeQuotes(stdoutFile.path) + "\"" + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
+                // TODO: should we only attempt the actual command conditionally on a successful cd?
+                command = "cd " + escapeQuotes(cwd) + "; " + command + " > \"" + escapeQuotes(stdoutFile.path) + "\""
+                            + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
 
             var stdinFile = null;
 
