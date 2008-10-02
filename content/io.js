@@ -719,7 +719,7 @@ lookup:
             var stdoutFile = ioManager.createTempFile();
             var stderrFile = ioManager.createTempFile();
 
-            function escapeQuotes(str) str.replace('"', '\\"');
+            function escapeQuotes(str) str.replace('"', '\\"', "g");
 
             if (!stdoutFile || !stderrFile) // FIXME: error reporting
                 return "";
