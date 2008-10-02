@@ -731,7 +731,7 @@ liberator.Tabs = function () //{{{
                     </tr>;
             }
 
-            let list = liberator.template.generic(<table>{items}</table>);
+            let list = liberator.template.generic(items);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
