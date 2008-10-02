@@ -32,6 +32,13 @@ liberator.Buffer = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    function arrayIter(ary)
+    {
+        let length = ary.length;
+        for (let i = 0; i < length; i++)
+            yield ary[i];
+    }
+
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
@@ -138,6 +145,13 @@ liberator.Buffer = function () //{{{
         win.scrollTo(h, v);
     }
 
+    // Holds option: [function, title] to generate :pageinfo sections
+    var pageInfo = {};
+    function addPageInfoSection(option, title, fn)
+    {
+        pageInfo[option] = [fn, title];
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -169,13 +183,8 @@ liberator.Buffer = function () //{{{
         {
             completer: function (filter)
             {
-                return [
-                    ["g", "General info"],
-                    ["f", "Feeds"],
-                    ["m", "Meta tags"]
-                ];
+                return [[k, v[1]] for ([k, v] in Iterator(pageInfo))]
             },
-            validator: function (value) !(/[^gfm]/.test(value) || value.length > 3 || value.length < 1)
         });
 
     liberator.options.add(["scroll", "scr"],
@@ -602,6 +611,161 @@ liberator.Buffer = function () //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PAGE INFO ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    addPageInfoSection("f", "Feeds", function (verbose)
+    {
+        var doc = window.content.document;
+
+        const feedTypes = {
+            "application/rss+xml": "RSS",
+            "application/atom+xml": "Atom",
+            "text/xml": "XML",
+            "application/xml": "XML",
+            "application/rdf+xml": "XML"
+        };
+
+        function isValidFeed(data, principal, isFeed)
+        {
+            if (!data || !principal)
+                return false;
+
+            if (!isFeed)
+            {
+                var type = data.type && data.type.toLowerCase();
+                type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
+
+                isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
+                if (!isFeed)
+                {
+                    // really slimy: general XML types with magic letters in the title
+                    const titleRegex = /(^|\s)rss($|\s)/i;
+                    isFeed = ((type == "text/xml" || type == "application/rdf+xml" || type == "application/xml")
+                        && titleRegex.test(data.title));
+                }
+            }
+
+            if (isFeed)
+            {
+                try
+                {
+                    urlSecurityCheck(data.href, principal,
+                            Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                }
+                catch (e)
+                {
+                    isFeed = false;
+                }
+            }
+
+            if (type)
+                data.type = type;
+
+            return isFeed;
+        }
+
+        // put feeds rss into pageFeeds[]
+        let nFeed = 0;
+        var linkNodes = doc.getElementsByTagName("link");
+        for (link in arrayIter(linkNodes)) {
+            if (!link.href)
+                return;
+
+            var rel = link.rel && link.rel.toLowerCase();
+
+            if (rel == "feed" || (link.type && rel == "alternate"))
+            {
+                var feed = { title: link.title, href: link.href, type: link.type || "" };
+                if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
+                {
+                    nFeed++;
+                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                    if (verbose)
+                        yield [feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>];
+                }
+            }
+        }
+
+        if (!verbose && nFeed)
+            yield nFeed + " feed" + (nFeed > 1 ? "s" : "");
+    });
+
+    addPageInfoSection("g", "General Info", function (verbose)
+    {
+        let doc = window.content.document;
+
+        // get file size
+        const nsICacheService = Components.interfaces.nsICacheService;
+        const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
+        const cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
+                                       .getService(nsICacheService);
+        let cacheKey = doc.location.toString().replace(/#.*$/, "");
+
+        for (let proto in arrayIter(["HTTP", "FTP"]))
+        {
+            try
+            {
+                var cacheEntryDescriptor = cacheService.createSession(proto, 0, true)
+                                                       .openCacheEntry(cacheKey, ACCESS_READ, false);
+                break;
+            }
+            catch (e) {}
+        }
+
+        var pageSize = []; // [0] bytes; [1] kbytes
+        if (cacheEntryDescriptor)
+        {
+            pageSize[0] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+            pageSize[1] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+            if (pageSize[1] == pageSize[0])
+                pageSize.length = 1; // don't output "xx Bytes" twice
+        }
+
+        var lastModVerbose = new Date(doc.lastModified).toLocaleString();
+        var lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
+        // FIXME: probably not portable across different language versions
+        if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
+            lastModVerbose = lastMod = null;
+
+        if (!verbose)
+        {
+            if (pageSize[0])
+                yield (pageSize[1] || pageSize[0]) + " bytes";
+            yield lastMod;
+            return;
+        }
+
+        yield ["Title", doc.title];
+        yield ["URL", liberator.util.highlightURL(doc.location.toString(), true)];
+
+        var ref = "referrer" in doc && doc.referrer;
+        if (ref)
+            yield ["Referrer", liberator.util.highlightURL(ref, true)];
+
+        if (pageSize[0])
+            yield ["File Size", pageSize[1] ? pageSize[1] + " (" + pageSize[0] + ")"
+                                            : pageSize[0]];
+
+        yield ["Mime-Type", doc.contentType];
+        yield ["Encoding", doc.characterSet];
+        yield ["Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"];
+        if (lastModVerbose)
+            yield ["Last Modified", lastModVerbose];
+    });
+
+    addPageInfoSection("m", "Meta Tags", function (verbose)
+    {
+        // get meta tag data, sort and put into pageMeta[]
+        var metaNodes = window.content.document.getElementsByTagName("meta");
+
+        let nodes = Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), node.content])
+                         .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
+        return ([node[0], liberator.util.highlightURL(node[1], false)]
+                        for each (node in arrayIter(nodes)));
+    });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -617,6 +781,8 @@ liberator.Buffer = function () //{{{
 
             return stylesheets;
         },
+
+        get pageInfo() pageInfo,
 
         // 0 if loading, 1 if loaded or 2 if load failed
         get loaded()
@@ -676,6 +842,8 @@ liberator.Buffer = function () //{{{
         {
             return window.content.document.title;
         },
+
+        addPageInfoSection: addPageInfoSection,
 
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)
@@ -1099,202 +1267,34 @@ liberator.Buffer = function () //{{{
 
         showPageInfo: function (verbose)
         {
-            var doc = window.content.document;
-
-            const feedTypes = {
-                "application/rss+xml": "RSS",
-                "application/atom+xml": "Atom",
-                "text/xml": "XML",
-                "application/xml": "XML",
-                "application/rdf+xml": "XML"
-            };
-
-            function isValidFeed(data, principal, isFeed)
-            {
-                if (!data || !principal)
-                    return false;
-
-                if (!isFeed)
-                {
-                    var type = data.type && data.type.toLowerCase();
-                    type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
-
-                    isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
-                    if (!isFeed)
-                    {
-                        // really slimy: general XML types with magic letters in the title
-                        const titleRegex = /(^|\s)rss($|\s)/i;
-                        isFeed = ((type == "text/xml" || type == "application/rdf+xml" ||
-                                    type == "application/xml") && titleRegex.test(data.title));
-                    }
-                }
-
-                if (isFeed)
-                {
-                    try
-                    {
-                        urlSecurityCheck(data.href, principal,
-                                Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
-                    }
-                    catch (e)
-                    {
-                        isFeed = false;
-                    }
-                }
-
-                if (type)
-                    data.type = type;
-
-                return isFeed;
-            }
-
-            var pageGeneral = [];
-            var pageFeeds = [];
-            var pageMeta = [];
-
-            // get file size
-            const nsICacheService = Components.interfaces.nsICacheService;
-            const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
-            const cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
-                                           .getService(nsICacheService);
-            var httpCacheSession = cacheService.createSession("HTTP", 0, true);
-            var ftpCacheSession = cacheService.createSession("FTP", 0, true);
-            httpCacheSession.doomEntriesIfExpired = false;
-            ftpCacheSession.doomEntriesIfExpired = false;
-            var cacheKey = doc.location.toString().replace(/#.*$/, "");
-            try
-            {
-                var cacheEntryDescriptor = httpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
-            }
-            catch (e)
-            {
-                try
-                {
-                    cacheEntryDescriptor = ftpCacheSession.openCacheEntry(cacheKey, ACCESS_READ, false);
-                }
-                catch (e) {}
-            }
-
-            var pageSize = []; // [0] bytes; [1] kbytes
-            if (cacheEntryDescriptor)
-            {
-                pageSize[0] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
-                pageSize[1] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
-                if (pageSize[1] == pageSize[0])
-                    pageSize[1] = null; // don't output "xx Bytes" twice
-            }
-
-            // put feeds rss into pageFeeds[]
-            var linkNodes = doc.getElementsByTagName("link");
-            Array.forEach(linkNodes, function (link) {
-                if (!link.href)
-                    return;
-
-                /* Ok... I don't know what this insanity was trying
-                 * to do, but, as far as I can tell, it was:
-                 */
-                var rel = link.rel && link.rel.toLowerCase();
-
-                if (rel == "feed" || (link.type && rel == "alternate"))
-                {
-                    var feed = { title: link.title, href: link.href, type: link.type || "" };
-                    if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
-                    {
-                        var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
-                        pageFeeds.push([feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>]);
-                    }
-                }
-            });
-
-            var lastModVerbose = new Date(doc.lastModified).toLocaleString();
-            var lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
-            // FIXME: probably not portable across different language versions
-            if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
-                lastModVerbose = lastMod = null;
-
             // Ctrl-g single line output
             if (!verbose)
             {
-                var info = []; // tmp array for joining later
-                var file = doc.location.pathname.split("/").pop() || "[No Name]";
-                var title = doc.title || "[No Title]";
+                let file = content.document.location.pathname.split("/").pop() || "[No Name]";
+                let title = content.document.title || "[No Title]";
 
-                if (pageSize[0])
-                    info.push(pageSize[1] || pageSize[0]);
-
-                if (lastMod)
-                    info.push(lastMod);
-
-                var countFeeds = "";
-                if (pageFeeds.length)
-                    countFeeds = pageFeeds.length + (pageFeeds.length == 1 ? " feed" : " feeds");
-
-                if (countFeeds)
-                    info.push(countFeeds);
+                let info = liberator.template.map("gf", function (opt)
+                    liberator.template.map(pageInfo[opt][0](), function (val) val, ", "),
+                    ", ");
 
                 if (liberator.bookmarks.isBookmarked(this.URL))
-                    info.push("bookmarked");
+                    info += ", bookmarked";
 
-                var pageInfoText = '"' + file + '" [' + info.join(", ") + "] " + title;
+                var pageInfoText = <>"{file}" [{info}] {title}</>;
                 liberator.echo(pageInfoText, liberator.commandline.FORCE_SINGLELINE);
                 return;
             }
 
-            // get general infos
-            pageGeneral.push(["Title", doc.title]);
-            pageGeneral.push(["URL", liberator.util.highlightURL(doc.location.toString(), true)]);
-
-            var ref = "referrer" in doc && doc.referrer;
-            if (ref)
-                pageGeneral.push(["Referrer", liberator.util.highlightURL(ref, true)]);
-
-            if (pageSize[0])
+            let option = liberator.options["pageinfo"];
+            let list = liberator.template.map(option, function (option)
             {
-                if (pageSize[1])
-                    pageGeneral.push(["File Size", pageSize[1] + " (" + pageSize[0] + ")"]);
-                else
-                    pageGeneral.push(["File Size", pageSize[0]]);
-            }
-
-            pageGeneral.push(["Mime-Type", doc.contentType]);
-            pageGeneral.push(["Encoding", doc.characterSet]);
-            pageGeneral.push(["Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"]);
-            if (lastModVerbose)
-                pageGeneral.push(["Last Modified", lastModVerbose]);
-
-            // get meta tag data, sort and put into pageMeta[]
-            var metaNodes = doc.getElementsByTagName("meta");
-            if (metaNodes.length)
-            {
-                let nodes = [];
-                let i = 0;
-
-                nodes = Array.map(metaNodes, function (node) [node.name || node.httpEquiv, node.content]);
-                nodes.sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
-
-                pageMeta = [[node[0], liberator.util.highlightURL(node[1], false)]
-                                for each (node in nodes)];
-            }
-
-            var pageInfoText = "";
-            var option = liberator.options["pageinfo"];
-            var br = "";
-
-            let options = {
-                g: [pageGeneral, "General Info"],
-                f: [pageFeeds, "Feeds"],
-                m: [pageMeta, "Meta Tags"],
-            };
-            Array.forEach(option, function (option)
-            {
-                let opt = options[option];
-                if (opt && opt[0].length > 0)
-                        pageInfoText += br + liberator.template.table(opt[1], opt[0]);
-                        if (!br)
-                            br = "<br/>";
-                }
-            );
-            liberator.echo(pageInfoText, liberator.commandline.FORCE_MULTILINE);
+                let opt = pageInfo[option];
+                if (opt)
+                    return liberator.template.table(opt[1], opt[0](true));
+                else alert(option);
+            }, <br/>);
+            XML.prettyPrinting = false;
+            liberator.echo(list, liberator.commandline.FORCE_MULTILINE);
         },
 
         viewSelectionSource: function ()
@@ -1715,21 +1715,18 @@ liberator.template = {
 
     map: function (iter, fn, sep)
     {
+        if (iter.length) /* Kludge? */
+            iter = liberator.util.arrayIter(iter);
         let ret = <></>;
-        if (sep == undefined)
+        let n = 0;
+        for each (let i in iter)
         {
-            for each (let i in iter)
-                ret += fn(i);
-        }
-        else
-        {
-            let n = 0;
-            for each (let i in iter)
-            {
-                if (n++)
-                    ret += sep;
-                ret += fn(i);
-            }
+            let val = fn(i);
+            if (val == undefined)
+                continue;
+            if (sep && n++)
+                ret += sep;
+            ret += val;
         }
         return ret;
     },
@@ -1846,9 +1843,7 @@ liberator.template = {
 
     table: function (title, data)
     {
-        let self = this;
-
-        return this.generic(
+        let table =
             <table>
                 <tr>
                     <th class="hl-Title" align="left" colspan="2">{title}</th>
@@ -1857,10 +1852,12 @@ liberator.template = {
                     this.map(data, function (datum)
                     <tr>
                        <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
-                       <td>{self.maybeXML(datum[1])}</td>
+                       <td>{liberator.template.maybeXML(datum[1])}</td>
                     </tr>)
                 }
-            </table>);
+            </table>;
+        if (table.tr.length() > 1)
+            return table;
     }
 };
 

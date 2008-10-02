@@ -28,6 +28,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 liberator.util = { //{{{
 
+    arrayIter: function (ary)
+    {
+        let length = ary.length;
+        for (let i = 0; i < length; i++)
+            yield ary[i];
+    },
+
     clip: function (str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";

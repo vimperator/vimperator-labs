@@ -142,7 +142,7 @@ liberator.IO = function () //{{{
 
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
-            if (/^(~|\/|[a-z]:|\.\/|\.\.\/)/i.test(args))
+            if (/^(~|\/|\.\/|\.\.\/)/.test(args))
             {
                 // TODO: apparently we don't handle ../ or ./ paths yet
                 if (liberator.io.setCurrentDirectory(args))
@@ -323,12 +323,12 @@ liberator.IO = function () //{{{
             XML.prettyPrinting = false;
             var list =
                 <table>
-                {
-                    liberator.template.map2(scriptNames, function (i, name)
+                {[
                     <tr>
                         <td style="text-align: right">{i+1}</td>
                         <td>{name}</td>
-                    </tr>)
+                    </tr>
+                    for ([i, name] in Iterator(striptNames))].reduce(liberator.buffer.template.add, <></>)
                 }
                  </table>.toXMLString();
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
@@ -551,7 +551,7 @@ liberator.IO = function () //{{{
         },
 
         // file is either a full pathname or an instance of file instanceof nsILocalFile
-        readDirectory: function (file)
+        readDirectory: function (file, sort)
         {
             if (typeof file == "string")
                 file = ioManager.getFile(file);
@@ -568,6 +568,8 @@ liberator.IO = function () //{{{
                     entry.QueryInterface(Components.interfaces.nsIFile);
                     array.push(entry);
                 }
+                if (sort)
+                    return array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
                 return array;
             }
             else

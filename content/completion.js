@@ -234,7 +234,7 @@ liberator.Completion = function () //{{{
 
             try
             {
-                files = liberator.io.readDirectory(dir);
+                files = liberator.io.readDirectory(dir, true);
 
                 if (liberator.options["wildignore"])
                 {
@@ -244,8 +244,7 @@ liberator.Completion = function () //{{{
                 }
 
                 mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
-                                                    file.isDirectory() ? "Directory" : "File"])
-                              .sort(function (a, b) a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]));
+                                                    file.isDirectory() ? "Directory" : "File"]);
             }
             catch (e)
             {

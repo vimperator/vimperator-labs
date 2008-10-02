@@ -847,7 +847,7 @@ liberator.Options = function () //{{{
                         isDefault: opt.value == opt.defaultValue,
                         name:      opt.name,
                         default:   opt.defaultValue,
-                        pre:       <>&#160;&#160;</>,
+                        pre:       "  ", /* Unicode nonbreaking space. */
                         value:     <></>,
                     };
 
@@ -897,7 +897,7 @@ liberator.Options = function () //{{{
                         default:   loadPreference(pref, null, true),
                         value:     <>={liberator.util.colorize(value, false)}</>,
                         name:      pref,
-                        pre:       <>&#160;&#160;</>,
+                        pre:       "  ", /* Unicode nonbreaking space. */
                     };
 
                     yield option;

@@ -37,9 +37,16 @@ const liberator = (function () //{{{
     function loadModule(name, func)
     {
         var message = "Loading module " + name + "...";
-        liberator.log(message, 0);
-        liberator.dump(message + "\n");
-        liberator[name] = func();
+        try
+        {
+            liberator.log(message, 0);
+            liberator.dump(message + "\n");
+            liberator[name] = func();
+        }
+        catch(e)
+        {
+            liberator.dump(e + "\n");
+        }
     }
 
     // Only general options are added here, which are valid for all vimperator like extensions
@@ -1111,9 +1118,9 @@ const liberator = (function () //{{{
 
                                 liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
 
-                                let files = liberator.io.readDirectory(dir.path);
+                                let files = liberator.io.readDirectory(dir.path, true);
 
-                                files.sort(function (a, b) String.localeCompare(a.path, b.path)).forEach(function (file) {
+                                files.forEach(function (file) {
                                     if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
                                         liberator.io.source(file.path, false);
                                 });

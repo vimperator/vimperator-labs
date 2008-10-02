@@ -175,13 +175,14 @@ liberator.Bookmarks = function () //{{{
         bookmarksService.addObserver(observer, false);
     }
 
-    var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
-    liberator.storage.addObserver("bookmark-cache", function (key, event, arg)
+    let bookmarkObserver = function (key, event, arg)
     {
         if (event == "add")
             liberator.autocommands.trigger("BookmarkAdd", "");
         liberator.statusline.updateUrl();
-    });
+    }
+    var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
+    liberator.storage.addObserver("bookmark-cache", bookmarkObserver);
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -494,6 +495,7 @@ liberator.Bookmarks = function () //{{{
 
         destroy: function ()
         {
+            liberator.storage.removeObserver("bookmark-cache", bookmarkObserver);
         }
     };
     //}}}
