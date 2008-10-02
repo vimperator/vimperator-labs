@@ -136,7 +136,7 @@ liberator.IO = function () //{{{
 
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
-            if (/^(~|\/|\.\/|\.\.\/)/.test(args))
+            if (/^(~|\/|[a-z]:|\.\/|\.\.\/)/i.test(args))
             {
                 // TODO: apparently we don't handle ../ or ./ paths yet
                 if (liberator.io.setCurrentDirectory(args))
