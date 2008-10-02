@@ -1852,7 +1852,7 @@ liberator.template = {
                     <th class="hl-Title" align="left" colspan="2">{title}</th>
                 </tr>
                 {
-                    this.map(data, function(datum)
+                    this.map(data, function (datum)
                     <tr>
                        <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
                        <td>{this.maybeXML(datum[1])}</td>

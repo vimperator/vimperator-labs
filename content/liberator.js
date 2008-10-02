@@ -634,7 +634,7 @@ const liberator = (function () //{{{
             else
             {
                 var soundService = Components.classes["@mozilla.org/sound;1"]
-                                   .getService(Components.interfaces.nsISound);
+                                             .getService(Components.interfaces.nsISound);
                 soundService.beep();
             }
             return false; // so you can do: if (...) return liberator.beep();

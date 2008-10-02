@@ -669,7 +669,7 @@ liberator.Events = function () //{{{
             var str = <table>
                 {
                     liberator.template.map2(liberator.events.getMacros(args),
-                    function(macro, keys) 
+                    function (macro, keys)
                     <tr>
                         <td>{macro}</td>
                         <td>{keys}</td>

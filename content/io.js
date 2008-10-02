@@ -321,7 +321,7 @@ liberator.IO = function () //{{{
         function ()
         {
             XML.prettyPrinting = false;
-            var list = 
+            var list =
                 <table>
                 {
                     liberator.template.map2(scriptNames, function (i, name)
