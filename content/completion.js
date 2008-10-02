@@ -79,7 +79,7 @@ liberator.Completion = function () //{{{
                     }
                     else
                     {
-                        substrings = substrings.filter(function ($_) complist[j].indexOf($_) >= 0);
+                        substrings = substrings.filter(function (s) complist[j].indexOf(s) >= 0);
                     }
                 }
                 break;
@@ -117,7 +117,7 @@ liberator.Completion = function () //{{{
                     }
                     else
                     {
-                        substrings = substrings.filter(function ($_) complist[j].indexOf($_) == 0);
+                        substrings = substrings.filter(function (s) complist[j].indexOf(s) == 0);
                     }
                 }
                 break;
@@ -195,7 +195,7 @@ liberator.Completion = function () //{{{
             }
 
             if (!filter)
-                return [0, items.map(function ($_) [$_[0][0], $_[1]])];
+                return [0, items.map(function (i) [i[0][0], i[1]])];
 
             return [0, buildLongestCommonSubstring(items, filter)];
         },
@@ -577,7 +577,7 @@ liberator.Completion = function () //{{{
                 }
                 else
                 {
-                    substrings = substrings.filter(function ($_) url.indexOf($_) >= 0);
+                    substrings = substrings.filter(function (s) url.indexOf(s) >= 0);
                 }
 
                 filtered.push(elem);
