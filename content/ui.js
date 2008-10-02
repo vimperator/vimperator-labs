@@ -156,6 +156,8 @@ liberator.CommandLine = function () //{{{
             var res = liberator.completion.ex(command);
             liberator.commandline.setCompletions(res[1], res[0]);
         }
+        else
+            completionIndex = UNINITIALIZED;
     });
 
     function closePrompt(value)
