@@ -32,8 +32,8 @@ syn match vimperatorCommand "!" contained
 
 syn keyword vimperatorAutoCmd au[tocmd] contained nextgroup=vimperatorAutoEventList skipwhite
 
-syn keyword vimperatorAutoEvent BookmarkAdd LocationChange PageLoadPre PageLoad ShellCmdPost VimperatorEnter VimperatorLeavePre
-    \ VimperatorLeave
+syn keyword vimperatorAutoEvent BookmarkAdd DOMLoad LocationChange PageLoadPre PageLoad ShellCmdPost VimperatorEnter
+    \ VimperatorLeavePre VimperatorLeave
     \ contained
 
 syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperatorAutoEvent

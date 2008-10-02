@@ -300,6 +300,8 @@ liberator.Events = function () //{{{
             }, false);
         }
 
+        getBrowser().addEventListener("DOMContentLoaded", onDOMContentLoaded, true);
+
         // this adds an event which is is called on each page load, even if the
         // page is loaded in a background tab
         getBrowser().addEventListener("load", onPageLoad, true);
@@ -447,6 +449,13 @@ liberator.Events = function () //{{{
         return false;
     }
 
+    function onDOMContentLoaded(event)
+    {
+        if (event.originalTarget instanceof HTMLDocument)
+            liberator.autocommands.trigger("DOMLoad", event.originalTarget.location.href);
+    }
+
+    // TODO: see what can be moved to onDOMContentLoaded()
     function onPageLoad(event)
     {
         if (event.originalTarget instanceof HTMLDocument)
