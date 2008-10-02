@@ -394,6 +394,60 @@ liberator.Options = function () //{{{
         }
     );
 
+    // FIXME: Integrate with setter
+    function parseOpt(args, modifiers)
+    {
+        let ret = {};
+
+        ret.onlyNonDefault = false; // used for :set to print non-default options
+        if (!args)
+        {
+            args = "all";
+            ret.onlyNonDefault = true;
+        }
+
+        //                               1        2       3       4  5       6
+        var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+        if (!matches)
+            return null;
+
+        ret.unsetBoolean = false;
+        if (matches[1] == "no")
+            ret.unsetBoolean = true;
+
+        ret.name = matches[2];
+        ret.all = false;
+        if (ret.name == "all")
+            ret.all = true;
+
+        ret.scope = modifiers && modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
+        ret.option = liberator.options.get(ret.name, ret.scope);
+
+        if (!ret.option && !ret.all)
+            return ret;
+
+        let valueGiven = !!matches[4];
+
+        ret.get = false;
+        if (ret.all || matches[3] == "?" || (ret.option.type != "boolean" && !valueGiven))
+            ret.get = true;
+
+        ret.reset = false;
+        if (matches[3] == "&")
+            ret.reset = true;
+
+        ret.invert = false;
+        if (matches[1] == "inv" || matches[3] == "!")
+            ret.invert = true;
+
+        ret.operator = matches[5];
+
+        ret.value = matches[6];
+        if (ret.value === undefined)
+            ret.value = "";
+        return ret;
+    }
+
     // TODO: support setting multiple options at once
     liberator.commands.add(["se[t]"],
         "Set an option",
@@ -462,7 +516,7 @@ liberator.Options = function () //{{{
             }
 
             //                               1        2       3       4  5       6
-            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?$/);
             if (!matches)
             {
                 liberator.echoerr("E518: Unknown option: " + args);
@@ -662,20 +716,19 @@ liberator.Options = function () //{{{
 
                     if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
                     {
-                        for (let i = 0; i < prefArray.length; i++)
+                        for (let [,name] in prefArray)
                         {
-                            var name = prefArray[i];
                             if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
                             {
-                                var value = liberator.options.getPref(name) + "";
+                                let value = liberator.options.getPref(name) + "";
                                 return [filter.length + 1, [[value, ""]]];
                             }
                         }
                         return [0, []];
                     }
 
-                    for (let i = 0; i < prefArray.length; i++)
-                        optionCompletions.push([prefArray[i], liberator.options.getPref(prefArray[i])]);
+                    optionCompletions = prefArray.map(function (pref)
+                        [pref, liberator.options.getPref(pref)]);
 
                     return [0, liberator.completion.filter(optionCompletions, filter)];
                 }
@@ -684,61 +737,80 @@ liberator.Options = function () //{{{
                 if (modifiers && modifiers.scope)
                     scope = modifiers.scope;
 
+                let options = (opt for (opt in liberator.options)
+                                   if ((opt.scope & scope) && (!prefix || opt.type == "boolean")));
+
                 if (!filter)
                 {
-                    var options = [];
-
-                    for (let option in liberator.options)
-                    {
-                        if (!(option.scope & scope))
-                            continue;
-                        if (prefix && option.type != "boolean")
-                            continue;
-                        options.push([prefix + option.name, option.description]);
-                    }
+                    let options = [[prefix + option.name, option.description]
+                                        for (option in options)];
                     return [0, options];
                 }
-                // check if filter ends with =, then complete current value
-                else if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
+                else if (filter.indexOf("=") == -1)
                 {
-                    filter = filter.substr(0, filter.length - 1);
-                    for (let option in liberator.options)
-                    {
-                        if (!(option.scope & scope))
-                            continue;
-                        if (option.hasName(filter))
-                        {
-                            // TODO: the starting value should be the current
-                            // value, for compatibility with Vim (also the most
-                            // useful approach in this case) while still
-                            // offering much better completion
-                            if (option.completer)
-                                return [filter.length + 1, option.completer(filter)]; // FIXME: filter should be component after "option="
-                            return [filter.length + 1, [[option.value + "", ""]]];
-                        }
-                    }
-                    return [0, optionCompletions];
+                    for (let option in options)
+                        optionCompletions.push([[prefix + name, option.description]
+                            for (name in option.names)
+                            if (name.indexOf(filter) == 0)]);
+                    // Flatten array.
+                    optionCompletions = Array.concat.apply(Array, optionCompletions);
+
+                    return [0, liberator.completion.filter(optionCompletions, prefix + filter, true)];
                 }
+                else if (prefix)
+                    return;
 
-                var filterLength = filter.length;
-                for (let option in liberator.options)
+                let [name, value] = filter.split("=", 2);
+                let offset = name.length + 1;
+                let opt = parseOpt(filter, modifiers);
+                let option = opt.option;
+
+                if (opt.get || opt.reset || !option || prefix)
+                    return [0, []];
+
+                let len = opt.value.length;
+                let completer = option.completer;
+                let have = null;
+                let have2;
+
+                switch (option.type)
                 {
-                    if (!(option.scope & scope))
-                        continue;
-                    if (prefix && option.type != "boolean")
-                        continue;
-
-                    for (let j = 0; j < option.names.length; j++)
-                    {
-                        if (option.names[j].indexOf(filter) != 0)
-                            continue;
-
-                        optionCompletions.push([prefix + option.names[j], option.description]);
+                    case "boolean":
+                        completer = function () [["true", ""], ["false", ""]]
                         break;
-                    }
+                    case "stringlist":
+                        have = option.value.split(",");
+                        have2 = opt.value.split(",");
+                        len = have2.pop().length;
+                        break;
+                    case "charlist":
+                        have = option.value.split("");
+                        have2 = opt.value;
+                        len = 0;
+                        break;
                 }
 
-                return [0, liberator.completion.filter(optionCompletions, prefix + filter, true)];
+                len = filter.length - len;
+                filter = filter.substr(len);
+
+                if (!completer)
+                    return [len, [[option.value, ""]]];
+
+                let completions = completer(filter);
+                if (have)
+                {
+                    completions = completions.filter(function (val) have2.indexOf(val[0]) == -1);
+                    switch (opt.operator)
+                    {
+                        case "+":
+                            completions = completions.filter(function (val) have.indexOf(val[0]) == -1);
+                            break;
+                        case "-":
+                            completions = completions.filter(function (val) have.indexOf(val[0]) > -1);
+                            break;
+                    }
+                }
+                return [len, liberator.completion.filter(completions, filter, true)];
             }
         });
 
