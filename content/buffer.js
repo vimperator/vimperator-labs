@@ -1715,14 +1715,21 @@ liberator.template = {
 
     map: function (iter, fn, sep)
     {
-        if (sep == undefined)
-            sep = <></>;
         let ret = <></>;
-        let n = 0;
-        for each (let i in iter) {
-            if (n++)
-                ret += sep;
-            ret += fn(i);
+        if (sep == undefined)
+        {
+            for each (let i in iter)
+                ret += fn(i);
+        }
+        else
+        {
+            let n = 0;
+            for each (let i in iter)
+            {
+                if (n++)
+                    ret += sep;
+                ret += fn(i);
+            }
         }
         return ret;
     },
