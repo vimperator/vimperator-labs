@@ -711,7 +711,7 @@ liberator.Tabs = function () //{{{
         {
             // TODO: move this to liberator.tabs.get()
 
-            let items = <></>;
+            let items = <table/>
             for (let [i, item] in Iterator(liberator.completion.buffer("")[1]))
             {
                 if (i == liberator.tabs.index())
@@ -722,7 +722,7 @@ liberator.Tabs = function () //{{{
                    indicator = " ";
 
                 let [number, title] = item[0].split(/:\s+/, 2);
-                items +=
+                items.* +=
                     <tr>
                         <td align="right">  {number}</td>
                         <td><span style="color: blue"> {indicator} </span></td>

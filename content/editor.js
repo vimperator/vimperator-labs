@@ -929,29 +929,29 @@ liberator.Editor = function () //{{{
             else // list all (for that filter {i,c,!})
             {
                 var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
+
                 XML.prettyPrinting = false;
-                let list = <></>;
+                let list = <table/>;
                 for (let tmplhs in abbrev)
                 {
                     abbrev[tmplhs].forEach(function (abbr)
                     {
                         if (searchFilter.indexOf(abbr[0]) > -1)
                         {
-                            list += <tr>
-                                        <td>{abbr[0]}</td>
-                                        <td>{tmplhs}</td>
-                                        <td>{abbr[1]}</td>
-                                    </tr>;
+                            list.* += <tr>
+                                          <td>{abbr[0]}</td>
+                                          <td>{tmplhs}</td>
+                                          <td>{abbr[1]}</td>
+                                      </tr>;
                         }
                     });
                 }
 
-                if (!list.length())
+                if (!list.*.length())
                 {
                     liberator.echoerr("No abbreviations found");
                     return;
                 }
-                list = <table>{list}</table>
                 liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         },
