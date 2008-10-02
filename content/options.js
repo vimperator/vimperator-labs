@@ -240,27 +240,6 @@ liberator.Options = function () //{{{
         }
     }
 
-    function echoOptions(title, opts) {
-        XML.prettyPrinting = false;
-        let list = liberator.buffer.template.generic(
-                <table>
-                    <tr class="hl-Title" align="left">
-                        <th>--- {title} ---</th>
-                    </tr>
-                    {[
-                        <tr>
-                            <td>
-                                <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
-                                {opt.isDefault || opt.default == null ? "" : <span style="color: gray"> (default: {opt.default})</span>}
-                            </td>
-                        </tr>
-                        for each (opt in opts)].reduce(liberator.buffer.template.add, <></>)
-                    }
-                </table>);
-
-        liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
-    }
-
     //
     // firefox preferences which need to be changed to work well with vimperator
     //
@@ -888,7 +867,8 @@ liberator.Options = function () //{{{
                 }
             }
 
-            echoOptions("Options", opts());
+            let list = liberator.template.options("Options", opts());
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         listPrefs: function (onlyNonDefault, filter)
@@ -921,7 +901,8 @@ liberator.Options = function () //{{{
                 }
             }
 
-            echoOptions(liberator.config.hostApplication + " Options", prefs());
+            let list = liberator.template.options(liberator.config.hostApplication + " Options", prefs());
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
         get store() liberator.storage.options,

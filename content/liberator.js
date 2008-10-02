@@ -276,12 +276,12 @@ const liberator = (function () //{{{
                     // TODO: clicking on these should open the help
                     XML.prettyPrinting = false;
                     var usage = <table>
-                        {[
+                        {
+                            liberator.template.map(liberator.commands, function (command)
                             <tr>
                                 <td class="hl-Title" style="padding-right: 20px">{command.name}</td>
                                 <td>{command.description}</td>
-                            </tr>
-                            for each (command in liberator.commands)].reduce(liberator.buffer.template.add)
+                            </tr>)
                         }
                         </table>.toXMLString();
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
@@ -428,8 +428,7 @@ const liberator = (function () //{{{
                             var totalUnits = "msec";
                         }
 
-                        XML.prettyPrinting = false;
-                        var str = liberator.buffer.template.generic(
+                        var str = liberator.template.generic(
                                 <table>
                                     <tr class="hl-Title" align="left">
                                         <th colspan="3">Code execution summary</th>
@@ -501,12 +500,12 @@ const liberator = (function () //{{{
                     // TODO: clicking on these should open the help
                     XML.prettyPrinting = false;
                     var usage = <table>
-                            {[
+                            {
+                                liberator.template.add(liberator.mappings, function (mapping)
                                 <tr>
                                     <td class="hl-Title" style="padding-right: 20px"> {mapping.names[0]}</td>
                                     <td>{mapping.description}</td>
-                                </tr>
-                                for each (mapping in liberator.mappings)].reduce(liberator.buffer.template.add)
+                                </tr>)
                              }
                              </table>.toXMLString();
 

@@ -419,15 +419,14 @@ liberator.Mappings = function () //{{{
                              if (output[i]));
             XML.prettyPrinting = false;
             let list = <table>
-                    {[
-                        [
+                    {
+                        liberator.template.map(_maps, function (map)
+                            liberator.template.map(map.names, function (name)
                             <tr>
                                 <td>{modeSign} {name}</td>
                                 <td>{map.noremap ? "*" : " "}</td>
                                 <td>{map.rhs || "function () { ... }"}</td>
-                            </tr>
-                            for each (name in map.names)].reduce(liberator.buffer.template.add)
-                        for each (map in _maps)].reduce(liberator.buffer.template.add)
+                            </tr>))
                     }
                     </table>
 

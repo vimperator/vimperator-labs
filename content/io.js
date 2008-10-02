@@ -317,12 +317,12 @@ liberator.IO = function () //{{{
             XML.prettyPrinting = false;
             var list = 
                 <table>
-                {[
+                {
+                    liberator.template.map2(scriptNames, function (i, name)
                     <tr>
                         <td style="text-align: right">{i+1}</td>
                         <td>{name}</td>
-                    </tr>
-                    for ([i, name] in Iterator(striptNames))].reduce(liberator.buffer.template.add, <></>)
+                    </tr>)
                 }
                  </table>.toXMLString();
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);

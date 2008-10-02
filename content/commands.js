@@ -698,20 +698,20 @@ liberator.Commands = function () //{{{
                 if (cmdlist.length > 0)
                 {
                     XML.prettyPrinting = false;
-                    var str = liberator.buffer.template.generic(
+                    var str = liberator.template.generic(
                         <table>
                             <tr class="hl-Title" align="left">
                                 <th>Name</th>
                                 <th>Args</th>
                                 <th>Definition</th>
                             </tr>
-                            {[
+                            {
+                                liberator.template.map(cmdlist, function (cmd)
                                 <tr>
                                     <td>{cmd.name}</td>
                                     <td>*</td>
                                     <td>{cmd.replacementText || "function () { ... }"}</td>
-                                </tr>
-                                for each (cmd in cmdlist)].reduce(liberator.buffer.template.add, <></>)
+                                </tr>)
                             }
                         </table>);
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);

@@ -233,7 +233,7 @@ liberator.Bookmarks = function () //{{{
             var sh = getWebNavigation().sessionHistory;
 
             let entries = [sh.getEntryAtIndex(i, false) for (i in liberator.util.range(0, sh.count))];
-            let list = liberator.buffer.template.jumps(sh.index, entries);
+            let list = liberator.template.jumps(sh.index, entries);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
@@ -482,7 +482,7 @@ liberator.Bookmarks = function () //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            let list = liberator.buffer.template.bookmarks("title", (
+            let list = liberator.template.bookmarks("title", (
                 {
                     url:   item[0],
                     title: item[1],
@@ -767,7 +767,7 @@ liberator.History = function () //{{{
             }
             else
             {
-                let list = liberator.buffer.template.bookmarks("title", (
+                let list = liberator.template.bookmarks("title", (
                     {
                         title: item[1],
                         url:   item[0],
@@ -942,7 +942,7 @@ liberator.QuickMarks = function () //{{{
             }
 
             let items = ({title: mark, url: qmarks.get(mark)} for each (mark in marks));
-            let list = liberator.buffer.template.bookmarks("QuickMark", items);
+            let list = liberator.template.bookmarks("QuickMark", items);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
     };

@@ -711,7 +711,6 @@ liberator.Tabs = function () //{{{
         {
             // TODO: move this to liberator.tabs.get()
 
-            XML.prettyPrinting = false;
             let items = <></>;
             for (let [i, item] in Iterator(liberator.completion.buffer("")[1]))
             {
@@ -732,7 +731,7 @@ liberator.Tabs = function () //{{{
                     </tr>;
             }
 
-            let list = liberator.buffer.template.generic(<table>{items}</table>);
+            let list = liberator.template.generic(<table>{items}</table>);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 

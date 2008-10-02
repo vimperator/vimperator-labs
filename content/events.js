@@ -205,23 +205,21 @@ liberator.AutoCommands = function () //{{{
             let cmds = (item for (item in Iterator(autoCommands))
                              if ((!auEvent || item[0] == auEvent) && item[1].length));
 
-            // Okay, maybe a bit scary. --Kris
-            XML.prettyPrinting = false;
-            var list = liberator.buffer.template.generic(
+            var list = liberator.template.generic(
                 <table>
                     <tr>
                         <td class="hl-Title" colspan="2">----- Auto Commands -----</td>
                     </tr>
-                    {[
+                    {
+                        liberator.template.map2(cmds, function (event, items)
                         <tr>
                             <td class="hl-Title" colspan="2">{event}</td>
                         </tr>
-                        + [<tr>
-                               <td>&#160;{item[0]}</td>
-                               <td>{item[1]}</td>
-                           </tr>
-                           for each (item in items)].reduce(liberator.buffer.template.add)
-                        for ([event, items] in cmds)].reduce(liberator.buffer.template.add, <></>)
+                        + liberator.template.map(items, function (item)
+                            <tr>
+                                <td>&#160;{item[0]}</td>
+                                <td>{item[1]}</td>
+                            </tr>))
                     }
                 </table>);
 
@@ -669,13 +667,13 @@ liberator.Events = function () //{{{
         {
             XML.prettyPrinting = false;
             var str = <table>
-                {[
+                {
+                    liberator.template.map2(liberator.events.getMacros(args),
+                    function(macro, keys) 
                     <tr>
                         <td>{macro}</td>
                         <td>{keys}</td>
-                    </tr>
-                    for ([macro, keys] in Iterator(liberator.events.getMacros(args)))
-                    ].reduce(liberator.buffer.template.add, <></>)
+                    </tr>)
                 }
             </table>.toXMLString();
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);

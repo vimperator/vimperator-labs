@@ -1289,123 +1289,12 @@ liberator.Buffer = function () //{{{
             {
                 let opt = options[option];
                 if (opt && opt[0].length > 0)
-                        pageInfoText += br + liberator.buffer.template.table(opt[1], opt[0]);
+                        pageInfoText += br + liberator.template.table(opt[1], opt[0]);
                         if (!br)
                             br = "<br/>";
                 }
             );
             liberator.echo(pageInfoText, liberator.commandline.FORCE_MULTILINE);
-        },
-
-        template:
-        {
-            add: function (a, b) a + b,
-            join: function (c) function (a, b) a + c + b,
-            maybeXML: function (xml)
-            {
-                try
-                {
-                    return new XML(xml)
-                }
-                catch (e) {}
-                return xml;
-            },
-
-            generic: function (xml)
-            {
-                return (<>:{liberator.commandline.getCommand()}<br/></> + xml).toXMLString();
-            },
-
-            bookmarks: function (header, items)
-            {
-                XML.prettyPrinting = false;
-                return this.generic(
-                    <table>
-                        <tr align="left" class="hl-Title">
-                            <th>{header}</th><th>URL</th>
-                        </tr>
-                        {[
-                            <tr>
-                                <td>{liberator.util.clip(item.title, 50)}</td>
-                                <td style="width: 100%">
-                                    <a href="#" class="hl-URL">{item.url}</a>&#160;
-                                    {
-                                        (item.extra && item.extra.length) ?
-                                            <span style="color: gray;">
-                                                ({
-                                                    [<>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>
-                                                        for each (e in item.extra)].reduce(this.join(<>&#160;</>))
-                                                })
-                                            </span>
-                                        : ""
-                                    }
-                                </td>
-                            </tr>
-                            for each (item in items)].reduce(this.add, <></>)
-                        }
-                    </table>);
-            },
-
-            jumps: function (index, elems)
-            {
-                XML.prettyPrinting = false;
-                return this.generic(
-                    <table>
-                        <tr style="text-align: left;" class="hl-Title">
-                            <th colspan="2">jump</th><th>title</th><th>URI</th>
-                        </tr>
-                        {[
-                            <tr>
-                                <td>{idx == index ? <span style="color: blue;">{">"}</span> : ""}</td> <!-- } //vim :( -->
-                                <td>{Math.abs(idx - index)}</td>
-                                <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
-                                <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
-                            </tr>
-                            for ([idx, val] in Iterator(elems))].reduce(this.add, <></>)
-                        }
-                    </table>);
-            },
-
-            marks: function (marks)
-            {
-                XML.prettyPrinting = false;
-                return this.generic(
-                    <table>
-                        <tr class="hl-Title" align="left">
-                            <th>mark</th>
-                            <th>line</th>
-                            <th>col</th>
-                            <th>file</th>
-                        </tr>
-                        {[
-                            <tr>
-                                <td>{mark[0]}</td>
-                                <td align="right">{Math.round(mark[1].position.y * 100)}%</td>
-                                <td align="right">{Math.round(mark[1].position.x * 100)}%</td>
-                                <td style="color: green;">{mark[1].location}</td>
-                            </tr>
-                            for each (mark in marks)].reduce(this.add, <></>)
-                        }
-                    </table>);
-            },
-
-            table: function (title, data)
-            {
-                XML.prettyPrinting = false;
-                return this.generic(
-                    <table>
-                        <tr>
-                            <th class="hl-Title" align="left" colspan="2">{title}</th>
-                        </tr>
-                        {
-                             [<tr>
-                                 <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
-                                 <td>{this.maybeXML(datum[1])}</td>
-                              </tr>
-                              for each (datum in data)].reduce(this.add, <></>)
-                        }
-                    </table>);
-            }
         },
 
         viewSelectionSource: function ()
@@ -1812,12 +1701,158 @@ liberator.Marks = function () //{{{
                 }
             }
 
-            var list = liberator.buffer.template.marks(marks);
+            var list = liberator.template.marks(marks);
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 
     };
     //}}}
 }; //}}}
+
+liberator.template = {
+    add: function (a, b) a + b,
+    join: function (c) function (a, b) a + c + b,
+
+    map: function (iter, fn, sep)
+    {
+        if (sep == undefined)
+            sep = <></>;
+        let ret = <></>;
+        let n = 0;
+        for each (let i in iter) {
+            if (n++)
+                ret += sep;
+            ret += fn(i);
+        }
+        return ret;
+    },
+    map2: function (iter, fn, sep)
+    {
+        // Could cause performance problems.
+        return this.map(Iterator(iter), function (x) fn.apply(null, x), sep);
+    },
+
+    maybeXML: function (xml)
+    {
+        try
+        {
+            return new XML(xml)
+        }
+        catch (e) {}
+        return xml;
+    },
+
+    generic: function (xml)
+    {
+        XML.prettyPrinting = false;
+        return (<>:{liberator.commandline.getCommand()}<br/></> + xml).toXMLString();
+    },
+
+    bookmarks: function (header, items)
+    {
+        return this.generic(
+            <table>
+                <tr align="left" class="hl-Title">
+                    <th>{header}</th><th>URL</th>
+                </tr>
+                {
+                    this.map(items, function (item)
+                    <tr>
+                        <td>{liberator.util.clip(item.title, 50)}</td>
+                        <td style="width: 100%">
+                            <a href="#" class="hl-URL">{item.url}</a>&#160;
+                            {
+                                !(item.extra && item.extra.length) ? "" :
+                                <span style="color: gray;">
+                                    ({
+                                        liberator.template.map(item.extra, function (e)
+                                        <>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>,
+                                        <>&#160;</>)
+                                    })
+                                </span>
+                            }
+                        </td>
+                    </tr>)
+                }
+            </table>);
+    },
+
+    jumps: function (index, elems)
+    {
+        return this.generic(
+            <table>
+                <tr style="text-align: left;" class="hl-Title">
+                    <th colspan="2">jump</th><th>title</th><th>URI</th>
+                </tr>
+                {
+                    this.map2(elems, function (idx, val)
+                    <tr>
+                        <td>{idx == index ? <span style="color: blue;">{">"}</span> : ""}</td> <!-- } //vim :( -->
+                        <td>{Math.abs(idx - index)}</td>
+                        <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
+                        <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
+                    </tr>)
+                }
+            </table>);
+    },
+
+    marks: function (marks)
+    {
+        return this.generic(
+            <table>
+                <tr class="hl-Title" align="left">
+                    <th>mark</th>
+                    <th>line</th>
+                    <th>col</th>
+                    <th>file</th>
+                </tr>
+                {
+                    this.map(marks, function (mark)
+                    <tr>
+                        <td>{mark[0]}</td>
+                        <td align="right">{Math.round(mark[1].position.y * 100)}%</td>
+                        <td align="right">{Math.round(mark[1].position.x * 100)}%</td>
+                        <td style="color: green;">{mark[1].location}</td>
+                    </tr>)
+                }
+            </table>);
+    },
+
+    options: function (title, opts)
+    {
+        return liberator.template.generic(
+            <table>
+                <tr class="hl-Title" align="left">
+                    <th>--- {title} ---</th>
+                </tr>
+                {
+                    liberator.template.map(opts, function (opt)
+                    <tr>
+                        <td>
+                            <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
+                            {opt.isDefault || opt.default == null ? "" : <span style="color: gray"> (default: {opt.default})</span>}
+                        </td>
+                    </tr>)
+                }
+            </table>);
+    },
+
+    table: function (title, data)
+    {
+        return this.generic(
+            <table>
+                <tr>
+                    <th class="hl-Title" align="left" colspan="2">{title}</th>
+                </tr>
+                {
+                    this.map(data, function(datum)
+                    <tr>
+                       <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
+                       <td>{this.maybeXML(datum[1])}</td>
+                    </tr>)
+                }
+            </table>);
+    }
+};
 
 // vim: set fdm=marker sw=4 ts=4 et:
