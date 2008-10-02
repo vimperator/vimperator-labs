@@ -73,9 +73,9 @@ var prototype = {
     save: function () { savePref(this) },
 };
 
-function ObjectStore(name, store)
+function ObjectStore(name, store, data)
 {
-    var object = loadPref(name, store, Object) || {};
+    var object = data || {};
 
     this.__defineGetter__("store", function () store);
     this.__defineGetter__("name", function () name);
@@ -115,9 +115,9 @@ function ObjectStore(name, store)
 }
 ObjectStore.prototype = prototype;
 
-function ArrayStore(name, store)
+function ArrayStore(name, store, data)
 {
-    var array = loadPref(name, store, Array) || [];
+    var array = data || [];
 
     this.__defineGetter__("store",  function () store);
     this.__defineGetter__("name",   function () name);
@@ -182,35 +182,26 @@ var keys = {};
 var observers = {};
 
 var storage = {
-    _addKey: function addKey(key, val)
+    newObject: function newObject(key, constructor, store, type)
     {
-        if (key in this)
-            throw Error; // TODO: Find a better error.
-        keys[key] = val;
-        this.__defineGetter__(key, function () keys[key]);
+        if (!(key in keys))
+        {
+            if (key in this)
+                throw Error;
+            keys[key] = new constructor(key, store, loadPref(key, store, type || Object));
+            this.__defineGetter__(key, function () keys[key]);
+        }
+        return keys[key];
     },
 
     newMap: function newMap(key, store)
     {
-        // TODO: Add type checking.
-        if (!(key in keys))
-            this._addKey(key, new ObjectStore(key, store));
-        return this[key];
+        return this.newObject(key, ObjectStore, store);
     },
 
     newArray: function newArray(key, store)
     {
-        // TODO: Add type checking.
-        if (!(key in keys))
-            this._addKey(key, new ArrayStore(key, store));
-        return this[key];
-    },
-
-    newObject: function newObject(key, constructor, store)
-    {
-        if(!(key in keys))
-            this._addKey(key, new constructor(key, store, loadPref(key, store, Object)));
-        return this[key];
+        return this.newObject(key, ArrayStore, store, Array);
     },
 
     addObserver: function addObserver(key, callback)
