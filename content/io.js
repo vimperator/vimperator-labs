@@ -256,7 +256,18 @@ liberator.IO = function () //{{{
             line += "\nsource! " + filename + ".local\n";
             line += "\n\" vim: set ft=vimperator:";
 
-            liberator.io.writeFile(file, line);
+            try
+            {
+                liberator.io.writeFile(file, line);
+            }
+            catch (e)
+            {
+                liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
+                liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
+            }
+        },
+        {
+            completer: function (filter) liberator.completion.file(filter, true)
         });
 
     liberator.commands.add(["ru[ntime]"],
