@@ -1820,13 +1820,13 @@ liberator.template = {
 
     options: function (title, opts)
     {
-        return liberator.template.generic(
+        return this.generic(
             <table>
                 <tr class="hl-Title" align="left">
                     <th>--- {title} ---</th>
                 </tr>
                 {
-                    liberator.template.map(opts, function (opt)
+                    this.map(opts, function (opt)
                     <tr>
                         <td>
                             <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
