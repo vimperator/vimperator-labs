@@ -30,41 +30,38 @@ liberator.util = { //{{{
 
     Timer: function Timer(minInterval, maxInterval, callback)
     {
-        let self = this;
         let timer = Components.classes["@mozilla.org/timer;1"]
                               .createInstance(Components.interfaces.nsITimer);
-        this.first = true; /* When set, trigger immediately. */
+        this.doneAt = 0;
         this.latest = 0;
         this.notify = function (aTimer) 
         {
             timer.cancel();
-            if (this.latest || this.first)
-                callback(this.arg);
-            else /* Don't trigger. Set this.first after the minimum interval. */
-                timer.initWithCallback(this, minInterval, timer.TYPE_ONE_SHOT);
-            this.first = (this.latest == 0);
+            this.doneAt = Date.now() + minInterval;
             this.latest = 0;
+            callback(this.arg);
         }
         this.tell = function (arg)
         {
-            if (arg != undefined)
+            if (arg !== undefined)
                 this.arg = arg;
-            if (this.first || this.latest > Date.now())
-                return this.notify();
-            if (this.latest)
+            if (this.doneAt == -1)
                 timer.cancel();
+            else if (Date.now() >= this.doneAt)
+                return this.notify();
 
             let timeout = minInterval;
             if (this.latest)
                 timeout = Math.min(minInterval, this.latest - Date.now());
             else
                 this.latest = Date.now() + maxInterval;
-            this.timer = timer.initWithCallback(this, timeout, timer.TYPE_ONE_SHOT);
+            timer.initWithCallback(this, timeout, timer.TYPE_ONE_SHOT);
+            this.doneAt = -1;
         }
         this.reset = function ()
         {
             timer.cancel();
-            this.first = true;
+            this.doneAt = 0;
         }
         this.flush = function ()
         {

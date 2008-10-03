@@ -564,7 +564,6 @@ liberator.CommandLine = function () //{{{
 
             historyIndex = UNINITIALIZED;
             completionIndex = UNINITIALIZED;
-            autocompleteTimer.reset();
 
             liberator.modes.push(liberator.modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
@@ -812,7 +811,6 @@ liberator.CommandLine = function () //{{{
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         completionList.setItems(completions);
-                        statusTimer.reset();
                     }
 
                     if (completions.length == 0)
@@ -1234,8 +1232,15 @@ liberator.ItemList = function (id) //{{{
     catch (e) {} // for muttator!
 
     // TODO: temporary, to be changed/removed
-    function createRow(a, b, c, dom)
+    function createRow(b, c, dom)
     {
+        try
+        {
+            let uri = ioService.newURI(b, null, null);
+            var a = faviconService.getFaviconImageForPage(uri).spec;
+        }
+        catch (e) {}
+
         let row =
             <tr class="liberator-compitem">
                 <td style="width: 16px"/>
@@ -1258,9 +1263,8 @@ liberator.ItemList = function (id) //{{{
             if (completionElements.length == 0)
                 return doc.height;
 
-            var wanted = maxItems + listOffset;
-            if (wanted > completionElements.length)
-                wanted = completionElements.length;
+            var wanted = Math.min(maxItems + listOffset,
+                                  completionElements.length);
             return completionElements[wanted - 1].getBoundingClientRect().bottom;
         }
 
@@ -1285,38 +1289,25 @@ liberator.ItemList = function (id) //{{{
         if (listIndex > -1 && offset == listOffset + 1)
         {
             listOffset = offset;
-            var icon = "";
-            try
-            {
-                var uri = ioService.newURI(completions[offset][0], null, null);
-                icon = faviconService.getFaviconImageForPage(uri).spec;
-            }
-            catch (e) {}
-
-            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1], true);
+            var row = createRow(completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1], true);
             var e = doc.getElementsByTagName("tbody");
             e = e[e.length - 1];
+
             e.removeChild(e.firstChild);
             e.appendChild(row);
-            completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
+            completionElements = e.children;
             return;
         }
         else if (listIndex > -1 && offset == listOffset - 1)
         {
             listOffset = offset;
-            var icon = "";
-            try
-            {
-                var uri = ioService.newURI(completions[offset][0], null, null);
-                icon = faviconService.getFaviconImageForPage(uri).spec;
-            }
-            catch (e) {}
-            var row = createRow(icon, completions[offset][0], completions[offset][1], true);
+            var row = createRow(completions[offset][0], completions[offset][1], true);
             var e = doc.getElementsByTagName("tbody");
             e = e[e.length - 1];
+
             e.removeChild(e.lastChild);
             e.insertBefore(row, e.firstChild);
-            completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
+            completionElements = e.children;
             return;
         }
 
@@ -1331,21 +1322,12 @@ liberator.ItemList = function (id) //{{{
                   </div>;
         let tbody = div..tbody;
 
-        for (let [i, elem] in Iterator(completions))
+        for (let i in liberator.util.range(offset, Math.min(offset + maxItems,
+                                                            completions.length)))
         {
-            if (i >= listOffset && i - listOffset < maxItems)
-            {
-                let icon = "";
-                try
-                {
-                    let uri = ioService.newURI(elem[0], null, null);
-                    icon = faviconService.getFaviconImageForPage(uri).spec;
-                }
-                catch (e) {}
-
-                tbody.* += createRow(icon, elem[0], elem[1]);
-            }
-        };
+            let elem = completions[i];
+            tbody.* += createRow(elem[0], elem[1]);
+        }
 
         doc.body.appendChild(liberator.util.xmlToDom(div, doc));
 
