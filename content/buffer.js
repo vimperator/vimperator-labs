@@ -1246,7 +1246,7 @@ liberator.Buffer = function () //{{{
             // TODO: make this an XBL element rather than messing with the content
             // document
             var doc = frames[next].document;
-            var indicator = 
+            var indicator =
                 <div id="liberator-frame-indicator"
                      style="background-color: red; opacity: 0.5; z-index: 999
                             position: fixed; top: 0; bottom: 0; left: 0; right: 0"/>;

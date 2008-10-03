@@ -43,7 +43,7 @@ const liberator = (function () //{{{
             liberator.dump(message + "\n");
             liberator[name] = func();
         }
-        catch(e)
+        catch (e)
         {
             liberator.dump(e + "\n");
         }

@@ -34,7 +34,7 @@ liberator.util = { //{{{
                               .createInstance(Components.interfaces.nsITimer);
         this.doneAt = 0;
         this.latest = 0;
-        this.notify = function (aTimer) 
+        this.notify = function (aTimer)
         {
             timer.cancel();
             this.doneAt = Date.now() + minInterval;
