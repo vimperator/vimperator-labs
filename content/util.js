@@ -77,6 +77,24 @@ liberator.util = { //{{{
             yield ary[i];
     },
 
+    blankDocument: function (bodyId)
+    {
+        let mainWindowID = liberator.config.mainWindowID || "main-window";
+        let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
+                                           .getPropertyValue("font-size");
+
+        return 'data:application/xhtml+xml,' + encodeURI('<?xml version="1.0" encoding="UTF-8"?>' +
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">' +
+                  <html xmlns="http://www.w3.org/1999/xhtml">
+                      <head>
+                          <title/>
+                          <link rel="stylesheet" type="text/css"
+                                href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>
+                      </head>
+                      <body id={bodyId} style={"font-size: " + fontSize}/>
+                  </html>)
+    },
+
     clip: function (str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
@@ -404,7 +422,8 @@ liberator.util = { //{{{
             case "text":
                 return doc.createTextNode(node);
             case "element":
-                let domnode = doc.createElement(node.name());
+                // Should use the node's namespace, in the future.
+                let domnode = doc.createElementNS("http://www.w3.org/1999/xhtml", node.localName());
                 for each (let attr in node.@*)
                     domnode.setAttribute(attr.name(), String(attr));
                 for each (let child in node.*)

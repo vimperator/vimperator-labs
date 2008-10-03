@@ -682,7 +682,7 @@ liberator.Buffer = function () //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield ["  " + feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>];
+                        yield [feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>];
                 }
             }
         }
@@ -736,22 +736,22 @@ liberator.Buffer = function () //{{{
             return;
         }
 
-        yield ["  Title", doc.title];
-        yield ["  URL", liberator.util.highlightURL(doc.location.toString(), true)];
+        yield ["Title", doc.title];
+        yield ["URL", liberator.util.highlightURL(doc.location.toString(), true)];
 
         var ref = "referrer" in doc && doc.referrer;
         if (ref)
-            yield ["  Referrer", liberator.util.highlightURL(ref, true)];
+            yield ["Referrer", liberator.util.highlightURL(ref, true)];
 
         if (pageSize[0])
-            yield ["  File Size", pageSize[1] ? pageSize[1] + " (" + pageSize[0] + ")"
+            yield ["File Size", pageSize[1] ? pageSize[1] + " (" + pageSize[0] + ")"
                                             : pageSize[0]];
 
-        yield ["  Mime-Type", doc.contentType];
-        yield ["  Encoding", doc.characterSet];
-        yield ["  Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"];
+        yield ["Mime-Type", doc.contentType];
+        yield ["Encoding", doc.characterSet];
+        yield ["Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"];
         if (lastModVerbose)
-            yield ["  Last Modified", lastModVerbose];
+            yield ["Last Modified", lastModVerbose];
     });
 
     addPageInfoSection("m", "Meta Tags", function (verbose)
@@ -761,7 +761,7 @@ liberator.Buffer = function () //{{{
 
         let nodes = Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), node.content])
                          .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
-        return (["  " + node[0], liberator.util.highlightURL(node[1], false)]
+        return ([node[0], liberator.util.highlightURL(node[1], false)]
                         for each (node in arrayIter(nodes)));
     });
 
@@ -1840,16 +1840,18 @@ liberator.template = {
             </table>);
     },
 
-    table: function (title, data)
+    table: function (title, data, indent)
     {
         let table =
             <table>
+                <col style={"width: " + (indent || "2ex")}/>
                 <tr>
-                    <th class="hl-Title" align="left" colspan="2">{title}</th>
+                    <th class="hl-Title" align="left" colspan="3">{title}</th>
                 </tr>
                 {
                     this.map(data, function (datum)
                     <tr>
+                       <td/>
                        <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
                        <td>{liberator.template.maybeXML(datum[1])}</td>
                     </tr>)

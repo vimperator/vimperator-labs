@@ -121,23 +121,8 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-
-    var stylesheet =
-        <link rel="stylesheet" type="text/css"
-              href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>;
-
-    stylesheet = liberator.util.xmlToDom(stylesheet, multilineOutputWidget.contentDocument);
-    multilineOutputWidget.contentDocument.getElementsByTagName("head")[0]
-                         .appendChild(stylesheet);
-
-    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
-
-    // TODO: is there a better way to determine and set the UI font, 'guifont' perhaps?
-    var mainWindowID = liberator.config.mainWindowID || "main-window";
-    var fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null).getPropertyValue("font-size");
-    multilineOutputWidget.contentDocument.body.setAttribute("style", "font-size: " + fontSize);
-
-    multilineOutputWidget.contentDocument.body.innerHTML = "";
+    multilineOutputWidget.setAttribute("src",
+        liberator.util.blankDocument("liberator-multiline-output-content"));
 
     var outputContainer = multilineOutputWidget.parentNode;
 
@@ -1203,19 +1188,10 @@ liberator.ItemList = function (id) //{{{
         return;
     }
 
-    var doc = iframe.contentDocument;
+    var doc;
     var container = iframe.parentNode;
 
-    var stylesheet = liberator.util.xmlToDom(
-        <link rel="stylesheet" type="text/css"
-              href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>, doc);
-    doc.getElementsByTagName("head")[0].appendChild(stylesheet);
-
-    doc.body.id = id + "-content";
-
-    var mainWindowID = liberator.config.mainWindowID || "main-window";
-    var fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null).getPropertyValue("font-size");
-    doc.body.setAttribute("style", "font-size: " + fontSize);
+    iframe.setAttribute("src", liberator.util.blankDocument(id + "-content"));
 
     var completions = []; // a reference to the Array of completions
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
@@ -1349,6 +1325,7 @@ liberator.ItemList = function (id) //{{{
         // if @param selectedItem is given, show the list and select that item
         setItems: function (items, selectedItem)
         {
+            doc = iframe.contentDocument;
             listOffset = listIndex = -1;
             completions = items || [];
             if (typeof(selectedItem) == "number")

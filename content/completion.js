@@ -475,7 +475,7 @@ liberator.Completion = function () //{{{
                             historyResult = result;
                             historyTimer.tell();
                             if (result.searchResult <= result.RESULT_SUCCESS)
-                                historyTimer.force();
+                                historyTimer.flush();
                         }
                     });
                 }
