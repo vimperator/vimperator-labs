@@ -697,23 +697,9 @@ liberator.Commands = function () //{{{
                 var cmdlist = getMatchingUserCommands(cmd);
                 if (cmdlist.length > 0)
                 {
-                    XML.prettyPrinting = false;
-                    var str = liberator.template.generic(
-                        <table>
-                            <tr class="hl-Title" align="left">
-                                <th>Name</th>
-                                <th>Args</th>
-                                <th>Definition</th>
-                            </tr>
-                            {
-                                liberator.template.map(cmdlist, function (cmd)
-                                <tr>
-                                    <td>{cmd.name}</td>
-                                    <td>*</td>
-                                    <td>{cmd.replacementText || "function () { ... }"}</td>
-                                </tr>)
-                            }
-                        </table>);
+                    var str = liberator.template.tabular(["Name", "Args", "Definition"],
+                        ([cmd.name, "*", cmd.replacementText || "function () { ... }"]
+                            for each (cmd in cmdlist)));
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else

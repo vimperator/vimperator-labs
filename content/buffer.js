@@ -26,21 +26,120 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 liberator.Buffer = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    function arrayIter(ary)
-    {
-        let length = ary.length;
-        for (let i = 0; i < length; i++)
-            yield ary[i];
-    }
+    const arrayIter = liberator.util.arrayIter;
 
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
+
+    function Styles(name, store, serial)
+    {
+        const XHTML = "http://www.w3.org/1999/xhtml";
+        const ios = Components.classes["@mozilla.org/network/io-service;1"]
+                              .getService(Components.interfaces.nsIIOService);
+        const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
+                              .getService(Components.interfaces.nsIStyleSheetService);
+
+        let cssUri = function (css) ios.newURI("data:text/css," + encodeURI(css), null, null);
+
+        let sheets = [];
+        this.__iterator__ = function () Iterator(sheets);
+
+        this.addSheet = function (filter, css)
+        {
+            let errors = checkSyntax(css);
+            if (errors.length)
+                return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
+
+            let chrome = /^chrome:/.test(filter);
+            if (chrome)
+                return "Chrome styling not supported"; /* For now. */
+
+            if (sheets.some(function (s) s[0] == filter && s[1] == css))
+                return null;
+            sheets.push([filter, css]);
+            let uri = cssUri(wrapCSS(filter, css));
+            sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+            return null;
+        }
+
+        this.removeSheet = function (number)
+        {
+            if (number >= sheets.length)
+                return false;
+            let sheet = sheets.splice(number)[0];
+            let uri = cssUri(wrapCSS(sheet[0], sheet[1]));
+            sss.unregisterSheet(uri, sss.USER_SHEET);
+            return true;
+        }
+
+        function wrapCSS(filter, css)
+        {
+            if (filter == "*")
+                return css;
+            let selector = /[\/:]/.test(filter) ? "url" : "domain";
+            filter = filter.replace('"', "%22", "g");
+            return "@namespace url(" + XHTML + ");\n" +
+                   "@-moz-document " + selector + '("' + filter + '") {\n' + css + "\n}\n";
+            /* } vim */
+        }
+
+        function checkSyntax(css)
+        {
+            let errors = [];
+            let listener = {
+                QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]),
+                observe: function (message)
+                {
+                    try
+                    {
+                        message = message.QueryInterface(Components.interfaces.nsIScriptError);
+                        if (message.sourceName.indexOf("data:text/css,") == 0)
+                            errors.push(message.errorMessage);
+                    }
+                    catch (e) {}
+                }
+            };
+
+            var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                           .getService(Components.interfaces.nsIConsoleService);
+            consoleService.registerListener(listener);
+
+            try
+            {
+                var doc = document.implementation.createDocument(XHTML, "doc", null);
+                doc.documentElement.appendChild(liberator.util.xmlToDom(
+                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css).spec}/></head></html>, doc));
+
+                while (true)
+                {
+                    try {
+                        // Throws NS_ERROR_DOM_INVALID_ACCESS_ERR if not finished loading
+                        doc.styleSheets[0].cssRules.length;
+                        break;
+                    } catch (e) {
+                        if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
+                            throw e;
+                        liberator.sleep(10);
+                    }
+                }
+            }
+            finally
+            {
+                consoleService.unregisterListener(listener);
+            }
+            return errors;
+        }
+    }
+
+    let styles = liberator.storage.newObject(styles, Styles, false);
 
     function setZoom(value, fullZoom)
     {
@@ -181,10 +280,7 @@ liberator.Buffer = function () //{{{
 
     liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
-            completer: function (filter)
-            {
-                return [[k, v[1]] for ([k, v] in Iterator(pageInfo))]
-            },
+            completer: function (filter) [0, [[k, v[1]] for ([k, v] in Iterator(pageInfo))]]
         });
 
     liberator.options.add(["scroll", "scr"],
@@ -198,14 +294,11 @@ liberator.Buffer = function () //{{{
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            completer: function (filter)
-            {
-                return [
+            completer: function (filter) [0, [
                   ["0", "Don't show link destination"],
                   ["1", "Show the link in the status line"],
                   ["2", "Show the link in the command line"]
-                ];
-            },
+              ]],
             validator: function (value) value >= 0 && value <= 2
         });
 
@@ -566,6 +659,42 @@ liberator.Buffer = function () //{{{
             BrowserStop();
         },
         { argCount: "0" });
+
+    liberator.commands.add(["sty[le]"],
+        "Add or list user styles",
+        function (args, special)
+        {
+            let [, filter, css] = args.match(/([^\s]+)\s*(.*)/) || [];
+            if (!css)
+            {
+                let str = liberator.template.tabular(["", "Filter", "CSS"],
+                    ([i, style[0], style[1]] for ([i, style] in styles)
+                                             if (!filter || style[0] == filter)));
+                liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            }
+            else
+            {
+                // TODO: Accept here docs.
+                let err = styles.addSheet(filter, css);
+                if (err)
+                    liberator.echoerr(err);
+            }
+        },
+        {
+            completer: function (filter) [0, [
+                [content.location.host, ""],
+                [content.location.href, ""]]
+                    .concat([[s[0], ""] for ([i, s] in styles)])
+                ],
+        });
+
+    liberator.commands.add(["dels[tyle]"],
+        "Remove a user stylesheet",
+        function (args, special) styles.removeSheet(parseInt(args.arguments[0])),
+        {
+            completer: function (filter) [0, [[i, s[0] + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]],
+            argCount: 1
+        });
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
@@ -1243,8 +1372,6 @@ liberator.Buffer = function () //{{{
                 frames[next].frameElement.scrollIntoView(false);
 
             // add the frame indicator
-            // TODO: make this an XBL element rather than messing with the content
-            // document
             var doc = frames[next].document;
             var indicator =
                 <div id="liberator-frame-indicator"
@@ -1859,7 +1986,30 @@ liberator.template = {
             </table>;
         if (table.tr.length() > 1)
             return table;
-    }
+    },
+
+    tabular: function (headings, iter)
+    {
+        /* This might be mind-bogglingly slow. We'll see. */
+        return this.generic(
+            <table>
+                <tr class="hl-Title" align="left">
+                {
+                    this.map(headings, function (h)
+                    <th>{h}</th>)
+                }
+                </tr>
+                {
+                    this.map(iter, function (row)
+                    <tr>
+                    {
+                        liberator.template.map(row, function (d)
+                        <td>{d}</td>)
+                    }
+                    </tr>)
+                }
+            </table>);
+    },
 };
 
 // vim: set fdm=marker sw=4 ts=4 et:

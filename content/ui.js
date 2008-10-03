@@ -504,7 +504,7 @@ liberator.CommandLine = function () //{{{
             // TODO: color messages
             //     : are all messages single line? Some display an aggregation
             //       of single line messages at least. E.g. :source
-            let list = messageHistory.messages.join("<br/>");
+            let list = messageHistory.messages.join("\n");
 
             liberator.commandline.echo(list);
         }, { argCount: "0" });

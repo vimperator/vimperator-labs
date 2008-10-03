@@ -440,10 +440,10 @@ const liberator = (function () //{{{
                                     <tr class="hl-Title" align="left">
                                         <th colspan="3">Code execution summary</th>
                                     </tr>
-                                    <tr><td>  Executed:</td><td align="right"><span style="color: green">{count}</span></td><td>times</td></tr>
-                                    <tr><td>  Average time:</td><td align="right"><span style="color: green">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>  Total time:</td><td align="right"><span style="color: red">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
-                                 </table>);
+                                    <tr><td>  Executed:</td><td align="right"><span style="color: green">{count}</span></td><td>times</td></tr>
+                                    <tr><td>  Average time:</td><td align="right"><span style="color: green">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>  Total time:</td><td align="right"><span style="color: red">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                </table>);
 
                         liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                     }

@@ -666,16 +666,7 @@ liberator.Events = function () //{{{
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = <table>
-                {
-                    liberator.template.map2(liberator.events.getMacros(args),
-                    function (macro, keys)
-                    <tr>
-                        <td>{macro}</td>
-                        <td>{keys}</td>
-                    </tr>)
-                }
-            </table>.toXMLString();
+            var str = liberator.template.tabular(["Macro", "Keys"], liberator.events.getMacros(args)); 
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {
