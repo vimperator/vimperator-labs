@@ -32,10 +32,26 @@ liberator.Completion = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
+                                      .getService(Components.interfaces.nsIAutoCompleteSearch);
+
     // the completion substrings, used for showing the longest common match
     var substrings = [];
-    var urlResultsCache = null;
-    var urlCompletionCache = [];
+    var historyCache = [];
+    var historyResult = null;
+    var completionCache = [];
+
+    var historyTimer = new liberator.util.Timer(50, 100, function () {
+        let comp = [];
+        for (let i in liberator.util.range(0, historyResult.matchCount))
+            comp.push([historyResult.getValueAt(i),
+                       historyResult.getCommentAt(i)]);
+
+        //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
+
+        liberator.commandline.setCompletions(completionCache.concat(comp));
+        historyCache = comp;
+    });
 
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
@@ -439,46 +455,33 @@ liberator.Completion = function () //{{{
             var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
             var suggestEngineAlias = liberator.options["suggestengines"] || "google";
             // join all completion arrays together
-            for (let i = 0; i < cpt.length; i++)
+            for (let c in liberator.util.arrayIter(cpt))
             {
-                if (cpt[i] == "s")
+                if (c == "s")
                     completions = completions.concat(this.search(filter)[1]);
-                else if (cpt[i] == "f")
+                else if (c == "f")
                     completions = completions.concat(this.file(filter, false)[1]);
-                else if (!autoCompletions && cpt[i] == "b")
-                    completions = completions.concat(liberator.bookmarks.get(filter));
-                else if (!autoCompletions && cpt[i] == "h")
-                    completions = completions.concat(liberator.history.get(filter));
-                else if (cpt[i] == "S")
+                else if (c == "S")
                     completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
-                else if (autoCompletions && cpt[i] == "l") // add completions like Firefox's smart location bar
+                else if (c == "b" && !autoCompletions)
+                    completions = completions.concat(liberator.bookmarks.get(filter));
+                else if (c == "h" && !autoCompletions)
+                    completions = completions.concat(liberator.history.get(filter));
+                else if (c == "l") // add completions like Firefox's smart location bar
                 {
-                    var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
-                                                      .getService(Components.interfaces.nsIAutoCompleteSearch);
-                    completionService.startSearch(filter, "", urlResultsCache, {
+                    completionCache = completions;
+                    completionService.startSearch(filter, "", historyResult, {
                         onSearchResult: function (search, result) {
-                            //if (result.searchResult != result.RESULT_SUCCESS)
-                            //    return;
-                            //liberator.log(result.searchResult);
-                            //var res = "";// + util.objectToString(result) + "\n---\n";
-                            //liberator.log(result.matchCount + " matches: " + result.searchResult);
-                            var comp = [];
-                            //if (result.searchResult == result.RESULT_SUCCESS)
-                            //    urlResultsCache = result;
-
-                            for (let i = 0; i < result.matchCount; i++)
-                            {
-                                comp.push([result.getValueAt(i), result.getCommentAt(i)]);
-                            }
-                            urlCompletionCache = comp;
-                            if (comp.length > 0 || result.searchResult == result.RESULT_SUCCESS)
-                                liberator.commandline.setCompletions(completions.concat(comp));
+                            historyResult = result;
+                            historyTimer.tell();
+                            if (result.searchResult <= result.RESULT_SUCCESS)
+                                historyTimer.force();
                         }
                     });
                 }
             }
 
-            return [start, completions.concat(urlCompletionCache)];
+            return [start, completions.concat(historyCache)];
         },
 
         userCommand: function (filter)

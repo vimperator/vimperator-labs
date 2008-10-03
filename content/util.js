@@ -28,6 +28,51 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 liberator.util = { //{{{
 
+    Timer: function Timer(minInterval, maxInterval, callback)
+    {
+        let self = this;
+        let timer = Components.classes["@mozilla.org/timer;1"]
+                              .createInstance(Components.interfaces.nsITimer);
+        this.first = true; /* When set, trigger immediately. */
+        this.latest = 0;
+        this.notify = function (aTimer) 
+        {
+            timer.cancel();
+            if (this.latest || this.first)
+                callback(this.arg);
+            else /* Don't trigger. Set this.first after the minimum interval. */
+                timer.initWithCallback(this, minInterval, timer.TYPE_ONE_SHOT);
+            this.first = (this.latest == 0);
+            this.latest = 0;
+        }
+        this.tell = function (arg)
+        {
+            if (arg != undefined)
+                this.arg = arg;
+            if (this.first || this.latest > Date.now())
+                return this.notify();
+            if (this.latest)
+                timer.cancel();
+
+            let timeout = minInterval;
+            if (this.latest)
+                timeout = Math.min(minInterval, this.latest - Date.now());
+            else
+                this.latest = Date.now() + maxInterval;
+            this.timer = timer.initWithCallback(this, timeout, timer.TYPE_ONE_SHOT);
+        }
+        this.reset = function ()
+        {
+            timer.cancel();
+            this.first = true;
+        }
+        this.flush = function ()
+        {
+            if (this.latest)
+                this.notify();
+        }
+    },
+
     arrayIter: function (ary)
     {
         let length = ary.length;
@@ -353,7 +398,23 @@ liberator.util = { //{{{
         }
 
         return urls;
-    }
+    },
+
+    xmlToDom: function (node, doc)
+    {
+        switch (node.nodeKind())
+        {
+            case "text":
+                return doc.createTextNode(node);
+            case "element":
+                let domnode = doc.createElement(node.name());
+                for each (let attr in node.@*)
+                    domnode.setAttribute(attr.name(), String(attr));
+                for each (let child in node.*)
+                    domnode.appendChild(arguments.callee(child, doc));
+                return domnode;
+        }
+    },
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

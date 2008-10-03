@@ -1246,13 +1246,11 @@ liberator.Buffer = function () //{{{
             // TODO: make this an XBL element rather than messing with the content
             // document
             var doc = frames[next].document;
-            var indicator = doc.createElement("div");
-            indicator.id = "liberator-frame-indicator";
-            // NOTE: need to set a high z-index - it's a crapshoot!
-            var style = "background-color: red; opacity: 0.5; z-index: 999;" +
-                        "position: fixed; top: 0; bottom: 0; left: 0; right: 0;";
-            indicator.setAttribute("style", style);
-            doc.body.appendChild(indicator);
+            var indicator = 
+                <div id="liberator-frame-indicator"
+                     style="background-color: red; opacity: 0.5; z-index: 999
+                            position: fixed; top: 0; bottom: 0; left: 0; right: 0"/>;
+            doc.body.appendChild(liberator.util.xmlToDom(indicator));
 
             // remove the frame indicator
             setTimeout(function () doc.body.removeChild(indicator), 500);

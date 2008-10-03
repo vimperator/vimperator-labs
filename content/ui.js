@@ -105,6 +105,13 @@ liberator.CommandLine = function () //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
+    var statusTimer = new liberator.util.Timer(50, 100, function ()
+        liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
+    var autocompleteTimer = new liberator.util.Timer(50, 100, function (command) {
+            var res = liberator.completion.ex(command);
+            liberator.commandline.setCompletions(res[1], res[0]);
+        });
+
     // the containing box for the promptWidget and commandWidget
     var commandlineWidget = document.getElementById("liberator-commandline");
     // the prompt for the current command, for example : or /. Can be blank
@@ -115,11 +122,13 @@ liberator.CommandLine = function () //{{{
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
 
-    var stylesheet = multilineOutputWidget.contentDocument.createElement("link");
-    stylesheet.setAttribute("rel", "stylesheet");
-    stylesheet.setAttribute("type", "text/css");
-    stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
-    multilineOutputWidget.contentDocument.getElementsByTagName("head")[0].appendChild(stylesheet);
+    var stylesheet =
+        <link rel="stylesheet" type="text/css"
+              href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>;
+
+    stylesheet = liberator.util.xmlToDom(stylesheet, multilineOutputWidget.contentDocument);
+    multilineOutputWidget.contentDocument.getElementsByTagName("head")[0]
+                         .appendChild(stylesheet);
 
     multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
 
@@ -152,10 +161,7 @@ liberator.CommandLine = function () //{{{
 
     liberator.registerCallback("change", liberator.modes.EX, function (command) {
         if (liberator.options["wildoptions"].indexOf("auto") >= 0)
-        {
-            var res = liberator.completion.ex(command);
-            liberator.commandline.setCompletions(res[1], res[0]);
-        }
+            autocompleteTimer.tell(command);
         else
             completionIndex = UNINITIALIZED;
     });
@@ -558,6 +564,7 @@ liberator.CommandLine = function () //{{{
 
             historyIndex = UNINITIALIZED;
             completionIndex = UNINITIALIZED;
+            autocompleteTimer.reset();
 
             liberator.modes.push(liberator.modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
@@ -805,6 +812,7 @@ liberator.CommandLine = function () //{{{
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         completionList.setItems(completions);
+                        statusTimer.reset();
                     }
 
                     if (completions.length == 0)
@@ -833,7 +841,7 @@ liberator.CommandLine = function () //{{{
 
                         // FIXME: this innocent looking line is the source of a big performance
                         // problem, when keeping <Tab> pressed down, so disable it for now
-                        // liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+                        statusTimer.tell();
                     }
 
                     // the following line is not inside if (hasList) for list:longest,full
@@ -1200,10 +1208,9 @@ liberator.ItemList = function (id) //{{{
     var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
-    var stylesheet = doc.createElement("link");
-    stylesheet.setAttribute("rel", "stylesheet");
-    stylesheet.setAttribute("type", "text/css");
-    stylesheet.setAttribute("href", "chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css");
+    var stylesheet = liberator.util.xmlToDom(
+        <link rel="stylesheet" type="text/css"
+              href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>, doc);
     doc.getElementsByTagName("head")[0].appendChild(stylesheet);
 
     doc.body.id = id + "-content";
@@ -1227,44 +1234,20 @@ liberator.ItemList = function (id) //{{{
     catch (e) {} // for muttator!
 
     // TODO: temporary, to be changed/removed
-    function createRow(a, b, c)
+    function createRow(a, b, c, dom)
     {
-        var row = doc.createElement("tr");
-        row.setAttribute("class", "liberator-compitem");
-        var icon = doc.createElement("td");
-        icon.setAttribute("style", "width: 16px");
+        let row =
+            <tr class="liberator-compitem">
+                <td style="width: 16px"/>
+                <td style="width: 45%; overflow: hidden">{b}</td>
+                <td style="color: gray">{c}</td>
+            </tr>
+
         if (a)
-        {
-            var img = doc.createElement("img");
-            img.setAttribute("width", "16px");
-            img.setAttribute("height", "16px");
-            img.setAttribute("src", a);
-            icon.appendChild(img);
-        }
-        row.appendChild(icon);
+            row.td[0].* = <img width="16px" height="16px" src={a}/>;
 
-        var title = doc.createElement("td");
-        title.appendChild(doc.createTextNode(b));
-        title.setAttribute("style", "width: 45%; overflow:hidden");
-        row.appendChild(title);
-
-        var url = doc.createElement("td");
-        url.setAttribute("style", "color: gray");
-        url.appendChild(doc.createTextNode(c));
-        row.appendChild(url);
-
-        return row;
-
-        var row = doc.createElement("tr");
-        row.setAttribute("class", "liberator-compitem");
-        var icon = doc.createElement("td");
-        XML.prettyPrinting = false;
-        icon.innerHTML = <>
-                <td style="vertical-align: middle"><img src={a} width="16px" height="16px"/></td>
-                <td style="vertical-align:middle">{b}<br/><span style="color: green">{c}</span></td>;
-            </>;
-        row.appendChild(icon);
-
+        if (dom)
+            return liberator.util.xmlToDom(row, doc);
         return row;
     }
 
@@ -1296,7 +1279,7 @@ liberator.ItemList = function (id) //{{{
      */
     function fill(offset)
     {
-        if (listOffset == offset || offset < 0 || offset >= completions.length)
+        if (listOffset == offset || offset < 0 || offset >= completions.length && completions.length)
             return;
 
         if (listIndex > -1 && offset == listOffset + 1)
@@ -1310,10 +1293,11 @@ liberator.ItemList = function (id) //{{{
             }
             catch (e) {}
 
-            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1]);
+            var row = createRow(icon, completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1], true);
             var e = doc.getElementsByTagName("tbody");
-            e[e.length - 1].removeChild(e[e.length - 1].firstChild);
-            e[e.length - 1].appendChild(row);
+            e = e[e.length - 1];
+            e.removeChild(e.firstChild);
+            e.appendChild(row);
             completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
             return;
         }
@@ -1327,58 +1311,43 @@ liberator.ItemList = function (id) //{{{
                 icon = faviconService.getFaviconImageForPage(uri).spec;
             }
             catch (e) {}
-            var row = createRow(icon, completions[offset][0], completions[offset][1]);
+            var row = createRow(icon, completions[offset][0], completions[offset][1], true);
             var e = doc.getElementsByTagName("tbody");
-            e[e.length - 1].removeChild(e[e.length - 1].lastChild);
-            e[e.length - 1].insertBefore(row, e[e.length - 1].firstChild);
+            e = e[e.length - 1];
+            e.removeChild(e.lastChild);
+            e.insertBefore(row, e.firstChild);
             completionElements = doc.getElementsByClassName("liberator-compitem"); // TODO: make faster
             return;
         }
+
         listOffset = offset;
 
         // do a full refill of the list:
         doc.body.innerHTML = "";
 
-        var div = doc.createElement("div");
-        div.setAttribute("class", "ex-command-output hl-Normal");
-        div.innerHTML = "<span class=\"hl-Title\" style=\"font-weight: bold\">Completions:</span>";
-        var table = doc.createElement("table");
-        table.setAttribute("width", "100%");
-        table.setAttribute("style", "table-layout: fixed; width: 100%");
-        //div.appendChild(table);
-        var tbody = doc.createElement("tbody");
-        table.appendChild(tbody);
+        let div = <div class="ex-command-output hl-Normal">
+                      <span class="hl-Title" style="font-weight: bold">Completions:</span>
+                      <table width="100%" style="table-layout: fixed; width: 100%"><tbody/></table>
+                  </div>;
+        let tbody = div..tbody;
 
-        for (let i = 0; i < completions.length; i++)
+        for (let [i, elem] in Iterator(completions))
         {
-            var elem = completions[i];
             if (i >= listOffset && i - listOffset < maxItems)
             {
-                var icon = "";
+                let icon = "";
                 try
                 {
-                    var uri = ioService.newURI(elem[0], null, null);
+                    let uri = ioService.newURI(elem[0], null, null);
                     icon = faviconService.getFaviconImageForPage(uri).spec;
-                    //dump(icon + "\n");
                 }
                 catch (e) {}
 
-                if (i == -132434)
-                {
-                    var row = doc.createElement("tr");
-                    row.setAttribute("align", "center");
-                    row.innerHTML = '<th width="16px"></th><th style="background-color: gray !important;"><span style="font-weight: bold;">Bookmarks</span></th>';
-                    tbody.appendChild(row);
-                }
-                else
-                {
-                    tbody.appendChild(createRow(icon, elem[0], elem[1]));
-                }
+                tbody.* += createRow(icon, elem[0], elem[1]);
             }
         };
 
-        doc.body.appendChild(div);
-        doc.body.appendChild(table);
+        doc.body.appendChild(liberator.util.xmlToDom(div, doc));
 
         completionElements = doc.getElementsByClassName("liberator-compitem");
         autoSize();

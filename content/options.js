@@ -742,15 +742,15 @@ liberator.Options = function () //{{{
 
                 if (!filter)
                 {
-                    let options = [[prefix + option.name, option.description]
+                    let opts = [[prefix + option.name, option.description]
                                         for (option in options)];
-                    return [0, options];
+                    return [0, opts];
                 }
                 else if (filter.indexOf("=") == -1)
                 {
                     for (let option in options)
                         optionCompletions.push([[prefix + name, option.description]
-                            for (name in option.names)
+                            for each (name in option.names)
                             if (name.indexOf(filter) == 0)]);
                     // Flatten array.
                     optionCompletions = Array.concat.apply(Array, optionCompletions);
