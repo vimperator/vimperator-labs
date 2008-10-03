@@ -182,11 +182,11 @@ var keys = {};
 var observers = {};
 
 var storage = {
-    newObject: function newObject(key, constructor, store, type)
+    newObject: function newObject(key, constructor, store, type, reload)
     {
-        if (!(key in keys))
+        if (!(key in keys) || reload)
         {
-            if (key in this)
+            if (key in this && !reload)
                 throw Error;
             keys[key] = new constructor(key, store, loadPref(key, store, type || Object));
             this.__defineGetter__(key, function () keys[key]);

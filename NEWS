@@ -1,6 +1,7 @@
 <pre>
 2008-XX-XX:
     * version 2.0 (probably)
+<<<<<<< NEWS
     * IMPORTANT: 'verbose' is now used for message levels. Logging is
       controlled by the extensions.liberator.loglevel preference.
     * IMPORTANT: :viusage and :exusage now jump to the help index, use the
@@ -26,6 +27,10 @@
     * add 'eventignore' option
     * add :tabdetach command
     * new ;b extended hint mode (thanks Daniel Schaffrath)
+    * :qa! and :q! quit forcefully, as in vim
+    * stop macro playback on <C-c>
+    * allow ; hints to work in the multiline output widget
+    * add :style and :delstyle commands
     * many bug fixes
 
 2008-08-16:
