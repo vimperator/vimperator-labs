@@ -321,16 +321,7 @@ liberator.IO = function () //{{{
         function ()
         {
             XML.prettyPrinting = false;
-            var list =
-                <table>
-                {
-                    liberator.template.map2(scriptNames, function (i, name)
-                    <tr>
-                        <td style="text-align: right">{i+1}</td>
-                        <td>{name}</td>
-                    </tr>)
-                }
-                 </table>.toXMLString();
+            var list = liberator.template.tabular(["Idx", "Filename"], ["text-align: right"], Iterator(scriptNames));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });

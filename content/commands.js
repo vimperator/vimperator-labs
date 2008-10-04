@@ -77,6 +77,7 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.completer   = extraInfo.completer || null;
     this.options     = extraInfo.options || [];
     this.argCount    = extraInfo.argCount || "";
+    this.hereDoc     = extraInfo.hereDoc || false;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
     this.replacementText = extraInfo.replacementText || null;
@@ -90,6 +91,7 @@ liberator.Command.prototype = {
         special = !!special;
         count = (count === undefined) ? -1 : count;
         modifiers = modifiers || {};
+        let self = this;
 
         // whenever the user specifies special options or fixed number of arguments
         // we use our args parser instead of passing a string to the callback
@@ -98,6 +100,16 @@ liberator.Command.prototype = {
             args = liberator.commands.parseArgs(args, this.options, this.argCount);
             if (args == null)
                 return false;
+        }
+        else if (this.hereDoc)
+        {
+            let matches = args.match(/(.*)<<\s*([^\s]+)$/);
+            if (matches && matches[2])
+            {
+                liberator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                    function (args) self.action.call(self, matches[1] + "\n" + args, special, count, modifiers));
+                return;
+            }
         }
 
         return this.action.call(this, args, special, count, modifiers);
@@ -697,7 +709,7 @@ liberator.Commands = function () //{{{
                 var cmdlist = getMatchingUserCommands(cmd);
                 if (cmdlist.length > 0)
                 {
-                    var str = liberator.template.tabular(["Name", "Args", "Definition"],
+                    var str = liberator.template.tabular(["Name", "Args", "Definition"], [],
                         ([cmd.name, "*", cmd.replacementText || "function () { ... }"]
                             for each (cmd in cmdlist)));
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);

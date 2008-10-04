@@ -325,38 +325,19 @@ const liberator = (function () //{{{
                 }
                 else
                 {
-                    // check for a heredoc
-                    var matches = args.match(/(.*)<<\s*([^\s]+)$/);
-                    if (matches && matches[2])
+                    try
                     {
-                        liberator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                            function (code)
-                            {
-                                try
-                                {
-                                    eval(matches[1] + "\n" + code);
-                                }
-                                catch (e)
-                                {
-                                    liberator.echoerr(e.name + ": " + e.message);
-                                }
-                            });
+                        liberator.eval(args);
                     }
-                    else // single line javascript code
+                    catch (e)
                     {
-                        try
-                        {
-                            liberator.eval(args);
-                        }
-                        catch (e)
-                        {
-                            liberator.echoerr(e.name + ": " + e.message);
-                        }
+                        liberator.echoerr(e.name + ": " + e.message);
                     }
                 }
             },
             {
-                completer: function (filter) liberator.completion.javascript(filter)
+                completer: function (filter) liberator.completion.javascript(filter),
+                hereDoc: true,
             });
 
         liberator.commands.add(["norm[al]"],

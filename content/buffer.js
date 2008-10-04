@@ -664,10 +664,11 @@ liberator.Buffer = function () //{{{
         "Add or list user styles",
         function (args, special)
         {
-            let [, filter, css] = args.match(/([^\s]+)\s*(.*)/) || [];
+            let [, filter, css] = args.match(/([^\s]+)\s*((?:.|\n)*)/) || [];
             if (!css)
             {
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
+                    ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
                     ([i, style[0], style[1]] for ([i, style] in styles)
                                              if (!filter || style[0] == filter)));
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
@@ -686,6 +687,7 @@ liberator.Buffer = function () //{{{
                 [content.location.href, ""]]
                     .concat([[s[0], ""] for ([i, s] in styles)])
                 ],
+            hereDoc: true,
         });
 
     liberator.commands.add(["dels[tyle]"],
@@ -1988,7 +1990,7 @@ liberator.template = {
             return table;
     },
 
-    tabular: function (headings, iter)
+    tabular: function (headings, style, iter)
     {
         /* This might be mind-bogglingly slow. We'll see. */
         return this.generic(
@@ -2003,8 +2005,8 @@ liberator.template = {
                     this.map(iter, function (row)
                     <tr>
                     {
-                        liberator.template.map(row, function (d)
-                        <td>{d}</td>)
+                        liberator.template.map2(row, function (i, d)
+                        <td style={style[i] || ""}>{d}</td>)
                     }
                     </tr>)
                 }
