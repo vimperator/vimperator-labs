@@ -1836,8 +1836,8 @@ liberator.Marks = function () //{{{
             let list = liberator.template.tabular(["mark", "line", "col", "file"],
                 ["", "text-align: right", "text-align: right", "color: green"],
                 ([mark[0],
-                  Math.round(mark[1].position.x & 100) + "%",
-                  Math.round(mark[1].position.y & 100) + "%",
+                  Math.round(mark[1].position.x * 100) + "%",
+                  Math.round(mark[1].position.y * 100) + "%",
                   mark[1].location]
                   for each (mark in marks)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
