@@ -208,9 +208,14 @@ liberator.CommandLine = function () //{{{
         let doc = multilineOutputWidget.contentDocument;
         let win = multilineOutputWidget.contentWindow;
 
-        XML.ignoreWhitespace = false;
+        /* If it's already XML, assume it knows what it's doing.
+         * Otherwise, white space is significant.
+         * The problem elsewhere is that E4X tends to insert new lines
+         * after interpolated data.
+         */
+        XML.ignoreWhitespace = typeof str == "xml";
         var output = <div class={"ex-command-output " + highlightGroup}>{liberator.template.maybeXML(str)}</div>;
-        XML.ignoreWhitespace = true;
+        XML.ignoreWhiteSpace = true;
 
         lastMowOutput = output;
 
