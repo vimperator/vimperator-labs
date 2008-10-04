@@ -32,13 +32,12 @@ liberator.AutoCommands = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var autoCommands = {};
+    var store = [];
 
-    function autoCommandsIterator()
+    function matchAutoCmd(autoCmd, event, regex)
     {
-        for (let item in autoCommands)
-            for (let i = 0; i < autoCommands[item].length; i++)
-                yield item + " " + autoCommands[item][i][0] + " " + autoCommands[item][i][1];
+        return (!event || autoCmd.event == event) &&
+               (!regex || autoCmd.pattern.source == regex);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -53,7 +52,7 @@ liberator.AutoCommands = function () //{{{
             validator: function (value)
             {
                 let values = value.split(",");
-                let events = liberator.config.autocommands.map(function (e) e[0]);
+                let events = liberator.config.autocommands.map(function (event) event[0]);
 
                 events.push("all");
 
@@ -75,136 +74,158 @@ liberator.AutoCommands = function () //{{{
         {
             if (!args)
             {
-                if (special) // :au!
-                    liberator.autocommands.remove(null, null);
-                else // :au
-                    liberator.autocommands.list(null, null);
+                if (special)
+                    liberator.autocommands.remove(null, null); // remove all
+                else
+                    liberator.autocommands.list(null, null);   // list all
             }
             else
             {
-                // (?:  ) means don't store; (....)? <-> exclamation marks makes the group optional
-                var [all, asterix, auEvent, regex, cmds] = args.match(/^(\*)?(?:\s+)?(\S+)(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
+                // TODO: assume the pattern doesn't contain spaces until we have whitespace escaping
+                let [, event, regex, cmd] = args.match(/^(\S+)?(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
 
-                if (cmds)
+                // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
+                let events = event.split(",");
+                let validEvents = liberator.config.autocommands.map(function (event) event[0]);
+
+                validEvents.push("*");
+
+                if (!events.every(function (event) validEvents.indexOf(event) >= 0))
                 {
-                    liberator.autocommands.add(auEvent, regex, cmds);
+                    liberator.echoerr("E216: No such group or event: " + args);
+                    return;
                 }
-                else if (regex) // e.g. no cmds provided
+
+                if (cmd) // add new command, possibly removing all others with the same event/pattern
                 {
                     if (special)
-                        liberator.autocommands.remove(auEvent, regex);
-                    else
-                        liberator.autocommands.list(auEvent, regex);
+                        liberator.autocommands.remove(event, regex);
+
+                    liberator.autocommands.add(events, regex, cmd);
                 }
-                else if (auEvent)
+                else if (regex)
                 {
-                    if (asterix)
-                        if (special)
-                            liberator.autocommands.remove(null, auEvent); // ':au! * auEvent'
-                        else
-                            liberator.autocommands.list(null, auEvent);
+                    if (special)
+                        liberator.autocommands.remove(event == "*" ? null : event, regex);
                     else
-                        if (special)
-                            liberator.autocommands.remove(auEvent, null);
-                        else
-                            liberator.autocommands.list(auEvent, null);
+                        liberator.autocommands.list(event == "*" ? null : event, regex);
+                }
+                else if (event)
+                {
+                    if (special)
+                    {
+                        // TODO: "*" only appears to work in Vim when there is a {group} specified
+                        if (event != "*")
+                            liberator.autocommands.remove(event, null);
+                    }
+                    else
+                    {
+                        liberator.autocommands.list(event == "*" ? null : event, null);
+                    }
                 }
             }
         },
         {
             bangAllowed: true,
-            completer: function (filter)
-            {
-                return [0, liberator.completion.filter(liberator.config.autocommands || [], filter)];
-            }
+            completer: function (filter) liberator.completion.autocommand(filter)
         });
+
+    // TODO: expand target to all buffers
+    liberator.commands.add(["doauto[all]"],
+        "Apply the autocommands matching the specified URL pattern to all buffers",
+        function (args)
+        {
+            liberator.commands.get("doautocmd").action.call(this, args);
+        },
+        {
+            argCount: "+",
+            completer: function (filter) liberator.completion.autocommand(filter)
+        }
+    );
+
+    // TODO: restrict target to current buffer
+    liberator.commands.add(["do[autocmd]"],
+        "Apply the autocommands matching the specified URL pattern to the current buffer",
+        function (args)
+        {
+            args = args.string;
+
+            let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
+            url = url || liberator.buffer.URL;
+
+            let validEvents = liberator.config.autocommands.map(function (e) e[0]);
+
+            if (event == "*")
+            {
+                liberator.echoerr("E217: Can't execute autocommands for ALL events");
+            }
+            else if (validEvents.indexOf(event) == -1)
+            {
+                liberator.echoerr("E216: No such group or event: " + args);
+            }
+            else
+            {
+                // TODO: perhaps trigger could return the number of autocmds triggered
+                if (!liberator.autocommands.get(event).some(function (c) c.pattern.test(url)))
+                    liberator.echo("No matching autocommands");
+                else
+                    liberator.autocommands.trigger(event, url);
+            }
+        },
+        {
+            // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
+            argCount: "+",
+            completer: function (filter) liberator.completion.autocommand(filter)
+        }
+    );
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    //TODO: maybe this.function rather than v.autocommands.function...
-
     return {
 
         __iterator__: function ()
         {
-            return autoCommandsIterator();
+            for (let i = 0; i < store.length; i++)
+                yield autoCmd[i];
         },
 
-        add: function (auEvent, regex, cmds)
+        add: function (events, regex, cmd)
         {
-            var eventsIter = auEvent.split(",");
-            for (let i = 0; i < eventsIter.length; i++)
+            if (typeof events == "string")
             {
-                if (!autoCommands[eventsIter[i]])
-                    autoCommands[eventsIter[i]] = [];
-
-                var flag = true;
-                for (let j = 0; j < autoCommands[eventsIter[i]].length; j++)
-                {
-                    if (autoCommands[eventsIter[i]][j][0] == regex && autoCommands[eventsIter[i]][j][1] == cmds)
-                    {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag)
-                    autoCommands[eventsIter[i]].push([regex, cmds, new RegExp(regex)]);
+                events = events.split(",");
+                liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
+
+            events.forEach(
+                function (event) { store.push({event: event, pattern: RegExp(regex), command: cmd}); }
+            );
         },
 
-        remove: function (auEvent, regex) // arguments are filters (NULL = all)
+        get: function (event, regex)
         {
-            if (!auEvent && !regex)
-            {
-                autoCommands = {}; // delete all
-            }
-            else if (!regex) // remove all on this auEvent
-            {
-                for (let item in autoCommands)
-                {
-                    if (item == auEvent)
-                        delete autoCommands[item];
-                }
-            }
-            else if (!auEvent) // delete all matches to this regex
-            {
-                for (let item in autoCommands)
-                {
-                    var i = 0;
-                    while (i < autoCommands[item].length)
-                    {
-                        if (regex == autoCommands[item][i][0])
-                        {
-                            autoCommands[item].splice(i, 1); // remove array
-                            // keep `i' since this is removed, so a possible next one is at this place now
-                        }
-                        else
-                            i++;
-                    }
-                }
-            }
-            else // delete matching `auEvent && regex' items
-            {
-                for (let item in autoCommands)
-                {
-                    if (item == auEvent)
-                    {
-                        for (let i = 0; i < autoCommands[item].length; i++)
-                        {
-                            if (regex == autoCommands[item][i][0])
-                                autoCommands[item].splice(i, 1); // remove array
-                        }
-                    }
-                }
-            }
+            return store.filter(function (autoCmd) matchAutoCmd(autoCmd, event, regex));
         },
 
-        list: function (auEvent, regex) // arguments are filters (NULL = all)
+        remove: function (event, regex)
         {
-            let cmds = (item for (item in Iterator(autoCommands))
-                             if ((!auEvent || item[0] == auEvent) && item[1].length));
+            store = store.filter(function (autoCmd) !matchAutoCmd(autoCmd, event, regex));
+        },
+
+        list: function (event, regex)
+        {
+            let cmds = {};
+
+            // XXX
+            store.forEach(function (autoCmd) {
+                if (matchAutoCmd(autoCmd, event, regex))
+                {
+                    cmds[autoCmd.event] = cmds[autoCmd.event] || [];
+                    cmds[autoCmd.event].push(autoCmd);
+                }
+            });
 
             var list = liberator.template.generic(
                 <table>
@@ -219,8 +240,8 @@ liberator.AutoCommands = function () //{{{
                         +
                         liberator.template.map(items, function (item)
                         <tr>
-                            <td>&#160;{item[0]}</td>
-                            <td>{item[1]}</td>
+                            <td>&#160;{item.pattern.source}</td>
+                            <td>{item.command}</td>
                         </tr>))
                     }
                 </table>);
@@ -228,26 +249,30 @@ liberator.AutoCommands = function () //{{{
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
-        trigger: function (auEvent, url)
+        trigger: function (event, url)
         {
             let events = liberator.options["eventignore"].split(",");
 
-            if (events.some(function (event) event == "all" || event == auEvent))
+            if (events.some(function (e) e == "all" || e == event))
                 return;
 
-            liberator.echomsg("Executing " + auEvent + " Auto commands for \"*\"", 8);
+            let autoCmds = store.filter(function (autoCmd) autoCmd.event == event);
 
-            if (autoCommands[auEvent])
+            liberator.echomsg("Executing " + event + " Auto commands for \"*\"", 8);
+
+            let lastPattern = null;
+
+            for (let [,autoCmd] in Iterator(autoCmds))
             {
-                for (let i = 0; i < autoCommands[auEvent].length; i++)
+                if (autoCmd.pattern.test(url))
                 {
-                    if (autoCommands[auEvent][i][2].test(url))
-                    {
-                        liberator.echomsg("Executing " + auEvent + " Auto commands for \""
-                                                       + autoCommands[auEvent][i][2] + "\"", 8);
-                        liberator.echomsg("autocommand " + autoCommands[auEvent][i][1], 9);
-                        liberator.execute(autoCommands[auEvent][i][1]);
-                    }
+                    if (!lastPattern || lastPattern.source != autoCmd.pattern.source)
+                        liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
+
+                    lastPattern = autoCmd.pattern;
+
+                    liberator.echomsg("autocommand " + autoCmd.command, 9);
+                    liberator.execute(autoCmd.command);
                 }
             }
         }

@@ -177,6 +177,12 @@ liberator.Completion = function () //{{{
                 return buildLongestCommonSubstring(array, filter);
         },
 
+        autocommand: function (filter)
+        {
+            let autoCmds = liberator.config.autocommands;
+            return [0, this.filter(autoCmds, filter)];
+        },
+
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function (filter)
         {

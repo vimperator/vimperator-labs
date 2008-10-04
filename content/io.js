@@ -244,7 +244,7 @@ liberator.IO = function () //{{{
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
             // line += "\n\" Auto-Commands\n";
             // for (let item in liberator.autocommands)
-            //     line += "autocmd " + item + "\n";
+            //     line += "autocmd " + item.event + " " + item.pattern.source + " " + item.command + "\n";
 
             line += "\n\" Abbreviations\n";
             for (let abbrCmd in liberator.editor.abbreviations)

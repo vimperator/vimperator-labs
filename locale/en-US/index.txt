@@ -159,6 +159,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:delmarks|| Delete the specified marks +
 ||:delqmarks|| Delete the specified QuickMarks +
 ||:dialog|| Open a undefined dialog +
+||:doautoall|| Apply the autocommands matching the specified URL to all buffers +
+||:doautocmd|| Apply the autocommands matching the specified URL to the current buffer +
 ||:downloads|| Show progress of current downloads +
 ||:echo|| Display a string at the bottom of the window +
 ||:echoerr|| Display an error string at the bottom of the window +

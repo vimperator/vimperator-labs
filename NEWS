@@ -7,6 +7,8 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add :doautocmd and :doautoall
+    * add :style and :delstyle commands
     * add DOMLoad autocmd event
     * add :messages and 'messages'
     * add :runtime
@@ -28,8 +30,6 @@
     * new ;b extended hint mode (thanks Daniel Schaffrath)
     * :qa! and :q! quit forcefully, as in vim
     * stop macro playback on <C-c>
-    * allow ; hints to work in the multiline output widget
-    * add :style and :delstyle commands
     * many bug fixes
 
 2008-08-16:

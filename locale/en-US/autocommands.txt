@@ -38,6 +38,22 @@ Warning: Autocommand events are, in general, currently only fired when
 Vimperator commands are executed.
 ________________________________________________________________________________
 
+
+|:doautoa| |:doautoall|
+||:doautocmda[ll] {event} [url]|| +
+________________________________________________________________________________
+Apply the autocommands matching the specified URL to all buffers. If no [url]
+is specified use the current URL.
+________________________________________________________________________________
+
+
+|:do| |:doautocmd|
+||:do[autocmd] {event} [url]|| +
+________________________________________________________________________________
+Apply the autocommands matching the specified URL to the current buffer. If no
+[url] is specified use the current URL.
+________________________________________________________________________________
+
 section:Examples[autocmd-examples]
 
 Enable _passthrough_ mode on all Google sites:
