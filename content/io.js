@@ -821,7 +821,7 @@ lookup:
                                 {
                                     break;
                                 }
-                                else if (command.name == "javascript")
+                                else if (command.hereDoc)
                                 {
                                     // check for a heredoc
                                     let matches = args.match(/(.*)<<\s*(\S+)$/);
