@@ -34,10 +34,15 @@ liberator.Buffer = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const arrayIter = liberator.util.arrayIter;
-
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
+
+    const arrayIter = liberator.util.arrayIter;
+    /* Can't reference liberator inside Styles --
+     * it's a global object, and liberator disappears
+     * with this window.
+     */
+    const util = liberator.util;
 
     function Styles(name, store, serial)
     {
@@ -60,18 +65,35 @@ liberator.Buffer = function () //{{{
 
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
+            let filter = filter.split(",");
             sheets.push([filter, css]);
             this.registerSheet(cssUri(wrapCSS(filter, css)));
             return null;
         }
 
-        this.removeSheet = function (number)
+        this.removeSheet = function (filter, index)
         {
-            if (number >= sheets.length)
-                return false;
-            let sheet = sheets.splice(number)[0];
-            let uri =
-            this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
+            if (filter == undefined)
+                filter = "";
+            /* Find all sheets which match the filter */
+            let matches = [s for (s in Iterator(sheets)) if (filter == "" || s[1][0].indexOf(filter) >= 0)];
+
+            if (matches.length == 0 && sheets[Number(filter)])
+                matches.push([filter, sheets[filter]]);
+            else if (!isNaN(index))
+                matches = (index < matches.length) ? [matches[index]] : [];
+            else if (index)
+                matches = [m for each (m in matches) if (m[1][1] == index)];
+
+            for (let [,[i, sheet]] in Iterator(matches.reverse()))
+            {
+                this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
+                sheet[0] = sheet[0].filter(function (f) f != filter);
+                if (sheet[0].length && isNaN(filter))
+                    this.registerSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
+                else
+                    sheets.splice(i, 1);
+            }
             return true;
         }
 
@@ -91,12 +113,15 @@ liberator.Buffer = function () //{{{
 
         function wrapCSS(filter, css)
         {
-            if (filter == "*")
-                return css;
-            let selector = /[\/:]/.test(filter) ? "url" : "domain";
-            filter = filter.replace('"', "%22", "g");
+            if (filter[0] == "*")
+                return "@namespace url(" + XHTML + ");\n" + css;
+            let selectors = filter.map(function (part) (/\/$/.test(part) ? "url-prefix" :
+                                                        /\/:/.test(part) ? "url"
+                                                                         : "domain")
+                                                + '("' + part.replace(/"/g, "%22") + '")')
+                                  .join(", ");
             return "@namespace url(" + XHTML + ");\n" +
-                   "@-moz-document " + selector + '("' + filter + '") {\n' + css + "\n}\n";
+                   "@-moz-document " + selectors + "{\n" + css + "\n}\n";
             /* } vim */
         }
 
@@ -125,7 +150,7 @@ liberator.Buffer = function () //{{{
             try
             {
                 var doc = document.implementation.createDocument(XHTML, "doc", null);
-                doc.documentElement.appendChild(liberator.util.xmlToDom(
+                doc.documentElement.appendChild(util.xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, doc));
 
                 while (true)
@@ -151,8 +176,11 @@ liberator.Buffer = function () //{{{
             return errors;
         }
     }
+    Styles.prototype = {
+        get sites() util.uniq(util.flatten([v[0] for ([k, v] in this)])),
+    };
 
-    let styles = liberator.storage.newObject(styles, Styles, false);
+    let styles = liberator.storage.newObject("styles", Styles, false);
 
     function setZoom(value, fullZoom)
     {
@@ -672,8 +700,8 @@ liberator.Buffer = function () //{{{
             {
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([i, style[0], style[1]] for ([i, style] in styles)
-                                             if (!filter || style[0] == filter)));
+                    ([i, style[0].join(","), style[1]] for ([i, style] in styles)
+                                             if (!filter || style[0].indexOf(filter) >= 0)));
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
             else
@@ -685,20 +713,23 @@ liberator.Buffer = function () //{{{
             }
         },
         {
-            completer: function (filter) [0, [
-                [content.location.host, ""],
-                [content.location.href, ""]]
-                    .concat([[s[0], ""] for ([i, s] in styles)])
-                ],
+            completer: function (filter) [0, liberator.completion.filter(
+                [[content.location.host, ""],
+                 [content.location.href, ""]]
+                    .concat([[s, ""] for each (s in styles.sites)])
+                , filter)],
             hereDoc: true,
         });
 
     liberator.commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
-        function (args) { styles.removeSheet(parseInt(args.arguments[0])); },
+        function (args) { styles.removeSheet.apply(styles, args.arguments); },
         {
-            completer: function (filter) [0, [[i, s[0] + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]],
-            argCount: 1
+            completer: function (filter) [0, liberator.completion.filter(
+                    [[i, s[0].join(",") + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]
+                        .concat([[s, ""] for each (s in styles.sites)])
+                    , filter)],
+            argCount: "*",
         });
 
     liberator.commands.add(["vie[wsource]"],
@@ -1382,9 +1413,7 @@ liberator.Buffer = function () //{{{
             // add the frame indicator
             var doc = frames[next].document;
             var indicator =
-                <div id="liberator-frame-indicator"
-                     style="background-color: red; opacity: 0.5; z-index: 999
-                            position: fixed; top: 0; bottom: 0; left: 0; right: 0"/>;
+                <div id="liberator-frame-indicator"/>;
             doc.body.appendChild(liberator.util.xmlToDom(indicator));
 
             // remove the frame indicator
@@ -1910,7 +1939,7 @@ liberator.template = {
                                     ({
                                         liberator.template.map(item.extra, function (e)
                                         <>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>,
-                                        <>&#160;</>)
+                                        <![CDATA[ ]]>/* Non-breaking space */)
                                     })
                                 </span>
                             }
@@ -1930,7 +1959,7 @@ liberator.template = {
                 {
                     this.map2(elems, function (idx, val)
                     <tr>
-                        <td>{idx == index ? <span style="color: blue;">{">"}</span> : ""}</td> <!-- } //vim :( -->
+                        <td style="color: blue;">{idx == index ? ">" : ""}</td>
                         <td>{Math.abs(idx - index)}</td>
                         <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
                         <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>

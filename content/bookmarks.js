@@ -56,7 +56,7 @@ liberator.Bookmarks = function () //{{{
         this.__defineGetter__("keywords",
             function () [[k[2], k[1], k[0]] for each (k in self.bookmarks) if (k[2])]);
 
-        this.__iterator__ = (val for each (val in self.bookmarks));
+        this.__iterator__ = function () (val for each (val in self.bookmarks));
 
         function loadBookmark(node)
         {
@@ -242,16 +242,14 @@ liberator.Bookmarks = function () //{{{
 
     liberator.commands.add(["bma[rk]"],
         "Add a bookmark",
-        function (args)
+        function (args, special)
         {
             var url = args.arguments.length == 0 ? liberator.buffer.URL : args.arguments[0];
             var title = args["-title"] || (args.arguments.length == 0 ? liberator.buffer.title : null);
-            if (!title)
-                title = url;
             var keyword = args["-keyword"] || null;
             var tags =    args["-tags"] || [];
 
-            if (liberator.bookmarks.add(false, title, url, keyword, tags))
+            if (liberator.bookmarks.add(false, title, url, keyword, tags, special))
             {
                 var extra = "";
                 if (title != url)
@@ -310,14 +308,28 @@ liberator.Bookmarks = function () //{{{
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
-        add: function (starOnly, title, url, keyword, tags)
+        add: function (starOnly, title, url, keyword, tags, force)
         {
             try
             {
                 var uri = PlacesUIUtils.createFixedURI(url);
-                var id = bookmarksService.insertBookmark(
-                         bookmarksService[starOnly ? "unfiledBookmarksFolder" : "bookmarksMenuFolder"],
-                         uri, -1, title);
+                if (!force)
+                {
+                    for (let bmark in cache)
+                    {
+                        if (bmark[0] == uri.spec)
+                        {
+                            var id = bmark[4];
+                            if (title)
+                                bookmarksService.setItemTitle(id, title);
+                            break;
+                        }
+                    }
+                }
+                if (id == undefined)
+                    id = bookmarksService.insertBookmark(
+                             bookmarksService[starOnly ? "unfiledBookmarksFolder" : "bookmarksMenuFolder"],
+                             uri, -1, title || url);
                 if (!id)
                     return false;
 

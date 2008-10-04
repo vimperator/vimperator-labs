@@ -72,7 +72,7 @@ liberator.Completion = function () //{{{
             var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
             for (let j = 0; j < complist.length; j++)
             {
-                var item = complist[j];
+                var item = String(complist[j]);
                 if (ignorecase)
                     item = item.toLowerCase();
 

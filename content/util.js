@@ -172,6 +172,20 @@ liberator.util = { //{{{
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
+    escapeRegex: function (str)
+    {
+        return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
+    },
+
+    // Flatten an array:
+    //  [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
+    flatten: function (ary)
+    {
+        if (ary.length == 0)
+            return [];
+        return Array.concat.apply(Array, ary);
+    },
+
     formatBytes: function (num, decimalPlaces, humanReadable)
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
@@ -414,6 +428,18 @@ liberator.util = { //{{{
         }
 
         return urls;
+    },
+
+    uniq: function (ary)
+    {
+        let ret = [];
+        for (let [,item] in Iterator(ary.sort()))
+        {
+            if (item != last || !ret.length)
+                ret.push(item);
+            var last = item;
+        }
+        return ret;
     },
 
     xmlToDom: function (node, doc)
