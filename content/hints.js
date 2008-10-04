@@ -567,9 +567,7 @@ liberator.Hints = function () //{{{
     liberator.options.add(["hinttimeout", "hto"],
         "Automatically follow non unique numerical hint",
         "number", 0,
-        {
-            validator: function (value) value >= 0
-        });
+        { validator: function (value) value >= 0 });
 
     liberator.options.add(["linkfgcolor", "lfc"],
         "Foreground color of a link during hint mode",

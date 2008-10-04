@@ -328,16 +328,12 @@ liberator.CommandLine = function () //{{{
     liberator.options.add(["history", "hi"],
         "Number of Ex commands and search patterns to store in the command-line history",
         "number", 500,
-        {
-            validator: function (value) value >= 0
-        });
+        { validator: function (value) value >= 0 });
 
     liberator.options.add(["messages", "msgs"],
         "Number of messages to store in the message history",
         "number", 100,
-        {
-            validator: function (value) value >= 0
-        });
+        { validator: function (value) value >= 0 });
 
     liberator.options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
@@ -499,9 +495,7 @@ liberator.CommandLine = function () //{{{
                 if (str != null)
                     command.action(str);
             },
-            {
-                completer: function (filter) liberator.completion.javascript(filter)
-            });
+            { completer: function (filter) liberator.completion.javascript(filter) });
     });
 
     liberator.commands.add(["mes[sages]"],
@@ -514,7 +508,8 @@ liberator.CommandLine = function () //{{{
             let list = messageHistory.messages.join("\n");
 
             liberator.commandline.echo(list);
-        }, { argCount: "0" });
+        },
+        { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

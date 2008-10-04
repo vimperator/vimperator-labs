@@ -366,7 +366,10 @@ liberator.Options = function () //{{{
                 openPreferences();
             }
         },
-        { argCount: "0" });
+        {
+            argCount: "0",
+            bangAllowed: true,
+        });
 
     liberator.commands.add(["setl[ocal]"],
         "Set local option",
@@ -375,6 +378,7 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
         },
         {
+            bangAllowed: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
@@ -389,6 +393,7 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
         },
         {
+            bangAllowed: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
@@ -701,6 +706,7 @@ liberator.Options = function () //{{{
             }
         },
         {
+            bangAllowed: true,
             completer: function (filter, special, count, modifiers)
             {
                 var optionCompletions = [];
@@ -839,7 +845,10 @@ liberator.Options = function () //{{{
                 delete reference[0][reference[1]];
             }
         },
-        { argCount: "+" });
+        {
+            argCount: "+",
+            bangAllowed: true
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

@@ -289,16 +289,12 @@ liberator.Buffer = function () //{{{
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
 
     liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
-        {
-            completer: function (filter) [0, [[k, v[1]] for ([k, v] in Iterator(pageInfo))]]
-        });
+        { completer: function (filter) [0, [[k, v[1]] for ([k, v] in Iterator(pageInfo))]] });
 
     liberator.options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
         "number", 0,
-        {
-            validator: function (value) value >= 0
-        });
+        { validator: function (value) value >= 0 });
 
     liberator.options.add(["showstatuslinks", "ssli"],
         "Show the destination of the link under the cursor in the status bar",
@@ -607,14 +603,12 @@ liberator.Buffer = function () //{{{
             liberator.options.setPref("print.always_print_silent", aps);
             liberator.options.setPref("print.show_print_progress", spp);
             liberator.echo("Print job sent.");
-        });
+        },
+        { bangAllowed: true });
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
-        function ()
-        {
-            liberator.buffer.showPageInfo(true);
-        },
+        function () liberator.buffer.showPageInfo(true),
         { argCount: "0" });
 
     liberator.commands.add(["pagest[yle]"],
@@ -634,17 +628,15 @@ liberator.Buffer = function () //{{{
 
             stylesheetSwitchAll(window.content, args);
         },
-        {
-            completer: function (filter) liberator.completion.stylesheet(filter)
-        });
+        { completer: function (filter) liberator.completion.stylesheet(filter) });
 
     liberator.commands.add(["re[load]"],
         "Reload current page",
-        function (args, special)
+        function (args, special) liberator.tabs.reload(getBrowser().mCurrentTab, special),
         {
-            liberator.tabs.reload(getBrowser().mCurrentTab, special);
-        },
-        { argCount: "0" });
+            bangAllowed: true,
+            argCount: "0"
+        });
 
     liberator.commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
@@ -660,19 +652,17 @@ liberator.Buffer = function () //{{{
             //}
             //else
             saveDocument(window.content.document, special);
-        });
+        },
+        { bangAllowed: true, });
 
     liberator.commands.add(["st[op]"],
         "Stop loading",
-        function ()
-        {
-            BrowserStop();
-        },
+        function () BrowserStop(),
         { argCount: "0" });
 
     liberator.commands.add(["sty[le]"],
         "Add or list user styles",
-        function (args, special)
+        function (args)
         {
             let [, filter, css] = args.match(/(\S+)\s*((?:.|\n)*)/) || [];
             if (!css)
@@ -702,7 +692,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
-        function (args, special) styles.removeSheet(parseInt(args.arguments[0])),
+        function (args) styles.removeSheet(parseInt(args.arguments[0])),
         {
             completer: function (filter) [0, [[i, s[0] + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]],
             argCount: 1
@@ -710,7 +700,8 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { liberator.buffer.viewSource(args, special); });
+        function (args, special) liberator.buffer.viewSource(args, special),
+        { bangAllowed: true });
 
     liberator.commands.add(["zo[om]"],
         "Set zoom value of current web page",
@@ -749,7 +740,8 @@ liberator.Buffer = function () //{{{
                 liberator.buffer.fullZoom = level;
             else
                 liberator.buffer.textZoom = level;
-        });
+        },
+        { bangAllowed: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PAGE INFO ///////////////////////////////////////////////
@@ -1663,7 +1655,8 @@ liberator.Marks = function () //{{{
             }
 
             liberator.marks.remove(args, special);
-        });
+        },
+        { bangAllowed: true });
 
     liberator.commands.add(["ma[rk]"],
         "Mark current location within the web page",

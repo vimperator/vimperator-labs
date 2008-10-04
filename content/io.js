@@ -180,9 +180,7 @@ liberator.IO = function () //{{{
                 }
             }
         },
-        {
-            completer: function (filter) liberator.completion.file(filter, true)
-        });
+        { completer: function (filter) liberator.completion.file(filter, true) });
 
     liberator.commands.add(["fini[sh]"],
         "Stop sourcing a script file",
@@ -195,10 +193,7 @@ liberator.IO = function () //{{{
 
     liberator.commands.add(["pw[d]"],
         "Print the current directory name",
-        function ()
-        {
-            liberator.echo(liberator.io.getCurrentDirectory());
-        },
+        function () liberator.echo(liberator.io.getCurrentDirectory()),
         { argCount: "0" });
 
     // mkv[imperatorrc] or mkm[uttatorrc]
@@ -273,6 +268,7 @@ liberator.IO = function () //{{{
             }
         },
         {
+            bangAllowed: true,
             completer: function (filter) liberator.completion.file(filter, true)
         });
 
@@ -313,7 +309,10 @@ liberator.IO = function () //{{{
             if (!found)
                 liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
         },
-        { argCount: "+" }
+        {
+            argCount: "+",
+            bangAllowed: true
+        }
     );
 
     liberator.commands.add(["scrip[tnames]"],
@@ -339,6 +338,7 @@ liberator.IO = function () //{{{
             liberator.io.source(args, special);
         },
         {
+            bangAllowed: true,
             completer: function (filter) liberator.completion.file(filter, true)
         });
 
@@ -361,7 +361,8 @@ liberator.IO = function () //{{{
             liberator.echo(command + liberator.util.escapeHTML(output));
 
             liberator.autocommands.trigger("ShellCmdPost", "");
-        });
+        },
+        { bangAllowed: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

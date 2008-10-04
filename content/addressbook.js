@@ -126,15 +126,16 @@ liberator.Addressbook = function () //{{{
 
         },
         {
+            argCount: "+",
             options: [[["-firstname", "-f"], liberator.commands.OPTION_STRING],
                       [["-lastname", "-l"],  liberator.commands.OPTION_STRING],
-                      [["-name", "-n"],      liberator.commands.OPTION_STRING]],
-            argCount: "+"
+                      [["-name", "-n"],      liberator.commands.OPTION_STRING]]
         });
 
     liberator.commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
-        function (args, special) { liberator.addressbook.list(args, special); });
+        function (args, special) liberator.addressbook.list(args, special),
+        { bangAllowed: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

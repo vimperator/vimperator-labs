@@ -112,6 +112,7 @@ liberator.AutoCommands = function () //{{{
             }
         },
         {
+            bangAllowed: true,
             completer: function (filter)
             {
                 return [0, liberator.completion.filter(liberator.config.autocommands || [], filter)];
@@ -658,9 +659,7 @@ liberator.Events = function () //{{{
             else
                 liberator.events.deleteMacros(args);
         },
-        {
-            completer: function (filter) liberator.completion.macro(filter)
-        });
+        { completer: function (filter) liberator.completion.macro(filter) });
 
     liberator.commands.add(["macros"],
         "List all macros",
@@ -670,9 +669,7 @@ liberator.Events = function () //{{{
             var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args)); 
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
-        {
-            completer: function (filter) liberator.completion.macro(filter)
-        });
+        { completer: function (filter) liberator.completion.macro(filter) });
 
     liberator.commands.add(["pl[ay]"],
         "Replay a recorded macro",
@@ -683,9 +680,7 @@ liberator.Events = function () //{{{
             else
                 liberator.events.playMacro(args);
         },
-        {
-            completer: function (filter) liberator.completion.macro(filter)
-        });
+        { completer: function (filter) liberator.completion.macro(filter) });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

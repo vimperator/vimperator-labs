@@ -287,6 +287,7 @@ liberator.config = { //{{{
                 }
             },
             {
+                bangAllowed: true,
                 completer: function (filter) liberator.completion.url(filter)
             });
 
@@ -363,9 +364,7 @@ liberator.config = { //{{{
                 else
                     liberator.open("about:blank", liberator.NEW_WINDOW);
             },
-            {
-                completer: function (filter) liberator.completion.url(filter)
-            });
+            { completer: function (filter) liberator.completion.url(filter) });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////

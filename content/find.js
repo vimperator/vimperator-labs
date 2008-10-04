@@ -305,10 +305,7 @@ liberator.Search = function () //{{{
 
     liberator.commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
-        function ()
-        {
-            liberator.search.clear();
-        },
+        function () liberator.search.clear(),
         { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}

@@ -174,14 +174,11 @@ liberator.Editor = function () //{{{
 
         liberator.commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) { liberator.editor.removeAbbreviation(mode, args); });
+            function (args) liberator.editor.removeAbbreviation(mode, args));
 
         liberator.commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
-            function ()
-            {
-                liberator.editor.removeAllAbbreviations(mode);
-            },
+            function () liberator.editor.removeAllAbbreviations(mode),
             { argCount: "0" });
     }
 

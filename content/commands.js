@@ -74,10 +74,11 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.names       = expandedSpecs.names; // return all command name aliases
     this.description = description || "";
     this.action      = action;
-    this.completer   = extraInfo.completer || null;
-    this.options     = extraInfo.options || [];
     this.argCount    = extraInfo.argCount || "";
+    this.completer   = extraInfo.completer || null;
     this.hereDoc     = extraInfo.hereDoc || false;
+    this.options     = extraInfo.options || [];
+    this.bangAllowed = extraInfo.bangAllowed || false;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
     this.replacementText = extraInfo.replacementText || null;
@@ -699,7 +700,12 @@ liberator.Commands = function () //{{{
 
                             liberator.execute(replaced);
                         },
-                        { replacementText: rep }, special))
+                        {
+                            bangAllowed: true, // FIXME: until we implement -bang
+                            replacementText: rep
+                        },
+                        special)
+                )
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
                 }
@@ -723,10 +729,11 @@ liberator.Commands = function () //{{{
             }
         },
         {
+            bangAllowed: true,
+            completer: function (filter) liberator.completion.userCommand(filter)
             /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],
                    [["-bar"],      OPTION_NOARG]] */
-            completer: function (filter) liberator.completion.userCommand(filter)
         });
 
     commandManager.add(["comc[lear]"],

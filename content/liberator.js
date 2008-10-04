@@ -104,9 +104,7 @@ const liberator = (function () //{{{
         liberator.options.add(["verbose", "vbs"],
             "Define which info messages are displayed",
             "number", 0,
-            {
-                validator: function (value) value >= 0 && value <= 15
-            });
+            { validator: function (value) value >= 0 && value <= 15 });
 
         liberator.options.add(["visualbell", "vb"],
             "Use visual bell instead of beeping on errors",
@@ -158,15 +156,12 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["beep"],
             "Play a system beep",
-            function ()
-            {
-                liberator.beep();
-            },
+            function () liberator.beep(),
             { argCount: "0" });
 
         liberator.commands.add(["dia[log]"],
             "Open a " + liberator.config.name + " dialog",
-            function (args, special)
+            function (args)
             {
                 try
                 {
@@ -188,7 +183,8 @@ const liberator = (function () //{{{
                 {
                     return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
                 }
-            });
+            },
+            { bangAllowed: true });
 
         // TODO: move this
         function getMenuItems()
@@ -294,7 +290,10 @@ const liberator = (function () //{{{
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
-            { argCount: "0" });
+            {
+                argCount: "0",
+                bangAllowed: true
+            });
 
         liberator.commands.add(["h[elp]"],
             "Display help",
@@ -309,6 +308,7 @@ const liberator = (function () //{{{
                 liberator.help(args);
             },
             {
+                bangAllowed: true,
                 completer: function (filter) getHelpCompletions(filter)
             });
 
@@ -336,17 +336,18 @@ const liberator = (function () //{{{
                 }
             },
             {
+                bangAllowed: true,
                 completer: function (filter) liberator.completion.javascript(filter),
                 hereDoc: true,
             });
 
         liberator.commands.add(["norm[al]"],
             "Execute Normal mode commands",
-            function (args, special)
+            function (args, special) liberator.events.feedkeys(args.string, special),
             {
-                liberator.events.feedkeys(args.string, special);
-            },
-            { argCount: "+" });
+                argCount: "+",
+                bangAllowed: true
+            });
 
         liberator.commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
@@ -357,14 +358,14 @@ const liberator = (function () //{{{
                 else
                     liberator.quit(false, special);
             },
-            { argCount: "0" });
+            {
+                argCount: "0",
+                bangAllowed: true
+            });
 
         liberator.commands.add(["res[tart]"],
             "Force " + liberator.config.name + " to restart",
-            function ()
-            {
-                liberator.restart();
-            },
+            function () liberator.restart(),
             { argCount: "0" });
 
         liberator.commands.add(["time"],
@@ -452,6 +453,7 @@ const liberator = (function () //{{{
                 }
             },
             {
+                bangAllowed: true,
                 completer: function (filter)
                 {
                     if (/^:/.test(filter))
@@ -472,7 +474,10 @@ const liberator = (function () //{{{
                                     liberator.config.name + " " + liberator.version +
                                     " running on:\n" + navigator.userAgent);
             },
-            { argCount: "0" });
+            {
+                argCount: "0",
+                bangAllowed: true
+            });
 
         liberator.commands.add(["viu[sage]"],
             "List all mappings with a short description",
@@ -497,7 +502,10 @@ const liberator = (function () //{{{
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
-            { argCount: "0" });
+            {
+                argCount: "0",
+                bangAllowed: true
+            });
     }
 
     function getHelpCompletions(filter)
@@ -637,7 +645,7 @@ const liberator = (function () //{{{
             return eval("with (liberator) {" + str + "}");
         },
 
-        // Execute an ex command like str=":zoom 300"
+        // Execute an Ex command like str=":zoom 300"
         execute: function (str, modifiers)
         {
             // skip comments and blank lines
@@ -661,6 +669,12 @@ const liberator = (function () //{{{
             if (command.action === null)
             {
                 liberator.echoerr("E666: Internal error: command.action === null");
+                return;
+            }
+
+            if (special && !command.bangAllowed)
+            {
+                liberator.echoerr("E477: No ! allowed");
                 return;
             }
 

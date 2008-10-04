@@ -261,10 +261,10 @@ liberator.Bookmarks = function () //{{{
                 liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", liberator.commandline.FORCE_SINGLELINE);
         },
         {
+            argCount: "?",
             options: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
                       [["-tags", "-T"],     liberator.commands.OPTION_LIST],
-                      [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]],
-            argCount: "?"
+                      [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
         });
 
     liberator.commands.add(["bmarks"],
@@ -274,13 +274,14 @@ liberator.Bookmarks = function () //{{{
             liberator.bookmarks.list(args.arguments.join(" "), args["-tags"] || [], special);
         },
         {
+            bangAllowed: true,
             completer: function (filter) [0, liberator.bookmarks.get(filter)],
             options: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
 
     liberator.commands.add(["delbm[arks]"],
         "Delete a bookmark",
-        function (args, special)
+        function (args)
         {
             var url = args;
             if (!url)
@@ -289,9 +290,7 @@ liberator.Bookmarks = function () //{{{
             var deletedCount = liberator.bookmarks.remove(url);
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", liberator.commandline.FORCE_SINGLELINE);
         },
-        {
-            completer: function (filter) [0, liberator.bookmarks.get(filter)]
-        });
+        { completer: function (filter) [0, liberator.bookmarks.get(filter)] });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -602,6 +601,7 @@ liberator.History = function () //{{{
             }
         },
         {
+            bangAllowed: true,
             completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
@@ -648,6 +648,7 @@ liberator.History = function () //{{{
             }
         },
         {
+            bangAllowed: true,
             completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
@@ -666,8 +667,9 @@ liberator.History = function () //{{{
 
     liberator.commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args, special) { liberator.history.list(args, special); },
+        function (args, special) liberator.history.list(args, special),
         {
+            bangAllowed: true,
             completer: function (filter) [0, liberator.history.get(filter)]
         });
 
@@ -849,7 +851,8 @@ liberator.QuickMarks = function () //{{{
                 liberator.quickmarks.removeAll();
             else
                 liberator.quickmarks.remove(args);
-        });
+        },
+        { bangAllowed: true });
 
     liberator.commands.add(["qma[rk]"],
         "Mark a URL with a letter for quick access",

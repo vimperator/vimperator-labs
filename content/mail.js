@@ -672,9 +672,7 @@ liberator.Mail = function () //{{{
             else
                 SelectFolder(folder.URI);
         },
-        {
-            completer: function (filter) getFolderCompletions(filter)
-        });
+        { completer: function (filter) getFolderCompletions(filter) });
 
     liberator.commands.add(["m[essage]"],
         "Write a new message",
@@ -713,33 +711,26 @@ liberator.Mail = function () //{{{
 
     liberator.commands.add(["copy[to]"],
         "Copy selected messages",
-        function (args, special) { moveOrCopy(true, args); },
-        {
-            completer: function (filter) getFolderCompletions(filter)
-        });
+        function (args) moveOrCopy(true, args),
+        { completer: function (filter) getFolderCompletions(filter) });
 
     liberator.commands.add(["move[to]"],
         "Move selected messages",
-        function (args, special) { moveOrCopy(false, args); },
-        {
-            completer: function (filter) getFolderCompletions(filter)
-        });
+        function (args) moveOrCopy(false, args),
+        { completer: function (filter) getFolderCompletions(filter) });
 
     liberator.commands.add(["empty[trash]"],
         "Empty trash of the current account",
-        function ()
-        {
-            goDoCommand("cmd_emptyTrash");
-        },
+        function () goDoCommand("cmd_emptyTrash"),
         { argCount: "0" });
 
     liberator.commands.add(["get[messages]"],
         "Check for new messages",
-        function (args, special)
+        function (args, special) liberator.mail.getNewMessages(!special),
         {
-            liberator.mail.getNewMessages(!special);
-        },
-        { argCount: "0" });
+            argCount: "0",
+            bangAllowed: true,
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
