@@ -1829,7 +1829,13 @@ liberator.Marks = function () //{{{
                 }
             }
 
-            var list = liberator.template.marks(marks);
+            let list = liberator.template.tabular(["mark", "line", "col", "file"],
+                ["", "text-align: right", "text-align: right", "color: green"],
+                ([mark[0],
+                  Math.round(mark[1].position.x & 100) + "%", 
+                  Math.round(mark[1].position.y & 100) + "%", 
+                  mark[1].location]
+                  for each (mark in marks)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 
@@ -1871,7 +1877,7 @@ liberator.template = {
             return new XML(xml)
         }
         catch (e) {}
-        return xml;
+        return <>{xml}</>;
     },
 
     generic: function (xml)
@@ -1928,28 +1934,6 @@ liberator.template = {
             </table>);
     },
 
-    marks: function (marks)
-    {
-        return this.generic(
-            <table>
-                <tr class="hl-Title" align="left">
-                    <th>mark</th>
-                    <th>line</th>
-                    <th>col</th>
-                    <th>file</th>
-                </tr>
-                {
-                    this.map(marks, function (mark)
-                    <tr>
-                        <td>{mark[0]}</td>
-                        <td align="right">{Math.round(mark[1].position.y * 100)}%</td>
-                        <td align="right">{Math.round(mark[1].position.x * 100)}%</td>
-                        <td style="color: green;">{mark[1].location}</td>
-                    </tr>)
-                }
-            </table>);
-    },
-
     options: function (title, opts)
     {
         return this.generic(
@@ -1973,15 +1957,13 @@ liberator.template = {
     {
         let table =
             <table>
-                <col style={"width: " + (indent || "2ex")}/>
-                <tr>
-                    <th class="hl-Title" align="left" colspan="3">{title}</th>
+                <tr class="hl-Title">
+                    <th colspan="2">{title}</th>
                 </tr>
                 {
                     this.map(data, function (datum)
                     <tr>
-                       <td/>
-                       <td style="font-weight: bold; min-width: 150px">{datum[0]}</td>
+                       <td style={"font-weight: bold; min-width: 150px; padding-left: " + (indent || "2ex")}>{datum[0]}</td>
                        <td>{liberator.template.maybeXML(datum[1])}</td>
                     </tr>)
                 }

@@ -206,20 +206,19 @@ liberator.CommandLine = function () //{{{
     function setMultiline(str, highlightGroup)
     {
         //outputContainer.collapsed = true;
+        let doc = multilineOutputWidget.contentDocument;
+        let win = multilineOutputWidget.contentWindow;
 
-        var output = "<div class=\"ex-command-output " + highlightGroup + "\">" + str + "</div>";
+        var output = <div class={"ex-command-output " + highlightGroup}>{liberator.template.maybeXML(str)}</div>;
 
         lastMowOutput = output;
 
-        if (!outputContainer.collapsed)
-        {
-            // FIXME: need to make sure an open MOW is closed when commands
-            //        that don't generate output are executed
-            output = multilineOutputWidget.contentDocument.body.innerHTML + output;
-            //outputContainer.collapsed = true;
-        }
+        // FIXME: need to make sure an open MOW is closed when commands
+        //        that don't generate output are executed
+        if (outputContainer.collapsed)
+            doc.body.innerHTML = "";
 
-        multilineOutputWidget.contentDocument.body.innerHTML = output;
+        doc.body.appendChild(liberator.util.xmlToDom(output, doc));
 
         var availableHeight = 250;
         try
@@ -228,30 +227,30 @@ liberator.CommandLine = function () //{{{
                 getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
         }
         catch (e) {}
-        var contentHeight = multilineOutputWidget.contentDocument.height;
+        var contentHeight = doc.height;
         var height = contentHeight < availableHeight ? contentHeight : availableHeight;
 
         outputContainer.height = height + "px";
         outputContainer.collapsed = false;
 
-        if (liberator.options["more"] && multilineOutputWidget.contentWindow.scrollMaxY > 0)
+        if (liberator.options["more"] && win.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
-            var elements = multilineOutputWidget.contentDocument.getElementsByClassName("ex-command-output");
+            var elements = doc.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
 
-            if (multilineOutputWidget.contentWindow.scrollY >= multilineOutputWidget.contentWindow.scrollMaxY)
+            if (win.scrollY >= win.scrollMaxY)
                 setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
             else
                 setLine("-- More --", liberator.commandline.HL_QUESTION);
         }
         else
         {
-            multilineOutputWidget.contentWindow.scrollTo(0, contentHeight);
+            win.scrollTo(0, contentHeight);
             setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
         }
 
-        multilineOutputWidget.contentWindow.focus();
+        win.focus();
 
         startHints = false;
         liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
