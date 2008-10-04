@@ -15,7 +15,7 @@ Vimperator supports a number of different marks:
 section:Bookmarks[bookmarks]
 
 |a| |:bma| |:bmark|
-||:bma[rk] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+||:bma[rk][!] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
 ||a||
 ____________________________________________________________________________
 Add a bookmark. +
@@ -26,8 +26,10 @@ The following options are interpreted:
 - -tags=comma,separated,tag,list (short option: -T)
 - -keyword=keyword (short option: -k)
 
-If you don't add a custom title, either the title of the web page or the URL
-is taken as the title. You can omit the optional [url] argument, so just do
+If [!] is present, a new bookmark is always added. Otherwise, the first
+bookmark matching [url] is updated.
+When creating a new bookmark, if [-title] isn't given, either the web page's
+title or url is used. You can omit the optional [url] argument, so just do
 [c]:bmark[c] to bookmark the currently loaded web page with a default title and
 without any tags.
 ____________________________________________________________________________

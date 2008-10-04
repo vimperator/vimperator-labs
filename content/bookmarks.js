@@ -261,6 +261,7 @@ liberator.Bookmarks = function () //{{{
         },
         {
             argCount: "?",
+            bang: true,
             options: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
                       [["-tags", "-T"],     liberator.commands.OPTION_LIST],
                       [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) /\w/.test(arg)]]

@@ -31,6 +31,7 @@
     * new ;b extended hint mode (thanks Daniel Schaffrath)
     * :qa! and :q! quit forcefully, as in vim
     * stop macro playback on <C-c>
+    * :bmark now updates a bookmark, if possible. :bmark! adds a new one
     * many bug fixes
 
 2008-08-16:

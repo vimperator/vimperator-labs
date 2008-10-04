@@ -115,10 +115,10 @@ liberator.Buffer = function () //{{{
         {
             if (filter[0] == "*")
                 return "@namespace url(" + XHTML + ");\n" + css;
-            let selectors = filter.map(function (part) (/\/$/.test(part) ? "url-prefix" :
-                                                        /\/:/.test(part) ? "url"
-                                                                         : "domain")
-                                                + '("' + part.replace(/"/g, "%22") + '")')
+            let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
+                                                        /[\/:]/.test(part)  ? "url"
+                                                                            : "domain")
+                                                + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
                                   .join(", ");
             return "@namespace url(" + XHTML + ");\n" +
                    "@-moz-document " + selectors + "{\n" + css + "\n}\n";
