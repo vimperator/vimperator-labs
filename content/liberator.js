@@ -349,6 +349,34 @@ const liberator = (function () //{{{
                 bangAllowed: true
             });
 
+        liberator.commands.add(["optionu[sage]"],
+            "List all options with a short description",
+            function (args, special)
+            {
+                if (!special)
+                {
+                    liberator.help("option-index");
+                }
+                else
+                {
+                    // TODO: clicking on these should open the help
+                    var usage = <table>
+                        {
+                            liberator.template.map(liberator.options, function (option)
+                            <tr>
+                                <td class="hl-Title" style="padding-right: 20px">{option.name}</td>
+                                <td>{option.description}</td>
+                            </tr>)
+                        }
+                        </table>;
+                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                }
+            },
+            {
+                argCount: "0",
+                bangAllowed: true
+            });
+
         liberator.commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
             function (args, special)

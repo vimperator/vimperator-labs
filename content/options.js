@@ -862,8 +862,9 @@ liberator.Options = function () //{{{
 
         __iterator__: function ()
         {
-            for (let i = 0; i < options.length; i++)
-                yield options[i];
+            let sorted = options.sort(function (opt1, opt2) opt1.name > opt2.name);
+            for (let i = 0; i < sorted.length; i++)
+                yield sorted[i];
         },
 
         add: function (names, description, type, defaultValue, extraInfo)
