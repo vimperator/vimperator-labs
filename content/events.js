@@ -666,7 +666,7 @@ liberator.Events = function () //{{{
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args)); 
+            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args));
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {

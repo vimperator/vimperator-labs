@@ -103,7 +103,7 @@ liberator.Command.prototype = {
         }
         else if (this.hereDoc)
         {
-            let matches = args.match(/(.*)<<\s*([^\s]+)$/);
+            let matches = args.match(/(.*)<<\s*(\S+)$/);
             if (matches && matches[2])
             {
                 liberator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),

@@ -164,7 +164,7 @@ liberator.Editor = function () //{{{
                     return;
                 }
 
-                var matches = args.match(/^([^\s]+)(?:\s+(.+))?$/);
+                var matches = args.match(/^(\S+)(?:\s+(.+))?$/);
                 var [lhs, rhs] = [matches[1], matches[2]];
                 if (rhs)
                     liberator.editor.addAbbreviation(mode, lhs, rhs);

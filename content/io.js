@@ -824,7 +824,7 @@ lookup:
                                 else if (command.name == "javascript")
                                 {
                                     // check for a heredoc
-                                    let matches = args.match(/(.*)<<\s*([^\s]+)$/);
+                                    let matches = args.match(/(.*)<<\s*(\S+)$/);
 
                                     if (matches)
                                     {
