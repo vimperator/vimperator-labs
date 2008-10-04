@@ -88,7 +88,7 @@ liberator.Mappings = function () //{{{
     function addMap(map, userMap)
     {
         var where = userMap ? user : main;
-        map.modes.forEach(function (mode) where[mode].push(map));
+        map.modes.forEach(function (mode) { where[mode].push(map); });
     }
 
     function getMap(mode, cmd, stack)
@@ -202,12 +202,12 @@ liberator.Mappings = function () //{{{
 
         liberator.commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
-            function (args) map(args, modes, false),
+            function (args) { map(args, modes, false); },
             { completer: function (filter) liberator.completion.userMapping(filter, modes) });
 
         liberator.commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
-            function (args) map(args, modes, true));
+            function (args) { map(args, modes, true); });
 
         liberator.commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,

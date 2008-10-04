@@ -310,7 +310,8 @@ liberator.util = { //{{{
                     value = "<no value>";
                 }
 
-                if (color) {
+                if (color)
+                {
                     value = this.colorize(value, true).toXMLString();
                     i = <span style="font-weight: bold;">{i}</span>.toXMLString();
                 }

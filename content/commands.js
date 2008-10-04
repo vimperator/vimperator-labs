@@ -740,7 +740,7 @@ liberator.Commands = function () //{{{
         "Delete all user-defined commands",
         function ()
         {
-            liberator.commands.getUserCommands().forEach(function (cmd) liberator.commands.removeUserCommand(cmd.name));
+            liberator.commands.getUserCommands().forEach(function (cmd) { liberator.commands.removeUserCommand(cmd.name); });
         },
         { argCount: "0" });
 

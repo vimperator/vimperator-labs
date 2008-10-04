@@ -165,7 +165,8 @@ liberator.Bookmarks = function () //{{{
                     liberator.storage.fireEvent(name, "change", itemId);
                 }
             },
-            QueryInterface: function (iid) {
+            QueryInterface: function (iid)
+            {
                 if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
                     return this;
                 throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -221,7 +222,7 @@ liberator.Bookmarks = function () //{{{
 
     liberator.mappings.add(modes, ["A"],
         "Toggle bookmarked state of current URL",
-        function () liberator.bookmarks.toggle(liberator.buffer.URL));
+        function () { liberator.bookmarks.toggle(liberator.buffer.URL); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -264,7 +265,7 @@ liberator.Bookmarks = function () //{{{
             argCount: "?",
             options: [[["-title", "-t"],    liberator.commands.OPTION_STRING],
                       [["-tags", "-T"],     liberator.commands.OPTION_LIST],
-                      [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) { return /\w/.test(arg); }]]
+                      [["-keyword", "-k"],  liberator.commands.OPTION_STRING, function (arg) /\w/.test(arg)]]
         });
 
     liberator.commands.add(["bmarks"],
@@ -513,7 +514,7 @@ liberator.History = function () //{{{
     var cachedHistory = []; // add pages here after loading the initial Places history
 
     if (liberator.options["preload"])
-        setTimeout(function () load(), 100);
+        setTimeout(function () { load(); }, 100);
 
     function load()
     {
@@ -667,7 +668,7 @@ liberator.History = function () //{{{
 
     liberator.commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args, special) liberator.history.list(args, special),
+        function (args, special) { liberator.history.list(args, special); },
         {
             bangAllowed: true,
             completer: function (filter) [0, liberator.history.get(filter)]

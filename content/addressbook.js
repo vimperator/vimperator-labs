@@ -82,7 +82,10 @@ liberator.Addressbook = function () //{{{
             {
                 to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
             }
-            catch (e) { liberator.beep(); }
+            catch (e)
+            {
+                liberator.beep();
+            }
 
             if (!to)
                 return;
@@ -134,7 +137,7 @@ liberator.Addressbook = function () //{{{
 
     liberator.commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
-        function (args, special) liberator.addressbook.list(args, special),
+        function (args, special) { liberator.addressbook.list(args, special); },
         { bangAllowed: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}

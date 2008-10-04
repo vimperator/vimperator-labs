@@ -340,8 +340,8 @@ liberator.Hints = function () //{{{
             case "V": liberator.buffer.viewSource(loc, true); break;
             case "w": liberator.buffer.followLink(elem, liberator.NEW_WINDOW);  break;
             case "W": liberator.commandline.open(":", "winopen " + loc, liberator.modes.EX); break;
-            case "y": setTimeout(function () liberator.util.copyToClipboard(loc, true), timeout + 50); break;
-            case "Y": setTimeout(function () liberator.util.copyToClipboard(elem.textContent || "", true), timeout + 50); break;
+            case "y": setTimeout(function () { liberator.util.copyToClipboard(loc, true); }, timeout + 50); break;
+            case "Y": setTimeout(function () { liberator.util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
             default:
                 liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
@@ -804,7 +804,7 @@ liberator.Hints = function () //{{{
                         {
                             var timeout = liberator.options["hinttimeout"];
                             if (timeout > 0)
-                                activeTimeout = setTimeout(function () processHints(true), timeout);
+                                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
 
                             return false;
                         }

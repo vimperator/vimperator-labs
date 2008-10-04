@@ -156,7 +156,7 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["beep"],
             "Play a system beep",
-            function () liberator.beep(),
+            function () { liberator.beep(); },
             { argCount: "0" });
 
         liberator.commands.add(["dia[log]"],
@@ -343,7 +343,7 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["norm[al]"],
             "Execute Normal mode commands",
-            function (args, special) liberator.events.feedkeys(args.string, special),
+            function (args, special) { liberator.events.feedkeys(args.string, special); },
             {
                 argCount: "+",
                 bangAllowed: true
@@ -365,7 +365,7 @@ const liberator = (function () //{{{
 
         liberator.commands.add(["res[tart]"],
             "Force " + liberator.config.name + " to restart",
-            function () liberator.restart(),
+            function () { liberator.restart(); },
             { argCount: "0" });
 
         liberator.commands.add(["time"],
@@ -621,7 +621,7 @@ const liberator = (function () //{{{
                     popup.height = box.height;
                     popup.width = box.width;
                     popup.openPopup(win, "overlap", 0, 0, false, false);
-                    setTimeout(function () popup.hidePopup(), 50);
+                    setTimeout(function () { popup.hidePopup(); }, 50);
                 }
             }
             else

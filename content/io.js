@@ -193,7 +193,7 @@ liberator.IO = function () //{{{
 
     liberator.commands.add(["pw[d]"],
         "Print the current directory name",
-        function () liberator.echo(liberator.io.getCurrentDirectory()),
+        function () { liberator.echo(liberator.io.getCurrentDirectory()); },
         { argCount: "0" });
 
     // mkv[imperatorrc] or mkm[uttatorrc]

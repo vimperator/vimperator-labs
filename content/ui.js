@@ -661,7 +661,7 @@ liberator.CommandLine = function () //{{{
             multilineInputWidget.value = "";
             autosizeMultilineInputWidget();
 
-            setTimeout(function () multilineInputWidget.focus(), 10);
+            setTimeout(function () { multilineInputWidget.focus(); }, 10);
         },
 
         onEvent: function (event)
@@ -911,7 +911,7 @@ liberator.CommandLine = function () //{{{
             else if (event.type == "blur")
             {
                 if (liberator.modes.extended & liberator.modes.INPUT_MULTILINE)
-                    setTimeout(function () multilineInputWidget.inputField.focus(), 0);
+                    setTimeout(function () { multilineInputWidget.inputField.focus(); }, 0);
             }
             else if (event.type == "input")
             {
@@ -931,8 +931,8 @@ liberator.CommandLine = function () //{{{
             var closeWindow = false;
             var passEvent = false;
 
-            function isScrollable() { return !win.scrollMaxY == 0; }
-            function atEnd() { return win.scrollY / win.scrollMaxY >= 1; }
+            function isScrollable() !win.scrollMaxY == 0;
+            function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
             var key = liberator.events.toString(event);
 
@@ -1248,7 +1248,7 @@ liberator.ItemList = function (id) //{{{
 
         var height = getHeight();
         if (height == 0) // sometimes we don't have the correct size at this point
-            setTimeout(function () container.height = getHeight(), 10);
+            setTimeout(function () { container.height = getHeight(); }, 10);
         else
             container.height = height;
     }
@@ -1322,7 +1322,7 @@ liberator.ItemList = function (id) //{{{
         clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
         show: function () { container.collapsed = false; },
-        visible: function () { return !container.collapsed; },
+        visible: function () !container.collapsed,
 
         // if @param selectedItem is given, show the list and select that item
         setItems: function (items, selectedItem)

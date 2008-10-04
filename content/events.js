@@ -296,7 +296,7 @@ liberator.Events = function () //{{{
                 liberator.tabs.updateSelectionHistory();
 
                 if (liberator.options["focuscontent"])
-                    setTimeout(function () liberator.focusContent(true), 10); // just make sure, that no widget has focus
+                    setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
             }, false);
         }
 
@@ -666,7 +666,7 @@ liberator.Events = function () //{{{
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args)); 
+            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args));
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         { completer: function (filter) liberator.completion.macro(filter) });
@@ -873,7 +873,8 @@ liberator.Events = function () //{{{
                 evt.isMacro = true;
                 elem.dispatchEvent(evt);
                 // stop feeding keys if page loading failed
-                if (wasReplaying) {
+                if (wasReplaying)
+                {
                     if (!liberator.modes.isReplaying)
                         break;
                     if (!waitForPageLoaded())
@@ -1455,7 +1456,7 @@ liberator.Events = function () //{{{
                         // is not the focused frame
                         if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)
                         {
-                            setTimeout(function () liberator.modes.reset(false),
+                            setTimeout(function () { liberator.modes.reset(false); },
                                 liberator.mode == liberator.modes.HINTS ? 500 : 0);
                         }
                     }
@@ -1494,7 +1495,7 @@ liberator.Events = function () //{{{
                 liberator.autocommands.trigger("LocationChange", liberator.buffer.URL);
 
                 // if this is not delayed we get the position of the old buffer
-                setTimeout(function () liberator.statusline.updateBufferPosition(), 100);
+                setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);
             },
             // called at the very end of a page load
             asyncUpdateUI: function ()

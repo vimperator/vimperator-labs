@@ -155,7 +155,8 @@ liberator.Search = function () //{{{
             if (!doc || !(doc instanceof HTMLDocument))
                 return;
 
-            if (!aWord) {
+            if (!aWord)
+            {
                 let elems = doc.getElementsByClassName("__liberator-search");
                 for (let i = elems.length; --i >= 0;)
                 {
@@ -195,7 +196,8 @@ liberator.Search = function () //{{{
             this.endPt.setStart(body, count);
             this.endPt.setEnd(body, count);
 
-            for (let retRange in this.search(aWord, caseSensitive)) {
+            for (let retRange in this.search(aWord, caseSensitive))
+            {
                 // Highlight
                 var nodeSurround = baseNode.cloneNode(true);
                 var node = this.highlight(retRange, nodeSurround);
@@ -305,7 +307,7 @@ liberator.Search = function () //{{{
 
     liberator.commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
-        function () liberator.search.clear(),
+        function () { liberator.search.clear(); },
         { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -344,7 +346,7 @@ liberator.Search = function () //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                setTimeout(function () liberator.echoerr("E486: Pattern not found: " + searchPattern), 0);
+                setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
 
             return found;
         },
@@ -417,7 +419,7 @@ liberator.Search = function () //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () liberator.search.findAgain(false), 0);
+                setTimeout(function () { liberator.search.findAgain(false); }, 0);
 
             if (liberator.options["hlsearch"])
                 this.highlight(searchString);

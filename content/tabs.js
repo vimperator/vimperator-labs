@@ -43,10 +43,10 @@ liberator.Tabs = function () //{{{
                 if (!tabmail)
                 {
                     tabmail = document.getElementById('tabmail');
-                    tabmail.__defineGetter__('mTabContainer', function () { return this.tabContainer; });
-                    tabmail.__defineGetter__('mTabs', function () { return this.tabContainer.childNodes; });
-                    tabmail.__defineGetter__('mCurrentTab', function () { return this.tabContainer.selectedItem; });
-                    tabmail.__defineGetter__('mStrip', function () { return this.tabStrip; });
+                    tabmail.__defineGetter__('mTabContainer', function () this.tabContainer);
+                    tabmail.__defineGetter__('mTabs', function () this.tabContainer.childNodes);
+                    tabmail.__defineGetter__('mCurrentTab', function () this.tabContainer.selectedItem);
+                    tabmail.__defineGetter__('mStrip', function () this.tabStrip);
                 }
                 return tabmail;
             };
@@ -427,7 +427,7 @@ liberator.Tabs = function () //{{{
 
     liberator.commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
         "Switch to the first tab",
-        function () liberator.tabs.select(0, false),
+        function () { liberator.tabs.select(0, false); },
         { argCount: "0" });
 
     if (liberator.config.name == "Vimperator")
@@ -462,7 +462,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
-            function (args, special) liberator.tabs.list(special),
+            function (args, special) { liberator.tabs.list(special); },
             {
                 argCount: "0",
                 bangAllowed: true
@@ -470,7 +470,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + liberator.config.name,
-            function (args, special) liberator.quit(false, special),
+            function (args, special) { liberator.quit(false, special); },
             {
                 argCount: "0",
                 bangAllowed: true
@@ -478,7 +478,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["reloada[ll]"],
             "Reload all tab pages",
-            function (args, special) liberator.tabs.reloadAll(special),
+            function (args, special) { liberator.tabs.reloadAll(special); },
             {
                 argCount: "0",
                 bangAllowed: true
@@ -505,7 +505,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["tabo[nly]"],
             "Close all other tabs",
-            function () liberator.tabs.keepOnly(getBrowser().mCurrentTab),
+            function () { liberator.tabs.keepOnly(getBrowser().mCurrentTab); },
             { argCount: "0" });
 
         liberator.commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
@@ -528,7 +528,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["tabde[tach]"],
             "Detach current tab to its own window",
-            function (args, special, count) liberator.tabs.detachTab(null),
+            function (args, special, count) { liberator.tabs.detachTab(null); },
             {
                 argCount: "0",
                 bangAllowed: true

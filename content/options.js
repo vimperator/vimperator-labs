@@ -69,7 +69,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
     }
 
     this.__defineGetter__("globalvalue", function () liberator.options.store.get(cannonName));
-    this.__defineSetter__("globalvalue", function (val) liberator.options.store.set(cannonName, val));
+    this.__defineSetter__("globalvalue", function (val) { liberator.options.store.set(cannonName, val); });
     if (this.globalvalue == undefined)
         this.globalvalue = this.defaultValue;
 
@@ -887,7 +887,7 @@ liberator.Options = function () //{{{
             }
 
             // quickly access options with liberator.options["wildmode"]:
-            this.__defineGetter__(option.name, function () { return option.value; });
+            this.__defineGetter__(option.name, function () option.value);
             this.__defineSetter__(option.name, function (value) { option.value = value; });
 
             // TODO: sort option

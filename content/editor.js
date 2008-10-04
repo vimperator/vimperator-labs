@@ -174,11 +174,11 @@ liberator.Editor = function () //{{{
 
         liberator.commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) liberator.editor.removeAbbreviation(mode, args));
+            function (args) { liberator.editor.removeAbbreviation(mode, args); });
 
         liberator.commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
-            function () liberator.editor.removeAllAbbreviations(mode),
+            function () { liberator.editor.removeAllAbbreviations(mode); },
             { argCount: "0" });
     }
 
@@ -290,7 +290,7 @@ liberator.Editor = function () //{{{
 
     liberator.mappings.add([liberator.modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
-        function () { return liberator.editor.expandAbbreviation("i"); },
+        function () { liberator.editor.expandAbbreviation("i"); },
         { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
     liberator.mappings.add([liberator.modes.INSERT],

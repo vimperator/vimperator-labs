@@ -139,12 +139,12 @@ liberator.Mail = function () //{{{
         if (copy)
         {
             MsgCopyMessage(folders[0]);
-            setTimeout(function () liberator.echo(count + " message(s) copied to " + folders[0].prettyName), 100);
+            setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
         }
         else
         {
             MsgMoveMessage(folders[0]);
-            setTimeout(function () liberator.echo(count + " message(s) moved to " + folders[0].prettyName), 100);
+            setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
         }
         return true;
     }
@@ -263,7 +263,7 @@ liberator.Mail = function () //{{{
 
     liberator.mappings.add(modes, ["<Space>"],
         "Scroll message or select next unread one",
-        function () { return true; },
+        function () true,
         { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
 
     liberator.mappings.add(modes, ["t"],
@@ -591,7 +591,7 @@ liberator.Mail = function () //{{{
         "Mark all messages as read",
         function ()
         {
-            liberator.mail.getFolders("", false).forEach(function (folder) folder.markAllMessagesRead());
+            liberator.mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(); });
         });
 
     // DISPLAY OPTIONS
@@ -711,17 +711,17 @@ liberator.Mail = function () //{{{
 
     liberator.commands.add(["copy[to]"],
         "Copy selected messages",
-        function (args) moveOrCopy(true, args),
+        function (args) { moveOrCopy(true, args); },
         { completer: function (filter) getFolderCompletions(filter) });
 
     liberator.commands.add(["move[to]"],
         "Move selected messages",
-        function (args) moveOrCopy(false, args),
+        function (args) { moveOrCopy(false, args); },
         { completer: function (filter) getFolderCompletions(filter) });
 
     liberator.commands.add(["empty[trash]"],
         "Empty trash of the current account",
-        function () goDoCommand("cmd_emptyTrash"),
+        function () { goDoCommand("cmd_emptyTrash"); },
         { argCount: "0" });
 
     liberator.commands.add(["get[messages]"],
@@ -740,7 +740,8 @@ liberator.Mail = function () //{{{
 
         get currentAccount() this.currentFolder.rootFolder,
 
-        get currentFolder() {
+        get currentFolder()
+        {
             var tree = GetFolderTree();
             return GetFolderResource(tree, tree.currentIndex).
                    QueryInterface(Components.interfaces.nsIMsgFolder);

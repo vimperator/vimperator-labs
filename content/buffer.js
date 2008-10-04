@@ -70,7 +70,7 @@ liberator.Buffer = function () //{{{
             if (number >= sheets.length)
                 return false;
             let sheet = sheets.splice(number)[0];
-            let uri = 
+            let uri =
             this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
             return true;
         }
@@ -130,11 +130,14 @@ liberator.Buffer = function () //{{{
 
                 while (true)
                 {
-                    try {
+                    try
+                    {
                         // Throws NS_ERROR_DOM_INVALID_ACCESS_ERR if not finished loading
                         doc.styleSheets[0].cssRules.length;
                         break;
-                    } catch (e) {
+                    }
+                    catch (e)
+                    {
                         if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
                             return [e.toString()];
                         liberator.sleep(10);
@@ -608,7 +611,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
-        function () liberator.buffer.showPageInfo(true),
+        function () { liberator.buffer.showPageInfo(true); },
         { argCount: "0" });
 
     liberator.commands.add(["pagest[yle]"],
@@ -632,7 +635,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["re[load]"],
         "Reload current page",
-        function (args, special) liberator.tabs.reload(getBrowser().mCurrentTab, special),
+        function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); },
         {
             bangAllowed: true,
             argCount: "0"
@@ -657,7 +660,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["st[op]"],
         "Stop loading",
-        function () BrowserStop(),
+        function () { BrowserStop(); },
         { argCount: "0" });
 
     liberator.commands.add(["sty[le]"],
@@ -692,7 +695,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
-        function (args) styles.removeSheet(parseInt(args.arguments[0])),
+        function (args) { styles.removeSheet(parseInt(args.arguments[0])); },
         {
             completer: function (filter) [0, [[i, s[0] + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]],
             argCount: 1
@@ -700,7 +703,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) liberator.buffer.viewSource(args, special),
+        function (args, special) { liberator.buffer.viewSource(args, special); },
         { bangAllowed: true });
 
     liberator.commands.add(["zo[om]"],
@@ -801,7 +804,8 @@ liberator.Buffer = function () //{{{
         // put feeds rss into pageFeeds[]
         let nFeed = 0;
         var linkNodes = doc.getElementsByTagName("link");
-        for (link in arrayIter(linkNodes)) {
+        for (link in arrayIter(linkNodes))
+        {
             if (!link.href)
                 return;
 
@@ -1384,7 +1388,7 @@ liberator.Buffer = function () //{{{
             doc.body.appendChild(liberator.util.xmlToDom(indicator));
 
             // remove the frame indicator
-            setTimeout(function () doc.body.removeChild(indicator), 500);
+            setTimeout(function () { doc.body.removeChild(indicator); }, 500);
         },
 
         // similar to pageInfo
@@ -1876,7 +1880,7 @@ liberator.template = {
             return xml;
         try
         {
-            return new XMLList(xml)
+            return new XMLList(xml);
         }
         catch (e) {}
         return <>{xml}</>;
@@ -1884,7 +1888,7 @@ liberator.template = {
 
     generic: function (xml)
     {
-        return <>:{liberator.commandline.getCommand()}<br/></> + xml
+        return <>:{liberator.commandline.getCommand()}<br/></> + xml;
     },
 
     bookmarks: function (header, items)
