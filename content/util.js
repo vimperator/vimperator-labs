@@ -77,11 +77,22 @@ liberator.util = { //{{{
             yield ary[i];
     },
 
-    blankDocument: function (iframe, bodyId)
+    blankDocument: function (bodyId)
     {
-        let name = liberator.config.name.toLowerCase();
-        iframe.addEventListener("load", function () iframe.contentDocument.body.setAttribute("id", bodyId), true);
-        iframe.setAttribute("src", "chrome://" + name + "/skin/blank-" + name + ".xhtml");
+        let mainWindowID = liberator.config.mainWindowID || "main-window";
+        let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
+                                           .getPropertyValue("font-size");
+
+        return 'data:application/xhtml+xml,' + encodeURI('<?xml version="1.0" encoding="UTF-8"?>' +
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">' +
+                  <html xmlns="http://www.w3.org/1999/xhtml">
+                      <head>
+                          <title/>
+                          <link rel="stylesheet" type="text/css"
+                                href={"chrome://" + liberator.config.name.toLowerCase() + "/skin/vimperator.css"}/>
+                      </head>
+                      <body id={bodyId} style={"font-size: " + fontSize}/>
+                  </html>)
     },
 
     clip: function (str, length)

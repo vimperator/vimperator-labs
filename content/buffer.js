@@ -61,8 +61,7 @@ liberator.Buffer = function () //{{{
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
             sheets.push([filter, css]);
-            let uri = cssUri(wrapCSS(filter, css));
-            this.registerSheet(uri, sss.USER_SHEET);
+            this.registerSheet(cssUri(wrapCSS(filter, css)));
             return null;
         }
 
@@ -71,8 +70,8 @@ liberator.Buffer = function () //{{{
             if (number >= sheets.length)
                 return false;
             let sheet = sheets.splice(number)[0];
-            let uri = cssUri(wrapCSS(sheet[0], sheet[1]));
-            this.unregisterSheet(uri, sss.USER_SHEET);
+            let uri = 
+            this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
             return true;
         }
 
@@ -151,18 +150,6 @@ liberator.Buffer = function () //{{{
     }
 
     let styles = liberator.storage.newObject(styles, Styles, false);
-
-    for (let sheet in arrayIter(liberator.config.userSheets || []))
-        styles.registerSheet(sheet);
-
-    /* FIXME: This doesn't belong here. */
-    let mainWindowID = liberator.config.mainWindowID || "main-window";
-    let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
-                                       .getPropertyValue("font-size");
-
-    let name = liberator.config.name.toLowerCase();
-    let error = styles.addSheet("chrome://" + name + "/skin/blank-" + name + ".xhtml",
-        "body { font-size: " + fontSize + "}");
 
     function setZoom(value, fullZoom)
     {
@@ -1398,14 +1385,10 @@ liberator.Buffer = function () //{{{
 
             // add the frame indicator
             var doc = frames[next].document;
-
-            /* Doesn't unapply...
-            var class = doc.body.class || "";
-            doc.body.setAttribute("class", class + " liberator-frame-indicator");
-            setTimeout(function () doc.body.setAttribute("class", class), 500);
-            */
-
-            var indicator = <div id="liberator-frame-indicator"/>;
+            var indicator =
+                <div id="liberator-frame-indicator"
+                     style="background-color: red; opacity: 0.5; z-index: 999
+                            position: fixed; top: 0; bottom: 0; left: 0; right: 0"/>;
             doc.body.appendChild(liberator.util.xmlToDom(indicator));
 
             // remove the frame indicator

@@ -121,7 +121,8 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    liberator.util.blankDocument(multilineOutputWidget, "liberator-multiline-output-content");
+    multilineOutputWidget.setAttribute("src",
+        liberator.util.blankDocument("liberator-multiline-output-content"));
 
     var outputContainer = multilineOutputWidget.parentNode;
 
@@ -1196,7 +1197,7 @@ liberator.ItemList = function (id) //{{{
     var doc;
     var container = iframe.parentNode;
 
-    liberator.util.blankDocument(iframe, id + "-content");
+    iframe.setAttribute("src", liberator.util.blankDocument(id + "-content"));
 
     var completions = []; // a reference to the Array of completions
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
