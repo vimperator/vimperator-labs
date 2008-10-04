@@ -417,7 +417,6 @@ liberator.Mappings = function () //{{{
 
             let _maps = (map for ([i, map] in Iterator(maps))
                              if (output[i]));
-            XML.prettyPrinting = false;
             let list = <table>
                     {
                         liberator.template.map(_maps, function (map)
@@ -428,8 +427,7 @@ liberator.Mappings = function () //{{{
                                 <td>{map.rhs || "function () { ... }"}</td>
                             </tr>))
                     }
-                    </table>
-
+                    </table>;
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         }
 

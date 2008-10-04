@@ -215,11 +215,12 @@ liberator.AutoCommands = function () //{{{
                         <tr>
                             <td class="hl-Title" colspan="2">{event}</td>
                         </tr>
-                        + liberator.template.map(items, function (item)
-                            <tr>
-                                <td>&#160;{item[0]}</td>
-                                <td>{item[1]}</td>
-                            </tr>))
+                        +
+                        liberator.template.map(items, function (item)
+                        <tr>
+                            <td>&#160;{item[0]}</td>
+                            <td>{item[1]}</td>
+                        </tr>))
                     }
                 </table>);
 
@@ -666,7 +667,7 @@ liberator.Events = function () //{{{
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args));
+            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args)); 
             liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
         },
         {

@@ -45,6 +45,7 @@ const liberator = (function () //{{{
         }
         catch (e)
         {
+            Components.utils.reportError(e);
             liberator.dump(e + "\n");
         }
     }
@@ -281,7 +282,6 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    XML.prettyPrinting = false;
                     var usage = <table>
                         {
                             liberator.template.map(liberator.commands, function (command)
@@ -290,7 +290,7 @@ const liberator = (function () //{{{
                                 <td>{command.description}</td>
                             </tr>)
                         }
-                        </table>.toXMLString();
+                        </table>;
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
@@ -425,7 +425,6 @@ const liberator = (function () //{{{
                                     <tr><td>  Average time:</td><td align="right"><span style="color: green">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
                                     <tr><td>  Total time:</td><td align="right"><span style="color: red">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
                                 </table>);
-
                         liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                     }
                     else
@@ -486,7 +485,6 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    XML.prettyPrinting = false;
                     var usage = <table>
                             {
                                 liberator.template.add(liberator.mappings, function (mapping)
@@ -495,8 +493,7 @@ const liberator = (function () //{{{
                                     <td>{mapping.description}</td>
                                 </tr>)
                              }
-                             </table>.toXMLString();
-
+                             </table>;
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },

@@ -110,6 +110,10 @@ liberator.config = { //{{{
         "message.html", "developer.html", "various.html", "index.html"
     ],
 
+    userSheets: [
+        "chrome://vimperator/skin/content.css",
+    ],
+
     init: function ()
     {
         function incrementURL(count)

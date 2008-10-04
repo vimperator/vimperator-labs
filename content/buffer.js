@@ -47,7 +47,7 @@ liberator.Buffer = function () //{{{
         const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Components.interfaces.nsIStyleSheetService);
 
-        let cssUri = function (css) ios.newURI("data:text/css," + encodeURI(css), null, null);
+        let cssUri = function (css) "data:text/css," + encodeURI(css);
 
         let sheets = [];
         this.__iterator__ = function () Iterator(sheets);
@@ -58,15 +58,11 @@ liberator.Buffer = function () //{{{
             if (errors.length)
                 return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
 
-            let chrome = /^chrome:/.test(filter);
-            if (chrome)
-                return "Chrome styling not supported"; /* For now. */
-
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
             sheets.push([filter, css]);
             let uri = cssUri(wrapCSS(filter, css));
-            sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+            this.registerSheet(uri, sss.USER_SHEET);
             return null;
         }
 
@@ -76,8 +72,22 @@ liberator.Buffer = function () //{{{
                 return false;
             let sheet = sheets.splice(number)[0];
             let uri = cssUri(wrapCSS(sheet[0], sheet[1]));
-            sss.unregisterSheet(uri, sss.USER_SHEET);
+            this.unregisterSheet(uri, sss.USER_SHEET);
             return true;
+        }
+
+        this.registerSheet = function (uri)
+        {
+            let uri = ios.newURI(uri, null, null);
+            if (!sss.sheetRegistered(uri, sss.USER_SHEET))
+                sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+        }
+
+        this.unregisterSheet = function (uri)
+        {
+            let uri = ios.newURI(uri, null, null);
+            if (sss.sheetRegistered(uri, sss.USER_SHEET))
+                sss.unregisterSheet(uri, sss.USER_SHEET);
         }
 
         function wrapCSS(filter, css)
@@ -91,11 +101,12 @@ liberator.Buffer = function () //{{{
             /* } vim */
         }
 
+        let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
         function checkSyntax(css)
         {
             let errors = [];
             let listener = {
-                QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]),
+                QueryInterface: queryinterface,
                 observe: function (message)
                 {
                     try
@@ -116,7 +127,7 @@ liberator.Buffer = function () //{{{
             {
                 var doc = document.implementation.createDocument(XHTML, "doc", null);
                 doc.documentElement.appendChild(liberator.util.xmlToDom(
-                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css).spec}/></head></html>, doc));
+                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, doc));
 
                 while (true)
                 {
@@ -126,7 +137,7 @@ liberator.Buffer = function () //{{{
                         break;
                     } catch (e) {
                         if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
-                            throw e;
+                            return [e.toString()];
                         liberator.sleep(10);
                     }
                 }
@@ -140,6 +151,18 @@ liberator.Buffer = function () //{{{
     }
 
     let styles = liberator.storage.newObject(styles, Styles, false);
+
+    for (let sheet in arrayIter(liberator.config.userSheets || []))
+        styles.registerSheet(sheet);
+
+    /* FIXME: This doesn't belong here. */
+    let mainWindowID = liberator.config.mainWindowID || "main-window";
+    let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
+                                       .getPropertyValue("font-size");
+
+    let name = liberator.config.name.toLowerCase();
+    let error = styles.addSheet("chrome://" + name + "/skin/blank-" + name + ".xhtml",
+        "body { font-size: " + fontSize + "}");
 
     function setZoom(value, fullZoom)
     {
@@ -1375,10 +1398,14 @@ liberator.Buffer = function () //{{{
 
             // add the frame indicator
             var doc = frames[next].document;
-            var indicator =
-                <div id="liberator-frame-indicator"
-                     style="background-color: red; opacity: 0.5; z-index: 999
-                            position: fixed; top: 0; bottom: 0; left: 0; right: 0"/>;
+
+            /* Doesn't unapply...
+            var class = doc.body.class || "";
+            doc.body.setAttribute("class", class + " liberator-frame-indicator");
+            setTimeout(function () doc.body.setAttribute("class", class), 500);
+            */
+
+            var indicator = <div id="liberator-frame-indicator"/>;
             doc.body.appendChild(liberator.util.xmlToDom(indicator));
 
             // remove the frame indicator
@@ -1389,7 +1416,7 @@ liberator.Buffer = function () //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            liberator.echo("Element:<br/>" + liberator.util.objectToString(elem), liberator.commandline.FORCE_MULTILINE);
+            liberator.echo(<>Element:<br/></> + liberator.util.objectToString(elem), liberator.commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)
@@ -1400,8 +1427,8 @@ liberator.Buffer = function () //{{{
                 let file = content.document.location.pathname.split("/").pop() || "[No Name]";
                 let title = content.document.title || "[No Title]";
 
-                let info = liberator.template.map("gf", function (opt)
-                    liberator.template.map(pageInfo[opt][0](), function (val) val, ", "),
+                let info = liberator.template.map("gf",
+                    function (opt) liberator.template.map(pageInfo[opt][0](), function (val) val, ", "),
                     ", ");
 
                 if (liberator.bookmarks.isBookmarked(this.URL))
@@ -1418,10 +1445,7 @@ liberator.Buffer = function () //{{{
                 let opt = pageInfo[option];
                 if (opt)
                     return liberator.template.table(opt[1], opt[0](true));
-                else
-                    alert(option);
             }, <br/>);
-            XML.prettyPrinting = false;
             liberator.echo(list, liberator.commandline.FORCE_MULTILINE);
         },
 
@@ -1872,9 +1896,11 @@ liberator.template = {
 
     maybeXML: function (xml)
     {
+        if (typeof xml == "xml")
+            return xml;
         try
         {
-            return new XML(xml)
+            return new XMLList(xml)
         }
         catch (e) {}
         return <>{xml}</>;
@@ -1882,8 +1908,7 @@ liberator.template = {
 
     generic: function (xml)
     {
-        XML.prettyPrinting = false;
-        return (<>:{liberator.commandline.getCommand()}<br/></> + xml).toXMLString();
+        return <>:{liberator.commandline.getCommand()}<br/></> + xml
     },
 
     bookmarks: function (header, items)

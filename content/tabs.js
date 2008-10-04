@@ -726,7 +726,7 @@ liberator.Tabs = function () //{{{
                     <tr>
                         <td align="right">  {number}</td>
                         <td><span style="color: blue"> {indicator} </span></td>
-                        <td style="width:250px; max-width: 500px; overflow: hidden">{title}</td>
+                        <td style="width: 250px; max-width: 500px; overflow: hidden">{title}</td>
                         <td><a href="#" class="hl-URL buffer-list">{item[1]}</a></td>
                     </tr>;
             }

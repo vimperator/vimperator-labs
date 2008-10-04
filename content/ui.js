@@ -121,8 +121,7 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    multilineOutputWidget.setAttribute("src",
-        liberator.util.blankDocument("liberator-multiline-output-content"));
+    liberator.util.blankDocument(multilineOutputWidget, "liberator-multiline-output-content");
 
     var outputContainer = multilineOutputWidget.parentNode;
 
@@ -209,7 +208,9 @@ liberator.CommandLine = function () //{{{
         let doc = multilineOutputWidget.contentDocument;
         let win = multilineOutputWidget.contentWindow;
 
+        XML.ignoreWhitespace = false;
         var output = <div class={"ex-command-output " + highlightGroup}>{liberator.template.maybeXML(str)}</div>;
+        XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
 
@@ -1190,7 +1191,7 @@ liberator.ItemList = function (id) //{{{
     var doc;
     var container = iframe.parentNode;
 
-    iframe.setAttribute("src", liberator.util.blankDocument(id + "-content"));
+    liberator.util.blankDocument(iframe, id + "-content");
 
     var completions = []; // a reference to the Array of completions
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index

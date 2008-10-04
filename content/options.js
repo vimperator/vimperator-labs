@@ -268,18 +268,20 @@ liberator.Options = function () //{{{
         {
             if (!args)
             {
-                XML.prettyPrinting = false;
-                var str = <table/>
-                for (let [i, value] in Iterator(liberator.globalVariables))
-                {
-                    let prefix = typeof value == "number"   ? "#" :
-                                 typeof value == "function" ? "*" :
-                                                              " ";
-                    str.* += <tr>
-                                 <td style="width: 200px;">{i}</td>
-                                 <td>{prefix}{value}</td>
-                             </tr>;
-                }
+                var str =
+                    <table>
+                    {
+                        liberator.template.map2(liberator.globalVariables, function (i, value) {
+                            let prefix = typeof value == "number"   ? "#" :
+                                         typeof value == "function" ? "*" :
+                                                                      " ";
+                            return <tr>
+                                        <td style="width: 200px;">{i}</td>
+                                        <td>{prefix}{value}</td>
+                                   </tr>
+                        })
+                    }
+                    </table>;
                 if (str.*.length())
                     liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
                 else

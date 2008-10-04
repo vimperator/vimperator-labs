@@ -710,7 +710,9 @@ liberator.Commands = function () //{{{
                 if (cmdlist.length > 0)
                 {
                     var str = liberator.template.tabular(["Name", "Args", "Definition"], [],
-                        ([cmd.name, "*", cmd.replacementText || "function () { ... }"]
+                        ([cmd.name,
+                          "*",
+                          cmd.replacementText || "function () { ... }"]
                             for each (cmd in cmdlist)));
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }

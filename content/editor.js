@@ -928,31 +928,26 @@ liberator.Editor = function () //{{{
             }
             else // list all (for that filter {i,c,!})
             {
-                var searchFilter = (filter == "!") ? "!ci" : filter + "!"; // ! -> list all, on c or i ! matches too)
+                var searchFilter = (filter == "!") ? "!ci"
+                                                   : filter + "!"; // ! -> list all, on c or i ! matches too)
 
-                XML.prettyPrinting = false;
-                let list = <table/>;
-                for (let tmplhs in abbrev)
-                {
-                    abbrev[tmplhs].forEach(function (abbr)
+                let list =
+                    <table>
                     {
-                        if (searchFilter.indexOf(abbr[0]) > -1)
-                        {
-                            list.* += <tr>
-                                          <td>{abbr[0]}</td>
-                                          <td>{tmplhs}</td>
-                                          <td>{abbr[1]}</td>
-                                      </tr>;
-                        }
-                    });
-                }
-
-                if (!list.*.length())
-                {
+                        liberator.template.map2(abbrev, function (lhs, rhs)
+                            liberator.template.map(rhs, function (abbr)
+                            searchFilter.indexOf(abbr[0]) < 0 ? undefined :
+                            <tr>
+                                <td>{abbr[0]}</td>
+                                <td>{lhs}</td>
+                                <td>{abbr[1]}</td>
+                            </tr>))
+                    }
+                    </table>;
+                if (list.*.length())
+                    liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                else
                     liberator.echoerr("No abbreviations found");
-                    return;
-                }
-                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
         },
 

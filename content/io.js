@@ -320,7 +320,6 @@ liberator.IO = function () //{{{
         "List all sourced script names",
         function ()
         {
-            XML.prettyPrinting = false;
             var list = liberator.template.tabular(["Idx", "Filename"], ["text-align: right"], Iterator(scriptNames));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
