@@ -344,7 +344,7 @@ liberator.Tabs = function () //{{{
                 liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) liberator.completion.buffer(filter)
         });
 
@@ -456,7 +456,7 @@ liberator.Tabs = function () //{{{
                 }
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter) liberator.completion.buffer(filter)
             });
 
@@ -465,7 +465,7 @@ liberator.Tabs = function () //{{{
             function (args, special) { liberator.tabs.list(special); },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
@@ -473,7 +473,7 @@ liberator.Tabs = function () //{{{
             function (args, special) { liberator.quit(false, special); },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["reloada[ll]"],
@@ -481,7 +481,7 @@ liberator.Tabs = function () //{{{
             function (args, special) { liberator.tabs.reloadAll(special); },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         // TODO: add count support
@@ -501,7 +501,7 @@ liberator.Tabs = function () //{{{
 
                 liberator.tabs.move(getBrowser().mCurrentTab, args, special);
             },
-            { bangAllowed: true });
+            { bang: true });
 
         liberator.commands.add(["tabo[nly]"],
             "Close all other tabs",
@@ -522,7 +522,7 @@ liberator.Tabs = function () //{{{
                     liberator.open("about:blank", where);
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter) liberator.completion.url(filter)
             });
 
@@ -531,7 +531,7 @@ liberator.Tabs = function () //{{{
             function (args, special, count) { liberator.tabs.detachTab(null); },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["tabd[uplicate]"],
@@ -552,7 +552,7 @@ liberator.Tabs = function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
     }
 
@@ -624,7 +624,7 @@ liberator.Tabs = function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["wqa[ll]", "wq", "xa[ll]"],

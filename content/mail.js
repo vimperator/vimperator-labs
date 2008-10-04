@@ -729,7 +729,7 @@ liberator.Mail = function () //{{{
         function (args, special) liberator.mail.getNewMessages(!special),
         {
             argCount: "0",
-            bangAllowed: true,
+            bang: true,
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

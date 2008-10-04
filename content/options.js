@@ -368,7 +368,7 @@ liberator.Options = function () //{{{
         },
         {
             argCount: "0",
-            bangAllowed: true,
+            bang: true,
         });
 
     liberator.commands.add(["setl[ocal]"],
@@ -378,7 +378,7 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
@@ -393,7 +393,7 @@ liberator.Options = function () //{{{
             liberator.commands.get("set").execute(args, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
@@ -706,7 +706,7 @@ liberator.Options = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter, special, count, modifiers)
             {
                 var optionCompletions = [];
@@ -847,7 +847,7 @@ liberator.Options = function () //{{{
         },
         {
             argCount: "+",
-            bangAllowed: true
+            bang: true
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

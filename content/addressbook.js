@@ -138,7 +138,7 @@ liberator.Addressbook = function () //{{{
     liberator.commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
         function (args, special) { liberator.addressbook.list(args, special); },
-        { bangAllowed: true });
+        { bang: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

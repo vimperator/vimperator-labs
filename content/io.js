@@ -268,7 +268,7 @@ liberator.IO = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) liberator.completion.file(filter, true)
         });
 
@@ -311,7 +311,7 @@ liberator.IO = function () //{{{
         },
         {
             argCount: "+",
-            bangAllowed: true
+            bang: true
         }
     );
 
@@ -338,7 +338,7 @@ liberator.IO = function () //{{{
             liberator.io.source(args, special);
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) liberator.completion.file(filter, true)
         });
 
@@ -362,7 +362,7 @@ liberator.IO = function () //{{{
 
             liberator.autocommands.trigger("ShellCmdPost", "");
         },
-        { bangAllowed: true });
+        { bang: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

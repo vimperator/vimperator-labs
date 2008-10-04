@@ -126,7 +126,7 @@ liberator.AutoCommands = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) liberator.completion.autocommand(filter)
         });
 

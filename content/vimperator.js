@@ -287,7 +287,7 @@ liberator.config = { //{{{
                 }
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter) liberator.completion.url(filter)
             });
 

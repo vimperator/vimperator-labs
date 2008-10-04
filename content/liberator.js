@@ -184,7 +184,7 @@ const liberator = (function () //{{{
                     return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
                 }
             },
-            { bangAllowed: true });
+            { bang: true });
 
         // TODO: move this
         function getMenuItems()
@@ -292,7 +292,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["h[elp]"],
@@ -308,7 +308,7 @@ const liberator = (function () //{{{
                 liberator.help(args);
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter) getHelpCompletions(filter)
             });
 
@@ -336,7 +336,7 @@ const liberator = (function () //{{{
                 }
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter) liberator.completion.javascript(filter),
                 hereDoc: true,
             });
@@ -346,7 +346,7 @@ const liberator = (function () //{{{
             function (args, special) { liberator.events.feedkeys(args.string, special); },
             {
                 argCount: "+",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["optionu[sage]"],
@@ -374,7 +374,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["q[uit]"],
@@ -388,7 +388,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["res[tart]"],
@@ -481,7 +481,7 @@ const liberator = (function () //{{{
                 }
             },
             {
-                bangAllowed: true,
+                bang: true,
                 completer: function (filter)
                 {
                     if (/^:/.test(filter))
@@ -504,7 +504,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
 
         liberator.commands.add(["viu[sage]"],
@@ -532,7 +532,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "0",
-                bangAllowed: true
+                bang: true
             });
     }
 
@@ -700,7 +700,7 @@ const liberator = (function () //{{{
                 return;
             }
 
-            if (special && !command.bangAllowed)
+            if (special && !command.bang)
             {
                 liberator.echoerr("E477: No ! allowed");
                 return;

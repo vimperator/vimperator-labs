@@ -78,7 +78,7 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.completer   = extraInfo.completer || null;
     this.hereDoc     = extraInfo.hereDoc || false;
     this.options     = extraInfo.options || [];
-    this.bangAllowed = extraInfo.bangAllowed || false;
+    this.bang        = extraInfo.bang || false;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
     this.replacementText = extraInfo.replacementText || null;
@@ -701,7 +701,7 @@ liberator.Commands = function () //{{{
                             liberator.execute(replaced);
                         },
                         {
-                            bangAllowed: true, // FIXME: until we implement -bang
+                            bang: true, // FIXME: until we implement -bang
                             replacementText: rep
                         },
                         special)
@@ -729,7 +729,7 @@ liberator.Commands = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) liberator.completion.userCommand(filter)
             /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
                    [["-bang"],     OPTION_NOARG],

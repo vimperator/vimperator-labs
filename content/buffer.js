@@ -607,7 +607,7 @@ liberator.Buffer = function () //{{{
             liberator.options.setPref("print.show_print_progress", spp);
             liberator.echo("Print job sent.");
         },
-        { bangAllowed: true });
+        { bang: true });
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
@@ -637,7 +637,7 @@ liberator.Buffer = function () //{{{
         "Reload current page",
         function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); },
         {
-            bangAllowed: true,
+            bang: true,
             argCount: "0"
         });
 
@@ -656,7 +656,7 @@ liberator.Buffer = function () //{{{
             //else
             saveDocument(window.content.document, special);
         },
-        { bangAllowed: true, });
+        { bang: true, });
 
     liberator.commands.add(["st[op]"],
         "Stop loading",
@@ -704,7 +704,7 @@ liberator.Buffer = function () //{{{
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
         function (args, special) { liberator.buffer.viewSource(args, special); },
-        { bangAllowed: true });
+        { bang: true });
 
     liberator.commands.add(["zo[om]"],
         "Set zoom value of current web page",
@@ -744,7 +744,7 @@ liberator.Buffer = function () //{{{
             else
                 liberator.buffer.textZoom = level;
         },
-        { bangAllowed: true });
+        { bang: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PAGE INFO ///////////////////////////////////////////////
@@ -1660,7 +1660,7 @@ liberator.Marks = function () //{{{
 
             liberator.marks.remove(args, special);
         },
-        { bangAllowed: true });
+        { bang: true });
 
     liberator.commands.add(["ma[rk]"],
         "Mark current location within the web page",

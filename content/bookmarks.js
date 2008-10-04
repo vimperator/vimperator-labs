@@ -275,7 +275,7 @@ liberator.Bookmarks = function () //{{{
             liberator.bookmarks.list(args.arguments.join(" "), args["-tags"] || [], special);
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) [0, liberator.bookmarks.get(filter)],
             options: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
@@ -602,7 +602,7 @@ liberator.History = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
@@ -649,7 +649,7 @@ liberator.History = function () //{{{
             }
         },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter)
             {
                 var sh = getWebNavigation().sessionHistory;
@@ -670,7 +670,7 @@ liberator.History = function () //{{{
         "Show recently visited URLs",
         function (args, special) { liberator.history.list(args, special); },
         {
-            bangAllowed: true,
+            bang: true,
             completer: function (filter) [0, liberator.history.get(filter)]
         });
 
@@ -853,7 +853,7 @@ liberator.QuickMarks = function () //{{{
             else
                 liberator.quickmarks.remove(args);
         },
-        { bangAllowed: true });
+        { bang: true });
 
     liberator.commands.add(["qma[rk]"],
         "Mark a URL with a letter for quick access",
