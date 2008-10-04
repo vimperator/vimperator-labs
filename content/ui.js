@@ -225,6 +225,7 @@ liberator.CommandLine = function () //{{{
         if (outputContainer.collapsed)
             doc.body.innerHTML = "";
 
+        XML.prettyPrinting = false;
         doc.body.appendChild(liberator.util.xmlToDom(output, doc));
 
         var availableHeight = 250;
