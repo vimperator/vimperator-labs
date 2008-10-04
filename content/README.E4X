@@ -1,0 +1,149 @@
+               A terse introduction to E4X
+                      Public Domain
+
+The inline XML literals in this code are part of E4X, a standard
+XML processing interface for ECMAScript. In addition to syntax
+for XML literals, E4X provides a new kind of native object,
+"xml", and a syntax, similar to XPath, for accessing and
+modifying the tree. Here is a brief synopsis of the kind of
+usage you'll see herein:
+
+> let xml =
+	<foo bar="baz" baz="qux">
+            <bar>
+                <baz id="1"/>
+            </bar>
+            <baz id="2"/>
+        </foo>;
+
+ // Select all bar elements of the root foo element
+> xml.bar
+ <bar><baz id="1"/></bar>
+
+ // Select all baz elements anywhere beneath the root
+> xml..baz
+ <baz id="1"/>
+ <baz id="2"/>
+
+ // Select all of the immediate children of the root
+> xml.*
+ <bar><baz id="1"/></bar>
+ <baz id="2"/>
+
+ // Select the bar attribute of the root node
+> xml.@bar
+ baz
+
+ // Select all id attributes in the tree
+> xml..@id
+ 1
+ 2
+
+ // Select all attributes of the root node
+> xml.@*
+ baz
+ quz
+
+// Add a quux elemend beneath the first baz
+> xml..baz[0] += <quux/>
+  <baz id="1"/>
+  <quux/>
+> xml
+  <foo bar="baz" baz="qux">
+      <bar>
+          <baz id="1"/>
+          <quux/>
+      </bar>
+      <baz id="2"/>
+  </foo>
+
+  // and beneath the second
+> xml.baz[1] = <quux id="1"/>
+> xml
+  <foo bar="baz" baz="qux">
+      <bar>
+          <baz id="1"/>
+          <quux/>
+      </bar>
+      <baz id="2"/>
+      <quux id="1"/>
+  </foo>
+
+  // Replace bar's subtree with a foo element
+> xml.bar.* = <foo id="1"/>
+> xml
+  <foo bar="baz" baz="qux">
+      <bar>
+          <foo id="1"/>
+      </bar>
+      <baz id="2"/>
+      <quux id="1"/>
+  </foo>
+
+  // Add a bar below bar
+> xml.bar.* += <bar id="1"/>
+  <foo id="1"/>
+  <bar id="1"/>
+> xml
+  <foo bar="baz" baz="qux">
+      <bar>
+          <foo id="1"/>
+          <bar id="1"/>
+      </bar>
+      <baz id="2"/>
+      <quux id="1"/>
+  </foo>
+
+  // Adding a quux attribute to the root
+> xml.@quux = "foo"   
+  foo
+> xml
+  <foo bar="baz" baz="qux" quux="foo">
+      <bar>
+          <foo id="1"/>
+          <bar id="1"/>
+      </bar>
+      <baz id="2"/>
+      <quux id="1"/>
+  </foo>
+
+> xml.bar.@id = "0"
+> xml..foo[0] = "Foo"
+  Foo
+> xml..bar[1] = "Bar"
+  Bar
+> xml
+js> xml
+<foo bar="baz" baz="qux" quux="foo" id="0">
+    <bar id="0">
+        <foo id="1">Foo</foo>
+        <bar id="1">Bar</bar>
+    </bar>
+    <baz id="2"/>
+    <quux id="1"/>
+</foo>
+
+  // Selecting all bar elements where id="1"
+> xml..bar.(@id == 1)
+  Bar
+
+  // Literals:
+  // XMLList literal. No root node.
+> <>Foo<br/>Baz</>
+  Foo
+  <br/>
+  Baz
+
+// Interpolation.
+> let x = "<foo/>"
+> <foo bar={x}>{x + "<?>"}</foo>
+  <foo/><?>
+> <foo bar={x}>{x + "<?>"}</foo>.toXMLString()
+  <foo bar="&lt;foo/>">&lt;foo/&gt;&lt;?&gt;</foo>
+
+> let x = <foo/>
+> <foo bar={x}>{x}</foo>.toXMLString()
+  <foo bar="">
+      <foo/>
+  </foo>
+
