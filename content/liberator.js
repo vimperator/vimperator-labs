@@ -627,7 +627,7 @@ const liberator = (function () //{{{
             for (let i = 0; i < callbacks.length; i++)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
-                if (mode == thismode && type == thistype)
+                if (mode == liberator.modes.NONE || mode == thismode && type == thistype)
                     return thisfunc.call(this, data);
             }
             return false;
@@ -1077,10 +1077,10 @@ const liberator = (function () //{{{
             loadModule("commands",     liberator.Commands); addCommands();
             loadModule("options",      liberator.Options);  addOptions();
             loadModule("mappings",     liberator.Mappings); addMappings();
+            loadModule("buffer",       liberator.Buffer);
             loadModule("events",       liberator.Events);
             loadModule("commandline",  liberator.CommandLine);
             loadModule("statusline",   liberator.StatusLine);
-            loadModule("buffer",       liberator.Buffer);
             loadModule("editor",       liberator.Editor);
             loadModule("autocommands", liberator.AutoCommands);
             loadModule("io",           liberator.IO);
@@ -1181,11 +1181,7 @@ const liberator = (function () //{{{
 
             liberator.storage.saveAll();
 
-            // save our preferences
-            liberator.options.destroy();
-            liberator.events.destroy();
-            if (liberator.has("bookmarks"))
-                liberator.bookmarks.destroy();
+            liberator.triggerCallback("shutdown", 0, null);
 
             liberator.dump("All liberator modules destroyed\n");
 

@@ -174,6 +174,9 @@ liberator.Options = function () //{{{
 
     liberator.storage.newMap("options", false);
     liberator.storage.addObserver("options", optionObserver);
+    liberator.registerCallback("shutdown", 0, function () {
+        liberator.storage.removeObserver("options", optionObserver)
+    });
 
     function storePreference(name, value)
     {
@@ -247,7 +250,15 @@ liberator.Options = function () //{{{
     // work around firefox popup blocker
     var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
     if (!/keypress/.test(popupAllowedEvents))
+    {
         storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
+        liberator.registerCallback("shutdown", 0, function ()
+        {
+            if (loadPreference("dom.popup_allowed_events", "")
+                    == popupAllowedEvents + " keypress")
+                storePreference("dom.popup_allowed_events", popupAllowedEvents);
+        });
+    }
 
     // TODO: maybe reset in .destroy()?
     // TODO: move to vim.js or buffer.js
@@ -801,21 +812,27 @@ liberator.Options = function () //{{{
                 len = filter.length - len;
                 filter = filter.substr(len);
 
-                if (!completer)
-                    return [len, [[option.value, ""]]];
-
-                let completions = completer(filter);
-                if (have)
+                /* Not vim compatible, but is a significant enough improvement
+                 * that it's worth breaking compatibility.
+                 */
+                let completions = [];
+                if (!opt.value)
+                    completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0]);
+                if (completer)
                 {
-                    completions = completions.filter(function (val) have2.indexOf(val[0]) == -1);
-                    switch (opt.operator)
+                    completions = completions.concat(completer(filter));
+                    if (have)
                     {
-                        case "+":
-                            completions = completions.filter(function (val) have.indexOf(val[0]) == -1);
-                            break;
-                        case "-":
-                            completions = completions.filter(function (val) have.indexOf(val[0]) > -1);
-                            break;
+                        completions = completions.filter(function (val) have2.indexOf(val[0]) == -1);
+                        switch (opt.operator)
+                        {
+                            case "+":
+                                completions = completions.filter(function (val) have.indexOf(val[0]) == -1);
+                                break;
+                            case "-":
+                                completions = completions.filter(function (val) have.indexOf(val[0]) > -1);
+                                break;
+                        }
                     }
                 }
                 return [len, liberator.completion.filter(completions, filter, true)];
@@ -894,15 +911,6 @@ liberator.Options = function () //{{{
             // TODO: sort option
             options.push(option);
             return true;
-        },
-
-        destroy: function ()
-        {
-            // reset some modified firefox prefs
-            if (loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit")
-                    == popupAllowedEvents + " keypress")
-                storePreference("dom.popup_allowed_events", popupAllowedEvents);
-            liberator.storage.removeObserver("options", optionObserver);
         },
 
         get: function (name, scope)

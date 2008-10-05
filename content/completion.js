@@ -49,9 +49,42 @@ liberator.Completion = function () //{{{
 
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
-        liberator.commandline.setCompletions(completionCache.concat(comp));
-        historyCache = comp;
+        historyCache = comp.map(addIcon);
+        liberator.commandline.setCompletions(completionCache.concat(historyCache));
     });
+
+    const faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                                     .getService(Components.interfaces.nsIFaviconService);
+    const ioService      = Components.classes["@mozilla.org/network/io-service;1"]
+                                     .getService(Components.interfaces.nsIIOService);
+    function getIcon(uri)
+    {
+        try
+        {
+            let img = faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null));
+            return img.spec;
+        }
+        catch (e) {}
+    }
+    function addIcon(elem)
+    {
+        return [elem[0], elem[1], getIcon(elem[0])];
+    }
+
+    function buildSubstrings(str, filter)
+    {
+        if (filter == "")
+            return;
+        let length = filter.length;
+        let start = 0;
+        let idx;
+        while ((idx = str.indexOf(filter, start)) > -1)
+        {
+            for (let end in liberator.util.range(idx + length, str.length + 1))
+                substrings.push(str.substring(idx, end));
+            start = idx + 1;
+        }
+    }
 
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
@@ -67,36 +100,26 @@ liberator.Completion = function () //{{{
         if (liberator.options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
-        for (let i = 0; i < list.length; i++)
+        for (let [,item] in Iterator(list))
         {
-            var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
-            for (let j = 0; j < complist.length; j++)
+            var complist = item[0] instanceof Array ?  item[0]
+                                                    : [item[0]];
+            for (let [,compitem] in Iterator(complist))
             {
-                var item = String(complist[j]);
                 if (ignorecase)
-                    item = item.toLowerCase();
+                    compitem = String.toLowerCase(compitem);
 
-                if (item.indexOf(filter) == -1)
+                if (compitem.indexOf(filter) == -1)
                     continue;
 
-                filtered.push([complist[j], list[i][1]]);
+                filtered.push([compitem, item[1], item[2]]);
 
                 if (longest)
                 {
                     if (substrings.length == 0)
-                    {
-                        var lastIndex = item.lastIndexOf(filter);
-                        var length = item.length;
-                        for (let k = item.indexOf(filter); k != -1 && k <= lastIndex; k = item.indexOf(filter, k + 1))
-                        {
-                            for (let l = k + filter.length; l <= length; l++)
-                                substrings.push(complist[j].substring(k, l));
-                        }
-                    }
+                        buildSubstrings(compitem, filter);
                     else
-                    {
-                        substrings = substrings.filter(function (s) complist[j].indexOf(s) >= 0);
-                    }
+                        substrings = substrings.filter(function (s) compitem.indexOf(s) >= 0);
                 }
                 break;
             }
@@ -113,27 +136,28 @@ liberator.Completion = function () //{{{
         if (liberator.options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
-        for (let i = 0; i < list.length; i++)
+        for (let [,item] in Iterator(list))
         {
-            var complist = list[i][0] instanceof Array ? list[i][0] : [list[i][0]];
-            for (let j = 0; j < complist.length; j++)
+            var complist = item[0] instanceof Array ?  item[0]
+                                                    : [item[0]];
+            for (let [,compitem] in Iterator(complist))
             {
-                if (complist[j].indexOf(filter) != 0)
+                if (compitem.indexOf(filter) != 0)
                     continue;
 
-                filtered.push([complist[j], list[i][1]]);
+                filtered.push([compitem, item[1], item[2]]);
 
                 if (longest)
                 {
                     if (substrings.length == 0)
                     {
-                        var length = complist[j].length;
+                        var length = compitem.length;
                         for (let k = filter.length; k <= length; k++)
-                            substrings.push(complist[j].substring(0, k));
+                            substrings.push(compitem.substring(0, k));
                     }
                     else
                     {
-                        substrings = substrings.filter(function (s) complist[j].indexOf(s) == 0);
+                        substrings = substrings.filter(function (s) compitem.indexOf(s) == 0);
                     }
                 }
                 break;
@@ -266,7 +290,8 @@ liberator.Completion = function () //{{{
                 }
 
                 mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
-                                                    file.isDirectory() ? "Directory" : "File"]);
+                                                    file.isDirectory() ? "Directory" : "File",
+                                                    getIcon("file://" + file.path)]);
             }
             catch (e)
             {
@@ -366,8 +391,9 @@ liberator.Completion = function () //{{{
 
         search: function (filter)
         {
-            var engines = liberator.bookmarks.getSearchEngines().concat(liberator.bookmarks.getKeywords());
-            return [0, this.filter(engines, filter)];
+            var keywords = [[k[0], k[1], getIcon(k[2])] for each (k in liberator.bookmarks.getKeywords())];
+            var engines = liberator.bookmarks.getSearchEngines();
+            return [0, this.filter(engines.concat(keywords), filter)];
         },
 
         // XXX: Move to bookmarks.js?
@@ -464,18 +490,17 @@ liberator.Completion = function () //{{{
             for (let c in liberator.util.arrayIter(cpt))
             {
                 if (c == "s")
-                    completions = completions.concat(this.search(filter)[1]);
+                    completions.push(this.search(filter)[1]);
                 else if (c == "f")
-                    completions = completions.concat(this.file(filter, false)[1]);
+                    completions.push(this.file(filter, false)[1]);
                 else if (c == "S")
-                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
+                    completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b" && !autoCompletions)
-                    completions = completions.concat(liberator.bookmarks.get(filter));
+                    completions.push(liberator.bookmarks.get(filter).map(addIcon));
                 else if (c == "h" && !autoCompletions)
-                    completions = completions.concat(liberator.history.get(filter));
+                    completions.push(liberator.history.get(filter).map(addIcon));
                 else if (c == "l") // add completions like Firefox's smart location bar
                 {
-                    completionCache = completions;
                     completionService.startSearch(filter, "", historyResult, {
                         onSearchResult: function (search, result) {
                             historyResult = result;
@@ -487,7 +512,8 @@ liberator.Completion = function () //{{{
                 }
             }
 
-            return [start, completions.concat(historyCache)];
+            completionCache = liberator.util.flatten(completions);
+            return [start, completionCache.concat(historyCache)];
         },
 
         userCommand: function (filter)
@@ -515,7 +541,7 @@ liberator.Completion = function () //{{{
         {
             var filtered = [];
             // completions which don't match the url but just the description
-            // list them add the end of the array
+            // list them at the end of the array
             var additionalCompletions = [];
 
             if (urls.length == 0)
@@ -529,7 +555,7 @@ liberator.Completion = function () //{{{
             filterTags = filterTags || [];
 
             // TODO: use ignorecase and smartcase settings
-            var ignorecase = (filter == filter.toLowerCase() && filterTags.join(",") == filterTags.join(",").toLowerCase());
+            var ignorecase = (filter == filter.toLowerCase() && filterTags.every(function (t) t == t.toLowerCase()));
 
             if (ignorecase)
             {
@@ -540,12 +566,12 @@ liberator.Completion = function () //{{{
             // Longest Common Subsequence
             // This shouldn't use buildLongestCommonSubstring for performance
             // reasons, so as not to cycle through the urls twice
+            let filterTokens = filter.split(/\s+/);
             for (let [,elem] in Iterator(urls))
             {
                 var url   = elem[0] || "";
                 var title = elem[1] || "";
                 var tags  = elem[3] || [];
-
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
@@ -561,32 +587,17 @@ liberator.Completion = function () //{{{
                 {
                     // no direct match of filter in the url, but still accept this item
                     // if _all_ tokens of filter match either the url or the title
-                    if (filter.split(/\s+/).every(
-                        function (token) url.indexOf(token) > -1 || title.indexOf(token) > -1
-                    ))
+                    if (filterTokens.every(function (token) url.indexOf(token) > -1 || title.indexOf(token) > -1))
                         additionalCompletions.push(elem);
-
                     continue;
                 }
 
                 // TODO: refactor out? And just build if wildmode contains longest?
+                //   Of course --Kris
                 if (substrings.length == 0)   // Build the substrings
-                {
-                    var lastIndex = url.lastIndexOf(filter);
-                    var urlLength = url.length;
-                    if (lastIndex >= 0 && lastIndex < urlLength) // do not build substrings, if we don't match filter
-                    {
-                        for (let k = url.indexOf(filter); k != -1 && k <= lastIndex; k = url.indexOf(filter, k + 1))
-                        {
-                            for (let l = k + filter.length; l <= urlLength; l++)
-                                substrings.push(url.substring(k, l));
-                        }
-                    }
-                }
+                    buildSubstrings(url, filter);
                 else
-                {
                     substrings = substrings.filter(function (s) url.indexOf(s) >= 0);
-                }
 
                 filtered.push(elem);
             }

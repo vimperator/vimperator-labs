@@ -184,6 +184,9 @@ liberator.Bookmarks = function () //{{{
     }
     var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
     liberator.storage.addObserver("bookmark-cache", bookmarkObserver);
+    liberator.registerCallback("shutdown", 0, function () {
+        liberator.storage.removeObserver("bookmark-cache", bookmarkObserver)
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -416,11 +419,11 @@ liberator.Bookmarks = function () //{{{
         {
             var searchEngines = [];
             var firefoxEngines = searchService.getVisibleEngines({});
-            for (let i in firefoxEngines)
+            for (let [,engine] in Iterator(firefoxEngines))
             {
-                var alias = firefoxEngines[i].alias;
+                var alias = engine.alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))
-                    alias = firefoxEngines[i].name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
+                    alias = engine.name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
                 if (!alias)
                     alias = "search"; // for search engines which we can't find a suitable alias
 
@@ -434,10 +437,10 @@ liberator.Bookmarks = function () //{{{
                     newAlias = alias + j;
                 }
                 // only write when it changed, writes are really slow
-                if (firefoxEngines[i].alias != newAlias)
-                    firefoxEngines[i].alias = newAlias;
+                if (engine.alias != newAlias)
+                    engine.alias = newAlias;
 
-                searchEngines.push([firefoxEngines[i].alias, firefoxEngines[i].description]);
+                searchEngines.push([engine.alias, engine.description, engine.iconURI.spec]);
             }
 
             return searchEngines;
@@ -500,16 +503,11 @@ liberator.Bookmarks = function () //{{{
                 {
                     url:   item[0],
                     title: item[1],
-                    extra: [['keyword', item[2],            'red'],
-                            ['tags',    item[3].join(', '), 'blue']].filter(function (i) i[1])
+                    extra: [['keyword', item[2],                  'red'],
+                            ['tags',    (item[3]||[]).join(', '), 'blue']].filter(function (i) i[1])
                 } for each (item in items)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
-
-        destroy: function ()
-        {
-            liberator.storage.removeObserver("bookmark-cache", bookmarkObserver);
-        }
     };
     //}}}
 }; //}}}

@@ -38,11 +38,13 @@ liberator.Buffer = function () //{{{
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
     const arrayIter = liberator.util.arrayIter;
-    /* Can't reference liberator inside Styles --
-     * it's a global object, and liberator disappears
+    /* Can't reference liberator or Components inside Styles --
+     * they're members of the window object, which disappear
      * with this window.
      */
     const util = liberator.util;
+    const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                     .getService(Components.interfaces.nsIConsoleService);
 
     function Styles(name, store, serial)
     {
@@ -143,13 +145,10 @@ liberator.Buffer = function () //{{{
                 }
             };
 
-            var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                           .getService(Components.interfaces.nsIConsoleService);
-            consoleService.registerListener(listener);
-
             try
             {
-                var doc = document.implementation.createDocument(XHTML, "doc", null);
+                consoleService.registerListener(listener);
+                let doc = document.implementation.createDocument(XHTML, "doc", null);
                 doc.documentElement.appendChild(util.xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, doc));
 
@@ -181,6 +180,16 @@ liberator.Buffer = function () //{{{
     };
 
     let styles = liberator.storage.newObject("styles", Styles, false);
+
+    /* FIXME: This doesn't belong here. */
+    let mainWindowID = liberator.config.mainWindowID || "main-window";
+    let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
+                                       .getPropertyValue("font-size");
+
+    let name = liberator.config.name.toLowerCase();
+    styles.registerSheet("chrome://" + name + "/skin/vimperator.css");
+    let error = styles.addSheet("chrome://" + name + "/content/buffer.xhtml",
+        "body { font-size: " + fontSize + "}");
 
     function setZoom(value, fullZoom)
     {

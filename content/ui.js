@@ -121,8 +121,7 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    multilineOutputWidget.setAttribute("src",
-        liberator.util.blankDocument("liberator-multiline-output-content"));
+    liberator.util.blankDocument(multilineOutputWidget, "liberator-multiline-output-content");
 
     var outputContainer = multilineOutputWidget.parentNode;
 
@@ -225,7 +224,6 @@ liberator.CommandLine = function () //{{{
         if (outputContainer.collapsed)
             doc.body.innerHTML = "";
 
-        XML.prettyPrinting = false;
         doc.body.appendChild(liberator.util.xmlToDom(output, doc));
 
         var availableHeight = 250;
@@ -824,8 +822,6 @@ liberator.CommandLine = function () //{{{
                                 completionIndex = 0;
                         }
 
-                        // FIXME: this innocent looking line is the source of a big performance
-                        // problem, when keeping <Tab> pressed down, so disable it for now
                         statusTimer.tell();
                     }
 
@@ -1131,6 +1127,9 @@ liberator.CommandLine = function () //{{{
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
 
+            if (compl.length == 0)
+                return completionList.hide();
+
             completionList.setItems(compl);
 
             if (completionIndex >= 0 && completionIndex < compl.length && completionIndex < completions.length)
@@ -1193,32 +1192,16 @@ liberator.ItemList = function (id) //{{{
     var doc;
     var container = iframe.parentNode;
 
-    iframe.setAttribute("src", liberator.util.blankDocument(id + "-content"));
+    liberator.util.blankDocument(iframe, id + "-content");
 
     var completions = []; // a reference to the Array of completions
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
     var listIndex = -1;   // listOffset + listIndex = completions[item]
     var selectedElement = null;
 
-    // FIXME: ItemList shouldn't know of favicons of course, so also temporary
-    try
-    {
-        var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"].getService(Components.interfaces.nsIFaviconService);
-        const ioService    = Components.classes["@mozilla.org/network/io-service;1"]
-                                       .getService(Components.interfaces.nsIIOService);
-    }
-    catch (e) {} // for muttator!
-
     // TODO: temporary, to be changed/removed
-    function createRow(b, c, dom)
+    function createRow(b, c, a, dom)
     {
-        try
-        {
-            let uri = ioService.newURI(b, null, null);
-            var a = faviconService.getFaviconImageForPage(uri).spec;
-        }
-        catch (e) {}
-
         let row =
             <tr class="liberator-compitem">
                 <td style="width: 16px"/>
@@ -1266,8 +1249,9 @@ liberator.ItemList = function (id) //{{{
 
         if (listIndex > -1 && offset == listOffset + 1)
         {
+            let item = completions[offset + maxItems - 1];
             listOffset = offset;
-            var row = createRow(completions[offset + maxItems - 1][0], completions[offset + maxItems - 1][1], true);
+            var row = createRow(item[0], item[1], item[2], true);
             var e = doc.getElementsByTagName("tbody");
             e = e[e.length - 1];
 
@@ -1278,8 +1262,9 @@ liberator.ItemList = function (id) //{{{
         }
         else if (listIndex > -1 && offset == listOffset - 1)
         {
+            let item = completions[offset];
             listOffset = offset;
-            var row = createRow(completions[offset][0], completions[offset][1], true);
+            var row = createRow(item[0], item[1], item[2], true);
             var e = doc.getElementsByTagName("tbody");
             e = e[e.length - 1];
 
@@ -1294,6 +1279,7 @@ liberator.ItemList = function (id) //{{{
         // do a full refill of the list:
         doc.body.innerHTML = "";
 
+        XML.ignoreWhitespace = true;
         let div = <div class="ex-command-output hl-Normal">
                       <span class="hl-Title" style="font-weight: bold">Completions:</span>
                       <table width="100%" style="table-layout: fixed; width: 100%"><tbody/></table>
@@ -1304,7 +1290,7 @@ liberator.ItemList = function (id) //{{{
                                                             completions.length)))
         {
             let elem = completions[i];
-            tbody.* += createRow(elem[0], elem[1]);
+            tbody.* += createRow(elem[0], elem[1], elem[2]);
         }
 
         doc.body.appendChild(liberator.util.xmlToDom(div, doc));

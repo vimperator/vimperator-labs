@@ -87,9 +87,8 @@ liberator.Hints = function () //{{{
         var scrollX = doc.defaultView.scrollX;
         var scrollY = doc.defaultView.scrollY;
 
-        var baseNodeAbsolute = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-        baseNodeAbsolute.style.cssText = liberator.options["hintstyle"];
-        baseNodeAbsolute.className = "liberator-hint";
+        var baseNodeAbsolute = liberator.util.xmlToDom(
+            <span style={liberator.options["hintstyle"]} class="liberator-hint"/>, doc);
 
         var elem, tagname, text, span, rect;
         var res = liberator.buffer.evaluateXPath(liberator.options["hinttags"], doc, null, true);

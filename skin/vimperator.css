@@ -26,6 +26,11 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+@-moz-document 
+    url-prefix(chrome://vimperator/),
+    url-prefix(chrome://muttator/),
+    url(chrome://browser/content/browser.xul) {
+
 #liberator-container  {
     font-family: monospace;
 }
@@ -205,6 +210,8 @@ a.hl-URL:hover {
 /* for muttator's composer */
 #content-frame, #appcontent {
     border: 0px;
+}
+
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

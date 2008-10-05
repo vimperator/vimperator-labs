@@ -1603,6 +1603,7 @@ liberator.Events = function () //{{{
     catch (e) {}
 
     eventManager.prefObserver.register();
+    liberator.registerCallback("shutdown", 0, eventManager.destroy);
 
     window.addEventListener("keypress", eventManager.onKeyPress,    true);
     window.addEventListener("keydown",  eventManager.onKeyUpOrDown, true);
