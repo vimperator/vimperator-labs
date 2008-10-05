@@ -45,11 +45,12 @@ liberator.Completion = function () //{{{
         let comp = [];
         for (let i in liberator.util.range(0, historyResult.matchCount))
             comp.push([historyResult.getValueAt(i),
-                       historyResult.getCommentAt(i)]);
+                       historyResult.getCommentAt(i),
+                       historyResult.getImageAt(i)]);
 
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
-        historyCache = comp.map(addIcon);
+        historyCache = comp;
         liberator.commandline.setCompletions(completionCache.concat(historyCache));
     });
 
