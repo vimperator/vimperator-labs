@@ -108,9 +108,9 @@ liberator.CommandLine = function () //{{{
     var statusTimer = new liberator.util.Timer(50, 100, function ()
         liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
     var autocompleteTimer = new liberator.util.Timer(50, 100, function (command) {
-            var res = liberator.completion.ex(command);
-            liberator.commandline.setCompletions(res[1], res[0]);
-        });
+        let res = liberator.completion.ex(command);
+        liberator.commandline.setCompletions(res[1], res[0]);
+    });
 
     // the containing box for the promptWidget and commandWidget
     var commandlineWidget = document.getElementById("liberator-commandline");

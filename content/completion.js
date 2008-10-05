@@ -59,6 +59,7 @@ liberator.Completion = function () //{{{
                                      .getService(Components.interfaces.nsIIOService);
     function getIcon(uri)
     {
+        return;
         try
         {
             let img = faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null));
