@@ -80,12 +80,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
             oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-multiline-output" src="about:blank" flex="1" height="10px" hidden="false" collapsed="false"
+            <iframe id="liberator-multiline-output" src="chrome://muttator/content/buffer.xhtml"
+                flex="1" height="10px" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-completions" src="about:blank" flex="1" height="250px" hidden="false" collapsed="false"
+            <iframe id="liberator-completions" src="chrome://muttator/content/buffer.xhtml"
+                flex="1" height="250px" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 

@@ -46,6 +46,7 @@ liberator.Buffer = function () //{{{
     const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                      .getService(Components.interfaces.nsIConsoleService);
     const sleep = liberator.sleep;
+    const storage = liberator.storage;
     function Styles(name, store, serial)
     {
         const XHTML = "http://www.w3.org/1999/xhtml";
@@ -56,11 +57,22 @@ liberator.Buffer = function () //{{{
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
 
-        let sheets = [];
-        this.__iterator__ = function () Iterator(sheets);
+        let userSheets = [];
+        let systemSheets = [];
 
-        this.addSheet = function (filter, css)
+        this.__iterator__ = function () Iterator(userSheets);
+        this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
+
+        this.__defineGetter__("chromeCSS", function ()
         {
+            let css = [v[1] for ([k, v] in this) if (v[0].indexOf("chrome") >= 0)];
+            return cssUri(css.join("\n/**/\n"));
+        });
+
+        this.addSheet = function (filter, css, system)
+        {
+            let sheets = system ? systemSheets : userSheets;
+
             let errors = checkSyntax(css);
             if (errors.length)
                 return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
@@ -70,11 +82,16 @@ liberator.Buffer = function () //{{{
             filter = filter.split(",");
             sheets.push([filter, css]);
             this.registerSheet(cssUri(wrapCSS(filter, css)));
+
+            if (filter.indexOf("chrome") > -1)
+                storage.fireEvent(name, "chrome-added")
             return null;
         }
 
-        this.removeSheet = function (filter, index)
+        this.removeSheet = function (filter, index, system)
         {
+            let sheets = system ? systemSheets : userSheets;
+
             if (filter == undefined)
                 filter = "";
             /* Find all sheets which match the filter */
@@ -87,15 +104,25 @@ liberator.Buffer = function () //{{{
             else if (index)
                 matches = [m for each (m in matches) if (m[1][1] == index)];
 
+            let foundChrome = false;
             for (let [,[i, sheet]] in Iterator(matches.reverse()))
             {
+                let sites = sheet[0];
                 this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
-                sheet[0] = sheet[0].filter(function (f) f != filter);
+                sheet[0] = sites.filter(function (f) f != filter);
                 if (sheet[0].length && isNaN(filter))
                     this.registerSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
                 else
                     sheets.splice(i, 1);
+                /* Crazy, I know. If we had chrome before, and either we don't have it now, or we've removed
+                 * the whole entry, we've found chrome.
+                 * Perhaps we out to just refresh the chrome stylesheet any time anything is removed.
+                 */
+                if (!foundChrome && sites.indexOf("chrome") > -1 && (sheet[0].indexOf("chrome") == -1 || !isNaN(filter)))
+                    foundChrome = true;
             }
+            if (foundChrome)
+                storage.fireEvent(name, "chrome-removed");
             return true;
         }
 
@@ -184,6 +211,15 @@ liberator.Buffer = function () //{{{
 
     let styles = liberator.storage.newObject("styles", Styles, false);
 
+    let stylesheet = document.createProcessingInstruction("xml-stylesheet", "");
+    document.insertBefore(stylesheet, document.firstChild);
+
+    let chromeObserver = function () { stylesheet.data = 'type="text/css" href="' + styles.chromeCSS + '"' };
+    storage.addObserver("styles", chromeObserver);
+    liberator.registerObserver("shutdown", function () {
+        liberator.storage.removeObserver("styles", chromeObserver)
+    });
+
     /* FIXME: This doesn't belong here. */
     let mainWindowID = liberator.config.mainWindowID || "main-window";
     let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
@@ -192,7 +228,7 @@ liberator.Buffer = function () //{{{
     let name = liberator.config.name.toLowerCase();
     styles.registerSheet("chrome://" + name + "/skin/vimperator.css");
     let error = styles.addSheet("chrome://" + name + "/content/buffer.xhtml",
-        "body { font-size: " + fontSize + "}");
+        "body { font-size: " + fontSize + "}", true);
 
     function setZoom(value, fullZoom)
     {
@@ -862,7 +898,7 @@ liberator.Buffer = function () //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield [feed.title, liberator.util.highlightURL(feed.href, true) + <span style="color: gray;"> ({type})</span>];
+                        yield [feed.title, liberator.util.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
                 }
             }
         }
@@ -1947,10 +1983,10 @@ liberator.template = {
                             <a href="#" class="hl-URL">{item.url}</a>&#160;
                             {
                                 !(item.extra && item.extra.length) ? "" :
-                                <span style="color: gray;">
+                                <span class="extra-info">
                                     ({
                                         liberator.template.map(item.extra, function (e)
-                                        <>{e[0]}: <span style={"color: " + e[2]}>{e[1]}</span></>,
+                                        <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
                                         <![CDATA[ ]]>/* Non-breaking space */)
                                     })
                                 </span>
@@ -1971,7 +2007,7 @@ liberator.template = {
                 {
                     this.map2(elems, function (idx, val)
                     <tr>
-                        <td style="color: blue;">{idx == index ? ">" : ""}</td>
+                        <td class="indicator">{idx == index ? ">" : ""}</td>
                         <td>{Math.abs(idx - index)}</td>
                         <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
                         <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
@@ -1992,7 +2028,7 @@ liberator.template = {
                     <tr>
                         <td>
                             <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
-                            {opt.isDefault || opt.default == null ? "" : <span style="color: gray"> (default: {opt.default})</span>}
+                            {opt.isDefault || opt.default == null ? "" : <span class="extra-info"> (default: {opt.default})</span>}
                         </td>
                     </tr>)
                 }

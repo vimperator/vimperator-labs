@@ -4,3 +4,4 @@ resource vimperator modules/
 locale	 vimperator en-US locale/en-US/
 skin vimperator classic/1.0 skin/
 overlay chrome://browser/content/browser.xul chrome://vimperator/content/vimperator.xul
+

@@ -105,7 +105,7 @@ liberator.CommandLine = function () //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
-    var statusTimer = new liberator.util.Timer(50, 100, function ()
+    var statusTimer = new liberator.util.Timer(51, 100, function ()
         liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
     var autocompleteTimer = new liberator.util.Timer(50, 100, function (command) {
         let res = liberator.completion.ex(command);
@@ -121,7 +121,7 @@ liberator.CommandLine = function () //{{{
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    liberator.util.blankDocument(multilineOutputWidget, "liberator-multiline-output-content");
+    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
 
     var outputContainer = multilineOutputWidget.parentNode;
 
@@ -1193,15 +1193,17 @@ liberator.ItemList = function (id) //{{{
         return;
     }
 
-    var doc;
+    var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
-    liberator.util.blankDocument(iframe, id + "-content");
+    doc.body.id = id + "-content";
 
     var completions = []; // a reference to the Array of completions
-    var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
-    var listIndex = -1;   // listOffset + listIndex = completions[item]
-    var selectedElement = null;
+    var startIndex = -1;  // The index of the first displayed item
+    var endIndex = -1;    // The index one *after* the last displayed item
+    var selIndex = -1;    // The index of the currently selected element
+    var completionBody = null;
+    var completionElements = null;
     var minHeight = 0;
 
     // TODO: temporary, to be changed/removed
@@ -1231,9 +1233,9 @@ liberator.ItemList = function (id) //{{{
             if (completionElements.length == 0)
                 return Math.max(minHeight, doc.height);
 
-            var wanted = Math.min(maxItems + listOffset,
-                                  completionElements.length);
-            minHeight = Math.max(minHeight, completionElements[wanted - 1].getBoundingClientRect().bottom);
+            minHeight = Math.max(minHeight,
+                                 completionElements[completionElements.length - 1]
+                                        .getBoundingClientRect().bottom);
             return minHeight;
         }
 
@@ -1252,37 +1254,33 @@ liberator.ItemList = function (id) //{{{
      */
     function fill(offset)
     {
-        if (listOffset == offset || offset < 0 || offset >= completions.length && completions.length)
+        let diff = offset - startIndex;
+        if (diff == 0 || offset < 0 || completions.length && offset >= completions.length)
             return;
 
-        if (listIndex > -1 && offset == listOffset + 1)
-        {
-            let item = completions[offset + maxItems - 1];
-            listOffset = offset;
-            var row = createRow(item[0], item[1], item[2], true);
-            var e = doc.getElementsByTagName("tbody");
-            e = e[e.length - 1];
+        startIndex = offset;
+        endIndex = Math.min(startIndex + maxItems, completions.length);
 
-            e.removeChild(e.firstChild);
-            e.appendChild(row);
-            completionElements = e.children;
+        if (selIndex > -1 && Math.abs(diff) == 1) /* Scroll one position */
+        {
+            let tbody = completionBody;
+
+            if (diff == 1) /* Scroll down */
+            {
+                let item = completions[endIndex - 1];
+                let row = createRow(item[0], item[1], item[2], true);
+                tbody.removeChild(tbody.firstChild);
+                tbody.appendChild(row);
+            }
+            else /* Scroll up */
+            {
+                let item = completions[offset];
+                let row = createRow(item[0], item[1], item[2], true);
+                tbody.removeChild(tbody.lastChild);
+                tbody.insertBefore(row, tbody.firstChild);
+            }
             return;
         }
-        else if (listIndex > -1 && offset == listOffset - 1)
-        {
-            let item = completions[offset];
-            listOffset = offset;
-            var row = createRow(item[0], item[1], item[2], true);
-            var e = doc.getElementsByTagName("tbody");
-            e = e[e.length - 1];
-
-            e.removeChild(e.lastChild);
-            e.insertBefore(row, e.firstChild);
-            completionElements = e.children;
-            return;
-        }
-
-        listOffset = offset;
 
         // do a full refill of the list:
         doc.body.innerHTML = "";
@@ -1292,18 +1290,20 @@ liberator.ItemList = function (id) //{{{
                       <span class="hl-Title" style="font-weight: bold">Completions:</span>
                       <table width="100%" style="table-layout: fixed; width: 100%"><tbody/></table>
                   </div>;
-        let tbody = div..tbody;
 
-        for (let i in liberator.util.range(offset, Math.min(offset + maxItems,
-                                                            completions.length)))
+        let tbody = div..tbody;
+        for (let i in liberator.util.range(offset, endIndex))
         {
             let elem = completions[i];
             tbody.* += createRow(elem[0], elem[1], elem[2]);
         }
 
-        doc.body.appendChild(liberator.util.xmlToDom(div, doc));
+        let dom = liberator.util.xmlToDom(div, doc);
+        doc.body.appendChild(dom);
 
-        completionElements = doc.getElementsByClassName("compitem");
+        completionBody = dom.getElementsByTagName("tbody")[0];
+        completionElements = completionBody.childNodes;
+
         autoSize();
     }
 
@@ -1332,8 +1332,7 @@ liberator.ItemList = function (id) //{{{
         // if @param selectedItem is given, show the list and select that item
         setItems: function (items, selectedItem)
         {
-            doc = iframe.contentDocument;
-            listOffset = listIndex = -1;
+            startIndex = endIndex = selIndex = -1;
             completions = items || [];
             if (typeof selectedItem == "number")
             {
@@ -1350,37 +1349,31 @@ liberator.ItemList = function (id) //{{{
 
             if (index == -1 || index == completions.length) // wrapped around
             {
-                if (listIndex >= 0)
-                    completionElements[listIndex - listOffset].style.backgroundColor = "";
+                if (selIndex >= 0)
+                    completionElements[selIndex - startIndex].removeAttribute("selected");
                 else // list is shown the first time
                     fill(0);
-
-                listIndex = index;
+                selIndex = -1;
                 return;
             }
 
             // find start index
-            var newOffset = 0;
-            if (index >= listOffset + maxItems - CONTEXT_LINES)
-                newOffset = index - maxItems + CONTEXT_LINES + 1;
-            else if (index <= listOffset + CONTEXT_LINES)
+            let newOffset = startIndex;
+            if (index >= endIndex - CONTEXT_LINES)
+                newOffset = index + CONTEXT_LINES - maxItems + 1;
+            else if (index <= startIndex + CONTEXT_LINES)
                 newOffset = index - CONTEXT_LINES;
-            else
-                newOffset = listOffset;
 
-            if (newOffset + maxItems > completions.length)
-                newOffset = completions.length - maxItems;
-            if (newOffset < 0)
-                newOffset = 0;
+            newOffset = Math.min(newOffset, completions.length - maxItems);
+            newOffset = Math.max(newOffset, 0);
+
+            if (selIndex > -1)
+                completionElements[selIndex - startIndex].removeAttribute("selected");
 
             fill(newOffset);
+            selIndex = index;
+            completionElements[index - startIndex].setAttribute("selected", "true");
 
-            if (selectedElement)
-                selectedElement.removeAttribute("selected");
-            selectedElement = completionElements[index - newOffset];
-            selectedElement.setAttribute("selected", "true");
-
-            listIndex = index;
             return;
         },
 

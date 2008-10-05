@@ -45,16 +45,18 @@ liberator.util = { //{{{
         {
             if (arg !== undefined)
                 this.arg = arg;
+
+            let now = Date.now();
             if (this.doneAt == -1)
                 timer.cancel();
-            else if (Date.now() >= this.doneAt)
+            else if (now >= this.doneAt || now >= this.latest)
                 return this.notify();
 
             let timeout = minInterval;
             if (this.latest)
-                timeout = Math.min(minInterval, this.latest - Date.now());
+                timeout = Math.min(minInterval, this.latest - now);
             else
-                this.latest = Date.now() + maxInterval;
+                this.latest = now + maxInterval;
             timer.initWithCallback(this, timeout, timer.TYPE_ONE_SHOT);
             this.doneAt = -1;
         }
@@ -77,12 +79,6 @@ liberator.util = { //{{{
             yield ary[i];
     },
 
-    blankDocument: function (iframe, bodyId)
-    {
-        iframe.addEventListener("load", function () { iframe.contentDocument.body.setAttribute("id", bodyId) }, true);
-        iframe.setAttribute("src", "chrome://" + liberator.config.name.toLowerCase() + "/content/buffer.xhtml");
-    },
-
     clip: function (str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
@@ -100,22 +96,22 @@ liberator.util = { //{{{
         {
             if (type == "number")
             {
-                return <span style="color: red;">{arg}</span>;
+                return <span class="hl-Number">{arg}</span>;
             }
             else if (type == "string")
             {
                 if (processStrings)
                     arg = <>"{arg.replace(/\n/, "\\n")}"</>;
 
-                return <span style="color: green;">{arg}</span>;
+                return <span class="hl-String">{arg}</span>;
             }
             else if (type == "boolean")
             {
-                return <span style="color: blue;">{arg}</span>;
+                return <span class="hl-Boolean">{arg}</span>;
             }
             else if (arg == null || arg == "undefined")
             {
-                return <span style="color: blue;">{arg}</span>;
+                return <span class="hl-Null">{arg}</span>;
             }
             else if (type == "object" || type == "function")
             {

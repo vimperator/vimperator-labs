@@ -454,9 +454,9 @@ const liberator = (function () //{{{
                                     <tr class="hl-Title" align="left">
                                         <th colspan="3">Code execution summary</th>
                                     </tr>
-                                    <tr><td>  Executed:</td><td align="right"><span style="color: green">{count}</span></td><td>times</td></tr>
-                                    <tr><td>  Average time:</td><td align="right"><span style="color: green">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>  Total time:</td><td align="right"><span style="color: red">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                    <tr><td>  Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
+                                    <tr><td>  Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>  Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
                                 </table>);
                         liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                     }
@@ -683,6 +683,18 @@ const liberator = (function () //{{{
         dump: function (message)
         {
             dump(liberator.config.name.toLowerCase() + ": " + message);
+        },
+
+        dumpStack: function (msg)
+        {
+            try
+            {
+                someStatisticallyImprobableVariableName.foo = 1;
+            }
+            catch (e)
+            {
+                liberator.dump((msg || "") + e.stack);
+            }
         },
 
         // with (liberator) means, liberator is the default namespace "inside" eval
