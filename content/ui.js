@@ -500,12 +500,14 @@ liberator.CommandLine = function () //{{{
         "Display previously given messages",
         function ()
         {
-            // TODO: color messages
-            //     : are all messages single line? Some display an aggregation
+            // TODO: are all messages single line? Some display an aggregation
             //       of single line messages at least. E.g. :source
-            let list = messageHistory.messages.join("\n");
+            let list = <></>;
 
-            liberator.commandline.echo(list);
+            for (let [,message] in Iterator(messageHistory.messages))
+                list += <div class={message.highlight}>{message.msg}</div>;
+
+            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
 
@@ -604,7 +606,7 @@ liberator.CommandLine = function () //{{{
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
             if (flags & this.APPEND_TO_MESSAGES)
-                messageHistory.add(str);
+                messageHistory.add({ msg: str, highlight: highlightGroup });
 
             var where = setLine;
             if (flags & this.FORCE_MULTILINE)
@@ -1321,7 +1323,7 @@ liberator.ItemList = function (id) //{{{
             if (container.collapsed)
             {
                 minHeight = 0;
-                autoSize(); 
+                autoSize();
             }
             container.collapsed = false;
         },
