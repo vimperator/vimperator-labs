@@ -15,7 +15,7 @@ ________________________________________________________________________________
 |gm| +
 ||gm||
 ________________________________________________________________________________
-Redisplay the last command output. Only the most recent commands output is
+Redisplay the last command output. Only the most recent command's output is
 available.
 ________________________________________________________________________________
 

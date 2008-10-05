@@ -7,8 +7,8 @@ Vimperator supports a number of different marks:
 - Bookmarks which allow you to mark a web page as one of your favorites for
   easy access.
 - QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or group of
-  web sites) which you really visit most often
-- Local marks to store the position with a web page
+  web sites) which you visit most often.
+- Local marks to store the position within a web page.
 - History is also a special type of marks, as Vimperator automatically
   remembers sites which you have visited in the past.
 
@@ -29,7 +29,7 @@ The following options are interpreted:
 If [!] is present, a new bookmark is always added. Otherwise, the first
 bookmark matching [url] is updated.
 When creating a new bookmark, if [-title] isn't given, either the web page's
-title or url is used. You can omit the optional [url] argument, so just do
+title or URL is used. You can omit the optional [url] argument, so just do
 [c]:bmark[c] to bookmark the currently loaded web page with a default title and
 without any tags.
 ____________________________________________________________________________
