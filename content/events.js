@@ -1560,15 +1560,15 @@ liberator.Events = function () //{{{
             {
                 var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                             .getService(Components.interfaces.nsIPrefService);
-                  this._branch = prefService.getBranch(""); // better way to monitor all changes?
-                  this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
-                  this._branch.addObserver("", this, false);
+                this._branch = prefService.getBranch(""); // better way to monitor all changes?
+                this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
+                this._branch.addObserver("", this, false);
             },
 
             unregister: function ()
             {
-                if (!this._branch) return;
-                this._branch.removeObserver("", this);
+                if (this._branch)
+                    this._branch.removeObserver("", this);
             },
 
             observe: function (aSubject, aTopic, aData)
@@ -1603,7 +1603,10 @@ liberator.Events = function () //{{{
     catch (e) {}
 
     eventManager.prefObserver.register();
-    liberator.registerCallback("shutdown", 0, eventManager.destroy);
+    liberator.registerObserver("shutdown", function () {
+            eventManager.destroy();
+            eventManager.prefObserver.unregister();
+    });
 
     window.addEventListener("keypress", eventManager.onKeyPress,    true);
     window.addEventListener("keydown",  eventManager.onKeyUpOrDown, true);

@@ -41,6 +41,7 @@ liberator.Bookmarks = function () //{{{
     const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService);
 
+    const storage = liberator.storage;
     function Cache(name, store, serial)
     {
         const properties = { uri: 0, title: 1, keyword: 2, tags: 3, id: 4 };
@@ -140,7 +141,7 @@ liberator.Bookmarks = function () //{{{
                     if (rootFolders.indexOf(findRoot(itemId)) >= 0)
                     {
                         loadBookmark(readBookmark(itemId));
-                        liberator.storage.fireEvent(name, "add", itemId);
+                        storage.fireEvent(name, "add", itemId);
                     }
                 }
             },
@@ -148,7 +149,7 @@ liberator.Bookmarks = function () //{{{
             {
                 // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (deleteBookmark(itemId))
-                    liberator.storage.fireEvent(name, "remove", itemId);
+                    storage.fireEvent(name, "remove", itemId);
             },
             onItemChanged: function (itemId, property, isAnnotation, value)
             {
@@ -162,7 +163,7 @@ liberator.Bookmarks = function () //{{{
                         value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.uri], null, null), {});
                     if (property in properties)
                         bookmark[properties[property]] = value;
-                    liberator.storage.fireEvent(name, "change", itemId);
+                    storage.fireEvent(name, "change", itemId);
                 }
             },
             QueryInterface: function (iid)
@@ -184,7 +185,7 @@ liberator.Bookmarks = function () //{{{
     }
     var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
     liberator.storage.addObserver("bookmark-cache", bookmarkObserver);
-    liberator.registerCallback("shutdown", 0, function () {
+    liberator.registerObserver("shutdown", function () {
         liberator.storage.removeObserver("bookmark-cache", bookmarkObserver)
     });
 

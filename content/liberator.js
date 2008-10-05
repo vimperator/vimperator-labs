@@ -32,7 +32,11 @@ const liberator = (function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const threadManager = Components.classes["@mozilla.org/thread-manager;1"]
+                                    .getService(Components.interfaces.nsIThreadManager);
+
     var callbacks = [];
+    var observers = [];
 
     function loadModule(name, func)
     {
@@ -627,10 +631,24 @@ const liberator = (function () //{{{
             for (let i = 0; i < callbacks.length; i++)
             {
                 var [thistype, thismode, thisfunc] = callbacks[i];
-                if (mode == liberator.modes.NONE || mode == thismode && type == thistype)
+                if (mode == thismode && type == thistype)
                     return thisfunc.call(this, data);
             }
             return false;
+        },
+
+        registerObserver: function (type, callback)
+        {
+            observers.push([type, callback]);
+        },
+
+        triggerObserver: function (type, data)
+        {
+            for (let [,[thistype, callback]] in Iterator(observers))
+            {
+                if (thistype == type)
+                    callback(data);
+            }
         },
 
         beep: function ()
@@ -1181,7 +1199,7 @@ const liberator = (function () //{{{
 
             liberator.storage.saveAll();
 
-            liberator.triggerCallback("shutdown", 0, null);
+            liberator.triggerObserver("shutdown", null);
 
             liberator.dump("All liberator modules destroyed\n");
 
@@ -1190,8 +1208,6 @@ const liberator = (function () //{{{
 
         sleep: function (ms)
         {
-            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
-                                .getService(Components.interfaces.nsIThreadManager);
             var mainThread = threadManager.mainThread;
 
             var then = new Date().getTime(), now = then;

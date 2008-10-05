@@ -174,7 +174,7 @@ liberator.Options = function () //{{{
 
     liberator.storage.newMap("options", false);
     liberator.storage.addObserver("options", optionObserver);
-    liberator.registerCallback("shutdown", 0, function () {
+    liberator.registerObserver("shutdown", function () {
         liberator.storage.removeObserver("options", optionObserver)
     });
 
@@ -252,7 +252,7 @@ liberator.Options = function () //{{{
     if (!/keypress/.test(popupAllowedEvents))
     {
         storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
-        liberator.registerCallback("shutdown", 0, function ()
+        liberator.registerObserver("shutdown", function ()
         {
             if (loadPreference("dom.popup_allowed_events", "")
                     == popupAllowedEvents + " keypress")
@@ -735,7 +735,7 @@ liberator.Options = function () //{{{
 
                     if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
                     {
-                        for (let [,name] in prefArray)
+                        for (let [,name] in Iterator(prefArray))
                         {
                             if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
                             {

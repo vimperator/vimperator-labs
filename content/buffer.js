@@ -45,7 +45,7 @@ liberator.Buffer = function () //{{{
     const util = liberator.util;
     const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                      .getService(Components.interfaces.nsIConsoleService);
-
+    const sleep = liberator.sleep;
     function Styles(name, store, serial)
     {
         const XHTML = "http://www.w3.org/1999/xhtml";
@@ -128,6 +128,8 @@ liberator.Buffer = function () //{{{
         }
 
         let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
+        /* What happens if more than one thread tries to use this? */
+        let testDoc = document.implementation.createDocument(XHTML, "doc", null);
         function checkSyntax(css)
         {
             let errors = [];
@@ -148,23 +150,24 @@ liberator.Buffer = function () //{{{
             try
             {
                 consoleService.registerListener(listener);
-                let doc = document.implementation.createDocument(XHTML, "doc", null);
-                doc.documentElement.appendChild(util.xmlToDom(
-                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, doc));
+                if (testDoc.documentElement.firstChild)
+                    testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
+                testDoc.documentElement.appendChild(util.xmlToDom(
+                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, testDoc));
 
                 while (true)
                 {
                     try
                     {
                         // Throws NS_ERROR_DOM_INVALID_ACCESS_ERR if not finished loading
-                        doc.styleSheets[0].cssRules.length;
+                        testDoc.styleSheets[0].cssRules.length;
                         break;
                     }
                     catch (e)
                     {
                         if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
                             return [e.toString()];
-                        liberator.sleep(10);
+                        sleep(10);
                     }
                 }
             }
