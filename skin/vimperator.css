@@ -54,14 +54,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     /*-moz-appearance: none !important; /* prevent an ugly 3D border */
 }
 
-/* the selected item in listboxes is hardly readable without this */
-#liberator-completion    > listitem[selected="true"] > listcell,
-#liberator-bufferwindow  > listitem[selected="true"] > listcell,
-#liberator-previewwindow > listitem[selected="true"] > listcell {
-   background-color: Highlight !important;
-   color: HighlightText !important;
-}
-
 /* fixes the min-height: 22px from firefox */
 #status-bar, statusbarpanel {
     -moz-appearance: none !important;
