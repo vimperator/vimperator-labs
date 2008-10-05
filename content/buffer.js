@@ -67,7 +67,7 @@ liberator.Buffer = function () //{{{
 
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
-            let filter = filter.split(",");
+            filter = filter.split(",");
             sheets.push([filter, css]);
             this.registerSheet(cssUri(wrapCSS(filter, css)));
             return null;
@@ -101,14 +101,14 @@ liberator.Buffer = function () //{{{
 
         this.registerSheet = function (uri)
         {
-            let uri = ios.newURI(uri, null, null);
+            uri = ios.newURI(uri, null, null);
             if (!sss.sheetRegistered(uri, sss.USER_SHEET))
                 sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
         }
 
         this.unregisterSheet = function (uri)
         {
-            let uri = ios.newURI(uri, null, null);
+            uri = ios.newURI(uri, null, null);
             if (sss.sheetRegistered(uri, sss.USER_SHEET))
                 sss.unregisterSheet(uri, sss.USER_SHEET);
         }
