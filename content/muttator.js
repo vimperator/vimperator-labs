@@ -182,7 +182,7 @@ liberator.config = { //{{{
             // XXX: Hack!
             window.document.addEventListener("load", function ()
             {
-                if (typeof(window.messageWasEditedExternally) == "undefined")
+                if (typeof window.messageWasEditedExternally == "undefined")
                 {
                     window.messageWasEditedExternally = false;
                     GetCurrentEditor().addDocumentStateListener(stateListener);

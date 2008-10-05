@@ -603,7 +603,7 @@ liberator.Events = function () //{{{
                                 return;
 
                         let name = file.leafName.replace(/\.vimp$/i, "");
-                        macros.set(name, liberator.io.readFile(file).split(/\n/)[0]);
+                        macros.set(name, liberator.io.readFile(file).split("\n")[0]);
 
                         liberator.log("Macro " + name + " added: " + macros.get(name), 5);
                     });
@@ -720,7 +720,7 @@ liberator.Events = function () //{{{
             // removeEventListeners() to avoid mem leaks
             liberator.dump("TODO: remove all eventlisteners\n");
 
-            if (typeof(getBrowser) != "undefined")
+            if (typeof getBrowser != "undefined")
                 getBrowser().removeProgressListener(this.progressListener);
 
             window.removeEventListener("popupshown", enterPopupMode, true);

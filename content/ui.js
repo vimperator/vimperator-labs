@@ -768,7 +768,7 @@ liberator.CommandLine = function () //{{{
                     historyIndex = UNINITIALIZED;
 
                     // TODO: call just once, and not on each <Tab>
-                    var wim = liberator.options["wildmode"].split(/,/);
+                    var wim = liberator.options["wildmode"].split(",");
                     var hasList = false;
                     var longest = false;
                     var full = false;
@@ -1333,7 +1333,7 @@ liberator.ItemList = function (id) //{{{
             doc = iframe.contentDocument;
             listOffset = listIndex = -1;
             completions = items || [];
-            if (typeof(selectedItem) == "number")
+            if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);
                 this.show();

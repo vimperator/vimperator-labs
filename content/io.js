@@ -93,23 +93,17 @@ liberator.IO = function () //{{{
     liberator.options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
         "stringlist", cdpath,
-        {
-            setter: function (value) expandPathList(value)
-        });
+        { setter: function (value) expandPathList(value) });
 
     liberator.options.add(["runtimepath", "rtp"],
         "List of directories searched for runtime files",
         "stringlist", runtimepath,
-        {
-            setter: function (value) expandPathList(value)
-        });
+        { setter: function (value) expandPathList(value) });
 
     liberator.options.add(["shell", "sh"],
         "Shell to use for executing :! and :run commands",
         "string", shell,
-        {
-            setter: function (value) liberator.io.expandPath(value)
-        });
+        { setter: function (value) liberator.io.expandPath(value) });
 
     liberator.options.add(["shellcmdflag", "shcf"],
         "Flag passed to shell when executing :! and :run commands",

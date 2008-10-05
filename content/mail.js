@@ -344,7 +344,10 @@ liberator.Mail = function () //{{{
             var to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
             liberator.commandline.open(":", "message " + to + " -subject=", liberator.modes.EX);
           }
-          catch (e) { liberator.beep(); }
+          catch (e)
+          {
+              liberator.beep();
+          }
         });
 
     liberator.mappings.add(modes, ["r"],
@@ -650,7 +653,10 @@ liberator.Mail = function () //{{{
                     messenger.launchExternalURL(getRSSUrl());
                 // TODO: what to do for non-rss message?
             }
-            catch (e) { liberator.beep(); }
+            catch (e)
+            {
+                liberator.beep();
+            }
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1031,7 +1037,7 @@ liberator.Mail = function () //{{{
                           [false, 0, 0],                          // HTML
                           [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML
 
-            if (typeof(value) != "number" || value < 0 || value > 2)
+            if (typeof value != "number" || value < 0 || value > 2)
                 value = 1;
 
             gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", values[value][0]);
