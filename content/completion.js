@@ -59,13 +59,7 @@ liberator.Completion = function () //{{{
                                      .getService(Components.interfaces.nsIIOService);
     function getIcon(uri)
     {
-        return;
-        try
-        {
-            let img = faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null));
-            return img.spec;
-        }
-        catch (e) {}
+        return function () faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
     }
     function addIcon(elem)
     {
@@ -89,7 +83,7 @@ liberator.Completion = function () //{{{
 
     // function uses smartcase
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
-    function buildLongestCommonSubstring(list, filter)
+    function buildLongestCommonSubstring(list, filter, favicon)
     {
         var filtered = [];
 
@@ -113,7 +107,7 @@ liberator.Completion = function () //{{{
                 if (compitem.indexOf(filter) == -1)
                     continue;
 
-                filtered.push([compitem, item[1], item[2]]);
+                filtered.push([compitem, item[1], favicon ? item[2] : null]);
 
                 if (longest)
                 {
@@ -129,7 +123,7 @@ liberator.Completion = function () //{{{
     }
 
     // this function is case sensitive
-    function buildLongestStartingSubstring(list, filter)
+    function buildLongestStartingSubstring(list, filter, favicon)
     {
         var filtered = [];
 
@@ -146,7 +140,7 @@ liberator.Completion = function () //{{{
                 if (compitem.indexOf(filter) != 0)
                     continue;
 
-                filtered.push([compitem, item[1], item[2]]);
+                filtered.push([compitem, item[1], favicon ? item[2] : null]);
 
                 if (longest)
                 {
@@ -191,15 +185,15 @@ liberator.Completion = function () //{{{
 
         // generic filter function, also builds substrings needed
         // for :set wildmode=list:longest, if necessary
-        filter: function (array, filter, matchFromBeginning)
+        filter: function (array, filter, matchFromBeginning, favicon)
         {
             if (!filter)
-                return array;
+                return [[a[0], a[1], favicon ? a[2] : null] for each (a in array)];
 
             if (matchFromBeginning)
-                return buildLongestStartingSubstring(array, filter);
+                return buildLongestStartingSubstring(array, filter, favicon);
             else
-                return buildLongestCommonSubstring(array, filter);
+                return buildLongestCommonSubstring(array, filter, favicon);
         },
 
         autocommand: function (filter)
@@ -300,9 +294,9 @@ liberator.Completion = function () //{{{
             }
 
             if (tail)
-                return [dir.length, buildLongestStartingSubstring(mapped, compl)];
+                return [dir.length, buildLongestStartingSubstring(mapped, compl, true)];
             else
-                return [0, buildLongestStartingSubstring(mapped, filter)];
+                return [0, buildLongestStartingSubstring(mapped, filter, true)];
         },
 
         javascript: function (str)
@@ -394,7 +388,7 @@ liberator.Completion = function () //{{{
         {
             var keywords = [[k[0], k[1], getIcon(k[2])] for each (k in liberator.bookmarks.getKeywords())];
             var engines = liberator.bookmarks.getSearchEngines();
-            return [0, this.filter(engines.concat(keywords), filter)];
+            return [0, this.filter(engines.concat(keywords), filter, false, true)];
         },
 
         // XXX: Move to bookmarks.js?

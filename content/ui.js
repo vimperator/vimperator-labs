@@ -1127,8 +1127,10 @@ liberator.CommandLine = function () //{{{
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
 
+            /* Only hide if not pending.
             if (compl.length == 0)
                 return completionList.hide();
+            */
 
             completionList.setItems(compl);
 
@@ -1198,19 +1200,22 @@ liberator.ItemList = function (id) //{{{
     var listOffset = -1;  // how many items is the displayed list shifted from the internal tab index
     var listIndex = -1;   // listOffset + listIndex = completions[item]
     var selectedElement = null;
+    var minHeight = 0;
 
     // TODO: temporary, to be changed/removed
     function createRow(b, c, a, dom)
     {
         let row =
-            <tr class="liberator-compitem">
-                <td style="width: 16px"/>
-                <td style="width: 45%; overflow: hidden">{b}</td>
-                <td style="color: gray">{c}</td>
+            <tr class="compitem">
+                <td class="favicon"/>
+                <td class="completion">{b}</td>
+                <td class="description">{c}</td>
             </tr>
 
+        if (typeof a == "function")
+            a = a();
         if (a)
-            row.td[0].* = <img width="16px" height="16px" src={a}/>;
+            row.td[0].* = <img src={a}/>;
 
         if (dom)
             return liberator.util.xmlToDom(row, doc);
@@ -1222,11 +1227,12 @@ liberator.ItemList = function (id) //{{{
         function getHeight()
         {
             if (completionElements.length == 0)
-                return doc.height;
+                return Math.max(minHeight, doc.height);
 
             var wanted = Math.min(maxItems + listOffset,
                                   completionElements.length);
-            return completionElements[wanted - 1].getBoundingClientRect().bottom;
+            minHeight = Math.max(minHeight, completionElements[wanted - 1].getBoundingClientRect().bottom);
+            return minHeight;
         }
 
         var height = getHeight();
@@ -1295,7 +1301,7 @@ liberator.ItemList = function (id) //{{{
 
         doc.body.appendChild(liberator.util.xmlToDom(div, doc));
 
-        completionElements = doc.getElementsByClassName("liberator-compitem");
+        completionElements = doc.getElementsByClassName("compitem");
         autoSize();
     }
 
@@ -1307,7 +1313,18 @@ liberator.ItemList = function (id) //{{{
 
         clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
-        show: function () { container.collapsed = false; },
+        show: function ()
+        {
+            /* FIXME: Should only happen with autocomplete,
+             * possibly only with async entries.
+             */
+            if (container.collapsed)
+            {
+                minHeight = 0;
+                autoSize(); 
+            }
+            container.collapsed = false;
+        },
         visible: function () !container.collapsed,
 
         // if @param selectedItem is given, show the list and select that item
@@ -1357,9 +1374,9 @@ liberator.ItemList = function (id) //{{{
             fill(newOffset);
 
             if (selectedElement)
-                selectedElement.style.backgroundColor = "";
+                selectedElement.removeAttribute("selected");
             selectedElement = completionElements[index - newOffset];
-            selectedElement.style.backgroundColor = "yellow";
+            selectedElement.setAttribute("selected", "true");
 
             listIndex = index;
             return;

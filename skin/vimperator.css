@@ -26,6 +26,18 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+@-moz-document
+    url-prefix(chrome://vimperator/),
+    url-prefix(chrome://muttator/) {
+
+.compitem[selected=true] { background-color: yellow; }
+.compitem .favicon { width: 16px; }
+.compitem .favicon img { width: 16px; height: 16px; }
+.compitem .completion { width: 45%; overflow: hidden; }
+.compitem .description { color: gray; }
+
+}
+
 @-moz-document 
     url-prefix(chrome://vimperator/),
     url-prefix(chrome://muttator/),
@@ -49,10 +61,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
    background-color: Highlight !important;
    color: HighlightText !important;
 }
-
-/*.liberator-compitem {
-    min-height: 16px;
-}*/
 
 /* fixes the min-height: 22px from firefox */
 #status-bar, statusbarpanel {
