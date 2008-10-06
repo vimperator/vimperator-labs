@@ -566,7 +566,7 @@ liberator.Mail = function () //{{{
             switch (arg)
             {
                 case "r": MsgMarkMsgAsRead(); break;
-                case "s": MsgMarkMsgAsFlagged(); break;
+                case "s": MsgMarkAsFlagged(); break;
                 case "i": ToggleMessageTagKey(1); break; // Important
                 case "w": ToggleMessageTagKey(2); break; // Work
                 case "p": ToggleMessageTagKey(3); break; // Personal
