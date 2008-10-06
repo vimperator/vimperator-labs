@@ -302,7 +302,7 @@ liberator.config = { //{{{
             "Close the sidebar window",
             function ()
             {
-                if (document.getElementById("sidebar-box").hidden == false)
+                if (!document.getElementById("sidebar-box").hidden)
                     toggleSidebar();
             },
             { argCount: "0" });

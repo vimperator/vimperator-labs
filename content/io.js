@@ -178,13 +178,10 @@ liberator.IO = function () //{{{
         },
         { completer: function (filter) liberator.completion.file(filter, true) });
 
+    // NOTE: this command is only used in :source
     liberator.commands.add(["fini[sh]"],
         "Stop sourcing a script file",
-        function ()
-        {
-            // this command is only used in :source
-            liberator.echoerr("E168: :finish used outside of a sourced file");
-        },
+        function () { liberator.echoerr("E168: :finish used outside of a sourced file"); },
         { argCount: "0" });
 
     liberator.commands.add(["pw[d]"],

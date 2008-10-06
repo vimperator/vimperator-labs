@@ -188,7 +188,10 @@ const liberator = (function () //{{{
                     return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
                 }
             },
-            { bang: true });
+            {
+                argCount: "1",
+                bang: true
+            });
 
         // TODO: move this
         function getMenuItems()
@@ -485,6 +488,7 @@ const liberator = (function () //{{{
                 }
             },
             {
+                argCount: "+",
                 bang: true,
                 completer: function (filter)
                 {

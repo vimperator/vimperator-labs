@@ -675,7 +675,10 @@ liberator.Buffer = function () //{{{
             liberator.options.setPref("print.show_print_progress", spp);
             liberator.echo("Print job sent.");
         },
-        { bang: true });
+        {
+            argCount: "0",
+            bang: true
+        });
 
     liberator.commands.add(["pa[geinfo]"],
         "Show various page information",
@@ -724,7 +727,10 @@ liberator.Buffer = function () //{{{
             //else
             saveDocument(window.content.document, special);
         },
-        { bang: true, });
+        {
+            argCount: "0",
+            bang: true
+        });
 
     liberator.commands.add(["st[op]"],
         "Stop loading",
@@ -795,7 +801,10 @@ liberator.Buffer = function () //{{{
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
         function (args, special) { liberator.buffer.viewSource(args, special); },
-        { bang: true });
+        {
+            argCount: "1",
+            bang: true
+        });
 
     liberator.commands.add(["zo[om]"],
         "Set zoom value of current web page",

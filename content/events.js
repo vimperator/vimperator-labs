@@ -677,14 +677,11 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["delmac[ros]"],
         "Delete macros",
-        function (args)
+        function (args) { liberator.events.deleteMacros(args); },
         {
-            if (!args)
-                liberator.echoerr("E474: Invalid argument");
-            else
-                liberator.events.deleteMacros(args);
-        },
-        { completer: function (filter) liberator.completion.macro(filter) });
+            argCount: "+",  // pattern might contain whitespace
+            completer: function (filter) liberator.completion.macro(filter)
+        });
 
     liberator.commands.add(["macros"],
         "List all macros",
@@ -698,14 +695,11 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["pl[ay]"],
         "Replay a recorded macro",
-        function (args)
+        function (args) { liberator.events.playMacro(args); },
         {
-            if (!args)
-                liberator.echoerr("E474: Invalid argument");
-            else
-                liberator.events.playMacro(args);
-        },
-        { completer: function (filter) liberator.completion.macro(filter) });
+            argCount: "1",
+            completer: function (filter) liberator.completion.macro(filter)
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

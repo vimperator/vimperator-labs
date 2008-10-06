@@ -358,7 +358,10 @@ liberator.Tabs = function () //{{{
             liberator.execute(args);
             liberator.forceNewTab = false;
         },
-        { completer: function (filter) liberator.completion.ex(filter) });
+        {
+            argCount: "+",
+            completer: function (filter) liberator.completion.ex(filter)
+        });
 
     liberator.commands.add(["tabl[ast]", "bl[ast]"],
         "Switch to the last tab",

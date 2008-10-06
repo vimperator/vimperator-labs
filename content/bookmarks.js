@@ -287,11 +287,9 @@ liberator.Bookmarks = function () //{{{
         "Delete a bookmark",
         function (args)
         {
-            var url = args;
-            if (!url)
-                url = liberator.buffer.URL;
+            let url = args || liberator.buffer.URL;
+            let deletedCount = liberator.bookmarks.remove(url);
 
-            var deletedCount = liberator.bookmarks.remove(url);
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", liberator.commandline.FORCE_SINGLELINE);
         },
         { completer: function (filter) [0, liberator.bookmarks.get(filter)] });
