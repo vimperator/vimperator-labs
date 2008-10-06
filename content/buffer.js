@@ -38,7 +38,8 @@ liberator.Buffer = function () //{{{
             "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question", "StatusLine",
             "StatusLineBroken", "StatusLineSecure", "String", "Tag", "Title", "URL",
             "WarningMsg"];
-    const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome"
+    let name = liberator.config.name.toLowerCase();
+    const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
     var highlight = liberator.storage.newMap("highlight", false);
 
@@ -63,7 +64,7 @@ liberator.Buffer = function () //{{{
                               .getService(Components.interfaces.nsIIOService);
         const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Components.interfaces.nsIStyleSheetService);
-        const namespace = "@namespace url(" + XHTML + ");\n" +
+        const namespace = "@namespace html url(" + XHTML + ");\n" +
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
@@ -74,12 +75,6 @@ liberator.Buffer = function () //{{{
         this.__iterator__ = function () Iterator(userSheets.concat(systemSheets));
         this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
         this.__defineGetter__("userSheets", function () Iterator(userSheets));
-
-        this.__defineGetter__("chromeCSS", function ()
-        {
-            let css = [v[1] for ([k, v] in this) if (v[0].indexOf("chrome") >= 0)];
-            return cssUri(namespace + css.join("\n/**/\n"));
-        });
 
         this.addSheet = function (filter, css, system)
         {
@@ -94,9 +89,6 @@ liberator.Buffer = function () //{{{
             filter = filter.split(",");
             sheets.push([filter, css]);
             this.registerSheet(cssUri(wrapCSS(filter, css)));
-
-            if (filter.indexOf("chrome") > -1)
-                storage.fireEvent(name, "chrome-added")
             return null;
         }
 
@@ -116,11 +108,11 @@ liberator.Buffer = function () //{{{
             let matches = [s for (s in Iterator(sheets))
                              if (filter == "" || s[1][0].indexOf(filter) >= 0)];
 
-            if (matches.length == 0 && sheets[Number(filter)])
+            if (matches.length == 0 && sheets[Number(filter)]) /* Match nth sheet */
                 matches.push([filter, sheets[filter]]);
-            else if (!isNaN(index))
+            else if (!isNaN(index)) /* Match nth matching URI */
                 matches = (index < matches.length) ? [matches[index]] : [];
-            else if (index)
+            else if (index) /* Match on CSS */
                 matches = [m for each (m in matches) if (m[1][1] == index)];
 
             let foundChrome = false;
@@ -133,15 +125,7 @@ liberator.Buffer = function () //{{{
                     this.registerSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
                 else
                     sheets.splice(i, 1);
-                /* Crazy, I know. If we had chrome before, and either we don't have it now, or we've removed
-                 * the whole entry, we've found chrome.
-                 * Perhaps we out to just refresh the chrome stylesheet any time anything is removed.
-                 */
-                if (!foundChrome && sites.indexOf("chrome") > -1 && (sheet[0].indexOf("chrome") == -1 || !isNaN(filter)))
-                    foundChrome = true;
             }
-            if (foundChrome)
-                storage.fireEvent(name, "chrome-removed");
             return matches.length;
         }
 
@@ -229,21 +213,11 @@ liberator.Buffer = function () //{{{
 
     let styles = liberator.storage.newObject("styles", Styles, false);
 
-    let stylesheet = document.createProcessingInstruction("xml-stylesheet", "");
-    document.insertBefore(stylesheet, document.childNodes[document.childNodes.length - 1]);
-
-    let chromeObserver = function () { stylesheet.data = 'type="text/css" href="' + styles.chromeCSS + '"' };
-    storage.addObserver("styles", chromeObserver);
-    liberator.registerObserver("shutdown", function () {
-        liberator.storage.removeObserver("styles", chromeObserver)
-    });
-
     /* FIXME: This doesn't belong here. */
     let mainWindowID = liberator.config.mainWindowID || "main-window";
     let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
                                        .getPropertyValue("font-size");
 
-    let name = liberator.config.name.toLowerCase();
     styles.registerSheet("chrome://" + name + "/skin/vimperator.css");
     let error = styles.addSheet("chrome://" + name + "/content/buffer.xhtml",
         "body { font-size: " + fontSize + "; }", true);
@@ -1107,7 +1081,7 @@ liberator.Buffer = function () //{{{
                 return;
             }
 
-            let getCSS = function (style) ".hl-" + class + selectors + " { " + style + " }";
+            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/;|;?$/g, "!important;") + " }";
             let css = getCSS(style);
 
             if (highlight.get(key))
