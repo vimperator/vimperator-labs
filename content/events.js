@@ -701,7 +701,7 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["pl[ay]"],
         "Replay a recorded macro",
-        function (args) { liberator.events.playMacro(args); },
+        function (args) { liberator.events.playMacro(args.arguments[0]); },
         {
             argCount: "1",
             completer: function (filter) liberator.completion.macro(filter)

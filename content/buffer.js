@@ -808,7 +808,7 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { liberator.buffer.viewSource(args, special); },
+        function (args, special) { liberator.buffer.viewSource(args.arguments[0], special); },
         {
             argCount: "1",
             bang: true

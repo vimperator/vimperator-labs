@@ -167,6 +167,8 @@ const liberator = (function () //{{{
             "Open a " + liberator.config.name + " dialog",
             function (args)
             {
+                args = args.arguments[0];
+
                 try
                 {
                     var dialogs = liberator.config.dialogs || [];
@@ -407,6 +409,8 @@ const liberator = (function () //{{{
             "Profile a piece of code or run a command multiple times",
             function (args, special, count)
             {
+                args = args.string;
+
                 try
                 {
                     if (count > 1)

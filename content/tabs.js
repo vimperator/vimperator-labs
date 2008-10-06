@@ -355,7 +355,7 @@ liberator.Tabs = function () //{{{
         function (args)
         {
             liberator.forceNewTab = true;
-            liberator.execute(args);
+            liberator.execute(args.string);
             liberator.forceNewTab = false;
         },
         {
