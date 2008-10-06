@@ -854,7 +854,8 @@ lookup:
             catch (e)
             {
                 let message = "Sourcing file: " + file.path + ": " + e;
-                Components.utils.reportError(message);
+                if (Components.utils.reportError)
+                    Components.utils.reportError(message);
                 if (!silent)
                     liberator.echoerr(message);
             }

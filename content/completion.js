@@ -95,10 +95,9 @@ liberator.Completion = function () //{{{
                                                     : [item[0]];
             for (let [,compitem] in Iterator(complist))
             {
-                if (ignorecase)
-                    compitem = String.toLowerCase(compitem);
+                let str = !ignorecase ? compitem : String(compitem).toLowerCase();
 
-                if (compitem.indexOf(filter) == -1)
+                if (str.indexOf(filter) == -1)
                     continue;
 
                 filtered.push([compitem, item[1], favicon ? item[2] : null]);
@@ -106,9 +105,9 @@ liberator.Completion = function () //{{{
                 if (longest)
                 {
                     if (substrings.length == 0)
-                        buildSubstrings(compitem, filter);
+                        buildSubstrings(str, filter);
                     else
-                        substrings = substrings.filter(function (s) compitem.indexOf(s) >= 0);
+                        substrings = substrings.filter(function (s) str.indexOf(s) >= 0);
                 }
                 break;
             }

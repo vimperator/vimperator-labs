@@ -161,6 +161,11 @@ liberator.util = { //{{{
         return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
     },
 
+    escapeString: function (str)
+    {
+        return '"' + str.replace(/([\\'])/g, "\\$1") + '"';
+    },
+
     // Flatten an array:
     //  [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
     flatten: function (ary)
