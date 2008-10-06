@@ -185,14 +185,12 @@ const liberator = (function () //{{{
                 }
             },
             {
+                argCount: "1",
+                bang: true,
                 completer: function (filter)
                 {
                     return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
                 }
-            },
-            {
-                argCount: "1",
-                bang: true
             });
 
         // TODO: move this
