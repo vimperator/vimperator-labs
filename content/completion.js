@@ -36,6 +36,8 @@ liberator.Completion = function () //{{{
                                       .getService(Components.interfaces.nsIAutoCompleteSearch);
 
     // the completion substrings, used for showing the longest common match
+    var cacheFilter = {};
+    var cacheResults = {};
     var substrings = [];
     var historyCache = [];
     var historyResult = null;
@@ -184,6 +186,17 @@ liberator.Completion = function () //{{{
                 return buildLongestCommonSubstring(array, filter, favicon);
         },
 
+        cached: function (key, filter, generate, method)
+        {
+            let oldFilter = cacheFilter[key];
+            cacheFilter[key] = filter;
+            let results = cacheResults[key];
+            if (!oldFilter || filter.indexOf(oldFilter) != 0)
+                results = generate(filter);
+            cacheResults[key] = this[method].apply(this, [results, filter].concat(Array.splice(arguments, 4)));
+            return cacheResults[key];
+        },
+
         autocommand: function (filter)
         {
             let autoCmds = liberator.config.autocommands;
@@ -288,12 +301,11 @@ liberator.Completion = function () //{{{
 
         javascript: function (str)
         {
-            var matches = str.match(/^(.*?)(\s*\.\s*)?(\w*)$/);
+            var matches = str.match(/^(.*?)((?:\s*\.\s*)?)(\w*)$/);
             var objects = [];
-            var filter = matches[3] || "";
             var start = matches[1].length - 1;
-            var offset = matches[1] ? matches[1].length : 0;
-            offset += matches[2] ? matches[2].length : 0;
+            var offset = matches[1].length + matches[2].length;
+            var filter = matches[3];
 
             if (matches[2])
             {
@@ -338,22 +350,28 @@ liberator.Completion = function () //{{{
             var completions = [];
             try
             {
-                for (let o = 0; o < objects.length; o++)
+                for (let [,object] in Iterator(objects))
                 {
-                    completions = completions.concat(eval(
-                        "var comp = [];" +
-                        "var type = '';" +
-                        "var value = '';" +
-                        "var obj = eval('with (liberator) {" + objects[o] + "}');" +
-                        "for (var i in obj) {" +
-                        "     try { type = typeof(obj[i]); } catch (e) { type = 'unknown type'; };" +
-                        "     if (type == 'number' || type == 'string' || type == 'boolean') {" +
-                        "          value = obj[i];" +
-                        "          comp.push([[i], type + ': ' + value]); }" +
-                        "     else {" +
-                        "          comp.push([[i], type]); }" +
-                        "} comp;"
-                    ));
+                    /* Why the double eval? --Kris */
+                    completions.push(eval(<![CDATA[
+                        let comp = [];
+                        let type = "";
+                        let value = "";
+                        let obj = eval("with (liberator) {" + object + "}");
+                        for (let i in obj)
+                        {
+                            type = "unknown type";
+                            try
+                            {
+                                type = typeof obj[i];
+                            }
+                            catch (e) {};
+                            if (type == "number" || type == "string" || type == "boolean")
+                                type += ": " + obj[i];
+                            comp.push([[i], type]);
+                        }
+                        comp;
+                    ]]>.toString()));
                 }
             }
             catch (e)
@@ -361,7 +379,7 @@ liberator.Completion = function () //{{{
                 completions = [];
             }
 
-            return [offset, buildLongestStartingSubstring(completions, filter)];
+            return [offset, buildLongestStartingSubstring(liberator.util.flatten(completions), filter)];
         },
 
         macro: function (filter)
@@ -373,9 +391,11 @@ liberator.Completion = function () //{{{
 
         search: function (filter)
         {
-            var keywords = [[k[0], k[1], k[3]] for each (k in liberator.bookmarks.getKeywords())];
-            var engines = liberator.bookmarks.getSearchEngines();
-            return [0, this.filter(engines.concat(keywords), filter, false, true)];
+            let results = this.cached("search", filter,
+                function () Array.concat(liberator.bookmarks.getKeywords().map(function (k) [k[0], k[1], k[3]]),
+                                         liberator.bookmarks.getSearchEngines()),
+                "filter", false, true);
+            return [0, results];
         },
 
         // XXX: Move to bookmarks.js?
@@ -466,7 +486,6 @@ liberator.Completion = function () //{{{
             }
 
             var cpt = complete || liberator.options["complete"];
-            var autoCompletions = liberator.options["wildoptions"].indexOf("auto") >= 0;
             var suggestEngineAlias = liberator.options["suggestengines"] || "google";
             // join all completion arrays together
             for (let c in liberator.util.arrayIter(cpt))
@@ -477,9 +496,9 @@ liberator.Completion = function () //{{{
                     completions.push(this.file(filter, false)[1]);
                 else if (c == "S")
                     completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
-                else if (c == "b" && !autoCompletions)
+                else if (c == "b")
                     completions.push(liberator.bookmarks.get(filter).map(function (a) [a[0], a[1], a[5]]));
-                else if (c == "h" && !autoCompletions)
+                else if (c == "h")
                     completions.push(liberator.history.get(filter));
                 else if (c == "l") // add completions like Firefox's smart location bar
                 {

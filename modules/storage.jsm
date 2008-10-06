@@ -107,11 +107,7 @@ function ObjectStore(name, store, data)
         object = {};
     };
 
-    this.__iterator__ = function ()
-    {
-        for (let key in object)
-            yield [key, object[key]];
-    };
+    this.__iterator__ = function () Iterator(object);
 }
 ObjectStore.prototype = prototype;
 
@@ -170,11 +166,7 @@ function ArrayStore(name, store, data)
         return index >= 0 ? array[index] : array[array.length + index];
     };
 
-    this.__iterator__ = function ()
-    {
-        for (let i = 0; i < array.length; i++)
-            yield [i, array[i]];
-    };
+    this.__iterator__ = function () Iterator(array);
 }
 ArrayStore.prototype = prototype;
 
@@ -208,9 +200,8 @@ var storage = {
     {
         if (!(key in observers))
             observers[key] = [];
-        if (observers[key].indexOf(callback) >= 0)
-            return;
-        observers[key].push(callback);
+        if (observers[key].indexOf(callback) == -1)
+            observers[key].push(callback);
     },
 
     removeObserver: function (key, callback)

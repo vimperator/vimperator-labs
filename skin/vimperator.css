@@ -26,18 +26,53 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/* Applied to all content */
+.liberator-frame-indicator {
+    -moz-binding: url(chrome://vimperator/content/bindings.xml#frame);
+}
+
+#liberator-frame-indicator {
+    background-color: red;
+    opacity: 0.5;
+    z-index: 999
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Applied only to completion buffer and MOW */
 @-moz-document
     url-prefix(chrome://vimperator/),
     url-prefix(chrome://muttator/) {
 
+*:-moz-loading, *:-moz-broken { display: none !important; }
+
 .compitem[selected=true] { background-color: yellow; }
-.compitem .favicon { width: 16px; }
-.compitem .favicon img { width: 16px; height: 16px; }
-.compitem .completion { width: 45%; overflow: hidden; }
-.compitem .description { color: gray; }
+.compitem > .favicon { width: 16px; }
+.compitem > .favicon > img { width: 16px; height: 16px; }
+.compitem > .completion { width: 45%; overflow: hidden; }
+.compitem > .description { color: gray; }
+
+.extra-info { color: gray; }
+
+.times-executed, .time-average { color: green; }
+.time-total { color: red; }
+
+.indicator  { color: blue; }
+
+.hl-Number  { color: red; }
+.hl-String  { color: green; }
+.hl-Boolean { color: blue; }
+.hl-Null    { color: blue; }
+
+.hl-Keyword { color: red; }
+.hl-Tag     { color: blue; }
 
 }
 
+/* Applied to completion buffer, MOW, browser window */
 @-moz-document 
     url-prefix(chrome://vimperator/),
     url-prefix(chrome://muttator/),

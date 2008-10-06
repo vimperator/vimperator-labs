@@ -311,7 +311,8 @@ liberator.Bookmarks = function () //{{{
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
-            return liberator.completion.filterURLArray(cache.bookmarks, filter, tags);
+            return liberator.completion.cached(cache.bookmarks, filter, function () cache.bookmarks,
+                                            "filterURLArray", tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
@@ -709,8 +710,8 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
-            return liberator.completion.filterURLArray(cachedHistory, filter).concat(
-                   liberator.completion.filterURLArray(history, filter));
+            return liberator.completion.cached("history", filter, function() cachedHistory.concat(history),
+                                "filterURLArray");
         },
 
         // the history is automatically added to the Places global history

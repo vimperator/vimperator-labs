@@ -37,9 +37,9 @@ liberator.util = { //{{{
         this.notify = function (aTimer)
         {
             timer.cancel();
-            this.doneAt = Date.now() + minInterval;
             this.latest = 0;
             callback(this.arg);
+            this.doneAt = Date.now() + minInterval;
         }
         this.tell = function (arg)
         {
@@ -49,7 +49,7 @@ liberator.util = { //{{{
             let now = Date.now();
             if (this.doneAt == -1)
                 timer.cancel();
-            else if (now >= this.doneAt || now >= this.latest)
+            else if (now >= this.doneAt || this.latest && now >= this.latest)
                 return this.notify();
 
             let timeout = minInterval;

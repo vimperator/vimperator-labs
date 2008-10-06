@@ -105,9 +105,9 @@ liberator.CommandLine = function () //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
-    var statusTimer = new liberator.util.Timer(51, 100, function ()
+    var statusTimer = new liberator.util.Timer(5, 100, function ()
         liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
-    var autocompleteTimer = new liberator.util.Timer(50, 100, function (command) {
+    var autocompleteTimer = new liberator.util.Timer(201, 300, function (command) {
         let res = liberator.completion.ex(command);
         liberator.commandline.setCompletions(res[1], res[0]);
     });

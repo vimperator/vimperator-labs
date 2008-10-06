@@ -49,6 +49,7 @@ const liberator = (function () //{{{
         }
         catch (e)
         {
+            toJavaScriptConsole();
             Components.utils.reportError(e);
             liberator.dump(e + "\n");
         }
