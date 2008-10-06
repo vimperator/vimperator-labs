@@ -52,18 +52,18 @@ liberator.Buffer = function () //{{{
      * they're members of the window object, which disappear
      * with this window.
      */
-    const util = liberator.util;
-    const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                     .getService(Components.interfaces.nsIConsoleService);
-    const sleep = liberator.sleep;
-    const storage = liberator.storage;
     function Styles(name, store, serial)
     {
-        const XHTML = "http://www.w3.org/1999/xhtml";
+        const xmlToDom = liberator.util.xmlToDom;
+        const sleep = liberator.sleep;
+        const storage = liberator.storage;
+        const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                         .getService(Components.interfaces.nsIConsoleService);
         const ios = Components.classes["@mozilla.org/network/io-service;1"]
                               .getService(Components.interfaces.nsIIOService);
         const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Components.interfaces.nsIStyleSheetService);
+        const XHTML = "http://www.w3.org/1999/xhtml";
         const namespace = "@namespace html url(" + XHTML + ");\n" +
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
 
@@ -76,13 +76,16 @@ liberator.Buffer = function () //{{{
         this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
         this.__defineGetter__("userSheets", function () Iterator(userSheets));
 
-        this.addSheet = function (filter, css, system)
+        this.addSheet = function (filter, css, system, force)
         {
             let sheets = system ? systemSheets : userSheets;
 
-            let errors = checkSyntax(css);
-            if (errors.length)
-                return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
+            if (!force)
+            {
+                let errors = checkSyntax(css);
+                if (errors.length)
+                    return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
+            }
 
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
@@ -104,7 +107,7 @@ liberator.Buffer = function () //{{{
             if (filter == undefined)
                 filter = "";
 
-            /* Find all sheets which match the filter */
+            /* Find all sheets with URIs matching the filter */
             let matches = [s for (s in Iterator(sheets))
                              if (filter == "" || s[1][0].indexOf(filter) >= 0)];
 
@@ -181,7 +184,7 @@ liberator.Buffer = function () //{{{
                 consoleService.registerListener(listener);
                 if (testDoc.documentElement.firstChild)
                     testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
-                testDoc.documentElement.appendChild(util.xmlToDom(
+                testDoc.documentElement.appendChild(xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={cssUri(namespace + css)}/></head></html>, testDoc));
 
                 while (true)
@@ -739,20 +742,23 @@ liberator.Buffer = function () //{{{
 
     liberator.commands.add(["sty[le]"],
         "Add or list user styles",
-        function (args)
+        function (args, special)
         {
             let [, filter, css] = args.match(/(\S+)\s*((?:.|\n)*)/) || [];
             if (!css)
             {
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([i, style[0].join(","), style[1]] for ([i, style] in styles.userSheets)
-                                             if (!filter || style[0].indexOf(filter) >= 0)));
+                    ([i,
+                      style[0].join(","),
+                      style[1]]
+                     for ([i, style] in styles.userSheets)
+                     if (!filter || style[0].indexOf(filter) >= 0)));
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
             else
             {
-                let err = styles.addSheet(filter, css);
+                let err = styles.addSheet(filter, css, false, special);
                 if (err)
                     liberator.echoerr(err);
             }
@@ -764,6 +770,7 @@ liberator.Buffer = function () //{{{
                     .concat([[s, ""] for each (s in styles.sites)])
                 , filter)],
             hereDoc: true,
+            bang: true,
         });
 
     liberator.commands.add(["dels[tyle]"],
@@ -790,7 +797,7 @@ liberator.Buffer = function () //{{{
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 return;
             }
-            liberator.buffer.highlight(key, css);
+            liberator.buffer.highlight(key, css, special);
         },
         {
             completer: function (filter) [0, liberator.completion.filter([[v, ""] for ([k, v] in Iterator(highlightClasses))], filter)],
@@ -1080,7 +1087,7 @@ liberator.Buffer = function () //{{{
 
         addPageInfoSection: addPageInfoSection,
 
-        highlight: function (key, style)
+        highlight: function (key, style, force)
         {
             let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
@@ -1090,7 +1097,7 @@ liberator.Buffer = function () //{{{
                 return;
             }
 
-            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/;|;?$/g, "!important;") + " }";
+            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/(?:!\s*important\s*)?;|(?:!\s*important\s*)?;?$/g, "!important;") + " }";
             let css = getCSS(style);
             liberator.log("css: " + css);
 
@@ -1100,7 +1107,7 @@ liberator.Buffer = function () //{{{
             if (/^\s*$/.test(style))
                 return highlight.remove(key);
 
-            let error = styles.addSheet(highlightDocs, css, true);
+            let error = styles.addSheet(highlightDocs, css, true, force);
             if (error)
                 liberator.echoerr(error);
             else
