@@ -40,11 +40,13 @@ liberator.Bookmarks = function () //{{{
                                        .getService(Components.interfaces.nsIBrowserSearchService);
     const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService);
+    const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                                       .getService(Components.interfaces.nsIFaviconService);
 
     const storage = liberator.storage;
     function Cache(name, store, serial)
     {
-        const properties = { uri: 0, title: 1, keyword: 2, tags: 3, id: 4 };
+        const properties = { uri: 0, title: 1, keyword: 2, tags: 3, id: 4, icon: 5 };
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
 
         var bookmarks = [];
@@ -55,15 +57,17 @@ liberator.Bookmarks = function () //{{{
         this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks; });
 
         this.__defineGetter__("keywords",
-            function () [[k[2], k[1], k[0]] for each (k in self.bookmarks) if (k[2])]);
+            function () [[k[2], k[1], k[0], k[5]] for each (k in self.bookmarks) if (k[2])]);
 
         this.__iterator__ = function () (val for each (val in self.bookmarks));
 
         function loadBookmark(node)
         {
-            var keyword = bookmarksService.getKeywordForBookmark(node.itemId);
-            var tags = taggingService.getTagsForURI(ioService.newURI(node.uri, null, null), {});
-            bookmarks.push([node.uri, node.title, keyword, tags, node.itemId]);
+            let uri = ioService.newURI(node.uri, null, null);
+            let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
+            let tags = taggingService.getTagsForURI(uri, {}) || [];
+            let icon = faviconService.getFaviconImageForPage(uri).spec;
+            bookmarks.push([node.uri, node.title, keyword, tags, node.itemId, icon]);
         }
 
         function readBookmark(id)
@@ -502,8 +506,8 @@ liberator.Bookmarks = function () //{{{
                 {
                     url:   item[0],
                     title: item[1],
-                    extra: [['keyword', item[2],                  "hl-Keyword"],
-                            ['tags',    (item[3]||[]).join(', '), "hl-Tag"]].filter(function (i) i[1])
+                    extra: [['keyword', item[2],            "hl-Keyword"],
+                            ['tags',    item[3].join(', '), "hl-Tag"]].filter(function (i) i[1])
                 } for each (item in items)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
@@ -519,6 +523,14 @@ liberator.History = function () //{{{
 
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                      .getService(Components.interfaces.nsINavHistoryService);
+    const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
+                                       .getService(Components.interfaces.nsIIOService);
+    const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                                       .getService(Components.interfaces.nsIFaviconService);
+    function getIcon(uri)
+    {
+        return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
+    }
 
     var history = [];
     var cachedHistory = []; // add pages here after loading the initial Places history
@@ -545,7 +557,7 @@ liberator.History = function () //{{{
             var node = rootNode.getChild(i);
             //liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                history.push([node.uri, node.title || "[No title]"]);
+                history.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
         }
 
         // close a container after using it!
@@ -717,7 +729,7 @@ liberator.History = function () //{{{
             else
                 cachedHistory = cachedHistory.filter(function (elem) elem[0] != url);
 
-            cachedHistory.unshift([url, title || "[No title]"]);
+            cachedHistory.unshift([url, title || "[No title]", getIcon(url)]);
             return true;
         },
 

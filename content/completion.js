@@ -54,19 +54,6 @@ liberator.Completion = function () //{{{
         liberator.commandline.setCompletions(completionCache.concat(historyCache));
     });
 
-    const faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                                     .getService(Components.interfaces.nsIFaviconService);
-    const ioService      = Components.classes["@mozilla.org/network/io-service;1"]
-                                     .getService(Components.interfaces.nsIIOService);
-    function getIcon(uri)
-    {
-        return function () faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
-    }
-    function addIcon(elem)
-    {
-        return [elem[0], elem[1], getIcon(elem[0])];
-    }
-
     function buildSubstrings(str, filter)
     {
         if (filter == "")
@@ -286,8 +273,7 @@ liberator.Completion = function () //{{{
                 }
 
                 mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
-                                                    file.isDirectory() ? "Directory" : "File",
-                                                    getIcon("file://" + file.path)]);
+                                                    file.isDirectory() ? "Directory" : "File"]);
             }
             catch (e)
             {
@@ -387,7 +373,7 @@ liberator.Completion = function () //{{{
 
         search: function (filter)
         {
-            var keywords = [[k[0], k[1], getIcon(k[2])] for each (k in liberator.bookmarks.getKeywords())];
+            var keywords = [[k[0], k[1], k[3]] for each (k in liberator.bookmarks.getKeywords())];
             var engines = liberator.bookmarks.getSearchEngines();
             return [0, this.filter(engines.concat(keywords), filter, false, true)];
         },
@@ -492,9 +478,9 @@ liberator.Completion = function () //{{{
                 else if (c == "S")
                     completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b" && !autoCompletions)
-                    completions.push(liberator.bookmarks.get(filter).map(addIcon));
+                    completions.push(liberator.bookmarks.get(filter).map(function (a) [a[0], a[1], a[5]]));
                 else if (c == "h" && !autoCompletions)
-                    completions.push(liberator.history.get(filter).map(addIcon));
+                    completions.push(liberator.history.get(filter));
                 else if (c == "l") // add completions like Firefox's smart location bar
                 {
                     completionService.startSearch(filter, "", historyResult, {
