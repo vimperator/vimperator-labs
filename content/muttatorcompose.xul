@@ -89,7 +89,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
         </statusbar>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-multiline-output" "chrome://muttator/content/buffer.xhtml"
+            <iframe id="liberator-multiline-output" src="chrome://muttator/content/buffer.xhtml"
                 flex="1" height="10px" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
