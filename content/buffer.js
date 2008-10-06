@@ -48,6 +48,7 @@ liberator.Buffer = function () //{{{
 
     const arrayIter = liberator.util.arrayIter;
 
+    const util = liberator.util;
     function Styles(name, store, serial)
     {
         /* Can't reference liberator or Components inside Styles --
@@ -56,7 +57,6 @@ liberator.Buffer = function () //{{{
          */
         const sleep = liberator.sleep;
         const storage = liberator.storage;
-        const xmlToDom = liberator.util.xmlToDom;
         const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                          .getService(Components.interfaces.nsIConsoleService);
         const ios = Components.classes["@mozilla.org/network/io-service;1"]
@@ -185,7 +185,7 @@ liberator.Buffer = function () //{{{
                 consoleService.registerListener(listener);
                 if (testDoc.documentElement.firstChild)
                     testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
-                testDoc.documentElement.appendChild(xmlToDom(
+                testDoc.documentElement.appendChild(util.xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
 
                 while (true)
