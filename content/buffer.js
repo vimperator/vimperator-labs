@@ -212,7 +212,7 @@ liberator.Buffer = function () //{{{
     let styles = liberator.storage.newObject("styles", Styles, false);
 
     let stylesheet = document.createProcessingInstruction("xml-stylesheet", "");
-    document.insertBefore(stylesheet, document.firstChild);
+    document.insertBefore(stylesheet, document.childNodes[document.childNodes.length - 1]);
 
     let chromeObserver = function () { stylesheet.data = 'type="text/css" href="' + styles.chromeCSS + '"' };
     storage.addObserver("styles", chromeObserver);
