@@ -491,12 +491,12 @@ liberator.Buffer = function () //{{{
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["]]"],
-        "Follow a link labeled to 'next' or '>' if it exists",
+        "Follow the link labeled 'next' or '>' if it exists",
         function (count) { liberator.buffer.followDocumentRelationship("next"); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["[["],
-        "Follow a link labeled to 'prev', 'previous' or '<' if it exists",
+        "Follow the link labeled 'prev', 'previous' or '<' if it exists",
         function (count) { liberator.buffer.followDocumentRelationship("previous"); },
         { flags: liberator.Mappings.flags.COUNT });
 
@@ -1073,7 +1073,9 @@ liberator.Buffer = function () //{{{
 
         highlight: function (key, style)
         {
+liberator.log("key: " + key + ", style: " + style);
             let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
+liberator.log("class: " + class + ", selectors: " + selectors);
 
             if (highlightClasses.indexOf(class) == -1)
             {
@@ -1083,6 +1085,7 @@ liberator.Buffer = function () //{{{
 
             let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/;|;?$/g, "!important;") + " }";
             let css = getCSS(style);
+            liberator.log("css: " + css);
 
             if (highlight.get(key))
                 styles.removeSheet(highlightDocs, getCSS(highlight.get(key)), true);

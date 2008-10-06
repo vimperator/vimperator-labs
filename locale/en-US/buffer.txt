@@ -193,18 +193,18 @@ ________________________________________________________________________________
 |]]| +
 ||[count]]]||
 ________________________________________________________________________________
-Open link labeled with "next" or ">".  Useful when browsing forums or
-documentation. Change 'nextpattern' to modify its behavior. It follows
-relations between files too.
+Follow the link labeled \'next' or \'>' if it exists. Useful when browsing
+forums or documentation. Change 'nextpattern' to modify its behavior. It
+follows relations between files too.
 ________________________________________________________________________________
 
 
 |[[| +
 ||[count][[||
 ________________________________________________________________________________
-Open link labeled with "prev", "previous" or "<".  Useful when browsing forums
-or documentation. Change 'previouspattern' to modify its behavior. It follows
-relations between files too.
+Follow the link labeled \'prev', \'previous' or \'<' if it exists. Useful when
+browsing forums or documentation. Change 'previouspattern' to modify its
+behavior. It follows relations between files too.
 ________________________________________________________________________________
 
 section:Zooming[zooming]

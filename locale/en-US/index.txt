@@ -82,8 +82,8 @@ section:Normal{nbsp}mode[normal-index]
 
 ||]f|| Focus next frame +
 ||[f|| Focus previous frame +
-||]]|| Follow a link labeled to 'next' or '>' if it exists +
-||[[|| Follow a link labeled to 'prev', 'previous' or '<' if it exists +
+||]]|| Follow the link labeled \'next' or \'>' if it exists +
+||[[|| Follow the link labeled \'prev', \'previous' or \'<' if it exists +
 
 ||g$|| Go to the last tab +
 ||g0|| Go to the first tab +
