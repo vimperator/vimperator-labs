@@ -345,10 +345,7 @@ liberator.config = { //{{{
 
         liberator.commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
-            function ()
-            {
-                window.close();
-            },
+            function () { window.close(); },
             { argCount: "0" });
 
         liberator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],

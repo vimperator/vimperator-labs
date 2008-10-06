@@ -678,11 +678,14 @@ liberator.Mail = function () //{{{
             else
                 SelectFolder(folder.URI);
         },
-        { completer: function (filter) getFolderCompletions(filter) });
+        {
+            completer: function (filter) getFolderCompletions(filter),
+            count: true
+        });
 
     liberator.commands.add(["m[essage]"],
         "Write a new message",
-        function (args, special, count)
+        function (args)
         {
             var mailargs = {};
             mailargs.to =          args.arguments.join(", ");

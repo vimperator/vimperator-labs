@@ -492,7 +492,8 @@ const liberator = (function () //{{{
                         return liberator.completion.ex(filter);
                     else
                         return liberator.completion.javascript(filter);
-                }
+                },
+                count: true
             });
 
         liberator.commands.add(["ve[rsion]"],
@@ -710,34 +711,34 @@ const liberator = (function () //{{{
             if (/^\s*("|$)/.test(str))
                 return;
 
-            if (!modifiers)
-                modifiers = {};
+            modifiers = modifiers || {};
 
-            var [count, cmd, special, args] = liberator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
-            var command = liberator.commands.get(cmd);
+            let err = null;
+            let [count, cmd, special, args] = liberator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
+            let command = liberator.commands.get(cmd);
 
             if (command === null)
             {
-                liberator.echoerr("E492: Not a browser command: " + str);
+                err = "E492: Not a browser command: " + str;
                 liberator.focusContent();
-                return;
             }
-
-            // TODO: need to perform this test? -- djk
-            if (command.action === null)
+            else if (command.action === null)
             {
-                liberator.echoerr("E666: Internal error: command.action === null");
-                return;
+                err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
             }
-
-            if (special && !command.bang)
+            else if (count != -1 && !command.count)
             {
-                liberator.echoerr("E477: No ! allowed");
-                return;
+                err = "E481: No range allowed";
+            }
+            else if (special && !command.bang)
+            {
+                err = "E477: No ! allowed";
             }
 
-            // valid command, call it:
-            command.execute(args, special, count, modifiers);
+            if (!err)
+                command.execute(args, special, count, modifiers);
+            else
+                liberator.echoerr(err);
         },
 
         // TODO: move to liberator.buffer.focus()?

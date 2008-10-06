@@ -628,7 +628,8 @@ liberator.History = function () //{{{
                         completions.push([url, title]);
                 }
                 return [0, completions];
-            }
+            },
+            count: true
         });
 
     liberator.commands.add(["fo[rward]", "fw"],
@@ -675,7 +676,8 @@ liberator.History = function () //{{{
                         completions.push([url, title]);
                 }
                 return [0, completions];
-            }
+            },
+            count: true
         });
 
     liberator.commands.add(["hist[ory]", "hs"],

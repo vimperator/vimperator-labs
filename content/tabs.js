@@ -345,6 +345,7 @@ liberator.Tabs = function () //{{{
         },
         {
             bang: true,
+            count: true,
             completer: function (filter) liberator.completion.buffer(filter)
         });
 
@@ -385,7 +386,8 @@ liberator.Tabs = function () //{{{
             {
                 liberator.tabs.select("-1", true);
             }
-        });
+        },
+        { count: true });
 
     // TODO: "Zero count" if 0 specified as arg
     liberator.commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
@@ -423,7 +425,8 @@ liberator.Tabs = function () //{{{
             {
                 liberator.tabs.select("+1", true);
             }
-        });
+        },
+        { count: true });
 
     liberator.commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
         "Switch to the first tab",
@@ -457,6 +460,7 @@ liberator.Tabs = function () //{{{
             },
             {
                 bang: true,
+                count: true,
                 completer: function (filter) liberator.completion.buffer(filter)
             });
 
@@ -528,11 +532,8 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["tabde[tach]"],
             "Detach current tab to its own window",
-            function (args, special, count) { liberator.tabs.detachTab(null); },
-            {
-                argCount: "0",
-                bang: true
-            });
+            function () { liberator.tabs.detachTab(null); },
+            { argCount: "0" });
 
         liberator.commands.add(["tabd[uplicate]"],
             "Duplicate current tab",
@@ -552,7 +553,8 @@ liberator.Tabs = function () //{{{
             },
             {
                 argCount: "0",
-                bang: true
+                bang: true,
+                count: true
             });
     }
 
@@ -598,7 +600,8 @@ liberator.Tabs = function () //{{{
                             completions.push([url, title]);
                     }
                     return [0, completions];
-                }
+                },
+                count: true
             });
 
         liberator.commands.add(["undoa[ll]"],
@@ -624,7 +627,8 @@ liberator.Tabs = function () //{{{
             },
             {
                 argCount: "0",
-                bang: true
+                bang: true,
+                count: true
             });
 
         liberator.commands.add(["wqa[ll]", "wq", "xa[ll]"],

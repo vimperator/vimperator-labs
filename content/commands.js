@@ -79,6 +79,7 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.hereDoc     = extraInfo.hereDoc || false;
     this.options     = extraInfo.options || [];
     this.bang        = extraInfo.bang || false;
+    this.count       = extraInfo.count || false;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
     this.replacementText = extraInfo.replacementText || null;

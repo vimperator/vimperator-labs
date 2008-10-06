@@ -390,6 +390,7 @@ liberator.Options = function () //{{{
         },
         {
             bang: true,
+            count: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_LOCAL });
@@ -405,6 +406,7 @@ liberator.Options = function () //{{{
         },
         {
             bang: true,
+            count: true,
             completer: function (filter, special, count)
             {
                 return liberator.commands.get("set").completer(filter, special, count, { scope: liberator.options.OPTION_SCOPE_GLOBAL });
