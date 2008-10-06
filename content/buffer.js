@@ -48,15 +48,15 @@ liberator.Buffer = function () //{{{
 
     const arrayIter = liberator.util.arrayIter;
 
-    /* Can't reference liberator or Components inside Styles --
-     * they're members of the window object, which disappear
-     * with this window.
-     */
     function Styles(name, store, serial)
     {
-        const xmlToDom = liberator.util.xmlToDom;
+        /* Can't reference liberator or Components inside Styles --
+         * they're members of the window object, which disappear
+         * with this window.
+         */
         const sleep = liberator.sleep;
         const storage = liberator.storage;
+        const xmlToDom = liberator.util.xmlToDom;
         const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                          .getService(Components.interfaces.nsIConsoleService);
         const ios = Components.classes["@mozilla.org/network/io-service;1"]
@@ -164,6 +164,7 @@ liberator.Buffer = function () //{{{
         let testDoc = document.implementation.createDocument(XHTML, "doc", null);
         function checkSyntax(css)
         {
+            let uri = cssUri(namespace + css);
             let errors = [];
             let listener = {
                 QueryInterface: queryinterface,
@@ -172,7 +173,7 @@ liberator.Buffer = function () //{{{
                     try
                     {
                         message = message.QueryInterface(Components.interfaces.nsIScriptError);
-                        if (message.sourceName.indexOf("data:text/css,") == 0)
+                        if (message.sourceName == uri)
                             errors.push(message.errorMessage);
                     }
                     catch (e) {}
@@ -185,7 +186,7 @@ liberator.Buffer = function () //{{{
                 if (testDoc.documentElement.firstChild)
                     testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
                 testDoc.documentElement.appendChild(xmlToDom(
-                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(namespace + css)}/></head></html>, testDoc));
+                        <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
 
                 while (true)
                 {
@@ -1097,9 +1098,8 @@ liberator.Buffer = function () //{{{
                 return;
             }
 
-            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/(?:!\s*important\s*)?;|(?:!\s*important\s*)?;?$/g, "!important;") + " }";
+            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/(?:!\s*important\s*)?(?:;|;?$)/g, "!important;") + " }";
             let css = getCSS(style);
-            liberator.log("css: " + css);
 
             if (highlight.get(key))
                 styles.removeSheet(highlightDocs, getCSS(highlight.get(key)), true);
