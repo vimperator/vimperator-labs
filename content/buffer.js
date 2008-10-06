@@ -63,6 +63,8 @@ liberator.Buffer = function () //{{{
                               .getService(Components.interfaces.nsIIOService);
         const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Components.interfaces.nsIStyleSheetService);
+        const namespace = "@namespace url(" + XHTML + ");\n" +
+                          "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
 
@@ -76,7 +78,7 @@ liberator.Buffer = function () //{{{
         this.__defineGetter__("chromeCSS", function ()
         {
             let css = [v[1] for ([k, v] in this) if (v[0].indexOf("chrome") >= 0)];
-            return cssUri(css.join("\n/**/\n"));
+            return cssUri(namespace + css.join("\n/**/\n"));
         });
 
         this.addSheet = function (filter, css, system)
@@ -160,14 +162,13 @@ liberator.Buffer = function () //{{{
         function wrapCSS(filter, css)
         {
             if (filter[0] == "*")
-                return "@namespace url(" + XHTML + ");\n" + css;
+                return namespace + css;
             let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
                                                         /[\/:]/.test(part)  ? "url"
                                                                             : "domain")
                                                 + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
                                   .join(", ");
-            return "@namespace url(" + XHTML + ");\n" +
-                   "@-moz-document " + selectors + "{\n" + css + "\n}\n";
+            return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
             /* } vim */
         }
 
@@ -197,7 +198,7 @@ liberator.Buffer = function () //{{{
                 if (testDoc.documentElement.firstChild)
                     testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
                 testDoc.documentElement.appendChild(util.xmlToDom(
-                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(css)}/></head></html>, testDoc));
+                        <html><head><link type="text/css" rel="stylesheet" href={cssUri(namespace + css)}/></head></html>, testDoc));
 
                 while (true)
                 {
@@ -1012,10 +1013,8 @@ liberator.Buffer = function () //{{{
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
 
-        let nodes = Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), node.content])
-                         .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
-        return ([node[0], liberator.util.highlightURL(node[1], false)]
-                        for each (node in arrayIter(nodes)));
+        return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), liberator.util.highlightURL(node.content)])
+                    .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -2102,7 +2101,7 @@ liberator.template = {
     {
         let table =
             <table>
-                <tr class="hl-Title">
+                <tr class="hl-Title" align="left">
                     <th colspan="2">{title}</th>
                 </tr>
                 {
