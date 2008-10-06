@@ -134,6 +134,8 @@ liberator.IO = function () //{{{
                 }
             }
 
+            args = liberator.io.expandPath(args);
+
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
             if (/^(~|\/|[a-z]:|\.\/|\.\.\/)/i.test(args))
