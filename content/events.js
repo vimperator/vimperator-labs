@@ -677,9 +677,15 @@ liberator.Events = function () //{{{
 
     liberator.commands.add(["delmac[ros]"],
         "Delete macros",
-        function (args) { liberator.events.deleteMacros(args); },
+        function (args, special)
         {
-            argCount: "+",  // pattern might contain whitespace
+            if (special)
+                args = ".*"; // XXX
+
+            liberator.events.deleteMacros(args);
+        },
+        {
+            bang: true,
             completer: function (filter) liberator.completion.macro(filter)
         });
 

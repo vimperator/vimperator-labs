@@ -1082,9 +1082,7 @@ liberator.Buffer = function () //{{{
 
         highlight: function (key, style)
         {
-liberator.log("key: " + key + ", style: " + style);
             let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
-liberator.log("class: " + class + ", selectors: " + selectors);
 
             if (highlightClasses.indexOf(class) == -1)
             {
