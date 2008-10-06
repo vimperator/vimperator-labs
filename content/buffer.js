@@ -34,10 +34,19 @@ liberator.Buffer = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const highlightClasses = ["Boolean", "ErrorMsg", "InfoMsg", "Keyword", "LineNr",
+            "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question", "StatusLine",
+            "StatusLineBroken", "StatusLineSecure", "String", "Tag", "Title", "URL",
+            "WarningMsg"];
+    const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome"
+
+    var highlight = liberator.storage.newMap("highlight", false);
+
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
     const arrayIter = liberator.util.arrayIter;
+
     /* Can't reference liberator or Components inside Styles --
      * they're members of the window object, which disappear
      * with this window.
@@ -60,8 +69,9 @@ liberator.Buffer = function () //{{{
         let userSheets = [];
         let systemSheets = [];
 
-        this.__iterator__ = function () Iterator(userSheets);
+        this.__iterator__ = function () Iterator(userSheets.concat(systemSheets));
         this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
+        this.__defineGetter__("userSheets", function () Iterator(userSheets));
 
         this.__defineGetter__("chromeCSS", function ()
         {
@@ -90,12 +100,19 @@ liberator.Buffer = function () //{{{
 
         this.removeSheet = function (filter, index, system)
         {
+            let self = this;
             let sheets = system ? systemSheets : userSheets;
+
+            if (filter.indexOf(",") > -1)
+                return filter.split(",").reduce(
+                    function (n, f) n + self.removeSheet(f, index, system), 0);
 
             if (filter == undefined)
                 filter = "";
+
             /* Find all sheets which match the filter */
-            let matches = [s for (s in Iterator(sheets)) if (filter == "" || s[1][0].indexOf(filter) >= 0)];
+            let matches = [s for (s in Iterator(sheets))
+                             if (filter == "" || s[1][0].indexOf(filter) >= 0)];
 
             if (matches.length == 0 && sheets[Number(filter)])
                 matches.push([filter, sheets[filter]]);
@@ -123,7 +140,7 @@ liberator.Buffer = function () //{{{
             }
             if (foundChrome)
                 storage.fireEvent(name, "chrome-removed");
-            return true;
+            return matches.length;
         }
 
         this.registerSheet = function (uri)
@@ -206,7 +223,7 @@ liberator.Buffer = function () //{{{
         }
     }
     Styles.prototype = {
-        get sites() util.uniq(util.flatten([v[0] for ([k, v] in this)])),
+        get sites() util.uniq(util.flatten([v[0] for ([k, v] in this.userSheets)])),
     };
 
     let styles = liberator.storage.newObject("styles", Styles, false);
@@ -228,7 +245,7 @@ liberator.Buffer = function () //{{{
     let name = liberator.config.name.toLowerCase();
     styles.registerSheet("chrome://" + name + "/skin/vimperator.css");
     let error = styles.addSheet("chrome://" + name + "/content/buffer.xhtml",
-        "body { font-size: " + fontSize + "}", true);
+        "body { font-size: " + fontSize + "; }", true);
 
     function setZoom(value, fullZoom)
     {
@@ -748,13 +765,12 @@ liberator.Buffer = function () //{{{
             {
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([i, style[0].join(","), style[1]] for ([i, style] in styles)
+                    ([i, style[0].join(","), style[1]] for ([i, style] in styles.userSheets)
                                              if (!filter || style[0].indexOf(filter) >= 0)));
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
             else
             {
-                // TODO: Accept here docs.
                 let err = styles.addSheet(filter, css);
                 if (err)
                     liberator.echoerr(err);
@@ -774,10 +790,31 @@ liberator.Buffer = function () //{{{
         function (args) { styles.removeSheet.apply(styles, args.arguments); },
         {
             completer: function (filter) [0, liberator.completion.filter(
-                    [[i, s[0].join(",") + ": " + s[1].replace("\n", "\\n")] for ([i, s] in styles)]
+                    [[i, <>{s[0].join(",")}: {s[1].replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]
                         .concat([[s, ""] for each (s in styles.sites)])
                     , filter)],
             argCount: "*",
+        });
+
+    liberator.commands.add(["hi[ghlight]"],
+        "Set the style of certain display elements",
+        function (args, special)
+        {
+            let [, key, css] = args.match(/(\S+)\s*((?:.|\n)*)/) || [];
+            if (!css && !(key && special))
+            {
+                let str = liberator.template.tabular(["Key", "CSS"],
+                    ["padding: 0 1em 0 0; vertical-align: top"],
+                    (h for (h in highlight) if (!key || h[0].indexOf(key) > -1)));
+                liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                return;
+            }
+            liberator.buffer.highlight(key, css);
+        },
+        {
+            completer: function (filter) [0, liberator.completion.filter([[v, ""] for ([k, v] in Iterator(highlightClasses))], filter)],
+            hereDoc: true,
+            bang: true,
         });
 
     liberator.commands.add(["vie[wsource]"],
@@ -1060,6 +1097,32 @@ liberator.Buffer = function () //{{{
         },
 
         addPageInfoSection: addPageInfoSection,
+
+        highlight: function (key, style)
+        {
+            let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
+
+            if (highlightClasses.indexOf(class) == -1)
+            {
+                liberator.echoerr("Unknown highlight keyword");
+                return;
+            }
+
+            let getCSS = function (style) ".hl-" + class + selectors + " { " + style + " }";
+            let css = getCSS(style);
+
+            if (highlight.get(key))
+                styles.removeSheet(highlightDocs, getCSS(highlight.get(key)), true);
+
+            if (/^\s*$/.test(style))
+                return highlight.remove(key);
+
+            let error = styles.addSheet(highlightDocs, css, true);
+            if (error)
+                liberator.echoerr(error);
+            else
+                highlight.set(key, style);
+        },
 
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)
