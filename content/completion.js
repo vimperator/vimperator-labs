@@ -32,8 +32,12 @@ liberator.Completion = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
-                                      .getService(Components.interfaces.nsIAutoCompleteSearch);
+    try
+    {
+        var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
+                                          .getService(Components.interfaces.nsIAutoCompleteSearch);
+    }
+    catch (e) {}
 
     // the completion substrings, used for showing the longest common match
     var cacheFilter = {};
@@ -500,8 +504,9 @@ liberator.Completion = function () //{{{
                     completions.push(liberator.bookmarks.get(filter).map(function (a) [a[0], a[1], a[5]]));
                 else if (c == "h")
                     completions.push(liberator.history.get(filter));
-                else if (c == "l") // add completions like Firefox's smart location bar
+                else if (c == "l" && completionService) // add completions like Firefox's smart location bar
                 {
+                    completionService.stopSearch();
                     completionService.startSearch(filter, "", historyResult, {
                         onSearchResult: function (search, result) {
                             historyResult = result;
