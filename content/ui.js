@@ -502,12 +502,21 @@ liberator.CommandLine = function () //{{{
         {
             // TODO: are all messages single line? Some display an aggregation
             //       of single line messages at least. E.g. :source
-            let list = <></>;
+            // FIXME: I retract my retraction, this command-line/MOW mismatch _is_ really annoying -- djk
+            if (messageHistory.length == 1)
+            {
+                let message = messageHistory.messages[0];
+                liberator.commandline.echo(message.str, message.highlight, liberator.commandline.FORCE_SINGLELINE);
+            }
+            else if (messageHistory.length > 1)
+            {
+                let list = <></>;
 
-            for (let [,message] in Iterator(messageHistory.messages))
-                list += <div class={message.highlight}>{message.msg}</div>;
+                for (let [,message] in Iterator(messageHistory.messages))
+                    list += <div class={message.highlight}>{message.str}</div>;
 
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                liberator.echo(list, liberator.commandline.FORCE_MULTILINE);
+            }
         },
         { argCount: "0" });
 
@@ -606,7 +615,7 @@ liberator.CommandLine = function () //{{{
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
             if (flags & this.APPEND_TO_MESSAGES)
-                messageHistory.add({ msg: str, highlight: highlightGroup });
+                messageHistory.add({ str: str, highlight: highlightGroup });
 
             var where = setLine;
             if (flags & this.FORCE_MULTILINE)
