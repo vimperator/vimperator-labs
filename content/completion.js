@@ -489,10 +489,12 @@ liberator.Completion = function () //{{{
             if (!filter)
                 return [[a[0], a[1], favicon ? a[2] : null] for each (a in array)];
 
+            let result;
             if (matchFromBeginning)
-                return buildLongestStartingSubstring(array, filter, favicon);
+                result = buildLongestStartingSubstring(array, filter, favicon);
             else
-                return buildLongestCommonSubstring(array, filter, favicon);
+                result = buildLongestCommonSubstring(array, filter, favicon);
+            return result;
         },
 
         cached: function (key, filter, generate, method)

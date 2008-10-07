@@ -49,9 +49,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.8" src="io.js"/>
     <script type="application/x-javascript;version=1.8" src="mappings.js"/>
     <script type="application/x-javascript;version=1.8" src="modes.js"/>
+    <script type="application/x-javascript;version=1.8" src="options.js"/>
+    <script type="application/x-javascript;version=1.8" src="template.js"/>
     <script type="application/x-javascript;version=1.8" src="ui.js"/>
     <script type="application/x-javascript;version=1.8" src="util.js"/>
-    <script type="application/x-javascript;version=1.8" src="options.js"/>
 
     <window id="&liberator.mainWindow;">
 

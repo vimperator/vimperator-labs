@@ -91,57 +91,6 @@ liberator.util = { //{{{
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
 
-    // TODO: use :highlight color groups
-    // if "processStrings" is true, any passed strings will be surrounded by " and
-    // any line breaks are displayed as \n
-    colorize: function (arg, processStrings)
-    {
-        var type = typeof arg;
-
-        // some objects like window.JSON or getBrowsers()._browsers need the try/catch
-        try
-        {
-            if (type == "number")
-            {
-                return <span class="hl-Number">{arg}</span>;
-            }
-            else if (type == "string")
-            {
-                if (processStrings)
-                    arg = <>"{arg.replace(/\n/, "\\n")}"</>;
-
-                return <span class="hl-String">{arg}</span>;
-            }
-            else if (type == "boolean")
-            {
-                return <span class="hl-Boolean">{arg}</span>;
-            }
-            else if (arg == null || arg == "undefined")
-            {
-                return <span class="hl-Null">{arg}</span>;
-            }
-            else if (type == "object" || type == "function")
-            {
-                // for java packages value.toString() would crash so badly
-                // that we cannot even try/catch it
-                if (/^\[JavaPackage.*\]$/.test(arg))
-                    return <>[JavaPackage]</>;
-
-                var str = arg.toString();
-                if (typeof str == "string")  // can be "undefined"
-                    return <>{str}</>;
-                else
-                    return <>undefined</>;
-            }
-        }
-        catch (e)
-        {
-            return <><![CDATA[<unknown>]]></>;
-        }
-
-        return <><![CDATA[<unknown type>]]></>;
-    },
-
     copyToClipboard: function (str, verbose)
     {
         var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
@@ -208,7 +157,8 @@ liberator.util = { //{{{
         }
 
         for (let u = strNum[0].length - 3; u > 0; u -= 3) // make a 10000 a 10,000
-            strNum[0] = strNum[0].substring(0, u) + "," + strNum[0].substring(u, strNum[0].length);
+            strNum[0] = strNum[0].substring(0, u)
+                + "," + strNum[0].substring(u, strNum[0].length);
 
         if (unitIndex) // decimalPlaces only when > Bytes
             strNum[0] += "." + strNum[1];
@@ -268,14 +218,6 @@ liberator.util = { //{{{
         return ret;
     },
 
-    highlightURL: function (str, force)
-    {
-        if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return <a class="hl-URL" href="#">{str}</a>;
-        else
-            return str;
-    },
-
     // if color = true it uses HTML markup to color certain items
     objectToString: function (object, color)
     {
@@ -311,19 +253,16 @@ liberator.util = { //{{{
         {
             for (let i in object)
             {
-                var value;
+                let value = "<no value>";
                 try
                 {
                     value = object[i];
                 }
-                catch (e)
-                {
-                    value = "<no value>";
-                }
+                catch (e) {}
 
                 if (color)
                 {
-                    value = this.colorize(value, true).toXMLString();
+                    value = liberator.template.highlight(value, true).toXMLString();
                     i = <span style="font-weight: bold;">{i}</span>.toXMLString();
                 }
                 string += i + ": " + value + "\n";

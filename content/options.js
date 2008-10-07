@@ -958,7 +958,7 @@ liberator.Options = function () //{{{
                     }
                     else
                     {
-                        option.value = <>={liberator.util.colorize(opt.value, false)}</>;
+                        option.value = <>={liberator.template.highlight(opt.value)}</>;
                     }
                     yield option;
                 }
@@ -989,7 +989,7 @@ liberator.Options = function () //{{{
                     let option = {
                         isDefault: !userValue,
                         default:   loadPreference(pref, null, true),
-                        value:     <>={liberator.util.colorize(value, false)}</>,
+                        value:     <>={liberator.template.highlight(value)}</>,
                         name:      pref,
                         pre:       "  ", /* Unicode nonbreaking space. */
                     };

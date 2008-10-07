@@ -34,10 +34,10 @@ liberator.Buffer = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const highlightClasses = ["Boolean", "ErrorMsg", "InfoMsg", "Keyword", "LineNr",
-            "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question", "StatusLine",
-            "StatusLineBroken", "StatusLineSecure", "String", "Tag", "Title", "URL",
-            "WarningMsg"];
+    const highlightClasses = ["Boolean", "ErrorMsg", "Function", "InfoMsg", "Keyword",
+            "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question",
+            "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
+            "Title", "URL", "WarningMsg"];
     let name = liberator.config.name.toLowerCase();
     const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
@@ -927,7 +927,7 @@ liberator.Buffer = function () //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield [feed.title, liberator.util.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
+                        yield [feed.title, liberator.template.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
                 }
             }
         }
@@ -982,11 +982,11 @@ liberator.Buffer = function () //{{{
         }
 
         yield ["Title", doc.title];
-        yield ["URL", liberator.util.highlightURL(doc.location.toString(), true)];
+        yield ["URL", liberator.template.highlightURL(doc.location.toString(), true)];
 
         var ref = "referrer" in doc && doc.referrer;
         if (ref)
-            yield ["Referrer", liberator.util.highlightURL(ref, true)];
+            yield ["Referrer", liberator.template.highlightURL(ref, true)];
 
         if (pageSize[0])
             yield ["File Size", pageSize[1] ? pageSize[1] + " (" + pageSize[0] + ")"
@@ -1004,7 +1004,7 @@ liberator.Buffer = function () //{{{
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
 
-        return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), liberator.util.highlightURL(node.content)])
+        return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), liberator.template.highlightURL(node.content)])
                     .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
     });
 
@@ -1976,159 +1976,5 @@ liberator.Marks = function () //{{{
     };
     //}}}
 }; //}}}
-
-liberator.template = {
-    add: function (a, b) a + b,
-    join: function (c) function (a, b) a + c + b,
-
-    map: function (iter, fn, sep)
-    {
-        if (iter.length) /* Kludge? */
-            iter = liberator.util.arrayIter(iter);
-        let ret = <></>;
-        let n = 0;
-        for each (let i in iter)
-        {
-            let val = fn(i);
-            if (val == undefined)
-                continue;
-            if (sep && n++)
-                ret += sep;
-            ret += val;
-        }
-        return ret;
-    },
-    map2: function (iter, fn, sep)
-    {
-        // Could cause performance problems.
-        return this.map(Iterator(iter), function (x) fn.apply(null, x), sep);
-    },
-
-    maybeXML: function (xml)
-    {
-        if (typeof xml == "xml")
-            return xml;
-        try
-        {
-            return new XMLList(xml);
-        }
-        catch (e) {}
-        return <>{xml}</>;
-    },
-
-    generic: function (xml)
-    {
-        return <>:{liberator.commandline.getCommand()}<br/></> + xml;
-    },
-
-    bookmarks: function (header, items)
-    {
-        return this.generic(
-            <table>
-                <tr align="left" class="hl-Title">
-                    <th>{header}</th><th>URL</th>
-                </tr>
-                {
-                    this.map(items, function (item)
-                    <tr>
-                        <td>{liberator.util.clip(item.title, 50)}</td>
-                        <td style="width: 100%">
-                            <a href="#" class="hl-URL">{item.url}</a>&#160;
-                            {
-                                !(item.extra && item.extra.length) ? "" :
-                                <span class="extra-info">
-                                    ({
-                                        liberator.template.map(item.extra, function (e)
-                                        <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                                        <![CDATA[ ]]>/* Non-breaking space */)
-                                    })
-                                </span>
-                            }
-                        </td>
-                    </tr>)
-                }
-            </table>);
-    },
-
-    jumps: function (index, elems)
-    {
-        return this.generic(
-            <table>
-                <tr style="text-align: left;" class="hl-Title">
-                    <th colspan="2">jump</th><th>title</th><th>URI</th>
-                </tr>
-                {
-                    this.map2(elems, function (idx, val)
-                    <tr>
-                        <td class="indicator">{idx == index ? ">" : ""}</td>
-                        <td>{Math.abs(idx - index)}</td>
-                        <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
-                        <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
-                    </tr>)
-                }
-            </table>);
-    },
-
-    options: function (title, opts)
-    {
-        return this.generic(
-            <table>
-                <tr class="hl-Title" align="left">
-                    <th>--- {title} ---</th>
-                </tr>
-                {
-                    this.map(opts, function (opt)
-                    <tr>
-                        <td>
-                            <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
-                            {opt.isDefault || opt.default == null ? "" : <span class="extra-info"> (default: {opt.default})</span>}
-                        </td>
-                    </tr>)
-                }
-            </table>);
-    },
-
-    table: function (title, data, indent)
-    {
-        let table =
-            <table>
-                <tr class="hl-Title" align="left">
-                    <th colspan="2">{title}</th>
-                </tr>
-                {
-                    this.map(data, function (datum)
-                    <tr>
-                       <td style={"font-weight: bold; min-width: 150px; padding-left: " + (indent || "2ex")}>{datum[0]}</td>
-                       <td>{liberator.template.maybeXML(datum[1])}</td>
-                    </tr>)
-                }
-            </table>;
-        if (table.tr.length() > 1)
-            return table;
-    },
-
-    tabular: function (headings, style, iter)
-    {
-        /* This might be mind-bogglingly slow. We'll see. */
-        return this.generic(
-            <table>
-                <tr class="hl-Title" align="left">
-                {
-                    this.map(headings, function (h)
-                    <th>{h}</th>)
-                }
-                </tr>
-                {
-                    this.map(iter, function (row)
-                    <tr>
-                    {
-                        liberator.template.map2(row, function (i, d)
-                        <td style={style[i] || ""}>{d}</td>)
-                    }
-                    </tr>)
-                }
-            </table>);
-    },
-};
 
 // vim: set fdm=marker sw=4 ts=4 et:
