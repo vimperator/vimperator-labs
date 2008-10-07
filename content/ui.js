@@ -1248,12 +1248,10 @@ liberator.ItemList = function (id) //{{{
             return minHeight;
         }
 
-        var height = getHeight();
-        if (height == 0) // sometimes we don't have the correct size at this point
-            setTimeout(function () { container.height = getHeight(); }, 10);
-        else
-            container.height = height;
+        if (completionElements)
+            container.height = getHeight();
     }
+    doc.body.addEventListener("DOMSubtreeModified", autoSize, true);
 
     /**
      * uses the entries in completions to fill the listbox
@@ -1308,12 +1306,10 @@ liberator.ItemList = function (id) //{{{
         }
 
         let dom = liberator.util.xmlToDom(div, doc);
-        doc.body.appendChild(dom);
-
         completionBody = dom.getElementsByTagName("tbody")[0];
         completionElements = completionBody.childNodes;
+        doc.body.appendChild(dom);
 
-        autoSize();
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
