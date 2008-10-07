@@ -79,6 +79,11 @@ liberator.util = { //{{{
             yield ary[i];
     },
 
+    ciCompare: function (a, b)
+    {
+        return String.localeCompare(a.toLowerCase(), b.toLowerCase());
+    },
+
     clip: function (str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
@@ -161,9 +166,10 @@ liberator.util = { //{{{
         return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
     },
 
-    escapeString: function (str)
+    escapeString: function (str, delimiter)
     {
-        return '"' + str.replace(/([\\'])/g, "\\$1") + '"';
+        delimiter = delimiter || '"';
+        return delimiter + str.replace(/([\\'"])/g, "\\$1") + delimiter;
     },
 
     // Flatten an array:

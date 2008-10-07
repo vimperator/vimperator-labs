@@ -112,6 +112,8 @@ liberator.Completion = function () //{{{
                 break;
             }
         }
+        if (liberator.options.get("wildoptions").has("sort"))
+            filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -151,6 +153,8 @@ liberator.Completion = function () //{{{
                 break;
             }
         }
+        if (liberator.options.get("wildoptions").has("sort"))
+            filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -308,36 +312,49 @@ liberator.Completion = function () //{{{
             {
                 try
                 {
-                    liberator.dump("eval(" + liberator.util.escapeString(arg) + ")");
+                    // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")");
                     return window.eval(arg);
                 }
                 catch(e) {}
                 return null;
             }
             /* Search the object for strings starting with @key.
-             * If @fn is defined, slice @offset characters from
-             * the results and map them via @fn.
+             * If @last is defined, key is a quoted string, it's
+             * wrapped in @last after @offset characters are sliced
+             * off of it and it's quoted.
              */
-            function objectKeys(objects, key, fn, offset, last)
+            function objectKeys(objects, key, last, offset)
             {
                 if (!(objects instanceof Array))
                     objects = [objects];
 
                 let iter = function (obj)
                 {
-                    let iter = Iterator(obj);
+                    let iterator = (function ()
+                    {
+                        for (let k in obj)
+                        {
+                            try
+                            {
+                                yield [k, obj[k]];
+                                continue;
+                            }
+                            catch (e) {}
+                            yield [k, "inaccessable"]
+                        }
+                    })();
                     try
                     {
                         if ("__iterator__" in obj)
                         {
                             let oldIter = obj.__iterator__;
                             delete obj.__iterator__;
-                            iter = Iterator(obj);
+                            iterator = Iterator(obj);
                             obj.__iterator__ = oldIter;
                         }
                     }
                     catch (e) {}
-                    return iter;
+                    return iterator;
                 }
 
                 let compl = [];
@@ -354,18 +371,19 @@ liberator.Completion = function () //{{{
                         if (["string", "number", "boolean"].indexOf(type) > -1)
                             type += ": " + String(v).replace("\n", "\\n", "g");
                         if (type == "function")
-                            type += ": " + String(v).replace(/{(.|\n)*/, "{ ... }");
+                            type += ": " + String(v).replace(/{(.|\n)*/, "{ ... }"); /* } vim */
 
                         compl.push([k, type]);
                     }
                 }
-                if (fn)
+                if (last != undefined)
                 {
-                    compl.forEach(function (a) a[0] = fn(a[0].substr(offset)));
+                    compl.forEach(function (a) a[0] = liberator.util.escapeString(a[0].substr(offset), last));
                     key = last + key.substr(offset)
                 }
-                compl = buildLongestStartingSubstring(compl, key);
-                return compl;
+                else
+                    compl = compl.filter(function (a) /^[\w$][\w\d$]*$/.test(a[0]));
+                return buildLongestStartingSubstring(compl, key);
             }
 
             let stack = [];
@@ -502,7 +520,7 @@ liberator.Completion = function () //{{{
                 let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
                 let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
                 key = eval(key);
-                return [top[OFFSET], objectKeys(obj, key + string, liberator.util.escapeString, key.length, last)];
+                return [top[OFFSET], objectKeys(obj, key + string, last, key.length)];
             }
 
             /* Is this an object reference? */
@@ -755,7 +773,10 @@ liberator.Completion = function () //{{{
                 filtered.push(elem);
             }
 
-            return filtered.concat(additionalCompletions);
+            filtered = filtered.concat(additionalCompletions);
+            if (liberator.options.get("wildoptions").has("sort"))
+                filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
+            return filtered;
         },
 
         // generic helper function which checks if the given "items" array pass "filter"
