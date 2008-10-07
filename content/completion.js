@@ -318,16 +318,21 @@ liberator.Completion = function () //{{{
                 {
                     if (typeof obj == "string")
                         obj = window.eval("with (liberator) {" + obj + "}");
+                    if (typeof obj != "object")
+                        continue;
 
                     for (let k in obj)
                     {
-                        let v, type = "inaccessable"
+                        let v, type;
                         try
                         {
                             v = obj[k];
                             type = typeof v;
                         }
-                        catch(e) {}
+                        catch(e)
+                        {
+                            continue;
+                        }
                         if (["string", "number", "boolean", "function"].indexOf(type) > -1)
                             type += ": " + String(v).replace("\n", "\\n", "g");
 
