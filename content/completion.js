@@ -304,85 +304,205 @@ liberator.Completion = function () //{{{
 
         javascript: function (str)
         {
-            var matches = str.match(/^(.*?)((?:\s*\.\s*)?)(\w*)$/);
-            var objects = [];
-            var start = matches[1].length - 1;
-            var offset = matches[1].length + matches[2].length;
-            var filter = matches[3];
-
-            if (matches[2])
+            /* Search the object for strings starting with @key.
+             * If @fn is defined, slice @offset characters from
+             * the results and map them via @fn.
+             */
+            function objectKeys(objects, key, fn, offset)
             {
-                var brackets = 0, parentheses = 0;
-                outer:
-                for (; start >= 0; start--)
-                {
-                    switch (matches[1][start])
-                    {
-                        case ";":
-                        case "{":
-                            break outer;
+                if (!(objects instanceof Array))
+                    objects = [objects];
 
-                        case "]":
-                            brackets--;
-                            break;
-                        case "[":
-                            brackets++;
-                            break;
-                        case ")":
-                            parentheses--;
-                            break;
+                let compl = [];
+                for (let [,obj] in Iterator(objects))
+                {
+                    if (typeof obj == "string")
+                        obj = window.eval("with (liberator) {" + obj + "}");
+
+                    for (let k in obj)
+                    {
+                        let v, type = "inaccessable"
+                        try
+                        {
+                            v = obj[k];
+                            type = typeof v;
+                        }
+                        catch(e) {}
+                        if (["string", "number", "boolean", "function"].indexOf(type) > -1)
+                            type += ": " + String(v).replace("\n", "\\n", "g");
+
+                        compl.push([k, type]);
+                    }
+                }
+                compl = buildLongestStartingSubstring(compl, key);
+                if (fn)
+                    compl.forEach(function (a) a[0] = fn(a[0].substr(offset)));
+                return compl;
+            }
+
+            let stack = [];
+            let top = [];  /* The element on the top of the stack. */
+            let last = ""; /* The last opening char pushed onto the stack. */
+            /* Get an element from the stack. If @n is negative,
+             * count from the top of the stack, otherwise, the bottom.
+             * If @m is provided, return the @mth value of element @o
+             * of the stack entey at @n.
+             */
+            let get = function (n, m, o)
+            {
+                let a = stack[n >= 0 ? n : stack.length + n];
+                if (m == undefined)
+                    return a;
+                return a[o][a[o].length - m - 1];
+            }
+
+            /* Push and pop the stack, maintaining references to 'top' and 'last'. */
+            const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, FUNCTIONS = 5;
+            let push = function (arg)
+            {
+                top = [i, arg, [], [], [], []];
+                if (arg)
+                    top[STATEMENTS].push(firstNonwhite());
+                last = top[1];
+                stack.push(top);
+            }
+            let pop = function (arg)
+            {
+                if (top[CHAR] != arg)
+                    throw "Invalid JS";
+                top = get(-2);
+                last = top[CHAR];
+                let ret = stack.pop();
+                return ret;
+            }
+            push("");
+
+            /* Find the first non-whitespace character fillowing i. */
+            let firstNonwhite = function () {
+                let j = i + 1;
+                while (str[j] && /\s/.test(str[j]))
+                    j++;
+                return j < str.length && j;
+            }
+
+            let lastNonwhite = ""; /* Last non-whitespace character we saw. */
+            let lastChar = "";     /* Last character we saw, used for \ escaping quotes. */
+            let i = 0, c = "";     /* Current index and character, respectively. */
+
+            /* Build a parse stack, discarding entries opening characters
+             * match closing characters. The last open entry is used to
+             * figure out what to complete.
+             */
+            let length = str.length;
+            for (; i < length; lastChar = c, i++)
+            {
+                c = str[i];
+                if (last == '"' || last == "'" || last == "/")
+                {
+                    if (lastChar == "\\")
+                    {
+                        c = "";
+                        i++;
+                    }
+                    else if (c == last)
+                        pop(c);
+                }
+                else
+                {
+                    if (/\S/.test(c))
+                        lastNonwhite = c;
+                    switch (c)
+                    {
                         case "(":
-                            parentheses++;
+                            /* Function call, or if/while/for/... */
+                            if (/\w/.test(lastNonwhite))
+                                top[FUNCTIONS].push(i);
+                        case '"':
+                        case "'":
+                        case "/":
+                        case "{":
+                        case "[":
+                            push(c);
+                            break;
+                        case ")": pop("("); break;
+                        case "]": pop("]"); break;
+                        case "}": pop("}"); /* Fallthrough */
+                        case ";":
+                        case ",":
+                            top[FULL_STATEMENTS].push(i);
+                            break;
+                        case ".":
+                            top[DOTS].push(i);
+                            if (/[\])"']/.test(lastNonwhite))
+                                top[STATEMENTS].pop();
                             break;
                     }
-                    if (brackets > 0 || parentheses > 0)
-                        break outer;
+                    /* Could do better. */
+                    if (!/[\w\s.([]/.test(c))
+                        top[STATEMENTS].push(firstNonwhite());
                 }
             }
 
-            if (matches[1].substr(start+1))
+            /* Okay, have parse stack. Figure out what we're completing. */
+
+            /* Find any complete statements that we can eval. */
+            let end = get(0, 0, FULL_STATEMENTS) || 0;
+            let preEval = str.substring(0, end) + ";";
+
+            /* In a string. */
+            if (last == "'" || last == '"')
             {
-                objects.push(matches[1].substr(start+1));
-            }
-            else
-            {
-                objects.push("liberator");
-                objects.push("window");
+                /* Stack:
+                 *  [-1]: "...
+                 *  [-2]: [...
+                 *  [-3]: base statement
+                 */
+
+                /* Is this an object accessor? */
+                if (get(-2)[CHAR] != "[" /* Are inside of []? */
+                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET]) /* Okay. Is it an array literal? */
+                    return [0, []]; /* No. Nothing to do. */
+
+                /* 
+                 * str = "foo[bar + 'baz"
+                 * obj = "foo"
+                 * key = "bar + ''"
+                 */
+                let string = str.substring(top[OFFSET] + 1);
+                string = window.eval(last + string + last);
+
+                let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
+                let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
+                key = window.eval(key);
+                return [top[OFFSET], objectKeys(obj, key + string, liberator.util.escapeString, key.length)];
             }
 
-            var completions = [];
-            try
+            /* Is this an object reference? */
+            if (top[3].length)
             {
-                for (let [,object] in Iterator(objects))
-                {
-                    /* Why the double eval? --Kris */
-                    completions.push(eval(<![CDATA[
-                        let comp = [];
-                        let type = "";
-                        let value = "";
-                        let obj = eval("with (liberator) {" + object + "}");
-                        for (let i in obj)
-                        {
-                            type = "unknown type";
-                            try
-                            {
-                                type = typeof obj[i];
-                            }
-                            catch (e) {};
-                            if (type == "number" || type == "string" || type == "boolean")
-                                type += ": " + obj[i];
-                            comp.push([[i], type]);
-                        }
-                        comp;
-                    ]]>.toString()));
-                }
-            }
-            catch (e)
-            {
-                completions = [];
+                let dot = get(-1, 0, DOTS);
+                /*
+                 * str = "foo.bar.baz"
+                 * obj = "foo.bar"
+                 * key = "baz"
+                 */
+                let key = str.substring(dot + 1);
+                let obj = preEval + str.substring(get(-1, 0, STATEMENTS), dot);
+
+                if (!/^(?:\w[\w\d]*)?$/.test(key))
+                    return [0, []]; /* Not a word. Forget it. Can this even happen? */
+                return [dot + 1, objectKeys(obj, key)];
             }
 
-            return [offset, buildLongestStartingSubstring(liberator.util.flatten(completions), filter)];
+            /* Okay, assume it's an identifier and try to complete it from the window
+             * and liberator objects.
+             */
+            let offset = get(-1, 0, STATEMENTS) || 0;
+            let key = str.substring(offset);
+
+            if (/^(?:\w[\w\d]*)?$/.test(key))
+                return [offset, objectKeys([window, liberator], key)];
+            return [0, []];
         },
 
         macro: function (filter)
