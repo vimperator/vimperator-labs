@@ -42,6 +42,35 @@ the terms of any one of the MPL, the GPL or the LGPL.
     right: 0;
 }
 
+.__liberator-search {
+    display: inline;
+    font-size: inherit;
+    padding: 0;
+    color: black;
+    background-color: yellow;
+    padding: 0;
+    display: inline;
+}
+
+.liberator-hint {
+    z-index:5000;
+    font-family:monospace;
+    font-size:10px;
+    font-weight: bold;
+    color:white;
+    background-color:red;
+    border-color:ButtonShadow;
+    border-width:0px;
+    border-style:solid;
+    padding:0px 1px 0px 1px;
+    position:absolute;
+}
+
+#liberator-visualbell {
+    border: none;
+    background-color: black;
+}
+
 /* Applied only to completion buffer and MOW */
 @-moz-document
     url-prefix(chrome://vimperator/),
@@ -51,7 +80,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 .compitem[selected=true] { background-color: yellow; }
 .compitem > .favicon { width: 16px; }
-.compitem > .favicon > img { width: 16px; height: 16px; }
+.compitem > .favicon > * { width: 16px; height: 16px; display: block; }
 .compitem > .completion { width: 45%; overflow: hidden; }
 .compitem > .description { color: gray; }
 
@@ -69,6 +98,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 .hl-Keyword { color: red; }
 .hl-Tag     { color: blue; }
+
+.hl-Filter  { font-weight: bold; }
 
 }
 

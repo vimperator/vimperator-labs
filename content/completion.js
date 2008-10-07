@@ -62,6 +62,8 @@ liberator.Completion = function () //{{{
 
     function Javascript()
     {
+        let json = Components.classes["@mozilla.org/dom/json;1"]
+                             .createInstance(Components.interfaces.nsIJSON);
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, FUNCTIONS = 5;
         let stack = [];
         let top = [];  /* The element on the top of the stack. */
@@ -93,6 +95,13 @@ liberator.Completion = function () //{{{
             })();
             try
             {
+                // The point of 'for k in obj' is to get keys
+                // that are accessible via . or [] notation.
+                // Iterators quite often return values of no
+                // use whatsoever for this purpose, so, we try
+                // this rather dirty hack of getting a standard
+                // object iterator for any object that defines its
+                // own.
                 if ("__iterator__" in obj)
                 {
                     let oldIter = obj.__iterator__;
@@ -167,7 +176,7 @@ liberator.Completion = function () //{{{
         {
             try
             {
-                // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")");
+                // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")\n");
                 return window.eval(arg);
             }
             catch (e)
@@ -194,9 +203,7 @@ liberator.Completion = function () //{{{
             /* Push and pop the stack, maintaining references to 'top' and 'last'. */
             let push = function (arg)
             {
-                top = [i, arg, [], [], [], []];
-                if (arg)
-                    top[STATEMENTS].push(firstNonwhite());
+                top = [i, arg, [i], [], [], []];
                 last = top[CHAR];
                 stack.push(top);
             }
@@ -204,6 +211,8 @@ liberator.Completion = function () //{{{
             {
                 if (top[CHAR] != arg)
                     throw new Error("Invalid JS");
+                if (top[STATEMENTS][top[STATEMENTS].length - 1] == i)
+                    top[STATEMENTS].pop();
                 top = get(-2);
                 last = top[CHAR];
                 let ret = stack.pop();
@@ -224,6 +233,12 @@ liberator.Completion = function () //{{{
             {
                 stack = [];
                 push("");
+            }
+            else
+            {
+                let s = top[STATEMENTS];
+                if (s[s.length - 1] == start)
+                    s.pop();
             }
 
             /* Build a parse stack, discarding entries opening characters
@@ -246,6 +261,15 @@ liberator.Completion = function () //{{{
                 }
                 else
                 {
+                    if (/[\w$]/.test(c) && !/[\w\d$]/.test(lastChar) || !/[\w\d\s]/.test(c))
+                        top[STATEMENTS].push(i);
+
+                    // A "." or a "[" dereferences the last "statement" and effectively
+                    // joins it to this logical statement.
+                    if ((c == "." || c == "[") && /[\w\d\])"']/.test(lastNonwhite)
+                    ||  lastNonwhite == "." && /[\w$]/.test(c))
+                            top[STATEMENTS].pop();
+
                     switch (c)
                     {
                         case "(":
@@ -259,9 +283,10 @@ liberator.Completion = function () //{{{
                             push(c);
                             break;
                         case "[":
-                            if (/[\])"']/.test(lastNonwhite))
-                                top[STATEMENTS].pop();
                             push(c);
+                            break;
+                        case ".":
+                            top[DOTS].push(i);
                             break;
                         case ")": pop("("); break;
                         case "]": pop("["); break;
@@ -270,19 +295,15 @@ liberator.Completion = function () //{{{
                         case ",":
                             top[FULL_STATEMENTS].push(i);
                             break;
-                        case ".":
-                            top[DOTS].push(i);
-                            if (/[\])"']/.test(lastNonwhite))
-                                top[STATEMENTS].pop();
-                            break;
                     }
-                    /* Could do better. */
-                    if (!/[\w\s.([]/.test(c))
-                        top[STATEMENTS].push(i);
+
                     if (/\S/.test(c))
                         lastNonwhite = c;
                 }
             }
+
+            if (!/[\w\d$]/.test(lastChar) && lastNonwhite != ".")
+                top[STATEMENTS].push(i);
 
             lastIdx = i;
         }
@@ -291,12 +312,14 @@ liberator.Completion = function () //{{{
         {
             try
             {
-                continuing = string.indexOf(str) == 0;
+                continuing = lastIdx && string.indexOf(str) == 0;
                 str = string;
                 buildStack(continuing ? lastIdx : 0);
             }
             catch (e)
             {
+                liberator.dump(liberator.util.escapeString(string) + ": " + e + "\n" + e.stack + "\n");
+                lastIdx = 0;
                 return [0, []];
             }
 
@@ -307,6 +330,7 @@ liberator.Completion = function () //{{{
             let preEval = str.substring(0, end) + ";";
 
             /* In a string. */
+            // TODO: Make this work with unquoted integers.
             if (last == "'" || last == '"')
             {
                 /* Stack:
@@ -316,9 +340,11 @@ liberator.Completion = function () //{{{
                  */
 
                 /* Is this an object accessor? */
-                if (get(-2)[CHAR] != "[" /* Are inside of []? */
-                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET]) /* Okay. Is it an array literal? */
-                    return [0, []]; /* No. Nothing to do. */
+                if (get(-2)[CHAR] != "[" // Are we inside of []?
+                    // Okay, if the [ starts at the begining of a logical
+                    // statement, we're in an array literal, and we're done.
+                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET]) 
+                    return [0, []];
 
                 /*
                  * str = "foo[bar + 'baz"
@@ -343,12 +369,12 @@ liberator.Completion = function () //{{{
                  * obj = "foo.bar"
                  * key = "baz"
                  */
-                let key = str.substring(dot + 1);
+                let [, space, key] = str.substring(dot + 1).match(/^(\s*)(.*)/);
                 let obj = preEval + str.substring(get(-1, 0, STATEMENTS), dot);
 
                 if (!/^(?:\w[\w\d]*)?$/.test(key))
                     return [0, []]; /* Not a word. Forget it. Can this even happen? */
-                return [dot + 1, objectKeys(obj, key)];
+                return [dot + 1 + space.length, objectKeys(obj, key)];
             }
 
             /* Okay, assume it's an identifier and try to complete it from the window
@@ -383,6 +409,7 @@ liberator.Completion = function () //{{{
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
     function buildLongestCommonSubstring(list, filter, favicon)
     {
+        liberator.completion.filterString = filter;
         var filtered = [];
 
         var ignorecase = false;
@@ -767,7 +794,11 @@ liberator.Completion = function () //{{{
 
         javascript: function (str)
         {
-            return javascript.complete(str);
+            try
+            {
+                return javascript.complete(str);
+            }
+            catch (e) {}
         },
 
         macro: function (filter)
@@ -789,6 +820,7 @@ liberator.Completion = function () //{{{
         // XXX: Move to bookmarks.js?
         searchEngineSuggest: function (filter, engineAliases)
         {
+            this.filterString = filter;
             if (!filter)
                 return [0, []];
 
@@ -875,6 +907,7 @@ liberator.Completion = function () //{{{
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
         url: function (filter, complete)
         {
+            this.filterString = filter;
             var completions = [];
             var start = 0;
             var skip = filter.match("^(.*" + liberator.options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'

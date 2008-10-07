@@ -80,13 +80,14 @@ liberator.template = {
     {
         let lcstr = str.toLowerCase();
         let lcfilter = filter.toLowerCase();
+        str = str.replace(" ", " ");
         let s = <></>;
         let start = 0;
         let i;
-        while ((i = lca.indexOf(lcfilter, start)) > -1)
+        while ((i = lcstr.indexOf(lcfilter, start)) > -1)
         {
             s += <>{str.substring(start, i)}</>;
-            s += <span style="font-weight: bold">{str.substr(i, filter.length)}</span>;
+            s += <span class="hl-Filter">{str.substr(i, filter.length)}</span>;
             start = i + filter.length;
         }
         return s + <>{str.substr(start)}</>;

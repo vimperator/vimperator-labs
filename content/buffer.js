@@ -34,11 +34,11 @@ liberator.Buffer = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const highlightClasses = ["Boolean", "ErrorMsg", "Function", "InfoMsg", "Keyword",
+    const highlightClasses = ["Boolean", "ErrorMsg", "Filter", "Function", "InfoMsg", "Keyword",
             "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question",
             "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
             "Title", "URL", "WarningMsg",
-            ["Hint", ".liberator-hint", "*"]
+            ["Hint", ".liberator-hint", "*"],
             ["Search", ".__liberator-search", "*"],
             ["Bell", "#liberator-visualbell"],
             ];
@@ -806,7 +806,10 @@ liberator.Buffer = function () //{{{
         },
         {
             // TODO: add this as a standard highlight completion function?
-            completer: function (filter) [0, liberator.completion.filter([[v, ""] for ([k, v] in Iterator(highlightClasses))], filter)],
+            // I agree. It could (should) be much more sophisticated. --Kris
+            completer: function (filter) [0,
+                    liberator.completion.filter([[v instanceof Array ? v[0] : v, ""] for ([k, v] in Iterator(highlightClasses))], filter)
+                ],
             hereDoc: true,
             bang: true,
         });

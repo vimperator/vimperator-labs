@@ -737,7 +737,6 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
-            liberator.dump("filename: " + filename + "\n");
             try
             {
                 var file = ioManager.getFile(filename);

@@ -1218,17 +1218,23 @@ liberator.ItemList = function (id) //{{{
     // TODO: temporary, to be changed/removed
     function createRow(b, c, a, dom)
     {
-        let row =
-            <tr class="compitem">
-                <td class="favicon"/>
-                <td class="completion">{b}</td>
-                <td class="description">{c}</td>
-            </tr>
+        /* Obviously, ItemList shouldn't know or care about this. */
+        let filter = liberator.completion.filterString;
+        if (filter)
+        {
+            b = liberator.template.highlightFilter(String(b), filter);
+            c = liberator.template.highlightFilter(String(c), filter);
+        }
 
         if (typeof a == "function")
             a = a();
-        if (a)
-            row.td[0].* = <img src={a}/>;
+
+        let row =
+            <tr class="compitem">
+                <td class="favicon">{a ? <img src={a}/> : <span/>}</td>
+                <td class="completion">{b}</td>
+                <td class="description">{c}</td>
+            </tr>;
 
         if (dom)
             return liberator.util.xmlToDom(row, doc);
