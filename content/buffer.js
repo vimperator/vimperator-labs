@@ -1096,7 +1096,7 @@ liberator.Buffer = function () //{{{
         {
             let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
-            let class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
+            class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
             if (!class)
             {
                 liberator.echoerr("Unknown highlight keyword");
