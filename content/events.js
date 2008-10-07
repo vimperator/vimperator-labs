@@ -537,10 +537,7 @@ liberator.Events = function () //{{{
     function waitForPageLoaded()
     {
         liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
-        var mainThread = Components.classes["@mozilla.org/thread-manager;1"]
-                                   .getService(Components.interfaces.nsIThreadManager).mainThread;
-        while (mainThread.hasPendingEvents()) // clear queue
-            mainThread.processNextEvent(true);
+        liberator.threadyield(true); // clear queue
 
         if (liberator.buffer.loaded == 1)
             return true;
@@ -549,7 +546,7 @@ liberator.Events = function () //{{{
         var then = new Date().getTime();
         for (let now = then; now - then < ms; now = new Date().getTime())
         {
-            mainThread.processNextEvent(true);
+            liberator.threadyield();
             if ((now - then) % 1000 < 10)
                 liberator.dump("waited: " + (now - then) + " ms\n");
 
@@ -1196,7 +1193,6 @@ liberator.Events = function () //{{{
 
             if (liberator.modes.isReplaying)
             {
-                // XXX: Prevents using <C-c> in a macro.
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     liberator.modes.isReplaying = false;
@@ -1206,6 +1202,9 @@ liberator.Events = function () //{{{
                     return true;
                 }
             }
+
+            if (key == "<C-c>")
+                liberator.interrupted = true;
 
             var stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 

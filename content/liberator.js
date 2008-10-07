@@ -1237,6 +1237,14 @@ const liberator = (function () //{{{
             return true;
         },
 
+        threadyield: function (flush)
+        {
+            let mainThread = threadManager.mainThread;
+            do
+                mainThread.processNextEvent(true);
+            while (flush && mainThread.hasPendingEvents());
+        },
+
         get windows()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]

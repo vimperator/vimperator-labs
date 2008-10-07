@@ -647,10 +647,7 @@ liberator.Hints = function () //{{{
             generate(win);
 
             // get all keys from the input queue
-            var mt = Components.classes["@mozilla.org/thread-manager;1"]
-                               .getService().mainThread;
-            while (mt.hasPendingEvents())
-                mt.processNextEvent(true);
+            liberator.threadyield(true);
 
             canUpdate = true;
             showHints();

@@ -195,6 +195,8 @@ liberator.Search = function () //{{{
             this.endPt.setStart(body, count);
             this.endPt.setEnd(body, count);
 
+            liberator.interrupted = false;
+            let n = 0;
             for (let retRange in this.search(aWord, caseSensitive))
             {
                 // Highlight
@@ -203,6 +205,10 @@ liberator.Search = function () //{{{
                 this.startPt = node.ownerDocument.createRange();
                 this.startPt.setStart(node, node.childNodes.length);
                 this.startPt.setEnd(node, node.childNodes.length);
+                if (n++ % 20 == 0)
+                    liberator.threadyield();
+                if (liberator.interrupted)
+                    break;
             }
         },
 
