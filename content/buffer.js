@@ -1111,7 +1111,7 @@ liberator.Buffer = function () //{{{
             let cssClass = class[1] || ".hl-" + class[0];
             let scope = class[2] || highlightDocs;
 
-            let getCSS = function (style) cssClass + selectors + " { " + style.replace(/(?:!\s*important\s*)?(?:;|;?$)/g, "!important;") + " }";
+            let getCSS = function (style) cssClass + selectors + " { " + style.replace(/(?:!\s*important\s*)?(?:;?$|;)/g, "!important;") + " }";
             let css = getCSS(style);
 
             if (highlight.get(key))
