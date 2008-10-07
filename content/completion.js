@@ -304,6 +304,15 @@ liberator.Completion = function () //{{{
 
         javascript: function (str)
         {
+            let eval = function (arg)
+            {
+                try
+                {
+                    return window.eval(arg);
+                }
+                catch(e) {}
+                return null;
+            }
             /* Search the object for strings starting with @key.
              * If @fn is defined, slice @offset characters from
              * the results and map them via @fn.
@@ -317,7 +326,7 @@ liberator.Completion = function () //{{{
                 for (let [,obj] in Iterator(objects))
                 {
                     if (typeof obj == "string")
-                        obj = window.eval("with (liberator) {" + obj + "}");
+                        obj = eval("with (liberator) {" + obj + "}");
                     if (typeof obj != "object")
                         continue;
 
@@ -333,8 +342,10 @@ liberator.Completion = function () //{{{
                         {
                             continue;
                         }
-                        if (["string", "number", "boolean", "function"].indexOf(type) > -1)
+                        if (["string", "number", "boolean"].indexOf(type) > -1)
                             type += ": " + String(v).replace("\n", "\\n", "g");
+                        if (type == "function")
+                            type += ": " + v.toSource.replace(/\{.*/, "{ ... }");
 
                         compl.push([k, type]);
                     }
@@ -477,11 +488,11 @@ liberator.Completion = function () //{{{
                  * key = "bar + ''"
                  */
                 let string = str.substring(top[OFFSET] + 1);
-                string = window.eval(last + string + last);
+                string = eval(last + string + last);
 
                 let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
                 let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
-                key = window.eval(key);
+                key = eval(key);
                 return [top[OFFSET], objectKeys(obj, key + string, liberator.util.escapeString, key.length, last)];
             }
 
