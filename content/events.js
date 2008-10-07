@@ -253,7 +253,7 @@ liberator.AutoCommands = function () //{{{
         {
             let events = liberator.options["eventignore"].split(",");
 
-            if (events.some(function (e) e == "all" || e == event))
+            if (liberator.options.get("eventignore").has("all", event))
                 return;
 
             let autoCmds = store.filter(function (autoCmd) autoCmd.event == event);

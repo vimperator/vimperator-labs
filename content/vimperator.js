@@ -261,8 +261,8 @@ liberator.config = { //{{{
             function ()
             {
                 liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    (liberator.options["newtab"] == "all" || liberator.options["newtab"].split(",").indexOf("downloads") != -1) ?
-                        liberator.NEW_TAB : liberator.CURRENT_TAB);
+                    liberator.options.get("newtab").has("all", "downloads")
+                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
             },
             { argCount: "0" });
 

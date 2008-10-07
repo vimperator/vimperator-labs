@@ -144,7 +144,7 @@ liberator.CommandLine = function () //{{{
     var promptCompleter = null;
 
     liberator.registerCallback("change", liberator.modes.EX, function (command) {
-        if (liberator.options["wildoptions"].indexOf("auto") >= 0)
+        if (liberator.options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(command);
         else
             completionIndex = UNINITIALIZED;
@@ -570,7 +570,7 @@ liberator.CommandLine = function () //{{{
 
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
-                liberator.options["wildoptions"].indexOf("auto") >= 0 &&
+                liberator.options.get("wildoptions").has("auto") >= 0 &&
                 extendedMode == liberator.modes.EX)
             {
                 var [start, compl] = liberator.completion.ex(cmd);

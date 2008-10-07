@@ -100,15 +100,9 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
 
     this.set = function (newValue, scope)
     {
-        if (scope)
-        {
-            if ((scope & this.scope) == 0) // option doesn't exist in this scope
-                return null;
-        }
-        else
-        {
-            scope = this.scope;
-        }
+        scope = scope || this.scope;
+        if ((scope & this.scope) == 0) // option doesn't exist in this scope
+            return null;
 
         if (this.setter)
         {
@@ -130,8 +124,16 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         this.hasChanged = true;
     };
 
-    this.__defineGetter__("value", this.get);
+    this.has = function ()
+    {
+        let value = this.value;
+        if (this.type == "stringlist")
+            value = this.value.split(",");
+        /* Return the number of matching arguments. */
+        return Array.reduce(arguments, function (n, val) value.indexOf(val) >= 0, 0);
+    };
 
+    this.__defineGetter__("value", this.get);
     this.__defineSetter__("value", this.set);
 
     this.hasName = function (name)
@@ -162,7 +164,7 @@ liberator.Options = function () //{{{
 
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                 .getService(Components.interfaces.nsIPrefBranch);
-    var options = [];
+    var options = {};
 
     function optionObserver(key, event, option)
     {
@@ -368,9 +370,8 @@ liberator.Options = function () //{{{
             if (special) // open Firefox settings GUI dialog
             {
                 liberator.open("about:config",
-                    (liberator.options.newtab &&
-                        (liberator.options.newtab == "all" || liberator.options.newtab.split(",").indexOf("prefs") != -1)) ?
-                            liberator.NEW_TAB : liberator.CURRENT_TAB);
+                    (liberator.options["newtab"] && liberator.options.get("newtab").has("all", "prefs"))
+                            ? liberator.NEW_TAB : liberator.CURRENT_TAB);
             }
             else
             {
@@ -881,9 +882,9 @@ liberator.Options = function () //{{{
 
         __iterator__: function ()
         {
-            let sorted = options.sort(function (opt1, opt2) opt1.name > opt2.name);
-            for (let i = 0; i < sorted.length; i++)
-                yield sorted[i];
+            let sorted = [o for ([,o] in Iterator(options))]
+                            .sort(function (a, b) String.localeCompare(a.name, b.name));
+            return (v for ([k, v] in Iterator(sorted)));
         },
 
         add: function (names, description, type, defaultValue, extraInfo)
@@ -896,22 +897,18 @@ liberator.Options = function () //{{{
             if (!option)
                 return false;
 
-            for (let opt in Iterator(this))
+            if (option.name in options)
             {
-                if (opt.name == option.name)
-                {
-                    // never replace for now
-                    liberator.log("Warning: '" + names[0] + "' already exists, NOT replacing existing option.", 1);
-                    return false;
-                }
+                // never replace for now
+                liberator.log("Warning: '" + names[0] + "' already exists, NOT replacing existing option.", 1);
+                return false;
             }
 
             // quickly access options with liberator.options["wildmode"]:
             this.__defineGetter__(option.name, function () option.value);
             this.__defineSetter__(option.name, function (value) { option.value = value; });
 
-            // TODO: sort option
-            options.push(option);
+            options[option.name] = option;
             return true;
         },
 
@@ -920,10 +917,13 @@ liberator.Options = function () //{{{
             if (!scope)
                 scope = liberator.options.OPTION_SCOPE_BOTH;
 
-            for (let i = 0; i < options.length; i++)
+            if (name in options && (options[name].scope & scope))
+                return options[name];
+
+            for (let [,opt] in Iterator(options))
             {
-                if (options[i].hasName(name) && (options[i].scope & scope))
-                    return options[i];
+                if (opt.hasName(name) && (opt.scope & scope))
+                    return opt;
             }
 
             return null;

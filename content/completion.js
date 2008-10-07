@@ -308,6 +308,7 @@ liberator.Completion = function () //{{{
             {
                 try
                 {
+                    liberator.dump("eval(" + liberator.util.escapeString(arg) + ")");
                     return window.eval(arg);
                 }
                 catch(e) {}
@@ -345,7 +346,7 @@ liberator.Completion = function () //{{{
                         if (["string", "number", "boolean"].indexOf(type) > -1)
                             type += ": " + String(v).replace("\n", "\\n", "g");
                         if (type == "function")
-                            type += ": " + v.toSource.replace(/\{.*/, "{ ... }");
+                            type += ": " + String(v).replace(/{(.|\n)*/, "{ ... }");
 
                         compl.push([k, type]);
                     }
