@@ -323,6 +323,23 @@ liberator.Completion = function () //{{{
                 if (!(objects instanceof Array))
                     objects = [objects];
 
+                let iter = function (obj)
+                {
+                    let iter = Iterator(obj);
+                    try
+                    {
+                        if ("__iterator__" in obj)
+                        {
+                            let oldIter = obj.__iterator__;
+                            delete obj.__iterator__;
+                            iter = Iterator(obj);
+                            obj.__iterator__ = oldIter;
+                        }
+                    }
+                    catch (e) {}
+                    return iter;
+                }
+
                 let compl = [];
                 for (let [,obj] in Iterator(objects))
                 {
@@ -331,18 +348,9 @@ liberator.Completion = function () //{{{
                     if (typeof obj != "object")
                         continue;
 
-                    for (let k in obj)
+                    for (let [k, v] in iter(obj))
                     {
-                        let v, type;
-                        try
-                        {
-                            v = obj[k];
-                            type = typeof v;
-                        }
-                        catch(e)
-                        {
-                            continue;
-                        }
+                        let type = typeof v;
                         if (["string", "number", "boolean"].indexOf(type) > -1)
                             type += ": " + String(v).replace("\n", "\\n", "g");
                         if (type == "function")
