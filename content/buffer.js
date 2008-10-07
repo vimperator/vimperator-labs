@@ -380,10 +380,10 @@ liberator.Buffer = function () //{{{
         "number", 1,
         {
             completer: function (filter) [0, [
-                  ["0", "Don't show link destination"],
-                  ["1", "Show the link in the status line"],
-                  ["2", "Show the link in the command line"]
-              ]],
+                ["0", "Don't show link destination"],
+                ["1", "Show the link in the status line"],
+                ["2", "Show the link in the command line"]
+            ]],
             validator: function (value) value >= 0 && value <= 2
         });
 
@@ -805,6 +805,7 @@ liberator.Buffer = function () //{{{
             liberator.buffer.highlight(key, css, special);
         },
         {
+            // TODO: add this as a standard highlight completion function?
             completer: function (filter) [0, liberator.completion.filter([[v, ""] for ([k, v] in Iterator(highlightClasses))], filter)],
             hereDoc: true,
             bang: true,

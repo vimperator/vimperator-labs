@@ -145,9 +145,9 @@ liberator.Tabs = function () //{{{
             completer: function (filter)
             {
                 return [
-                  ["0", "Never show tab bar"],
-                  ["1", "Show tab bar only if more than one tab is open"],
-                  ["2", "Always show tab bar"]
+                    ["0", "Never show tab bar"],
+                    ["1", "Show tab bar only if more than one tab is open"],
+                    ["2", "Always show tab bar"]
                 ];
             },
             validator: function (value) value >= 0 && value <= 2

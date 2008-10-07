@@ -241,11 +241,10 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "+", // NOTE: single arg may contain unescaped whitespace
+                // TODO: add this as a standard menu completion function
                 completer: function (filter)
                 {
-                    var completions = getMenuItems().map(
-                        function (item) [item.fullMenuPath, item.label]
-                    );
+                    let completions = getMenuItems().map(function (item) [item.fullMenuPath, item.label]);
                     return [0, liberator.completion.filter(completions, filter)];
                 }
             });
@@ -313,7 +312,7 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter) getHelpCompletions(filter)
+                completer: function (filter) liberator.completion.help(filter)
             });
 
         liberator.commands.add(["javas[cript]", "js"],
@@ -541,33 +540,6 @@ const liberator = (function () //{{{
                 argCount: "0",
                 bang: true
             });
-    }
-
-    function getHelpCompletions(filter)
-    {
-        var files = liberator.config.helpFiles || [];
-        var res = [];
-
-        for (let i = 0; i < files.length; i++)
-        {
-            try
-            {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], false);
-                xmlhttp.send(null);
-            }
-            catch (e)
-            {
-                liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], 1);
-                continue;
-            }
-            var doc = xmlhttp.responseXML;
-            var elems = doc.getElementsByClassName("tag");
-            for (let j = 0; j < elems.length; j++)
-                res.push([elems[j].textContent, files[i]]);
-        }
-
-        return [0, liberator.completion.filter(res, filter)];
     }
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
@@ -905,7 +877,7 @@ const liberator = (function () //{{{
                 }, 500);
             }
 
-            var [, items] = getHelpCompletions(topic);
+            var [, items] = liberator.completion.help(topic);
             var partialMatch = -1;
 
             for (let i = 0; i < items.length; i++)

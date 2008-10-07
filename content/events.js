@@ -127,7 +127,7 @@ liberator.AutoCommands = function () //{{{
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.autocommand(filter)
+            completer: function (filter) liberator.completion.event(filter)
         });
 
     // TODO: expand target to all buffers
@@ -139,7 +139,7 @@ liberator.AutoCommands = function () //{{{
         },
         {
             argCount: "+",
-            completer: function (filter) liberator.completion.autocommand(filter)
+            completer: function (filter) liberator.completion.event(filter)
         }
     );
 
@@ -175,7 +175,7 @@ liberator.AutoCommands = function () //{{{
         {
             // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
             argCount: "+",
-            completer: function (filter) liberator.completion.autocommand(filter)
+            completer: function (filter) liberator.completion.event(filter)
         }
     );
 

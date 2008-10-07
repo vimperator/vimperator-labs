@@ -1430,9 +1430,9 @@ liberator.StatusLine = function () //{{{
             completer: function (filter)
             {
                 return [
-                  ["0", "Never display status line"],
-                  ["1", "Display status line only if there are multiple windows"],
-                  ["2", "Always display status line"]
+                    ["0", "Never display status line"],
+                    ["1", "Display status line only if there are multiple windows"],
+                    ["2", "Always display status line"]
                 ];
             },
             validator: function (value) value >= 0 && value <= 2

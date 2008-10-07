@@ -283,7 +283,7 @@ liberator.Bookmarks = function () //{{{
         },
         {
             bang: true,
-            completer: function (filter) [0, liberator.bookmarks.get(filter)],
+            completer: function (filter) liberator.completion.bookmark(filter),
             options: [[["-tags", "-T"], liberator.commands.OPTION_LIST]]
         });
 
@@ -296,7 +296,7 @@ liberator.Bookmarks = function () //{{{
 
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", liberator.commandline.FORCE_SINGLELINE);
         },
-        { completer: function (filter) [0, liberator.bookmarks.get(filter)] });
+        { completer: function (filter) liberator.completion.bookmark(filter) });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -696,7 +696,7 @@ liberator.History = function () //{{{
         function (args, special) { liberator.history.list(args, special); },
         {
             bang: true,
-            completer: function (filter) [0, liberator.history.get(filter)]
+            completer: function (filter) liberator.completion.history(filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

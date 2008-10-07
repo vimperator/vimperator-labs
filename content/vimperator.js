@@ -331,16 +331,7 @@ liberator.config = { //{{{
             },
             {
                 argCount: "+",
-                completer: function (filter)
-                {
-                    var menu = document.getElementById("viewSidebarMenu");
-                    var nodes = [];
-
-                    for (let i = 0; i < menu.childNodes.length; i++)
-                        nodes.push([menu.childNodes[i].label, ""]);
-
-                    return [0, liberator.completion.filter(nodes, filter)];
-                }
+                completer: function (filter) liberator.completion.sidebar(filter)
             });
 
         liberator.commands.add(["winc[lose]", "wc[lose]"],
