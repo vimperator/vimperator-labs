@@ -363,7 +363,7 @@ liberator.Completion = function () //{{{
                 top = [i, arg, [], [], [], []];
                 if (arg)
                     top[STATEMENTS].push(firstNonwhite());
-                last = top[1];
+                last = top[CHAR];
                 stack.push(top);
             }
             let pop = function (arg)
@@ -478,7 +478,7 @@ liberator.Completion = function () //{{{
             }
 
             /* Is this an object reference? */
-            if (top[3].length)
+            if (top[DOTS].length)
             {
                 let dot = get(-1, 0, DOTS);
                 /*
