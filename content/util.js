@@ -38,6 +38,8 @@ liberator.util = { //{{{
         {
             timer.cancel();
             this.latest = 0;
+            /* minInterval is the time between the completion of the command and the next firing. */
+            this.doneAt = Date.now() + minInterval;
             callback(this.arg);
             this.doneAt = Date.now() + minInterval;
         }
@@ -49,7 +51,7 @@ liberator.util = { //{{{
             let now = Date.now();
             if (this.doneAt == -1)
                 timer.cancel();
-            else if (now >= this.doneAt || this.latest && now >= this.latest)
+            if (now >= this.doneAt || this.latest && now >= this.latest)
                 return this.notify();
 
             let timeout = minInterval;
@@ -169,7 +171,7 @@ liberator.util = { //{{{
     escapeString: function (str, delimiter)
     {
         delimiter = delimiter || '"';
-        return delimiter + str.replace(/([\\'"])/g, "\\$1") + delimiter;
+        return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n").replace("\t", "\\t") + delimiter;
     },
 
     // Flatten an array:
