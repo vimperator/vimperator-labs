@@ -931,7 +931,7 @@ liberator.Editor = function () //{{{
                 let list =
                     <table>
                     {
-                        liberator.template.map2(abbrev, function (lhs, rhs)
+                        liberator.template.map(abbrev, function (lhs, rhs)
                             liberator.template.map(rhs, function (abbr)
                             searchFilter.indexOf(abbr[0]) < 0 ? undefined :
                             <tr>

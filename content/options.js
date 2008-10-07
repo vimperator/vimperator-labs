@@ -284,7 +284,7 @@ liberator.Options = function () //{{{
                 var str =
                     <table>
                     {
-                        liberator.template.map2(liberator.globalVariables, function (i, value) {
+                        liberator.template.map(liberator.globalVariables, function (i, value) {
                             let prefix = typeof value == "number"   ? "#" :
                                          typeof value == "function" ? "*" :
                                                                       " ";

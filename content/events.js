@@ -233,7 +233,7 @@ liberator.AutoCommands = function () //{{{
                         <td class="hl-Title" colspan="2">----- Auto Commands -----</td>
                     </tr>
                     {
-                        liberator.template.map2(cmds, function (event, items)
+                        liberator.template.map(cmds, function (event, items)
                         <tr>
                             <td class="hl-Title" colspan="2">{event}</td>
                         </tr>

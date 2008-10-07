@@ -5,7 +5,12 @@ liberator.template = {
 
     map: function (iter, fn, sep)
     {
-        if (iter.length) /* Kludge? */
+        if (fn.length > 1)
+        {
+            iter = Iterator(iter);
+            fn = function (x) fn.apply(null, x);
+        }
+        else if (iter.length) /* Kludge? */
             iter = liberator.util.arrayIter(iter);
         let ret = <></>;
         let n = 0;
@@ -19,11 +24,6 @@ liberator.template = {
             ret += val;
         }
         return ret;
-    },
-    map2: function (iter, fn, sep)
-    {
-        // Could cause performance problems.
-        return this.map(Iterator(iter), function (x) fn.apply(null, x), sep);
     },
 
     maybeXML: function (xml)
@@ -143,7 +143,7 @@ liberator.template = {
                     <th colspan="2">jump</th><th>title</th><th>URI</th>
                 </tr>
                 {
-                    this.map2(elems, function (idx, val)
+                    this.map(elems, function (idx, val)
                     <tr>
                         <td class="indicator">{idx == index ? ">" : ""}</td>
                         <td>{Math.abs(idx - index)}</td>
@@ -207,7 +207,7 @@ liberator.template = {
                     this.map(iter, function (row)
                     <tr>
                     {
-                        liberator.template.map2(row, function (i, d)
+                        liberator.template.map(row, function (i, d)
                         <td style={style[i] || ""}>{d}</td>)
                     }
                     </tr>)
