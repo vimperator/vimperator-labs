@@ -308,7 +308,7 @@ liberator.Completion = function () //{{{
              * If @fn is defined, slice @offset characters from
              * the results and map them via @fn.
              */
-            function objectKeys(objects, key, fn, offset)
+            function objectKeys(objects, key, fn, offset, last)
             {
                 if (!(objects instanceof Array))
                     objects = [objects];
@@ -334,9 +334,12 @@ liberator.Completion = function () //{{{
                         compl.push([k, type]);
                     }
                 }
-                compl = buildLongestStartingSubstring(compl, key);
                 if (fn)
+                {
                     compl.forEach(function (a) a[0] = fn(a[0].substr(offset)));
+                    key = last + key.substr(offset)
+                }
+                compl = buildLongestStartingSubstring(compl, key);
                 return compl;
             }
 
@@ -474,7 +477,7 @@ liberator.Completion = function () //{{{
                 let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
                 let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
                 key = window.eval(key);
-                return [top[OFFSET], objectKeys(obj, key + string, liberator.util.escapeString, key.length)];
+                return [top[OFFSET], objectKeys(obj, key + string, liberator.util.escapeString, key.length, last)];
             }
 
             /* Is this an object reference? */
