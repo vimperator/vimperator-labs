@@ -258,12 +258,10 @@ section:Options[option-index]
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
 ||'helpfile'|| Name of the main help file +
 ||'hintmatching'|| How links are matched +
-||'hintstyle'|| CSS specification of unfocused hints +
 ||'hinttags'|| XPath string of hintable elements activated by 'f' and 'F' +
 ||'hinttimeout'|| Automatically follow non unique numerical hint +
 ||'history'|| Number of Ex commands and search patterns to store in the command-line history +
 ||'hlsearch'|| Highlight previous search pattern matches +
-||'hlsearchstyle'|| CSS specification of highlighted search items +
 ||'ignorecase'|| Ignore case in search patterns +
 ||'incsearch'|| Show where the search pattern matches as it is typed +
 ||'insertmode'|| Use Insert mode as the default for text areas +
