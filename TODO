@@ -44,7 +44,7 @@ FEATURES:
 6 registers
 6 allow for multiple ex commands separated with |
 6 check/correct spellings in insert mode with some mappings
-6 add more autocommands (TabClose, TabOpen, TabChanged, any more?)
+6 add more autocommands (TabClose, TabOpen, TabChanged, DownloadPre/Post any more?)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
