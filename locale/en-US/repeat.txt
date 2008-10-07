@@ -53,8 +53,9 @@ section:Using{nbsp}scripts[using-scripts]
 |:so| |:source|
 ||:so[urce][!] {file}|| +
 ________________________________________________________________________________
-Read Ex commands from {file}. You can either source files which mostly contain
-Ex commands like [c]map < gt[c] and put JavaScript code within a:
+Read Ex commands, javascript, or CSS from {file}. You can either source files
+which mostly contain Ex commands like [c]map < gt[c] and put JavaScript code
+within a:
 
 --------------------------------------------------------------------------------
 js <<EOF
@@ -63,7 +64,7 @@ hello = function () {
 }
 EOF
 --------------------------------------------------------------------------------
-Or you can alternatively source a file which ends in _.js_, these files are
+Or you can alternatively source a file which ends in _.js_. These files are
 automatically sourced as pure JavaScript files.
 
 Note: In both cases you must add functions to the global window object like

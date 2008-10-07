@@ -9,7 +9,7 @@
       VimperatorLeave respectively
     * add :optionusage
     * add :doautocmd and :doautoall
-    * add :style and :delstyle commands
+    * add :style and :delstyle commands, allow :so to source stylesheets
     * add DOMLoad autocmd event
     * add :messages and 'messages'
     * add :runtime
