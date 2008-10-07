@@ -1123,6 +1123,8 @@ const liberator = (function () //{{{
             loadModule("io",           liberator.IO);
             loadModule("completion",   liberator.Completion);
 
+            liberator.dump(liberator.io.source.toString() + "\n");
+
             // This adds options/mappings/commands which are only valid in this particular extension
             if (liberator.config.init)
                 liberator.config.init();

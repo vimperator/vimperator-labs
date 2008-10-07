@@ -737,6 +737,7 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
+            liberator.dump("filename: " + filename + "\n");
             try
             {
                 var file = ioManager.getFile(filename);
@@ -764,6 +765,11 @@ lookup:
                 if (/\.js$/.test(filename))
                 {
                     liberator.eval(str);
+                }
+                else if (/\.css$/.test(filename))
+                {
+                    liberator.storage.styles.unregisterSheet("file://" + file.path);
+                    liberator.storage.styles.registerSheet("file://" + file.path);
                 }
                 else
                 {
