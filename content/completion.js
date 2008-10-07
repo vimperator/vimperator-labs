@@ -132,9 +132,6 @@ liberator.Completion = function () //{{{
             lastKey = key;
             lastObjs = objects;
 
-            liberator.dump("continuing: " + continuing + "\n");
-            liberator.dump("key: " + key + "\nlastKey: " + lastKey + "\n");
-
             if (!continuing)
             {
                 compl = [];
@@ -286,7 +283,6 @@ liberator.Completion = function () //{{{
             }
 
             lastIdx = i;
-            liberator.dump(liberator.util.objectToString(stack.map(function (a) json.encode(a))));
         }
 
         this.complete = function (string)
@@ -299,7 +295,6 @@ liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                liberator.dump(liberator.util.escapeString(str) + "\n" + e + "\n" + e.stack + "\n");
                 return [0, []];
             }
 
