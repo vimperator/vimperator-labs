@@ -176,11 +176,10 @@ liberator.Search = function () //{{{
                 return;
             }
 
-            var baseNode = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-                <span style={liberator.options["hlsearchstyle"] +
+            var baseNode = <span style={liberator.options["hlsearchstyle"] +
                             "; display: inline; font-size: inherit; padding: 0"}
-                      class="__liberator-search"/>
-            baseNode = liberator.util.xmlToDom(baseNode);
+                          class="__liberator-search"/>
+            baseNode = liberator.util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
             var count = body.childNodes.length;
