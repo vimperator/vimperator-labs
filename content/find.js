@@ -176,9 +176,7 @@ liberator.Search = function () //{{{
                 return;
             }
 
-            var baseNode = <span style={liberator.options["hlsearchstyle"] +
-                            "; display: inline; font-size: inherit; padding: 0"}
-                          class="__liberator-search"/>
+            var baseNode = <span class="__liberator-search"/>
             baseNode = liberator.util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
@@ -244,12 +242,6 @@ liberator.Search = function () //{{{
                 return value;
             }
         });
-
-    // TODO: use Search highlight group instead when we have proper highlight
-    // support
-    liberator.options.add(["hlsearchstyle", "hlss"],
-        "CSS specification of highlighted search items",
-        "string", "color: black; background-color: yellow; padding: 0; display: inline;");
 
     liberator.options.add(["ignorecase", "ic"],
         "Ignore case in search patterns",

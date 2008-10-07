@@ -88,7 +88,7 @@ liberator.Hints = function () //{{{
         var scrollY = doc.defaultView.scrollY;
 
         var baseNodeAbsolute = liberator.util.xmlToDom(
-            <span style={liberator.options["hintstyle"]} class="liberator-hint"/>, doc);
+            <span class="liberator-hint"/>, doc);
 
         var elem, tagname, text, span, rect;
         var res = liberator.buffer.evaluateXPath(liberator.options["hinttags"], doc, null, true);
@@ -554,10 +554,6 @@ liberator.Hints = function () //{{{
     liberator.options.add(["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
         "string", DEFAULT_HINTTAGS);
-
-    liberator.options.add(["hintstyle", "hs"],
-        "CSS specification of unfocused hints",
-        "string", "z-index:5000; font-family:monospace; font-size:10px; font-weight: bold; color:white; background-color:red; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;");
 
     liberator.options.add(["hinttags", "ht"],
         "XPath string of hintable elements activated by 'f' and 'F'",

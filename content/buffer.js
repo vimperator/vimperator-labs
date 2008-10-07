@@ -37,7 +37,11 @@ liberator.Buffer = function () //{{{
     const highlightClasses = ["Boolean", "ErrorMsg", "Function", "InfoMsg", "Keyword",
             "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question",
             "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
-            "Title", "URL", "WarningMsg"];
+            "Title", "URL", "WarningMsg",
+            ["Hint", ".liberator-hint", "*"]
+            ["Search", ".__liberator-search", "*"],
+            ["Bell", "#liberator-visualbell"],
+            ];
     let name = liberator.config.name.toLowerCase();
     const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
@@ -1092,22 +1096,27 @@ liberator.Buffer = function () //{{{
         {
             let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
-            if (highlightClasses.indexOf(class) == -1)
+            let class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
+            if (!class)
             {
                 liberator.echoerr("Unknown highlight keyword");
                 return;
             }
+            if (!(class instanceof Array))
+                class = [class];
+            let cssClass = class[1] || ".hl-" + class[0];
+            let scope = class[2] || highlightDocs;
 
-            let getCSS = function (style) ".hl-" + class + selectors + " { " + style.replace(/(?:!\s*important\s*)?(?:;|;?$)/g, "!important;") + " }";
+            let getCSS = function (style) cssClass + selectors + " { " + style.replace(/(?:!\s*important\s*)?(?:;|;?$)/g, "!important;") + " }";
             let css = getCSS(style);
 
             if (highlight.get(key))
-                styles.removeSheet(highlightDocs, getCSS(highlight.get(key)), true);
+                styles.removeSheet(scope, getCSS(highlight.get(key)), true);
 
             if (/^\s*$/.test(style))
                 return highlight.remove(key);
 
-            let error = styles.addSheet(highlightDocs, css, true, force);
+            let error = styles.addSheet(scope, css, true, force);
             if (error)
                 liberator.echoerr(error);
             else

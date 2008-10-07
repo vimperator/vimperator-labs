@@ -123,11 +123,6 @@ const liberator = (function () //{{{
                     return value;
                 }
             });
-
-        liberator.options.add(["visualbellstyle", "t_vb"],
-            "CSS specification of the visual bell",
-            "string", "border: none; background-color: black;"
-        );
     }
 
     function addMappings()
@@ -663,20 +658,15 @@ const liberator = (function () //{{{
         {
             if (liberator.options["visualbell"])
             {
-                var vbs = liberator.options["visualbellstyle"];
-                if (vbs)
-                {
-                    // flash the visual bell
-                    var popup = document.getElementById("liberator-visualbell");
-                    var win = liberator.config.visualbellWindow;
-                    var box = document.getBoxObjectFor(win);
+                // flash the visual bell
+                var popup = document.getElementById("liberator-visualbell");
+                var win = liberator.config.visualbellWindow;
+                var box = document.getBoxObjectFor(win);
 
-                    popup.style.cssText = vbs;
-                    popup.height = box.height;
-                    popup.width = box.width;
-                    popup.openPopup(win, "overlap", 0, 0, false, false);
-                    setTimeout(function () { popup.hidePopup(); }, 50);
-                }
+                popup.height = box.height;
+                popup.width = box.width;
+                popup.openPopup(win, "overlap", 0, 0, false, false);
+                setTimeout(function () { popup.hidePopup(); }, 50);
             }
             else
             {
