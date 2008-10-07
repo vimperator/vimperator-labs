@@ -652,6 +652,10 @@ const liberator = (function () //{{{
         // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
         dump: function (message)
         {
+            if (typeof message == "object")
+                message = liberator.util.objectToString(message);
+            else
+                message += "\n";
             dump(liberator.config.name.toLowerCase() + ": " + message);
         },
 
