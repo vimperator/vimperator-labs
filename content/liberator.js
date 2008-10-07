@@ -44,7 +44,7 @@ const liberator = (function () //{{{
         try
         {
             liberator.log(message, 0);
-            liberator.dump(message + "\n");
+            liberator.dump(message);
             liberator[name] = func();
         }
         catch (e)
@@ -52,8 +52,7 @@ const liberator = (function () //{{{
             toJavaScriptConsole();
             if (Components.utils.reportError)
                 Components.utils.reportError(e);
-            liberator.dump(e + "\n");
-            liberator.dump(e.stack + "\n");
+            liberator.dump(e);
         }
     }
 
@@ -661,14 +660,7 @@ const liberator = (function () //{{{
 
         dumpStack: function (msg)
         {
-            try
-            {
-                someStatisticallyImprobableVariableName.foo = 1;
-            }
-            catch (e)
-            {
-                liberator.dump((msg || "") + e.stack);
-            }
+            liberator.dump((msg || "") + (new Error()).stack.replace(/.*\n/, ""));
         },
 
         // with (liberator) means, liberator is the default namespace "inside" eval

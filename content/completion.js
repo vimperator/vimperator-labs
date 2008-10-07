@@ -318,7 +318,7 @@ liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                liberator.dump(liberator.util.escapeString(string) + ": " + e + "\n" + e.stack + "\n");
+                liberator.dump(liberator.util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return [0, []];
             }

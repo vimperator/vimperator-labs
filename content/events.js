@@ -536,7 +536,7 @@ liberator.Events = function () //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
-        liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded + "\n");
+        liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded);
         liberator.threadyield(true); // clear queue
 
         if (liberator.buffer.loaded == 1)
@@ -548,7 +548,7 @@ liberator.Events = function () //{{{
         {
             liberator.threadyield();
             if ((now - then) % 1000 < 10)
-                liberator.dump("waited: " + (now - then) + " ms\n");
+                liberator.dump("waited: " + (now - then) + " ms");
 
             if (!liberator.modes.isReplaying)
                 return false;
@@ -567,7 +567,7 @@ liberator.Events = function () //{{{
         var ret = (liberator.buffer.loaded == 1);
         if (!ret)
             liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
-        liberator.dump("done waiting: " + ret + "\n");
+        liberator.dump("done waiting: " + ret);
 
         // sometimes the input widget had focus when replaying a macro
         // maybe this call should be moved somewhere else?
@@ -715,7 +715,7 @@ liberator.Events = function () //{{{
         destroy: function ()
         {
             // removeEventListeners() to avoid mem leaks
-            liberator.dump("TODO: remove all eventlisteners\n");
+            liberator.dump("TODO: remove all eventlisteners");
 
             if (typeof getBrowser != "undefined")
                 getBrowser().removeProgressListener(this.progressListener);
@@ -1049,7 +1049,7 @@ liberator.Events = function () //{{{
                 {
                     if (liberator.config.isComposeWindow)
                     {
-                        liberator.dump("Compose editor got focus\n");
+                        liberator.dump("Compose editor got focus");
                         liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
                     }
                     else if (liberator.mode != liberator.modes.MESSAGE)
