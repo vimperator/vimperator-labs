@@ -170,8 +170,10 @@ liberator.Completion = function () //{{{
                 // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")");
                 return window.eval(arg);
             }
-            catch(e) {}
-            return null;
+            catch (e)
+            {
+                return null;
+            }
         }
 
         /* Get an element from the stack. If @n is negative,
