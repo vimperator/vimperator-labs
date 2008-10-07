@@ -1,0 +1,6 @@
+
+<!ENTITY liberator.mainWindow "messengerWindow">
+<!ENTITY liberator.name "vimperator">
+<!ENTITY liberator.statusBefore "">
+<!ENTITY liberator.statusAfter "statusTextBox">
+

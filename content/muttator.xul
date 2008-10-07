@@ -30,6 +30,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 <!--?xml-stylesheet href="chrome://browser/skin/" type="text/css"?-->
 <?xml-stylesheet href="chrome://muttator/skin/vimperator.css" type="text/css"?>
+<?xul-overlay href="chrome://muttator/content/liberator.xul"?>
 
 <overlay id="muttator"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -38,88 +39,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript;version=1.8" src="liberator.js"/>
-    <script type="application/x-javascript;version=1.8" src="muttator.js"/>
-
     <script type="application/x-javascript;version=1.8" src="addressbook.js"/>
-    <script type="application/x-javascript;version=1.8" src="buffer.js"/>
-    <script type="application/x-javascript;version=1.8" src="commands.js"/>
-    <script type="application/x-javascript;version=1.8" src="completion.js"/>
-    <script type="application/x-javascript;version=1.8" src="editor.js"/>
-    <script type="application/x-javascript;version=1.8" src="events.js"/>
-    <script type="application/x-javascript;version=1.8" src="find.js"/>
-    <script type="application/x-javascript;version=1.8" src="help.js"/>
-    <script type="application/x-javascript;version=1.8" src="hints.js"/>
-    <script type="application/x-javascript;version=1.8" src="io.js"/>
     <script type="application/x-javascript;version=1.8" src="mail.js"/>
-    <script type="application/x-javascript;version=1.8" src="mappings.js"/>
-    <script type="application/x-javascript;version=1.8" src="modes.js"/>
-    <script type="application/x-javascript;version=1.8" src="options.js"/>
-    <script type="application/x-javascript;version=1.8" src="ui.js"/>
-    <script type="application/x-javascript;version=1.8" src="util.js"/>
     <script type="application/x-javascript;version=1.8" src="tabs.js"/>
-
-    <window id="messengerWindow">
-
-       <keyset id="mainKeyset">
-           <key id="key_open_vimbar" key=":" oncommand="liberator.commandline.open(':', '', liberator.modes.EX);" modifiers=""/>
-           <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.events.onEscape();"/>
-           <!-- other keys are handled inside the event loop in events.js -->
-       </keyset>
-
-       <panel id="liberator-visualbell"/>
-
-        <!--this notifies us also of focus events in the XUL
-            from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
-        <commandset id="onVimperatorFocus"
-            commandupdater="true"
-            events="focus"
-            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onFocusChange(event);"/>
-        <commandset id="onVimperatorSelect"
-            commandupdater="true"
-            events="select"
-            oncommandupdate="if (typeof liberator.events != 'undefined') liberator.events.onSelectionChange(event);"/>
-
-        <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-multiline-output" src="chrome://muttator/content/buffer.xhtml"
-                flex="1" height="10px" hidden="false" collapsed="false"
-                onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
-        </vbox>
-
-        <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-completions" src="chrome://muttator/content/buffer.xhtml"
-                flex="1" height="250px" hidden="false" collapsed="false"
-                onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
-        </vbox>
-
-        <hbox id="liberator-commandline" hidden="false" class="hl-Normal">
-            <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-            <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
-                oninput="liberator.commandline.onEvent(event);"
-                onfocus="liberator.commandline.onEvent(event);"
-                onblur="liberator.commandline.onEvent(event);"/>
-        </hbox>
-
-        <vbox class="liberator-container" hidden="false" collapsed="false">
-            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
-                onkeypress="liberator.commandline.onMultilineInputEvent(event);"
-                oninput="liberator.commandline.onMultilineInputEvent(event);"
-                onblur="liberator.commandline.onMultilineInputEvent(event);"/>
-        </vbox>
-
-    </window>
-
-    <statusbar id="status-bar" class="hl-StatusLine">
-        <hbox insertafter="statusTextBox" id="liberator-statusline" flex="1" height="10" hidden="false" align="center">
-            <statusbarpanel class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
-            <statusbarpanel class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
-            <statusbarpanel class="plain" id="liberator-statusline-field-progress"       flex="0"/>
-            <statusbarpanel class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
-            <statusbarpanel class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
-        </hbox>
-        <!-- just hide them since other elements expect them -->
-        <statusbarpanel id="statusText" hidden="true"/>
-        <statusbarpanel id="statusbarpanel-progress" hidden="true"/>
-    </statusbar>
 
 </overlay>
 

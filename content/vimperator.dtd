@@ -1,0 +1,6 @@
+
+<!ENTITY liberator.mainWindow "main-window">
+<!ENTITY liberator.name "vimperator">
+<!ENTITY liberator.statusBefore "statusbar-display">
+<!ENTITY liberator.statusAfter "">
+
