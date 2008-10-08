@@ -7,6 +7,9 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * remove 'hintstyle', 'hlsearchstyle' and 'visualbellstyle' - use
+      :highlight {Hint,Search,Bell}
+    * add :highlight
     * add :optionusage
     * add :doautocmd and :doautoall
     * add :style and :delstyle commands, allow :so to source stylesheets
