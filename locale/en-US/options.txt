@@ -208,7 +208,7 @@ ____
 ____
 List of directories searched when executing the :cd command. This is only used
 for relative paths, if an absolute path is specified then the option is
-ignored. 
+ignored.
 ____
 
 

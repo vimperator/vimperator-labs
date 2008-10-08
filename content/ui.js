@@ -1335,7 +1335,6 @@ liberator.ItemList = function (id) //{{{
         completionBody = dom.getElementsByTagName("tbody")[0];
         completionElements = completionBody.childNodes;
         doc.body.appendChild(dom);
-
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

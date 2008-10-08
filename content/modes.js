@@ -229,7 +229,6 @@ liberator.modes = (function () //{{{
                 main = mainMode;
                 if (!extendedMode)
                     extended = liberator.modes.NONE;
-
             }
             if (typeof extendedMode === "number")
                 extended = extendedMode;

@@ -719,7 +719,7 @@ liberator.History = function () //{{{
 
             if (!filter)
                 return cachedHistory.concat(history);
-            return liberator.completion.cached("history", filter, function() cachedHistory.concat(history),
+            return liberator.completion.cached("history", filter, function () cachedHistory.concat(history),
                                 "filterURLArray");
         },
 

@@ -193,10 +193,10 @@ liberator.config = { //{{{
             {
                 window.messageWasEditedExternally = false;
             }, true);
+
             /*window.document.addEventListener("unload", function () {
                 GetCurrentEditor().removeDocumentStateListener(liberator.config.stateListener);
             }, true);*/
-
         }
         else
         {

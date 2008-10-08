@@ -176,7 +176,7 @@ section:Closing{nbsp}tabs[closing-tabs]
 ||[count]d||
 ________________________________________________________________________________
 Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
-and the one to the right is selected. Afterwards, the tab to the right of the 
+and the one to the right is selected. Afterwards, the tab to the right of the
 deleted one is selected.
 
 When used with [arg], remove all tabs which contain [arg] in the hostname.
