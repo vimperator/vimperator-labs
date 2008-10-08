@@ -40,8 +40,14 @@ liberator.util = { //{{{
             this.latest = 0;
             /* minInterval is the time between the completion of the command and the next firing. */
             this.doneAt = Date.now() + minInterval;
-            callback(this.arg);
-            this.doneAt = Date.now() + minInterval;
+            try
+            {
+                callback(this.arg);
+            }
+            finally
+            {
+                this.doneAt = Date.now() + minInterval;
+            }
         }
         this.tell = function (arg)
         {

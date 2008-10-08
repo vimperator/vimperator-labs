@@ -108,8 +108,10 @@ liberator.CommandLine = function () //{{{
     var statusTimer = new liberator.util.Timer(5, 100, function ()
         liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
     var autocompleteTimer = new liberator.util.Timer(201, 300, function (command) {
-        let res = liberator.completion.ex(command);
-        liberator.commandline.setCompletions(res[1], res[0]);
+        if (liberator.modes.isReplaying)
+            return;
+        let [start, compl] = liberator.completion.ex(command);
+        liberator.commandline.setCompletions(compl, start);
     });
 
     // the containing box for the promptWidget and commandWidget
@@ -574,10 +576,7 @@ liberator.CommandLine = function () //{{{
             if (/\s/.test(cmd) &&
                 liberator.options.get("wildoptions").has("auto") >= 0 &&
                 extendedMode == liberator.modes.EX)
-            {
-                var [start, compl] = liberator.completion.ex(cmd);
-                this.setCompletions(compl, start);
-            }
+                autocompleteTimer.tell(cmd);
         },
 
         // normally used when pressing esc, does not execute a command
@@ -1175,7 +1174,8 @@ liberator.CommandLine = function () //{{{
 
             completions = compl;
             completionList.selectItem(completionIndex);
-            completionList.show();
+            if (liberator.options.get("wildoptions").has("auto"))
+                completionList.show();
 
             var command = this.getCommand();
             completionPrefix = command.substring(0, commandWidget.selectionStart);
