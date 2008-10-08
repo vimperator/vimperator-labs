@@ -311,7 +311,9 @@ liberator.IO = function () //{{{
         "List all sourced script names",
         function ()
         {
-            var list = liberator.template.tabular(["Idx", "Filename"], ["text-align: right"], Iterator(scriptNames));
+            var list = liberator.template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
+                ([i + 1, file] for ([i, file] in Iterator(scriptNames))));  // TODO: add colon?
+
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
