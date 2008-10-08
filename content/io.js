@@ -793,7 +793,7 @@ lookup:
                         {
                             if (heredocEnd.test(line))
                             {
-                                liberator.eval(heredoc);
+                                command.execute(args + "\n" + heredoc, special, count);
                                 heredoc = "";
                                 heredocEnd = null;
                             }
@@ -808,8 +808,8 @@ lookup:
                             if (/^\s*(".*)?$/.test(line))
                                 continue;
 
-                            let [count, cmd, special, args] = liberator.commands.parseCommand(line);
-                            let command = liberator.commands.get(cmd);
+                            var [count, cmd, special, args] = liberator.commands.parseCommand(line);
+                            var command = liberator.commands.get(cmd);
 
                             if (!command)
                             {
@@ -837,6 +837,7 @@ lookup:
 
                                     if (matches)
                                     {
+                                        args = matches[1];
                                         heredocEnd = new RegExp("^" + matches[2] + "$", "m");
                                         if (matches[1])
                                             heredoc = matches[1] + "\n";

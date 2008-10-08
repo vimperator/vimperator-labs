@@ -59,7 +59,7 @@ liberator.util = { //{{{
                 timer.cancel();
 
             let timeout = minInterval;
-            if (now > this.doneAt)
+            if (now > this.doneAt && this.doneAt > -1)
                 timeout = 0;
             else if (this.latest)
                 timeout = Math.min(minInterval, this.latest - now);
