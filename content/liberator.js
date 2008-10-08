@@ -280,15 +280,7 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = <table>
-                        {
-                            liberator.template.map(liberator.commands, function (command)
-                            <tr>
-                                <td class="hl-Title" style="padding-right: 20px">{command.name}</td>
-                                <td>{command.description}</td>
-                            </tr>)
-                        }
-                        </table>;
+                    var usage = liberator.template.usage(liberator.commands);
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
@@ -361,15 +353,7 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = <table>
-                        {
-                            liberator.template.map(liberator.options, function (option)
-                            <tr>
-                                <td class="hl-Title" style="padding-right: 20px">{option.name}</td>
-                                <td>{option.description}</td>
-                            </tr>)
-                        }
-                        </table>;
+                    var usage = liberator.template.usage(liberator.options);
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },
@@ -523,15 +507,7 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = <table>
-                            {
-                                liberator.template.add(liberator.mappings, function (mapping)
-                                <tr>
-                                    <td class="hl-Title" style="padding-right: 20px"> {mapping.names[0]}</td>
-                                    <td>{mapping.description}</td>
-                                </tr>)
-                             }
-                             </table>;
+                    var usage = liberator.template.usage(liberator.mappings);
                     liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
                 }
             },

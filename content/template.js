@@ -5,17 +5,11 @@ liberator.template = {
 
     map: function (iter, fn, sep)
     {
-        if (fn.length > 1)
-        {
-            iter = Iterator(iter);
-            let oldfn = fn;
-            fn = function (x) oldfn.apply(null, x);
-        }
-        else if (iter.length) /* Kludge? */
+        if (iter.length) /* Kludge? */
             iter = liberator.util.arrayIter(iter);
         let ret = <></>;
         let n = 0;
-        for each (let i in iter)
+        for each (let i in Iterator(iter))
         {
             let val = fn(i);
             if (val == undefined)
@@ -215,11 +209,25 @@ liberator.template = {
                     this.map(iter, function (row)
                     <tr>
                     {
-                        liberator.template.map(row, function (i, d)
+                        liberator.template.map(Iterator(row), function ([i, d])
                         <td style={style[i] || ""}>{d}</td>)
                     }
                     </tr>)
                 }
+            </table>);
+    },
+
+    usage: function (iter)
+    {
+        return this.generic(
+            <table>
+            {
+                this.map(iter, function (item)
+                <tr>
+                    <td class="hl-Title" style="padding-right: 20px">{item.name || item.names[0]}</td>
+                    <td>{item.description}</td>
+                </tr>)
+            }
             </table>);
     },
 };

@@ -1558,8 +1558,9 @@ liberator.Buffer = function () //{{{
                 let file = content.document.location.pathname.split("/").pop() || "[No Name]";
                 let title = content.document.title || "[No Title]";
 
-                let info = liberator.template.map("gf",
-                    function (opt) liberator.template.map(pageInfo[opt][0](), function (val) val, ", "),
+                let info = liberator.template.map("gf", function (opt)
+                        liberator.template.map(pageInfo[opt][0](),
+                            function (val) val, ", "),
                     ", ");
 
                 if (liberator.bookmarks.isBookmarked(this.URL))
