@@ -368,14 +368,23 @@ liberator.util = { //{{{
         return urls;
     },
 
-    uniq: function (ary)
+    uniq: function (ary, unsorted)
     {
         let ret = [];
-        for (let [,item] in Iterator(ary.sort()))
+        if (unsorted)
         {
-            if (item != last || !ret.length)
-                ret.push(item);
-            var last = item;
+            for (let [, item] in Iterator(ary))
+                if (ret.indexOf(item) == -1)
+                    ret.push(item);
+        }
+        else
+        {
+            for (let [,item] in Iterator(ary.sort()))
+            {
+                if (item != last || !ret.length)
+                    ret.push(item);
+                var last = item;
+            }
         }
         return ret;
     },

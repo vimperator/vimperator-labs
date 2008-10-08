@@ -437,7 +437,8 @@ liberator.Options = function () //{{{
         if (!matches)
             return null;
 
-        ret.scope = modifiers && modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
+
+        ret.scope = modifiers && modifiers.scope;
         ret.option = liberator.options.get(ret.name, ret.scope);
 
         ret.all = (ret.name == "all")
@@ -449,7 +450,22 @@ liberator.Options = function () //{{{
         if (ret.value === undefined)
             ret.value = "";
 
-        liberator.dump(ret);
+        if (!ret.option)
+            return ret;
+
+        ret.optionValue = ret.option.get(ret.scope);
+
+        switch (ret.option.type)
+        {
+            case "stringlist":
+                ret.optionHas = ret.optionValue.split(",");
+                ret.valueHas = ret.value.split(",");
+                break;
+            case "charlist":
+                ret.optionHas = ret.optionValue.split("");
+                ret.valueHas = ret.value.split("");
+                break;
+        }
 
         return ret;
     }
@@ -533,9 +549,9 @@ liberator.Options = function () //{{{
                 else
                 {
                     if (option.type == "boolean")
-                        liberator.echo((option.get(opt.scope) ? "  " : "no") + option.name);
+                        liberator.echo((opt.optionValue ? "  " : "no") + option.name);
                     else
-                        liberator.echo("  " + option.name + "=" + option.get(opt.scope));
+                        liberator.echo("  " + option.name + "=" + opt.optionValue);
                 }
             }
             // write access
@@ -543,7 +559,7 @@ liberator.Options = function () //{{{
             // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
-                let currentValue = option.get(opt.scope);
+                let currentValue = opt.optionValue;
                 let newValue;
 
                 switch (option.type)
@@ -590,47 +606,24 @@ liberator.Options = function () //{{{
                         break;
 
                     case "charlist":
-                        switch (opt.operator)
-                        {
-                            case "+":
-                                newValue = currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "") + opt.value;
-                                break;
-                            case "-":
-                                newValue = currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "");
-                                break;
-                            case "^":
-                                // NOTE: Vim doesn't prepend if there's a match in the current value
-                                newValue = opt.value + currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "");
-                                break;
-                            default:
-                                newValue = opt.value;
-                                break;
-                        }
-
-                        break;
-
                     case "stringlist":
                         switch (opt.operator)
                         {
                             case "+":
-                                if (!currentValue.match(opt.value))
-                                    newValue = (currentValue ? currentValue + "," : "") + opt.value;
-                                else
-                                    newValue = currentValue;
-                                break;
-                            case "-":
-                                newValue = currentValue.replace(new RegExp("^" + opt.value + ",?|," + opt.value), "");
+                                newValue = liberator.util.uniq(Array.concat(opt.optionHas, opt.valueHas), true);
                                 break;
                             case "^":
-                                if (!currentValue.match(opt.value))
-                                    newValue = opt.value + (currentValue ? "," : "") + currentValue;
-                                else
-                                    newValue = currentValue;
+                                // NOTE: Vim doesn't prepend if there's a match in the current value
+                                newValue = liberator.util.uniq(Array.concat(opt.valueHas, opt.optionHas), true);
+                                break;
+                            case "-":
+                                newValue = Array.filter(opt.optionHas, function (item) opt.valueHas.indexOf(item) == -1);
                                 break;
                             default:
-                                newValue = opt.value;
+                                newValue = opt.valueHas;
                                 break;
                         }
+                        newValue = newValue.join(option.type == "charlist" ? "" : ",");
 
                         break;
 
@@ -737,10 +730,9 @@ liberator.Options = function () //{{{
                 if (opt.get || opt.reset || !option || prefix)
                     return [0, []];
 
-                let len = opt.value.length;
                 let completer = option.completer;
-                let have = null;
-                let have2;
+
+                let len = opt.value.length;
 
                 switch (option.type)
                 {
@@ -748,13 +740,9 @@ liberator.Options = function () //{{{
                         completer = function () [["true", ""], ["false", ""]]
                         break;
                     case "stringlist":
-                        have = option.value.split(",");
-                        have2 = opt.value.split(",");
-                        len = have2.pop().length;
+                        len = opt.valueHas.pop().length;
                         break;
                     case "charlist":
-                        have = option.value.split("");
-                        have2 = opt.value;
                         len = 0;
                         break;
                 }
@@ -768,19 +756,20 @@ liberator.Options = function () //{{{
                 let completions = [];
                 if (!opt.value)
                     completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0]);
+
                 if (completer)
                 {
                     completions = completions.concat(completer(filter));
-                    if (have)
+                    if (opt.optionHas)
                     {
-                        completions = completions.filter(function (val) have2.indexOf(val[0]) == -1);
+                        completions = completions.filter(function (val) opt.valueHas.indexOf(val[0]) == -1);
                         switch (opt.operator)
                         {
                             case "+":
-                                completions = completions.filter(function (val) have.indexOf(val[0]) == -1);
+                                completions = completions.filter(function (val) opt.optionHas.indexOf(val[0]) == -1);
                                 break;
                             case "-":
-                                completions = completions.filter(function (val) have.indexOf(val[0]) > -1);
+                                completions = completions.filter(function (val) opt.optionHas.indexOf(val[0]) > -1);
                                 break;
                         }
                     }

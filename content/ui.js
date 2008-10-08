@@ -543,6 +543,8 @@ liberator.CommandLine = function () //{{{
                                      // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // add the string to the message history
 
+        get autocompleteTimer() autocompleteTimer,
+
         get mode() (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search",
 
         getCommand: function ()
