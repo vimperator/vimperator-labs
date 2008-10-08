@@ -32,6 +32,8 @@ liberator.Completion = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const WINDOWS = navigator.platform == "Win32";
+
     try
     {
         var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
@@ -353,7 +355,7 @@ liberator.Completion = function () //{{{
                 if (get(-2)[CHAR] != "[" // Are we inside of []?
                     // Yes. If the [ starts at the begining of a logical
                     // statement, we're in an array literal, and we're done.
-                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET]) 
+                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
                     return [0, []];
 
                 /*
@@ -704,6 +706,21 @@ liberator.Completion = function () //{{{
         },
 
         dialog: function (filter) [0, this.filter(liberator.config.dialogs || [], filter)],
+
+        environment: function (filter)
+        {
+            let command = WINDOWS ? "set" : "export";
+            let lines = liberator.io.system(command).split("\n");
+
+            lines.splice(lines.length - 1, 1);
+
+            let vars = lines.map(function (line) {
+                let matches = line.match(/([^=]+)=(.+)/);
+                return [matches[1], matches[2]];
+            });
+
+            return [0, this.filter(vars, filter)];
+        },
 
         event: function (filter) [0, this.filter(liberator.config.autocommands, filter)],
 
