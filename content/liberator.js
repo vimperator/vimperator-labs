@@ -183,10 +183,7 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (filter)
-                {
-                    return [0, liberator.completion.filter(liberator.config.dialogs || [], filter)];
-                }
+                completer: function (filter) liberator.completion.dialog(filter)
             });
 
         // TODO: move this
