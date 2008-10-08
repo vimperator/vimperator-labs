@@ -718,10 +718,18 @@ liberator.CommandLine = function () //{{{
                     liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
                     return liberator.triggerCallback("submit", mode, command);
                 }
-
                 // user pressed UP or DOWN arrow to cycle history completion
-                else if (key == "<Up>" || key == "<Down>")
+                else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
                 {
+                    function gotoHistoryItem(index)
+                    {
+                        setCommand(history.get(historyIndex));
+                        liberator.triggerCallback("change", currentExtendedMode, liberator.commandline.getCommand());
+                    }
+
+                    let previousItem = /Up/.test(key);
+                    let matchCurrent = !/(Page|S-)/.test(key);
+
                     event.preventDefault();
                     event.stopPropagation();
 
@@ -739,7 +747,7 @@ liberator.CommandLine = function () //{{{
                     // commandline string
                     while (historyIndex >= -1 && historyIndex <= history.length)
                     {
-                        key == "<Up>" ? historyIndex-- : historyIndex++;
+                        previousItem ? historyIndex-- : historyIndex++;
 
                         // user pressed DOWN when there is no newer history item
                         if (historyIndex == history.length)
@@ -763,15 +771,21 @@ liberator.CommandLine = function () //{{{
                             break;
                         }
 
-                        if (history.get(historyIndex).indexOf(historyStart) == 0)
+                        if (matchCurrent)
                         {
-                            setCommand(history.get(historyIndex));
-                            liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                            if (history.get(historyIndex).indexOf(historyStart) == 0)
+                            {
+                                gotoHistoryItem(historyIndex);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            gotoHistoryItem(historyIndex);
                             break;
                         }
                     }
                 }
-
                 // user pressed TAB to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {

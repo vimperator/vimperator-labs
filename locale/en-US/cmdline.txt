@@ -44,6 +44,22 @@ Recall the next command-line from the history list which matches the current
 command-line.
 ________________________________________________________________________________
 
+
+|c_<S-Up>| |c_<PageUp>|
+||<S-Up>|| +
+||<PageUp>||
+________________________________________________________________________________
+Recall the previous command-line from the history list.
+________________________________________________________________________________
+
+
+|c_<S-Down>| |c_<PageDown>|
+||<S-Down>|| +
+||<PageDown>||
+________________________________________________________________________________
+Recall the next command-line from the history list.
+________________________________________________________________________________
+
 section:Command-line{nbsp}completion[cmdline-completion]
 
 |c_<Tab>| +
