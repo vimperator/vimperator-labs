@@ -420,52 +420,37 @@ liberator.Options = function () //{{{
     {
         let ret = {};
 
+        ret.args = args;
         ret.onlyNonDefault = false; // used for :set to print non-default options
         if (!args)
         {
-            args = "all";
+            ret.args = "all";
             ret.onlyNonDefault = true;
         }
 
-        //                               1        2       3       4  5       6
-        var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+        [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
+        args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
+
+        ret.prefix = prefix;
+        ret.postfix = postfix;
+
         if (!matches)
             return null;
-
-        ret.unsetBoolean = false;
-        if (matches[1] == "no")
-            ret.unsetBoolean = true;
-
-        ret.name = matches[2];
-        ret.all = false;
-        if (ret.name == "all")
-            ret.all = true;
 
         ret.scope = modifiers && modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
         ret.option = liberator.options.get(ret.name, ret.scope);
 
-        if (!ret.option && !ret.all)
-            return ret;
+        ret.all = (ret.name == "all")
+        ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven))
+        ret.invert = (prefix == "inv" || postfix == "!");
+        ret.reset = (postfix == "&");
+        ret.unsetBoolean = (prefix == "no");
 
-        let valueGiven = !!matches[4];
-
-        ret.get = false;
-        if (ret.all || matches[3] == "?" || (ret.option.type != "boolean" && !valueGiven))
-            ret.get = true;
-
-        ret.reset = false;
-        if (matches[3] == "&")
-            ret.reset = true;
-
-        ret.invert = false;
-        if (matches[1] == "inv" || matches[3] == "!")
-            ret.invert = true;
-
-        ret.operator = matches[5];
-
-        ret.value = matches[6];
         if (ret.value === undefined)
             ret.value = "";
+
+        liberator.dump(ret);
+
         return ret;
     }
 
@@ -483,16 +468,10 @@ liberator.Options = function () //{{{
                     onlyNonDefault = true;
                 }
 
-                //                                1                    2       3  4       5
-                var matches = args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
-                var name = matches[1];
-                var reset = false;
-                var invertBoolean = false;
-
-                if (matches[2] == "&")
-                    reset = true;
-                else if (matches[2] == "!")
-                    invertBoolean = true;
+                let [matches, name, postfix, valueGiven, operator, value] =
+                args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+                let reset = (postfix == "&");
+                let invertBoolean = (postfix == "!");
 
                 if (name == "all" && reset)
                     liberator.echoerr("You can't reset all options, it could make " + liberator.config.hostApplication + " unusable.");
@@ -502,9 +481,8 @@ liberator.Options = function () //{{{
                     liberator.options.resetPref(name);
                 else if (invertBoolean)
                     liberator.options.invertPref(name);
-                else if (matches[3])
+                else if (valueGiven)
                 {
-                    var value = matches[5];
                     switch (value)
                     {
                         case undefined:
@@ -529,63 +507,13 @@ liberator.Options = function () //{{{
                 return;
             }
 
-            var onlyNonDefault = false; // used for :set to print non-default options
-            if (!args)
-            {
-                args = "all";
-                onlyNonDefault = true;
-            }
-
-            //                               1        2       3       4  5       6
-            var matches = args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?$/);
-            if (!matches)
-            {
-                liberator.echoerr("E518: Unknown option: " + args);
-                return;
-            }
-
-            var unsetBoolean = false;
-            if (matches[1] == "no")
-                unsetBoolean = true;
-
-            var name = matches[2];
-            var all = false;
-            if (name == "all")
-                all = true;
-
-            var scope = modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
-            var option = liberator.options.get(name, scope);
-
-            if (!option && !all)
-            {
-                liberator.echoerr("E518: Unknown option: " + args);
-                return;
-            }
-
-            var valueGiven = !!matches[4];
-
-            var get = false;
-            if (all || matches[3] == "?" || (option.type != "boolean" && !valueGiven))
-                get = true;
-
-            var reset = false;
-            if (matches[3] == "&")
-                reset = true;
-
-            var invertBoolean = false;
-            if (matches[1] == "inv" || matches[3] == "!")
-                invertBoolean = true;
-
-            var operator = matches[5];
-
-            var value = matches[6];
-            if (value === undefined)
-                value = "";
+            let opt = parseOpt(args, modifiers);
+            let option = opt.option;
 
             // reset a variable to its default value
-            if (reset)
+            if (opt.reset)
             {
-                if (all)
+                if (opt.all)
                 {
                     for (let option in liberator.options)
                         option.reset();
@@ -596,18 +524,18 @@ liberator.Options = function () //{{{
                 }
             }
             // read access
-            else if (get)
+            else if (opt.get)
             {
-                if (all)
+                if (opt.all)
                 {
-                    liberator.options.list(onlyNonDefault, scope);
+                    liberator.options.list(opt.onlyNonDefault, scope);
                 }
                 else
                 {
                     if (option.type == "boolean")
-                        liberator.echo((option.get(scope) ? "  " : "no") + option.name);
+                        liberator.echo((option.get(opt.scope) ? "  " : "no") + option.name);
                     else
-                        liberator.echo("  " + option.name + "=" + option.get(scope));
+                        liberator.echo("  " + option.name + "=" + option.get(opt.scope));
                 }
             }
             // write access
@@ -615,28 +543,27 @@ liberator.Options = function () //{{{
             // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
-                var currentValue = option.get(scope);
-
-                var newValue;
+                let currentValue = option.get(opt.scope);
+                let newValue;
 
                 switch (option.type)
                 {
                     case "boolean":
-                        if (valueGiven)
+                        if (opt.valueGiven)
                         {
                             liberator.echoerr("E474: Invalid argument: " + args);
                             return;
                         }
 
-                        if (invertBoolean)
+                        if (opt.invert)
                             newValue = !currentValue;
                         else
-                            newValue = !unsetBoolean;
+                            newValue = !opt.unsetBoolean;
 
                         break;
 
                     case "number":
-                        value = parseInt(value); // deduce radix
+                        let value = parseInt(opt.value); // deduce radix
 
                         if (isNaN(value))
                         {
@@ -644,65 +571,85 @@ liberator.Options = function () //{{{
                             return;
                         }
 
-                        if (operator == "+")
-                            newValue = currentValue + value;
-                        else if (operator == "-")
-                            newValue = currentValue - value;
-                        else if (operator == "^")
-                            newValue = currentValue * value;
-                        else
-                            newValue = value;
+                        switch (opt.operator)
+                        {
+                            case "+":
+                                newValue = currentValue + value;
+                                break;
+                            case "-":
+                                newValue = currentValue - value;
+                                break;
+                            case "^":
+                                newValue = currentValue * value;
+                                break;
+                            default:
+                                newValue = value;
+                                break;
+                        }
 
                         break;
 
                     case "charlist":
-                        if (operator == "+")
-                            newValue = currentValue.replace(new RegExp("[" + value + "]", "g"), "") + value;
-                        else if (operator == "-")
-                            newValue = currentValue.replace(value, "");
-                        else if (operator == "^")
-                            // NOTE: Vim doesn't prepend if there's a match in the current value
-                            newValue = value + currentValue.replace(new RegExp("[" + value + "]", "g"), "");
-                        else
-                            newValue = value;
+                        switch (opt.operator)
+                        {
+                            case "+":
+                                newValue = currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "") + opt.value;
+                                break;
+                            case "-":
+                                newValue = currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "");
+                                break;
+                            case "^":
+                                // NOTE: Vim doesn't prepend if there's a match in the current value
+                                newValue = opt.value + currentValue.replace(new RegExp("[" + opt.value + "]", "g"), "");
+                                break;
+                            default:
+                                newValue = opt.value;
+                                break;
+                        }
 
                         break;
 
                     case "stringlist":
-                        if (operator == "+")
+                        switch (opt.operator)
                         {
-                            if (!currentValue.match(value))
-                                newValue = (currentValue ? currentValue + "," : "") + value;
-                            else
-                                newValue = currentValue;
-                        }
-                        else if (operator == "-")
-                        {
-                            newValue = currentValue.replace(new RegExp("^" + value + ",?|," + value), "");
-                        }
-                        else if (operator == "^")
-                        {
-                            if (!currentValue.match(value))
-                                newValue = value + (currentValue ? "," : "") + currentValue;
-                            else
-                                newValue = currentValue;
-                        }
-                        else
-                        {
-                            newValue = value;
+                            case "+":
+                                if (!currentValue.match(opt.value))
+                                    newValue = (currentValue ? currentValue + "," : "") + opt.value;
+                                else
+                                    newValue = currentValue;
+                                break;
+                            case "-":
+                                newValue = currentValue.replace(new RegExp("^" + opt.value + ",?|," + opt.value), "");
+                                break;
+                            case "^":
+                                if (!currentValue.match(opt.value))
+                                    newValue = opt.value + (currentValue ? "," : "") + currentValue;
+                                else
+                                    newValue = currentValue;
+                                break;
+                            default:
+                                newValue = opt.value;
+                                break;
                         }
 
                         break;
 
                     case "string":
-                        if (operator == "+")
-                            newValue = currentValue + value;
-                        else if (operator == "-")
-                            newValue = currentValue.replace(value, "");
-                        else if (operator == "^")
-                            newValue = value + currentValue;
-                        else
-                            newValue = value;
+                        switch (opt.operator)
+                        {
+                            case "+":
+                                newValue = currentValue + opt.value;
+                                break;
+                            case "-":
+                                newValue = currentValue.replace(opt.value, "");
+                                break;
+                            case "^":
+                                newValue = opt.value + currentValue;
+                                break;
+                            default:
+                                newValue = opt.value;
+                                break;
+                        }
 
                         break;
 
@@ -712,7 +659,7 @@ liberator.Options = function () //{{{
 
                 if (option.isValidValue(newValue))
                 {
-                    option.set(newValue, scope);
+                    option.set(newValue, opt.scope);
                 }
                 else
                     // FIXME: need to be able to specify more specific errors
