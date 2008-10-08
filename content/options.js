@@ -118,7 +118,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
 
         if (liberator.has("tabs") && (scope & liberator.options.OPTION_SCOPE_LOCAL))
             liberator.tabs.options[this.name] = newValue;
-        if (scope & liberator.options.OPTION_SCOPE_GLOBAL && newValue != this.globalValue)
+        if ((scope & liberator.options.OPTION_SCOPE_GLOBAL) && newValue != this.globalValue)
             this.globalvalue = newValue;
 
         this.hasChanged = true;
@@ -437,7 +437,6 @@ liberator.Options = function () //{{{
         if (!matches)
             return null;
 
-
         ret.scope = modifiers && modifiers.scope;
         ret.option = liberator.options.get(ret.name, ret.scope);
 
@@ -524,6 +523,9 @@ liberator.Options = function () //{{{
             }
 
             let opt = parseOpt(args, modifiers);
+            if (!opt)
+                return;
+
             let option = opt.option;
 
             // reset a variable to its default value

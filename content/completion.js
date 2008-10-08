@@ -864,7 +864,7 @@ liberator.Completion = function () //{{{
                     {
                         if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
                         {
-                            let query = h[0].substr(begin.length, h[0].length - end.length);
+                            let query = h[0].substring(begin.length, h[0].length - end.length);
                             searches.push([decodeURIComponent(query),
                                            <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
                                            k[2]]);

@@ -603,18 +603,17 @@ const liberator = (function () //{{{
             if (liberator.options["visualbell"])
             {
                 // flash the visual bell
-                var popup = document.getElementById("liberator-visualbell");
-                var win = liberator.config.visualbellWindow;
-                var box = document.getBoxObjectFor(win);
+                let popup = document.getElementById("liberator-visualbell");
+                let win = liberator.config.visualbellWindow;
+                let box = document.getBoxObjectFor(win);
 
-                popup.height = box.height;
-                popup.width = box.width;
                 popup.openPopup(win, "overlap", 0, 0, false, false);
-                setTimeout(function () { popup.hidePopup(); }, 50);
+                popup.sizeTo(box.width - 2, box.height - 2);
+                setTimeout(function () { popup.hidePopup(); }, 20);
             }
             else
             {
-                var soundService = Components.classes["@mozilla.org/sound;1"]
+                let soundService = Components.classes["@mozilla.org/sound;1"]
                                              .getService(Components.interfaces.nsISound);
                 soundService.beep();
             }
@@ -1131,8 +1130,8 @@ const liberator = (function () //{{{
                 // set before by any rc file
                 for (let option in liberator.options)
                 {
-                    if (option.setter && !option.hasChanged)
-                        option.reset();
+                    if (option.setter)
+                        option.value = option.value;
                 }
 
                 liberator.triggerObserver("enter", null);

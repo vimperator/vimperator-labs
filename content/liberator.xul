@@ -62,7 +62,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
             <!-- other keys are handled inside the event loop in events.js -->
         </keyset>
 
-        <panel id="liberator-visualbell"/>
+        <popupset>
+            <panel id="liberator-visualbell"/>
+        </popupset>
 
         <!--this notifies us also of focus events in the XUL
             from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
