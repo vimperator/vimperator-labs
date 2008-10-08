@@ -638,7 +638,22 @@ const liberator = (function () //{{{
         // with (liberator) means, liberator is the default namespace "inside" eval
         eval: function (str)
         {
-            return eval("with (liberator) {" + str + "}");
+            const fileName = "chrome://" + liberator.config.name.toLowerCase() + "/content/liberator.js";
+            const line = new Error().lineNumber + 3;
+            try
+            {
+                return eval("with (liberator) {" + str + "}");
+            }
+            catch (e)
+            {
+                if (e.fileName == fileName && e.lineNumber >= line)
+                {
+                    e.source = str;
+                    e.fileName = "<Evaled string>";
+                    e.lineNumber -= line;
+                }
+                throw e;
+            }
         },
 
         // Execute an Ex command like str=":zoom 300"

@@ -80,7 +80,9 @@ liberator.Completion = function () //{{{
         let lastIdx = 0;
         let continuing = false;
 
-        function iter(obj)
+        this.completers = {};
+
+        this.iter = function iter(obj)
         {
             let iterator = (function ()
             {
@@ -122,59 +124,64 @@ liberator.Completion = function () //{{{
          * wrapped in @last after @offset characters are sliced
          * off of it and it's quoted.
          */
-        function objectKeys(objects, key, last, offset)
+        this.objectKeys = function objectKeys(objects)
         {
             if (!(objects instanceof Array))
                 objects = [objects];
 
-            // See if we can use the cached member list from a previous
-            // call.
-            if (key.indexOf(lastKey) != 0)
-                continuing = false;
+            // See if we can use the cached member list from a previous call.
             if (continuing && objects != lastObjs)
             {
-                for (let [k, v] in Iterator(objects))
-                {
-                    if (lastObjs[k] != v)
-                    {
-                        continuing = false;
-                        break;
-                    }
-                }
+                let k = 0;
+                continuing = objects.every(function (obj) obj == lastObjs[k++]);
             }
 
-            lastKey = key;
             lastObjs = objects;
+            if (continuing)
+                return compl;
 
-            if (!continuing)
+            // Can't use the cache. Build a member list.
+            compl = [];
+            for (let [,obj] in Iterator(objects))
             {
-                // Can't use the cache. Build a member list.
-                compl = [];
-                for (let [,obj] in Iterator(objects))
-                {
-                    if (typeof obj == "string")
-                        obj = eval("with (liberator) {" + obj + "}");
-                    // Things we can dereference
-                    if (["object", "string", "function"].indexOf(typeof obj) == -1)
-                        continue;
+                if (typeof obj == "string")
+                    obj = eval("with (liberator) {" + obj + "}");
+                // Things we can dereference
+                if (["object", "string", "function"].indexOf(typeof obj) == -1)
+                    continue;
 
-                    for (let [k, v] in iter(obj))
-                        compl.push([k, liberator.template.highlight(v, true)]);
-                }
-                if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
-                    compl.forEach(function (a) a[0] = liberator.util.escapeString(a[0].substr(offset), last));
-                else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
-                    compl = compl.filter(function (a) /^[\w$][\w\d$]*$/.test(a[0]));
+                for (let [k, v] in this.iter(obj))
+                    compl.push([k, liberator.template.highlight(v, true)]);
             }
-            if (last != undefined)
+            return compl;
+        }
+
+        this.filter = function filter(compl, key, last, offset)
+        {
+            if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
+                key = liberator.util.escapeString(key.substr(offset), "");
+
+            liberator.completion.filterString = key;
+            let res = buildLongestStartingSubstring(compl, key);
+            if (res.length == 0)
             {
-                // Filter the results, escaping the key first (without adding quotes), otherwise, it might not match
-                let res = buildLongestCommonSubstring(compl, liberator.util.escapeString(key.substr(offset), ""));
-                // Also, prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
+                substrings = [];
+                res = buildLongestCommonSubstring(compl, key);
+            }
+
+            if (last != undefined) // Prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
                 substrings = substrings.map(function (s) last + s);
-                return res;
+
+            if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
+            {
+                res.forEach(function (a) a[0] = liberator.util.escapeString(a[0].substr(offset), last));
             }
-            return buildLongestCommonSubstring(compl, key);
+            else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
+            {
+                res = res.filter(function (a) /^[\w$][\w\d$]*$/.test(a[0]));
+            }
+            return res;
+
         }
 
         function eval(arg)
@@ -340,67 +347,118 @@ liberator.Completion = function () //{{{
             let end = get(0, 0, FULL_STATEMENTS) || 0;
             let preEval = str.substring(0, end) + ";";
 
+            let getObjKey = function (frame)
+            {
+                let obj = [liberator, window]; // Default objects;
+
+                let dot = get(frame, 0, DOTS) || -1; // Last dot in frame.
+                let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
+                let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
+
+                /* Is this an object dereference? */
+                if (dot < statement) // No.
+                    dot = statement - 1;
+                else // Yes. Set the object to the string before the dot.
+                    obj = preEval + str.substring(statement, dot);
+
+                let [, space, key] = str.substring(dot + 1, end).match(/^(\s*)(.*)/);
+                return [dot + 1 + space.length, obj, key];
+            }
+
             // In a string. Check if we're dereferencing an object.
             // Otherwise, do nothing.
             if (last == "'" || last == '"')
             {
             // TODO: Make this work with unquoted integers.
-                /* Stack:
-                 *  [-1]: "...
-                 *  [-2]: [...
-                 *  [-3]: base statement
-                 */
-
-                /* Is this an object accessor? */
-                if (get(-2)[CHAR] != "[" // Are we inside of []?
-                    // Yes. If the [ starts at the begining of a logical
-                    // statement, we're in an array literal, and we're done.
-                 || get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
-                    return [0, []];
 
                 /*
                  * str = "foo[bar + 'baz"
                  * obj = "foo"
                  * key = "bar + ''"
                  */
+                // The top of the stack is the sting we're completing.
+                // Wrap it in its delimiters and eval it to process escape sequences.
                 let string = str.substring(top[OFFSET] + 1);
-                string = eval(last + string + last); // Process escape sequences
+                string = eval(last + string + last);
 
-                // Begining of the statement upto the opening [
-                let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
-                // After the opening [ upto the opening ", plus '' to take care of any operators before it
-                let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
-                // Now eval the key, to process any referenced variables.
-                key = eval(key);
-                return [top[OFFSET], objectKeys(obj, key + string, last, key.length)];
+                /* Is this an object accessor? */
+                if (get(-2)[CHAR] == "[") // Are we inside of []?
+                {
+                    /* Stack:
+                     *  [-1]: "...
+                     *  [-2]: [...
+                     *  [-3]: base statement
+                     */
+
+                    // Yes. If the [ starts at the begining of a logical
+                    // statement, we're in an array literal, and we're done.
+                     if (get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
+                        return [0, []];
+
+                    // Begining of the statement upto the opening [
+                    let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
+                    // After the opening [ upto the opening ", plus '' to take care of any operators before it
+                    let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
+                    // Now eval the key, to process any referenced variables.
+                    key = eval(key);
+
+                    let compl = this.objectKeys(obj);
+                    return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
+                }
+
+                // Is this a function call?
+                if (get(-2)[CHAR] == "(")
+                {
+                    /* Stack:
+                     *  [-1]: "...
+                     *  [-2]: (...
+                     *  [-3]: base statement
+                     */
+
+                    // Does the opening "(" mark a function call?
+                    if (get(-3, 0, FUNCTIONS) != get(-2)[OFFSET])
+                        return [0, []]; // No. We're done.
+
+                    let [offset, obj, func] = getObjKey(-3);
+                    let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
+
+                    let completer = this.completers[func];
+                    if (!completer)
+                        return [0, []];
+
+                    // Split up the arguments
+                    let prev = get(-2)[OFFSET];
+                    let args = get(-2)[FULL_STATEMENTS].map(function (s)
+                    {
+                        let ret = str.substring(prev + 1, s);
+                        prev = s;
+                        return ret;
+                    });
+                    args.push(key);
+
+                    let compl = completer.call(this, func, preEval, obj, string, args);
+                    key = eval(preEval + key);
+                    return [0, this.filter(compl, key + string, last, key.length)];
+                }
             }
 
-            /* Is this an object reference? */
-            if (top[DOTS].length && get(-1, 0, DOTS) > get(-1, 0, STATEMENTS))
-            {
-                let dot = get(-1, 0, DOTS);
-                /*
-                 * str = "foo.bar.baz"
-                 * obj = "foo.bar"
-                 * key = "baz"
-                 */
-                let [, space, key] = str.substring(dot + 1).match(/^(\s*)(.*)/);
-                let obj = preEval + str.substring(get(-1, 0, STATEMENTS), dot);
-
-                if (!/^(?:\w[\w\d]*)?$/.test(key))
-                    return [0, []]; /* Not a word. Forget it. Can this even happen? */
-                return [dot + 1 + space.length, objectKeys(obj, key)];
-            }
-
-            /* Okay, assume it's an identifier and try to complete it from the window
-             * and liberator objects. It would be nice to be able to check the local scope.
+            /*
+             * str = "foo.bar.baz"
+             * obj = "foo.bar"
+             * key = "baz"
+             *
+             * str = "foo"
+             * obj = [liberator, window]
+             * key = "foo"
              */
-            let offset = get(-1, 0, STATEMENTS) || 0;
-            let key = str.substring(offset);
 
-            if (/^(?:\w[\w\d]*)?$/.test(key))
-                return [offset, objectKeys([window, liberator], key)];
-            return [0, []];
+            let [offset, obj, key] = getObjKey(-1);
+
+            if (!/^(?:\w[\w\d]*)?$/.test(key))
+                return [0, []]; /* Not a word. Forget it. Can this even happen? */
+
+            let compl = this.objectKeys(obj);
+            return [offset, this.filter(compl, key)];
         }
     };
     let javascript = new Javascript();
@@ -830,13 +888,19 @@ liberator.Completion = function () //{{{
 
         history: function (filter) [0, liberator.history.get(filter)],
 
+        get javascriptCompleter() javascript,
+
         javascript: function (str)
         {
             try
             {
                 return javascript.complete(str);
             }
-            catch (e) {}
+            catch (e)
+            {
+                liberator.dump(e);
+                return [0, []];
+            }
         },
 
         macro: function (filter)
