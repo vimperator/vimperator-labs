@@ -57,15 +57,15 @@ liberator.util = { //{{{
             let now = Date.now();
             if (this.doneAt == -1)
                 timer.cancel();
-            if (now >= this.doneAt || this.latest && now >= this.latest)
-                return this.notify();
 
             let timeout = minInterval;
-            if (this.latest)
+            if (now > this.doneAt)
+                timeout = 0;
+            else if (this.latest)
                 timeout = Math.min(minInterval, this.latest - now);
             else
                 this.latest = now + maxInterval;
-            timer.initWithCallback(this, timeout, timer.TYPE_ONE_SHOT);
+            timer.initWithCallback(this, Math.max(timeout, 0), timer.TYPE_ONE_SHOT);
             this.doneAt = -1;
         }
         this.reset = function ()
