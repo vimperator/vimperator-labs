@@ -543,10 +543,14 @@ liberator.Completion = function () //{{{
 
         cached: function (key, filter, generate, method)
         {
-            if (!filter || filter.indexOf(cacheFilter[key]) != 0)
+            if (!filter && cacheFilter[key] || filter.indexOf(cacheFilter[key]) != 0)
                 cacheResults[key] = generate(filter);
+            if (key == "searches")
+                liberator.dump({keyword: key, cacheFilter: cacheFilter[key], filter: filter, searches: {toString: function() json.encode(cacheResults[key])}});
             cacheFilter[key] = filter;
-            return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.splice(arguments, 4)));
+            if (cacheResults[key].length)
+                return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.splice(arguments, 4)));
+             return [];
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
@@ -728,6 +732,13 @@ liberator.Completion = function () //{{{
         ex: function (str)
         {
             substrings = [];
+            if (str.indexOf(cacheFilter["ex"]) != 0)
+            {
+                cacheFilter = {};
+                cacheResults = {};
+            }
+            cacheFilter["ex"] = str;
+
             var [count, cmd, special, args] = liberator.commands.parseCommand(str);
             var completions = [];
             var start = 0;
@@ -841,29 +852,29 @@ liberator.Completion = function () //{{{
             let keywords = liberator.bookmarks.getKeywords().map(function (k) [k[0], k[1], k[3], k[2]]);
             let engines = this.filter(keywords.concat(liberator.bookmarks.getSearchEngines()), filter, false, true);
 
-            let history = liberator.history.get();
-            let searches = [];
-            for (let [, k] in Iterator(keywords))
-            {
-                if (k[0].toLowerCase() != keyword.toLowerCase() || k[3].indexOf("%s") == -1)
-                    continue;
-                let [begin, end] = k[3].split("%s");
-                for (let [, h] in Iterator(history))
+            let generate = function () {
+                let history = liberator.history.get();
+                let searches = [];
+                for (let [, k] in Iterator(keywords))
                 {
-                    if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
+                    if (k[0].toLowerCase() != keyword.toLowerCase() || k[3].indexOf("%s") == -1)
+                        continue;
+                    let [begin, end] = k[3].split("%s");
+                    for (let [, h] in Iterator(history))
                     {
-                        let query = h[0].substr(begin.length, h[0].length - end.length);
-                        searches.push([decodeURIComponent(query),
-                                       <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
-                                       k[2]]);
+                        if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
+                        {
+                            let query = h[0].substr(begin.length, h[0].length - end.length);
+                            searches.push([decodeURIComponent(query),
+                                           <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
+                                           k[2]]);
+                        }
                     }
                 }
+                return searches;
             }
-            if (searches.length)
-            {
-                searches = this.filter(searches, args, false, true);
-                searches.forEach(function (a) a[0] = keyword + " " + a[0]);
-            }
+            let searches = this.cached("searches-" + keyword, args, generate, "filter", [false, true]);
+            searches = searches.map(function (a) (a = a.concat(), a[0] = keyword + " " + a[0], a));
             return [0, searches.concat(engines)];
         },
 

@@ -316,7 +316,7 @@ liberator.Bookmarks = function () //{{{
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
-            return liberator.completion.cached(cache.bookmarks, filter, function () cache.bookmarks,
+            return liberator.completion.cached("bookmarks", filter, function () cache.bookmarks,
                                             "filterURLArray", tags);
         },
 
