@@ -40,8 +40,8 @@ liberator.Completion = function () //{{{
     catch (e) {}
 
     // the completion substrings, used for showing the longest common match
-    var cacheFilter = {};
-    var cacheResults = {};
+    var cacheFilter = {}
+    var cacheResults = {}
     var substrings = [];
     var historyCache = [];
     var historyResult = null;
@@ -84,13 +84,14 @@ liberator.Completion = function () //{{{
             {
                 for (let k in obj)
                 {
+                    // Some object members are only accessible as function calls
                     try
                     {
                         yield [k, obj[k]];
                         continue;
                     }
                     catch (e) {}
-                    yield [k, "inaccessable"]
+                    yield [k, <>inaccessable</>]
                 }
             })();
             try
@@ -124,6 +125,8 @@ liberator.Completion = function () //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
+            // See if we can use the cached member list from a previous
+            // call.
             if (key.indexOf(lastKey) != 0)
                 continuing = false;
             if (continuing && objects != lastObjs)
@@ -143,33 +146,33 @@ liberator.Completion = function () //{{{
 
             if (!continuing)
             {
+                // Can't use the cache. Build a member list.
                 compl = [];
                 for (let [,obj] in Iterator(objects))
                 {
                     if (typeof obj == "string")
                         obj = eval("with (liberator) {" + obj + "}");
-                    if (typeof obj != "object")
+                    // Things we can dereference
+                    if (["object", "string", "function"].indexOf(typeof obj) == -1)
                         continue;
 
                     for (let [k, v] in iter(obj))
-                    {
-                        let type = typeof v;
-                        if (["string", "number", "boolean"].indexOf(type) > -1)
-                            type += ": " + String(v).replace("\n", "\\n", "g");
-                        if (type == "function")
-                            type += ": " + String(v).replace(/{(.|\n)*/, "{ ... }"); /* } vim */
-
-                        compl.push([k, type]);
-                    }
+                        compl.push([k, liberator.template.highlight(v, true)]);
                 }
-                if (last != undefined)
+                if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
                     compl.forEach(function (a) a[0] = liberator.util.escapeString(a[0].substr(offset), last));
-                else
+                else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
                     compl = compl.filter(function (a) /^[\w$][\w\d$]*$/.test(a[0]));
             }
             if (last != undefined)
-                key = last + key.substr(offset)
-            return buildLongestStartingSubstring(compl, key);
+            {
+                // Filter the results, escaping the key first (without adding quotes), otherwise, it might not match
+                let res = buildLongestCommonSubstring(compl, liberator.util.escapeString(key.substr(offset), ""));
+                // Also, prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
+                substrings = substrings.map(function (s) last + s);
+                return res;
+            }
+            return buildLongestCommonSubstring(compl, key);
         }
 
         function eval(arg)
@@ -211,6 +214,9 @@ liberator.Completion = function () //{{{
             {
                 if (top[CHAR] != arg)
                     throw new Error("Invalid JS");
+                // The closing character of this stack frame will have pushed a new
+                // statement, leaving us with an empty statement. This doesn't matter,
+                // now, as we simply throw away the frame when we pop it, but it may later.
                 if (top[STATEMENTS][top[STATEMENTS].length - 1] == i)
                     top[STATEMENTS].pop();
                 top = get(-2);
@@ -219,31 +225,28 @@ liberator.Completion = function () //{{{
                 return ret;
             }
 
-            /* Find the first non-whitespace character fillowing i. */
-            let firstNonwhite = function () {
-                let j = i + 1;
-                while (str[j] && /\s/.test(str[j]))
-                    j++;
-                return j;
-            }
-
             let i = start, c = "";     /* Current index and character, respectively. */
 
+            // We're starting afresh.
             if (start == 0)
             {
                 stack = [];
-                push("");
+                push("#root");
             }
             else
             {
+                // A new statement may have been pushed onto the stack just after
+                // the end of the last string. We'll throw it away for now, and
+                // add it again later if it turns out to be valid.
                 let s = top[STATEMENTS];
                 if (s[s.length - 1] == start)
                     s.pop();
             }
 
-            /* Build a parse stack, discarding entries opening characters
-             * match closing characters. The last open entry is used to
-             * figure out what to complete.
+            /* Build a parse stack, discarding entries as opening characters
+             * match closing characters. The stack is walked from the top entry
+             * and down as many levels as it takes us to figure out what it is
+             * that we're completing.
              */
             let length = str.length;
             for (; i < length; lastChar = c, i++)
@@ -251,7 +254,7 @@ liberator.Completion = function () //{{{
                 c = str[i];
                 if (last == '"' || last == "'" || last == "/")
                 {
-                    if (lastChar == "\\")
+                    if (lastChar == "\\") // Escape. Skip the next char, whatever it may be.
                     {
                         c = "";
                         i++;
@@ -261,6 +264,8 @@ liberator.Completion = function () //{{{
                 }
                 else
                 {
+                    // A word character following a non-word character, or simply a non-word
+                    // character. Start a new statement.
                     if (/[\w$]/.test(c) && !/[\w\d$]/.test(lastChar) || !/[\w\d\s]/.test(c))
                         top[STATEMENTS].push(i);
 
@@ -275,7 +280,10 @@ liberator.Completion = function () //{{{
                         case "(":
                             /* Function call, or if/while/for/... */
                             if (/\w/.test(lastNonwhite))
+                            {
                                 top[FUNCTIONS].push(i);
+                                top[STATEMENTS].pop();
+                            }
                         case '"':
                         case "'":
                         case "/":
@@ -325,14 +333,16 @@ liberator.Completion = function () //{{{
 
             /* Okay, have parse stack. Figure out what we're completing. */
 
-            /* Find any complete statements that we can eval. */
+            // Find any complete statements that we can eval before we eval our object.
+            // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
             let end = get(0, 0, FULL_STATEMENTS) || 0;
             let preEval = str.substring(0, end) + ";";
 
-            /* In a string. */
-            // TODO: Make this work with unquoted integers.
+            // In a string. Check if we're dereferencing an object.
+            // Otherwise, do nothing.
             if (last == "'" || last == '"')
             {
+            // TODO: Make this work with unquoted integers.
                 /* Stack:
                  *  [-1]: "...
                  *  [-2]: [...
@@ -341,7 +351,7 @@ liberator.Completion = function () //{{{
 
                 /* Is this an object accessor? */
                 if (get(-2)[CHAR] != "[" // Are we inside of []?
-                    // Okay, if the [ starts at the begining of a logical
+                    // Yes. If the [ starts at the begining of a logical
                     // statement, we're in an array literal, and we're done.
                  || get(-3, 0, STATEMENTS) == get(-2)[OFFSET]) 
                     return [0, []];
@@ -352,16 +362,19 @@ liberator.Completion = function () //{{{
                  * key = "bar + ''"
                  */
                 let string = str.substring(top[OFFSET] + 1);
-                string = eval(last + string + last);
+                string = eval(last + string + last); // Process escape sequences
 
+                // Begining of the statement upto the opening [
                 let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
+                // After the opening [ upto the opening ", plus '' to take care of any operators before it
                 let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
+                // Now eval the key, to process any referenced variables.
                 key = eval(key);
                 return [top[OFFSET], objectKeys(obj, key + string, last, key.length)];
             }
 
             /* Is this an object reference? */
-            if (top[DOTS].length)
+            if (top[DOTS].length && get(-1, 0, DOTS) > get(-1, 0, STATEMENTS))
             {
                 let dot = get(-1, 0, DOTS);
                 /*
@@ -378,7 +391,7 @@ liberator.Completion = function () //{{{
             }
 
             /* Okay, assume it's an identifier and try to complete it from the window
-             * and liberator objects.
+             * and liberator objects. It would be nice to be able to check the local scope.
              */
             let offset = get(-1, 0, STATEMENTS) || 0;
             let key = str.substring(offset);
@@ -528,13 +541,10 @@ liberator.Completion = function () //{{{
 
         cached: function (key, filter, generate, method)
         {
-            let oldFilter = cacheFilter[key];
+            if (!filter || filter.indexOf(cacheFilter[key]) != 0)
+                cacheResults[key] = generate(filter);
             cacheFilter[key] = filter;
-            let results = cacheResults[key];
-            if (!oldFilter || filter.indexOf(oldFilter) != 0)
-                results = generate(filter);
-            cacheResults[key] = this[method].apply(this, [results, filter].concat(Array.splice(arguments, 4)));
-            return cacheResults[key];
+            return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.splice(arguments, 4)));
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
@@ -810,11 +820,34 @@ liberator.Completion = function () //{{{
 
         search: function (filter)
         {
-            let results = this.cached("search", filter,
-                function () Array.concat(liberator.bookmarks.getKeywords().map(function (k) [k[0], k[1], k[3]]),
-                                         liberator.bookmarks.getSearchEngines()),
-                "filter", false, true);
-            return [0, results];
+            let [, keyword, args] = filter.match(/^\s*(\S*)\s*(.*)/);
+            let keywords = liberator.bookmarks.getKeywords().map(function (k) [k[0], k[1], k[3], k[2]]);
+            let engines = this.filter(keywords.concat(liberator.bookmarks.getSearchEngines()), filter, false, true);
+
+            let history = liberator.history.get();
+            let searches = [];
+            for (let [, k] in Iterator(keywords))
+            {
+                if (k[0].toLowerCase() != keyword.toLowerCase() || k[3].indexOf("%s") == -1)
+                    continue;
+                let [begin, end] = k[3].split("%s");
+                for (let [, h] in Iterator(history))
+                {
+                    if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
+                    {
+                        let query = h[0].substr(begin.length, h[0].length - end.length);
+                        searches.push([decodeURIComponent(query),
+                                       <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
+                                       k[2]]);
+                    }
+                }
+            }
+            if (searches.length)
+            {
+                searches = this.filter(searches, args, false, true);
+                searches.forEach(function (a) a[0] = keyword + " " + a[0]);
+            }
+            return [0, searches.concat(engines)];
         },
 
         // XXX: Move to bookmarks.js?

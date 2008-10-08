@@ -643,7 +643,7 @@ liberator.Hints = function () //{{{
             generate(win);
 
             // get all keys from the input queue
-            liberator.threadyield(true);
+            liberator.threadYield(true);
 
             canUpdate = true;
             showHints();

@@ -193,6 +193,11 @@ liberator.Bookmarks = function () //{{{
         liberator.storage.removeObserver("bookmark-cache", bookmarkObserver)
     });
 
+    liberator.registerObserver("enter", function () {
+        if (liberator.options["preload"])
+            cache.bookmarks; // Forces a load, if not already loaded.
+    });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -533,11 +538,8 @@ liberator.History = function () //{{{
         return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
     }
 
-    var history = [];
+    var history;
     var cachedHistory = []; // add pages here after loading the initial Places history
-
-    if (liberator.options["preload"])
-        setTimeout(function () { load(); }, 100);
 
     function load()
     {
@@ -556,7 +558,7 @@ liberator.History = function () //{{{
         for (let i = 0; i < rootNode.childCount; i++)
         {
             var node = rootNode.getChild(i);
-            //liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type + "\n");
+            // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
                 history.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
         }
@@ -564,6 +566,11 @@ liberator.History = function () //{{{
         // close a container after using it!
         rootNode.containerOpen = false;
     }
+
+    liberator.registerObserver("enter", function () {
+        if (liberator.options["preload"])
+            load();
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
@@ -710,6 +717,8 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
+            if (!filter)
+                return cachedHistory.concat(history);
             return liberator.completion.cached("history", filter, function() cachedHistory.concat(history),
                                 "filterURLArray");
         },
@@ -721,14 +730,17 @@ liberator.History = function () //{{{
             if (!history)
                 load();
 
-            // don' let cachedHistory grow too large
+            let filter = function (h) h[0] != url;
+            // don't let cachedHistory grow too large
             if (cachedHistory.length > 1000)
             {
                 history = cachedHistory.concat(history);
                 cachedHistory = [];
             }
             else
-                cachedHistory = cachedHistory.filter(function (elem) elem[0] != url);
+                cachedHistory = cachedHistory.filter(filter);
+            if (history.some(function (h) h[0] == url))
+                history = history.filter(filter);
 
             cachedHistory.unshift([url, title || "[No title]", getIcon(url)]);
             return true;

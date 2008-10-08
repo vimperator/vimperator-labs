@@ -95,11 +95,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 .hl-String  { color: green; }
 .hl-Boolean { color: blue; }
 .hl-Null    { color: blue; }
+.hl-Object  { color: maroon; }
+.hl-Function{ color: navy; }
 
 .hl-Keyword { color: red; }
 .hl-Tag     { color: blue; }
 
-.hl-Filter  { font-weight: bold; }
+.hl-Filter  { font-weight: bold !important; }
 
 }
 

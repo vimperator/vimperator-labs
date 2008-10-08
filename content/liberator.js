@@ -1162,6 +1162,7 @@ const liberator = (function () //{{{
                         option.reset();
                 }
 
+                liberator.triggerObserver("enter", null);
                 liberator.autocommands.trigger(liberator.config.name + "Enter", "");
             }, 0);
 
@@ -1193,7 +1194,7 @@ const liberator = (function () //{{{
             return true;
         },
 
-        threadyield: function (flush)
+        threadYield: function (flush)
         {
             let mainThread = threadManager.mainThread;
             do

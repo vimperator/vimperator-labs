@@ -763,12 +763,22 @@ lookup:
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    liberator.eval(str);
+                    var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                           .getService(Components.interfaces.mozIJSSubScriptLoader);
+                    try
+                    {
+                        loader.loadSubScript("file://" + file.path, liberator)
+                    }
+                    catch (e)
+                    {
+                        e.echoerr = file.path + ":" + e.lineNumber + ": " + e;
+                        throw e;
+                    }
                 }
                 else if (/\.css$/.test(filename))
                 {
                     liberator.storage.styles.unregisterSheet("file://" + file.path);
-                    liberator.storage.styles.registerSheet("file://" + file.path);
+                    liberator.storage.styles.registerSheet("file://" + file.path, !silent);
                 }
                 else
                 {
@@ -858,9 +868,9 @@ lookup:
             }
             catch (e)
             {
-                let message = "Sourcing file: " + file.path + ": " + e;
+                let message = "Sourcing file: " + (e.echoerr || file.path + ": " + e);
                 if (Components.utils.reportError)
-                    Components.utils.reportError(message);
+                    Components.utils.reportError(e);
                 if (!silent)
                     liberator.echoerr(message);
             }

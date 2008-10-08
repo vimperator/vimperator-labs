@@ -119,7 +119,8 @@ liberator.util = { //{{{
 
     escapeString: function (str, delimiter)
     {
-        delimiter = delimiter || '"';
+        if (delimiter == undefined)
+            delimiter = '"';
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n").replace("\t", "\\t") + delimiter;
     },
 
@@ -246,7 +247,7 @@ liberator.util = { //{{{
         }
 
         if (color)
-            obj = <span class="hl-Title">{obj}</span>.toXMLString();
+            obj = <span class="hl-Title hl-Object">{obj}</span>.toXMLString();
         string += obj + "::\n";
 
         try // window.content often does not want to be queried with "var i in object"
@@ -260,9 +261,10 @@ liberator.util = { //{{{
                 }
                 catch (e) {}
 
+                value = liberator.template.highlight(value, true);
                 if (color)
                 {
-                    value = liberator.template.highlight(value, true).toXMLString();
+                    value = value.toXMLString();
                     i = <span style="font-weight: bold;">{i}</span>.toXMLString();
                 }
                 string += i + ": " + value + "\n";

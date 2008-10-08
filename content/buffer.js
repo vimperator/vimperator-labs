@@ -35,7 +35,7 @@ liberator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const highlightClasses = ["Boolean", "ErrorMsg", "Filter", "Function", "InfoMsg", "Keyword",
-            "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Question",
+            "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Object", "Question",
             "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
             "Title", "URL", "WarningMsg",
             ["Hint", ".liberator-hint", "*"],
@@ -84,18 +84,18 @@ liberator.Buffer = function () //{{{
         {
             let sheets = system ? systemSheets : userSheets;
 
-            if (!force)
-            {
-                let errors = checkSyntax(css);
-                if (errors.length)
-                    return errors.map(function (e) "CSS: " + filter + ": " + e).join("\n");
-            }
-
             if (sheets.some(function (s) s[0] == filter && s[1] == css))
                 return null;
             filter = filter.split(",");
+            try
+            {
+                this.registerSheet(cssUri(wrapCSS(filter, css)), !force);
+            }
+            catch (e)
+            {
+                return e.echoerr || e;
+            }
             sheets.push([filter, css]);
-            this.registerSheet(cssUri(wrapCSS(filter, css)));
             return null;
         }
 
@@ -136,8 +136,10 @@ liberator.Buffer = function () //{{{
             return matches.length;
         }
 
-        this.registerSheet = function (uri)
+        this.registerSheet = function (uri, doCheckSyntax)
         {
+            if (doCheckSyntax)
+                checkSyntax(uri);
             uri = ios.newURI(uri, null, null);
             if (!sss.sheetRegistered(uri, sss.USER_SHEET))
                 sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
@@ -166,9 +168,8 @@ liberator.Buffer = function () //{{{
         let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
         /* What happens if more than one thread tries to use this? */
         let testDoc = document.implementation.createDocument(XHTML, "doc", null);
-        function checkSyntax(css)
+        function checkSyntax(uri)
         {
-            let uri = cssUri(namespace + css);
             let errors = [];
             let listener = {
                 QueryInterface: queryinterface,
@@ -178,7 +179,7 @@ liberator.Buffer = function () //{{{
                     {
                         message = message.QueryInterface(Components.interfaces.nsIScriptError);
                         if (message.sourceName == uri)
-                            errors.push(message.errorMessage);
+                            errors.push(message);
                     }
                     catch (e) {}
                 }
@@ -212,7 +213,14 @@ liberator.Buffer = function () //{{{
             {
                 consoleService.unregisterListener(listener);
             }
-            return errors;
+            if (errors.length)
+            {
+                let err = new Error("", errors[0].sourceName.replace(/^(data:text\/css,).*/, "$1..."), errors[0].lineNumber);
+                err.name = "CSSError"
+                err.message = errors.reduce(function (msg, e) msg + "; " + e.lineNumber + ": " + e.errorMessage, errors.shift().errorMessage);
+                err.echoerr = err.fileName + ":" + err.lineNumber + ": " + err.message;
+                throw err;
+            }
         }
     }
     Styles.prototype = {

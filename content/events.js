@@ -537,7 +537,7 @@ liberator.Events = function () //{{{
     function waitForPageLoaded()
     {
         liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded);
-        liberator.threadyield(true); // clear queue
+        liberator.threadYield(true); // clear queue
 
         if (liberator.buffer.loaded == 1)
             return true;
@@ -546,7 +546,7 @@ liberator.Events = function () //{{{
         var then = new Date().getTime();
         for (let now = then; now - then < ms; now = new Date().getTime())
         {
-            liberator.threadyield();
+            liberator.threadYield();
             if ((now - then) % 1000 < 10)
                 liberator.dump("waited: " + (now - then) + " ms");
 

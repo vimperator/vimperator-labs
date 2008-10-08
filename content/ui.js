@@ -874,6 +874,8 @@ liberator.CommandLine = function () //{{{
                         {
                             setCommand(command.substring(0, completionStartIndex) + compl + completionPostfix);
                             commandWidget.selectionStart = commandWidget.selectionEnd = completionStartIndex + compl.length;
+                            if (longest)
+                                liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
 
                             // Start a new completion in the next iteration. Useful for commands like :source
                             // RFC: perhaps the command can indicate whether the completion should be restarted
@@ -1236,8 +1238,8 @@ liberator.ItemList = function (id) //{{{
         let filter = liberator.completion.filterString;
         if (filter)
         {
-            b = liberator.template.highlightFilter(String(b), filter);
-            c = liberator.template.highlightFilter(String(c), filter);
+            b = liberator.template.highlightFilter(b, filter);
+            c = liberator.template.highlightFilter(c, filter);
         }
 
         if (typeof a == "function")

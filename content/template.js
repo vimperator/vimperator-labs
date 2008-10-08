@@ -8,7 +8,8 @@ liberator.template = {
         if (fn.length > 1)
         {
             iter = Iterator(iter);
-            fn = function (x) fn.apply(null, x);
+            let oldfn = fn;
+            fn = function (x) oldfn.apply(null, x);
         }
         else if (iter.length) /* Kludge? */
             iter = liberator.util.arrayIter(iter);
@@ -56,8 +57,9 @@ liberator.template = {
                 case "boolean":
                     return <span class="hl-Boolean">{arg}</span>;
                 case "function":
-                    return <span class="hl-Function">{arg}</span>;
-                    return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*/, "{ ... }")}</span>; /* } vim */
+                    if (processStrings)
+                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*/, "{ ... }")}</span>; /* } vim */
+                    return <>{arg}</>;
                 case "undefined":
                     return <span class="hl-Null">{arg}</span>;
                 case "object":
@@ -65,7 +67,9 @@ liberator.template = {
                     // that we cannot even try/catch it
                     if (/^\[JavaPackage.*\]$/.test(arg))
                         return <>[JavaPackage]</>;
-                    return <>{arg}</>;
+                    if (processStrings)
+                        arg = String(arg).replace("\n", "\\n", "g");
+                    return <span class="hl-Object">{arg}</span>;
                 default:
                     return <![CDATA[<unknown type>]]>;
             }
@@ -78,9 +82,13 @@ liberator.template = {
 
     highlightFilter: function (str, filter)
     {
-        let lcstr = str.toLowerCase();
+        if (typeof str == "xml")
+            return str;
+        if (str == "")
+            return <>{str}</>;
+        let lcstr = String(str).toLowerCase();
         let lcfilter = filter.toLowerCase();
-        str = str.replace(" ", " ");
+        str = String(str).replace(" ", " ");
         let s = <></>;
         let start = 0;
         let i;
