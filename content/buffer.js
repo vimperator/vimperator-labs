@@ -376,7 +376,7 @@ liberator.Buffer = function () //{{{
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
 
     liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
-        { completer: function (filter) [0, [[k, v[1]] for ([k, v] in Iterator(pageInfo))]] });
+        { completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))] });
 
     liberator.options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
@@ -387,11 +387,11 @@ liberator.Buffer = function () //{{{
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            completer: function (filter) [0, [
+            completer: function (filter) [
                 ["0", "Don't show link destination"],
                 ["1", "Show the link in the status line"],
                 ["2", "Show the link in the command line"]
-            ]],
+            ],
             validator: function (value) value >= 0 && value <= 2
         });
 
