@@ -591,6 +591,7 @@ liberator.CommandLine = function () //{{{
         {
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
+            autocompleteTimer.reset();
             completionList.hide();
             completions = [];
             this.resetCompletions();
@@ -713,6 +714,7 @@ liberator.CommandLine = function () //{{{
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
                     history.add(command);
                     liberator.modes.pop(true);
+                    autocompleteTimer.reset();
                     completionList.hide();
                     liberator.focusContent(false);
                     liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
