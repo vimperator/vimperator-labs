@@ -42,8 +42,7 @@ liberator.Buffer = function () //{{{
             ["Search", ".__liberator-search", "*"],
             ["Bell", "#liberator-visualbell"],
             ];
-    let name = liberator.config.name.toLowerCase();
-    const highlightDocs = "chrome://" + name + "/content/buffer.xhtml,chrome://browser/content/browser.xul";
+    const highlightDocs = "chrome://liberator/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
     var highlight = liberator.storage.newMap("highlight", false);
 
@@ -234,8 +233,8 @@ liberator.Buffer = function () //{{{
     let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
                                        .getPropertyValue("font-size");
 
-    styles.registerSheet("chrome://" + name + "/skin/vimperator.css");
-    let error = styles.addSheet("chrome://" + name + "/content/buffer.xhtml",
+    styles.registerSheet("chrome://liberator/skin/liberator.css");
+    let error = styles.addSheet("chrome://liberator/content/buffer.xhtml",
         "body { font-size: " + fontSize + "; }", true);
 
     function setZoom(value, fullZoom)

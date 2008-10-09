@@ -638,7 +638,7 @@ const liberator = (function () //{{{
         // with (liberator) means, liberator is the default namespace "inside" eval
         eval: function (str)
         {
-            const fileName = "chrome://" + liberator.config.name.toLowerCase() + "/content/liberator.js";
+            const fileName = "chrome://liberator/content/liberator.js";
             const line = new Error().lineNumber + 3;
             try
             {
@@ -840,7 +840,7 @@ const liberator = (function () //{{{
                 var helpFile = liberator.options["helpfile"];
 
                 if (liberator.config.helpFiles.indexOf(helpFile) != -1)
-                    liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + helpFile, where);
+                    liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
                     liberator.echo("Sorry, help file \"" + helpFile + "\" not found");
 
@@ -849,7 +849,7 @@ const liberator = (function () //{{{
 
             function jumpToTag(file, tag)
             {
-                liberator.open("chrome://" + liberator.config.name.toLowerCase() + "/locale/" + file, where);
+                liberator.open("chrome://liberator/locale/" + file, where);
                 // TODO: it would be better wo wait for pageLoad
                 setTimeout(function () {
                     var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
@@ -1053,7 +1053,7 @@ const liberator = (function () //{{{
             liberator.log("Initializing liberator object...", 0);
 
             // components which should be shared across all windows
-            Components.utils.import("resource://" + liberator.config.name.toLowerCase() + "/storage.jsm", liberator);
+            Components.utils.import("resource://liberator/storage.jsm", liberator);
 
             // commands must always be the first module to be initialized
             loadModule("commands",     liberator.Commands); addCommands();

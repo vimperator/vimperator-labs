@@ -1519,7 +1519,7 @@ liberator.StatusLine = function () //{{{
             }
             else
             {
-                url = url.replace(new RegExp("^chrome://" + liberator.config.name.toLowerCase() + "/locale/(\\S+)\\.html$"), "$1 [Help]");
+                url = url.replace(new RegExp("^chrome://liberator/locale/(\\S+)\\.html$"), "$1 [Help]");
             }
 
             // when session information is available, add [+] when we can go backwards

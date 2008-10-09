@@ -1,7 +1,9 @@
 # Firefox
-content	 vimperator content/
-resource vimperator modules/
-locale	 vimperator en-US locale/en-US/
-skin vimperator classic/1.0 skin/
-overlay chrome://browser/content/browser.xul chrome://vimperator/content/vimperator.xul
+content	 liberator content/
+resource liberator modules/
+locale	 liberator en-US locale/en-US/
+skin	 liberator classic/1.0 skin/
+override chrome://liberator/content/liberator.dtd chrome://liberator/content/vimperator.dtd
+overlay  chrome://browser/content/browser.xul chrome://liberator/content/liberator.xul
+overlay  chrome://browser/content/browser.xul chrome://liberator/content/vimperator.xul
 

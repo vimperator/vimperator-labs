@@ -28,7 +28,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK ***** -->
 
-<!DOCTYPE overlay SYSTEM "chrome://vimperator/content/vimperator.dtd">
+<?xml-stylesheet href="chrome://liberator/skin/liberator.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <overlay id="liberator"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -36,6 +37,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+    <script type="application/x-javascript;version=1.8" src="liberator.js"/>
     <script type="application/x-javascript;version=1.8" src="&liberator.name;.js"/>
 
     <script type="application/x-javascript;version=1.8" src="buffer.js"/>
@@ -80,13 +82,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-multiline-output" src="chrome://&liberator.name;/content/buffer.xhtml"
+            <iframe id="liberator-multiline-output" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
-            <iframe id="liberator-completions" src="chrome://&liberator.name;/content/buffer.xhtml"
+            <iframe id="liberator-completions" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
                 onclick="liberator.commandline.onMultilineOutputEvent(event)"/>
         </vbox>

@@ -34,7 +34,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 #liberator-frame-indicator {
     background-color: red;
     opacity: 0.5;
-    z-index: 999
+    z-index: 999;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -53,28 +53,22 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 
 .liberator-hint {
-    z-index:5000;
-    font-family:monospace;
-    font-size:10px;
-    font-weight: bold;
-    color:white;
-    background-color:red;
-    border-color:ButtonShadow;
-    border-width:0px;
-    border-style:solid;
-    padding:0px 1px 0px 1px;
-    position:absolute;
-}
-
-#liberator-visualbell {
-    border: none;
-    background-color: black;
+    z-index: 5000;
+    font-family: monospace;
+    font-size: 10px;
+    font-weight:  bold;
+    color: white;
+    background-color: red;
+    border-color: ButtonShadow;
+    border-width: 0px;
+    border-style: solid;
+    padding: 0px 1px 0px 1px;
+    position: absolute;
 }
 
 /* Applied only to completion buffer and MOW */
 @-moz-document
-    url-prefix(chrome://vimperator/),
-    url-prefix(chrome://muttator/) {
+    url-prefix(chrome://liberator/) {
 
 *:-moz-loading, *:-moz-broken { display: none !important; }
 
@@ -107,8 +101,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /* Applied to completion buffer, MOW, browser window */
 @-moz-document 
-    url-prefix(chrome://),
-    url(chrome://browser/content/browser.xul) {
+    url-prefix(chrome://) {
 
 #liberator-container  {
     font-family: monospace;

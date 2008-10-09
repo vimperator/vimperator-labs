@@ -876,12 +876,12 @@ liberator.Completion = function () //{{{
                 try
                 {
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], false);
+                    xmlhttp.open("GET", "chrome://liberator/locale/" + files[i], false);
                     xmlhttp.send(null);
                 }
                 catch (e)
                 {
-                    liberator.log("Error opening chrome://" + liberator.config.name.toLowerCase() + "/locale/" + files[i], 1);
+                    liberator.log("Error opening chrome://liberator/locale/" + files[i], 1);
                     continue;
                 }
                 var doc = xmlhttp.responseXML;
