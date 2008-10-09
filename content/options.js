@@ -524,9 +524,17 @@ liberator.Options = function () //{{{
 
             let opt = parseOpt(args, modifiers);
             if (!opt)
+            {
+                liberator.echoerr("Error parsing :set command: " + args);
                 return;
+            }
 
             let option = opt.option;
+            if (option == null)
+            {
+                liberator.echoerr("No such option: " + opt.name);
+                return;
+            }
 
             // reset a variable to its default value
             if (opt.reset)
