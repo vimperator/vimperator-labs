@@ -76,8 +76,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 .compitem-td-span { height: 1.5em; display: block; }
 
 .compitem[selected=true] { background-color: yellow; }
-.compitem > .favicon { width: 16px; }
-.compitem > .completion { width: 45%; overflow: hidden; }
+.compitem > .favicon     { width: 16px; }
+.favicon > img           { max-width: 16px, max-height: 16px}
+.compitem > .completion  { width: 45%; overflow: hidden; }
 .compitem > .description { color: gray; }
 
 .extra-info { color: gray; }
