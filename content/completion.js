@@ -423,6 +423,12 @@ liberator.Completion = function () //{{{
                     let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
 
                     let completer = this.completers[func];
+                    try
+                    {
+                        if (!completer)
+                            completer = eval(obj)[func].liberatorCompleter;
+                    }
+                    catch (e) {}
                     if (!completer)
                         return [0, []];
 
@@ -438,8 +444,11 @@ liberator.Completion = function () //{{{
 
                     let compl = completer.call(this, func, preEval, obj, string, args);
                     key = eval(preEval + key);
-                    return [0, this.filter(compl, key + string, last, key.length)];
+                    return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
                 }
+
+                // Nothing to do.
+                return [0, []];
             }
 
             /*
@@ -603,8 +612,6 @@ liberator.Completion = function () //{{{
         {
             if (!filter && cacheFilter[key] || filter.indexOf(cacheFilter[key]) != 0)
                 cacheResults[key] = generate(filter);
-            if (key == "searches")
-                liberator.dump({keyword: key, cacheFilter: cacheFilter[key], filter: filter, searches: {toString: function() json.encode(cacheResults[key])}});
             cacheFilter[key] = filter;
             if (cacheResults[key].length)
                 return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.splice(arguments, 4)));
