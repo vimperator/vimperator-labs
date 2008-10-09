@@ -72,10 +72,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 *:-moz-loading, *:-moz-broken { display: none !important; }
 
-.compitem > td {
-    display: table-cell;
-    -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
-}
+.compitem > td { -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td); }
 .compitem-td-span { height: 1.5em; display: block; }
 
 .compitem[selected=true] { background-color: yellow; }

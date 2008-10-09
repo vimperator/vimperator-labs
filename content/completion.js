@@ -149,6 +149,8 @@ liberator.Completion = function () //{{{
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
                     continue;
+                if (/^\[XPCNativeWrapper /.test(obj))
+                    obj = obj.wrappedJSObject;
 
                 for (let [k, v] in this.iter(obj))
                     compl.push([k, liberator.template.highlight(v, true)]);
