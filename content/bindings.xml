@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+	  xmlns:xbl="http://www.mozilla.org/xbl"
+	  xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <binding id="frame">
+        <content>
+            <div id="liberator-frame-indicator" style="width: 40px; height: 40px"/>
+            <children/>
+        </content>
+    </binding>
+    <binding id="compitem-td">
+        <!-- No white space. The table is white-space: pre; :( -->
+        <content><html:span class="compitem-td-span"><children/></html:span></content>
+    </binding>
+</bindings>
+
+<!-- vim:se ft=xbl sw=4 sts=4 tw=0 et: -->

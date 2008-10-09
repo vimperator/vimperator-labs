@@ -1235,32 +1235,6 @@ liberator.ItemList = function (id) //{{{
     var completionElements = null;
     var minHeight = 0;
 
-    // TODO: temporary, to be changed/removed
-    function createRow(b, c, a, dom)
-    {
-        /* Obviously, ItemList shouldn't know or care about this. */
-        let filter = liberator.completion.filterString;
-        if (filter)
-        {
-            b = liberator.template.highlightFilter(b, filter);
-            c = liberator.template.highlightFilter(c, filter);
-        }
-
-        if (typeof a == "function")
-            a = a();
-
-        let row =
-            <tr class="compitem">
-                <td class="favicon">{a ? <img src={a}/> : <span/>}</td>
-                <td class="completion">{b}</td>
-                <td class="description">{c}</td>
-            </tr>;
-
-        if (dom)
-            return liberator.util.xmlToDom(row, doc);
-        return row;
-    }
-
     function autoSize()
     {
         function getHeight()
@@ -1278,6 +1252,32 @@ liberator.ItemList = function (id) //{{{
             container.height = getHeight();
     }
     doc.body.addEventListener("DOMSubtreeModified", autoSize, true);
+
+    // TODO: temporary, to be changed/removed
+    function createRow(b, c, a, dom)
+    {
+        /* Obviously, ItemList shouldn't know or care about this. */
+        let filter = liberator.completion.filterString;
+        if (filter)
+        {
+            b = liberator.template.highlightFilter(b, filter);
+            c = liberator.template.highlightFilter(c, filter);
+        }
+
+        if (typeof a == "function")
+            a = a();
+
+        let row =
+            <tr class="compitem">
+                <td class="favicon">{a ? <img src={a}/> : <></>}</td>
+                <td class="completion">{b}</td>
+                <td class="description">{c}</td>
+            </tr>;
+
+        if (dom)
+            return liberator.util.xmlToDom(row, doc);
+        return row;
+    }
 
     /**
      * uses the entries in completions to fill the listbox
@@ -1334,7 +1334,7 @@ liberator.ItemList = function (id) //{{{
             <table>
             {
                 liberator.template.map(liberator.util.range(0, maxItems), function (i)
-                <tr><td style="color: blue">~</td></tr>)
+                <tr class="compitem"><td class="hl-NonText">~</td></tr>)
             }
             </table>;
 
