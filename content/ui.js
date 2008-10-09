@@ -1330,6 +1330,13 @@ liberator.ItemList = function (id) //{{{
             let elem = completions[i];
             tbody.* += createRow(elem[0], elem[1], elem[2]);
         }
+        div.* +=
+            <table>
+            {
+                liberator.template.map(liberator.util.range(0, maxItems), function (i)
+                <tr><td style="color: blue">~</td></tr>)
+            }
+            </table>;
 
         let dom = liberator.util.xmlToDom(div, doc);
         completionBody = dom.getElementsByTagName("tbody")[0];
