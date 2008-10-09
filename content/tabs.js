@@ -884,7 +884,7 @@ liberator.Tabs = function () //{{{
             else
             {
                 buffer = lastBufferSwitchArgs;
-                if (typeof allowNonUnique == "undefined" || allowNonUnique == null)
+                if (allowNonUnique === undefined || allowNonUnique == null) // XXX
                     allowNonUnique = lastBufferSwitchSpecial;
             }
 

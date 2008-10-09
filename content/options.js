@@ -109,7 +109,7 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
             let tmpValue = newValue;
             newValue = this.setter.call(this, newValue);
 
-            if (typeof newValue == "undefined")
+            if (newValue === undefined)
             {
                 newValue = tmpValue;
                 liberator.log("DEPRECATED: '" + this.name + "' setter should return a value");
@@ -316,7 +316,7 @@ liberator.Options = function () //{{{
                     }
 
                     var expr = liberator.evalExpression(matches[4]);
-                    if (typeof expr == "undefined")
+                    if (expr === undefined)
                     {
                         liberator.echoerr("E15: Invalid expression: " + matches[4]);
                         return;

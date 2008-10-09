@@ -1045,7 +1045,7 @@ liberator.Buffer = function () //{{{
         // 0 if loading, 1 if loaded or 2 if load failed
         get loaded()
         {
-            if (typeof window.content.document.pageIsFullyLoaded != "undefined")
+            if (window.content.document.pageIsFullyLoaded !== undefined)
                 return window.content.document.pageIsFullyLoaded;
             else
                 return 0; // in doubt return "loading"

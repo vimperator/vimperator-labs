@@ -814,9 +814,9 @@ liberator.Mail = function () //{{{
             if (!filter)
                 filter = "";
 
-            if (typeof includeServers == "undefined")
+            if (includeServers === undefined)
                 includeServers = false;
-            if (typeof includeMsgFolders == "undefined")
+            if (includeMsgFolders === undefined)
                 includeMsgFolders = true;
 
             var tree = GetFolderTree();

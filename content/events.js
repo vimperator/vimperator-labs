@@ -361,7 +361,7 @@ liberator.Events = function () //{{{
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by Firefox, when a context menu is closed
-        if (typeof gContextMenu != "undefined" && gContextMenu == null && !activeMenubar)
+        if (gContextMenu !== undefined && gContextMenu == null && !activeMenubar)
             liberator.modes.remove(liberator.modes.MENU);
     }
     function enterMenuMode()
@@ -520,7 +520,7 @@ liberator.Events = function () //{{{
                 {
                     setTimeout(function () {
                         var focused = document.commandDispatcher.focusedElement;
-                        if (focused && (typeof focused.value != "undefined") && focused.value.length == 0)
+                        if (focused && (focused.value !== undefined) && focused.value.length == 0)
                             focused.blur();
                     }, 100);
                 }
@@ -718,7 +718,7 @@ liberator.Events = function () //{{{
             // removeEventListeners() to avoid mem leaks
             liberator.dump("TODO: remove all eventlisteners");
 
-            if (typeof getBrowser != "undefined")
+            if (getBrowser !== undefined)
                 getBrowser().removeProgressListener(this.progressListener);
 
             window.removeEventListener("popupshown", enterPopupMode, true);
