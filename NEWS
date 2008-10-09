@@ -7,6 +7,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * much improved completion support, including javascript, option, and search keyword
     * add <PageUp>/<S-Up> and <PageDown>/<S-Down> command-line mappings for
       selecting the previous and next history items
     * remove 'hintstyle', 'hlsearchstyle' and 'visualbellstyle' - use
