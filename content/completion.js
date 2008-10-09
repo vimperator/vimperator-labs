@@ -832,40 +832,37 @@ liberator.Completion = function () //{{{
         // if "tail" is true, only return names without any directory components
         file: function (filter, tail)
         {
-            var dir = "", compl = "";
-            var matches = filter.match(/^(.*[\/\\])?(.*?)$/);
+            let [matches, dir, compl] = filter.match(/^((?:.*[\/\\])?)(.*?)$/);
+            // dir == "" is expanded inside readDirectory to the current dir
 
-            if (matches)
+            let generate = function ()
             {
-                dir = matches[1] || ""; // "" is expanded inside readDirectory to the current dir
-                compl = matches[2] || "";
-            }
+                var files = [], mapped = [];
 
-            var files = [], mapped = [];
-
-            try
-            {
-                files = liberator.io.readDirectory(dir, true);
-
-                if (liberator.options["wildignore"])
+                try
                 {
-                    var wigRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
+                    files = liberator.io.readDirectory(dir, true);
 
-                    files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
+                    if (liberator.options["wildignore"])
+                    {
+                        var wigRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
+
+                        files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
+                    }
+
+                    mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
+                                                        file.isDirectory() ? "Directory" : "File"]);
                 }
+                catch (e) {}
+                return mapped;
+            };
 
-                mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
-                                                    file.isDirectory() ? "Directory" : "File"]);
-            }
-            catch (e)
-            {
-                return [0, []];
-            }
-
+            try {
             if (tail)
-                return [dir.length, buildLongestStartingSubstring(mapped, compl, true)];
+                return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
             else
-                return [0, buildLongestStartingSubstring(mapped, filter, true)];
+                return [0, this.cached("file", filter, generate, "filter", [true])];
+            }catch(e){liberator.dump(e)}
         },
 
         help: function (filter)

@@ -1226,6 +1226,7 @@ liberator.ItemList = function (id) //{{{
     var container = iframe.parentNode;
 
     doc.body.id = id + "-content";
+    doc.body.appendChild(doc.createTextNode(""));
 
     var completions = []; // a reference to the Array of completions
     var startIndex = -1;  // The index of the first displayed item
@@ -1316,7 +1317,6 @@ liberator.ItemList = function (id) //{{{
         }
 
         // do a full refill of the list:
-        doc.body.innerHTML = "";
 
         XML.ignoreWhitespace = true;
         let div = <div class="ex-command-output hl-Normal">
@@ -1326,10 +1326,8 @@ liberator.ItemList = function (id) //{{{
 
         let tbody = div..tbody;
         for (let i in liberator.util.range(offset, endIndex))
-        {
-            let elem = completions[i];
-            tbody.* += createRow(elem[0], elem[1], elem[2]);
-        }
+            tbody.* += createRow.apply(null, completions[i]);
+
         div.* +=
             <table>
             {
@@ -1341,7 +1339,7 @@ liberator.ItemList = function (id) //{{{
         let dom = liberator.util.xmlToDom(div, doc);
         completionBody = dom.getElementsByTagName("tbody")[0];
         completionElements = completionBody.childNodes;
-        doc.body.appendChild(dom);
+        doc.body.replaceChild(dom, doc.body.firstChild);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
