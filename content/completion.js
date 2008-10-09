@@ -225,6 +225,8 @@ liberator.Completion = function () //{{{
             {
                 if (top[CHAR] != arg)
                     throw new Error("Invalid JS");
+                if (i == str.length - 1)
+                    liberator.completion.parenMatch = top[OFFSET];
                 // The closing character of this stack frame will have pushed a new
                 // statement, leaving us with an empty statement. This doesn't matter,
                 // now, as we simply throw away the frame when we pop it, but it may later.
@@ -798,6 +800,8 @@ liberator.Completion = function () //{{{
         // provides completions for ex commands, including their arguments
         ex: function (str)
         {
+            this.filterString = "";
+            this.parenMatch = null;
             substrings = [];
             if (str.indexOf(cacheFilter["ex"]) != 0)
             {
@@ -935,7 +939,7 @@ liberator.Completion = function () //{{{
                         if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
                         {
                             let query = h[0].substring(begin.length, h[0].length - end.length);
-                            searches.push([decodeURIComponent(query),
+                            searches.push([decodeURIComponent(query.replace("+", "%20")),
                                            <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
                                            k[2]]);
                         }

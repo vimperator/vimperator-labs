@@ -256,6 +256,7 @@ liberator.util = { //{{{
             obj = <span class="hl-Title hl-Object">{obj}</span>.toXMLString();
         string += obj + "::\n";
 
+        let keys = [];
         try // window.content often does not want to be queried with "var i in object"
         {
             for (let i in object)
@@ -273,12 +274,12 @@ liberator.util = { //{{{
                     value = value.toXMLString();
                     i = <span style="font-weight: bold;">{i}</span>.toXMLString();
                 }
-                string += i + ": " + value + "\n";
+                keys.push(i + ": " + value);
             }
         }
         catch (e) {}
 
-        return string;
+        return string + keys.sort().join("\n") + "\n";
     },
 
     range: function (start, end)

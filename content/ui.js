@@ -1150,12 +1150,32 @@ liberator.CommandLine = function () //{{{
             }
         },
 
-        // to allow asynchronous adding of completions, broken
-        // since the completion -> ItemList rewrite
+        // to allow asynchronous adding of completions
         setCompletions: function (compl, start)
         {
             if (liberator.mode != liberator.modes.COMMAND_LINE)
                 return;
+
+            // FIXME: Kludge.
+            try // Firefox <3.1 doesn't have repaintSelection
+            {
+                const SEL_TYPE = Components.interfaces.nsISelectionController.SELECTION_FIND;
+                let editor = document.getElementById("liberator-commandline-command")
+                                            .inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement).editor;
+                let sel = editor.selectionController.getSelection(SEL_TYPE);
+                sel.removeAllRanges();
+                if (liberator.completion.parenMatch != null)
+                {
+                    let range = editor.selection.getRangeAt(0).cloneRange();
+                    let paren = liberator.completion.parenMatch + this.getCommand().indexOf(" ") + 1;
+                    let node = range.startContainer;
+                    range.setStart(node, paren);
+                    range.setEnd(node, paren + 1);
+                    sel.addRange(range);
+                    editor.selectionController.repaintSelection(SEL_TYPE);
+                }
+            }
+            catch (e) {}
 
             /* Only hide if not pending.
             if (compl.length == 0)
