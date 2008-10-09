@@ -793,7 +793,7 @@ lookup:
                         {
                             if (heredocEnd.test(line))
                             {
-                                command.execute(args + "\n" + heredoc, special, count);
+                                command.execute(heredoc, special, count);
                                 heredoc = "";
                                 heredocEnd = null;
                             }
