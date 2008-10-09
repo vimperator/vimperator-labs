@@ -825,7 +825,7 @@ liberator.Completion = function () //{{{
             var command = liberator.commands.get(cmd);
             if (command && command.completer)
             {
-                matches = str.match(/^:*\d*\w+!?\s+/);
+                matches = str.match(/^:*\d*\w+[\s!]\s*/);
                 exLength = matches ? matches[0].length : 0;
                 [start, completions] = command.completer.call(this, args, special);
             }

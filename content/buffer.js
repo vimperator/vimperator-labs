@@ -1534,9 +1534,8 @@ liberator.Buffer = function () //{{{
 
             // add the frame indicator
             var doc = frames[next].document;
-            var indicator =
-                <div id="liberator-frame-indicator"/>;
-            doc.body.appendChild(liberator.util.xmlToDom(indicator));
+            var indicator = liberator.util.xmlToDom(<div id="liberator-frame-indicator"/>, doc);
+            doc.body.appendChild(indicator);
 
             // remove the frame indicator
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
