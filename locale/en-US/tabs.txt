@@ -9,12 +9,10 @@ result many buffer and tab commands are interchangeable.
 section:Listing{nbsp}tabs[listing-tabs]
 
 |B| |:tabs| |:ls| |:files| |:buffers|
-||:buffers[!]|| +
+||:buffers|| +
 ||B||
 ________________________________________________________________________________
-Show a list of all buffers (=tabs). The special version [c]:buffers![c] opens
-the buffer list in a persistent preview window. Call the special version of
-this command again to close the window.
+Show a list of all buffers (=tabs).
 ________________________________________________________________________________
 
 section:Opening{nbsp}tabs[listing-tabs]

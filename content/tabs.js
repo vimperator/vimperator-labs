@@ -469,11 +469,8 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
-            function (args, special) { liberator.tabs.list(special); },
-            {
-                argCount: "0",
-                bang: true
-            });
+            function (args) { liberator.tabs.list(); },
+            { argCount: "0" });
 
         liberator.commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + liberator.config.name,
