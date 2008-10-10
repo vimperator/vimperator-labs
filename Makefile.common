@@ -15,6 +15,7 @@ JAR_TXT_FILES = ${shell find -L content skin locale	\
 				-path '*.js'	\
 			     -o -path '*.css'	\
 			     -o -path '*.dtd'	\
+			     -o -path '*.xml'	\
 			     -o -path '*.xul'	\
 			     -o -path '*.html'	\
  			     -o -path '*.xhtml'	\
