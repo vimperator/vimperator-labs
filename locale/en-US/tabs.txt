@@ -94,7 +94,7 @@ buffer, it is selected. With [!] the next buffer matching the argument is
 selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
 
-If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-6>[m]).
+If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
 ________________________________________________________________________________
 
 
