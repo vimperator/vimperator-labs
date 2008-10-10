@@ -161,7 +161,6 @@ liberator.Buffer = function () //{{{
                                                 + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
                                   .join(", ");
             return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
-            /* } vim */
         }
 
         let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
