@@ -51,8 +51,10 @@ liberator.template = {
                 case "boolean":
                     return <span class="hl-Boolean">{arg}</span>;
                 case "function":
+                    // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
+                    // Using /foo*(:?)/ instead.
                     if (processStrings)
-                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*/, "{ ... }")}</span>; /* } vim */
+                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*(?:)/, "{ ... }")}</span>;
                     return <>{arg}</>;
                 case "undefined":
                     return <span class="hl-Null">{arg}</span>;
