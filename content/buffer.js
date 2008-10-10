@@ -139,9 +139,9 @@ liberator.Buffer = function () //{{{
         {
             if (doCheckSyntax)
                 checkSyntax(uri);
+            this.unregisterSheet(uri);
             uri = ios.newURI(uri, null, null);
-            if (!sss.sheetRegistered(uri, sss.USER_SHEET))
-                sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+            sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
         }
 
         this.unregisterSheet = function (uri)
