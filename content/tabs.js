@@ -608,17 +608,6 @@ liberator.Tabs = function () //{{{
             "Undo closing of all closed tabs",
             function (args, special, count)
             {
-                if (count > -1)
-                {
-                    liberator.echoerr("E481: No range allowed");
-                    return;
-                }
-                if (special)
-                {
-                    liberator.echoerr("E477: No ! allowed");
-                    return;
-                }
-
                 var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
                                    .getService(Components.interfaces.nsISessionStore);
                 var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
@@ -633,10 +622,7 @@ liberator.Tabs = function () //{{{
 
         liberator.commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
-            function ()
-            {
-                liberator.quit(true);
-            },
+            function () { liberator.quit(true); },
             { argCount: "0" });
     }
 
