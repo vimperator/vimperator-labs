@@ -420,25 +420,19 @@ liberator.Options = function () //{{{
     {
         let ret = {};
 
+        [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
+        args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
+
         ret.args = args;
         ret.onlyNonDefault = false; // used for :set to print non-default options
         if (!args)
         {
-            ret.args = "all";
+            ret.name = "all";
             ret.onlyNonDefault = true;
         }
 
-        [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
-        args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
-
         ret.prefix = prefix;
         ret.postfix = postfix;
-
-        if (!matches)
-            return null;
-
-        ret.scope = modifiers && modifiers.scope;
-        ret.option = liberator.options.get(ret.name, ret.scope);
 
         ret.all = (ret.name == "all")
         ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven))
@@ -446,11 +440,16 @@ liberator.Options = function () //{{{
         ret.reset = (postfix == "&");
         ret.unsetBoolean = (prefix == "no");
 
-        if (ret.value === undefined)
-            ret.value = "";
+        ret.scope = modifiers && modifiers.scope;
+
+        if (matches)
+            ret.option = liberator.options.get(ret.name, ret.scope);
 
         if (!ret.option)
             return ret;
+
+        if (ret.value === undefined)
+            ret.value = "";
 
         ret.optionValue = ret.option.get(ret.scope);
 
@@ -530,7 +529,7 @@ liberator.Options = function () //{{{
             }
 
             let option = opt.option;
-            if (option == null)
+            if (option == null && !opt.all)
             {
                 liberator.echoerr("No such option: " + opt.name);
                 return;
@@ -554,7 +553,7 @@ liberator.Options = function () //{{{
             {
                 if (opt.all)
                 {
-                    liberator.options.list(opt.onlyNonDefault, scope);
+                    liberator.options.list(opt.onlyNonDefault, opt.scope);
                 }
                 else
                 {
