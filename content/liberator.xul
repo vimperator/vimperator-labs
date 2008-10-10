@@ -29,7 +29,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://liberator/skin/liberator.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+<!DOCTYPE overlay SYSTEM "liberator.dtd" [
+    <!ENTITY liberator.content "chrome://liberator/content/">
+]>
 
 <overlay id="liberator"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -37,24 +39,24 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/x-javascript;version=1.8" src="liberator.js"/>
-    <script type="application/x-javascript;version=1.8" src="&liberator.name;.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;liberator.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;&liberator.name;.js"/>
 
-    <script type="application/x-javascript;version=1.8" src="buffer.js"/>
-    <script type="application/x-javascript;version=1.8" src="commands.js"/>
-    <script type="application/x-javascript;version=1.8" src="completion.js"/>
-    <script type="application/x-javascript;version=1.8" src="editor.js"/>
-    <script type="application/x-javascript;version=1.8" src="events.js"/>
-    <script type="application/x-javascript;version=1.8" src="find.js"/>
-    <script type="application/x-javascript;version=1.8" src="help.js"/>
-    <script type="application/x-javascript;version=1.8" src="hints.js"/>
-    <script type="application/x-javascript;version=1.8" src="io.js"/>
-    <script type="application/x-javascript;version=1.8" src="mappings.js"/>
-    <script type="application/x-javascript;version=1.8" src="modes.js"/>
-    <script type="application/x-javascript;version=1.8" src="options.js"/>
-    <script type="application/x-javascript;version=1.8" src="template.js"/>
-    <script type="application/x-javascript;version=1.8" src="ui.js"/>
-    <script type="application/x-javascript;version=1.8" src="util.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;buffer.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;commands.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;completion.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;editor.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;events.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;find.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;help.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;hints.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;io.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;mappings.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;modes.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;options.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;template.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;ui.js"/>
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;util.js"/>
 
     <window id="&liberator.mainWindow;">
 
