@@ -129,8 +129,8 @@ liberator.Option = function (names, description, type, defaultValue, extraInfo) 
         let value = this.value;
         if (this.type == "stringlist")
             value = this.value.split(",");
-        /* Return the number of matching arguments. */
-        return Array.reduce(arguments, function (n, val) value.indexOf(val) >= 0, 0);
+        /* Return whether some argument matches */
+        return Array.some(arguments, function (val) value.indexOf(val) >= 0);
     };
 
     this.__defineGetter__("value", this.get);
@@ -626,14 +626,14 @@ liberator.Options = function () //{{{
                                 newValue = liberator.util.uniq(Array.concat(opt.valueHas, opt.optionHas), true);
                                 break;
                             case "-":
-                                newValue = Array.filter(opt.optionHas, function (item) opt.valueHas.indexOf(item) == -1);
+                                newValue = opt.optionHas.filter(function (item) opt.valueHas.indexOf(item) == -1);
                                 break;
                             default:
                                 newValue = opt.valueHas;
                                 if (opt.invert)
                                 {
-                                    let keepValues = Array.filter(opt.optionHas, function (item) opt.valueHas.indexOf(item) == -1);
-                                    let addValues  = Array.filter(opt.valueHas,  function (item) opt.optionHas.indexOf(item) == -1);
+                                    let keepValues = opt.optionHas.filter(function (item) opt.valueHas.indexOf(item) == -1);
+                                    let addValues  = opt.valueHas .filter(function (item) opt.optionHas.indexOf(item) == -1);
                                     newValue = addValues.concat(keepValues);
                                 }
                                 break;
