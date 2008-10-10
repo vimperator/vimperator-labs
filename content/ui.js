@@ -1258,19 +1258,8 @@ liberator.ItemList = function (id) //{{{
 
     function autoSize()
     {
-        function getHeight()
-        {
-            if (completionElements.length == 0)
-                return Math.max(minHeight, doc.height);
-
-            minHeight = Math.max(minHeight,
-                                 completionElements[completionElements.length - 1]
-                                        .getBoundingClientRect().bottom);
-            return minHeight;
-        }
-
-        if (completionElements)
-            container.height = getHeight();
+        minHeight = Math.max(minHeight, completionBody.getBoundingClientRect().bottom);
+        container.height = minHeight;
     }
     doc.body.addEventListener("DOMSubtreeModified", autoSize, true);
 
