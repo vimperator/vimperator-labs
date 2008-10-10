@@ -55,8 +55,10 @@ ________________________________________________________________________________
 ||:map||
 ________________________________________________________________________________
 Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
-nested and recursive mappings. Mappings are NOT saved during sessions, make
-sure you put them in your vimperatorrc file!
+nested and recursive mappings.
+
+Warning: Mappings are NOT saved during sessions, make sure you put them in your
+vimperatorrc file!
 ________________________________________________________________________________
 
 
@@ -66,8 +68,10 @@ ________________________________________________________________________________
 ||:cmap||
 ________________________________________________________________________________
 Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
-remapped, allowing for nested and recursive mappings. Mappings are NOT saved
-during sessions, make sure you put them in your vimperatorrc file!
+remapped, allowing for nested and recursive mappings.
+
+Warning: Mappings are NOT saved during sessions, make sure you put them in your
+vimperatorrc file!
 ________________________________________________________________________________
 
 
@@ -77,8 +81,10 @@ ________________________________________________________________________________
 ||:imap||
 ________________________________________________________________________________
 Map the key sequence {lhs} to {rhs} (in insert mode). The {rhs} is remapped,
-allowing for nested and recursive mappings. Mappings are NOT saved during
-sessions, make sure you put them in your vimperatorrc file!
+allowing for nested and recursive mappings.
+
+Warning: Mappings are NOT saved during sessions, make sure you put them in your
+vimperatorrc file!
 ________________________________________________________________________________
 
 
@@ -247,24 +253,61 @@ ________________________________________________________________________________
 
 ||:com[mand][!] [{attr}...] {cmd} {rep}|| +
 ________________________________________________________________________________
-Define a new user command.  The name of the command is {cmd} and its relacement
-text is {rep}.  The command's attributes are {attr}.  If a command with this
-name already exists an error is reported unless [!] is specified, in which case
-the command is redefined.  Unlike Vim, the command may start with a lowercase
+Define a new user command. The name of the command is {cmd} and its relacement
+text is {rep}. The command's attributes are {attr}. If a command with this name
+already exists an error is reported unless [!] is specified, in which case the
+command is redefined. Unlike Vim, the command may start with a lowercase
 letter.
 
+The command's behavior can be specified by providing attributes when the
+command is defined.
+
+|E175| |E176| |:command-nargs| +
+Argument handling
+
+By default user commands accept no arguments. This can be changed by specifying
+the -nargs attribute.
+
+The valid values are:
+`----------`--------------------------------------------------------------------
+*-nargs=0* No arguments are allowed (default)
+*-nargs=1* One argument is allowed
+*-nargs=** Zero or more arguments are allowed
+*-nargs=?* Zero or one argument is allowed
+*-nargs=+* One or more argument is allowd
+--------------------------------------------------------------------------------
+
+|E177| |E178| |:command-count| +
+Count handling
+
+By default user commands do not accept a count. Use the -count attribute if
+you'd like to have a count passed to your user command. This will then be
+available for expansion as <count> in the argument.
+
+|:command-bang| +
+Special cases
+
+By default a user command does not have a special version. i.e. a version
+executed with the ! modifier. Providing the -bang attribute will enable this
+and <bang> will be available in the argument.
+
+|:command-replacement-text| +
+Replacement text
+
 The replacement text {rep} is scanned for escape sequences and these are
-replaced with values from the user entered command-line.  The resulting string
+replaced with values from the user entered command-line. The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:
 `----------`--------------------------------------------------------------------
 *<args>*   The command arguments exactly as supplied
-*<q-args>* The command arguments quoted as a single value in a manner suitable for expression evaluation
+*<count>*  Any supplied count E.g. 5
+*<bang>*   ! if the command was executed with the ! modifier
 *<lt>*     A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
 --------------------------------------------------------------------------------
 
-Note: {attr} not implemented yet.
+"q-" can be prefixed to the escape sequence so that the value is quoted, making
+it suitable for expression evaluation. Example: <q-args> 
 ________________________________________________________________________________
 
 
@@ -280,5 +323,13 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Delete the user-defined command {cmd}.
 ________________________________________________________________________________
+
+section:Examples[command-examples]
+
+Add a :Google command to search via google:
+
+  :command -nargs=* Google open google <args>
+
+// TODO: add decent examples
 
 // vim: set syntax=asciidoc:

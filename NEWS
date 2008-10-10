@@ -7,6 +7,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add -nargs, -bang, and -count attribute support to :command
     * much improved completion support, including javascript, option, and search keyword
     * add <PageUp>/<S-Up> and <PageDown>/<S-Down> command-line mappings for
       selecting the previous and next history items
@@ -53,7 +54,7 @@
     * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
       use "B" or :buffers instead
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded
-      use :set [no]focuscontent to control the behavior (thanks Paul Sobey for the 
+      use :set [no]focuscontent to control the behavior (thanks Paul Sobey for the
       generous donation which made this behavior possible)
     * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
       too unpredictable
@@ -67,7 +68,7 @@
     * add :bn[ext], :bp[revious], :bN[ext] to switch to next/previous tab
     * add :pagestyle command to allow for switching between alternate style sheets
     * add :b# to select the alternate buffer
-    * add :tabduplicate command 
+    * add :tabduplicate command
     * new 'urlseparator' option for specifying the regexp used to split the arg to
       :open, :tabopen and :winopen
     * :set editor now accepts quoting/escaping to use an editor with spaces in the path
@@ -205,7 +206,7 @@
     * new :time command for profiling
     * added new :sidebar and :sbclose commands
     * added 'more' and standard more-prompt key mappings to control
-      behaviour of the message list pager 
+      behaviour of the message list pager
     * added 'hlsearchstyle' option to allow for user CSS styling of the
       highlighted text strings when 'hlsearch' is set
     * added 'linksearch' option to restrict page searches to link text - \L
@@ -323,7 +324,6 @@
     * showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
     * gh goes home :) gH in a new tab
     * :open! bypasses cache
-    
     * :buffer and :buffers support (patch from Lars Kindler)
     * added :edit, :e and :tabedit aliases for :open, :tabopen
     * settings can now be changed with += and -= like in vim (patch from Виктор Кожухаров)

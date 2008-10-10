@@ -235,6 +235,8 @@ liberator.Commands = function () //{{{
             description = description || "User defined command";
 
             var command = new liberator.Command(names, description, action, extra);
+            // FIXME: shouldn't this be testing for an existing command by name?
+            // Requiring uppercase user command names like Vim would be easier
             if (!command)
                 return false;
 
@@ -255,6 +257,7 @@ liberator.Commands = function () //{{{
             }
 
             exCommands.push(command);
+
             return true;
         },
 
@@ -318,7 +321,7 @@ liberator.Commands = function () //{{{
         parseArgs: function (str, options, argCount, allowUnknownOptions) //{{{
         {
             // returns [count, parsed_argument]
-            function getNextArg(str)
+            function getNextArg(str) // {{{
             {
                 var inSingleString = false;
                 var inDoubleString = false;
@@ -415,7 +418,7 @@ liberator.Commands = function () //{{{
                     return [-1, "trailing \\"];
                 else
                     return [str.length, arg];
-            }
+            } // }}}
 
             if (!options)
                 options = [];
@@ -426,6 +429,8 @@ liberator.Commands = function () //{{{
             var args = {};       // parsed options
             args.arguments = []; // remaining arguments
             args.string = str;   // for access to the unparsed string
+            // FIXME: quick hack! Best way to do this? -- djk
+            args.argumentsString = "";
 
             var invalid = false;
             var onlyArgumentsRemaining = allowUnknownOptions || false; // after a -- has been found
@@ -452,7 +457,7 @@ liberator.Commands = function () //{{{
                 }
 
                 var optname = "";
-                if (!onlyArgumentsRemaining)
+                if (!onlyArgumentsRemaining) //{{{
                 {
                     for (let opt = 0; opt < options.length; opt++)
                     {
@@ -578,7 +583,11 @@ liberator.Commands = function () //{{{
                             }
                         }
                     }
-                }
+                } //}}}
+
+                // FIXME: quick hack! -- djk
+                if (!args.argumentsString)
+                    args.argumentsString = str.substr(i);
 
                 // if not an option, treat this token as an argument
                 var [count, arg] = getNextArg(sub);
@@ -596,7 +605,7 @@ liberator.Commands = function () //{{{
                 if (arg != null)
                     args.arguments.push(arg);
 
-                i += count; // hopefully count is always >0, otherwise we get an endless loop
+                i += count; // hopefully count is always > 0, otherwise we get an endless loop
             }
 
             // check for correct number of arguments
@@ -674,53 +683,95 @@ liberator.Commands = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
+    // specified - useful?
     commandManager.add(["com[mand]"],
         "List and define commands",
         function (args, special)
         {
-            if (args)
+            if (args.argumentsString)
             {
-                var res = args.match(/^(\w+)(?:\s+(.+))?$/);
-                if (!res)
+                let matches = args.argumentsString.match(/^(\w+)(?:\s+(.+))?$/);
+
+                if (!matches)
                 {
                     liberator.echoerr("E182: Invalid command name");
-                    return false;
+                    return;
                 }
-                var [cmd, rep] = [res[1], res[2]];
+
+                var [cmd, rep] = [matches[1], matches[2]];
             }
 
             if (rep)
             {
-                if (!liberator.commands.addUserCommand([cmd],
+                let nargsOpt = args["-nargs"] || "0";
+                let bangOpt  = "-bang"  in args;
+                let countOpt = "-count" in args;
+
+                if (!liberator.commands.addUserCommand(
+                        [cmd],
                         "User defined command",
                         function (args, special, count, modifiers)
                         {
-                            var replaced = rep.replace("<args>", args);
-                            replaced = replaced.replace("<q-args>", '"' + args.replace('"', '\\"', "g") + '"');
-                            replaced = replaced.replace("<lt>", "<");
+                            function replaceTokens(token)
+                            {
+                                let ret;
+                                let quote = false;
 
-                            liberator.execute(replaced);
+                                // ignore quoting of <lt> like Vim, not needed for <count>
+                                if (/^<q-(?!(lt|count))[a-z]+>$/.test(token))
+                                    quote = true;
+
+                                token = token.replace("q-", "");
+
+                                switch (token)
+                                {
+                                    case "<args>":
+                                        ret = args.argumentsString;
+                                        break;
+                                    case "<bang>":
+                                        ret = bangOpt ? (special ? "!" : "") : token;
+                                        break;
+                                    case "<count>":
+                                        ret = countOpt ? (count > -1 ? count : 0) : token;
+                                        break;
+                                    case "<lt>":
+                                        ret = "<";
+                                        break;
+                                    default:
+                                        ret = token;
+                                }
+
+                                return quote ? '"' + ret.replace('"', '\\"', "g") + '"' : ret;
+                            }
+
+                            liberator.execute(rep.replace(/<(?:q-)?[a-z]+>/g, replaceTokens));
                         },
                         {
-                            bang: true, // FIXME: until we implement -bang
+                            argCount: nargsOpt,
+                            bang: bangOpt,
+                            count: countOpt,
                             replacementText: rep
                         },
                         special)
-                )
+                    )
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
                 }
             }
             else
             {
-                var cmdlist = getMatchingUserCommands(cmd);
-                if (cmdlist.length > 0)
+                let cmds = getMatchingUserCommands(cmd);
+
+                if (cmds.length > 0)
                 {
-                    var str = liberator.template.tabular(["Name", "Args", "Definition"], [],
-                        ([cmd.name,
-                          "*",
-                          cmd.replacementText || "function () { ... }"]
-                            for each (cmd in cmdlist)));
+                    let str = liberator.template.tabular(["", "Name", "Args", "Range", "Definition"], ["padding-right: 2em;"],
+                        ([cmd.bang ? "!" : " ",
+                          cmd.name,
+                          cmd.argCount,
+                          cmd.count ? "0c" : "",
+                          cmd.replacementText || "function () { ... }"] for each (cmd in cmds)));
+
                     liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
                 }
                 else
@@ -731,10 +782,12 @@ liberator.Commands = function () //{{{
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.userCommand(filter)
-            /*options: [[["-nargs"],    OPTION_STRING, function (arg) { return /^(0|1|\*|\?|\+)$/.test(arg); }],
-                   [["-bang"],     OPTION_NOARG],
-                   [["-bar"],      OPTION_NOARG]] */
+            completer: function (filter) liberator.completion.userCommand(filter),
+            options: [
+                [["-nargs"], commandManager.OPTION_STRING, function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
+                [["-bang"],  commandManager.OPTION_NOARG],
+                [["-count"], commandManager.OPTION_NOARG],
+            ]
         });
 
     commandManager.add(["comc[lear]"],
