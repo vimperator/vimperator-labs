@@ -38,9 +38,9 @@ liberator.Buffer = function () //{{{
             "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Object", "Question",
             "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
             "Title", "URL", "WarningMsg",
-            ["Hint", ".liberator-hint", "*"],
+            ["Hint",   ".liberator-hint",     "*"],
             ["Search", ".__liberator-search", "*"],
-            ["Bell", "#liberator-visualbell"],
+            ["Bell",   "#liberator-visualbell"],
             ];
     const highlightDocs = "chrome://liberator/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
@@ -69,68 +69,108 @@ liberator.Buffer = function () //{{{
         const XHTML = "http://www.w3.org/1999/xhtml";
         const namespace = "@namespace html url(" + XHTML + ");\n" +
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
+        const NAME = 0, SITES = 1, CSS = 2, REF = 3;
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
 
         let userSheets = [];
         let systemSheets = [];
+        let userNames = {};
+        let systemNames = {};
 
         this.__iterator__ = function () Iterator(userSheets.concat(systemSheets));
         this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
         this.__defineGetter__("userSheets", function () Iterator(userSheets));
+        this.__defineGetter__("systemNames", function () Iterator(systemNames));
+        this.__defineGetter__("userNames", function () Iterator(userNames));
 
-        this.addSheet = function (filter, css, system, force)
+        this.addSheet = function (name, filter, css, system, force)
         {
             let sheets = system ? systemSheets : userSheets;
+            let names = system ? systemNames : userNames;
+            if (name && name in names)
+                this.removeSheet(name, null, null, null, system);
 
-            if (sheets.some(function (s) s[0] == filter && s[1] == css))
-                return null;
-            filter = filter.split(",");
-            try
+            let sheet = sheets.filter(function (s) s[SITES].join(",") == filter && s[CSS] == css)[0];
+            if (!sheet)
+                sheet = [name, filter.split(","), css, null];
+
+            if (sheet[REF] == null) // Not registered yet
             {
-                this.registerSheet(cssUri(wrapCSS(filter, css)), !force);
+                sheet[REF] = [];
+                try
+                {
+                    this.registerSheet(cssUri(wrapCSS(sheet)), !force);
+                }
+                catch (e)
+                {
+                    return e.echoerr || e;
+                }
+                sheets.push(sheet);
             }
-            catch (e)
+            if (name)
             {
-                return e.echoerr || e;
+                sheet[REF].push(name);
+                names[name] = sheet;
             }
-            sheets.push([filter, css]);
             return null;
         }
 
-        this.removeSheet = function (filter, index, system)
+        this.findSheets = function (name, filter, css, index, system)
+        {
+            let sheets = system ? systemSheets : userSheets;
+            let names = system ? systemNames : userNames;
+
+            // Grossly inefficient.
+            let matches = [k for ([k, v] in sheets)];
+            if (index)
+                matches = String(index).split(",").filter(function (i) i in sheets);
+            if (name)
+                matches = matches.filter(function (i) sheets[i] == names[name]);
+            if (css)
+                matches = matches.filter(function (i) sheets[i][CSS] == css);
+            if (filter)
+                matches = matches.filter(function (i) sheets[i][SITES].indexOf(filter) >= 0);
+            return matches;
+        },
+
+        this.removeSheet = function (name, filter, css, index, system)
         {
             let self = this;
             let sheets = system ? systemSheets : userSheets;
+            let names = system ? systemNames : userNames;
 
-            if (filter.indexOf(",") > -1)
+            if (filter && filter.indexOf(",") > -1)
                 return filter.split(",").reduce(
-                    function (n, f) n + self.removeSheet(f, index, system), 0);
+                    function (n, f) n + self.removeSheet(name, f, index, system), 0);
 
             if (filter == undefined)
                 filter = "";
 
-            /* Find all sheets with URIs matching the filter */
-            let matches = [s for (s in Iterator(sheets))
-                             if (filter == "" || s[1][0].indexOf(filter) >= 0)];
+            let matches = this.findSheets(name, filter, css, index, system);
+            if (matches.length == 0)
+                return;
 
-            if (matches.length == 0 && sheets[Number(filter)]) /* Match nth sheet */
-                matches.push([filter, sheets[filter]]);
-            else if (!isNaN(index)) /* Match nth matching URI */
-                matches = (index < matches.length) ? [matches[index]] : [];
-            else if (index) /* Match on CSS */
-                matches = [m for each (m in matches) if (m[1][1] == index)];
-
-            let foundChrome = false;
-            for (let [,[i, sheet]] in Iterator(matches.reverse()))
+            for (let [,i] in Iterator(matches.reverse()))
             {
-                let sites = sheet[0];
-                this.unregisterSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
-                sheet[0] = sites.filter(function (f) f != filter);
-                if (sheet[0].length && isNaN(filter))
-                    this.registerSheet(cssUri(wrapCSS(sheet[0], sheet[1])));
-                else
-                    sheets.splice(i, 1);
+                let sheet = sheets[i];
+                if (name)
+                {
+                    sheet[REF].splice(sheet[REF].indexOf(name));
+                    delete names[name];
+                }
+                if (!sheet[REF].length)
+                {
+                    sheets.splice(i);
+                    this.unregisterSheet(cssUri(wrapCSS(sheet)));
+                }
+                // Filter out the given site, and re-add if there are any left
+                if (filter)
+                {
+                    let sites = sheet[SITES].filter(function (f) f != filter);
+                    if (sites.length)
+                        this.addSheet(name, sites.join(","), css, system, true);
+                }
             }
             return matches.length;
         }
@@ -153,8 +193,10 @@ liberator.Buffer = function () //{{{
                 sss.unregisterSheet(uri, sss.USER_SHEET);
         }
 
-        function wrapCSS(filter, css)
+        function wrapCSS(sheet)
         {
+            let filter = sheet[SITES];
+            let css = sheet[CSS];
             if (filter[0] == "*")
                 return namespace + css;
             let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
@@ -224,7 +266,7 @@ liberator.Buffer = function () //{{{
         }
     }
     Styles.prototype = {
-        get sites() util.uniq(util.flatten([v[0] for ([k, v] in this.userSheets)])),
+        get sites() util.uniq(util.flatten([v[1] for ([k, v] in this.userSheets)])),
     };
 
     let styles = liberator.storage.newObject("styles", Styles, false);
@@ -235,7 +277,7 @@ liberator.Buffer = function () //{{{
                                        .getPropertyValue("font-size");
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
-    let error = styles.addSheet("chrome://liberator/content/buffer.xhtml",
+    let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
         "body { font-size: " + fontSize + "; }", true);
 
     function setZoom(value, fullZoom)
@@ -757,21 +799,24 @@ liberator.Buffer = function () //{{{
         "Add or list user styles",
         function (args, special)
         {
-            let [, filter, css] = args.match(/(\S+)\s*((?:.|\n)*)/) || [];
+            let [filter] = args.arguments;
+            let name = args["-name"];
+            let css = args.literalArg;
+
             if (!css)
             {
+                let list = Array.concat([i for (i in styles.userNames)],
+                                        [i for (i in styles.userSheets) if (!i[1][3].length)]);
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([i,
-                      style[0].join(","),
-                      style[1]]
-                     for ([i, style] in styles.userSheets)
-                     if (!filter || style[0].indexOf(filter) >= 0)));
+                    ([k, v[1].join(","), v[2]]
+                     for ([i, [k, v]] in Iterator(list))
+                     if ((!filter || v[1].indexOf(filter) >= 0) && (!name || v[0] == name))));
                 liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
             }
             else
             {
-                let err = styles.addSheet(filter, css, false, special);
+                let err = styles.addSheet(name, filter, css, false, special);
                 if (err)
                     liberator.echoerr(err);
             }
@@ -788,19 +833,27 @@ liberator.Buffer = function () //{{{
                 comp = compl.concat([[s, ""] for each (s in styles.sites)])
                 return [0, liberator.completion.filter(compl, filter)];
             },
-            hereDoc: true,
+            argCount: 1,
             bang: true,
+            hereDoc: true,
+            literal: true,
+            options: [[["-name", "-n"], liberator.commands.OPTION_STRING]]
         });
 
     liberator.commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
-        function (args) { styles.removeSheet.apply(styles, args.arguments); },
+        function (args) {
+            styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
+        },
         {
+            argCount: 1,
             completer: function (filter) [0, liberator.completion.filter(
-                    [[i, <>{s[0].join(",")}: {s[1].replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]
+                    [[i, <>{s[1].join(",")}: {s[2].replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]
                         .concat([[s, ""] for each (s in styles.sites)])
                     , filter)],
-            argCount: "*",
+            literal: true,
+            options: [[["-index", "-i"], liberator.commands.OPTION_INT],
+                      [["-name", "-n"],  liberator.commands.OPTION_STRING]],
         });
 
     liberator.commands.add(["hi[ghlight]"],

@@ -321,7 +321,7 @@ const liberator = (function () //{{{
                     }
                     catch (e)
                     {
-                        liberator.echoerr(e.name + ": " + e.message);
+                        liberator.echoerr(e);
                     }
                 }
             },
@@ -807,6 +807,11 @@ const liberator = (function () //{{{
         echoerr: function (str, flags)
         {
             flags |= liberator.commandline.APPEND_TO_MESSAGES;
+
+            if (typeof str == "object" && "echoerr" in str)
+                str = str.echoerr;
+            else if (str instanceof Error)
+                str = str.fileName + ":" + str.lineNumber + ": " + str;
 
             liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags);
         },
