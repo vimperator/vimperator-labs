@@ -1264,7 +1264,7 @@ liberator.ItemList = function (id) //{{{
     doc.body.addEventListener("DOMSubtreeModified", autoSize, true);
 
     // TODO: temporary, to be changed/removed
-    function createRow(b, c, a, dom)
+    function createRow([b, c, a], dom)
     {
         /* Obviously, ItemList shouldn't know or care about this. */
         let filter = liberator.completion.filterString;
@@ -1311,14 +1311,14 @@ liberator.ItemList = function (id) //{{{
             if (diff == 1) /* Scroll down */
             {
                 let item = completions[endIndex - 1];
-                let row = createRow(item[0], item[1], item[2], true);
+                let row = createRow(item, true);
                 tbody.removeChild(tbody.firstChild);
                 tbody.appendChild(row);
             }
             else /* Scroll up */
             {
                 let item = completions[offset];
-                let row = createRow(item[0], item[1], item[2], true);
+                let row = createRow(item, true);
                 tbody.removeChild(tbody.lastChild);
                 tbody.insertBefore(row, tbody.firstChild);
             }
@@ -1335,7 +1335,7 @@ liberator.ItemList = function (id) //{{{
 
         let tbody = div.div;
         for (let i in liberator.util.range(offset, endIndex))
-            tbody.* += createRow.apply(null, completions[i]);
+            tbody.* += createRow(completions[i]);
 
         div.* +=
             <div class="completion-items">
