@@ -860,7 +860,8 @@ liberator.Buffer = function () //{{{
         "Set the style of certain display elements",
         function (args, special)
         {
-            let [, key, css] = args.match(/(\S+)\s*((?:.|\n)*)/) || [];
+            let key = args.arguments[0];
+            let css = args.literalArg;
             if (!css && !(key && special))
             {
                 let str = liberator.template.tabular(["Key", "CSS"],
@@ -877,8 +878,10 @@ liberator.Buffer = function () //{{{
             completer: function (filter) [0,
                     liberator.completion.filter([[v instanceof Array ? v[0] : v, ""] for ([k, v] in Iterator(highlightClasses))], filter)
                 ],
-            hereDoc: true,
+            argCount: 1,
             bang: true,
+            hereDoc: true,
+            literal: true,
         });
 
     liberator.commands.add(["vie[wsource]"],
@@ -1175,20 +1178,21 @@ liberator.Buffer = function () //{{{
             }
             if (!(class instanceof Array))
                 class = [class];
+
+            styles.removeSheet("hl-" + key, null, null, null, true);
+            highlight.remove(key);
+
+            if (/^\s*$/.test(style))
+                return;
+
             let cssClass = class[1] || ".hl-" + class[0];
             let scope = class[2] || highlightDocs;
 
-            let getCSS = function (style) cssClass + selectors +
-                " { " + style.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;").replace(";!important;", ";", "g") + " }";
-            let css = getCSS(style);
+            let css = style.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
+                           .replace(";!important;", ";", "g") // Seeming Spidermonkey bug
+            css = cssClass + selectors + " { " + css + " }";
 
-            if (highlight.get(key))
-                styles.removeSheet(scope, getCSS(highlight.get(key)), true);
-
-            if (/^\s*$/.test(style))
-                return highlight.remove(key);
-
-            let error = styles.addSheet(scope, css, true, force);
+            let error = styles.addSheet("hl-" + key, scope, css, true, force);
             if (error)
                 liberator.echoerr(error);
             else
