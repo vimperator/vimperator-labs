@@ -49,6 +49,11 @@ ____
 Toggle option: Invert value.
 ____
 
+||:se[t] inv((option))={value}|| +
+____
+For list options, toggle the specified values.
+____
+
 |:set-default|
 ||:se[t] {option}&||
 ____

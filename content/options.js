@@ -431,6 +431,9 @@ liberator.Options = function () //{{{
             ret.onlyNonDefault = true;
         }
 
+        if (matches)
+            ret.option = liberator.options.get(ret.name, ret.scope);
+
         ret.prefix = prefix;
         ret.postfix = postfix;
 
@@ -441,9 +444,6 @@ liberator.Options = function () //{{{
         ret.unsetBoolean = (prefix == "no");
 
         ret.scope = modifiers && modifiers.scope;
-
-        if (matches)
-            ret.option = liberator.options.get(ret.name, ret.scope);
 
         if (!ret.option)
             return ret;
@@ -460,8 +460,8 @@ liberator.Options = function () //{{{
                 ret.valueHas = ret.value.split(",");
                 break;
             case "charlist":
-                ret.optionHas = ret.optionValue.split("");
-                ret.valueHas = ret.value.split("");
+                ret.optionHas = Array.slice(ret.optionValue);
+                ret.valueHas = Array.slice(ret.value);
                 break;
         }
 
@@ -630,9 +630,15 @@ liberator.Options = function () //{{{
                                 break;
                             default:
                                 newValue = opt.valueHas;
+                                if (opt.invert)
+                                {
+                                    let keepValues = Array.filter(opt.optionHas, function (item) opt.valueHas.indexOf(item) == -1);
+                                    let addValues  = Array.filter(opt.valueHas,  function (item) opt.optionHas.indexOf(item) == -1);
+                                    newValue = addValues.concat(keepValues);
+                                }
                                 break;
                         }
-                        newValue = newValue.join(option.type == "charlist" ? "" : ",");
+                        newValue = newValue.filter(function (x) x != "").join(option.type == "charlist" ? "" : ",");
 
                         break;
 
@@ -673,10 +679,9 @@ liberator.Options = function () //{{{
             completer: function (filter, special, count, modifiers)
             {
                 var optionCompletions = [];
-                var prefix = filter.match(/^no|inv/) || "";
 
                 if (prefix)
-                    filter = filter.replace(prefix, "");
+                    filter = filter.replace(ret.prefix, "");
 
                 if (special) // list completions for about:config entries
                 {
@@ -704,12 +709,14 @@ liberator.Options = function () //{{{
                     return [0, liberator.completion.filter(optionCompletions, filter)];
                 }
 
-                var scope = liberator.options.OPTION_SCOPE_BOTH;
-                if (modifiers && modifiers.scope)
-                    scope = modifiers.scope;
+                let prefix = filter.match(/^(no|inv)/)[0] || "";
+                if (prefix)
+                    filter = filter.substr(prefix.length);
+
+                let scope = modifiers && modifiers.scope || liberator.options.OPTION_SCOPE_BOTH;
 
                 let options = (opt for (opt in liberator.options)
-                                   if ((opt.scope & scope) && (!prefix || opt.type == "boolean")));
+                                   if ((opt.scope & scope) && (!prefix || opt.type == "boolean" || prefix == "inv" && /list$/.test(opt.type))));
 
                 if (!filter)
                 {
@@ -728,7 +735,7 @@ liberator.Options = function () //{{{
 
                     return [0, liberator.completion.filter(optionCompletions, prefix + filter, true)];
                 }
-                else if (prefix)
+                else if (prefix == "no")
                     return;
 
                 let [name, value] = filter.split("=", 2);
