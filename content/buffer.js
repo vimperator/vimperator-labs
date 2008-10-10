@@ -135,13 +135,15 @@ liberator.Buffer = function () //{{{
             return matches.length;
         }
 
-        this.registerSheet = function (uri, doCheckSyntax)
+        this.registerSheet = function (uri, doCheckSyntax, reload)
         {
             if (doCheckSyntax)
                 checkSyntax(uri);
-            this.unregisterSheet(uri);
+            if (reload)
+                this.unregisterSheet(uri);
             uri = ios.newURI(uri, null, null);
-            sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+            if (reload || !sss.sheetRegistered(uri, sss.USER_SHEET))
+                sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
         }
 
         this.unregisterSheet = function (uri)
@@ -775,11 +777,17 @@ liberator.Buffer = function () //{{{
             }
         },
         {
-            completer: function (filter) [0, liberator.completion.filter(
-                [[content.location.host, ""],
-                 [content.location.href, ""]]
-                    .concat([[s, ""] for each (s in styles.sites)])
-                , filter)],
+            completer: function (filter) {
+                let compl = [];
+                try
+                {
+                    compl.push([content.location.host, "Current Host"]);
+                    compl.push([content.location.href, "Current URL"]);
+                }
+                catch (e) {}
+                comp = compl.concat([[s, ""] for each (s in styles.sites)])
+                return [0, liberator.completion.filter(compl, filter)];
+            },
             hereDoc: true,
             bang: true,
         });

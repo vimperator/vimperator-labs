@@ -778,8 +778,7 @@ lookup:
                 }
                 else if (/\.css$/.test(filename))
                 {
-                    liberator.storage.styles.unregisterSheet("file://" + file.path);
-                    liberator.storage.styles.registerSheet("file://" + file.path, !silent);
+                    liberator.storage.styles.registerSheet("file://" + file.path, !silent, true);
                 }
                 else
                 {
