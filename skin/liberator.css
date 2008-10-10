@@ -72,12 +72,20 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 *:-moz-loading, *:-moz-broken { display: none !important; }
 
-.compitem > td { -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td); }
+.compitem {
+    display: table-row;
+}
+.compitem > * {
+    -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 .5ex;
+}
 .compitem-td-span { height: 1.5em; display: block; }
 
 .compitem[selected=true] { background-color: yellow; }
 .compitem > .favicon     { width: 16px; }
-.favicon > img           { max-width: 16px, max-height: 16px}
+.favicon > img           { max-width: 16px; max-height: 16px; }
 .compitem > .completion  { width: 45%; overflow: hidden; }
 .compitem > .description { color: gray; }
 

@@ -820,7 +820,7 @@ liberator.CommandLine = function () //{{{
                             [completionStartIndex, completions] = res;
 
                         // sort the completion list
-                        if (/\bsort\b/.test(liberator.options["wildoptions"]))
+                        if (liberator.options["wildoptions"].has("sort"))
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         completionList.setItems(completions);
@@ -1289,11 +1289,11 @@ liberator.ItemList = function (id) //{{{
             a = a();
 
         let row =
-            <tr class="compitem">
-                <td class="favicon">{a ? <img src={a}/> : <></>}</td>
-                <td class="completion">{b}</td>
-                <td class="description">{c}</td>
-            </tr>;
+            <ul class="compitem">
+                <li class="favicon">{a ? <img src={a}/> : <></>}</li>
+                <li class="completion">{b}</li>
+                <li class="description">{c}</li>
+            </ul>;
 
         if (dom)
             return liberator.util.xmlToDom(row, doc);
@@ -1340,24 +1340,24 @@ liberator.ItemList = function (id) //{{{
 
         XML.ignoreWhitespace = true;
         let div = <div class="ex-command-output hl-Normal">
-                      <span class="hl-Title" style="font-weight: bold">Completions:</span>
-                      <table width="100%" style="table-layout: fixed; width: 100%"><tbody/></table>
+                      <span class="hl-Title">Completions:</span>
+                      <div class="completion-items"/>
                   </div>;
 
-        let tbody = div..tbody;
+        let tbody = div.div;
         for (let i in liberator.util.range(offset, endIndex))
             tbody.* += createRow.apply(null, completions[i]);
 
         div.* +=
-            <table>
+            <div class="completion-items">
             {
                 liberator.template.map(liberator.util.range(0, maxItems), function (i)
-                <tr class="compitem"><td class="hl-NonText">~</td></tr>)
+                <ul class="compitem hl-NonText"><li>~</li></ul>)
             }
-            </table>;
+            </div>;
 
         let dom = liberator.util.xmlToDom(div, doc);
-        completionBody = dom.getElementsByTagName("tbody")[0];
+        completionBody = dom.getElementsByClassName("completion-items")[0];
         completionElements = completionBody.childNodes;
         doc.body.replaceChild(dom, doc.body.firstChild);
     }
@@ -1370,7 +1370,7 @@ liberator.ItemList = function (id) //{{{
 
         clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
-        show: function ()
+        show: function show()
         {
             /* FIXME: Should only happen with autocomplete,
              * possibly only with async entries.
@@ -1385,7 +1385,7 @@ liberator.ItemList = function (id) //{{{
         visible: function () !container.collapsed,
 
         // if @param selectedItem is given, show the list and select that item
-        setItems: function (items, selectedItem)
+        setItems: function setItems(items, selectedItem)
         {
             startIndex = endIndex = selIndex = -1;
             completions = items || [];
@@ -1397,7 +1397,7 @@ liberator.ItemList = function (id) //{{{
         },
 
         // select index, refill list if necessary
-        selectItem: function (index)
+        selectItem: function selectItem(index)
         {
             //if (container.collapsed) // fixme
             //    return;
@@ -1496,22 +1496,13 @@ liberator.StatusLine = function () //{{{
 
         setClass: function (type)
         {
-            var highlightGroup;
+            const highlightGroup = {
+                secure:   "StatusLineSecure",
+                broken:   "StatusLineBroken",
+                insecure: "StatusLine",
+            };
 
-            switch (type)
-            {
-                case "secure":
-                    highlightGroup = "hl-StatusLineSecure";
-                    break;
-                case "broken":
-                    highlightGroup = "hl-StatusLineBroken";
-                    break;
-                case "insecure":
-                    highlightGroup = "hl-StatusLine";
-                    break;
-            }
-
-            statusBar.setAttribute("class", "chromeclass-status " + highlightGroup);
+            statusBar.setAttribute("class", "chromeclass-status hl-" + highlightGroup[type]);
         },
 
         // update all fields of the statusline
@@ -1591,17 +1582,12 @@ liberator.StatusLine = function () //{{{
                     progressStr = "[ Loading...         ]";
                 else if (progress < 1)
                 {
-                    progressStr = "[";
-                    var done = Math.floor(progress * 20);
-                    for (let i = 0; i < done; i++)
-                        progressStr += "=";
-
-                    progressStr += ">";
-
-                    for (let i = 19; i > done; i--)
-                        progressStr += " ";
-
-                    progressStr += "]";
+                    progress = Math.floor(progress * 20);
+                    progressStr = "["
+                        + "====================".substr(0, progress)
+                        + ">"
+                        + "                    ".substr(0, 19 - progress)
+                        + "]";
                 }
                 progressWidget.value = progressStr;
             }
