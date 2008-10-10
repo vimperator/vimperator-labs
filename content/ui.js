@@ -820,7 +820,7 @@ liberator.CommandLine = function () //{{{
                             [completionStartIndex, completions] = res;
 
                         // sort the completion list
-                        if (liberator.options["wildoptions"].has("sort"))
+                        if (liberator.options.get("wildoptions").has("sort"))
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         completionList.setItems(completions);
