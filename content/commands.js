@@ -318,104 +318,107 @@ liberator.Commands = function () //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function (str, options, argCount, allowUnknownOptions) //{{{
+        parseArgs: function (str, options, argCount, allowUnknownOptions, complete) //{{{
         {
+            function quoteArg(quote)
+            {
+                switch (quote)
+                {
+                    case "'":
+                        return function (str) "'" + str.substitute(/[\\']/g, "\\$&") + "'";
+                    case '"':
+                        return function (str) '"' + str.substitute(/[\\"\t\n]/g,
+                                    function (c) (c == "\n" ? "\\n" : c == "\t" ? "\\t" : "\\" + c));
+                    default:
+                        return function (str) str.substitute(/[\\ ]/g, "\\$&");
+                }
+            }
+
             // returns [count, parsed_argument]
             function getNextArg(str) // {{{
             {
-                var inSingleString = false;
-                var inDoubleString = false;
-                var inEscapeKey = false;
+                var stringDelimiter = null;
+                var escapeNext = false;
 
                 var arg = "";
 
                 outer:
                 for (let i = 0; i < str.length; i++)
                 {
+                    inner:
                     switch (str[i])
                     {
-                        case "\"":
-                            if (inEscapeKey)
-                            {
-                                inEscapeKey = false;
-                                break;
-                            }
-                            if (!inSingleString)
-                            {
-                                inDoubleString = !inDoubleString;
-                                continue outer;
-                            }
-                            break;
-
+                        case '"':
                         case "'":
-                            if (inEscapeKey)
+                            if (escapeNext)
                             {
-                                inEscapeKey = false;
+                                escapeNext = false;
                                 break;
                             }
-                            if (!inDoubleString)
+                            switch (stringDelimiter)
                             {
-                                inSingleString = !inSingleString;
-                                continue outer;
+                                case str[i]:
+                                    stringDelimiter = null;
+                                    continue outer;
+                                case null:
+                                    stringDelimiter = str[i];
+                                    continue outer;
                             }
                             break;
 
                         // \ is an escape key for non quoted or "-quoted strings
                         // for '-quoted strings it is taken literally, apart from \' and \\
                         case "\\":
-                            if (inEscapeKey)
+                            if (escapeNext)
                             {
-                                inEscapeKey = false;
+                                escapeNext = false;
                                 break;
                             }
                             else
                             {
-                                // only escape "\\" and "\ " in non quoted strings
-                                if (!inSingleString && !inDoubleString && str[i + 1] != "\\" && str[i + 1] != " ")
+                                // in non-quoted strings, only escape "\\" and "\ ", otherwise drop "\\"
+                                if (!stringDelimiter && str[i + 1] != "\\" && str[i + 1] != " ")
                                     continue outer;
-                                // only escape "\\" and "\'" in single quoted strings
-                                else if (inSingleString && str[i + 1] != "\\" && str[i + 1] != "'")
+                                // in single quoted strings, only escape "\\" and "\'", otherwise keep "\\"
+                                if (stringDelimiter == "'" && str[i + 1] != "\\" && str[i + 1] != "'")
                                     break;
-                                else
-                                {
-                                    inEscapeKey = true;
-                                    continue outer;
-                                }
+                                escapeNext = true;
+                                continue outer;
                             }
                             break;
 
                         default:
-                            if (inSingleString)
+                            if (stringDelimiter == "'")
                             {
-                                inEscapeKey = false;
+                                escapeNext = false;
                                 break;
                             }
-                            else if (inEscapeKey)
+                            if (escapeNext)
                             {
-                                inEscapeKey = false;
+                                escapeNext = false;
                                 switch (str[i])
                                 {
-                                    case "n": arg += "\n"; continue outer;
-                                    case "t": arg += "\t"; continue outer;
+                                    case "n": arg += "\n"; break;
+                                    case "t": arg += "\t"; break;
                                     default:
-                                        break; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                                        break inner; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
                                 }
+                                continue outer;
                             }
-                            else if (!inDoubleString && /\s/.test(str[i]))
+                            else if (stringDelimiter != '"' && /\s/.test(str[i]))
                             {
                                 return [i, arg];
                             }
-                            else // a normal charcter
-                                break;
+                            break;
                     }
                     arg += str[i];
                 }
 
                 // TODO: add parsing of a " comment here:
-                if (inDoubleString || inSingleString)
-                    return [-1, "E114: Missing quote"];
-                if (inEscapeKey)
-                    return [-1, "trailing \\"];
+                if (stringDelimiter)
+                    return [str.length, arg, stringDelimiter];
+                if (escapeNext)
+                    return [str.length, arg, "\\"];
                 else
                     return [str.length, arg];
             } // }}}
@@ -459,15 +462,15 @@ liberator.Commands = function () //{{{
                 var optname = "";
                 if (!onlyArgumentsRemaining) //{{{
                 {
-                    for (let opt = 0; opt < options.length; opt++)
+                    for (let [,opt] in Iterator(options))
                     {
-                        for (let name = 0; name < options[opt][0].length; name++)
+                        for (let [,optname] in Iterator(opt[0]))
                         {
-                            optname = options[opt][0][name];
                             if (sub.indexOf(optname) == 0)
                             {
                                 invalid = false;
                                 arg = null;
+                                quote = null;
                                 // no value to the option
                                 if (optname.length >= sub.length)
                                 {
@@ -475,28 +478,19 @@ liberator.Commands = function () //{{{
                                 }
                                 else if (sub[optname.length] == "=")
                                 {
-                                    [count, arg] = getNextArg(sub.substr(optname.length + 1));
-                                    if (count == -1)
-                                    {
-                                        liberator.echoerr("Invalid argument for option " + optname);
-                                        return null;
-                                    }
+                                    [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
 
                                     count++; // to compensate the "=" character
                                 }
                                 else if (/\s/.test(sub[optname.length]))
                                 {
-                                    if (options[opt][1] != this.OPTION_NOARG)
+                                    if (opt[1] != this.OPTION_NOARG)
                                     {
-                                        [count, arg] = getNextArg(sub.substr(optname.length + 1));
+                                        [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
                                         if (count == -1)
-                                        {
-                                            liberator.echoerr("Invalid argument for option " + optname);
-                                            return null;
-                                        }
 
                                         // if we add the argument to an option after a space, it MUST not be empty
-                                        if (arg.length == 0)
+                                        if (!quote && arg.length == 0)
                                             arg = null;
 
                                         count++; // to compensate the " " character
@@ -510,9 +504,23 @@ liberator.Commands = function () //{{{
                                     invalid = true;
                                 }
 
+                                if (quote) 
+                                {
+                                    if (!complete)
+                                    {
+                                        liberator.echoerr("Invalid argument for option " + optname);
+                                        return null;
+                                    }
+                                    let compl = opt[3] || [];
+                                    if (typeof compl == "function")
+                                        compl = compl();
+                                    let filter = quoteArg(sub[optname.length + 1])
+                                    return [i + optname.length + 1, liberator.completion.filter(compl.map(filter), filter(arg))];
+                                }
+
                                 if (!invalid)
                                 {
-                                    switch (options[opt][1]) // type
+                                    switch (opt[1]) // type
                                     {
                                     case this.OPTION_NOARG:
                                         if (arg != null)
@@ -566,16 +574,16 @@ liberator.Commands = function () //{{{
                                     }
 
                                     // we have a validator function
-                                    if (typeof options[opt][2] == "function")
+                                    if (typeof opt[2] == "function")
                                     {
-                                        if (options[opt][2].call(this, arg) == false)
+                                        if (opt[2].call(this, arg) == false)
                                         {
                                             liberator.echoerr("Invalid argument for option: " + optname);
                                             return null;
                                         }
                                     }
 
-                                    args[options[opt][0][0]] = arg; // always use the first name of the option
+                                    args[opt[0][0]] = arg; // always use the first name of the option
                                     i += optname.length + count;
                                     continue outer;
                                 }

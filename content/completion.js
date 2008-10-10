@@ -191,7 +191,7 @@ liberator.Completion = function () //{{{
             try
             {
                 // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")\n");
-                return window.eval(arg);
+                return liberator.eval(arg);
             }
             catch (e)
             {
