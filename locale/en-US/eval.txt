@@ -49,10 +49,10 @@ is found, and interpret them with the JavaScript _eval()_ function.
 The special version [c]:javascript![c] opens the JavaScript console of
 Firefox.
 
-Rudimentary [m]<Tab>[m] completion is available for [c]:javascript
-{cmd}<Tab>[c] (but not yet for the [c]:js <<EOF[c] multiline widget). Be aware
-that Vimperator needs to run {cmd} through eval() to get the completions,
-which could have unwanted side effects.
+[m]<Tab>[m] completion is available for [c]:javascript {cmd}<Tab>[c] (but not
+yet for the [c]:js <<EOF[c] multiline widget). Be aware that Vimperator needs
+to run {cmd} through eval() to get the completions, which could have unwanted
+side effects.
 ________________________________________________________________________________
 
 // >> To make the syntax highlighting happy
