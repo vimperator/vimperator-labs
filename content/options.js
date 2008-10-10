@@ -709,7 +709,7 @@ liberator.Options = function () //{{{
                     return [0, liberator.completion.filter(optionCompletions, filter)];
                 }
 
-                let prefix = filter.match(/^(no|inv)/)[0] || "";
+                let prefix = (filter.match(/^(no|inv)/) || [""])[0];
                 if (prefix)
                     filter = filter.substr(prefix.length);
 
