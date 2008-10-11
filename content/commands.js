@@ -325,7 +325,7 @@ liberator.Commands = function () //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete) //{{{
+        parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete)
         {
             function quoteArg(quote)
             {
@@ -342,7 +342,7 @@ liberator.Commands = function () //{{{
             }
 
             // returns [count, parsed_argument]
-            function getNextArg(str) // {{{
+            function getNextArg(str)
             {
                 var stringDelimiter = null;
                 var escapeNext = false;
@@ -428,7 +428,7 @@ liberator.Commands = function () //{{{
                     return [str.length, arg, "\\"];
                 else
                     return [str.length, arg];
-            } // }}}
+            }
 
             if (!options)
                 options = [];
@@ -468,7 +468,7 @@ liberator.Commands = function () //{{{
                 }
 
                 var optname = "";
-                if (!onlyArgumentsRemaining) //{{{
+                if (!onlyArgumentsRemaining)
                 {
                     for (let [,opt] in Iterator(options))
                     {
@@ -599,7 +599,7 @@ liberator.Commands = function () //{{{
                             }
                         }
                     }
-                } //}}}
+                }
 
                 if (literal && args.arguments.length == argCount)
                 {
@@ -643,7 +643,7 @@ liberator.Commands = function () //{{{
             }
 
             return args;
-        }, //}}}
+        },
 
         // return [null, null, null, null, heredoc_tag || false];
         //        [count, cmd, special, args] = match;
