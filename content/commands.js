@@ -186,6 +186,26 @@ liberator.Commands = function () //{{{
         return matches;
     }
 
+    function parseBool(arg)
+    {
+        if (arg == "true" || arg == "1" || arg == "on")
+            return true;
+        if (arg == "false" || arg == "0" || arg == "off")
+            return false;
+        return NaN;
+    }
+
+    const ArgType = new liberator.util.Struct("description", "parse");
+    const argTypes = [
+        null,
+        ["no arg",  function (arg) !arg],
+        ["boolean", parseBool],
+        ["string",  function (val) val],
+        ["int",     parseInt],
+        ["float",   parseFloat],
+        ["list",    function (arg) arg && arg.split(/\s*,\s*/)]
+    ].map(function (x) x && ArgType.apply(null, x));;
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -528,57 +548,15 @@ liberator.Commands = function () //{{{
 
                                 if (!invalid)
                                 {
-                                    switch (opt[1]) // type
+                                    let type = argTypes[opt[1]];
+                                    if (type)
                                     {
-                                    case this.OPTION_NOARG:
-                                        if (arg != null)
+                                        arg = type.parse(arg);
+                                        if (arg == null || arg == NaN)
                                         {
-                                            liberator.echoerr("No argument allowed for option: " + optname);
+                                            liberator.echoerr("Invalid argument for " + type.description + "option: " + optname);
                                             return null;
                                         }
-                                        break;
-                                    case this.OPTION_BOOL:
-                                        if (arg == "true" || arg == "1" || arg == "on")
-                                            arg = true;
-                                        else if (arg == "false" || arg == "0" || arg == "off")
-                                            arg = false;
-                                        else
-                                        {
-                                            liberator.echoerr("Invalid argument for boolean option: " + optname);
-                                            return null;
-                                        }
-                                        break;
-                                    case this.OPTION_STRING:
-                                        if (arg == null)
-                                        {
-                                            liberator.echoerr("Argument required for string option: " + optname);
-                                            return null;
-                                        }
-                                        break;
-                                    case this.OPTION_INT:
-                                        arg = parseInt(arg, 10);
-                                        if (isNaN(arg))
-                                        {
-                                            liberator.echoerr("Numeric argument required for integer option: " + optname);
-                                            return null;
-                                        }
-                                        break;
-                                    case this.OPTION_FLOAT:
-                                        arg = parseFloat(arg);
-                                        if (isNaN(arg))
-                                        {
-                                            liberator.echoerr("Numeric argument required for float option: " + optname);
-                                            return null;
-                                        }
-                                        break;
-                                    case this.OPTION_LIST:
-                                        if (arg == null)
-                                        {
-                                            liberator.echoerr("Argument required for list option: " + optname);
-                                            return null;
-                                        }
-                                        arg = arg.split(/\s*,\s*/);
-                                        break;
                                     }
 
                                     // we have a validator function

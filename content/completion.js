@@ -476,6 +476,11 @@ liberator.Completion = function () //{{{
     };
     let javascript = new Javascript();
 
+    function filterFavicon(array, want)
+    {
+        return want ? array : [a[2] ? a.slice(0, 2) : a for ([i, a] in Iterator(array))];
+    }
+
     function buildSubstrings(str, filter)
     {
         if (filter == "")
@@ -618,7 +623,7 @@ liberator.Completion = function () //{{{
                 cacheResults[key] = generate(filter);
             cacheFilter[key] = filter;
             if (cacheResults[key].length)
-                return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.splice(arguments, 4)));
+                return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.slice(arguments, 4)));
              return [];
         },
 
@@ -659,7 +664,7 @@ liberator.Completion = function () //{{{
             {
                 var url   = elem[0] || "";
                 var title = elem[1] || "";
-                var tags  = elem[3] || [];
+                var tags  = elem.tags || elem[3] || [];
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
@@ -923,7 +928,7 @@ liberator.Completion = function () //{{{
         search: function search(filter)
         {
             let [, keyword, args] = filter.match(/^\s*(\S*)\s*(.*)/);
-            let keywords = liberator.bookmarks.getKeywords().map(function (k) [k[0], k[1], k[3], k[2]]);
+            let keywords = liberator.bookmarks.getKeywords();
             let engines = this.filter(keywords.concat(liberator.bookmarks.getSearchEngines()), filter, false, true);
 
             let generate = function () {
@@ -1064,7 +1069,7 @@ liberator.Completion = function () //{{{
                 else if (c == "S")
                     completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b")
-                    completions.push(liberator.bookmarks.get(filter).map(function (a) [a[0], a[1], a[5]]));
+                    completions.push(liberator.bookmarks.get(filter));
                 else if (c == "h")
                     completions.push(liberator.history.get(filter));
                 else if (c == "l" && completionService) // add completions like Firefox's smart location bar

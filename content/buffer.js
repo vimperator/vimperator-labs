@@ -69,7 +69,7 @@ liberator.Buffer = function () //{{{
         const XHTML = "http://www.w3.org/1999/xhtml";
         const namespace = "@namespace html url(" + XHTML + ");\n" +
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
-        const NAME = 0, SITES = 1, CSS = 2, REF = 3;
+        const Sheet = new util.Struct("name", "sites", "css", "ref");
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
 
@@ -91,13 +91,13 @@ liberator.Buffer = function () //{{{
             if (name && name in names)
                 this.removeSheet(name, null, null, null, system);
 
-            let sheet = sheets.filter(function (s) s[SITES].join(",") == filter && s[CSS] == css)[0];
+            let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
             if (!sheet)
-                sheet = [name, filter.split(","), css, null];
+                sheet = new Sheet(name, filter.split(","), css, null);
 
-            if (sheet[REF] == null) // Not registered yet
+            if (sheet.ref == null) // Not registered yet
             {
-                sheet[REF] = [];
+                sheet.ref = [];
                 try
                 {
                     this.registerSheet(cssUri(wrapCSS(sheet)), !force);
@@ -110,7 +110,7 @@ liberator.Buffer = function () //{{{
             }
             if (name)
             {
-                sheet[REF].push(name);
+                sheet.ref.push(name);
                 names[name] = sheet;
             }
             return null;
@@ -128,9 +128,9 @@ liberator.Buffer = function () //{{{
             if (name)
                 matches = matches.filter(function (i) sheets[i] == names[name]);
             if (css)
-                matches = matches.filter(function (i) sheets[i][CSS] == css);
+                matches = matches.filter(function (i) sheets[i].css == css);
             if (filter)
-                matches = matches.filter(function (i) sheets[i][SITES].indexOf(filter) >= 0);
+                matches = matches.filter(function (i) sheets[i].sites.indexOf(filter) >= 0);
             return matches;
         },
 
@@ -156,10 +156,10 @@ liberator.Buffer = function () //{{{
                 let sheet = sheets[i];
                 if (name)
                 {
-                    sheet[REF].splice(sheet[REF].indexOf(name));
+                    sheet.ref.splice(sheet.ref.indexOf(name));
                     delete names[name];
                 }
-                if (!sheet[REF].length)
+                if (!sheet.ref.length)
                 {
                     sheets.splice(i);
                     this.unregisterSheet(cssUri(wrapCSS(sheet)));
@@ -167,7 +167,7 @@ liberator.Buffer = function () //{{{
                 // Filter out the given site, and re-add if there are any left
                 if (filter)
                 {
-                    let sites = sheet[SITES].filter(function (f) f != filter);
+                    let sites = sheet.sites.filter(function (f) f != filter);
                     if (sites.length)
                         this.addSheet(name, sites.join(","), css, system, true);
                 }
@@ -195,8 +195,8 @@ liberator.Buffer = function () //{{{
 
         function wrapCSS(sheet)
         {
-            let filter = sheet[SITES];
-            let css = sheet[CSS];
+            let filter = sheet.sites;
+            let css = sheet.css;
             if (filter[0] == "*")
                 return namespace + css;
             let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
@@ -266,7 +266,7 @@ liberator.Buffer = function () //{{{
         }
     }
     Styles.prototype = {
-        get sites() util.uniq(util.flatten([v[1] for ([k, v] in this.userSheets)])),
+        get sites() util.uniq(util.flatten([v.sites for ([k, v] in this.userSheets)])),
     };
 
     let styles = liberator.storage.newObject("styles", Styles, false);
@@ -829,7 +829,7 @@ liberator.Buffer = function () //{{{
             if (!css)
             {
                 let list = Array.concat([i for (i in styles.userNames)],
-                                        [i for (i in styles.userSheets) if (!i[1][3].length)]);
+                                        [i for (i in styles.userSheets) if (!i[1].ref.length)]);
                 let str = liberator.template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
                     ([k, v[1].join(","), v[2]]
@@ -871,8 +871,10 @@ liberator.Buffer = function () //{{{
         {
             argCount: 1,
             completer: function (filter) [0, liberator.completion.filter(
-                    [[i, <>{s[1].join(",")}: {s[2].replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]
-                        .concat([[s, ""] for each (s in styles.sites)])
+                    [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
+                        for ([i, s] in styles.userSheets)
+                    ]
+                    .concat([[s, ""] for each (s in styles.sites)])
                     , filter)],
             literal: true,
             options: [[["-index", "-i"], liberator.commands.OPTION_INT],

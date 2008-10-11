@@ -43,8 +43,10 @@ liberator.Bookmarks = function () //{{{
     const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
                                        .getService(Components.interfaces.nsIFaviconService);
 
+    const Bookmark = new liberator.util.Struct("url", "title", "icon", "keyword", "tags", "id");
+    const Keyword = new liberator.util.Struct("keyword", "title", "icon", "url");
+
     const storage = liberator.storage;
-    const properties = { url: 0, title: 1, keyword: 2, tags: 3, id: 4, icon: 5 };
     function Cache(name, store, serial)
     {
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
@@ -57,7 +59,7 @@ liberator.Bookmarks = function () //{{{
         this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks; });
 
         this.__defineGetter__("keywords",
-            function () [[k[2], k[1], k[0], k[5]] for each (k in self.bookmarks) if (k[2])]);
+            function () [new Keyword(k.keyword, k.title, k.icon, k.url) for each (k in self.bookmarks) if (k.keyword)]);
 
         this.__iterator__ = function () (val for each (val in self.bookmarks));
 
@@ -67,7 +69,7 @@ liberator.Bookmarks = function () //{{{
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
             let icon = faviconService.getFaviconImageForPage(uri).spec;
-            return bookmarks.push([node.uri, node.title, keyword, tags, node.itemId, icon]);
+            return bookmarks.push(new Bookmark(node.uri, node.title, icon, keyword, tags, node.itemId));
         }
 
         function readBookmark(id)
@@ -82,7 +84,7 @@ liberator.Bookmarks = function () //{{{
         function deleteBookmark(id)
         {
             var length = bookmarks.length;
-            bookmarks = bookmarks.filter(function (item) item[properties.id] != id);
+            bookmarks = bookmarks.filter(function (item) item.id != id);
             return bookmarks.length < length;
         }
 
@@ -160,13 +162,13 @@ liberator.Bookmarks = function () //{{{
                 if (isAnnotation)
                     return;
                 // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
-                var bookmark = bookmarks.filter(function (item) item[properties.id] == itemId)[0];
+                var bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
                 if (bookmark)
                 {
                     if (property == "tags")
-                        value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.url], null, null), {});
-                    if (property in properties)
-                        bookmark[properties[property]] = value;
+                        value = taggingService.getTagsForURI(ioService.newURI(bookmark.url, null, null), {});
+                    if (property in bookmark)
+                        bookmark[property] = value;
                     storage.fireEvent(name, "change", itemId);
                 }
             },
@@ -184,12 +186,7 @@ liberator.Bookmarks = function () //{{{
     let bookmarkObserver = function (key, event, arg)
     {
         if (event == "add")
-        {
-            let args = {};
-            for (let [k, v] in Iterator(properties))
-                args[k] = arg[v];
-            liberator.autocommands.trigger("BookmarkAdd", args);
-        }
+            liberator.autocommands.trigger("BookmarkAdd", arg);
         liberator.statusline.updateUrl();
     }
 
@@ -512,14 +509,15 @@ liberator.Bookmarks = function () //{{{
             }
 
             if (openItems)
-                return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
+                return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
 
             let list = liberator.template.bookmarks("title", (
                 {
-                    url:   item[0],
-                    title: item[1],
-                    extra: [['keyword', item[2],            "hl-Keyword"],
-                            ['tags',    item[3].join(', '), "hl-Tag"]].filter(function (i) i[1])
+                    url:   item.url,
+                    title: item.title,
+                    extra: [['keyword', item.keyword,         "hl-Keyword"],
+                            ['tags',    item.tags.join(', '), "hl-Tag"]
+                           ].filter(function (i) i[1])
                 } for each (item in items)));
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
@@ -566,7 +564,7 @@ liberator.History = function () //{{{
             var node = rootNode.getChild(i);
             // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                history.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
+                history.push([node.url, node.title || "[No title]", getIcon(node.uri)]);
         }
 
         // close a container after using it!

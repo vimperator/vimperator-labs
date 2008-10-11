@@ -422,4 +422,43 @@ liberator.util = { //{{{
     },
 }; //}}}
 
+liberator.util.Struct = function Struct()
+{
+    let self = this instanceof Struct ? this : new Struct();
+    if (!arguments.length)
+        return self;
+
+    let args = Array.slice(arguments);
+    self.__defineGetter__("length", function () args.length);
+    self.__defineGetter__("members", function () args.slice());
+    for (let arg in Iterator(args))
+    {
+        let [i, name] = arg;
+        self.__defineGetter__(name, function () this[i]);
+        self.__defineSetter__(name, function (val) { this[i] = val; });
+    }
+    function ConStructor()
+    {
+        let self = this instanceof arguments.callee ? this : new arguments.callee();
+        for (let [k, v] in Iterator(Array.slice(arguments)))
+            self[k] = v;
+        return self;
+    }
+    ConStructor.prototype = self;
+    return self.constructor = ConStructor;
+}
+liberator.util.Struct.prototype = {
+    clone: function () 
+    {
+        return this.constructor.apply(null, this.slice());
+    },
+    // Iterator over our named members
+    __iterator__: function () ([v, this[v]] for ([k, v] in this.members))
+}
+// Add no-sideeffect array methods. Can't set new Array() as the prototype or
+// get length() won't work.
+for (let [,k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
+                           "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
+    liberator.util.Struct.prototype[k] = Array.prototype[k];
+
 // vim: set fdm=marker sw=4 ts=4 et:
