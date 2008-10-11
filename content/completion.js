@@ -292,7 +292,7 @@ liberator.Completion = function () //{{{
                     {
                         case "(":
                             /* Function call, or if/while/for/... */
-                            if (/\w$/.test(lastNonwhite))
+                            if (/\w\d$/.test(lastNonwhite))
                             {
                                 top[FUNCTIONS].push(i);
                                 top[STATEMENTS].pop();

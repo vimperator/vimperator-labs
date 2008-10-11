@@ -48,6 +48,15 @@ Replay the last executed macro [count] times.
 ____________________________________________________________________________
 
 
+|.|
+||[count].|
+____________________________________________________________________________
+Repeat the last keyboard mapping [count] times. Note that, unlike in vim, this
+does not apply solely to editing commands, mainly because Vimperator doesn't
+have them.
+____________________________________________________________________________
+
+
 section:Using{nbsp}scripts[using-scripts]
 
 |:so| |:source|

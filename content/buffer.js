@@ -469,11 +469,15 @@ liberator.Buffer = function () //{{{
 
     liberator.mappings.add(modes, ["."],
         "Repeat the last key event",
-        function ()
+        function (count)
         {
             if (liberator.mappings.repeat)
-                liberator.mappings.repeat();
-        });
+            {
+                for (let i in liberator.util.range(0, count || 1))
+                    liberator.mappings.repeat();
+            }
+        },
+        { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["i", "<Insert>"],
         "Start caret mode",
