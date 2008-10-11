@@ -467,6 +467,14 @@ liberator.Buffer = function () //{{{
 
     var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
 
+    liberator.mappings.add(modes, ["."],
+        "Repeat the last key event",
+        function ()
+        {
+            if (liberator.mappings.repeat)
+                liberator.mappings.repeat();
+        });
+
     liberator.mappings.add(modes, ["i", "<Insert>"],
         "Start caret mode",
         function ()

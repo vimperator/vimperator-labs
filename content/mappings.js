@@ -65,6 +65,10 @@ liberator.Map.prototype = {
         if (this.flags & liberator.Mappings.flags.ARGUMENT)
             args.push(argument);
 
+        let self = this;
+        // FIXME: Kludge.
+        if (this.names[0] != ".")
+            liberator.mappings.repeat = function () self.action.apply(self, args);
         return this.action.apply(this, args);
     }
 
