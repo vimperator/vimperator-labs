@@ -279,12 +279,12 @@ liberator.Completion = function () //{{{
                 {
                     // A word character following a non-word character, or simply a non-word
                     // character. Start a new statement.
-                    if (/[\w$]/.test(c) && !/[\w\d$]/.test(lastChar) || !/[\w\d\s]/.test(c))
+                    if (/[\w$]/.test(c) && !/[\w\d$]/.test(lastChar) || !/[\w\d\s$]/.test(c))
                         top[STATEMENTS].push(i);
 
                     // A "." or a "[" dereferences the last "statement" and effectively
                     // joins it to this logical statement.
-                    if ((c == "." || c == "[") && /[\w\d\])"']/.test(lastNonwhite)
+                    if ((c == "." || c == "[") && /[\w\d$\])"']/.test(lastNonwhite)
                     ||  lastNonwhite == "." && /[\w$]/.test(c))
                             top[STATEMENTS].pop();
 
@@ -292,7 +292,7 @@ liberator.Completion = function () //{{{
                     {
                         case "(":
                             /* Function call, or if/while/for/... */
-                            if (/\w/.test(lastNonwhite))
+                            if (/\w$/.test(lastNonwhite))
                             {
                                 top[FUNCTIONS].push(i);
                                 top[STATEMENTS].pop();
