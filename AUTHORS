@@ -4,7 +4,6 @@ Main developer/Project founder:
 
 Developers:
   * Doug Kearns (dougkearns@gmail.com)
-  * Marco Candrian (mac@calmar.ws)
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
   * Tim Hammerquist (penryu@gmail.com)
   * Konstantin Stepanov (milezv@yandex.ru)
@@ -12,6 +11,7 @@ Developers:
 
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
+  * Marco Candrian (mac@calmar.ws)
  
 Patches (in no special order):
   * Kazuo (count support for ctrl-^)
