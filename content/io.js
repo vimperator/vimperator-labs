@@ -758,8 +758,7 @@ lookup:
                 }
 
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
-
-                let str = ioManager.readFile(file);
+                let uri = PlacesUIUtils.createFixedURI(file.path).spec
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -768,7 +767,7 @@ lookup:
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript("file://" + file.path, liberator)
+                        loader.loadSubScript(uri, liberator)
                     }
                     catch (e)
                     {
@@ -778,10 +777,11 @@ lookup:
                 }
                 else if (/\.css$/.test(filename))
                 {
-                    liberator.storage.styles.registerSheet("file://" + file.path, !silent, true);
+                    liberator.storage.styles.registerSheet(uri, !silent, true);
                 }
                 else
                 {
+                    let str = ioManager.readFile(file);
                     let heredoc = "";
                     let heredocEnd = null; // the string which ends the heredoc
                     let lines = str.split("\n");
