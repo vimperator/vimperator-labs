@@ -1369,7 +1369,7 @@ liberator.ItemList = function (id) //{{{
             {
                 minHeight = 0;
                 autoSize();
-                fill(startIndex);
+                setTimeout(function () { fill(startIndex); }, 0);
             }
             container.collapsed = false;
         },

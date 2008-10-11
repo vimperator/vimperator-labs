@@ -92,6 +92,15 @@ printed.
 ________________________________________________________________________________
 
 
+|:lpl| |:loadplugins|
+||:loadplugins|| +
+________________________________________________________________________________
+Load all unloaded plugins immediately. This is useful both for sourcing new
+plugins without restarting vimperator, and making sure that a plugin is loaded
+so that you can use its commands from your vimperatorrc.
+________________________________________________________________________________
+
+
 |:ru| |:runtime|
 ||:ru[ntime][!]| {file} ...|| +
 ________________________________________________________________________________

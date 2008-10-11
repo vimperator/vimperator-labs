@@ -331,6 +331,10 @@ const liberator = (function () //{{{
                 hereDoc: true,
             });
 
+        liberator.commands.add(["loadplugins", "lpl"],
+            "Load all plugins immediately",
+            function () { liberator.loadPlugins(); });
+
         liberator.commands.add(["norm[al]"],
             "Execute Normal mode commands",
             function (args, special) { liberator.events.feedkeys(args.string, special); },
@@ -891,6 +895,49 @@ const liberator = (function () //{{{
 
         loadModule: function (name, func) { loadModule(name, func); },
 
+        loadPlugins: function ()
+        {
+            // FIXME: largely duplicated for loading macros
+            try
+            {
+                let dirs = liberator.io.getRuntimeDirectories("plugin");
+
+                if (dirs.length > 0)
+                {
+                    for (let [,dir] in Iterator(dirs))
+                    {
+                        // TODO: search plugins/**/* for plugins
+                        liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
+
+                        liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+
+                        let files = liberator.io.readDirectory(dir.path, true);
+
+                        files.forEach(function (file) {
+                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
+                            {
+                                try
+                                {
+                                    liberator.io.source(file.path, false);
+                                    liberator.pluginFiles[file.path] = true;
+                                }
+                                catch (e) {};
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    liberator.log("No user plugin directory found", 3);
+                }
+            }
+            catch (e)
+            {
+                // thrown if directory does not exist
+                liberator.log("Error sourcing plugin directory: " + e, 9);
+            }
+        },
+
         // logs a message to the javascript error console
         // if msg is an object, it is beautified
         // TODO: add proper level constants
@@ -1001,6 +1048,8 @@ const liberator = (function () //{{{
         // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
         plugins: {},
 
+        pluginFiles: {},
+
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession, force)
         {
@@ -1110,40 +1159,7 @@ const liberator = (function () //{{{
                     liberator.log("No user RC file found", 3);
 
                 if (liberator.options["loadplugins"])
-                {
-                    // FIXME: largely duplicated for loading macros
-                    try
-                    {
-                        let dirs = liberator.io.getRuntimeDirectories("plugin");
-
-                        if (dirs.length > 0)
-                        {
-                            for (let [,dir] in Iterator(dirs))
-                            {
-                                // TODO: search plugins/**/* for plugins
-                                liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
-
-                                liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-
-                                let files = liberator.io.readDirectory(dir.path, true);
-
-                                files.forEach(function (file) {
-                                    if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
-                                        liberator.io.source(file.path, false);
-                                });
-                            }
-                        }
-                        else
-                        {
-                            liberator.log("No user plugin directory found", 3);
-                        }
-                    }
-                    catch (e)
-                    {
-                        // thrown if directory does not exist
-                        liberator.log("Error sourcing plugin directory: " + e, 9);
-                    }
-                }
+                    liberator.loadPlugins;
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
