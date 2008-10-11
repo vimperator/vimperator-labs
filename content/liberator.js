@@ -675,7 +675,7 @@ const liberator = (function () //{{{
 
             if (command === null)
             {
-                err = "E492: Not a browser command: " + str;
+                err = "E492: Not a " + liberator.config.name.toLowerCase() + " command: " + str;
                 liberator.focusContent();
             }
             else if (command.action === null)
