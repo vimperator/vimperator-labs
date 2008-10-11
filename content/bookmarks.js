@@ -331,7 +331,7 @@ liberator.Bookmarks = function () //{{{
         {
             try
             {
-                var uri = PlacesUIUtils.createFixedURI(url);
+                var uri = liberator.util.createURI(url);
                 if (!force)
                 {
                     for (let bmark in cache)

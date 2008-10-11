@@ -760,6 +760,7 @@ lookup:
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = ioManager.readFile(file);
+                let uri = liberator.util.createURI(file.path);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -768,7 +769,7 @@ lookup:
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript("file://" + file.path, liberator)
+                        loader.loadSubScript(uri.spec, liberator)
                     }
                     catch (e)
                     {
@@ -778,7 +779,7 @@ lookup:
                 }
                 else if (/\.css$/.test(filename))
                 {
-                    liberator.storage.styles.registerSheet("file://" + file.path, !silent, true);
+                    liberator.storage.styles.registerSheet(uri.spec, !silent, true);
                 }
                 else
                 {

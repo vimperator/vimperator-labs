@@ -107,6 +107,13 @@ liberator.util = { //{{{
             liberator.echo("Yanked " + str, liberator.commandline.FORCE_SINGLELINE);
     },
 
+    createURI: function (str)
+    {
+        const fixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
+                                .getService(Components.interfaces.nsIURIFixup);
+        return fixup.createFixupURI(str, fixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
+    },
+
     escapeHTML: function (str)
     {
         // XXX: the following code is _much_ slower than a simple .replace()
