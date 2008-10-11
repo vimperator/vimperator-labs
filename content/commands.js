@@ -707,7 +707,7 @@ liberator.Commands = function () //{{{
                 let res = tokens[token];
                 if (res == undefined) // Ignore anything undefined
                     res = "<" + token + ">";
-                if (quote)
+                if (quote && typeof res != "number")
                     return '"' + String.replace(res, '"', '\\"', "g") + '"';
                 return res;
             });
