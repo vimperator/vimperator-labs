@@ -517,13 +517,24 @@ liberator.Buffer = function () //{{{
         function () { liberator.buffer.scrollEnd(); });
 
     liberator.mappings.add(modes, ["gg", "<Home>"],
-        "Goto the top of the document",
+        "Go to the top of the document",
         function (count) { liberator.buffer.scrollToPercentile(count > 0 ? count : 0); },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["G", "<End>"],
-        "Goto the end of the document",
+        "Go to the end of the document",
         function (count) { liberator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
+        { flags: liberator.Mappings.flags.COUNT });
+
+    liberator.mappings.add(modes, ["%"],
+        "Scroll to {count} percent of the document",
+        function (count)
+        {
+            if (count > 0 && count <= 100)
+                liberator.buffer.scrollToPercentile(count);
+            else
+                liberator.beep();
+        },
         { flags: liberator.Mappings.flags.COUNT });
 
     liberator.mappings.add(modes, ["<C-d>"],

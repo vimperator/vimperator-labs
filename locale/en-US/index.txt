@@ -35,7 +35,7 @@ section:Normal{nbsp}mode[normal-index]
 ||B|| Show buffer list +
 ||D|| Delete current buffer, focus tab to the left +
 ||F|| Start QuickHint mode, but open link in a new tab +
-||G|| Goto the end of the document +
+||G|| Go to the end of the document +
 ||H|| Go back in the browser history +
 ||L|| Go forward in the browser history +
 ||M|| Add new QuickMark for current URL +
@@ -76,6 +76,8 @@ section:Normal{nbsp}mode[normal-index]
 ||*|| Find word under cursor +
 ||#|| Find word under cursor backwards +
 
+||N%|| Scroll to {count} percent of the document +
+
 ||'|| Jump to the mark in the current buffer +
 
 ||@|| Play a macro +
@@ -96,7 +98,7 @@ section:Normal{nbsp}mode[normal-index]
 ||gU|| Go to the root of the website +
 ||gb|| Repeat last :buffer[!] command +
 ||gf|| View source +
-||gg|| Goto the top of the document +
+||gg|| Go to the top of the document +
 ||gh|| Open homepage +
 ||gi|| Focus last used input field +
 ||gn|| Jump to a QuickMark in a new tab +
