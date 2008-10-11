@@ -82,6 +82,8 @@ section:Normal{nbsp}mode[normal-index]
 
 ||@|| Play a macro +
 
+||.|| Repeat the last keyborad command
+
 ||]f|| Focus next frame +
 ||[f|| Focus previous frame +
 ||]]|| Follow the link labeled \'next' or \'>' if it exists +
