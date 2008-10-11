@@ -914,7 +914,7 @@ const liberator = (function () //{{{
                         let files = liberator.io.readDirectory(dir.path, true);
 
                         files.forEach(function (file) {
-                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path))
+                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
                             {
                                 try
                                 {
