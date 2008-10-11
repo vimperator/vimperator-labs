@@ -405,7 +405,7 @@ liberator.Search = function () //{{{
                 command = lastSearchPattern;
 
             this.clear();
-            if (!liberator.options["incsearch"])
+            if (!liberator.options["incsearch"] || !found)
                 this.find(command, backwards);
 
             lastSearchBackwards = backwards;
