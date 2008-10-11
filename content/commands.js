@@ -696,6 +696,21 @@ liberator.Commands = function () //{{{
                     break;
                 }
             }
+        },
+
+        replaceTokens: function replaceTokens(str, tokens)
+        {
+            return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)
+            {
+                if (token == "lt") // Don't quote, as in vim (but, why so in vim? You'd think people wouldn't say <q-lt> if they didn't want it)
+                    return "<";
+                let res = tokens[token];
+                if (res == undefined) // Ignore anything undefined
+                    res = "<" + token + ">";
+                if (quote)
+                    return '"' + String.replace(res, '"', '\\"', "g") + '"';
+                return res;
+            });
         }
 
     };
@@ -706,39 +721,13 @@ liberator.Commands = function () //{{{
 
     function userCommand(args, special, count, modifiers)
     {
-        function replaceTokens(token)
-        {
-            let ret;
-            let quote = false;
+        let tokens = {
+            args:  this.argCount && args.string,
+            bang:  this.bang  && bang ? "!" : "",
+            count: this.count && count
+        };
 
-            // ignore quoting of <lt> like Vim, not needed for <count>
-            if (/^<q-(?!(lt|count))[a-z]+>$/.test(token))
-                quote = true;
-
-            token = token.replace("q-", "");
-
-            switch (token)
-            {
-                case "<args>":
-                    ret = args.argumentsString;
-                    break;
-                case "<bang>":
-                    ret = bangOpt ? (special ? "!" : "") : token;
-                    break;
-                case "<count>":
-                    ret = countOpt ? (count > -1 ? count : 0) : token;
-                    break;
-                case "<lt>":
-                    ret = "<";
-                    break;
-                default:
-                    ret = token;
-            }
-
-            return quote ? '"' + ret.replace('"', '\\"', "g") + '"' : ret;
-        }
-
-        liberator.execute(this.replacementText.replace(/<(?:q-)?[a-z]+>/g, replaceTokens));
+        liberator.execute(liberator.commands.replaceTokens(this.replacementText, tokens));
     }
 
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
