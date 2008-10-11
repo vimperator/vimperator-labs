@@ -1,8 +1,11 @@
 # Thunderbird
-content	muttator content/
-resource muttator modules/
-locale	muttator en-US locale/en-US/
-skin muttator classic/1.0 skin/
-overlay chrome://messenger/content/messenger.xul chrome://muttator/content/muttator.xul
-
-overlay chrome://messenger/content/messengercompose/messengercompose.xul chrome://muttator/content/muttatorcompose.xul
+content  liberator content/
+resource liberator modules/
+locale   liberator en-US locale/en-US/
+skin     liberator classic/1.0 skin/
+override chrome://liberator/content/liberator.dtd chrome://liberator/content/muttator.dtd
+overlay  chrome://messenger/content/messenger.xul chrome://liberator/content/liberator.xul
+overlay  chrome://messenger/content/messenger.xul chrome://liberator/content/muttator.xul
+overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/liberator.xul
+#overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/muttatorcompose.xul
+overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/compose/compose.xul
