@@ -54,7 +54,7 @@ liberator.Mail = function () //{{{
                 if (folder)
                 {
                     var msgFolder = folder.QueryInterface(Components.interfaces.nsIMsgFolder);
-                    liberator.autocommands.trigger("FolderLoaded", msgFolder);
+                    liberator.autocommands.trigger("FolderLoaded", {url: msgFolder});
 
                     // Jump to a message when requested
                     var indices = [];

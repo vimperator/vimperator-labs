@@ -44,9 +44,9 @@ liberator.Bookmarks = function () //{{{
                                        .getService(Components.interfaces.nsIFaviconService);
 
     const storage = liberator.storage;
+    const properties = { url: 0, title: 1, keyword: 2, tags: 3, id: 4, icon: 5 };
     function Cache(name, store, serial)
     {
-        const properties = { uri: 0, title: 1, keyword: 2, tags: 3, id: 4, icon: 5 };
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
 
         var bookmarks = [];
@@ -67,7 +67,7 @@ liberator.Bookmarks = function () //{{{
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
             let icon = faviconService.getFaviconImageForPage(uri).spec;
-            bookmarks.push([node.uri, node.title, keyword, tags, node.itemId, icon]);
+            return bookmarks.push([node.uri, node.title, keyword, tags, node.itemId, icon]);
         }
 
         function readBookmark(id)
@@ -144,8 +144,8 @@ liberator.Bookmarks = function () //{{{
                 {
                     if (rootFolders.indexOf(findRoot(itemId)) >= 0)
                     {
-                        loadBookmark(readBookmark(itemId));
-                        storage.fireEvent(name, "add", itemId);
+                        let bmark = loadBookmark(readBookmark(itemId));
+                        storage.fireEvent(name, "add", bmark);
                     }
                 }
             },
@@ -164,7 +164,7 @@ liberator.Bookmarks = function () //{{{
                 if (bookmark)
                 {
                     if (property == "tags")
-                        value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.uri], null, null), {});
+                        value = taggingService.getTagsForURI(ioService.newURI(bookmark[properties.url], null, null), {});
                     if (property in properties)
                         bookmark[properties[property]] = value;
                     storage.fireEvent(name, "change", itemId);
@@ -184,9 +184,15 @@ liberator.Bookmarks = function () //{{{
     let bookmarkObserver = function (key, event, arg)
     {
         if (event == "add")
-            liberator.autocommands.trigger("BookmarkAdd", "");
+        {
+            let args = {};
+            for (let [k, v] in Iterator(properties))
+                args[k] = arg[v];
+            liberator.autocommands.trigger("BookmarkAdd", args);
+        }
         liberator.statusline.updateUrl();
     }
+
     var cache = liberator.storage.newObject("bookmark-cache", Cache, false);
     liberator.storage.addObserver("bookmark-cache", bookmarkObserver);
     liberator.registerObserver("shutdown", function () {

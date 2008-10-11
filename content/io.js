@@ -354,7 +354,7 @@ liberator.IO = function () //{{{
 
             liberator.echo(command + liberator.util.escapeHTML(output));
 
-            liberator.autocommands.trigger("ShellCmdPost", "");
+            liberator.autocommands.trigger("ShellCmdPost", {});
         },
         { bang: true });
 

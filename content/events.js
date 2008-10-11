@@ -72,61 +72,49 @@ liberator.AutoCommands = function () //{{{
         "Execute commands automatically on events",
         function (args, special)
         {
-            if (!args)
+            let [event, regex] = args.arguments;
+            let cmd = args.literalArg;
+            let events = null;
+            if (event)
+            {
+                // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
+                let validEvents = liberator.config.autocommands.map(function (event) event[0]);
+                validEvents.push("*");
+
+                events = event.split(",");
+                if (!events.every(function (event) validEvents.indexOf(event) >= 0))
+                {
+                    liberator.echoerr("E216: No such group or event: " + event);
+                    return;
+                }
+            }
+
+            if (cmd) // add new command, possibly removing all others with the same event/pattern
             {
                 if (special)
-                    liberator.autocommands.remove(null, null); // remove all
-                else
-                    liberator.autocommands.list(null, null);   // list all
+                    liberator.autocommands.remove(event, regex);
+                liberator.autocommands.add(events, regex, cmd);
             }
             else
             {
-                // TODO: assume the pattern doesn't contain spaces until we have whitespace escaping
-                let [, event, regex, cmd] = args.match(/^(\S+)?(?:\s+)?(\S+)?(?:\s+)?(.+)?$/);
-
-                // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
-                let events = event.split(",");
-                let validEvents = liberator.config.autocommands.map(function (event) event[0]);
-
-                validEvents.push("*");
-
-                if (!events.every(function (event) validEvents.indexOf(event) >= 0))
+                if (event == "*")
+                    event = null;
+                if (special)
                 {
-                    liberator.echoerr("E216: No such group or event: " + args);
-                    return;
+                    // TODO: "*" only appears to work in Vim when there is a {group} specified
+                    if (args.arguments[0] != "*" || regex)
+                        liberator.autocommands.remove(event, regex); // remove all
                 }
-
-                if (cmd) // add new command, possibly removing all others with the same event/pattern
+                else
                 {
-                    if (special)
-                        liberator.autocommands.remove(event, regex);
-
-                    liberator.autocommands.add(events, regex, cmd);
-                }
-                else if (regex)
-                {
-                    if (special)
-                        liberator.autocommands.remove(event == "*" ? null : event, regex);
-                    else
-                        liberator.autocommands.list(event == "*" ? null : event, regex);
-                }
-                else if (event)
-                {
-                    if (special)
-                    {
-                        // TODO: "*" only appears to work in Vim when there is a {group} specified
-                        if (event != "*")
-                            liberator.autocommands.remove(event, null);
-                    }
-                    else
-                    {
-                        liberator.autocommands.list(event == "*" ? null : event, null);
-                    }
+                    liberator.autocommands.list(event, regex);   // list all
                 }
             }
         },
         {
+            argCount: 2,
             bang: true,
+            literal: true,
             completer: function (filter) liberator.completion.event(filter)
         });
 
@@ -166,10 +154,11 @@ liberator.AutoCommands = function () //{{{
             else
             {
                 // TODO: perhaps trigger could return the number of autocmds triggered
+                // TODO: Perhaps this should take -args to pass to the command?
                 if (!liberator.autocommands.get(event).some(function (c) c.pattern.test(url)))
                     liberator.echo("No matching autocommands");
                 else
-                    liberator.autocommands.trigger(event, url);
+                    liberator.autocommands.trigger(event, {url: url});
             }
         },
         {
@@ -249,7 +238,7 @@ liberator.AutoCommands = function () //{{{
             liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
         },
 
-        trigger: function (event, url)
+        trigger: function (event, args)
         {
             let events = liberator.options["eventignore"].split(",");
 
@@ -262,6 +251,7 @@ liberator.AutoCommands = function () //{{{
 
             let lastPattern = null;
 
+            let url = args.url || "";
             for (let [,autoCmd] in Iterator(autoCmds))
             {
                 if (autoCmd.pattern.test(url))
@@ -272,7 +262,7 @@ liberator.AutoCommands = function () //{{{
                     lastPattern = autoCmd.pattern;
 
                     liberator.echomsg("autocommand " + autoCmd.command, 9);
-                    liberator.execute(autoCmd.command);
+                    liberator.execute(liberator.commands.replaceTokens(autoCmd.command, args));
                 }
             }
         }
@@ -475,10 +465,22 @@ liberator.Events = function () //{{{
         return false;
     }
 
+    function triggerLoadAutocmd(name, doc)
+    {
+        let args = {
+            url:   doc.location.href,
+            title: doc.title
+        }
+        if (liberator.has("tabs"))
+            args.tab = liberator.tabs.getContentIndex(doc) + 1;
+
+        liberator.autocommands.trigger(name, args);
+    }
+
     function onDOMContentLoaded(event)
     {
         if (event.originalTarget instanceof HTMLDocument)
-            liberator.autocommands.trigger("DOMLoad", event.originalTarget.location.href);
+            triggerLoadAutocmd("DOMLoad", event.originalTarget);
     }
 
     // TODO: see what can be moved to onDOMContentLoaded()
@@ -486,7 +488,7 @@ liberator.Events = function () //{{{
     {
         if (event.originalTarget instanceof HTMLDocument)
         {
-            var doc = event.originalTarget;
+            let doc = event.originalTarget;
             // document is part of a frameset
             if (doc.defaultView.frameElement)
             {
@@ -499,8 +501,8 @@ liberator.Events = function () //{{{
 
             // code which should happen for all (also background) newly loaded tabs goes here:
 
-            var url = doc.location.href;
-            var title = doc.title;
+            let url = doc.location.href;
+            let title = doc.title;
 
             // update history
             if (url && liberator.history)
@@ -530,7 +532,7 @@ liberator.Events = function () //{{{
                 liberator.echomsg("Background tab loaded: " + title || url, 1);
             }
 
-            liberator.autocommands.trigger("PageLoad", url);
+            triggerLoadAutocmd("PageLoad", doc);
         }
     }
 
@@ -1474,7 +1476,7 @@ liberator.Events = function () //{{{
                         liberator.buffer.loaded = 0;
                         liberator.statusline.updateProgress(0);
 
-                        liberator.autocommands.trigger("PageLoadPre", liberator.buffer.URL);
+                        liberator.autocommands.trigger("PageLoadPre", {url: liberator.buffer.URL});
 
                         // don't reset mode if a frame of the frameset gets reloaded which
                         // is not the focused frame
@@ -1516,7 +1518,7 @@ liberator.Events = function () //{{{
                 liberator.statusline.updateUrl();
                 liberator.statusline.updateProgress();
 
-                liberator.autocommands.trigger("LocationChange", liberator.buffer.URL);
+                liberator.autocommands.trigger("LocationChange", {url: liberator.buffer.URL});
 
                 // if this is not delayed we get the position of the old buffer
                 setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);

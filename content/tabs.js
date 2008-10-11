@@ -634,6 +634,13 @@ liberator.Tabs = function () //{{{
 
         get alternate() alternates[1],
 
+        get browsers() function ()
+        {
+            let browsers = getBrowser.browsers;
+            for (let i = 0; i < browsers.length; i++)
+                yield [i, browsers[i]];
+        },
+
         get count() getBrowser().mTabs.length,
 
         // used for :setlocal
@@ -676,15 +683,25 @@ liberator.Tabs = function () //{{{
         get: function (filter)
         {
             var buffers = [];
-            var browsers = getBrowser().browsers;
-            for (let i = 0; i < browsers.length; i++)
+            for (let [i, browser] in this.browsers)
             {
-                var title = browsers[i].contentTitle || "(Untitled)";
-                var uri = browsers[i].currentURI.spec;
+                var title = browser.contentTitle || "(Untitled)";
+                var uri = browser.currentURI.spec;
                 var number = i + 1;
                 buffers.push([number, title, uri]);
             }
             return buffers;
+        },
+
+        getContentIndex: function (content)
+        {
+            for (let [i, browser] in this.browsers)
+            {
+                if (browser.contentWindow == content)
+                    return i;
+                if (browser.contentDocument == content)
+                    return i;
+            }
         },
 
         getTab: function (index)
