@@ -53,7 +53,7 @@ section:Using{nbsp}scripts[using-scripts]
 |:so| |:source|
 ||:so[urce][!] {file}|| +
 ________________________________________________________________________________
-Read Ex commands, javascript, or CSS from {file}. You can either source files
+Read Ex commands, JavaScript, or CSS from {file}. You can either source files
 which mostly contain Ex commands like [c]map < gt[c] and put JavaScript code
 within a:
 
