@@ -231,7 +231,7 @@ liberator.Buffer = function () //{{{
             {
                 consoleService.registerListener(listener);
                 if (testDoc.documentElement.firstChild)
-                    testDoc.documentElement.removeChild(testDoc.lastChild);
+                    testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
                 testDoc.documentElement.appendChild(util.xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
 
