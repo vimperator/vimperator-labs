@@ -36,8 +36,8 @@ liberator.Buffer = function () //{{{
 
     const highlightClasses = ["Boolean", "ErrorMsg", "Filter", "Function", "InfoMsg", "Keyword",
             "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Object", "Question",
-            "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "Tag",
-            "Title", "URL", "WarningMsg",
+            "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "TabClose", "TabIcon",
+            "TabIconNumber", "TabNumber", "TabText", "Tag", "Title", "URL", "WarningMsg",
             ["Hint",   ".liberator-hint",     "*"],
             ["Search", ".__liberator-search", "*"],
             ["Bell",   "#liberator-visualbell"],

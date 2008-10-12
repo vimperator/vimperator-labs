@@ -7,6 +7,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add guioptions=nN to number tabs
     * add :loadplugins command
     * add . mapping
     * add N% normal mode command

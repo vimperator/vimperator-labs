@@ -318,6 +318,8 @@ Show or hide certain GUI elements like the menu or toolbar. Supported characters
 *m* Menubar
 *T* Toolbar
 *b* Bookmark bar
+*n* Tab number
+*N* Tab number over image
 ----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].

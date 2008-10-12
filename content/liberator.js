@@ -59,6 +59,10 @@ const liberator = (function () //{{{
     // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
+         const tabopts = [
+             ["n", "Tab number", null, ".hl-TabNumber"],
+             ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
+         ];
         liberator.options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
             "charlist", liberator.config.defaults.guioptions || "",
@@ -69,14 +73,23 @@ const liberator = (function () //{{{
 
                     for (let option in guioptions)
                     {
-                        guioptions[option].forEach(function (elem) {
-                            try
-                            {
-                                document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
-                            }
-                            catch (e) {}
-                        });
+                        if (option in guioptions)
+                        {
+                            guioptions[option].forEach(function (elem) {
+                                try
+                                {
+                                    document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
+                                }
+                                catch (e) {}
+                            });
+                        }
                     }
+                    let classes = tabopts.filter(function (o) value.indexOf(o[0]) == -1)
+                                         .map(function (a) a[3])
+                    if (!classes.length)
+                        liberator.storage.styles.removeSheet("taboptions", null, null, null, true);
+                    else
+                        liberator.storage.styles.addSheet("taboptions", "chrome://*", classes.join(",") + "{ display: none; }", true, true);
 
                     return value;
                 },
@@ -86,17 +99,9 @@ const liberator = (function () //{{{
                         ["m", "Menubar"],
                         ["T", "Toolbar"],
                         ["b", "Bookmark bar"]
-                    ];
+                    ].concat(!liberator.has("tabs") ? [] : tabopts);
                 },
-                validator: function (value)
-                {
-                    var regex = "[^";
-
-                    for (let option in liberator.config.guioptions)
-                        regex += option.toString();
-
-                    return !(new RegExp(regex + "]").test(value));
-                }
+                validator: function (value) Array.every(value, function (c) c in liberator.config.guioptions || tabopts.some(function (a) a[0] == c)),
             });
 
         liberator.options.add(["helpfile", "hf"],

@@ -603,13 +603,6 @@ liberator.CommandLine = function () //{{{
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function (str, highlightGroup, flags)
         {
-            // if we are modifing the GUI while we are not in the main thread
-            // Firefox will hang up
-            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
-                                          .getService(Components.interfaces.nsIThreadManager);
-            if (!threadManager.isMainThread)
-                return false;
-
             var focused = document.commandDispatcher.focusedElement;
             if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
                 return false;
@@ -618,6 +611,13 @@ liberator.CommandLine = function () //{{{
 
             if (flags & this.APPEND_TO_MESSAGES)
                 messageHistory.add({ str: str, highlight: highlightGroup });
+
+            // if we are modifing the GUI while we are not in the main thread
+            // Firefox will hang up
+            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
+                                          .getService(Components.interfaces.nsIThreadManager);
+            if (!threadManager.isMainThread)
+                return false;
 
             var where = setLine;
             if (flags & this.FORCE_MULTILINE)
@@ -1592,6 +1592,10 @@ liberator.StatusLine = function () //{{{
                 tabCountWidget = "";
                 return;
             }
+
+            let tabs = getBrowser().mTabs;
+            for (let i = 0; i < tabs.length; i++)
+                tabs[i].setAttribute("ordinal", i + 1);
 
             if (!currentIndex || typeof currentIndex != "number")
                 currentIndex = liberator.tabs.index() + 1;

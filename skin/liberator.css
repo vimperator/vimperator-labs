@@ -120,6 +120,22 @@ the terms of any one of the MPL, the GPL or the LGPL.
 @-moz-document 
     url-prefix(chrome://) {
 
+.tabbrowser-tab {
+    -moz-binding: url(chrome://liberator/content/bindings.xml#tab);
+}
+
+.hl-TabIconNumber {
+    font-weight: bold;
+    text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
+    text-align: center;
+    color: white;
+}
+
+.hl-TabNumber {
+    font-weight: bold;
+    padding-right: .3ex;
+}
+
 #liberator-container  {
     font-family: monospace;
 }
