@@ -392,50 +392,43 @@ const liberator = (function () //{{{
             function (args, special, count)
             {
                 args = args.string;
+                let method = args[0] == ":" ? "execute" : "eval";
 
                 try
                 {
                     if (count > 1)
                     {
-                        var i = count;
+                        let total = 0;
                         var beforeTime = Date.now();
 
-                        liberator.interrupted = false;
-                        if (args && args[0] == ":")
+                        for (let i in liberator.util.rangeInterruptable(0, count, 500))
                         {
-                            while (i-- && !liberator.interrupted)
-                                liberator.execute(args);
-                        }
-                        else
-                        {
-                            while (i--)
-                                liberator.eval(args);
+                            let now = Date.now();
+                            liberator[method](args);
+                            total += Date.now() - now;
                         }
 
                         if (special)
                             return;
 
-                        var afterTime = Date.now();
-
-                        if ((afterTime - beforeTime) / count >= 100)
+                        if (total / count >= 100)
                         {
-                            var each = ((afterTime - beforeTime) / 1000.0 / count);
+                            var each = (total / 1000.0) / count;
                             var eachUnits = "sec";
                         }
                         else
                         {
-                            var each = ((afterTime - beforeTime) / count);
+                            var each = total / count;
                             var eachUnits = "msec";
                         }
 
-                        if (afterTime - beforeTime >= 100)
+                        if (total >= 100)
                         {
-                            var total = ((afterTime - beforeTime) / 1000.0);
+                            var total = total / 1000.0;
                             var totalUnits = "sec";
                         }
                         else
                         {
-                            var total = (afterTime - beforeTime);
                             var totalUnits = "msec";
                         }
 

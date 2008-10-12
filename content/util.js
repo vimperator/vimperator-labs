@@ -295,6 +295,23 @@ liberator.util = { //{{{
             yield start++;
     },
 
+    rangeInterruptable: function (start, end, time)
+    {
+        let endTime = Date.now() + time;
+        while (start < end)
+        {
+            if (Date.now() > endTime)
+            {
+                liberator.interrupted = false;
+                liberator.threadYield();
+                if (liberator.interrupted)
+                    throw new Error("Interrupted");
+                endTime = Date.now() + time;
+            }
+            yield start++;
+        }
+    },
+
     // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
     readFromClipboard: function ()
     {

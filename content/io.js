@@ -188,8 +188,8 @@ liberator.IO = function () //{{{
         function () { liberator.echo(liberator.io.getCurrentDirectory()); },
         { argCount: "0" });
 
-    // mkv[imperatorrc] or mkm[uttatorrc]
-    liberator.commands.add(["mk" + EXTENSION_NAME.substr(0, 1) + "[" + EXTENSION_NAME.substr(1) + "rc]"],
+    // "mkv[imperatorrc]" or "mkm[uttatorrc]"
+    liberator.commands.add([EXTENSION_NAME.replace(/(.)(.*)/, "mk$1[$2rc]")],
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
