@@ -269,12 +269,11 @@ ________________________________________________________________________________
 section:Writing[writing,save-file]
 
 |:w| |:write| |:sav| |:saveas| +
-||:sav[eas]||
+||:sav[eas][!] [file]||
 ________________________________________________________________________________
-Save current web page to disk. Opens the original Firefox "Save page as..."
-dialog.  There, you can save the current web page to disk with various
-options. Use [!] to save the file with a default filename to the current working
-directory, skipping the "Save as..." prompt
+Save current web page to disk. If [file] is omitted, save to the page's
+default filename. Existing documents will only be overwritten if [!] is
+given.
 ________________________________________________________________________________
 
 section:Quitting[quitting,save-session]

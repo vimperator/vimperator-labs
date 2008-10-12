@@ -286,7 +286,7 @@ liberator.CommandLine = function () //{{{
         }
         catch (e)
         {
-            liberator.echoerr(e.toString());
+            liberator.echoerr(e);
             return null;
         }
 

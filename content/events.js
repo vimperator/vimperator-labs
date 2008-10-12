@@ -535,6 +535,27 @@ liberator.Events = function () //{{{
         }
     }
 
+    function wrapListener(method)
+    {
+        return function (event)
+        {
+            try
+            {
+                liberator.dump(event);
+                eventManager[method](event);
+            }
+            catch (e)
+            {
+                if (e.message == "Interrupted")
+                    liberator.echoerr("Interrupted");
+                else
+                    liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
+                if (Components.utils.reportError)
+                    Components.utils.reportError(e);
+            }
+        }
+    }
+
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
@@ -1195,6 +1216,13 @@ liberator.Events = function () //{{{
                 }
             }
 
+            if (key == "<C-c>")
+                liberator.interrupted = true;
+
+            // feedingKeys needs to be separate from interrupted so
+            // we can differentiate between a recorded <C-c>
+            // interrupting whatever it's started and a real <C-c>
+            // interrupting our playback.
             if (liberator.events.feedingKeys)
             {
                 if (key == "<C-c>" && !event.isMacro)
@@ -1206,9 +1234,6 @@ liberator.Events = function () //{{{
                     return true;
                 }
             }
-
-            if (key == "<C-c>")
-                liberator.interrupted = true;
 
             var stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
@@ -1611,9 +1636,9 @@ liberator.Events = function () //{{{
             eventManager.prefObserver.unregister();
     });
 
-    window.addEventListener("keypress", eventManager.onKeyPress,    true);
-    window.addEventListener("keydown",  eventManager.onKeyUpOrDown, true);
-    window.addEventListener("keyup",    eventManager.onKeyUpOrDown, true);
+    window.addEventListener("keypress", wrapListener("onKeyPress"),    true);
+    window.addEventListener("keydown",  wrapListener("onKeyUpOrDown"), true);
+    window.addEventListener("keyup",    wrapListener("onKeyUpOrDown"), true);
 
     return eventManager;
 

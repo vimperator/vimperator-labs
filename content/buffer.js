@@ -231,7 +231,7 @@ liberator.Buffer = function () //{{{
             {
                 consoleService.registerListener(listener);
                 if (testDoc.documentElement.firstChild)
-                    testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
+                    testDoc.documentElement.removeChild(testDoc.lastChild);
                 testDoc.documentElement.appendChild(util.xmlToDom(
                         <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
 
@@ -473,7 +473,7 @@ liberator.Buffer = function () //{{{
         {
             if (liberator.mappings.repeat)
             {
-                for (let i in liberator.util.range(0, count || 1))
+                for (let i in liberator.util.rangeInterruptable(0, count || 1, 100))
                     liberator.mappings.repeat();
             }
         },
@@ -797,20 +797,29 @@ liberator.Buffer = function () //{{{
         "Save current document to disk",
         function (args, special)
         {
-            //var file = liberator.io.getFile(args || "");
-            // we always want to save that link relative to the current working directory
+            let doc = window.content.document;
+            let file = liberator.io.getFile(args || "");
+            if (args && file.exists() && !special)
+                return liberator.echoerr("E13: File exists (add ! to override)");
+
             liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
-            //if (args)
-            //{
-            //    saveURL(liberator.buffer.URL, args, null, true, special, // special == skipPrompt
-            //            makeURI(liberator.buffer.URL, content.document.characterSet));
-            //}
-            //else
-            saveDocument(window.content.document, special);
+            try
+            {
+                var contentDisposition = window.content
+                                               .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                                               .getInterface(Components.interfaces.nsIDOMWindowUtils)
+                                               .getDocumentMetadata("content-disposition");
+            } catch (e) {}
+
+            internalSave(doc.location.href, doc, null, contentDisposition,
+                doc.contentType, false, null,
+                args && { file: file, uri: makeURI(doc.location.href, doc.characterSet) },
+                doc.referrer ? makeURI(doc.referrer) : null,
+                true);
         },
         {
-            argCount: "0",
-            bang: true
+            bang: true,
+            completer: function (filter) liberator.completion.file(filter)
         });
 
     liberator.commands.add(["st[op]"],

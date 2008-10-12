@@ -85,7 +85,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
     vertical-align: middle;
     padding: 0 .5ex;
 }
-.compitem-td-span { height: 1.5em; display: block; min-height: 16px; }
+.compitem-td-span { height: 1.5em; line-height: 1.5em !important; display: block; min-height: 16px; }
 
 .compitem[selected=true] { background-color: yellow; }
 .compitem > .favicon     { width: 16px; }
