@@ -276,7 +276,6 @@ liberator.Events = function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var replayingMacro;
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
@@ -553,7 +552,7 @@ liberator.Events = function () //{{{
             if ((now - then) % 1000 < 10)
                 liberator.dump("waited: " + (now - then) + " ms");
 
-            if (!liberator.modes.isReplaying)
+            if (!liberator.events.feedingKeys)
                 return false;
 
             if (liberator.buffer.loaded > 0)
@@ -713,6 +712,8 @@ liberator.Events = function () //{{{
 
     var eventManager = {
 
+        feedingKeys: false,
+
         wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
 
         destroy: function ()
@@ -791,9 +792,9 @@ liberator.Events = function () //{{{
                 catch (e) {}
 
                 liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                replayingMacro = true;
+                liberator.modes.isReplaying = true;
                 res = liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
-                replayingMacro = false;
+                liberator.modes.isReplaying = false;
             }
             else
             {
@@ -837,8 +838,9 @@ liberator.Events = function () //{{{
             var doc = window.document;
             var view = window.document.defaultView;
             var escapeKey = false; // \ to escape some special keys
-            var wasReplaying = liberator.modes.isReplaying;
-            liberator.modes.isReplaying = true;
+
+            var wasFeeding = this.feedingKeys;
+            this.feedingKeys = true;
 
             noremap = !!noremap;
 
@@ -898,15 +900,15 @@ liberator.Events = function () //{{{
                 evt.noremap = noremap;
                 evt.isMacro = true;
                 elem.dispatchEvent(evt);
-                if (!liberator.modes.isReplaying)
+                if (!this.feedingKeys)
                     break;
                 // stop feeding keys if page loading failed
-                if (replayingMacro && !waitForPageLoaded())
+                if (liberator.modes.isReplaying && !waitForPageLoaded())
                     break;
                 // else // a short break between keys often helps
                 //     liberator.sleep(50);
             }
-            liberator.modes.isReplaying = wasReplaying;
+            this.feedingKeys = wasFeeding;
             return i == keys.length;
         },
 
@@ -1193,12 +1195,12 @@ liberator.Events = function () //{{{
                 }
             }
 
-            if (liberator.modes.isReplaying)
+            if (liberator.events.feedingKeys)
             {
                 if (key == "<C-c>" && !event.isMacro)
                 {
-                    liberator.modes.isReplaying = false;
-                    liberator.echo("Canceled playback of macro '" + lastMacro + "'");
+                    liberator.events.feedingKeys = false;
+                    setTimeout(function () { liberator.echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1335,7 +1337,7 @@ liberator.Events = function () //{{{
                 liberator.input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
-                    if (replayingMacro && !waitForPageLoaded())
+                    if (liberator.modes.isReplaying && !waitForPageLoaded())
                         return true;
 
                     tmp.execute(null, liberator.input.count, key);
@@ -1378,7 +1380,7 @@ liberator.Events = function () //{{{
                     liberator.input.buffer = "";
                     inputBufferLength = 0;
 
-                    if (replayingMacro && !waitForPageLoaded())
+                    if (liberator.modes.isReplaying && !waitForPageLoaded())
                         return true;
 
                     var ret = map.execute(null, liberator.input.count);

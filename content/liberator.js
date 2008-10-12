@@ -400,9 +400,10 @@ const liberator = (function () //{{{
                         var i = count;
                         var beforeTime = Date.now();
 
+                        liberator.interrupted = false;
                         if (args && args[0] == ":")
                         {
-                            while (i--)
+                            while (i-- && !liberator.interrupted)
                                 liberator.execute(args);
                         }
                         else
