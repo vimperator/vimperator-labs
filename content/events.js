@@ -541,7 +541,6 @@ liberator.Events = function () //{{{
         {
             try
             {
-                liberator.dump(event);
                 eventManager[method](event);
             }
             catch (e)
