@@ -564,7 +564,7 @@ liberator.History = function () //{{{
             var node = rootNode.getChild(i);
             // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                history.push([node.url, node.title || "[No title]", getIcon(node.uri)]);
+                history.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
         }
 
         // close a container after using it!
