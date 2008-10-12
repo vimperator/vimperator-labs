@@ -1298,7 +1298,7 @@ liberator.ItemList = function (id) //{{{
     function fill(offset)
     {
         let diff = offset - startIndex;
-        if (/* diff == 0 ||*/ offset < 0 || completions.length && offset >= completions.length)
+        if (offset == null || offset - startIndex == 0 || offset < 0 || completions.length && offset >= completions.length)
             return;
 
         startIndex = offset;
@@ -1369,7 +1369,7 @@ liberator.ItemList = function (id) //{{{
             {
                 minHeight = 0;
                 autoSize();
-                setTimeout(function () { fill(startIndex); }, 0);
+                setTimeout(function () { fill(null); }, 0);
             }
             container.collapsed = false;
         },
