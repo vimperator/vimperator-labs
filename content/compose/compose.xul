@@ -35,9 +35,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns:nc="http://home.netscape.com/NC-rdf#"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-    <!--script type="application/x-javascript;version=1.8" src="mail.js"/-->
-
 </overlay>
 
 <!-- vim: set fdm=marker sw=4 ts=4 et: -->

@@ -3,8 +3,9 @@ content	 liberator content/
 resource liberator modules/
 locale	 liberator en-US locale/en-US/
 skin	 liberator classic/1.0 skin/
+
 override chrome://liberator/content/liberator.dtd chrome://liberator/content/vimperator.dtd
 override chrome://liberator/content/config.js chrome://liberator/content/vimperator.js
+
 overlay  chrome://browser/content/browser.xul chrome://liberator/content/liberator.xul
 overlay  chrome://browser/content/browser.xul chrome://liberator/content/vimperator.xul
-

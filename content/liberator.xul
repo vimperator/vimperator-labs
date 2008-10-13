@@ -47,7 +47,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
             <key id="key_open_vimbar" key=":" oncommand="liberator.modules.commandline.open(':', '', liberator.modules.modes.EX);" modifiers=""/>
             <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.modules.events.onEscape();"/>
             <!-- other keys are handled inside the event loop in events.js -->
-        </keyset>
+        </keyset> 
 
         <popupset>
             <panel id="liberator-visualbell"/>
