@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.Completion = function () //{{{
+function Completion() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -190,8 +190,8 @@ with (liberator) liberator.Completion = function () //{{{
         {
             try
             {
-                // dump("eval(" + util.escapeString(arg) + ")\n");
-                return eval(arg);
+                // liberator.dump("eval(" + util.escapeString(arg) + ")\n");
+                return liberator.eval(arg);
             }
             catch (e)
             {
@@ -339,7 +339,7 @@ with (liberator) liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
+                liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return [0, []];
             }
@@ -871,7 +871,7 @@ with (liberator) liberator.Completion = function () //{{{
                 return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
             else
                 return [0, this.cached("file", filter, generate, "filter", [true])];
-            }catch(e){dump(e)}
+            }catch(e){liberator.dump(e)}
         },
 
         help: function help(filter)
@@ -889,7 +889,7 @@ with (liberator) liberator.Completion = function () //{{{
                 }
                 catch (e)
                 {
-                    log("Error opening chrome://liberator/locale/" + files[i], 1);
+                    liberator.log("Error opening chrome://liberator/locale/" + files[i], 1);
                     continue;
                 }
                 var doc = xmlhttp.responseXML;
@@ -913,7 +913,7 @@ with (liberator) liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                dump(e);
+                liberator.dump(e);
                 return [0, []];
             }
         },
@@ -932,14 +932,14 @@ with (liberator) liberator.Completion = function () //{{{
             let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), filter, false, true);
 
             let generate = function () {
-                let history = liberator.history.get();
+                let hist = history.get();
                 let searches = [];
                 for (let [, k] in Iterator(keywords))
                 {
                     if (k[0].toLowerCase() != keyword.toLowerCase() || k[3].indexOf("%s") == -1)
                         continue;
                     let [begin, end] = k[3].split("%s");
-                    for (let [, h] in Iterator(history))
+                    for (let [, h] in Iterator(hist))
                     {
                         if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
                         {

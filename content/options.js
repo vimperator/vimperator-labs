@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // do NOT create instances of this class yourself, use the helper method
 // options.add() instead
-with (liberator) liberator.Option = function (names, description, type, defaultValue, extraInfo) //{{{
+function Option(names, description, type, defaultValue, extraInfo) //{{{
 {
     if (!names || !type)
         return null;
@@ -112,7 +112,7 @@ with (liberator) liberator.Option = function (names, description, type, defaultV
             if (newValue === undefined)
             {
                 newValue = tmpValue;
-                log("DEPRECATED: '" + this.name + "' setter should return a value");
+                liberator.log("DEPRECATED: '" + this.name + "' setter should return a value");
             }
         }
 
@@ -156,7 +156,7 @@ with (liberator) liberator.Option = function (names, description, type, defaultV
 
 }; //}}}
 
-with (liberator) liberator.Options = function () //{{{
+function Options() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -176,7 +176,7 @@ with (liberator) liberator.Options = function () //{{{
 
     storage.newMap("options", false);
     storage.addObserver("options", optionObserver);
-    registerObserver("shutdown", function () {
+    liberator.registerObserver("shutdown", function () {
         storage.removeObserver("options", optionObserver)
     });
 
@@ -189,26 +189,26 @@ with (liberator) liberator.Options = function () //{{{
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_STRING)
                     prefService.setCharPref(name, value);
                 else if (type == prefService.PREF_INT)
-                    echoerr("E521: Number required after =: " + name + "=" + value);
+                    liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
-                    echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_INT)
                     prefService.setIntPref(name, value);
                 else
-                    echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
                 if (type == prefService.PREF_INVALID || type == prefService.PREF_BOOL)
                     prefService.setBoolPref(name, value);
                 else if (type == prefService.PREF_INT)
-                    echoerr("E521: Number required after =: " + name + "=" + value);
+                    liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
-                    echoerr("E474: Invalid argument: " + name + "=" + value);
+                    liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             default:
-                echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
+                liberator.echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
         }
     }
 
@@ -254,7 +254,7 @@ with (liberator) liberator.Options = function () //{{{
     if (!/keypress/.test(popupAllowedEvents))
     {
         storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
-        registerObserver("shutdown", function ()
+        liberator.registerObserver("shutdown", function ()
         {
             if (loadPreference("dom.popup_allowed_events", "")
                     == popupAllowedEvents + " keypress")
@@ -296,9 +296,9 @@ with (liberator) liberator.Options = function () //{{{
                     }
                     </table>;
                 if (str.*.length())
-                    echo(str, commandline.FORCE_MULTILINE);
+                    liberator.echo(str, commandline.FORCE_MULTILINE);
                 else
-                    echo("No variables found");
+                    liberator.echo("No variables found");
                 return;
             }
 
@@ -308,17 +308,17 @@ with (liberator) liberator.Options = function () //{{{
             {
                 if (!matches[1])
                 {
-                    var reference = variableReference(matches[2]);
+                    var reference = liberator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
                     {
-                        echoerr("E121: Undefined variable: " + matches[2]);
+                        liberator.echoerr("E121: Undefined variable: " + matches[2]);
                         return;
                     }
 
-                    var expr = evalExpression(matches[4]);
+                    var expr = liberator.evalExpression(matches[4]);
                     if (expr === undefined)
                     {
-                        echoerr("E15: Invalid expression: " + matches[4]);
+                        liberator.echoerr("E15: Invalid expression: " + matches[4]);
                         return;
                     }
                     else
@@ -348,10 +348,10 @@ with (liberator) liberator.Options = function () //{{{
             // 1 - name
             else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
-                var reference = variableReference(matches[1]);
+                var reference = liberator.variableReference(matches[1]);
                 if (!reference[0])
                 {
-                    echoerr("E121: Undefined variable: " + matches[1]);
+                    liberator.echoerr("E121: Undefined variable: " + matches[1]);
                     return;
                 }
 
@@ -359,7 +359,7 @@ with (liberator) liberator.Options = function () //{{{
                 let prefix = typeof value == "number"   ? "#" :
                              typeof value == "function" ? "*" :
                                                           " ";
-                echo(reference[1] + "\t\t" + prefix + value);
+                liberator.echo(reference[1] + "\t\t" + prefix + value);
             }
         });
 
@@ -369,9 +369,9 @@ with (liberator) liberator.Options = function () //{{{
         {
             if (special) // open Firefox settings GUI dialog
             {
-                open("about:config",
+                liberator.open("about:config",
                     (options["newtab"] && options.get("newtab").has("all", "prefs"))
-                            ? NEW_TAB : CURRENT_TAB);
+                            ? liberator.NEW_TAB : liberator.CURRENT_TAB);
             }
             else
             {
@@ -488,7 +488,7 @@ with (liberator) liberator.Options = function () //{{{
                 let invertBoolean = (postfix == "!");
 
                 if (name == "all" && reset)
-                    echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
+                    liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
                 else if (name == "all")
                     options.listPrefs(onlyNonDefault, "");
                 else if (reset)
@@ -524,14 +524,14 @@ with (liberator) liberator.Options = function () //{{{
             let opt = parseOpt(args, modifiers);
             if (!opt)
             {
-                echoerr("Error parsing :set command: " + args);
+                liberator.echoerr("Error parsing :set command: " + args);
                 return;
             }
 
             let option = opt.option;
             if (option == null && !opt.all)
             {
-                echoerr("No such option: " + opt.name);
+                liberator.echoerr("No such option: " + opt.name);
                 return;
             }
 
@@ -558,9 +558,9 @@ with (liberator) liberator.Options = function () //{{{
                 else
                 {
                     if (option.type == "boolean")
-                        echo((opt.optionValue ? "  " : "no") + option.name);
+                        liberator.echo((opt.optionValue ? "  " : "no") + option.name);
                     else
-                        echo("  " + option.name + "=" + opt.optionValue);
+                        liberator.echo("  " + option.name + "=" + opt.optionValue);
                 }
             }
             // write access
@@ -576,7 +576,7 @@ with (liberator) liberator.Options = function () //{{{
                     case "boolean":
                         if (opt.valueGiven)
                         {
-                            echoerr("E474: Invalid argument: " + args);
+                            liberator.echoerr("E474: Invalid argument: " + args);
                             return;
                         }
 
@@ -592,7 +592,7 @@ with (liberator) liberator.Options = function () //{{{
 
                         if (isNaN(value))
                         {
-                            echoerr("E521: Number required after =: " + args);
+                            liberator.echoerr("E521: Number required after =: " + args);
                             return;
                         }
 
@@ -662,7 +662,7 @@ with (liberator) liberator.Options = function () //{{{
                         break;
 
                     default:
-                        echoerr("E685: Internal error: option type `" + option.type + "' not supported");
+                        liberator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
                 }
 
                 if (option.isValidValue(newValue))
@@ -671,7 +671,7 @@ with (liberator) liberator.Options = function () //{{{
                 }
                 else
                     // FIXME: need to be able to specify more specific errors
-                    echoerr("E474: Invalid argument: " + args);
+                    liberator.echoerr("E474: Invalid argument: " + args);
             }
         },
         {
@@ -806,11 +806,11 @@ with (liberator) liberator.Options = function () //{{{
             for (let i = 0; i < args.arguments.length; i++)
             {
                 var name = args.arguments[i];
-                var reference = variableReference(name);
+                var reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
                     if (!special)
-                        echoerr("E108: No such variable: " + name);
+                        liberator.echoerr("E108: No such variable: " + name);
                     return;
                 }
 
@@ -851,7 +851,7 @@ with (liberator) liberator.Options = function () //{{{
             if (option.name in optionHash)
             {
                 // never replace for now
-                log("Warning: '" + names[0] + "' already exists, NOT replacing existing option.", 1);
+                liberator.log("Warning: '" + names[0] + "' already exists, NOT replacing existing option.", 1);
                 return false;
             }
 
@@ -892,7 +892,7 @@ with (liberator) liberator.Options = function () //{{{
                         isDefault: opt.value == opt.defaultValue,
                         name:      opt.name,
                         default:   opt.defaultValue,
-                        pre:       "  ", /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
                         value:     <></>,
                     };
 
@@ -942,7 +942,7 @@ with (liberator) liberator.Options = function () //{{{
                         default:   loadPreference(pref, null, true),
                         value:     <>={template.highlight(value)}</>,
                         name:      pref,
-                        pre:       "  ", /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
                     };
 
                     yield option;
@@ -976,7 +976,7 @@ with (liberator) liberator.Options = function () //{{{
             if (prefService.getPrefType(name) == prefService.PREF_BOOL)
                 this.setPref(name, !this.getPref(name));
             else
-                echoerr("E488: Trailing characters: " + name + "!");
+                liberator.echoerr("E488: Trailing characters: " + name + "!");
         }
     };
     //}}}

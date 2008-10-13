@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.AutoCommands = function () //{{{
+function AutoCommands() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -83,7 +83,7 @@ with (liberator) liberator.AutoCommands = function () //{{{
                 events = event.split(",");
                 if (!events.every(function (event) validEvents.indexOf(event) >= 0))
                 {
-                    echoerr("E216: No such group or event: " + event);
+                    liberator.echoerr("E216: No such group or event: " + event);
                     return;
                 }
             }
@@ -144,18 +144,18 @@ with (liberator) liberator.AutoCommands = function () //{{{
 
             if (event == "*")
             {
-                echoerr("E217: Can't execute autocommands for ALL events");
+                liberator.echoerr("E217: Can't execute autocommands for ALL events");
             }
             else if (validEvents.indexOf(event) == -1)
             {
-                echoerr("E216: No such group or event: " + args);
+                liberator.echoerr("E216: No such group or event: " + args);
             }
             else
             {
                 // TODO: perhaps trigger could return the number of autocmds triggered
                 // TODO: Perhaps this should take -args to pass to the command?
                 if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
-                    echo("No matching autocommands");
+                    liberator.echo("No matching autocommands");
                 else
                     autocommands.trigger(event, {url: url});
             }
@@ -184,7 +184,7 @@ with (liberator) liberator.AutoCommands = function () //{{{
             if (typeof events == "string")
             {
                 events = events.split(",");
-                log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
+                liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
             events.forEach(function (event)
                 store.push({event: event, pattern: RegExp(regex), command: cmd}));
@@ -242,7 +242,7 @@ with (liberator) liberator.AutoCommands = function () //{{{
 
             let autoCmds = store.filter(function (autoCmd) autoCmd.event == event);
 
-            echomsg("Executing " + event + " Auto commands for \"*\"", 8);
+            liberator.echomsg("Executing " + event + " Auto commands for \"*\"", 8);
 
             let lastPattern = null;
 
@@ -252,12 +252,12 @@ with (liberator) liberator.AutoCommands = function () //{{{
                 if (autoCmd.pattern.test(url))
                 {
                     if (!lastPattern || lastPattern.source != autoCmd.pattern.source)
-                        echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
+                        liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
 
                     lastPattern = autoCmd.pattern;
 
-                    echomsg("autocommand " + autoCmd.command, 9);
-                    execute(commands.replaceTokens(autoCmd.command, args));
+                    liberator.echomsg("autocommand " + autoCmd.command, 9);
+                    liberator.execute(commands.replaceTokens(autoCmd.command, args));
                 }
             }
         }
@@ -265,11 +265,13 @@ with (liberator) liberator.AutoCommands = function () //{{{
     //}}}
 }; //}}}
 
-with (liberator) liberator.Events = function () //{{{
+function Events() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
+
+    const input = liberator.input;
 
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
@@ -306,7 +308,7 @@ with (liberator) liberator.Events = function () //{{{
                 tabs.updateSelectionHistory();
 
                 if (options["focuscontent"])
-                    setTimeout(function () { focusContent(true); }, 10); // just make sure, that no widget has focus
+                    setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
             }, false);
         }
 
@@ -365,7 +367,7 @@ with (liberator) liberator.Events = function () //{{{
 
     // window.document.addEventListener("DOMTitleChanged", function (event)
     // {
-    //     log("titlechanged");
+    //     liberator.log("titlechanged");
     // }, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
@@ -523,7 +525,7 @@ with (liberator) liberator.Events = function () //{{{
             }
             else // background tab
             {
-                echomsg("Background tab loaded: " + title || url, 1);
+                liberator.echomsg("Background tab loaded: " + title || url, 1);
             }
 
             triggerLoadAutocmd("PageLoad", doc);
@@ -541,12 +543,12 @@ with (liberator) liberator.Events = function () //{{{
             catch (e)
             {
                 if (e.message == "Interrupted")
-                    echoerr("Interrupted");
+                    liberator.echoerr("Interrupted");
                 else
-                    echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
+                    liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
+                liberator.dump(e);
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
-                liberator.dump(e);
             }
         }
     }
@@ -554,8 +556,8 @@ with (liberator) liberator.Events = function () //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
-        dump("start waiting in loaded state: " + buffer.loaded);
-        threadYield(true); // clear queue
+        liberator.dump("start waiting in loaded state: " + buffer.loaded);
+        liberator.threadYield(true); // clear queue
 
         if (buffer.loaded == 1)
             return true;
@@ -564,32 +566,32 @@ with (liberator) liberator.Events = function () //{{{
         var then = new Date().getTime();
         for (let now = then; now - then < ms; now = new Date().getTime())
         {
-            threadYield();
+            liberator.threadYield();
             if ((now - then) % 1000 < 10)
-                dump("waited: " + (now - then) + " ms");
+                liberator.dump("waited: " + (now - then) + " ms");
 
             if (!events.feedingKeys)
                 return false;
 
             if (buffer.loaded > 0)
             {
-                sleep(250);
+                liberator.sleep(250);
                 break;
             }
             else
-                echo("Waiting for page to load...");
+                liberator.echo("Waiting for page to load...");
         }
         modes.show();
 
         // TODO: allow macros to be continued when page does not fully load with an option
         var ret = (buffer.loaded == 1);
         if (!ret)
-            echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
-        dump("done waiting: " + ret);
+            liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+        liberator.dump("done waiting: " + ret);
 
         // sometimes the input widget had focus when replaying a macro
         // maybe this call should be moved somewhere else?
-        // focusContent(true);
+        // liberator.focusContent(true);
 
         return ret;
     }
@@ -606,9 +608,9 @@ with (liberator) liberator.Events = function () //{{{
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
+                    liberator.echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
 
-                    log("Sourcing macros directory: " + dir.path + "...", 3);
+                    liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
                     let files = io.readDirectory(dir.path);
 
@@ -620,19 +622,19 @@ with (liberator) liberator.Events = function () //{{{
                         let name = file.leafName.replace(/\.vimp$/i, "");
                         macros.set(name, io.readFile(file).split("\n")[0]);
 
-                        log("Macro " + name + " added: " + macros.get(name), 5);
+                        liberator.log("Macro " + name + " added: " + macros.get(name), 5);
                     });
                 }
             }
             else
             {
-                log("No user macros directory found", 3);
+                liberator.log("No user macros directory found", 3);
             }
         }
         catch (e)
         {
             // thrown if directory does not exist
-            log("Error sourcing macros directory: " + e, 9);
+            liberator.log("Error sourcing macros directory: " + e, 9);
         }
     }, 100);
 
@@ -710,7 +712,7 @@ with (liberator) liberator.Events = function () //{{{
         {
             XML.prettyPrinting = false;
             var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args));
-            echo(str, commandline.FORCE_MULTILINE);
+            liberator.echo(str, commandline.FORCE_MULTILINE);
         },
         { completer: function (filter) completion.macro(filter) });
 
@@ -735,7 +737,7 @@ with (liberator) liberator.Events = function () //{{{
         destroy: function ()
         {
             // removeEventListeners() to avoid mem leaks
-            dump("TODO: remove all eventlisteners");
+            liberator.dump("TODO: remove all eventlisteners");
 
             if (typeof getBrowser != "undefined")
                 getBrowser().removeProgressListener(this.progressListener);
@@ -754,7 +756,7 @@ with (liberator) liberator.Events = function () //{{{
             if (!/[a-zA-Z0-9]/.test(macro))
             {
                 // TODO: ignore this like Vim?
-                echoerr("E354: Invalid register name: '" + macro + "'");
+                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
                 return;
             }
 
@@ -778,7 +780,7 @@ with (liberator) liberator.Events = function () //{{{
             var res = false;
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
-                echoerr("E354: Invalid register name: '" + macro + "'");
+                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
                 return false;
             }
 
@@ -786,7 +788,7 @@ with (liberator) liberator.Events = function () //{{{
             {
                 if (!lastMacro)
                 {
-                    echoerr("E748: No previously used register");
+                    liberator.echoerr("E748: No previously used register");
                     return false;
                 }
             }
@@ -816,9 +818,9 @@ with (liberator) liberator.Events = function () //{{{
             {
                 if (lastMacro.length == 1)
                     // TODO: ignore this like Vim?
-                    echoerr("Exxx: Register " + lastMacro + " not set");
+                    liberator.echoerr("Exxx: Register " + lastMacro + " not set");
                 else
-                    echoerr("Exxx: Named macro '" + lastMacro + "' not set");
+                    liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
             }
             return res;
         },
@@ -922,7 +924,7 @@ with (liberator) liberator.Events = function () //{{{
                 if (modes.isReplaying && !waitForPageLoaded())
                     break;
                 // else // a short break between keys often helps
-                //     sleep(50);
+                //     liberator.sleep(50);
             }
             this.feedingKeys = wasFeeding;
             return i == keys.length;
@@ -1025,7 +1027,7 @@ with (liberator) liberator.Events = function () //{{{
         onFocusChange: function (event)
         {
             // command line has it's own focus change handler
-            if (mode == modes.COMMAND_LINE)
+            if (liberator.mode == modes.COMMAND_LINE)
                 return;
 
             var win  = window.document.commandDispatcher.focusedWindow;
@@ -1033,9 +1035,9 @@ with (liberator) liberator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
-            //log("onFocusChange: " + elem);
-            //dump("=+++++++++=\n" + util.objectToString(event.target) + "\n")
-            //dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
+            //liberator.log("onFocusChange: " + elem);
+            //liberator.dump("=+++++++++=\n" + util.objectToString(event.target) + "\n")
+            //liberator.dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
             if (elem && (
                    (elem instanceof HTMLInputElement && (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password")) ||
@@ -1043,7 +1045,7 @@ with (liberator) liberator.Events = function () //{{{
                 ))
             {
                 this.wantsModeReset = false;
-                liberator.mode = liberator.modes.INSERT;
+                liberator.mode = modes.INSERT;
                 buffer.lastInputField = elem;
                 return;
             }
@@ -1069,24 +1071,24 @@ with (liberator) liberator.Events = function () //{{{
                 {
                     if (config.isComposeWindow)
                     {
-                        dump("Compose editor got focus");
+                        liberator.dump("Compose editor got focus");
                         modes.set(modes.INSERT, modes.TEXTAREA);
                     }
-                    else if (mode != modes.MESSAGE)
-                        liberator.mode = liberator.modes.MESSAGE;
+                    else if (liberator.mode != modes.MESSAGE)
+                        liberator.mode = modes.MESSAGE;
                     return;
                 }
             }
 
-            if (mode == modes.INSERT ||
-                mode == modes.TEXTAREA ||
-                mode == modes.MESSAGE ||
-                mode == modes.VISUAL)
+            if (liberator.mode == modes.INSERT ||
+                liberator.mode == modes.TEXTAREA ||
+                liberator.mode == modes.MESSAGE ||
+                liberator.mode == modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
                // setTimeout(function () {
-               //     dump("cur: " + mode + "\n");
+               //     liberator.dump("cur: " + liberator.mode + "\n");
                //     if (events.wantsModeReset)
                //     {
                //         events.wantsModeReset = false;
@@ -1103,15 +1105,15 @@ with (liberator) liberator.Events = function () //{{{
             if (controller && controller.isCommandEnabled("cmd_copy"))
                 couldCopy = true;
 
-            if (mode != modes.VISUAL)
+            if (liberator.mode != modes.VISUAL)
             {
                 if (couldCopy)
                 {
-                    if ((mode == modes.TEXTAREA ||
+                    if ((liberator.mode == modes.TEXTAREA ||
                          (modes.extended & modes.TEXTAREA))
                             && !options["insertmode"])
                         modes.set(modes.VISUAL, modes.TEXTAREA);
-                    else if (mode == modes.CARET)
+                    else if (liberator.mode == modes.CARET)
                         modes.set(modes.VISUAL, modes.CARET);
                 }
             }
@@ -1119,7 +1121,7 @@ with (liberator) liberator.Events = function () //{{{
             // else
             // {
             //     if (!couldCopy && modes.extended & modes.CARET)
-            //         liberator.mode = liberator.modes.CARET;
+            //         liberator.mode = modes.CARET;
             // }
         },
 
@@ -1134,7 +1136,7 @@ with (liberator) liberator.Events = function () //{{{
                     return;
                 }
 
-                switch (mode)
+                switch (liberator.mode)
                 {
                     case modes.NORMAL:
                         // clear any selection made
@@ -1147,14 +1149,14 @@ with (liberator) liberator.Events = function () //{{{
                         commandline.clear();
 
                         modes.reset();
-                        focusContent(true);
+                        liberator.focusContent(true);
                         break;
 
                     case modes.VISUAL:
                         if (modes.extended & modes.TEXTAREA)
-                            liberator.mode = liberator.modes.TEXTAREA;
+                            liberator.mode = modes.TEXTAREA;
                         else if (modes.extended & modes.CARET)
-                            liberator.mode = liberator.modes.CARET;
+                            liberator.mode = modes.CARET;
                         break;
 
                     case modes.CARET:
@@ -1166,12 +1168,12 @@ with (liberator) liberator.Events = function () //{{{
                     case modes.INSERT:
                         if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
                         {
-                            liberator.mode = liberator.modes.TEXTAREA;
+                            liberator.mode = modes.TEXTAREA;
                         }
                         else
                         {
                             modes.reset();
-                            focusContent(true);
+                            liberator.focusContent(true);
                         }
                         break;
 
@@ -1190,22 +1192,22 @@ with (liberator) liberator.Events = function () //{{{
             if (!key)
                  return true;
 
-            //log(key + " in mode: " + mode);
-            //dump(key + " in mode: " + mode + "\n");
+            //liberator.log(key + " in mode: " + liberator.mode);
+            //liberator.dump(key + " in mode: " + liberator.mode + "\n");
 
             if (modes.isRecording)
             {
                 if (key == "q") // TODO: should not be hardcoded
                 {
                     modes.isRecording = false;
-                    log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
-                    echo("Recorded macro '" + currentMacro + "'");
+                    liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
+                    liberator.echo("Recorded macro '" + currentMacro + "'");
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
                 }
                 else if (!(modes.extended & modes.INACTIVE_HINT) &&
-                         !mappings.hasMap(mode, input.buffer + key))
+                         !mappings.hasMap(liberator.mode, input.buffer + key))
                 {
                     macros.set(currentMacro, macros.get(currentMacro) + key);
                 }
@@ -1223,7 +1225,7 @@ with (liberator) liberator.Events = function () //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    setTimeout(function () { echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
+                    setTimeout(function () { liberator.echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1258,7 +1260,7 @@ with (liberator) liberator.Events = function () //{{{
             }
 
             // just forward event without checking any mappings when the MOW is open
-            if (mode == modes.COMMAND_LINE &&
+            if (liberator.mode == modes.COMMAND_LINE &&
                 (modes.extended & modes.OUTPUT_MULTILINE))
             {
                 commandline.onMultilineOutputEvent(event);
@@ -1270,8 +1272,8 @@ with (liberator) liberator.Events = function () //{{{
             // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if ((config.name == "Vimperator" && mode == modes.NORMAL)
-                 || mode == modes.INSERT)
+            if ((config.name == "Vimperator" && liberator.mode == modes.NORMAL)
+                 || liberator.mode == modes.INSERT)
             {
                 if (key == "<Return>")
                     return false;
@@ -1302,7 +1304,7 @@ with (liberator) liberator.Events = function () //{{{
             if (key != "<Esc>" && key != "<C-[>")
             {
                 // custom mode...
-                if (mode == modes.CUSTOM)
+                if (liberator.mode == modes.CUSTOM)
                 {
                     plugins.onEvent(event);
                     event.preventDefault();
@@ -1310,7 +1312,7 @@ with (liberator) liberator.Events = function () //{{{
                     return false;
                 }
                 // if Hint mode is on, special handling of keys is required
-                if (mode == modes.HINTS)
+                if (liberator.mode == modes.HINTS)
                 {
                     hints.onEvent(event);
                     event.preventDefault();
@@ -1326,22 +1328,22 @@ with (liberator) liberator.Events = function () //{{{
             // whatever reason).  if that happens to be correct, well..
             // XXX: why not just do that as well for HINTS mode actually?
 
-            if (mode == modes.CUSTOM)
+            if (liberator.mode == modes.CUSTOM)
                 return true;
 
             var countStr = input.buffer.match(/^[0-9]*/)[0];
             var candidateCommand = (input.buffer + key).replace(countStr, "");
             var map;
             if (event.noremap)
-                map = mappings.getDefault(mode, candidateCommand);
+                map = mappings.getDefault(liberator.mode, candidateCommand);
             else
-                map = mappings.get(mode, candidateCommand);
+                map = mappings.get(liberator.mode, candidateCommand);
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(input.buffer + key))
             {
                 // no count for insert mode mappings
-                if (mode == modes.INSERT || mode == modes.COMMAND_LINE)
+                if (liberator.mode == modes.INSERT || liberator.mode == modes.COMMAND_LINE)
                     stop = false;
                 else
                 {
@@ -1367,7 +1369,7 @@ with (liberator) liberator.Events = function () //{{{
             // (allows you to do :map z yy, when zz is a longer mapping than z)
             // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
             else if (map && !skipMap && (map.rhs ||
-                     mappings.getCandidates(mode, candidateCommand).length == 0))
+                     mappings.getCandidates(liberator.mode, candidateCommand).length == 0))
             {
                 input.count = parseInt(countStr, 10);
                 if (isNaN(input.count))
@@ -1408,7 +1410,7 @@ with (liberator) liberator.Events = function () //{{{
                         stop = false;
                 }
             }
-            else if (mappings.getCandidates(mode, candidateCommand).length > 0 && !skipMap)
+            else if (mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !skipMap)
             {
                 input.buffer += key;
                 inputBufferLength++;
@@ -1416,8 +1418,8 @@ with (liberator) liberator.Events = function () //{{{
             else // if the key is neither a mapping nor the start of one
             {
                 // the mode checking is necessary so that things like g<esc> do not beep
-                if (input.buffer != "" && !skipMap && (mode == modes.INSERT ||
-                    mode == modes.COMMAND_LINE || mode == modes.TEXTAREA))
+                if (input.buffer != "" && !skipMap && (liberator.mode == modes.INSERT ||
+                    liberator.mode == modes.COMMAND_LINE || liberator.mode == modes.TEXTAREA))
                 {
                     // no map found -> refeed stuff in v.input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so
@@ -1438,14 +1440,14 @@ with (liberator) liberator.Events = function () //{{{
                     // allow key to be passed to firefox if we can't handle it
                     stop = false;
 
-                    if (mode == modes.COMMAND_LINE)
+                    if (liberator.mode == modes.COMMAND_LINE)
                     {
                         if (!(modes.extended & modes.INPUT_MULTILINE))
                             commandline.onEvent(event); // reroute event in command line mode
                     }
-                    else if (mode != modes.INSERT && mode != modes.TEXTAREA)
+                    else if (liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA)
                     {
-                        beep();
+                        liberator.beep();
                     }
                 }
             }
@@ -1505,7 +1507,7 @@ with (liberator) liberator.Events = function () //{{{
                         if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)
                         {
                             setTimeout(function () { modes.reset(false); },
-                                mode == modes.HINTS ? 500 : 0);
+                                liberator.mode == modes.HINTS ? 500 : 0);
                         }
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
@@ -1558,7 +1560,7 @@ with (liberator) liberator.Events = function () //{{{
                     if (ssli == 1)
                         statusline.updateUrl("Link: " + link);
                     else if (ssli == 2)
-                        echo("Link: " + link, commandline.DISALLOW_MULTILINE);
+                        liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
                 }
 
                 if (link == "")
@@ -1605,7 +1607,7 @@ with (liberator) liberator.Events = function () //{{{
                 {
                     case "accessibility.browsewithcaret":
                         var value = options.getPref("accessibility.browsewithcaret", false);
-                        liberator.mode = value ? liberator.modes.CARET : liberator.modes.NORMAL;
+                        liberator.mode = value ? modes.CARET : modes.NORMAL;
                         break;
                 }
              }
@@ -1626,7 +1628,7 @@ with (liberator) liberator.Events = function () //{{{
     catch (e) {}
 
     eventManager.prefObserver.register();
-    registerObserver("shutdown", function () {
+    liberator.registerObserver("shutdown", function () {
             eventManager.destroy();
             eventManager.prefObserver.unregister();
     });

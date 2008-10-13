@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.config = { //{{{
+const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
@@ -103,6 +103,12 @@ with (liberator) liberator.config = { //{{{
         "various.html"
         ],*/
 
+    scripts: [
+        "addressbook.js",
+        "mail.js",
+        "tabs.js",
+    ],
+
     init: function ()
     {
         // don't wait too long when selecting new messages
@@ -119,7 +125,7 @@ with (liberator) liberator.config = { //{{{
         if (this.isComposeWindow)
         {
             this.features = ["addressbook"]; // the composer has no special features
-            //loadModule("addressbook", Addressbook);
+            //liberator.loadModule("addressbook", Addressbook);
 
             // TODO: move mappings elsewhere, probably compose.js
             mappings.add([modes.COMPOSE],
@@ -200,11 +206,11 @@ with (liberator) liberator.config = { //{{{
         }
         else
         {
-            loadModule("mail",        Mail);
-            loadModule("addressbook", Addressbook);
-            loadModule("tabs",        Tabs);
-            loadModule("marks",       Marks);
-            loadModule("hints",       Hints);
+            liberator.loadModule("mail",        Mail);
+            liberator.loadModule("addressbook", Addressbook);
+            liberator.loadModule("tabs",        Tabs);
+            liberator.loadModule("marks",       Marks);
+            liberator.loadModule("hints",       Hints);
         }
     }
 }; //}}}

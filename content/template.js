@@ -1,5 +1,5 @@
 
-with (liberator) liberator.template = {
+const template = {
     add: function (a, b) a + b,
     join: function (c) function (a, b) a + c + b,
 
@@ -84,7 +84,7 @@ with (liberator) liberator.template = {
             return <>{str}</>;
         let lcstr = String(str).toLowerCase();
         let lcfilter = filter.toLowerCase();
-        str = String(str).replace(" ", " ");
+        str = String(str).replace(" ", "\u00a0");
         let s = <></>;
         let start = 0;
         let i;
@@ -129,7 +129,7 @@ with (liberator) liberator.template = {
                                     ({
                                         template.map(item.extra, function (e)
                                         <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                                        <![CDATA[ ]]>/* Non-breaking space */)
+                                        <![CDATA[\u00a0]]>/* Non-breaking space */)
                                     })
                                 </span>
                             }

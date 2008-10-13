@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.Mail = function () //{{{
+function Mail() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -92,7 +92,7 @@ with (liberator) liberator.Mail = function () //{{{
     function getFolderCompletions(filter)
     {
         var completions = [];
-        var folders = mail.getFolders();
+        var folders = liberator.mail.getFolders();
 
         for (let folder = 0; folder < folders.length; folder++)
         {
@@ -113,38 +113,38 @@ with (liberator) liberator.Mail = function () //{{{
     {
         if (!destinationFolder)
         {
-            echoerr("E471: Argument required");
+            liberator.echoerr("E471: Argument required");
             return false;
         }
 
-        var folders = mail.getFolders(destinationFolder);
+        var folders = liberator.mail.getFolders(destinationFolder);
         if (folders.length == 0)
         {
-            echoerr("E94: No matching folder for " + destinationFolder);
+            liberator.echoerr("E94: No matching folder for " + destinationFolder);
             return false;
         }
         else if (folders.length > 1)
         {
-            echoerr("E93: More than one match for " + destinationFolder);
+            liberator.echoerr("E93: More than one match for " + destinationFolder);
             return false;
         }
 
         var count = gDBView.selection.count;
         if (!count)
         {
-            beep();
+            liberator.beep();
             return false;
         }
 
         if (copy)
         {
             MsgCopyMessage(folders[0]);
-            setTimeout(function () { echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
         }
         else
         {
             MsgMoveMessage(folders[0]);
-            setTimeout(function () { echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
         }
         return true;
     }
@@ -184,7 +184,7 @@ with (liberator) liberator.Mail = function () //{{{
             i += direction;
         }
         if (!folder || count > 0)
-            beep();
+            liberator.beep();
         else
             tree.view.selection.timedSelect(c + folder, tree._selectDelay);
     }
@@ -252,7 +252,7 @@ with (liberator) liberator.Mail = function () //{{{
         function ()
         {
             if (gDBView && gDBView.selection.count < 1)
-                return beep();
+                return liberator.beep();
 
             MsgOpenNewTabForMessage();
         });
@@ -276,32 +276,32 @@ with (liberator) liberator.Mail = function () //{{{
 
     mappings.add(myModes, ["j", "<Right>"],
         "Select next message",
-        function (count) { mail.selectMessage(function (msg) true, false, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, false, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["gj"],
         "Select next message, including closed threads",
-        function (count) { mail.selectMessage(function (msg) true, false, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, true, false, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["J", "<Tab>"],
         "Select next unread message",
-        function (count) { mail.selectMessage(function (msg) !msg.isRead, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) !msg.isRead, true, true, false, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["k", "<Left>"],
         "Select previous message",
-        function (count) { mail.selectMessage(function (msg) true, false, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, true, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["gk"],
         "Select previous message",
-        function (count) { mail.selectMessage(function (msg) true, false, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, true, true, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["K"],
         "Select previous unread message",
-        function (count) { mail.selectMessage(function (msg) !msg.isRead, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) !msg.isRead, true, true, true, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["*"],
@@ -311,9 +311,9 @@ with (liberator) liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, false, count);
+                liberator.mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, false, count);
             }
-            catch (e) { beep(); }
+            catch (e) { liberator.beep(); }
         },
         { flags: Mappings.flags.COUNT });
 
@@ -324,9 +324,9 @@ with (liberator) liberator.Mail = function () //{{{
             try
             {
                 var author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, true, count);
+                liberator.mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, true, count);
             }
-            catch (e) { beep(); }
+            catch (e) { liberator.beep(); }
         },
         { flags: Mappings.flags.COUNT });
 
@@ -346,7 +346,7 @@ with (liberator) liberator.Mail = function () //{{{
           }
           catch (e)
           {
-              beep();
+              liberator.beep();
           }
         });
 
@@ -379,12 +379,12 @@ with (liberator) liberator.Mail = function () //{{{
 
     mappings.add([modes.MESSAGE], ["<Left>"],
         "Select previous message",
-        function (count) { mail.selectMessage(function (msg) true, false, false, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, true, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.MESSAGE], ["<Right>"],
         "Select next message",
-        function (count) { mail.selectMessage(function (msg) true, false, false, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) true, false, false, false, count); },
         { flags: Mappings.flags.COUNT });
 
     // UNDO/REDO
@@ -395,7 +395,7 @@ with (liberator) liberator.Mail = function () //{{{
             if (messenger.canUndo())
                 messenger.undo(msgWindow);
             else
-                beep();
+                liberator.beep();
         });
     mappings.add(myModes, ["<C-r>"],
         "Redo",
@@ -404,17 +404,17 @@ with (liberator) liberator.Mail = function () //{{{
             if (messenger.canRedo())
                 messenger.redo(msgWindow);
             else
-                beep();
+                liberator.beep();
         });
 
     // GETTING MAIL
     mappings.add(myModes, ["gm"],
         "Get new messages",
-        function () { mail.getNewMessages(); });
+        function () { liberator.mail.getNewMessages(); });
 
     mappings.add(myModes, ["gM"],
         "Get new messages for current account only",
-        function () { mail.getNewMessages(true); });
+        function () { liberator.mail.getNewMessages(true); });
 
     // MOVING MAIL
     mappings.add(myModes, ["c"],
@@ -435,22 +435,22 @@ with (liberator) liberator.Mail = function () //{{{
 
     mappings.add(myModes, ["]s"],
         "Select next starred message",
-        function (count) { mail.selectMessage(function (msg) msg.isFlagged, true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) msg.isFlagged, true, true, false, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["[s"],
         "Select previous starred message",
-        function (count) { mail.selectMessage(function (msg) msg.isFlagged, true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) msg.isFlagged, true, true, true, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["]a"],
         "Select next message with an attachment",
-        function (count) { mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, false, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, false, count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["[a"],
         "Select previous message with an attachment",
-        function (count) { mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, true, count); },
+        function (count) { liberator.mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, true, count); },
         { flags: Mappings.flags.COUNT });
 
     // FOLDER SWITCHING
@@ -458,11 +458,11 @@ with (liberator) liberator.Mail = function () //{{{
         "Go to inbox",
         function (count)
         {
-            var folder = mail.getFolders("Inbox", false, true)[(count > 0) ? (count - 1) : 0];
+            var folder = liberator.mail.getFolders("Inbox", false, true)[(count > 0) ? (count - 1) : 0];
             if (folder)
                 SelectFolder(folder.URI);
             else
-                beep();
+                liberator.beep();
         },
         { flags: Mappings.flags.COUNT });
 
@@ -475,7 +475,7 @@ with (liberator) liberator.Mail = function () //{{{
             var c = tree.currentIndex;
             if (c + count >= tree.view.rowCount)
             {
-                beep();
+                liberator.beep();
                 return;
             }
             tree.view.selection.timedSelect(c + count, tree._selectDelay );
@@ -499,7 +499,7 @@ with (liberator) liberator.Mail = function () //{{{
             var c = tree.currentIndex;
             if (c - count < 0)
             {
-                beep();
+                liberator.beep();
                 return;
             }
             tree.view.selection.timedSelect(c - count, tree._selectDelay );
@@ -517,15 +517,15 @@ with (liberator) liberator.Mail = function () //{{{
     // THREADING
     mappings.add(myModes, ["za"],
         "Toggle thread collapsed/expanded",
-        function () { if (!mail.expandThread()) mail.collapseThread(); });
+        function () { if (!liberator.mail.expandThread()) liberator.mail.collapseThread(); });
 
     mappings.add(myModes, ["zc"],
         "Collapse thread",
-        function () { mail.collapseThread(); });
+        function () { liberator.mail.collapseThread(); });
 
     mappings.add(myModes, ["zo"],
         "Open thread",
-        function () { mail.expandThread(); });
+        function () { liberator.mail.expandThread(); });
 
     mappings.add(myModes, ["zr", "zR"],
         "Expand all threads",
@@ -561,7 +561,7 @@ with (liberator) liberator.Mail = function () //{{{
         function (arg)
         {
             if (!GetSelectedMessages())
-                return beep();
+                return liberator.beep();
 
             switch (arg)
             {
@@ -572,7 +572,7 @@ with (liberator) liberator.Mail = function () //{{{
                 case "p": ToggleMessageTagKey(3); break; // Personal
                 case "t": ToggleMessageTagKey(4); break; // TODO
                 case "l": ToggleMessageTagKey(5); break; // Later
-                default:  beep();
+                default:  liberator.beep();
             }
         },
         {
@@ -584,17 +584,17 @@ with (liberator) liberator.Mail = function () //{{{
         "Mark current folder as read",
         function ()
         {
-            if (mail.currentFolder.isServer)
-                return beep();
+            if (liberator.mail.currentFolder.isServer)
+                return liberator.beep();
 
-            mail.currentFolder.markAllMessagesRead();
+            liberator.mail.currentFolder.markAllMessagesRead();
         });
 
     mappings.add(myModes, ["<C-t>"],
         "Mark all messages as read",
         function ()
         {
-            mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(); });
+            liberator.mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(); });
         });
 
     // DISPLAY OPTIONS
@@ -612,7 +612,7 @@ with (liberator) liberator.Mail = function () //{{{
         function ()
         {
             var want_html = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
-            mail.setHTML(want_html ? 1 : 0);
+            liberator.mail.setHTML(want_html ? 1 : 0);
         });
 
     // YANKING TEXT
@@ -625,7 +625,7 @@ with (liberator) liberator.Mail = function () //{{{
                 var subject = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
                 util.copyToClipboard(subject, true);
             }
-            catch (e) { beep(); }
+            catch (e) { liberator.beep(); }
         });
 
     mappings.add(myModes, ["y"],
@@ -634,12 +634,12 @@ with (liberator) liberator.Mail = function () //{{{
         {
             try
             {
-                if (mail.currentAccount.server.type == "rss")
+                if (liberator.mail.currentAccount.server.type == "rss")
                     util.copyToClipboard(getRSSUrl(), true);
                 else
                     util.copyToClipboard(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor, true);
             }
-            catch (e) { beep(); }
+            catch (e) { liberator.beep(); }
         });
 
     // RSS specific mappings
@@ -649,13 +649,13 @@ with (liberator) liberator.Mail = function () //{{{
         {
             try
             {
-                if (mail.currentAccount.server.type == "rss")
+                if (liberator.mail.currentAccount.server.type == "rss")
                     messenger.launchExternalURL(getRSSUrl());
                 // TODO: what to do for non-rss message?
             }
             catch (e)
             {
-                beep();
+                liberator.beep();
             }
         });
 
@@ -670,10 +670,10 @@ with (liberator) liberator.Mail = function () //{{{
             args = args || "Inbox";
             count = count > 0 ? (count - 1) : 0;
 
-            var folder = mail.getFolders(args, true, true)[count];
+            var folder = liberator.mail.getFolders(args, true, true)[count];
             if (!folder)
-                echoerr("Folder \"" + args + "\" does not exist");
-            else if (forceNewTab)
+                liberator.echoerr("Folder \"" + args + "\" does not exist");
+            else if (liberator.forceNewTab)
                 MsgOpenNewTabForFolder(folder.URI);
             else
                 SelectFolder(folder.URI);
@@ -704,11 +704,11 @@ with (liberator) liberator.Mail = function () //{{{
             // TODO: is there a better way to check for validity?
             if (addresses.some(function (recipient) !(/\S@\S+\.\S/.test(recipient))))
             {
-                echoerr("Exxx: Invalid e-mail address");
+                liberator.echoerr("Exxx: Invalid e-mail address");
                 return;
             }
 
-            mail.composeNewMail(mailargs);
+            liberator.mail.composeNewMail(mailargs);
         },
         {
             options: [[["-subject", "-s"],    commands.OPTION_STRING],
@@ -735,7 +735,7 @@ with (liberator) liberator.Mail = function () //{{{
 
     commands.add(["get[messages]"],
         "Check for new messages",
-        function (args, special) mail.getNewMessages(!special),
+        function (args, special) liberator.mail.getNewMessages(!special),
         {
             argCount: "0",
             bang: true,
@@ -788,7 +788,7 @@ with (liberator) liberator.Mail = function () //{{{
                         var file = io.getFile(url);
                         if (!file.exists())
                         {
-                            echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
+                            liberator.echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
                             return;
                         }
 
@@ -848,7 +848,7 @@ with (liberator) liberator.Mail = function () //{{{
                 }
                 catch (e)
                 {
-                    log("Error getting messages for account " + account.prettyName + ": " + e);
+                    liberator.log("Error getting messages for account " + account.prettyName + ": " + e);
                 }
             });
         },
@@ -1006,7 +1006,7 @@ with (liberator) liberator.Mail = function () //{{{
                     }
                     catch (e)
                     {
-                        dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
+                        liberator.dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
                         continue;
                     }
 
@@ -1031,7 +1031,7 @@ with (liberator) liberator.Mail = function () //{{{
 
             // TODO: finally for the "rest" of the current folder
 
-            beep();
+            liberator.beep();
         },
 
         setHTML: function (value)

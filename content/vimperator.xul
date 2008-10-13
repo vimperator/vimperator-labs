@@ -36,9 +36,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/x-javascript;version=1.8" src="bookmarks.js"/>
-    <script type="application/x-javascript;version=1.8" src="tabs.js"/>
-
     <menupopup id="viewSidebarMenu">
         <menuitem observes="vimperator-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
         <menuitem observes="vimperator-viewConsoleSidebar" label="Console" accesskey="C"/>

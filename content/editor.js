@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
-with (liberator) liberator.Editor = function () //{{{
+function Editor() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -229,7 +229,7 @@ with (liberator) liberator.Editor = function () //{{{
     mappings.add(myModes,
         ["<C-o>", "<C-f>", "<C-g>", "<C-n>", "<C-p>"],
         "Ignore certain " + config.hostApplication + " key bindings",
-        function () { /*beep();*/ });
+        function () { /*liberator.beep();*/ });
 
     mappings.add(myModes,
         ["<C-w>"], "Delete previous word",
@@ -285,7 +285,7 @@ with (liberator) liberator.Editor = function () //{{{
     // FIXME: <esc> does not work correctly
     mappings.add([modes.INSERT],
         ["<C-t>"], "Edit text field in vi mode",
-        function () { liberator.mode = liberator.modes.TEXTAREA; });
+        function () { liberator.mode = modes.TEXTAREA; });
 
     mappings.add([modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
@@ -306,7 +306,7 @@ with (liberator) liberator.Editor = function () //{{{
         function (count)
         {
             editor.executeCommand("cmd_undo", count);
-            liberator.mode = liberator.modes.TEXTAREA;
+            liberator.mode = modes.TEXTAREA;
         },
         { flags: Mappings.flags.COUNT });
 
@@ -315,7 +315,7 @@ with (liberator) liberator.Editor = function () //{{{
         function (count)
         {
             editor.executeCommand("cmd_redo", count);
-            liberator.mode = liberator.modes.TEXTAREA;
+            liberator.mode = modes.TEXTAREA;
         },
         { flags: Mappings.flags.COUNT });
 
@@ -355,7 +355,7 @@ with (liberator) liberator.Editor = function () //{{{
     // visual mode
     mappings.add([modes.CARET, modes.TEXTAREA, modes.VISUAL],
         ["v"], "Start visual mode",
-        function (count) { modes.set(modes.VISUAL, mode); });
+        function (count) { modes.set(modes.VISUAL, liberator.mode); });
 
     mappings.add([modes.TEXTAREA],
         ["V"], "Start visual line mode",
@@ -376,7 +376,7 @@ with (liberator) liberator.Editor = function () //{{{
                 modes.set(modes.INSERT, modes.TEXTAREA);
             }
             else
-                beep();
+                liberator.beep();
         });
 
     mappings.add([modes.VISUAL],
@@ -389,7 +389,7 @@ with (liberator) liberator.Editor = function () //{{{
                 modes.set(modes.TEXTAREA);
             }
             else
-                beep();
+                liberator.beep();
         });
 
     mappings.add([modes.VISUAL],
@@ -407,7 +407,7 @@ with (liberator) liberator.Editor = function () //{{{
                 if (sel)
                     util.copyToClipboard(sel, true);
                 else
-                    beep();
+                    liberator.beep();
             }
         });
 
@@ -420,10 +420,10 @@ with (liberator) liberator.Editor = function () //{{{
                 if (!count) count = 1;
                 while (count--)
                     editor.executeCommand("cmd_paste");
-                liberator.mode = liberator.modes.TEXTAREA;
+                liberator.mode = modes.TEXTAREA;
             }
             else
-                beep();
+                liberator.beep();
         });
 
     // finding characters
@@ -433,7 +433,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             var pos = editor.findCharForward(arg, count);
             if (pos >= 0)
-                editor.moveToPosition(pos, true, mode == modes.VISUAL);
+                editor.moveToPosition(pos, true, liberator.mode == modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
@@ -443,7 +443,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             var pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
-                editor.moveToPosition(pos, false, mode == modes.VISUAL);
+                editor.moveToPosition(pos, false, liberator.mode == modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
@@ -453,7 +453,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             var pos = editor.findCharForward(arg, count);
             if (pos >= 0)
-                editor.moveToPosition(pos - 1, true, mode == modes.VISUAL);
+                editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
@@ -463,7 +463,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             var pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
-                editor.moveToPosition(pos + 1, false, mode == modes.VISUAL);
+                editor.moveToPosition(pos + 1, false, liberator.mode == modes.VISUAL);
         },
         { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
@@ -487,7 +487,7 @@ with (liberator) liberator.Editor = function () //{{{
                 var pos = getEditor().selectionStart;
                 if (pos >= text.length)
                 {
-                    beep();
+                    liberator.beep();
                     return;
                 }
                 var chr = text[pos];
@@ -575,7 +575,7 @@ with (liberator) liberator.Editor = function () //{{{
             var controller = getController();
             if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
             {
-                beep();
+                liberator.beep();
                 return false;
             }
 
@@ -596,7 +596,7 @@ with (liberator) liberator.Editor = function () //{{{
                 catch (e)
                 {
                     if (!didCommand)
-                        beep();
+                        liberator.beep();
                     return false;
                 }
             }
@@ -662,7 +662,7 @@ with (liberator) liberator.Editor = function () //{{{
                     break;
 
                 default:
-                    beep();
+                    liberator.beep();
                     return false;
             }
 
@@ -683,7 +683,7 @@ with (liberator) liberator.Editor = function () //{{{
                     break;
 
                 default:
-                    beep();
+                    liberator.beep();
                     return false;
             }
             return true;
@@ -748,7 +748,7 @@ with (liberator) liberator.Editor = function () //{{{
                     return i + 1; // always position the cursor after the char
             }
 
-            beep();
+            liberator.beep();
             return -1;
         },
 
@@ -775,7 +775,7 @@ with (liberator) liberator.Editor = function () //{{{
                     return i;
             }
 
-            beep();
+            liberator.beep();
             return -1;
         },
 
@@ -798,7 +798,7 @@ with (liberator) liberator.Editor = function () //{{{
             var args = commands.parseArgs(editor, [], "*", true).arguments;
             if (args.length < 1)
             {
-                echoerr("No editor specified");
+                liberator.echoerr("No editor specified");
                 return false;
             }
 
@@ -808,7 +808,7 @@ with (liberator) liberator.Editor = function () //{{{
             }
             catch (e)
             {
-                echoerr("Could not create temporary file: " + e.message);
+                liberator.echoerr("Could not create temporary file: " + e.message);
                 return false;
             }
             try
@@ -817,7 +817,7 @@ with (liberator) liberator.Editor = function () //{{{
             }
             catch (e)
             {
-                echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
+                liberator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
                 return false;
             }
 
@@ -833,7 +833,7 @@ with (liberator) liberator.Editor = function () //{{{
             }
 
             // TODO: save return value in v:shell_error
-            callFunctionInThread(null, io.run, [prog, args, true]);
+            liberator.callFunctionInThread(null, io.run, [prog, args, true]);
 
             if (textBox)
                 textBox.removeAttribute("readonly");
@@ -841,7 +841,7 @@ with (liberator) liberator.Editor = function () //{{{
     //        if (v:shell_error != 0)
     //        {
     //            tmpBg = "red";
-    //            echoerr("External editor returned with exit code " + retcode);
+    //            liberator.echoerr("External editor returned with exit code " + retcode);
     //        }
     //        else
     //        {
@@ -868,7 +868,7 @@ with (liberator) liberator.Editor = function () //{{{
                 catch (e)
                 {
                     tmpBg = "red";
-                    echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
+                    liberator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
                 }
     //        }
 
@@ -915,11 +915,11 @@ with (liberator) liberator.Editor = function () //{{{
                     for (let i = 0; i < abbrev[lhs].length; i++)
                     {
                         if (abbrev[lhs][i][0] == filter)
-                            echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
+                            liberator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
                         return true;
                     }
                 }
-                echoerr("No abbreviations found");
+                liberator.echoerr("No abbreviations found");
                 return false;
             }
             else // list all (for that filter {i,c,!})
@@ -943,7 +943,7 @@ with (liberator) liberator.Editor = function () //{{{
                 if (list.*.length())
                     commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 else
-                    echoerr("No abbreviations found");
+                    liberator.echoerr("No abbreviations found");
             }
         },
 
@@ -1033,7 +1033,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             if (!lhs)
             {
-                echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return false;
             }
 
@@ -1071,7 +1071,7 @@ with (liberator) liberator.Editor = function () //{{{
                 }
             }
 
-            echoerr("E24: No such abbreviation");
+            liberator.echoerr("E24: No such abbreviation");
             return false;
         },
 

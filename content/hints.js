@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.Hints = function () //{{{
+function Hints() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -303,7 +303,7 @@ with (liberator) liberator.Hints = function () //{{{
     {
         if (validHints.length == 0)
         {
-            beep();
+            liberator.beep();
             return false;
         }
 
@@ -329,19 +329,19 @@ with (liberator) liberator.Hints = function () //{{{
             case "?": buffer.showElementInfo(elem); break;
             case "a": buffer.saveLink(elem, false); break;
             case "s": buffer.saveLink(elem, true); break;
-            case "o": buffer.followLink(elem, CURRENT_TAB); break;
+            case "o": buffer.followLink(elem, liberator.CURRENT_TAB); break;
             case "O": commandline.open(":", "open " + loc, modes.EX); break;
-            case "t": buffer.followLink(elem, NEW_TAB); break;
-            case "b": buffer.followLink(elem, NEW_BACKGROUND_TAB); break;
+            case "t": buffer.followLink(elem, liberator.NEW_TAB); break;
+            case "b": buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB); break;
             case "T": commandline.open(":", "tabopen " + loc, modes.EX); break;
             case "v": buffer.viewSource(loc, false); break;
             case "V": buffer.viewSource(loc, true); break;
-            case "w": buffer.followLink(elem, NEW_WINDOW);  break;
+            case "w": buffer.followLink(elem, liberator.NEW_WINDOW);  break;
             case "W": commandline.open(":", "winopen " + loc, modes.EX); break;
             case "y": setTimeout(function () { util.copyToClipboard(loc, true); }, timeout + 50); break;
             case "Y": setTimeout(function () { util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
             default:
-                echoerr("INTERNAL ERROR: unknown submode: " + submode);
+                liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
         removeHints(timeout);
 
@@ -360,14 +360,14 @@ with (liberator) liberator.Hints = function () //{{{
             {
                 // force a possible mode change, based on wheter an input field has focus
                 events.onFocusChange();
-                if (mode == modes.HINTS)
+                if (liberator.mode == modes.HINTS)
                     modes.reset(false);
             }
             else
             {
                 modes.add(modes.INACTIVE_HINT);
                 setTimeout(function () {
-                    if (mode == modes.HINTS)
+                    if (liberator.mode == modes.HINTS)
                         modes.pop();
                 }, timeout);
             }
@@ -536,7 +536,7 @@ with (liberator) liberator.Hints = function () //{{{
             case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
             case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
             case "custom"        : return plugins.customHintMatcher(hintString);
-            default              : echoerr("Invalid hintmatching type: " + hintMatching);
+            default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
         }
         return null;
     } //}}}
@@ -629,7 +629,7 @@ with (liberator) liberator.Hints = function () //{{{
         {
             if (mode == modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
             {
-                beep();
+                liberator.beep();
                 return;
             }
 
@@ -642,14 +642,14 @@ with (liberator) liberator.Hints = function () //{{{
             generate(win);
 
             // get all keys from the input queue
-            threadYield(true);
+            liberator.threadYield(true);
 
             canUpdate = true;
             showHints();
 
             if (validHints.length == 0)
             {
-                beep();
+                liberator.beep();
                 modes.reset();
                 return false;
             }
@@ -725,7 +725,7 @@ with (liberator) liberator.Hints = function () //{{{
                     {
                         usedTabKey = false;
                         hintNumber = 0;
-                        beep();
+                        liberator.beep();
                         return;
                     }
                     break;
@@ -756,7 +756,7 @@ with (liberator) liberator.Hints = function () //{{{
                             return;
                         }
 
-                        beep();
+                        liberator.beep();
                         return;
                     }
 
@@ -785,7 +785,7 @@ with (liberator) liberator.Hints = function () //{{{
 
                         if (hintNumber == 0 || hintNumber > validHints.length)
                         {
-                            beep();
+                            liberator.beep();
                             return;
                         }
 

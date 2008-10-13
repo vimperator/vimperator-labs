@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.config = { //{{{
+const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
@@ -68,7 +68,7 @@ with (liberator) liberator.config = { //{{{
         ["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],
         ["dominspector",     "DOM Inspector",
-            function () { try { inspectDOMDocument(content.document); } catch (e) { echoerr("DOM Inspector extension not installed"); } }],
+            function () { try { inspectDOMDocument(content.document); } catch (e) { liberator.echoerr("DOM Inspector extension not installed"); } }],
         ["downloads",        "Manage Downloads",
             function () { toOpenWindowByType("Download:Manager", "chrome://mozapps/content/downloads/downloads.xul", "chrome,dialog=no,resizable"); }],
         ["history",          "List your history",
@@ -110,6 +110,11 @@ with (liberator) liberator.config = { //{{{
         "message.html", "developer.html", "various.html", "index.html"
     ],
 
+    scripts: [
+        "bookmarks.js",
+        "tabs.js",
+    ],
+
     init: function ()
     {
         function incrementURL(count)
@@ -119,7 +124,7 @@ with (liberator) liberator.config = { //{{{
 
             var matches = url.match(regex);
             if (!matches || !matches[2]) // no number to increment
-                return beep();
+                return liberator.beep();
 
             var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
             var nums = newNum.match(/^(-?)(\d+)$/);
@@ -129,17 +134,17 @@ with (liberator) liberator.config = { //{{{
                 newNum += "0"; // keep leading zeros
             newNum += nums[2];
 
-            open(matches[1] + newNum + matches[3]);
+            liberator.open(matches[1] + newNum + matches[3]);
         }
 
         // load Vimperator specific modules
-        loadModule("search",     Search);
-        loadModule("bookmarks",  Bookmarks);
-        loadModule("history",    History);
-        loadModule("tabs",       Tabs);
-        loadModule("marks",      Marks);
-        loadModule("quickmarks", QuickMarks);
-        loadModule("hints",      Hints);
+        liberator.loadModule("search",     Search);
+        liberator.loadModule("bookmarks",  Bookmarks);
+        liberator.loadModule("history",    History);
+        liberator.loadModule("tabs",       Tabs);
+        liberator.loadModule("marks",      Marks);
+        liberator.loadModule("quickmarks", QuickMarks);
+        liberator.loadModule("hints",      Hints);
 
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
@@ -178,7 +183,7 @@ with (liberator) liberator.config = { //{{{
 
         mappings.add([modes.NORMAL], ["~"],
             "Open home directory",
-            function () { open("~"); });
+            function () { liberator.open("~"); });
 
         mappings.add([modes.NORMAL], ["gh"],
             "Open homepage",
@@ -189,8 +194,8 @@ with (liberator) liberator.config = { //{{{
             function ()
             {
                 var homepages = gHomeButton.getHomePage();
-                open(homepages, /\bhomepage\b/.test(options["activate"]) ?
-                        NEW_TAB : NEW_BACKGROUND_TAB);
+                liberator.open(homepages, /\bhomepage\b/.test(options["activate"]) ?
+                        liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
             });
 
         mappings.add([modes.NORMAL], ["gu"],
@@ -228,10 +233,10 @@ with (liberator) liberator.config = { //{{{
 
                 if (url == buffer.URL)
                 {
-                    beep();
+                    liberator.beep();
                     return;
                 }
-                open(url);
+                liberator.open(url);
             },
             { flags: Mappings.flags.COUNT });
 
@@ -242,15 +247,15 @@ with (liberator) liberator.config = { //{{{
                 var uri = content.document.location;
                 if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
                 {
-                    beep();
+                    liberator.beep();
                     return;
                 }
-                open(uri.protocol + "//" + (uri.host || "") + "/");
+                liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
             });
 
         mappings.add([modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { commands.get("redraw").execute("", false); });
+            function () { commands.get("redraw").execute(); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -260,9 +265,9 @@ with (liberator) liberator.config = { //{{{
             "Show progress of current downloads",
             function ()
             {
-                open("chrome://mozapps/content/downloads/downloads.xul",
+                liberator.open("chrome://mozapps/content/downloads/downloads.xul",
                     options.get("newtab").has("all", "downloads")
-                        ? NEW_TAB : CURRENT_TAB);
+                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
             },
             { argCount: "0" });
 
@@ -272,7 +277,7 @@ with (liberator) liberator.config = { //{{{
             {
                 if (args)
                 {
-                    open(args);
+                    liberator.open(args);
                 }
                 else
                 {
@@ -291,10 +296,9 @@ with (liberator) liberator.config = { //{{{
             "Redraw the screen",
             function ()
             {
-                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                               .getInterface(Components.interfaces.nsIDOMWindowUtils);
+                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+                                getInterface(Components.interfaces.nsIDOMWindowUtils);
                 wu.redraw();
-                modes.show(); // Clears the shadow of the last command, as in vim.
             },
             { argCount: "0" });
 
@@ -328,7 +332,7 @@ with (liberator) liberator.config = { //{{{
                         return;
                     }
                 }
-                echoerr("No sidebar " + args.string + " found");
+                liberator.echoerr("No sidebar " + args.string + " found");
             },
             {
                 argCount: "+",
@@ -345,9 +349,9 @@ with (liberator) liberator.config = { //{{{
             function (args)
             {
                 if (args)
-                    open(args, NEW_WINDOW);
+                    liberator.open(args, liberator.NEW_WINDOW);
                 else
-                    open("about:blank", NEW_WINDOW);
+                    liberator.open("about:blank", liberator.NEW_WINDOW);
             },
             { completer: function (filter) completion.url(filter) });
 
@@ -393,7 +397,7 @@ with (liberator) liberator.config = { //{{{
                     }
                     catch (e)
                     {
-                        log("Couldn't set titlestring", 3);
+                        liberator.log("Couldn't set titlestring", 3);
                     }
 
                     return value;

@@ -45,7 +45,7 @@ const liberator = (function () //{{{
         {
             liberator.log(message, 0);
             liberator.dump(message);
-            liberator[name] = func();
+            modules[name] = func();
         }
         catch (e)
         {
@@ -59,17 +59,17 @@ const liberator = (function () //{{{
     // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
-         const tabopts = [
-             ["n", "Tab number", null, ".hl-TabNumber"],
-             ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
-         ];
-        liberator.options.add(["guioptions", "go"],
+        const tabopts = [
+            ["n", "Tab number", null, ".hl-TabNumber"],
+            ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
+        ];
+        options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
-            "charlist", liberator.config.defaults.guioptions || "",
+            "charlist", config.defaults.guioptions || "",
             {
                 setter: function (value)
                 {
-                    var guioptions = liberator.config.guioptions || {};
+                    var guioptions = config.guioptions || {};
 
                     for (let option in guioptions)
                     {
@@ -87,9 +87,9 @@ const liberator = (function () //{{{
                     let classes = tabopts.filter(function (o) value.indexOf(o[0]) == -1)
                                          .map(function (a) a[3])
                     if (!classes.length)
-                        liberator.storage.styles.removeSheet("taboptions", null, null, null, true);
+                        storage.styles.removeSheet("taboptions", null, null, null, true);
                     else
-                        liberator.storage.styles.addSheet("taboptions", "chrome://*", classes.join(",") + "{ display: none; }", true, true);
+                        storage.styles.addSheet("taboptions", "chrome://*", classes.join(",") + "{ display: none; }", true, true);
 
                     return value;
                 },
@@ -101,29 +101,29 @@ const liberator = (function () //{{{
                         ["b", "Bookmark bar"]
                     ].concat(!liberator.has("tabs") ? [] : tabopts);
                 },
-                validator: function (value) Array.every(value, function (c) c in liberator.config.guioptions || tabopts.some(function (a) a[0] == c)),
+                validator: function (value) Array.every(value, function (c) c in config.guioptions || tabopts.some(function (a) a[0] == c)),
             });
 
-        liberator.options.add(["helpfile", "hf"],
+        options.add(["helpfile", "hf"],
             "Name of the main help file",
             "string", "intro.html");
 
-        liberator.options.add(["loadplugins", "lpl"],
+        options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",
             "boolean", true);
 
-        liberator.options.add(["verbose", "vbs"],
+        options.add(["verbose", "vbs"],
             "Define which info messages are displayed",
             "number", 0,
             { validator: function (value) value >= 0 && value <= 15 });
 
-        liberator.options.add(["visualbell", "vb"],
+        options.add(["visualbell", "vb"],
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
                 setter: function (value)
                 {
-                    liberator.options.setPref("accessibility.typeaheadfind.enablesound", !value);
+                    options.setPref("accessibility.typeaheadfind.enablesound", !value);
                     return value;
                 }
             });
@@ -131,48 +131,48 @@ const liberator = (function () //{{{
 
     function addMappings()
     {
-        liberator.mappings.add(liberator.modes.all, ["<F1>"],
+        mappings.add(modes.all, ["<F1>"],
             "Open help window",
             function () { liberator.help(); });
 
         if (liberator.has("session"))
         {
-            liberator.mappings.add([liberator.modes.NORMAL], ["ZQ"],
+            mappings.add([modes.NORMAL], ["ZQ"],
                 "Quit and don't save the session",
                 function () { liberator.quit(false); });
         }
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["ZZ"],
+        mappings.add([modes.NORMAL], ["ZZ"],
             "Quit and save the session",
             function () { liberator.quit(true); });
     }
 
     function addCommands()
     {
-        liberator.commands.add(["addo[ns]"],
+        commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
             function ()
             {
                 liberator.open("chrome://mozapps/content/extensions/extensions.xul",
-                    (liberator.options["newtab"] && liberator.options.get("newtab").has("all", "addons"))
+                    (options["newtab"] && options.get("newtab").has("all", "addons"))
                         ? liberator.NEW_TAB: liberator.CURRENT_TAB);
             },
             { argCount: "0" });
 
-        liberator.commands.add(["beep"],
+        commands.add(["beep"],
             "Play a system beep",
             function () { liberator.beep(); },
             { argCount: "0" });
 
-        liberator.commands.add(["dia[log]"],
-            "Open a " + liberator.config.name + " dialog",
+        commands.add(["dia[log]"],
+            "Open a " + config.name + " dialog",
             function (args)
             {
                 args = args.arguments[0];
 
                 try
                 {
-                    var dialogs = liberator.config.dialogs || [];
+                    var dialogs = config.dialogs || [];
                     for (let i = 0; i < dialogs.length; i++)
                     {
                         if (dialogs[i][0] == args)
@@ -188,13 +188,13 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (filter) liberator.completion.dialog(filter)
+                completer: function (filter) completion.dialog(filter)
             });
 
         // TODO: move this
         function getMenuItems()
         {
-            var menubar = document.getElementById(liberator.config.guioptions["m"]);
+            var menubar = document.getElementById(config.guioptions["m"]);
             var items = [];
 
             for (let i = 0; i < menubar.childNodes.length; i++)
@@ -221,7 +221,7 @@ const liberator = (function () //{{{
             return items;
         }
 
-        liberator.commands.add(["em[enu]"],
+        commands.add(["em[enu]"],
             "Execute the specified menu item from the command line",
             function (args)
             {
@@ -246,11 +246,11 @@ const liberator = (function () //{{{
                 completer: function (filter)
                 {
                     let completions = getMenuItems().map(function (item) [item.fullMenuPath, item.label]);
-                    return [0, liberator.completion.filter(completions, filter)];
+                    return [0, completion.filter(completions, filter)];
                 }
             });
 
-        liberator.commands.add(["exe[cute]"],
+        commands.add(["exe[cute]"],
             "Execute the argument as an Ex command",
             // FIXME: this should evaluate each arg separately then join
             // with " " before executing.
@@ -271,7 +271,7 @@ const liberator = (function () //{{{
                 }
             });
 
-        liberator.commands.add(["exu[sage]"],
+        commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
             function (args, special)
             {
@@ -282,8 +282,8 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = liberator.template.usage(liberator.commands);
-                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                    var usage = template.usage(commands);
+                    liberator.echo(usage, commandline.FORCE_MULTILINE);
                 }
             },
             {
@@ -291,7 +291,7 @@ const liberator = (function () //{{{
                 bang: true
             });
 
-        liberator.commands.add(["h[elp]"],
+        commands.add(["h[elp]"],
             "Display help",
             function (args, special)
             {
@@ -305,17 +305,17 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter) liberator.completion.help(filter)
+                completer: function (filter) completion.help(filter)
             });
 
-        liberator.commands.add(["javas[cript]", "js"],
+        commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
             function (args, special)
             {
                 if (special) // open javascript console
                 {
                     liberator.open("chrome://global/content/console.xul",
-                        (liberator.options["newtab"] && liberator.options.get("newtab").has("all", "javascript"))
+                        (options["newtab"] && options.get("newtab").has("all", "javascript"))
                             ? liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else
@@ -332,23 +332,23 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter) liberator.completion.javascript(filter),
+                completer: function (filter) completion.javascript(filter),
                 hereDoc: true,
             });
 
-        liberator.commands.add(["loadplugins", "lpl"],
+        commands.add(["loadplugins", "lpl"],
             "Load all plugins immediately",
             function () { liberator.loadPlugins(); });
 
-        liberator.commands.add(["norm[al]"],
+        commands.add(["norm[al]"],
             "Execute Normal mode commands",
-            function (args, special) { liberator.events.feedkeys(args.string, special); },
+            function (args, special) { events.feedkeys(args.string, special); },
             {
                 argCount: "+",
                 bang: true
             });
 
-        liberator.commands.add(["optionu[sage]"],
+        commands.add(["optionu[sage]"],
             "List all options with a short description",
             function (args, special)
             {
@@ -359,8 +359,8 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = liberator.template.usage(liberator.options);
-                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                    var usage = template.usage(options);
+                    liberator.echo(usage, commandline.FORCE_MULTILINE);
                 }
             },
             {
@@ -368,12 +368,12 @@ const liberator = (function () //{{{
                 bang: true
             });
 
-        liberator.commands.add(["q[uit]"],
+        commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
             function (args, special)
             {
                 if (liberator.has("tabs"))
-                    liberator.tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
+                    tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
                     liberator.quit(false, special);
             },
@@ -382,12 +382,12 @@ const liberator = (function () //{{{
                 bang: true
             });
 
-        liberator.commands.add(["res[tart]"],
-            "Force " + liberator.config.name + " to restart",
+        commands.add(["res[tart]"],
+            "Force " + config.name + " to restart",
             function () { liberator.restart(); },
             { argCount: "0" });
 
-        liberator.commands.add(["time"],
+        commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
             function (args, special, count)
             {
@@ -401,7 +401,7 @@ const liberator = (function () //{{{
                         let each, eachUnits, totalUnits;
                         let total = 0;
 
-                        for (let i in liberator.util.rangeInterruptable(0, count, 500))
+                        for (let i in util.rangeInterruptable(0, count, 500))
                         {
                             let now = Date.now();
                             liberator[method](args);
@@ -432,16 +432,16 @@ const liberator = (function () //{{{
                             totalUnits = "msec";
                         }
 
-                        var str = liberator.template.generic(
+                        var str = template.generic(
                                 <table>
                                     <tr class="hl-Title" align="left">
                                         <th colspan="3">Code execution summary</th>
                                     </tr>
-                                    <tr><td>  Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
-                                    <tr><td>  Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>  Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                    <tr><td>\u00a0\u00a0Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
+                                    <tr><td>\u00a0\u00a0Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>\u00a0\u00a0Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
                                 </table>);
-                        liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                        commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
                     else
                     {
@@ -473,22 +473,22 @@ const liberator = (function () //{{{
                 completer: function (filter)
                 {
                     if (/^:/.test(filter))
-                        return liberator.completion.ex(filter);
+                        return completion.ex(filter);
                     else
-                        return liberator.completion.javascript(filter);
+                        return completion.javascript(filter);
                 },
                 count: true
             });
 
-        liberator.commands.add(["ve[rsion]"],
+        commands.add(["ve[rsion]"],
             "Show version information",
             function (args, special)
             {
                 if (special)
                     liberator.open("about:");
                 else
-                    liberator.echo(":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "\n" +
-                                    liberator.config.name + " " + liberator.version +
+                    liberator.echo(":" + util.escapeHTML(commandline.getCommand()) + "\n" +
+                                    config.name + " " + liberator.version +
                                     " running on:\n" + navigator.userAgent);
             },
             {
@@ -496,7 +496,7 @@ const liberator = (function () //{{{
                 bang: true
             });
 
-        liberator.commands.add(["viu[sage]"],
+        commands.add(["viu[sage]"],
             "List all mappings with a short description",
             function (args, special)
             {
@@ -507,8 +507,8 @@ const liberator = (function () //{{{
                 else
                 {
                     // TODO: clicking on these should open the help
-                    var usage = liberator.template.usage(liberator.mappings);
-                    liberator.echo(usage, liberator.commandline.FORCE_MULTILINE);
+                    var usage = template.usage(mappings);
+                    liberator.echo(usage, commandline.FORCE_MULTILINE);
                 }
             },
             {
@@ -521,7 +521,7 @@ const liberator = (function () //{{{
     // similar in his config
     function hideGUI()
     {
-        var guioptions = liberator.config.guioptions || {};
+        var guioptions = config.guioptions || {};
         for (let option in guioptions)
         {
             guioptions[option].forEach(function (elem) {
@@ -540,8 +540,10 @@ const liberator = (function () //{{{
 
     return {
 
-        get mode()      liberator.modes.main,
-        set mode(value) liberator.modes.main = value,
+        modules: modules,
+
+        get mode()      modes.main,
+        set mode(value) modes.main = value,
 
         // Global constants
         CURRENT_TAB: 1,
@@ -603,11 +605,11 @@ const liberator = (function () //{{{
 
         beep: function ()
         {
-            if (liberator.options["visualbell"])
+            if (options["visualbell"])
             {
                 // flash the visual bell
                 let popup = document.getElementById("liberator-visualbell");
-                let win = liberator.config.visualbellWindow;
+                let win = config.visualbellWindow;
                 let box = document.getBoxObjectFor(win);
 
                 popup.openPopup(win, "overlap", 0, 0, false, false);
@@ -627,10 +629,10 @@ const liberator = (function () //{{{
         dump: function (message)
         {
             if (typeof message == "object")
-                message = liberator.util.objectToString(message);
+                message = util.objectToString(message);
             else
                 message += "\n";
-            dump(liberator.config.name.toLowerCase() + ": " + message);
+            dump(config.name.toLowerCase() + ": " + message);
         },
 
         dumpStack: function (msg)
@@ -654,6 +656,12 @@ const liberator = (function () //{{{
                     e.source = str;
                     e.fileName = "<Evaled string>";
                     e.lineNumber -= line;
+                    if (modules.io && io.sourcing)
+                    {
+                        liberator.dump(io.sourcing);
+                        e.fileName = io.sourcing.file;
+                        e.lineNumber += io.sourcing.line;
+                    }
                 }
                 throw e;
             }
@@ -669,12 +677,12 @@ const liberator = (function () //{{{
             modifiers = modifiers || {};
 
             let err = null;
-            let [count, cmd, special, args] = liberator.commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
-            let command = liberator.commands.get(cmd);
+            let [count, cmd, special, args] = commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
+            let command = commands.get(cmd);
 
             if (command === null)
             {
-                err = "E492: Not a " + liberator.config.name.toLowerCase() + " command: " + str;
+                err = "E492: Not a " + config.name.toLowerCase() + " command: " + str;
                 liberator.focusContent();
             }
             else if (command.action === null)
@@ -696,7 +704,7 @@ const liberator = (function () //{{{
                 liberator.echoerr(err);
         },
 
-        // TODO: move to liberator.buffer.focus()?
+        // TODO: move to buffer.focus()?
         // after pressing Escape, put focus on a non-input field of the browser document
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
@@ -709,7 +717,7 @@ const liberator = (function () //{{{
             // TODO: make more generic
             try
             {
-                if (liberator.has("mail") && clearFocusedElement && !liberator.config.isComposeWindow)
+                if (liberator.has("mail") && clearFocusedElement && !config.isComposeWindow)
                 {
                     var i = gDBView.selection.currentIndex;
                     if (i == -1 && gDBView.rowCount >= 0)
@@ -720,7 +728,7 @@ const liberator = (function () //{{{
             }
             catch (e) {}
 
-            var elem = liberator.config.mainWidget || window.content;
+            var elem = config.mainWidget || window.content;
             if (elem && (elem != document.commandDispatcher.focusedElement))
                 elem.focus();
         },
@@ -803,51 +811,51 @@ const liberator = (function () //{{{
 
         echo: function (str, flags)
         {
-            liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, flags);
+            commandline.echo(str, commandline.HL_NORMAL, flags);
         },
 
         // TODO: Vim replaces unprintable characters in echoerr/echomsg
         echoerr: function (str, flags)
         {
-            flags |= liberator.commandline.APPEND_TO_MESSAGES;
+            flags |= commandline.APPEND_TO_MESSAGES;
 
             if (typeof str == "object" && "echoerr" in str)
                 str = str.echoerr;
             else if (str instanceof Error)
                 str = str.fileName + ":" + str.lineNumber + ": " + str;
 
-            liberator.commandline.echo(str, liberator.commandline.HL_ERRORMSG, flags);
+            commandline.echo(str, commandline.HL_ERRORMSG, flags);
         },
 
         // TODO: add proper level constants
         echomsg: function (str, verbosity, flags)
         {
-            flags |= liberator.commandline.APPEND_TO_MESSAGES;
+            flags |= commandline.APPEND_TO_MESSAGES;
 
             if (verbosity == null)
                 verbosity = 0; // verbosity level is exclusionary
 
-            if (liberator.options["verbose"] >= verbosity)
-                liberator.commandline.echo(str, liberator.commandline.HL_INFOMSG, flags);
+            if (options["verbose"] >= verbosity)
+                commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
         // return true, if this VIM-like extension has a certain feature
         has: function (feature)
         {
-            var features = liberator.config.features || [];
+            var features = config.features || [];
             return features.some(function (feat) feat == feature);
         },
 
         help: function (topic)
         {
-            var where = (liberator.options["newtab"] && liberator.options.get("newtab").has("all", "help"))
+            var where = (options["newtab"] && options.get("newtab").has("all", "help"))
                             ? liberator.NEW_TAB : liberator.CURRENT_TAB;
 
             if (!topic)
             {
-                var helpFile = liberator.options["helpfile"];
+                var helpFile = options["helpfile"];
 
-                if (liberator.config.helpFiles.indexOf(helpFile) != -1)
+                if (config.helpFiles.indexOf(helpFile) != -1)
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
                     liberator.echo("Sorry, help file \"" + helpFile + "\" not found");
@@ -860,7 +868,7 @@ const liberator = (function () //{{{
                 liberator.open("chrome://liberator/locale/" + file, where);
                 // TODO: it would be better wo wait for pageLoad
                 setTimeout(function () {
-                    var elem = liberator.buffer.getElement('@class="tag" and text()="' + tag + '"');
+                    var elem = buffer.getElement('@class="tag" and text()="' + tag + '"');
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
@@ -868,7 +876,7 @@ const liberator = (function () //{{{
                 }, 500);
             }
 
-            var [, items] = liberator.completion.help(topic);
+            var [, items] = completion.help(topic);
             var partialMatch = -1;
 
             for (let i = 0; i < items.length; i++)
@@ -899,7 +907,7 @@ const liberator = (function () //{{{
             // FIXME: largely duplicated for loading macros
             try
             {
-                let dirs = liberator.io.getRuntimeDirectories("plugin");
+                let dirs = io.getRuntimeDirectories("plugin");
 
                 if (dirs.length > 0)
                 {
@@ -910,15 +918,15 @@ const liberator = (function () //{{{
 
                         liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
 
-                        let files = liberator.io.readDirectory(dir.path, true);
+                        let files = io.readDirectory(dir.path, true);
 
                         files.forEach(function (file) {
-                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in pluginFiles))
                             {
                                 try
                                 {
-                                    liberator.io.source(file.path, false);
-                                    liberator.pluginFiles[file.path] = true;
+                                    io.source(file.path, false);
+                                    pluginFiles[file.path] = true;
                                 }
                                 catch (e) {};
                             }
@@ -946,19 +954,19 @@ const liberator = (function () //{{{
             if (typeof level != "number") // XXX
                 level = 1;
 
-            // liberator.options does not exist at the very beginning
-            if (liberator.options)
-                verbose = liberator.options.getPref("extensions.liberator.loglevel", 0);
+            // options does not exist at the very beginning
+            if (modules.options)
+                verbose = options.getPref("extensions.liberator.loglevel", 0);
 
             if (level > verbose)
                 return;
 
             if (typeof msg == "object")
-                msg = liberator.util.objectToString(msg, false);
+                msg = util.objectToString(msg, false);
 
             var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                            .getService(Components.interfaces.nsIConsoleService);
-            consoleService.logStringMessage(liberator.config.name.toLowerCase() + ": " + msg);
+            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs
@@ -974,13 +982,13 @@ const liberator = (function () //{{{
         open: function (urls, where, force)
         {
             // convert the string to an array of converted URLs
-            // -> see liberator.util.stringToURLArray for more details
+            // -> see util.stringToURLArray for more details
             if (typeof urls == "string")
-                urls = liberator.util.stringToURLArray(urls);
+                urls = util.stringToURLArray(urls);
 
             if (urls.length > 20 && !force)
             {
-                liberator.commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no])",
+                commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no])",
                     function (resp) { if (resp && resp.match(/^y(es)?$/i)) liberator.open(urls, where, true); });
                 return true;
             }
@@ -1053,9 +1061,9 @@ const liberator = (function () //{{{
         quit: function (saveSession, force)
         {
             if (saveSession)
-                liberator.options.setPref("browser.startup.page", 3); // start with saved session
+                options.setPref("browser.startup.page", 3); // start with saved session
             else
-                liberator.options.setPref("browser.startup.page", 1); // start with default homepage session
+                options.setPref("browser.startup.page", 1); // start with default homepage session
 
             const nsIAppStartup = Components.interfaces.nsIAppStartup;
             if (force)
@@ -1105,43 +1113,40 @@ const liberator = (function () //{{{
         {
             liberator.log("Initializing liberator object...", 0);
 
-            // components which should be shared across all windows
-            Components.utils.import("resource://liberator/storage.jsm", liberator);
-
             // commands must always be the first module to be initialized
-            loadModule("commands",     liberator.Commands); addCommands();
-            loadModule("options",      liberator.Options);  addOptions();
-            loadModule("mappings",     liberator.Mappings); addMappings();
-            loadModule("buffer",       liberator.Buffer);
-            loadModule("events",       liberator.Events);
-            loadModule("commandline",  liberator.CommandLine);
-            loadModule("statusline",   liberator.StatusLine);
-            loadModule("editor",       liberator.Editor);
-            loadModule("autocommands", liberator.AutoCommands);
-            loadModule("io",           liberator.IO);
-            loadModule("completion",   liberator.Completion);
+            loadModule("commands",     Commands); addCommands();
+            loadModule("options",      Options);  addOptions();
+            loadModule("mappings",     Mappings); addMappings();
+            loadModule("buffer",       Buffer);
+            loadModule("events",       Events);
+            loadModule("commandline",  CommandLine);
+            loadModule("statusline",   StatusLine);
+            loadModule("editor",       Editor);
+            loadModule("autocommands", AutoCommands);
+            loadModule("io",           IO);
+            loadModule("completion",   Completion);
 
             // This adds options/mappings/commands which are only valid in this particular extension
-            if (liberator.config.init)
-                liberator.config.init();
+            if (config.init)
+                config.init();
 
             liberator.log("All modules loaded", 3);
 
             // TODO: move elsewhere
-            liberator.registerCallback("submit", liberator.modes.EX, function (command) { liberator.execute(command); });
-            liberator.registerCallback("complete", liberator.modes.EX, function (str) { return liberator.completion.ex(str); });
+            liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
+            liberator.registerCallback("complete", modes.EX, function (str) { return completion.ex(str); });
 
             // first time intro message
-            if (liberator.options.getPref("extensions." + liberator.config.name.toLowerCase() + ".firsttime", true))
+            if (options.getPref("extensions." + config.name.toLowerCase() + ".firsttime", true))
             {
                 setTimeout(function () {
                     liberator.help();
-                    liberator.options.setPref("extensions." + liberator.config.name.toLowerCase() + ".firsttime", false);
+                    options.setPref("extensions." + config.name.toLowerCase() + ".firsttime", false);
                 }, 1000);
             }
 
             // always start in normal mode
-            liberator.modes.reset();
+            modes.reset();
 
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
@@ -1150,45 +1155,45 @@ const liberator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                var rcFile = liberator.io.getRCFile();
+                var rcFile = io.getRCFile();
 
                 if (rcFile)
-                    liberator.io.source(rcFile.path, true);
+                    io.source(rcFile.path, true);
                 else
                     liberator.log("No user RC file found", 3);
 
-                if (liberator.options["loadplugins"])
+                if (options["loadplugins"])
                     liberator.loadPlugins;
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
                 // set before by any rc file
-                for (let option in liberator.options)
+                for (let option in options)
                 {
                     if (option.setter)
                         option.value = option.value;
                 }
 
                 liberator.triggerObserver("enter", null);
-                liberator.autocommands.trigger(liberator.config.name + "Enter", {});
+                autocommands.trigger(config.name + "Enter", {});
             }, 0);
 
-            liberator.statusline.update();
+            statusline.update();
 
-            liberator.log(liberator.config.name + " fully initialized", 0);
+            liberator.log(config.name + " fully initialized", 0);
         },
 
         shutdown: function ()
         {
-            liberator.autocommands.trigger(liberator.config.name + "LeavePre", {});
+            autocommands.trigger(config.name + "LeavePre", {});
 
-            liberator.storage.saveAll();
+            storage.saveAll();
 
             liberator.triggerObserver("shutdown", null);
 
             liberator.dump("All liberator modules destroyed\n");
 
-            liberator.autocommands.trigger(liberator.config.name + "Leave", {});
+            autocommands.trigger(config.name + "Leave", {});
         },
 
         sleep: function (ms)
@@ -1254,6 +1259,8 @@ const liberator = (function () //{{{
     };
     //}}}
 })(); //}}}
+
+window.liberator = liberator;
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);

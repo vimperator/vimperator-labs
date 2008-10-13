@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-with (liberator) liberator.Buffer = function () //{{{
+function Buffer() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -49,8 +49,8 @@ with (liberator) liberator.Buffer = function () //{{{
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
-    const util = liberator.util;
-    const arrayIter = liberator.util.arrayIter;
+    const util = modules.util;
+    const arrayIter = util.arrayIter;
 
     function Styles(name, store, serial)
     {
@@ -59,7 +59,7 @@ with (liberator) liberator.Buffer = function () //{{{
          * with this window.
          */
         const sleep = liberator.sleep;
-        const storage = liberator.storage;
+        const storage = modules.storage;
         const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                          .getService(Components.interfaces.nsIConsoleService);
         const ios = Components.classes["@mozilla.org/network/io-service;1"]
@@ -69,7 +69,7 @@ with (liberator) liberator.Buffer = function () //{{{
         const XHTML = "http://www.w3.org/1999/xhtml";
         const namespace = "@namespace html url(" + XHTML + ");\n" +
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
-        const Sheet = new util.Struct("name", "sites", "css", "ref");
+        const Sheet = new Struct("name", "sites", "css", "ref");
 
         let cssUri = function (css) "data:text/css," + encodeURI(css);
 
@@ -284,7 +284,7 @@ with (liberator) liberator.Buffer = function () //{{{
     {
         if (value < 1 || value > 2000)
         {
-            echoerr("Zoom value out of range (1-2000%)");
+            liberator.echoerr("Zoom value out of range (1-2000%)");
             return;
         }
 
@@ -293,7 +293,7 @@ with (liberator) liberator.Buffer = function () //{{{
         else
             getBrowser().markupDocumentViewer.textZoom = value / 100.0;
 
-        echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
+        liberator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
 
         // TODO: shouldn't this just recalculate hint coords, rather than
         // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
@@ -334,7 +334,7 @@ with (liberator) liberator.Buffer = function () //{{{
         }
         if (index < 0 || index >= zoomLevels.length)
         {
-            beep();
+            liberator.beep();
             return;
         }
         setZoom(zoomLevels[index], fullZoom);
@@ -344,7 +344,7 @@ with (liberator) liberator.Buffer = function () //{{{
     {
         // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
         if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY == 0)
-            beep();
+            liberator.beep();
     }
 
     function findScrollableWindow()
@@ -537,7 +537,7 @@ with (liberator) liberator.Buffer = function () //{{{
             if (count > 0 && count <= 100)
                 buffer.scrollToPercentile(count);
             else
-                beep();
+                liberator.beep();
         },
         { flags: Mappings.flags.COUNT });
 
@@ -625,7 +625,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 }
                 else
                 {
-                    beep();
+                    liberator.beep();
                 }
             }
         },
@@ -635,22 +635,22 @@ with (liberator) liberator.Buffer = function () //{{{
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            open(util.readFromClipboard(),
+            liberator.open(util.readFromClipboard(),
                 /\bpaste\b/.test(options["activate"]) ?
-                NEW_BACKGROUND_TAB : NEW_TAB);
+                liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
         });
 
     mappings.add(myModes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
-        function () { open(util.readFromClipboard()); });
+        function () { liberator.open(util.readFromClipboard()); });
 
     mappings.add(myModes, ["P"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            open(util.readFromClipboard(),
+            liberator.open(util.readFromClipboard(),
                 /\bpaste\b/.test(options["activate"]) ?
-                NEW_TAB : NEW_BACKGROUND_TAB);
+                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         });
 
     // reloading
@@ -671,7 +671,7 @@ with (liberator) liberator.Buffer = function () //{{{
             if (sel)
                 util.copyToClipboard(sel, true);
             else
-                beep();
+                liberator.beep();
         });
 
     // zooming
@@ -746,7 +746,7 @@ with (liberator) liberator.Buffer = function () //{{{
             var aps = options.getPref("print.always_print_silent");
             var spp = options.getPref("print.show_print_progress");
 
-            echo("Sending to printer...");
+            liberator.echo("Sending to printer...");
             options.setPref("print.always_print_silent", special);
             options.setPref("print.show_print_progress", !special);
 
@@ -754,7 +754,7 @@ with (liberator) liberator.Buffer = function () //{{{
 
             options.setPref("print.always_print_silent", aps);
             options.setPref("print.show_print_progress", spp);
-            echo("Print job sent.");
+            liberator.echo("Print job sent.");
         },
         {
             argCount: "0",
@@ -774,7 +774,7 @@ with (liberator) liberator.Buffer = function () //{{{
 
             if (args && titles.indexOf(args) == -1)
             {
-                echoerr("E475: Invalid argument: " + args);
+                liberator.echoerr("E475: Invalid argument: " + args);
                 return;
             }
 
@@ -800,7 +800,7 @@ with (liberator) liberator.Buffer = function () //{{{
             let doc = window.content.document;
             let file = io.getFile(args || "");
             if (args && file.exists() && !special)
-                return echoerr("E13: File exists (add ! to override)");
+                return liberator.echoerr("E13: File exists (add ! to override)");
 
             options.setPref("browser.download.lastDir", io.getCurrentDirectory());
             try
@@ -850,7 +850,7 @@ with (liberator) liberator.Buffer = function () //{{{
             {
                 let err = styles.addSheet(name, filter, css, false, special);
                 if (err)
-                    echoerr(err);
+                    liberator.echoerr(err);
             }
         },
         {
@@ -955,7 +955,7 @@ with (liberator) liberator.Buffer = function () //{{{
             }
             else
             {
-                echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
 
@@ -1039,7 +1039,7 @@ with (liberator) liberator.Buffer = function () //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
+                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">\u00a0({type})</span>];
                 }
             }
         }
@@ -1207,7 +1207,7 @@ with (liberator) liberator.Buffer = function () //{{{
             class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
             if (!class)
             {
-                echoerr("Unknown highlight keyword");
+                liberator.echoerr("Unknown highlight keyword");
                 return;
             }
             if (!(class instanceof Array))
@@ -1228,7 +1228,7 @@ with (liberator) liberator.Buffer = function () //{{{
 
             let error = styles.addSheet("hl-" + key, scope, css, true, force);
             if (error)
-                echoerr(error);
+                liberator.echoerr(error);
             else
                 highlight.set(key, style);
         },
@@ -1347,7 +1347,7 @@ with (liberator) liberator.Buffer = function () //{{{
                         revString = "next";
                         break;
                     default:
-                        echoerr("Bad document relationship: " + relationship);
+                        liberator.echoerr("Bad document relationship: " + relationship);
                 }
 
                 relText = new RegExp(relationship, "i");
@@ -1358,7 +1358,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                            open(elems[i].href);
+                            liberator.open(elems[i].href);
                             return true;
                     }
                 }
@@ -1369,7 +1369,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                        buffer.followLink(elems[i], CURRENT_TAB);
+                        buffer.followLink(elems[i], liberator.CURRENT_TAB);
                         return true;
                     }
                 }
@@ -1381,7 +1381,7 @@ with (liberator) liberator.Buffer = function () //{{{
                     {
                         if (patternText.test(elems[i].textContent))
                         {
-                            buffer.followLink(elems[i], CURRENT_TAB);
+                            buffer.followLink(elems[i], liberator.CURRENT_TAB);
                             return true;
                         }
                         else
@@ -1392,7 +1392,7 @@ with (liberator) liberator.Buffer = function () //{{{
                             {
                                 if (patternText.test(children[j].alt))
                                 {
-                                    buffer.followLink(elems[i], CURRENT_TAB);
+                                    buffer.followLink(elems[i], liberator.CURRENT_TAB);
                                     return true;
                                 }
                             }
@@ -1423,7 +1423,7 @@ with (liberator) liberator.Buffer = function () //{{{
             }
 
             if (!retVal)
-                beep();
+                liberator.beep();
         },
 
         // artificially "clicks" a link in order to open it
@@ -1450,18 +1450,18 @@ with (liberator) liberator.Buffer = function () //{{{
             var ctrlKey = false, shiftKey = false;
             switch (where)
             {
-                case NEW_TAB:
-                case NEW_BACKGROUND_TAB:
+                case liberator.NEW_TAB:
+                case liberator.NEW_BACKGROUND_TAB:
                     ctrlKey = true;
-                    shiftKey = (where == NEW_BACKGROUND_TAB);
+                    shiftKey = (where == liberator.NEW_BACKGROUND_TAB);
                     break;
-                case NEW_WINDOW:
+                case liberator.NEW_WINDOW:
                     shiftKey = true;
                     break;
-                case CURRENT_TAB:
+                case liberator.CURRENT_TAB:
                     break;
                 default:
-                    log("Invalid where argument for followLink()", 0);
+                    liberator.log("Invalid where argument for followLink()", 0);
             }
 
             elem.focus();
@@ -1490,7 +1490,7 @@ with (liberator) liberator.Buffer = function () //{{{
             }
             catch (e)
             {
-                echoerr(e);
+                liberator.echoerr(e);
             }
         },
 
@@ -1505,7 +1505,7 @@ with (liberator) liberator.Buffer = function () //{{{
             const COL_WIDTH = 20;
 
             if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
-                beep();
+                liberator.beep();
 
             win.scrollBy(COL_WIDTH * cols, 0);
         },
@@ -1604,7 +1604,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 if (next > frames.length - 1)
                 {
                     if (current == frames.length - 1)
-                        beep(); // still allow the frame indicator to be activated
+                        liberator.beep(); // still allow the frame indicator to be activated
 
                     next = frames.length - 1;
                 }
@@ -1619,7 +1619,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 if (next < 0)
                 {
                     if (current == 0)
-                        beep(); // still allow the frame indicator to be activated
+                        liberator.beep(); // still allow the frame indicator to be activated
 
                     next = 0;
                 }
@@ -1643,7 +1643,7 @@ with (liberator) liberator.Buffer = function () //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            echo(<>Element:<br/></> + util.objectToString(elem), commandline.FORCE_MULTILINE);
+            liberator.echo(<>Element:<br/></> + util.objectToString(elem), commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)
@@ -1663,7 +1663,7 @@ with (liberator) liberator.Buffer = function () //{{{
                     info += ", bookmarked";
 
                 var pageInfoText = <>"{file}" [{info}] {title}</>;
-                echo(pageInfoText, commandline.FORCE_SINGLELINE);
+                liberator.echo(pageInfoText, commandline.FORCE_SINGLELINE);
                 return;
             }
 
@@ -1674,7 +1674,7 @@ with (liberator) liberator.Buffer = function () //{{{
                 if (opt)
                     return template.table(opt[1], opt[0](true));
             }, <br/>);
-            echo(list, commandline.FORCE_MULTILINE);
+            liberator.echo(list, commandline.FORCE_MULTILINE);
         },
 
         viewSelectionSource: function ()
@@ -1710,17 +1710,17 @@ with (liberator) liberator.Buffer = function () //{{{
                 var args = commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)
                 {
-                    echoerr("No editor specified");
+                    liberator.echoerr("No editor specified");
                     return;
                 }
 
                 var prog = args.shift();
                 args.push(url);
-                callFunctionInThread(null, io.run, [prog, args, true]);
+                liberator.callFunctionInThread(null, io.run, [prog, args, true]);
             }
             else
             {
-                open("view-source:" + url);
+                liberator.open("view-source:" + url);
             }
         },
 
@@ -1737,7 +1737,7 @@ with (liberator) liberator.Buffer = function () //{{{
     //}}}
 }; //}}}
 
-with (liberator) liberator.Marks = function () //{{{
+function Marks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1785,7 +1785,7 @@ with (liberator) liberator.Marks = function () //{{{
             {
                 if (localmark[i].location == win.location.href)
                 {
-                    log("Deleting local mark: " + markToString(mark, localmark[i]), 5);
+                    liberator.log("Deleting local mark: " + markToString(mark, localmark[i]), 5);
                     localmark.splice(i, 1);
                     if (localmark.length == 0)
                         localMarks.remove(mark);
@@ -1800,7 +1800,7 @@ with (liberator) liberator.Marks = function () //{{{
         var urlmark = urlMarks.get(mark);
         if (urlmark)
         {
-            log("Deleting URL mark: " + markToString(mark, urlmark), 5);
+            liberator.log("Deleting URL mark: " + markToString(mark, urlmark), 5);
             urlMarks.remove(mark);
         }
     }
@@ -1849,7 +1849,7 @@ with (liberator) liberator.Marks = function () //{{{
         {
             if (/[^a-zA-Z]/.test(arg))
             {
-                beep();
+                liberator.beep();
                 return;
             }
 
@@ -1872,12 +1872,12 @@ with (liberator) liberator.Marks = function () //{{{
         {
             if (!special && !args)
             {
-                echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
             if (special && args)
             {
-                echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return;
             }
             var matches;
@@ -1886,7 +1886,7 @@ with (liberator) liberator.Marks = function () //{{{
                 // NOTE: this currently differs from Vim's behavior which
                 // deletes any valid marks in the arg list, up to the first
                 // invalid arg, as well as giving the error message.
-                echoerr("E475: Invalid argument: " + matches[0]);
+                liberator.echoerr("E475: Invalid argument: " + matches[0]);
                 return;
             }
             // check for illegal ranges - only allow a-z A-Z 0-9
@@ -1901,7 +1901,7 @@ with (liberator) liberator.Marks = function () //{{{
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
                         start > end)
                     {
-                        echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
+                        liberator.echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
                         return;
                     }
                 }
@@ -1918,12 +1918,12 @@ with (liberator) liberator.Marks = function () //{{{
             var mark = args.arguments[0];
             if (mark.length > 1)
             {
-                echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
                 return;
             }
             if (!/[a-zA-Z]/.test(mark))
             {
-                echoerr("E191: Argument must be a letter or forward/backward quote");
+                liberator.echoerr("E191: Argument must be a letter or forward/backward quote");
                 return;
             }
 
@@ -1938,7 +1938,7 @@ with (liberator) liberator.Marks = function () //{{{
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
             {
-                echoerr("E283: No marks matching \"" + args + "\"");
+                liberator.echoerr("E283: No marks matching \"" + args + "\"");
                 return;
             }
 
@@ -1959,7 +1959,7 @@ with (liberator) liberator.Marks = function () //{{{
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                echoerr("Marks support for frameset pages not implemented yet");
+                liberator.echoerr("Marks support for frameset pages not implemented yet");
                 return;
             }
 
@@ -1970,7 +1970,7 @@ with (liberator) liberator.Marks = function () //{{{
             if (isURLMark(mark))
             {
                 urlMarks.set(mark, { location: win.location.href, position: position, tab: tabs.getTab() });
-                log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
+                liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
             }
             else if (isLocalMark(mark))
             {
@@ -1980,7 +1980,7 @@ with (liberator) liberator.Marks = function () //{{{
                     localMarks.set(mark, []);
                 let vals = { location: win.location.href, position: position };
                 localMarks.get(mark).push(vals);
-                log("Adding local mark: " + markToString(mark, vals), 5);
+                liberator.log("Adding local mark: " + markToString(mark, vals), 5);
             }
         },
 
@@ -2022,7 +2022,7 @@ with (liberator) liberator.Marks = function () //{{{
                         pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
                         // non-unique URLs :(
-                        open(slice.location, NEW_TAB);
+                        liberator.open(slice.location, liberator.NEW_TAB);
                         return;
                     }
                     var index = tabs.index(slice.tab);
@@ -2036,7 +2036,7 @@ with (liberator) liberator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        log("Jumping to URL mark: " + markToString(mark, slice), 5);
+                        liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -2051,7 +2051,7 @@ with (liberator) liberator.Marks = function () //{{{
                 {
                     if (win.location.href == slice[i].location)
                     {
-                        log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
+                        liberator.log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
                         win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -2059,7 +2059,7 @@ with (liberator) liberator.Marks = function () //{{{
             }
 
             if (!ok)
-                echoerr("E20: Mark not set"); // FIXME: move up?
+                liberator.echoerr("E20: Mark not set"); // FIXME: move up?
         },
 
         list: function (filter)
@@ -2068,7 +2068,7 @@ with (liberator) liberator.Marks = function () //{{{
 
             if (marks.length == 0)
             {
-                echoerr("No marks set");
+                liberator.echoerr("No marks set");
                 return;
             }
 
@@ -2077,7 +2077,7 @@ with (liberator) liberator.Marks = function () //{{{
                 marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
                 if (marks.length == 0)
                 {
-                    echoerr("E283: No marks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No marks matching \"" + filter + "\"");
                     return;
                 }
             }

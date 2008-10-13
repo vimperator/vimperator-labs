@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // Do NOT create instances of this class yourself, use the helper method
 // mappings.add() instead
-with (liberator) liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
+function Map(modes, cmds, description, action, extraInfo) //{{{
 {
     if (!modes || (!cmds || !cmds.length) || !action)
         return null;
@@ -47,7 +47,7 @@ with (liberator) liberator.Map = function (modes, cmds, description, action, ext
     this.noremap = extraInfo.noremap || false;
 };
 
-with (liberator) liberator.Map.prototype = {
+Map.prototype = {
 
     hasName: function (name)
     {
@@ -74,7 +74,7 @@ with (liberator) liberator.Map.prototype = {
 
 }; //}}}
 
-with (liberator) liberator.Mappings = function () //{{{
+function Mappings() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -225,7 +225,7 @@ with (liberator) liberator.Mappings = function () //{{{
             {
                 if (!args)
                 {
-                    echoerr("E474: Invalid argument");
+                    liberator.echoerr("E474: Invalid argument");
                     return;
                 }
 
@@ -239,7 +239,7 @@ with (liberator) liberator.Mappings = function () //{{{
                     }
                 }
                 if (!found)
-                    echoerr("E31: No such mapping");
+                    liberator.echoerr("E31: No such mapping");
             },
             { completer: function (filter) completion.userMapping(filter, modes) });
     }
@@ -336,7 +336,7 @@ with (liberator) liberator.Mappings = function () //{{{
 
         getMapLeader: function ()
         {
-            var leaderRef = variableReference("mapleader");
+            var leaderRef = liberator.variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 
@@ -364,7 +364,7 @@ with (liberator) liberator.Mappings = function () //{{{
 
             if (!maps || maps.length == 0)
             {
-                echo("No mappings found");
+                liberator.echo("No mappings found");
                 return;
             }
 
@@ -394,7 +394,7 @@ with (liberator) liberator.Mappings = function () //{{{
             var flag = output.some(function (x) x);
             if (!flag)
             {
-                echo("No mappings found");
+                liberator.echo("No mappings found");
                 return;
             }
 

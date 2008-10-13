@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // TODO: why are we passing around strings rather than file objects?
-with (liberator) liberator.IO = function () //{{{
+function IO() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -128,7 +128,7 @@ with (liberator) liberator.IO = function () //{{{
                 }
                 else
                 {
-                    echoerr("E186: No previous directory");
+                    liberator.echoerr("E186: No previous directory");
                     return;
                 }
             }
@@ -141,7 +141,7 @@ with (liberator) liberator.IO = function () //{{{
             {
                 // TODO: apparently we don't handle ../ or ./ paths yet
                 if (io.setCurrentDirectory(args))
-                    echo(io.getCurrentDirectory());
+                    liberator.echo(io.getCurrentDirectory());
             }
             else
             {
@@ -161,7 +161,7 @@ with (liberator) liberator.IO = function () //{{{
                     {
                         // FIXME: we're just overwriting the error message from
                         // setCurrentDirectory here
-                        echo(io.getCurrentDirectory());
+                        liberator.echo(io.getCurrentDirectory());
                         directoryFound = true;
                         break;
                     }
@@ -169,7 +169,7 @@ with (liberator) liberator.IO = function () //{{{
 
                 if (!directoryFound)
                 {
-                    echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
+                    liberator.echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
                                     + "\n"
                                     + "E472: Command failed");
                 }
@@ -180,12 +180,12 @@ with (liberator) liberator.IO = function () //{{{
     // NOTE: this command is only used in :source
     commands.add(["fini[sh]"],
         "Stop sourcing a script file",
-        function () { echoerr("E168: :finish used outside of a sourced file"); },
+        function () { liberator.echoerr("E168: :finish used outside of a sourced file"); },
         { argCount: "0" });
 
     commands.add(["pw[d]"],
         "Print the current directory name",
-        function () { echo(io.getCurrentDirectory()); },
+        function () { liberator.echo(io.getCurrentDirectory()); },
         { argCount: "0" });
 
     // "mkv[imperatorrc]" or "mkm[uttatorrc]"
@@ -203,11 +203,11 @@ with (liberator) liberator.IO = function () //{{{
             var file = io.getFile(filename);
             if (file.exists() && !special)
             {
-                echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
             }
 
-            var line = "\" " + version + "\n";
+            var line = "\" " + liberator.version + "\n";
             line += "\" Mappings\n";
 
             [[[modes.NORMAL], ""],
@@ -254,8 +254,8 @@ with (liberator) liberator.IO = function () //{{{
             }
             catch (e)
             {
-                echoerr("E190: Cannot open \"" + filename + "\" for writing");
-                log("Could not write to " + file.path + ": " + e.message); // XXX
+                liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
+                liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
             }
         },
         {
@@ -275,7 +275,7 @@ with (liberator) liberator.IO = function () //{{{
             let found = false;
 
             // FIXME: should use original arg string
-            echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
+            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
             for (let [,runtimeDir] in Iterator(runtimeDirs))
@@ -284,7 +284,7 @@ with (liberator) liberator.IO = function () //{{{
                 {
                     let file = io.getFile(joinPaths(runtimeDir, path));
 
-                    echomsg("Searching for \"" + file.path + "\" in \"", 3);
+                    liberator.echomsg("Searching for \"" + file.path + "\" in \"", 3);
 
                     if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
                     {
@@ -298,7 +298,7 @@ with (liberator) liberator.IO = function () //{{{
             }
 
             if (!found)
-                echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
         },
         {
             argCount: "+",
@@ -324,7 +324,7 @@ with (liberator) liberator.IO = function () //{{{
             // FIXME: implement proper filename quoting - "E172: Only one file name allowed"
             if (!args)
             {
-                echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
 
@@ -351,7 +351,7 @@ with (liberator) liberator.IO = function () //{{{
             var output = io.system(args);
             var command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
 
-            echo(command + util.escapeHTML(output));
+            liberator.echo(command + util.escapeHTML(output));
 
             autocommands.trigger("ShellCmdPost", {});
         },
@@ -371,6 +371,8 @@ with (liberator) liberator.IO = function () //{{{
         MODE_TRUNCATE: 0x20,
         MODE_SYNC: 0x40,
         MODE_EXCL: 0x80,
+
+        sourcing: null,
 
         expandPath: function (path)
         {
@@ -439,7 +441,7 @@ with (liberator) liberator.IO = function () //{{{
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
-                    echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
+                    liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
                     return null;
                 }
 
@@ -670,7 +672,7 @@ lookup:
 
             if (!file.exists())
             {
-                echoerr("Command not found: " + program);
+                liberator.echoerr("Command not found: " + program);
                 return -1;
             }
 
@@ -687,7 +689,7 @@ lookup:
         // is fixed, should use that instead of a tmpfile
         system: function (command, input)
         {
-            echomsg("Calling shell to execute: " + command, 4);
+            liberator.echomsg("Calling shell to execute: " + command, 4);
 
             var stdoutFile = ioManager.createTempFile();
             var stderrFile = ioManager.createTempFile();
@@ -740,23 +742,27 @@ lookup:
             try
             {
                 var file = ioManager.getFile(filename);
+                this.sourcing = {
+                    file: file.path,
+                    line: 0
+                };
 
                 if (!file.exists() || !file.isReadable() || file.isDirectory())
                 {
                     if (!silent)
                     {
                         if (file.exists() && file.isDirectory())
-                            echomsg("Cannot source a directory: \"" + filename + "\"", 0);
+                            liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
                         else
-                            echomsg("could not source: \"" + filename + "\"", 1);
+                            liberator.echomsg("could not source: \"" + filename + "\"", 1);
 
-                        echoerr("E484: Can't open file " + filename);
+                        liberator.echoerr("E484: Can't open file " + filename);
                     }
 
                     return;
                 }
 
-                echomsg("sourcing \"" + filename + "\"", 2);
+                liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = ioManager.readFile(file);
                 let uri = util.createURI(file.path);
@@ -803,6 +809,7 @@ lookup:
                         }
                         else
                         {
+                            this.sourcing.line = i + 1;
                             // skip line comments and blank lines
                             if (/^\s*(".*)?$/.test(line))
                                 continue;
@@ -817,11 +824,11 @@ lookup:
                                 // FIXME: messages need to be able to specify
                                 // whether they can be cleared/overwritten or
                                 // should be appended to and the MOW opened
-                                echoerr("Error detected while processing " + file.path,
+                                liberator.echoerr("Error detected while processing " + file.path,
                                     commandline.FORCE_MULTILINE);
                                 commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR,
                                     commandline.APPEND_TO_MESSAGES);
-                                echoerr("E492: Not an editor command: " + line);
+                                liberator.echoerr("E492: Not an editor command: " + line);
                             }
                             else
                             {
@@ -849,7 +856,7 @@ lookup:
                                 else
                                 {
                                     // execute a normal liberator command
-                                    execute(line);
+                                    liberator.execute(line);
                                 }
                             }
                         }
@@ -857,15 +864,16 @@ lookup:
 
                     // if no heredoc-end delimiter is found before EOF then
                     // process the heredoc anyway - Vim compatible ;-)
-                    eval(heredoc);
+                    if (heredocEnd)
+                        command.execute(heredoc, special, count);
                 }
 
                 if (scriptNames.indexOf(file.path) == -1)
                     scriptNames.push(file.path);
 
-                echomsg("finished sourcing \"" + filename + "\"", 2);
+                liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
 
-                log("Sourced: " + file.path, 3);
+                liberator.log("Sourced: " + file.path, 3);
             }
             catch (e)
             {
@@ -873,7 +881,11 @@ lookup:
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
                 if (!silent)
-                    echoerr(message);
+                    liberator.echoerr(message);
+            }
+            finally
+            {
+                this.sourcing = null;
             }
         }
     }; //}}}

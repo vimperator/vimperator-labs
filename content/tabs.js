@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // TODO: many methods do not work with Thunderbird correctly yet
 
-with (liberator) liberator.Tabs = function () //{{{
+function Tabs() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -336,9 +336,9 @@ with (liberator) liberator.Tabs = function () //{{{
                 }
 
                 if (removed > 0)
-                    echo(removed + " fewer tab(s)");
+                    liberator.echo(removed + " fewer tab(s)");
                 else
-                    echoerr("E94: No matching tab for " + args);
+                    liberator.echoerr("E94: No matching tab for " + args);
             }
             else // just remove the current tab
                 tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
@@ -355,7 +355,7 @@ with (liberator) liberator.Tabs = function () //{{{
         function (args)
         {
             liberator.forceNewTab = true;
-            execute(args.string);
+            liberator.execute(args.string);
             liberator.forceNewTab = false;
         },
         {
@@ -379,7 +379,7 @@ with (liberator) liberator.Tabs = function () //{{{
                 if (/^\d+$/.test(args))
                     tabs.select("-" + args, true); // FIXME: urgh!
                 else
-                    echoerr("E488: Trailing characters");
+                    liberator.echoerr("E488: Trailing characters");
             }
             else if (count > 0)
             {
@@ -410,7 +410,7 @@ with (liberator) liberator.Tabs = function () //{{{
                     }
                     else
                     {
-                        echoerr("E488: Trailing characters");
+                        liberator.echoerr("E488: Trailing characters");
                         return;
                     }
                 }
@@ -422,7 +422,7 @@ with (liberator) liberator.Tabs = function () //{{{
                 if (index < tabs.count)
                     tabs.select(index, true);
                 else
-                    beep();
+                    liberator.beep();
             }
             else
             {
@@ -450,7 +450,7 @@ with (liberator) liberator.Tabs = function () //{{{
                     if (/^\d+$/.test(args))
                         tabs.switchTo(args, special);
                     else
-                        echoerr("E488: Trailing characters");
+                        liberator.echoerr("E488: Trailing characters");
                 }
                 else if (count > 0)
                 {
@@ -474,7 +474,7 @@ with (liberator) liberator.Tabs = function () //{{{
 
         commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + config.name,
-            function (args, special) { quit(false, special); },
+            function (args, special) { liberator.quit(false, special); },
             {
                 argCount: "0",
                 bang: true
@@ -496,7 +496,7 @@ with (liberator) liberator.Tabs = function () //{{{
                 // FIXME: tabmove! N should probably produce an error
                 if (!/^([+-]?\d+|)$/.test(args))
                 {
-                    echoerr("E488: Trailing characters");
+                    liberator.echoerr("E488: Trailing characters");
                     return;
                 }
 
@@ -516,14 +516,14 @@ with (liberator) liberator.Tabs = function () //{{{
             "Open one or more URLs in a new tab",
             function (args, special)
             {
-                var where = special ? NEW_TAB : NEW_BACKGROUND_TAB;
+                var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
                 if (/\btabopen\b/.test(options["activate"]))
-                    where = special ? NEW_BACKGROUND_TAB : NEW_TAB;
+                    where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
 
                 if (args)
-                    open(args, where);
+                    liberator.open(args, where);
                 else
-                    open("about:blank", where);
+                    liberator.open("about:blank", where);
             },
             {
                 bang: true,
@@ -622,7 +622,7 @@ with (liberator) liberator.Tabs = function () //{{{
 
         commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
-            function () { quit(true); },
+            function () { liberator.quit(true); },
             { argCount: "0" });
     }
 
@@ -763,11 +763,11 @@ with (liberator) liberator.Tabs = function () //{{{
                             if (buffer.URL != "about:blank" ||
                                 getWebNavigation().sessionHistory.count > 0)
                             {
-                                open("about:blank", NEW_BACKGROUND_TAB);
+                                liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
                                 getBrowser().removeTab(tab);
                             }
                             else
-                                beep();
+                                liberator.beep();
                         }
                     },
                     Thunderbird: function (tab)
@@ -775,7 +775,7 @@ with (liberator) liberator.Tabs = function () //{{{
                         if (getBrowser().mTabs.length > 1)
                             getBrowser().removeTab(tab);
                         else
-                            beep();
+                            liberator.beep();
                     }
                 }[config.hostApplication] || function () {};
 
@@ -784,10 +784,10 @@ with (liberator) liberator.Tabs = function () //{{{
 
             if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)
             {
-                if (windows.length > 1)
+                if (liberator.windows.length > 1)
                     window.close();
                 else
-                    quit(quitOnLastTab == 2);
+                    liberator.quit(quitOnLastTab == 2);
 
                 return;
             }
@@ -825,7 +825,7 @@ with (liberator) liberator.Tabs = function () //{{{
             // FIXME:
             if (index === -1)
             {
-                beep(); // XXX: move to ex-handling?
+                liberator.beep(); // XXX: move to ex-handling?
                 return;
             }
             getBrowser().mTabContainer.selectedIndex = index;
@@ -924,9 +924,9 @@ with (liberator) liberator.Tabs = function () //{{{
                     matches.push(index);
             }
             if (matches.length == 0)
-                echoerr("E94: No matching buffer for " + buffer);
+                liberator.echoerr("E94: No matching buffer for " + buffer);
             else if (matches.length > 1 && !allowNonUnique)
-                echoerr("E93: More than one match for " + buffer);
+                liberator.echoerr("E93: More than one match for " + buffer);
             else
             {
                 if (reverse)
@@ -971,7 +971,7 @@ with (liberator) liberator.Tabs = function () //{{{
         {
             if (tabs.alternate == null || tabs.getTab() == tabs.alternate)
             {
-                echoerr("E23: No alternate page");
+                liberator.echoerr("E23: No alternate page");
                 return;
             }
 
@@ -983,7 +983,7 @@ with (liberator) liberator.Tabs = function () //{{{
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
             if (index == -1)
-                echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+                liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
             else
                 tabs.select(index);
         },

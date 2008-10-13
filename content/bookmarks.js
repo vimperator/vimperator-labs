@@ -27,7 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // also includes methods for dealing with keywords and search engines
-with (liberator) liberator.Bookmarks = function () //{{{
+function Bookmarks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -43,10 +43,10 @@ with (liberator) liberator.Bookmarks = function () //{{{
     const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
                                        .getService(Components.interfaces.nsIFaviconService);
 
-    const Bookmark = new util.Struct("url", "title", "icon", "keyword", "tags", "id");
-    const Keyword = new util.Struct("keyword", "title", "icon", "url");
+    const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
+    const Keyword = new Struct("keyword", "title", "icon", "url");
 
-    const storage = liberator.storage;
+    const storage = modules.storage;
     function Cache(name, store, serial)
     {
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
@@ -100,7 +100,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
 
         this.load = function load()
         {
-            // dump("cache.load()\n");
+            // liberator.dump("cache.load()\n");
             // update our bookmark cache
             bookmarks = [];
             this.__defineGetter__("bookmarks", function () bookmarks);
@@ -141,7 +141,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             onItemMoved:        function () {},
             onItemAdded: function (itemId, folder, index)
             {
-                // dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
+                // liberator.dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK)
                 {
                     if (rootFolders.indexOf(findRoot(itemId)) >= 0)
@@ -153,7 +153,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             },
             onItemRemoved: function (itemId, folder, index)
             {
-                // dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
+                // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (deleteBookmark(itemId))
                     storage.fireEvent(name, "remove", itemId);
             },
@@ -161,7 +161,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             {
                 if (isAnnotation)
                     return;
-                // dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
+                // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
                 var bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
                 if (bookmark)
                 {
@@ -192,11 +192,11 @@ with (liberator) liberator.Bookmarks = function () //{{{
 
     var cache = storage.newObject("bookmark-cache", Cache, false);
     storage.addObserver("bookmark-cache", bookmarkObserver);
-    registerObserver("shutdown", function () {
+    liberator.registerObserver("shutdown", function () {
         storage.removeObserver("bookmark-cache", bookmarkObserver)
     });
 
-    registerObserver("enter", function () {
+    liberator.registerObserver("enter", function () {
         if (options["preload"])
             cache.bookmarks; // Forces a load, if not already loaded.
     });
@@ -270,10 +270,10 @@ with (liberator) liberator.Bookmarks = function () //{{{
                 var extra = "";
                 if (title != url)
                     extra = " (" + title + ")";
-                echo("Added bookmark: " + url + extra, commandline.FORCE_SINGLELINE);
+                liberator.echo("Added bookmark: " + url + extra, commandline.FORCE_SINGLELINE);
             }
             else
-                echoerr("Exxx: Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
+                liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
         },
         {
             argCount: "?",
@@ -302,7 +302,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             let url = args || buffer.URL;
             let deletedCount = bookmarks.remove(url);
 
-            echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
+            liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
         },
         { completer: function (filter) completion.bookmark(filter) });
 
@@ -356,7 +356,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                log(e, 0);
+                liberator.log(e, 0);
                 return false;
             }
 
@@ -415,7 +415,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
             }
             catch (e)
             {
-                log(e, 0);
+                liberator.log(e, 0);
                 return i;
             }
 
@@ -497,26 +497,26 @@ with (liberator) liberator.Bookmarks = function () //{{{
             if (items.length == 0)
             {
                 if (filter.length > 0 && tags.length > 0)
-                    echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
+                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
                 else if (filter.length > 0)
-                    echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
+                    liberator.echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
                 else if (tags.length > 0)
-                    echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
+                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
                 else
-                    echoerr("No bookmarks set");
+                    liberator.echoerr("No bookmarks set");
 
                 return;
             }
 
             if (openItems)
-                return open([i.url for each (i in items)], NEW_TAB);
+                return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
 
             let list = template.bookmarks("title", (
                 {
                     url:   item.url,
                     title: item.title,
-                    extra: [['keyword', item.keyword,        "hl-Keyword"],
-                            ['tags',    item.tags.join(','), "hl-Tag"]
+                    extra: [['keyword', item.keyword,         "hl-Keyword"],
+                            ['tags',    item.tags.join(', '), "hl-Tag"]
                            ].filter(function (i) i[1])
                 } for each (item in items)));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -525,7 +525,7 @@ with (liberator) liberator.Bookmarks = function () //{{{
     //}}}
 }; //}}}
 
-with (liberator) liberator.History = function () //{{{
+function History() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -542,12 +542,12 @@ with (liberator) liberator.History = function () //{{{
         return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
     }
 
-    var history;
+    var placesHistory;
     var cachedHistory = []; // add pages here after loading the initial Places history
 
     function load()
     {
-        history = [];
+        placesHistory = [];
 
         // no query parameters will get all history
         // XXX default sorting is... ?
@@ -562,16 +562,16 @@ with (liberator) liberator.History = function () //{{{
         for (let i = 0; i < rootNode.childCount; i++)
         {
             var node = rootNode.getChild(i);
-            // dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
+            // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                history.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
+                placesHistory.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
         }
 
         // close a container after using it!
         rootNode.containerOpen = false;
     }
 
-    registerObserver("enter", function () {
+    liberator.registerObserver("enter", function () {
         if (options["preload"])
             load();
     });
@@ -584,22 +584,22 @@ with (liberator) liberator.History = function () //{{{
 
     mappings.add(myModes,
         ["<C-o>"], "Go to an older position in the jump list",
-        function (count) { liberator.history.stepTo(-(count > 1 ? count : 1)); },
+        function (count) { history.stepTo(-(count > 1 ? count : 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["<C-i>"], "Go to a newer position in the jump list",
-        function (count) { liberator.history.stepTo(count > 1 ? count : 1); },
+        function (count) { history.stepTo(count > 1 ? count : 1); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["H", "<A-Left>", "<M-Left>"], "Go back in the browser history",
-        function (count) { liberator.history.stepTo(-(count > 1 ? count : 1)); },
+        function (count) { history.stepTo(-(count > 1 ? count : 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["L", "<A-Right>", "<M-Right>"], "Go forward in the browser history",
-        function (count) { liberator.history.stepTo(count > 1 ? count : 1); },
+        function (count) { history.stepTo(count > 1 ? count : 1); },
         { flags: Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -627,11 +627,11 @@ with (liberator) liberator.History = function () //{{{
                             return;
                         }
                     }
-                    echoerr("Exxx: URL not found in history");
+                    liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
                 {
-                    liberator.history.stepTo(count > 0 ? -1 * count : -1);
+                    history.stepTo(count > 0 ? -1 * count : -1);
                 }
             }
         },
@@ -675,11 +675,11 @@ with (liberator) liberator.History = function () //{{{
                             return;
                         }
                     }
-                    echoerr("Exxx: URL not found in history");
+                    liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
                 {
-                    liberator.history.stepTo(count > 0 ? count : 1);
+                    history.stepTo(count > 0 ? count : 1);
                 }
             }
         },
@@ -718,12 +718,12 @@ with (liberator) liberator.History = function () //{{{
 
         get: function (filter)
         {
-            if (!history)
+            if (!placesHistory)
                 load();
 
             if (!filter)
-                return cachedHistory.concat(history);
-            return completion.cached("history", filter, function () cachedHistory.concat(history),
+                return cachedHistory.concat(placesHistory);
+            return completion.cached("history", filter, function () cachedHistory.concat(placesHistory),
                                 "filterURLArray");
         },
 
@@ -731,20 +731,20 @@ with (liberator) liberator.History = function () //{{{
         // so just update our cached history here
         add: function (url, title)
         {
-            if (!history)
+            if (!placesHistory)
                 load();
 
             let filter = function (h) h[0] != url;
             // don't let cachedHistory grow too large
             if (cachedHistory.length > 1000)
             {
-                history = cachedHistory.concat(history);
+                placesHistory = cachedHistory.concat(placesHistory);
                 cachedHistory = [];
             }
             else
                 cachedHistory = cachedHistory.filter(filter);
-            if (history.some(function (h) h[0] == url))
-                history = history.filter(filter);
+            if (placesHistory.some(function (h) h[0] == url))
+                placesHistory = placesHistory.filter(filter);
 
             cachedHistory.unshift([url, title || "[No title]", getIcon(url)]);
             return true;
@@ -762,7 +762,7 @@ with (liberator) liberator.History = function () //{{{
             }
             else
             {
-                beep();
+                liberator.beep();
             }
         },
 
@@ -772,7 +772,7 @@ with (liberator) liberator.History = function () //{{{
 
             if (index == 0)
             {
-                beep();
+                liberator.beep();
                 return;
             }
 
@@ -786,7 +786,7 @@ with (liberator) liberator.History = function () //{{{
 
             if (index == max)
             {
-                beep();
+                liberator.beep();
                 return;
             }
 
@@ -800,16 +800,16 @@ with (liberator) liberator.History = function () //{{{
             if (items.length == 0)
             {
                 if (filter.length > 0)
-                    echoerr("E283: No history matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No history matching \"" + filter + "\"");
                 else
-                    echoerr("No history set");
+                    liberator.echoerr("No history set");
 
                 return;
             }
 
             if (openItems)
             {
-                return open([i[0] for each (i in items)], NEW_TAB);
+                return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
             }
             else
             {
@@ -825,7 +825,7 @@ with (liberator) liberator.History = function () //{{{
     //}}}
 }; //}}}
 
-with (liberator) liberator.QuickMarks = function () //{{{
+function QuickMarks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -841,7 +841,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
 
     mappings.add(myModes,
         ["go"], "Jump to a QuickMark",
-        function (arg) { quickmarks.jumpTo(arg, CURRENT_TAB); },
+        function (arg) { quickmarks.jumpTo(arg, liberator.CURRENT_TAB); },
         { flags: Mappings.flags.ARGUMENT });
 
     mappings.add(myModes,
@@ -850,7 +850,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
         {
             quickmarks.jumpTo(arg,
                 /\bquickmark\b/.test(options["activate"]) ?
-                NEW_TAB : NEW_BACKGROUND_TAB);
+                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         },
         { flags: Mappings.flags.ARGUMENT });
 
@@ -860,7 +860,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
         {
             if (/[^a-zA-Z0-9]/.test(arg))
             {
-                beep();
+                liberator.beep();
                 return;
             }
 
@@ -879,13 +879,13 @@ with (liberator) liberator.QuickMarks = function () //{{{
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!special && !args)
             {
-                echoerr("E471: Argument required");
+                liberator.echoerr("E471: Argument required");
                 return;
             }
 
             if (special && args)
             {
-                echoerr("E474: Invalid argument");
+                liberator.echoerr("E474: Invalid argument");
                 return;
             }
 
@@ -902,7 +902,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
         {
             var matches = args.string.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
             if (!matches)
-                echoerr("E488: Trailing characters");
+                liberator.echoerr("E488: Trailing characters");
             else if (!matches[2])
                 quickmarks.add(matches[1], buffer.URL);
             else
@@ -917,7 +917,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
             // ignore invalid qmark characters unless there are no valid qmark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
             {
-                echoerr("E283: No QuickMarks matching \"" + args + "\"");
+                liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
                 return;
             }
 
@@ -957,9 +957,9 @@ with (liberator) liberator.QuickMarks = function () //{{{
             var url = qmarks.get(qmark);
 
             if (url)
-                open(url, where);
+                liberator.open(url, where);
             else
-                echoerr("E20: QuickMark not set");
+                liberator.echoerr("E20: QuickMark not set");
         },
 
         list: function (filter)
@@ -974,7 +974,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
 
             if (marks.length == 0)
             {
-                echoerr("No QuickMarks set");
+                liberator.echoerr("No QuickMarks set");
                 return;
             }
 
@@ -983,7 +983,7 @@ with (liberator) liberator.QuickMarks = function () //{{{
                 marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
                 if (marks.length == 0)
                 {
-                    echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
                     return;
                 }
             }

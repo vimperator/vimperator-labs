@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.modes = (function () //{{{
+const modes = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -100,8 +100,8 @@ with (liberator) liberator.modes = (function () //{{{
     function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work with verbosity level
-        //log("switching from mode " + oldMode + " to mode " + newMode, 7);
-        //dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
+        //liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        //liberator.dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
@@ -146,7 +146,7 @@ with (liberator) liberator.modes = (function () //{{{
                 options.setPref("accessibility.browsewithcaret", false);
 
             statusline.updateUrl();
-            focusContent(false);
+            liberator.focusContent(false);
         }
     }
 

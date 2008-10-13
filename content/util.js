@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.util = { //{{{
+const util = { //{{{
 
     Timer: function Timer(minInterval, maxInterval, callback)
     {
@@ -104,7 +104,7 @@ with (liberator) liberator.util = { //{{{
         clipboardHelper.copyString(str);
 
         if (verbose)
-            echo("Yanked " + str, commandline.FORCE_SINGLELINE);
+            liberator.echo("Yanked " + str, commandline.FORCE_SINGLELINE);
     },
 
     createURI: function (str)
@@ -184,9 +184,9 @@ with (liberator) liberator.util = { //{{{
     generateHelp: function (command, extraHelp)
     {
         var start = "", end = "";
-        if (command instanceof Command)
+        if (command instanceof liberator.Command)
             start = ":";
-        else if (command instanceof Option)
+        else if (command instanceof liberator.Option)
             start = end = "'";
 
         var ret = "";
@@ -303,8 +303,8 @@ with (liberator) liberator.util = { //{{{
             if (Date.now() > endTime)
             {
                 liberator.interrupted = false;
-                threadYield();
-                if (interrupted)
+                liberator.threadYield();
+                if (liberator.interrupted)
                     throw new Error("Interrupted");
                 endTime = Date.now() + time;
             }
@@ -439,7 +439,7 @@ with (liberator) liberator.util = { //{{{
     },
 }; //}}}
 
-liberator.util.Struct = function Struct()
+function Struct()
 {
     let self = this instanceof Struct ? this : new Struct();
     if (!arguments.length)
@@ -465,7 +465,7 @@ liberator.util.Struct = function Struct()
     return self.constructor = ConStructor;
 }
 
-liberator.util.Struct.prototype = {
+Struct.prototype = {
     clone: function () 
     {
         return this.constructor.apply(null, this.slice());
@@ -478,6 +478,6 @@ liberator.util.Struct.prototype = {
 // get length() won't work.
 for (let [,k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
                            "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
-    liberator.util.Struct.prototype[k] = Array.prototype[k];
+    Struct.prototype[k] = Array.prototype[k];
 
 // vim: set fdm=marker sw=4 ts=4 et:

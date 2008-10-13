@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-with (liberator) liberator.Addressbook = function () //{{{
+function Addressbook() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -84,7 +84,7 @@ with (liberator) liberator.Addressbook = function () //{{{
             }
             catch (e)
             {
-                beep();
+                liberator.beep();
             }
 
             if (!to)
@@ -123,9 +123,9 @@ with (liberator) liberator.Addressbook = function () //{{{
                 displayName = generateDisplayName(firstName, lastName);
 
             if (addressbook.add(mailAddr, firstName, lastName, displayName))
-                echo("Added address: " + displayName + " <" + mailAddr + ">", commandline.FORCE_SINGLELINE);
+                liberator.echo("Added address: " + displayName + " <" + mailAddr + ">", commandline.FORCE_SINGLELINE);
             else
-                echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
+                liberator.echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
 
         },
         {
@@ -189,7 +189,7 @@ with (liberator) liberator.Addressbook = function () //{{{
             }
             if (addresses.length < 1)
             {
-                echoerr("E94: No matching contact for " + filter, commandline.FORCE_SINGLELINE);
+                liberator.echoerr("E94: No matching contact for " + filter, commandline.FORCE_SINGLELINE);
                 return false;
             }
 
@@ -201,7 +201,7 @@ with (liberator) liberator.Addressbook = function () //{{{
                     function (address) "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""
                 ).join(", ");
 
-                mail.composeNewMail(args);
+                liberator.mail.composeNewMail(args);
             }
             else
             {
