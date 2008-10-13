@@ -1,12 +1,12 @@
 
-liberator.template = {
+with (liberator) liberator.template = {
     add: function (a, b) a + b,
     join: function (c) function (a, b) a + c + b,
 
     map: function (iter, fn, sep)
     {
         if (iter.length) /* Kludge? */
-            iter = liberator.util.arrayIter(iter);
+            iter = util.arrayIter(iter);
         let ret = <></>;
         let n = 0;
         for each (let i in Iterator(iter))
@@ -46,7 +46,7 @@ liberator.template = {
 		    return <span class="hl-Number">{arg}</span>;
 		case "string":
                     if (processStrings)
-                        arg = <>{liberator.util.escapeString(arg)}</>;
+                        arg = <>{util.escapeString(arg)}</>;
                     return <span class="hl-String">{arg}</span>;
                 case "boolean":
                     return <span class="hl-Boolean">{arg}</span>;
@@ -107,7 +107,7 @@ liberator.template = {
 
     generic: function (xml)
     {
-        return <>:{liberator.commandline.getCommand()}<br/></> + xml;
+        return <>:{commandline.getCommand()}<br/></> + xml;
     },
 
     bookmarks: function (header, items)
@@ -120,14 +120,14 @@ liberator.template = {
                 {
                     this.map(items, function (item)
                     <tr>
-                        <td>{liberator.util.clip(item.title, 50)}</td>
+                        <td>{util.clip(item.title, 50)}</td>
                         <td style="width: 100%">
                             <a href="#" class="hl-URL">{item.url}</a>&#160;
                             {
                                 !(item.extra && item.extra.length) ? "" :
                                 <span class="extra-info">
                                     ({
-                                        liberator.template.map(item.extra, function (e)
+                                        template.map(item.extra, function (e)
                                         <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
                                         <![CDATA[ ]]>/* Non-breaking space */)
                                     })
@@ -188,7 +188,7 @@ liberator.template = {
                     this.map(data, function (datum)
                     <tr>
                        <td style={"font-weight: bold; min-width: 150px; padding-left: " + (indent || "2ex")}>{datum[0]}</td>
-                       <td>{liberator.template.maybeXML(datum[1])}</td>
+                       <td>{template.maybeXML(datum[1])}</td>
                     </tr>)
                 }
             </table>;
@@ -211,7 +211,7 @@ liberator.template = {
                     this.map(iter, function (row)
                     <tr>
                     {
-                        liberator.template.map(Iterator(row), function ([i, d])
+                        template.map(Iterator(row), function ([i, d])
                         <td style={style[i] || ""}>{d}</td>)
                     }
                     </tr>)

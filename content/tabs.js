@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // TODO: many methods do not work with Thunderbird correctly yet
 
-liberator.Tabs = function () //{{{
+with (liberator) liberator.Tabs = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -36,7 +36,7 @@ liberator.Tabs = function () //{{{
 
     var tabmail;
     var getBrowser = (function () {
-        if (liberator.config.hostApplication == "Thunderbird")
+        if (config.hostApplication == "Thunderbird")
         {
             return function ()
             {
@@ -107,37 +107,37 @@ liberator.Tabs = function () //{{{
     }
 
     // hide tabs initially
-    if (liberator.config.name == "Vimperator")
+    if (config.name == "Vimperator")
         getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["showtabline", "stal"],
+    options.add(["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "number", liberator.config.name == "Vimperator" ? 2 : 0,
+        "number", config.name == "Vimperator" ? 2 : 0,
         {
             setter: function (value)
             {
-                var tabs = liberator.tabs.tabStrip;
+                let tabStrip = tabs.tabStrip;
 
-                if (!tabs)
+                if (!tabStrip)
                     return;
 
                 if (value == 0)
                 {
-                    tabs.collapsed = true;
+                    tabStrip.collapsed = true;
                 }
                 else if (value == 1)
                 {
-                    liberator.options.setPref("browser.tabs.autoHide", true);
-                    tabs.collapsed = false;
+                    options.setPref("browser.tabStrip.autoHide", true);
+                    tabStrip.collapsed = false;
                 }
                 else
                 {
-                    liberator.options.setPref("browser.tabs.autoHide", false);
-                    tabs.collapsed = false;
+                    options.setPref("browser.tabStrip.autoHide", false);
+                    tabStrip.collapsed = false;
                 }
 
                 return value;
@@ -153,9 +153,9 @@ liberator.Tabs = function () //{{{
             validator: function (value) value >= 0 && value <= 2
         });
 
-    if (liberator.config.name == "Vimperator")
+    if (config.name == "Vimperator")
     {
-        liberator.options.add(["activate", "act"],
+        options.add(["activate", "act"],
             "Define when tabs are automatically activated",
             "stringlist", "homepage,quickmark,tabopen,paste",
             {
@@ -176,7 +176,7 @@ liberator.Tabs = function () //{{{
                 }
             });
 
-        liberator.options.add(["newtab"],
+        options.add(["newtab"],
             "Define which commands should output in a new tab by default",
             "stringlist", "",
             {
@@ -199,7 +199,7 @@ liberator.Tabs = function () //{{{
                 }
             });
 
-        liberator.options.add(["popups", "pps"],
+        options.add(["popups", "pps"],
             "Where to show requested popup windows",
             "number", 1,
             {
@@ -211,8 +211,8 @@ liberator.Tabs = function () //{{{
                                   [1, 2], // always in new window
                                   [2, 1]];// current tab unless it has specified sizes
 
-                    liberator.options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
-                    liberator.options.setPref("browser.link.open_newwindow", values[value][1]);
+                    options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
+                    options.setPref("browser.link.open_newwindow", values[value][1]);
 
                     return value;
                 },
@@ -234,76 +234,76 @@ liberator.Tabs = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.mappings.add([liberator.modes.NORMAL], ["g0", "g^"],
+    mappings.add([modes.NORMAL], ["g0", "g^"],
         "Go to the first tab",
-        function (count) { liberator.tabs.select(0); });
+        function (count) { tabs.select(0); });
 
-    liberator.mappings.add([liberator.modes.NORMAL], ["g$"],
+    mappings.add([modes.NORMAL], ["g$"],
         "Go to the last tab",
-        function (count) { liberator.tabs.select("$"); });
+        function (count) { tabs.select("$"); });
 
-    liberator.mappings.add([liberator.modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
+    mappings.add([modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
         "Go to the next tab",
-        function (count) { liberator.tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
+    mappings.add([modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
        "Go to previous tab",
-        function (count) { liberator.tabs.select("-" + (count < 1 ? 1 : count), true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { tabs.select("-" + (count < 1 ? 1 : count), true); },
+        { flags: Mappings.flags.COUNT });
 
-    if (liberator.config.name == "Vimperator")
+    if (config.name == "Vimperator")
     {
-        liberator.mappings.add([liberator.modes.NORMAL], ["b"],
+        mappings.add([modes.NORMAL], ["b"],
             "Open a prompt to switch buffers",
-            function () { liberator.commandline.open(":", "buffer! ", liberator.modes.EX); });
+            function () { commandline.open(":", "buffer! ", modes.EX); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["B"],
+        mappings.add([modes.NORMAL], ["B"],
             "Show buffer list",
-            function () { liberator.tabs.list(false); });
+            function () { tabs.list(false); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["d"],
+        mappings.add([modes.NORMAL], ["d"],
             "Delete current buffer",
-            function (count) { liberator.tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
-            { flags: liberator.Mappings.flags.COUNT });
+            function (count) { tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["D"],
+        mappings.add([modes.NORMAL], ["D"],
             "Delete current buffer, focus tab to the left",
-            function (count) { liberator.tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
-            { flags: liberator.Mappings.flags.COUNT });
+            function (count) { tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gb"],
+        mappings.add([modes.NORMAL], ["gb"],
             "Repeat last :buffer[!] command",
-            function (count) { liberator.tabs.switchTo(null, null, count, false); },
-            { flags: liberator.Mappings.flags.COUNT });
+            function (count) { tabs.switchTo(null, null, count, false); },
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gB"],
+        mappings.add([modes.NORMAL], ["gB"],
             "Repeat last :buffer[!] command in reverse direction",
-            function (count) { liberator.tabs.switchTo(null, null, count, true); },
-            { flags: liberator.Mappings.flags.COUNT });
+            function (count) { tabs.switchTo(null, null, count, true); },
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["u"],
+        mappings.add([modes.NORMAL], ["u"],
             "Undo closing of a tab",
-            function (count) { liberator.commands.get("undo").execute("", false, count); },
-            { flags: liberator.Mappings.flags.COUNT });
+            function (count) { commands.get("undo").execute("", false, count); },
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["<C-^>", "<C-6>"],
+        mappings.add([modes.NORMAL], ["<C-^>", "<C-6>"],
             "Select the alternate tab or the [count]th tab",
             function (count)
             {
                 if (count < 1)
-                    liberator.tabs.selectAlternateTab();
+                    tabs.selectAlternateTab();
                 else
-                    liberator.tabs.switchTo(count.toString(), false);
+                    tabs.switchTo(count.toString(), false);
             },
-            { flags: liberator.Mappings.flags.COUNT });
+            { flags: Mappings.flags.COUNT });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
+    commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         "Delete current buffer",
         function (args, special, count)
         {
@@ -314,7 +314,7 @@ liberator.Tabs = function () //{{{
                 var match;
                 if (match = args.match(/^(\d+):?/))
                 {
-                    liberator.tabs.remove(liberator.tabs.getTab(parseInt(match[1], 10) - 1));
+                    tabs.remove(tabs.getTab(parseInt(match[1], 10) - 1));
                     removed = 1;
                 }
                 else
@@ -329,47 +329,47 @@ liberator.Tabs = function () //{{{
                         if (host.indexOf(args) >= 0 || uri == args ||
                             (special && (title.indexOf(args) >= 0 || uri.indexOf(args) >= 0)))
                         {
-                            liberator.tabs.remove(liberator.tabs.getTab(i));
+                            tabs.remove(tabs.getTab(i));
                             removed++;
                         }
                     }
                 }
 
                 if (removed > 0)
-                    liberator.echo(removed + " fewer tab(s)");
+                    echo(removed + " fewer tab(s)");
                 else
-                    liberator.echoerr("E94: No matching tab for " + args);
+                    echoerr("E94: No matching tab for " + args);
             }
             else // just remove the current tab
-                liberator.tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+                tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         },
         {
             bang: true,
             count: true,
-            completer: function (filter) liberator.completion.buffer(filter)
+            completer: function (filter) completion.buffer(filter)
         });
 
     // TODO: this should open in a new tab positioned directly after the current one, not at the end
-    liberator.commands.add(["tab"],
+    commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
         function (args)
         {
             liberator.forceNewTab = true;
-            liberator.execute(args.string);
+            execute(args.string);
             liberator.forceNewTab = false;
         },
         {
             argCount: "+",
-            completer: function (filter) liberator.completion.ex(filter)
+            completer: function (filter) completion.ex(filter)
         });
 
-    liberator.commands.add(["tabl[ast]", "bl[ast]"],
+    commands.add(["tabl[ast]", "bl[ast]"],
         "Switch to the last tab",
-        function () liberator.tabs.select("$", false),
+        function () tabs.select("$", false),
         { argCount: "0" });
 
     // TODO: "Zero count" if 0 specified as arg
-    liberator.commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]", "bp[revious]", "bN[ext]"],
+    commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]", "bp[revious]", "bN[ext]"],
         "Switch to the previous tab or go [count] tabs back",
         function (args, special, count)
         {
@@ -377,23 +377,23 @@ liberator.Tabs = function () //{{{
             if (args)
             {
                 if (/^\d+$/.test(args))
-                    liberator.tabs.select("-" + args, true); // FIXME: urgh!
+                    tabs.select("-" + args, true); // FIXME: urgh!
                 else
-                    liberator.echoerr("E488: Trailing characters");
+                    echoerr("E488: Trailing characters");
             }
             else if (count > 0)
             {
-                liberator.tabs.select("-" + count, true);
+                tabs.select("-" + count, true);
             }
             else
             {
-                liberator.tabs.select("-1", true);
+                tabs.select("-1", true);
             }
         },
         { count: true });
 
     // TODO: "Zero count" if 0 specified as arg
-    liberator.commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
+    commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
         "Switch to the next or [count]th tab",
         function (args, special, count)
         {
@@ -410,7 +410,7 @@ liberator.Tabs = function () //{{{
                     }
                     else
                     {
-                        liberator.echoerr("E488: Trailing characters");
+                        echoerr("E488: Trailing characters");
                         return;
                     }
                 }
@@ -419,27 +419,27 @@ liberator.Tabs = function () //{{{
                     index = count - 1;
                 }
 
-                if (index < liberator.tabs.count)
-                    liberator.tabs.select(index, true);
+                if (index < tabs.count)
+                    tabs.select(index, true);
                 else
-                    liberator.beep();
+                    beep();
             }
             else
             {
-                liberator.tabs.select("+1", true);
+                tabs.select("+1", true);
             }
         },
         { count: true });
 
-    liberator.commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
+    commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
         "Switch to the first tab",
-        function () { liberator.tabs.select(0, false); },
+        function () { tabs.select(0, false); },
         { argCount: "0" });
 
-    if (liberator.config.name == "Vimperator")
+    if (config.name == "Vimperator")
     {
         // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
-        liberator.commands.add(["b[uffer]"],
+        commands.add(["b[uffer]"],
             "Switch to a buffer",
             function (args, special, count)
             {
@@ -448,108 +448,108 @@ liberator.Tabs = function () //{{{
                 if (args && count > 0)
                 {
                     if (/^\d+$/.test(args))
-                        liberator.tabs.switchTo(args, special);
+                        tabs.switchTo(args, special);
                     else
-                        liberator.echoerr("E488: Trailing characters");
+                        echoerr("E488: Trailing characters");
                 }
                 else if (count > 0)
                 {
-                    liberator.tabs.switchTo(count.toString(), special);
+                    tabs.switchTo(count.toString(), special);
                 }
                 else
                 {
-                    liberator.tabs.switchTo(args, special);
+                    tabs.switchTo(args, special);
                 }
             },
             {
                 bang: true,
                 count: true,
-                completer: function (filter) liberator.completion.buffer(filter)
+                completer: function (filter) completion.buffer(filter)
             });
 
-        liberator.commands.add(["buffers", "files", "ls", "tabs"],
+        commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
-            function (args) { liberator.tabs.list(); },
+            function (args) { tabs.list(); },
             { argCount: "0" });
 
-        liberator.commands.add(["quita[ll]", "qa[ll]"],
-            "Quit " + liberator.config.name,
-            function (args, special) { liberator.quit(false, special); },
+        commands.add(["quita[ll]", "qa[ll]"],
+            "Quit " + config.name,
+            function (args, special) { quit(false, special); },
             {
                 argCount: "0",
                 bang: true
             });
 
-        liberator.commands.add(["reloada[ll]"],
+        commands.add(["reloada[ll]"],
             "Reload all tab pages",
-            function (args, special) { liberator.tabs.reloadAll(special); },
+            function (args, special) { tabs.reloadAll(special); },
             {
                 argCount: "0",
                 bang: true
             });
 
         // TODO: add count support
-        liberator.commands.add(["tabm[ove]"],
+        commands.add(["tabm[ove]"],
             "Move the current tab after tab N",
             function (args, special)
             {
                 // FIXME: tabmove! N should probably produce an error
                 if (!/^([+-]?\d+|)$/.test(args))
                 {
-                    liberator.echoerr("E488: Trailing characters");
+                    echoerr("E488: Trailing characters");
                     return;
                 }
 
                 if (!args)
                     args = "$"; // if not specified, move to the last tab
 
-                liberator.tabs.move(getBrowser().mCurrentTab, args, special);
+                tabs.move(getBrowser().mCurrentTab, args, special);
             },
             { bang: true });
 
-        liberator.commands.add(["tabo[nly]"],
+        commands.add(["tabo[nly]"],
             "Close all other tabs",
-            function () { liberator.tabs.keepOnly(getBrowser().mCurrentTab); },
+            function () { tabs.keepOnly(getBrowser().mCurrentTab); },
             { argCount: "0" });
 
-        liberator.commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
+        commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
             "Open one or more URLs in a new tab",
             function (args, special)
             {
-                var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
-                if (/\btabopen\b/.test(liberator.options["activate"]))
-                    where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
+                var where = special ? NEW_TAB : NEW_BACKGROUND_TAB;
+                if (/\btabopen\b/.test(options["activate"]))
+                    where = special ? NEW_BACKGROUND_TAB : NEW_TAB;
 
                 if (args)
-                    liberator.open(args, where);
+                    open(args, where);
                 else
-                    liberator.open("about:blank", where);
+                    open("about:blank", where);
             },
             {
                 bang: true,
-                completer: function (filter) liberator.completion.url(filter)
+                completer: function (filter) completion.url(filter)
             });
 
-        liberator.commands.add(["tabde[tach]"],
+        commands.add(["tabde[tach]"],
             "Detach current tab to its own window",
-            function () { liberator.tabs.detachTab(null); },
+            function () { tabs.detachTab(null); },
             { argCount: "0" });
 
-        liberator.commands.add(["tabd[uplicate]"],
+        commands.add(["tabd[uplicate]"],
             "Duplicate current tab",
             function (args, special, count)
             {
-                var tab = liberator.tabs.getTab();
+                var tab = tabs.getTab();
 
                 var activate = special ? true : false;
-                if (/\btabopen\b/.test(liberator.options["activate"]))
+                if (/\btabopen\b/.test(options["activate"]))
                     activate = !activate;
 
                 if (count < 1)
                     count = 1;
 
                 for (let i = 0; i < count; i++)
-                    liberator.tabs.cloneTab(tab, activate);
+                    tabs.cloneTab(tab, activate);
             },
             {
                 argCount: "0",
@@ -561,7 +561,7 @@ liberator.Tabs = function () //{{{
     if (liberator.has("session"))
     {
         // TODO: extract common functionality of "undoall"
-        liberator.commands.add(["u[ndo]"],
+        commands.add(["u[ndo]"],
             "Undo closing of a tab",
             function (args, special, count)
             {
@@ -596,7 +596,7 @@ liberator.Tabs = function () //{{{
                     {
                         var url = undoItems[i].state.entries[0].url;
                         var title = undoItems[i].title;
-                        if (liberator.completion.match([url, title], filter, false))
+                        if (completion.match([url, title], filter, false))
                             completions.push([url, title]);
                     }
                     return [0, completions];
@@ -604,7 +604,7 @@ liberator.Tabs = function () //{{{
                 count: true
             });
 
-        liberator.commands.add(["undoa[ll]"],
+        commands.add(["undoa[ll]"],
             "Undo closing of all closed tabs",
             function (args, special, count)
             {
@@ -620,9 +620,9 @@ liberator.Tabs = function () //{{{
                 count: true
             });
 
-        liberator.commands.add(["wqa[ll]", "wq", "xa[ll]"],
+        commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
-            function () { liberator.quit(true); },
+            function () { quit(true); },
             { argCount: "0" });
     }
 
@@ -655,9 +655,9 @@ liberator.Tabs = function () //{{{
 
         get tabStrip()
         {
-            if (liberator.config.hostApplication == "Firefox")
+            if (config.hostApplication == "Firefox")
                 return getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
-            else if (liberator.config.hostApplication == "Thunderbird")
+            else if (config.hostApplication == "Thunderbird")
                 return getBrowser().mStrip;
         },
 
@@ -715,14 +715,14 @@ liberator.Tabs = function () //{{{
         // TODO: shouldn't that have a filter argument?
         list: function ()
         {
-            // TODO: move this to liberator.tabs.get()
+            // TODO: move this to tabs.get()
 
             let items = <table/>
-            for (let [i, item] in Iterator(liberator.completion.buffer("")[1]))
+            for (let [i, item] in Iterator(completion.buffer("")[1]))
             {
-                if (i == liberator.tabs.index())
+                if (i == tabs.index())
                    indicator = "%"
-                else if (i == liberator.tabs.index(liberator.tabs.alternate))
+                else if (i == tabs.index(tabs.alternate))
                    indicator = "#";
                 else
                    indicator = " ";
@@ -737,8 +737,8 @@ liberator.Tabs = function () //{{{
                     </tr>;
             }
 
-            let list = liberator.template.generic(items);
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            let list = template.generic(items);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
         // wrap causes the movement to wrap around the start and end of the tab list
@@ -760,14 +760,14 @@ liberator.Tabs = function () //{{{
                             getBrowser().removeTab(tab);
                         else
                         {
-                            if (liberator.buffer.URL != "about:blank" ||
+                            if (buffer.URL != "about:blank" ||
                                 getWebNavigation().sessionHistory.count > 0)
                             {
-                                liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
+                                open("about:blank", NEW_BACKGROUND_TAB);
                                 getBrowser().removeTab(tab);
                             }
                             else
-                                liberator.beep();
+                                beep();
                         }
                     },
                     Thunderbird: function (tab)
@@ -775,19 +775,19 @@ liberator.Tabs = function () //{{{
                         if (getBrowser().mTabs.length > 1)
                             getBrowser().removeTab(tab);
                         else
-                            liberator.beep();
+                            beep();
                     }
-                }[liberator.config.hostApplication] || function () {};
+                }[config.hostApplication] || function () {};
 
             if (typeof count != "number" || count < 1)
                 count = 1;
 
             if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count)
             {
-                if (liberator.windows.length > 1)
+                if (windows.length > 1)
                     window.close();
                 else
-                    liberator.quit(quitOnLastTab == 2);
+                    quit(quitOnLastTab == 2);
 
                 return;
             }
@@ -825,7 +825,7 @@ liberator.Tabs = function () //{{{
             // FIXME:
             if (index === -1)
             {
-                liberator.beep(); // XXX: move to ex-handling?
+                beep(); // XXX: move to ex-handling?
                 return;
             }
             getBrowser().mTabContainer.selectedIndex = index;
@@ -890,7 +890,7 @@ liberator.Tabs = function () //{{{
 
             if (buffer == "#")
             {
-                liberator.tabs.selectAlternateTab();
+                tabs.selectAlternateTab();
                 return;
             }
 
@@ -902,13 +902,13 @@ liberator.Tabs = function () //{{{
             var match;
             if (match = buffer.match(/^(\d+):?/))
             {
-                liberator.tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+                tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
                 return;
             }
 
             var matches = [];
             var lowerBuffer = buffer.toLowerCase();
-            var first = liberator.tabs.index() + (reverse ? 0 : 1);
+            var first = tabs.index() + (reverse ? 0 : 1);
             for (let i = 0; i < getBrowser().browsers.length; i++)
             {
                 var index = (i + first) % getBrowser().browsers.length;
@@ -916,7 +916,7 @@ liberator.Tabs = function () //{{{
                 var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
                 if (url == buffer)
                 {
-                    liberator.tabs.select(index, false);
+                    tabs.select(index, false);
                     return;
                 }
 
@@ -924,9 +924,9 @@ liberator.Tabs = function () //{{{
                     matches.push(index);
             }
             if (matches.length == 0)
-                liberator.echoerr("E94: No matching buffer for " + buffer);
+                echoerr("E94: No matching buffer for " + buffer);
             else if (matches.length > 1 && !allowNonUnique)
-                liberator.echoerr("E93: More than one match for " + buffer);
+                echoerr("E93: More than one match for " + buffer);
             else
             {
                 if (reverse)
@@ -938,7 +938,7 @@ liberator.Tabs = function () //{{{
                 else
                     index = (count - 1) % matches.length;
 
-                liberator.tabs.select(matches[index], false);
+                tabs.select(matches[index], false);
             }
         },
 
@@ -969,23 +969,23 @@ liberator.Tabs = function () //{{{
 
         selectAlternateTab: function ()
         {
-            if (liberator.tabs.alternate == null || liberator.tabs.getTab() == liberator.tabs.alternate)
+            if (tabs.alternate == null || tabs.getTab() == tabs.alternate)
             {
-                liberator.echoerr("E23: No alternate page");
+                echoerr("E23: No alternate page");
                 return;
             }
 
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null
-            var index = liberator.tabs.index(liberator.tabs.alternate);
+            var index = tabs.index(tabs.alternate);
 
             // TODO: since a tab close is more like a bdelete for us we
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
             if (index == -1)
-                liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+                echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
             else
-                liberator.tabs.select(index);
+                tabs.select(index);
         },
 
         // NOTE: when restarting a session FF selects the first tab and then the

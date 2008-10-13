@@ -37,7 +37,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : incremental searches shouldn't permanently update search modifiers
 
 // make sure you only create this object when the "liberator" object is ready
-liberator.Search = function () //{{{
+with (liberator) liberator.Search = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -56,13 +56,13 @@ liberator.Search = function () //{{{
     var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    liberator.registerCallback("change", liberator.modes.SEARCH_FORWARD, function (command) { liberator.search.searchKeyPressed(command); });
-    liberator.registerCallback("submit", liberator.modes.SEARCH_FORWARD, function (command) { liberator.search.searchSubmitted(command); });
-    liberator.registerCallback("cancel", liberator.modes.SEARCH_FORWARD, function () { liberator.search.searchCanceled(); });
-    // TODO: allow advanced modes in register/triggerCallback
-    liberator.registerCallback("change", liberator.modes.SEARCH_BACKWARD, function (command) { liberator.search.searchKeyPressed(command); });
-    liberator.registerCallback("submit", liberator.modes.SEARCH_BACKWARD, function (command) { liberator.search.searchSubmitted(command); });
-    liberator.registerCallback("cancel", liberator.modes.SEARCH_BACKWARD, function () { liberator.search.searchCanceled(); });
+    registerCallback("change", modes.SEARCH_FORWARD, function (command) { search.searchKeyPressed(command); });
+    registerCallback("submit", modes.SEARCH_FORWARD, function (command) { search.searchSubmitted(command); });
+    registerCallback("cancel", modes.SEARCH_FORWARD, function () { search.searchCanceled(); });
+    // TODO: allow advanced myModes in register/triggerCallback
+    registerCallback("change", modes.SEARCH_BACKWARD, function (command) { search.searchKeyPressed(command); });
+    registerCallback("submit", modes.SEARCH_BACKWARD, function (command) { search.searchSubmitted(command); });
+    registerCallback("cancel", modes.SEARCH_BACKWARD, function () { search.searchCanceled(); });
 
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
@@ -80,7 +80,7 @@ liberator.Search = function () //{{{
             linksOnly = true;
         else if (/\L/.test(pattern))
             linksOnly = false;
-        else if (liberator.options["linksearch"])
+        else if (options["linksearch"])
             linksOnly = true;
         else
             linksOnly = false;
@@ -93,9 +93,9 @@ liberator.Search = function () //{{{
             caseSensitive = false;
         else if (/\C/.test(pattern))
             caseSensitive = true;
-        else if (liberator.options["ignorecase"] && liberator.options["smartcase"] && /[A-Z]/.test(pattern))
+        else if (options["ignorecase"] && options["smartcase"] && /[A-Z]/.test(pattern))
             caseSensitive = true;
-        else if (liberator.options["ignorecase"])
+        else if (options["ignorecase"])
             caseSensitive = false;
         else
             caseSensitive = true;
@@ -177,7 +177,7 @@ liberator.Search = function () //{{{
             }
 
             var baseNode = <span class="__liberator-search"/>
-            baseNode = liberator.util.xmlToDom(baseNode, window.content.document);
+            baseNode = util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
             var count = body.childNodes.length;
@@ -204,8 +204,8 @@ liberator.Search = function () //{{{
                 this.startPt.setStart(node, node.childNodes.length);
                 this.startPt.setEnd(node, node.childNodes.length);
                 if (n++ % 20 == 0)
-                    liberator.threadYield();
-                if (liberator.interrupted)
+                    threadYield();
+                if (interrupted)
                     break;
             }
         },
@@ -228,34 +228,34 @@ liberator.Search = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["hlsearch", "hls"],
+    options.add(["hlsearch", "hls"],
         "Highlight previous search pattern matches",
         "boolean", "false",
         {
             setter: function (value)
             {
                 if (value)
-                    liberator.search.highlight();
+                    search.highlight();
                 else
-                    liberator.search.clear();
+                    search.clear();
 
                 return value;
             }
         });
 
-    liberator.options.add(["ignorecase", "ic"],
+    options.add(["ignorecase", "ic"],
         "Ignore case in search patterns",
         "boolean", true);
 
-    liberator.options.add(["incsearch", "is"],
+    options.add(["incsearch", "is"],
         "Show where the search pattern matches as it is typed",
         "boolean", true);
 
-    liberator.options.add(["linksearch", "lks"],
+    options.add(["linksearch", "lks"],
         "Limit the search to hyperlink text",
         "boolean", false);
 
-    liberator.options.add(["smartcase", "scs"],
+    options.add(["smartcase", "scs"],
         "Override the 'ignorecase' option if the pattern contains uppercase characters",
         "boolean", true);
 
@@ -263,48 +263,48 @@ liberator.Search = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
-    modes = modes.concat([liberator.modes.CARET]);
+    var myModes = config.browserModes || [modes.NORMAL];
+    myModes = myModes.concat([modes.CARET]);
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["/"], "Search forward for a pattern",
-        function () { liberator.search.openSearchDialog(liberator.modes.SEARCH_FORWARD); });
+        function () { search.openSearchDialog(modes.SEARCH_FORWARD); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["?"], "Search backwards for a pattern",
-        function () { liberator.search.openSearchDialog(liberator.modes.SEARCH_BACKWARD); });
+        function () { search.openSearchDialog(modes.SEARCH_BACKWARD); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["n"], "Find next",
-        function () { liberator.search.findAgain(false); });
+        function () { search.findAgain(false); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["N"], "Find previous",
-        function () { liberator.search.findAgain(true); });
+        function () { search.findAgain(true); });
 
-    liberator.mappings.add(modes.concat([liberator.modes.CARET, liberator.modes.TEXTAREA]), ["*"],
+    mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["*"],
         "Find word under cursor",
         function ()
         {
-            liberator.search.searchSubmitted(liberator.buffer.getCurrentWord(), false);
-            liberator.search.findAgain();
+            search.searchSubmitted(buffer.getCurrentWord(), false);
+            search.findAgain();
         });
 
-    liberator.mappings.add(modes.concat([liberator.modes.CARET, liberator.modes.TEXTAREA]), ["#"],
+    mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
         "Find word under cursor backwards",
         function ()
         {
-            liberator.search.searchSubmitted(liberator.buffer.getCurrentWord(), true);
-            liberator.search.findAgain();
+            search.searchSubmitted(buffer.getCurrentWord(), true);
+            search.findAgain();
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["noh[lsearch]"],
+    commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
-        function () { liberator.search.clear(); },
+        function () { search.clear(); },
         { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -317,14 +317,14 @@ liberator.Search = function () //{{{
         // If you omit "mode", it will default to forward searching
         openSearchDialog: function (mode)
         {
-            if (mode == liberator.modes.SEARCH_BACKWARD)
+            if (mode == modes.SEARCH_BACKWARD)
             {
-                liberator.commandline.open("?", "", liberator.modes.SEARCH_BACKWARD);
+                commandline.open("?", "", modes.SEARCH_BACKWARD);
                 backwards = true;
             }
             else
             {
-                liberator.commandline.open("/", "", liberator.modes.SEARCH_FORWARD);
+                commandline.open("/", "", modes.SEARCH_FORWARD);
                 backwards = false;
             }
 
@@ -343,7 +343,7 @@ liberator.Search = function () //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
+                setTimeout(function () { echoerr("E486: Pattern not found: " + searchPattern); }, 0);
 
             return found;
         },
@@ -362,7 +362,7 @@ liberator.Search = function () //{{{
 
             if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
             {
-                liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
+                echoerr("E486: Pattern not found: " + lastSearchPattern);
             }
             else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
             {
@@ -370,18 +370,18 @@ liberator.Search = function () //{{{
                 // our command line
                 setTimeout(function () {
                     if (up)
-                        liberator.commandline.echo("search hit TOP, continuing at BOTTOM",
-                            liberator.commandline.HL_WARNINGMSG, liberator.commandline.APPEND_TO_MESSAGES);
+                        commandline.echo("search hit TOP, continuing at BOTTOM",
+                            commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
                     else
-                        liberator.commandline.echo("search hit BOTTOM, continuing at TOP",
-                            liberator.commandline.HL_WARNINGMSG, liberator.commandline.APPEND_TO_MESSAGES);
+                        commandline.echo("search hit BOTTOM, continuing at TOP",
+                            commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
                 }, 0);
             }
             else
             {
-                liberator.echo((up ? "?" : "/") + lastSearchPattern, null, liberator.commandline.FORCE_SINGLELINE);
+                echo((up ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
 
-                if (liberator.options["hlsearch"])
+                if (options["hlsearch"])
                     this.highlight(lastSearchString);
             }
         },
@@ -389,7 +389,7 @@ liberator.Search = function () //{{{
         // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
         searchKeyPressed: function (command)
         {
-            if (liberator.options["incsearch"])
+            if (options["incsearch"])
                 this.find(command, backwards);
         },
 
@@ -405,7 +405,7 @@ liberator.Search = function () //{{{
                 command = lastSearchPattern;
 
             this.clear();
-            if (!liberator.options["incsearch"] || !found)
+            if (!options["incsearch"] || !found)
                 this.find(command, backwards);
 
             lastSearchBackwards = backwards;
@@ -416,12 +416,12 @@ liberator.Search = function () //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () { liberator.search.findAgain(false); }, 0);
+                setTimeout(function () { search.findAgain(false); }, 0);
 
-            if (liberator.options["hlsearch"])
+            if (options["hlsearch"])
                 this.highlight(searchString);
 
-            liberator.modes.reset();
+            modes.reset();
         },
 
         // Called when the search is canceled - for example if someone presses
@@ -436,7 +436,7 @@ liberator.Search = function () //{{{
         // this is not dependent on the value of 'hlsearch'
         highlight: function (text)
         {
-            if (liberator.config.name == "Muttator")
+            if (config.name == "Muttator")
                 return;
 
             // already highlighted?

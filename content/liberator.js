@@ -398,8 +398,8 @@ const liberator = (function () //{{{
                 {
                     if (count > 1)
                     {
+                        let each, eachUnits, totalUnits;
                         let total = 0;
-                        var beforeTime = Date.now();
 
                         for (let i in liberator.util.rangeInterruptable(0, count, 500))
                         {
@@ -413,23 +413,23 @@ const liberator = (function () //{{{
 
                         if (total / count >= 100)
                         {
-                            var each = (total / 1000.0) / count;
-                            var eachUnits = "sec";
+                            each = total / 1000.0 / count;
+                            eachUnits = "sec";
                         }
                         else
                         {
-                            var each = total / count;
-                            var eachUnits = "msec";
+                            each = total / count;
+                            eachUnits = "msec";
                         }
 
                         if (total >= 100)
                         {
-                            var total = total / 1000.0;
-                            var totalUnits = "sec";
+                            total = total / 1000.0;
+                            totalUnits = "sec";
                         }
                         else
                         {
-                            var totalUnits = "msec";
+                            totalUnits = "msec";
                         }
 
                         var str = liberator.template.generic(

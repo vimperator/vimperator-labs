@@ -32,7 +32,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * it consists of a prompt and command field
  * be sure to only create objects of this class when the chrome is ready
  */
-liberator.CommandLine = function () //{{{
+with (liberator) liberator.CommandLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -40,13 +40,13 @@ liberator.CommandLine = function () //{{{
 
     const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
 
-    liberator.storage.newArray("history-search", true);
-    liberator.storage.newArray("history-command", true);
+    storage.newArray("history-search", true);
+    storage.newArray("history-command", true);
 
-    var history = {
-        get mode() (liberator.modes.extended == liberator.modes.EX) ? "command" : "search",
+    var inputHistory = {
+        get mode() (modes.extended == modes.EX) ? "command" : "search",
 
-        get store() liberator.storage["history-" + this.mode],
+        get store() storage["history-" + this.mode],
 
         get length() this.store.length,
 
@@ -59,7 +59,7 @@ liberator.CommandLine = function () //{{{
 
             this.store.mutate('filter', function (line) line != str);
             this.store.push(str);
-            this.store.truncate(liberator.options["history"], true);
+            this.store.truncate(options["history"], true);
         }
     };
 
@@ -70,7 +70,7 @@ liberator.CommandLine = function () //{{{
         _messages: [],
         get messages()
         {
-            let max = liberator.options["messages"];
+            let max = options["messages"];
 
             // resize if 'messages' has changed
             if (this._messages.length > max)
@@ -86,7 +86,7 @@ liberator.CommandLine = function () //{{{
             if (!message)
                 return;
 
-            if (this._messages.length >= liberator.options["messages"])
+            if (this._messages.length >= options["messages"])
                 this._messages.shift();
 
             this._messages.push(message);
@@ -94,7 +94,7 @@ liberator.CommandLine = function () //{{{
     };
     var lastMowOutput = null;
 
-    var completionList = new liberator.ItemList("liberator-completions");
+    var completionList = new ItemList("liberator-completions");
     var completions = [];
     // for the example command "open sometext| othertext" (| is the cursor pos):
     var completionStartIndex = 0;  // will be 5 because we want to complete arguments for the :open command
@@ -105,13 +105,13 @@ liberator.CommandLine = function () //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
-    var statusTimer = new liberator.util.Timer(5, 100, function ()
-        liberator.statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
-    var autocompleteTimer = new liberator.util.Timer(201, 300, function (command) {
-        if (liberator.modes.isReplaying)
+    var statusTimer = new util.Timer(5, 100, function ()
+        statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
+    var autocompleteTimer = new util.Timer(201, 300, function (command) {
+        if (modes.isReplaying)
             return;
-        let [start, compl] = liberator.completion.ex(command);
-        liberator.commandline.setCompletions(compl, start);
+        let [start, compl] = completion.ex(command);
+        commandline.setCompletions(compl, start);
     });
 
     // the containing box for the promptWidget and commandWidget
@@ -145,8 +145,8 @@ liberator.CommandLine = function () //{{{
     var promptCallback = null;
     var promptCompleter = null;
 
-    liberator.registerCallback("change", liberator.modes.EX, function (command) {
-        if (liberator.options.get("wildoptions").has("auto"))
+    registerCallback("change", modes.EX, function (command) {
+        if (options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(command);
         else
             completionIndex = UNINITIALIZED;
@@ -157,13 +157,13 @@ liberator.CommandLine = function () //{{{
         let callback = promptCallback;
         promptCallback = null;
         currentExtendedMode = null;
-        liberator.commandline.clear();
+        commandline.clear();
         if (callback)
             callback(value);
     }
-    liberator.registerCallback("cancel", liberator.modes.PROMPT, closePrompt);
-    liberator.registerCallback("submit", liberator.modes.PROMPT, closePrompt);
-    liberator.registerCallback("complete", liberator.modes.PROMPT,
+    registerCallback("cancel", modes.PROMPT, closePrompt);
+    registerCallback("submit", modes.PROMPT, closePrompt);
+    registerCallback("complete", modes.PROMPT,
         function (str) { if (promptCompleter) return promptCompleter(str); });
 
     function setHighlightGroup(group)
@@ -185,7 +185,7 @@ liberator.CommandLine = function () //{{{
         {
             promptWidget.collapsed = true;
         }
-        promptWidget.setAttribute("class", highlightGroup || liberator.commandline.HL_NORMAL);
+        promptWidget.setAttribute("class", highlightGroup || commandline.HL_NORMAL);
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
@@ -216,7 +216,7 @@ liberator.CommandLine = function () //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str == "xml";
-        var output = <div class={"ex-command-output " + highlightGroup}>{liberator.template.maybeXML(str)}</div>;
+        var output = <div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>;
         XML.ignoreWhiteSpace = true;
 
         lastMowOutput = output;
@@ -226,7 +226,7 @@ liberator.CommandLine = function () //{{{
         if (outputContainer.collapsed)
             doc.body.innerHTML = "";
 
-        doc.body.appendChild(liberator.util.xmlToDom(output, doc));
+        doc.body.appendChild(util.xmlToDom(output, doc));
 
         var availableHeight = 250;
         try
@@ -241,27 +241,27 @@ liberator.CommandLine = function () //{{{
         outputContainer.height = height + "px";
         outputContainer.collapsed = false;
 
-        if (liberator.options["more"] && win.scrollMaxY > 0)
+        if (options["more"] && win.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
             var elements = doc.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
 
             if (win.scrollY >= win.scrollMaxY)
-                setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", commandline.HL_QUESTION);
             else
-                setLine("-- More --", liberator.commandline.HL_QUESTION);
+                setLine("-- More --", commandline.HL_QUESTION);
         }
         else
         {
             win.scrollTo(0, contentHeight);
-            setLine("Press ENTER or type command to continue", liberator.commandline.HL_QUESTION);
+            setLine("Press ENTER or type command to continue", commandline.HL_QUESTION);
         }
 
         win.focus();
 
         startHints = false;
-        liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.OUTPUT_MULTILINE);
+        modes.push(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
     }
 
     function autosizeMultilineInputWidget()
@@ -282,18 +282,18 @@ liberator.CommandLine = function () //{{{
 
         try
         {
-            arg = liberator.eval(arg);
+            arg = eval(arg);
         }
         catch (e)
         {
-            liberator.echoerr(e);
+            echoerr(e);
             return null;
         }
 
         if (typeof arg === "object")
-            arg = liberator.util.objectToString(arg, useColor);
+            arg = util.objectToString(arg, useColor);
         else if (typeof arg === "function")
-            arg = liberator.util.escapeHTML(arg.toString());
+            arg = util.escapeHTML(arg.toString());
         else if (typeof arg === "number" || typeof arg === "boolean")
             arg = "" + arg;
         else if (typeof arg === "undefined")
@@ -307,7 +307,7 @@ liberator.CommandLine = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // TODO: doesn't belong in ui.js
-    liberator.options.add(["complete", "cpt"],
+    options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfbh",
         {
@@ -325,25 +325,25 @@ liberator.CommandLine = function () //{{{
             validator: function (value) !/[^sfbhSl]/.test(value)
         });
 
-    liberator.options.add(["history", "hi"],
+    options.add(["history", "hi"],
         "Number of Ex commands and search patterns to store in the command-line history",
         "number", 500,
         { validator: function (value) value >= 0 });
 
-    liberator.options.add(["messages", "msgs"],
+    options.add(["messages", "msgs"],
         "Number of messages to store in the message history",
         "number", 100,
         { validator: function (value) value >= 0 });
 
-    liberator.options.add(["more"],
+    options.add(["more"],
         "Pause the message list window when more than one screen of listings is displayed",
         "boolean", true);
 
-    liberator.options.add(["showmode", "smd"],
+    options.add(["showmode", "smd"],
         "Show the current mode in the command line",
         "boolean", true);
 
-    liberator.options.add(["suggestengines"],
+    options.add(["suggestengines"],
          "Engine Alias which has a feature of suggest",
          "stringlist", "google",
          {
@@ -368,7 +368,7 @@ liberator.CommandLine = function () //{{{
              }
          });
 
-    liberator.options.add(["wildignore", "wig"],
+    options.add(["wildignore", "wig"],
         "List of file patterns to ignore when completing files",
         "stringlist", "",
         {
@@ -387,7 +387,7 @@ liberator.CommandLine = function () //{{{
             }
         });
 
-    liberator.options.add(["wildmode", "wim"],
+    options.add(["wildmode", "wim"],
         "Define how command line completion works",
         "stringlist", "list:full",
         {
@@ -410,7 +410,7 @@ liberator.CommandLine = function () //{{{
             }
         });
 
-    liberator.options.add(["wildoptions", "wop"],
+    options.add(["wildoptions", "wop"],
         "Change how command line completion is done",
         "stringlist", "",
         {
@@ -431,37 +431,37 @@ liberator.CommandLine = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = [liberator.modes.COMMAND_LINE];
+    var myModes = [modes.COMMAND_LINE];
 
     // TODO: move "<Esc>", "<C-[" here from mappings
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-c>"], "Focus content",
-        function () { liberator.events.onEscape(); });
+        function () { events.onEscape(); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<Space>"], "Expand command line abbreviation",
         function ()
         {
-            liberator.commandline.resetCompletions();
-            return liberator.editor.expandAbbreviation("c");
+            commandline.resetCompletions();
+            return editor.expandAbbreviation("c");
         },
-        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+        { flags: Mappings.flags.ALLOW_EVENT_ROUTING });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
-        function () { liberator.editor.expandAbbreviation("c"); });
+        function () { editor.expandAbbreviation("c"); });
 
     // FIXME: Should be "g<" but that doesn't work unless it has a non-null
     // rhs, getCandidates broken?
-    liberator.mappings.add([liberator.modes.NORMAL],
+    mappings.add([modes.NORMAL],
         ["gm"], "Redisplay the last command output",
         function ()
         {
             if (lastMowOutput)
-                liberator.commandline.echo(lastMowOutput,
-                    liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                commandline.echo(lastMowOutput,
+                    commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             else
-                liberator.beep();
+                beep();
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -472,22 +472,22 @@ liberator.CommandLine = function () //{{{
         {
             name: "ec[ho]",
             description: "Display a string at the bottom of the window",
-            action: liberator.echo
+            action: echo
         },
         {
             name: "echoe[rr]",
             description: "Display an error string at the bottom of the window",
-            action: liberator.echoerr
+            action: echoerr
         },
         {
             name: "echom[sg]",
             description: "Display a message at the bottom of the window saving it in the message history",
-            action: liberator.echomsg
+            action: echomsg
         }
     ];
 
     echoCommands.forEach(function (command) {
-        liberator.commands.add([command.name],
+        commands.add([command.name],
             command.description,
             function (args)
             {
@@ -495,10 +495,10 @@ liberator.CommandLine = function () //{{{
                 if (str != null)
                     command.action(str);
             },
-            { completer: function (filter) liberator.completion.javascript(filter) });
+            { completer: function (filter) completion.javascript(filter) });
     });
 
-    liberator.commands.add(["mes[sages]"],
+    commands.add(["mes[sages]"],
         "Display previously given messages",
         function ()
         {
@@ -508,7 +508,7 @@ liberator.CommandLine = function () //{{{
             if (messageHistory.length == 1)
             {
                 let message = messageHistory.messages[0];
-                liberator.commandline.echo(message.str, message.highlight, liberator.commandline.FORCE_SINGLELINE);
+                commandline.echo(message.str, message.highlight, commandline.FORCE_SINGLELINE);
             }
             else if (messageHistory.length > 1)
             {
@@ -517,7 +517,7 @@ liberator.CommandLine = function () //{{{
                 for (let [,message] in Iterator(messageHistory.messages))
                     list += <div class={message.highlight}>{message.str}</div>;
 
-                liberator.echo(list, liberator.commandline.FORCE_MULTILINE);
+                echo(list, commandline.FORCE_MULTILINE);
             }
         },
         { argCount: "0" });
@@ -547,7 +547,7 @@ liberator.CommandLine = function () //{{{
 
         get autocompleteTimer() autocompleteTimer,
 
-        get mode() (liberator.modes.extended == liberator.modes.EX) ? "cmd" : "search",
+        get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
         getCommand: function ()
         {
@@ -565,7 +565,7 @@ liberator.CommandLine = function () //{{{
             historyIndex = UNINITIALIZED;
             completionIndex = UNINITIALIZED;
 
-            liberator.modes.push(liberator.modes.COMMAND_LINE, currentExtendedMode);
+            modes.push(modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
             setPrompt(currentPrompt);
             setCommand(currentCommand);
@@ -574,17 +574,17 @@ liberator.CommandLine = function () //{{{
 
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
-                liberator.options.get("wildoptions").has("auto") >= 0 &&
-                extendedMode == liberator.modes.EX)
+                options.get("wildoptions").has("auto") >= 0 &&
+                extendedMode == modes.EX)
                 autocompleteTimer.tell(cmd);
         },
 
         // normally used when pressing esc, does not execute a command
         close: function ()
         {
-            var res = liberator.triggerCallback("cancel", currentExtendedMode);
-            history.add(this.getCommand());
-            liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
+            var res = triggerCallback("cancel", currentExtendedMode);
+            inputHistory.add(this.getCommand());
+            statusline.updateProgress(""); // we may have a "match x of y" visible
             this.clear();
         },
 
@@ -600,7 +600,7 @@ liberator.CommandLine = function () //{{{
             setLine("", this.HL_NORMAL);
         },
 
-        // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
+        // echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function (str, highlightGroup, flags)
         {
             var focused = document.commandDispatcher.focusedElement;
@@ -643,15 +643,15 @@ liberator.CommandLine = function () //{{{
         },
 
         // this will prompt the user for a string
-        // liberator.commandline.input("(s)ave or (o)pen the file?")
+        // commandline.input("(s)ave or (o)pen the file?")
         input: function (prompt, callback, extra)
         {
             extra = extra || {};
 
             promptCallback = callback;
             promptCompleter = extra.completer;
-            liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.PROMPT);
-            currentExtendedMode = liberator.modes.PROMPT;
+            modes.push(modes.COMMAND_LINE, modes.PROMPT);
+            currentExtendedMode = modes.PROMPT;
             setPrompt(prompt + " ", this.HL_QUESTION);
             setCommand(extra.default || "");
             commandWidget.focus();
@@ -662,7 +662,7 @@ liberator.CommandLine = function () //{{{
         inputMultiline: function (untilRegexp, callbackFunc)
         {
             // save the mode, because we need to restore it
-            liberator.modes.push(liberator.modes.COMMAND_LINE, liberator.modes.INPUT_MULTILINE);
+            modes.push(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
 
             // save the arguments, they are needed in the event handler onEvent
             multilineRegexp = untilRegexp;
@@ -683,9 +683,9 @@ liberator.CommandLine = function () //{{{
             {
                 // prevent losing focus, there should be a better way, but it just didn't work otherwise
                 setTimeout(function () {
-                    if (liberator.mode == liberator.modes.COMMAND_LINE &&
-                        !(liberator.modes.extended & liberator.modes.INPUT_MULTILINE) &&
-                        !(liberator.modes.extended & liberator.modes.OUTPUT_MULTILINE))
+                    if (mode == modes.COMMAND_LINE &&
+                        !(modes.extended & modes.INPUT_MULTILINE) &&
+                        !(modes.extended & modes.OUTPUT_MULTILINE))
                                 commandWidget.inputField.focus();
                 }, 0);
             }
@@ -696,38 +696,38 @@ liberator.CommandLine = function () //{{{
             }
             else if (event.type == "input")
             {
-                liberator.triggerCallback("change", currentExtendedMode, command);
+                triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
                 if (!currentExtendedMode)
                     return true;
 
-                var key = liberator.events.toString(event);
-                //liberator.log("command line handling key: " + key + "\n");
+                var key = events.toString(event);
+                //log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
                 //   FIXME: <Esc> should trigger "cancel" event
-                if (liberator.events.isAcceptKey(key))
+                if (events.isAcceptKey(key))
                 {
-                    var mode = currentExtendedMode; // save it here, as setMode() resets it
+                    let mode = currentExtendedMode; // save it here, as setMode() resets it
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
-                    history.add(command);
-                    liberator.modes.pop(true);
+                    inputHistory.add(command);
+                    modes.pop(true);
                     autocompleteTimer.reset();
                     completionList.hide();
-                    liberator.focusContent(false);
-                    liberator.statusline.updateProgress(""); // we may have a "match x of y" visible
-                    return liberator.triggerCallback("submit", mode, command);
+                    focusContent(false);
+                    statusline.updateProgress(""); // we may have a "match x of y" visible
+                    return triggerCallback("submit", mode, command);
                 }
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
                 {
                     function gotoHistoryItem(index)
                     {
-                        setCommand(history.get(historyIndex));
-                        liberator.triggerCallback("change", currentExtendedMode, liberator.commandline.getCommand());
+                        setCommand(inputHistory.get(historyIndex));
+                        triggerCallback("change", currentExtendedMode, commandline.getCommand());
                     }
 
                     let previousItem = /Up/.test(key);
@@ -742,21 +742,21 @@ liberator.CommandLine = function () //{{{
                     // save 'start' position for iterating through the history
                     if (historyIndex == UNINITIALIZED)
                     {
-                        historyIndex = history.length;
+                        historyIndex = inputHistory.length;
                         historyStart = command;
                     }
 
                     // search the history for the first item matching the current
                     // commandline string
-                    while (historyIndex >= -1 && historyIndex <= history.length)
+                    while (historyIndex >= -1 && historyIndex <= inputHistory.length)
                     {
                         previousItem ? historyIndex-- : historyIndex++;
 
                         // user pressed DOWN when there is no newer history item
-                        if (historyIndex == history.length)
+                        if (historyIndex == inputHistory.length)
                         {
                             setCommand(historyStart);
-                            liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                            triggerCallback("change", currentExtendedMode, this.getCommand());
                             break;
                         }
 
@@ -764,19 +764,19 @@ liberator.CommandLine = function () //{{{
                         if (historyIndex <= -1)
                         {
                             historyIndex = 0;
-                            liberator.beep();
+                            beep();
                             break;
                         }
-                        else if (historyIndex >= history.length + 1)
+                        else if (historyIndex >= inputHistory.length + 1)
                         {
-                            historyIndex = history.length;
-                            liberator.beep();
+                            historyIndex = inputHistory.length;
+                            beep();
                             break;
                         }
 
                         if (matchCurrent)
                         {
-                            if (history.get(historyIndex).indexOf(historyStart) == 0)
+                            if (inputHistory.get(historyIndex).indexOf(historyStart) == 0)
                             {
                                 gotoHistoryItem(historyIndex);
                                 break;
@@ -796,7 +796,7 @@ liberator.CommandLine = function () //{{{
                     historyIndex = UNINITIALIZED;
 
                     // TODO: call just once, and not on each <Tab>
-                    var wim = liberator.options["wildmode"].split(",");
+                    var wim = options["wildmode"].split(",");
                     var hasList = false;
                     var longest = false;
                     var full = false;
@@ -815,12 +815,12 @@ liberator.CommandLine = function () //{{{
                         completionIndex = -1;
                         completionPrefix = command.substring(0, commandWidget.selectionStart);
                         completionPostfix = command.substring(commandWidget.selectionStart);
-                        var res = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
+                        var res = triggerCallback("complete", currentExtendedMode, completionPrefix);
                         if (res)
                             [completionStartIndex, completions] = res;
 
                         // sort the completion list
-                        if (liberator.options.get("wildoptions").has("sort"))
+                        if (options.get("wildoptions").has("sort"))
                             completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
                         completionList.setItems(completions);
@@ -828,7 +828,7 @@ liberator.CommandLine = function () //{{{
 
                     if (completions.length == 0)
                     {
-                        liberator.beep();
+                        beep();
                         // prevent tab from moving to the next field:
                         event.preventDefault();
                         event.stopPropagation();
@@ -867,7 +867,7 @@ liberator.CommandLine = function () //{{{
                     {
                         var compl = null;
                         if (longest && completions.length > 1)
-                            compl = liberator.completion.getLongestSubstring();
+                            compl = completion.getLongestSubstring();
                         else if (full)
                             compl = completions[completionIndex][0];
                         else if (completions.length == 1)
@@ -878,7 +878,7 @@ liberator.CommandLine = function () //{{{
                             setCommand(command.substring(0, completionStartIndex) + compl + completionPostfix);
                             commandWidget.selectionStart = commandWidget.selectionEnd = completionStartIndex + compl.length;
                             if (longest)
-                                liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                                triggerCallback("change", currentExtendedMode, this.getCommand());
 
                             // Start a new completion in the next iteration. Useful for commands like :source
                             // RFC: perhaps the command can indicate whether the completion should be restarted
@@ -900,8 +900,8 @@ liberator.CommandLine = function () //{{{
                     // and blur the command line if there is no text left
                     if (command.length == 0)
                     {
-                        liberator.triggerCallback("cancel", currentExtendedMode);
-                        liberator.modes.pop(); // FIXME: use mode stack
+                        triggerCallback("cancel", currentExtendedMode);
+                        modes.pop(); // FIXME: use mode stack
                     }
                 }
                 else // any other key
@@ -916,27 +916,27 @@ liberator.CommandLine = function () //{{{
         {
             if (event.type == "keypress")
             {
-                var key = liberator.events.toString(event);
-                if (liberator.events.isAcceptKey(key))
+                var key = events.toString(event);
+                if (events.isAcceptKey(key))
                 {
                     var text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
                     if (text.match(multilineRegexp))
                     {
                         text = text.replace(multilineRegexp, "");
-                        liberator.modes.pop();
+                        modes.pop();
                         multilineInputWidget.collapsed = true;
                         multilineCallback.call(this, text);
                     }
                 }
-                else if (liberator.events.isCancelKey(key))
+                else if (events.isCancelKey(key))
                 {
-                    liberator.modes.pop();
+                    modes.pop();
                     multilineInputWidget.collapsed = true;
                 }
             }
             else if (event.type == "blur")
             {
-                if (liberator.modes.extended & liberator.modes.INPUT_MULTILINE)
+                if (modes.extended & modes.INPUT_MULTILINE)
                     setTimeout(function () { multilineInputWidget.inputField.focus(); }, 0);
             }
             else if (event.type == "input")
@@ -960,13 +960,13 @@ liberator.CommandLine = function () //{{{
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
-            var key = liberator.events.toString(event);
+            var key = events.toString(event);
 
             if (startHints)
             {
-                liberator.statusline.updateInputBuffer("");
+                statusline.updateInputBuffer("");
                 startHints = false;
-                liberator.hints.show(liberator.modes.EXTENDED_HINT, key, undefined, win);
+                hints.show(modes.EXTENDED_HINT, key, undefined, win);
                 return;
             }
 
@@ -977,13 +977,13 @@ liberator.CommandLine = function () //{{{
                     break; // handled globally in events.js:onEscape()
 
                 case ":":
-                    liberator.commandline.open(":", "", liberator.modes.EX);
+                    commandline.open(":", "", modes.EX);
                     return;
 
                 // down a line
                 case "j":
                 case "<Down>":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollByLines(1);
                     else
                         passEvent = true;
@@ -992,7 +992,7 @@ liberator.CommandLine = function () //{{{
                 case "<C-j>":
                 case "<C-m>":
                 case "<Return>":
-                    if (liberator.options["more"] && isScrollable() && !atEnd())
+                    if (options["more"] && isScrollable() && !atEnd())
                         win.scrollByLines(1);
                     else
                         closeWindow = true; // don't propagate the event for accept keys
@@ -1002,9 +1002,9 @@ liberator.CommandLine = function () //{{{
                 case "k":
                 case "<Up>":
                 case "<BS>":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollByLines(-1);
-                    else if (liberator.options["more"] && !isScrollable())
+                    else if (options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
@@ -1012,7 +1012,7 @@ liberator.CommandLine = function () //{{{
 
                 // half page down
                 case "d":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollBy(0, win.innerHeight / 2);
                     else
                         passEvent = true;
@@ -1022,22 +1022,22 @@ liberator.CommandLine = function () //{{{
                 case "<LeftMouse>":
                     if (event.originalTarget.className == "hl-URL buffer-list")
                     {
-                        liberator.tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                        tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
                         closeWindow = true;
                         break;
                     }
                     else if (event.originalTarget.localName.toLowerCase() == "a")
                     {
-                        liberator.open(event.originalTarget.textContent);
+                        open(event.originalTarget.textContent);
                         break;
                     }
                 case "<A-LeftMouse>": // for those not owning a 3-button mouse
                 case "<MiddleMouse>":
                     if (event.originalTarget.localName.toLowerCase() == "a")
                     {
-                        var where = /\btabopen\b/.test(liberator.options["activate"]) ?
-                                    liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
-                        liberator.open(event.originalTarget.textContent, where);
+                        var where = /\btabopen\b/.test(options["activate"]) ?
+                                    NEW_TAB : NEW_BACKGROUND_TAB;
+                        open(event.originalTarget.textContent, where);
                     }
                     break;
 
@@ -1049,7 +1049,7 @@ liberator.CommandLine = function () //{{{
 
                 // page down
                 case "f":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollByPages(1);
                     else
                         passEvent = true;
@@ -1057,7 +1057,7 @@ liberator.CommandLine = function () //{{{
 
                 case "<Space>":
                 case "<PageDown>":
-                    if (liberator.options["more"] && isScrollable() && !atEnd())
+                    if (options["more"] && isScrollable() && !atEnd())
                         win.scrollByPages(1);
                     else
                         passEvent = true;
@@ -1066,7 +1066,7 @@ liberator.CommandLine = function () //{{{
                 // half page up
                 case "u":
                     // if (more and scrollable)
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollBy(0, -(win.innerHeight / 2));
                     else
                         passEvent = true;
@@ -1074,16 +1074,16 @@ liberator.CommandLine = function () //{{{
 
                 // page up
                 case "b":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollByPages(-1);
-                    else if (liberator.options["more"] && !isScrollable())
+                    else if (options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
                     break;
 
                 case "<PageUp>":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollByPages(-1);
                     else
                         passEvent = true;
@@ -1091,9 +1091,9 @@ liberator.CommandLine = function () //{{{
 
                 // top of page
                 case "g":
-                    if (liberator.options["more"] && isScrollable())
+                    if (options["more"] && isScrollable())
                         win.scrollTo(0, 0);
-                    else if (liberator.options["more"] && !isScrollable())
+                    else if (options["more"] && !isScrollable())
                         showMorePrompt = true;
                     else
                         passEvent = true;
@@ -1101,7 +1101,7 @@ liberator.CommandLine = function () //{{{
 
                 // bottom of page
                 case "G":
-                    if (liberator.options["more"] && isScrollable() && !atEnd())
+                    if (options["more"] && isScrollable() && !atEnd())
                         win.scrollTo(0, win.scrollMaxY);
                     else
                         passEvent = true;
@@ -1109,7 +1109,7 @@ liberator.CommandLine = function () //{{{
 
                 // copy text to clipboard
                 case "<C-y>":
-                    liberator.util.copyToClipboard(win.getSelection());
+                    util.copyToClipboard(win.getSelection());
                     break;
 
                 // close the window
@@ -1118,13 +1118,13 @@ liberator.CommandLine = function () //{{{
                     break;
 
                 case ";":
-                    liberator.statusline.updateInputBuffer(";");
+                    statusline.updateInputBuffer(";");
                     startHints = true;
                     break;
 
                 // unmapped key
                 default:
-                    if (!liberator.options["more"] || !isScrollable() || atEnd() || liberator.events.isCancelKey(key))
+                    if (!options["more"] || !isScrollable() || atEnd() || events.isCancelKey(key))
                         passEvent = true;
                     else
                         showMoreHelpPrompt = true;
@@ -1133,17 +1133,17 @@ liberator.CommandLine = function () //{{{
             if (passEvent || closeWindow)
             {
                 // FIXME: use mode stack
-                liberator.modes.pop();
+                modes.pop();
                 this.clear();
 
                 if (passEvent)
-                    liberator.events.onKeyPress(event);
+                    events.onKeyPress(event);
             }
             else // set update the prompt string
             {
                 if (showMoreHelpPrompt)
                     setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
-                else if (showMorePrompt || (liberator.options["more"] && isScrollable() && !atEnd()))
+                else if (showMorePrompt || (options["more"] && isScrollable() && !atEnd()))
                     setLine("-- More --", this.HL_MOREMSG);
                 else
                     setLine("Press ENTER or type command to continue", this.HL_QUESTION);
@@ -1153,7 +1153,7 @@ liberator.CommandLine = function () //{{{
         // to allow asynchronous adding of completions
         setCompletions: function (compl, start)
         {
-            if (liberator.mode != liberator.modes.COMMAND_LINE)
+            if (mode != modes.COMMAND_LINE)
                 return;
 
             // FIXME: Kludge.
@@ -1164,10 +1164,10 @@ liberator.CommandLine = function () //{{{
                                             .inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement).editor;
                 let sel = editor.selectionController.getSelection(SEL_TYPE);
                 sel.removeAllRanges();
-                if (liberator.completion.parenMatch != null)
+                if (completion.parenMatch != null)
                 {
                     let range = editor.selection.getRangeAt(0).cloneRange();
-                    let paren = liberator.completion.parenMatch + this.getCommand().indexOf(" ") + 1;
+                    let paren = completion.parenMatch + this.getCommand().indexOf(" ") + 1;
                     let node = range.startContainer;
                     range.setStart(node, paren);
                     range.setEnd(node, paren + 1);
@@ -1194,7 +1194,7 @@ liberator.CommandLine = function () //{{{
 
             completions = compl;
             completionList.selectItem(completionIndex);
-            if (liberator.options.get("wildoptions").has("auto"))
+            if (options.get("wildoptions").has("auto"))
                 completionList.show();
 
             var command = this.getCommand();
@@ -1223,7 +1223,7 @@ liberator.CommandLine = function () //{{{
  *
  * TODO: get rid off "completion" variables, we are dealing with variables after all
  */
-liberator.ItemList = function (id) //{{{
+with (liberator) liberator.ItemList = function (id) //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1238,7 +1238,7 @@ liberator.ItemList = function (id) //{{{
     var iframe = document.getElementById(id);
     if (!iframe)
     {
-        liberator.log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
+        log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
         return;
     }
 
@@ -1267,11 +1267,11 @@ liberator.ItemList = function (id) //{{{
     function createRow([b, c, a], dom)
     {
         /* Obviously, ItemList shouldn't know or care about this. */
-        let filter = liberator.completion.filterString;
+        let filter = completion.filterString;
         if (filter)
         {
-            b = liberator.template.highlightFilter(b, filter);
-            c = liberator.template.highlightFilter(c, filter);
+            b = template.highlightFilter(b, filter);
+            c = template.highlightFilter(c, filter);
         }
 
         if (typeof a == "function")
@@ -1285,7 +1285,7 @@ liberator.ItemList = function (id) //{{{
             </ul>;
 
         if (dom)
-            return liberator.util.xmlToDom(row, doc);
+            return util.xmlToDom(row, doc);
         return row;
     }
 
@@ -1335,18 +1335,18 @@ liberator.ItemList = function (id) //{{{
                   </div>;
 
         let tbody = div.div;
-        for (let i in liberator.util.range(offset, endIndex))
+        for (let i in util.range(offset, endIndex))
             tbody.* += createRow(completions[i]);
 
         div.* +=
             <div class="completion-items">
             {
-                liberator.template.map(liberator.util.range(0, maxItems), function (i)
+                template.map(util.range(0, maxItems), function (i)
                 <ul class="compitem hl-NonText"><li>~</li></ul>)
             }
             </div>;
 
-        let dom = liberator.util.xmlToDom(div, doc);
+        let dom = util.xmlToDom(div, doc);
         completionBody = dom.getElementsByClassName("completion-items")[0];
         completionElements = completionBody.childNodes;
         doc.body.replaceChild(dom, doc.body.firstChild);
@@ -1432,7 +1432,7 @@ liberator.ItemList = function (id) //{{{
     //}}}
 }; //}}}
 
-liberator.StatusLine = function () //{{{
+with (liberator) liberator.StatusLine = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -1453,7 +1453,7 @@ liberator.StatusLine = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["laststatus", "ls"],
+    options.add(["laststatus", "ls"],
         "Show the status line",
         "number", 2,
         {
@@ -1462,7 +1462,7 @@ liberator.StatusLine = function () //{{{
                 if (value == 0)
                     document.getElementById("status-bar").collapsed = true;
                 else if (value == 1)
-                    liberator.echo("show status line only with > 1 window not implemented yet");
+                    echo("show status line only with > 1 window not implemented yet");
                 else
                     document.getElementById("status-bar").collapsed = false;
 
@@ -1515,12 +1515,12 @@ liberator.StatusLine = function () //{{{
                 return;
             }
 
-            url = liberator.buffer.URL;
+            url = buffer.URL;
 
             // make it even more vim-like
             if (url == "about:blank")
             {
-                var title = liberator.buffer.title;
+                var title = buffer.title;
                 if (!title)
                     url = "[No Name]";
             }
@@ -1530,7 +1530,7 @@ liberator.StatusLine = function () //{{{
             }
 
             // when session information is available, add [+] when we can go backwards
-            if (liberator.config.name == "Vimperator")
+            if (config.name == "Vimperator")
             {
                 var sh = getWebNavigation().sessionHistory;
                 var modified = "";
@@ -1538,7 +1538,7 @@ liberator.StatusLine = function () //{{{
                     modified += "+";
                 if (sh.index < sh.count -1)
                     modified += "-";
-                if (liberator.bookmarks.isBookmarked(liberator.buffer.URL))
+                if (bookmarks.isBookmarked(buffer.URL))
                     modified += "\u2764"; // a heart symbol: ❤
                     //modified += "\u2665"; // a heart symbol: ♥
 
@@ -1593,14 +1593,13 @@ liberator.StatusLine = function () //{{{
                 return;
             }
 
-            let tabs = getBrowser().mTabs;
-            for (let i = 0; i < tabs.length; i++)
-                tabs[i].setAttribute("ordinal", i + 1);
+            for (let [i, tab] in Iterator(getBrowser().mTabs))
+                tab.setAttribute("ordinal", i + 1);
 
             if (!currentIndex || typeof currentIndex != "number")
-                currentIndex = liberator.tabs.index() + 1;
+                currentIndex = tabs.index() + 1;
             if (!totalTabs || typeof currentIndex != "number")
-                totalTabs = liberator.tabs.count;
+                totalTabs = tabs.count;
 
             tabCountWidget.value = "[" + currentIndex + "/" + totalTabs + "]";
         },

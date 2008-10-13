@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // Do NOT create instances of this class yourself, use the helper method
-// liberator.commands.add() instead
-liberator.Command = function (specs, description, action, extraInfo) //{{{
+// commands.add() instead
+with (liberator) liberator.Command = function (specs, description, action, extraInfo) //{{{
 {
     if (!specs || !action)
         return null;
@@ -86,7 +86,7 @@ liberator.Command = function (specs, description, action, extraInfo) //{{{
     this.replacementText = extraInfo.replacementText || null;
 };
 
-liberator.Command.prototype = {
+with (liberator) liberator.Command.prototype = {
 
     execute: function (args, special, count, modifiers)
     {
@@ -100,7 +100,7 @@ liberator.Command.prototype = {
         // we use our args parser instead of passing a string to the callback
         if (this.options.length > 0 || this.argCount)
         {
-            args = liberator.commands.parseArgs(args, this.options, this.argCount, false, this.literal);
+            args = commands.parseArgs(args, this.options, this.argCount, false, this.literal);
             if (args == null)
                 return false;
         }
@@ -109,7 +109,7 @@ liberator.Command.prototype = {
             let matches = args.match(/(.*)<<\s*(\S+)$/);
             if (matches && matches[2])
             {
-                liberator.commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
                     function (args) self.action.call(self, matches[1] + "\n" + args, special, count, modifiers));
                 return;
             }
@@ -151,7 +151,7 @@ liberator.Command.prototype = {
 
 }; //}}}
 
-liberator.Commands = function () //{{{
+with (liberator) liberator.Commands = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -195,7 +195,7 @@ liberator.Commands = function () //{{{
         return NaN;
     }
 
-    const ArgType = new liberator.util.Struct("description", "parse");
+    const ArgType = new util.Struct("description", "parse");
     const argTypes = [
         null,
         ["no arg",  function (arg) !arg],
@@ -237,7 +237,7 @@ liberator.Commands = function () //{{{
 
         add: function (names, description, action, extra)
         {
-            var command = new liberator.Command(names, description, action, extra);
+            var command = new Command(names, description, action, extra);
             if (!command)
                 return false;
 
@@ -246,7 +246,7 @@ liberator.Commands = function () //{{{
                 if (exCommands[i].name == command.name)
                 {
                     // never replace for now
-                    liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
+                    log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
                     return false;
                 }
             }
@@ -261,7 +261,7 @@ liberator.Commands = function () //{{{
             extra.isUserCommand = true;
             description = description || "User defined command";
 
-            var command = new liberator.Command(names, description, action, extra);
+            var command = new Command(names, description, action, extra);
             // FIXME: shouldn't this be testing for an existing command by name?
             // Requiring uppercase user command names like Vim would be easier
             if (!command)
@@ -479,7 +479,7 @@ liberator.Commands = function () //{{{
                 }
 
                 var sub = str.substr(i);
-                //liberator.dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
+                //dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
                 if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub))
                 {
                     onlyArgumentsRemaining = true;
@@ -536,14 +536,14 @@ liberator.Commands = function () //{{{
                                 {
                                     if (!complete)
                                     {
-                                        liberator.echoerr("Invalid argument for option " + optname);
+                                        echoerr("Invalid argument for option " + optname);
                                         return null;
                                     }
                                     let compl = opt[3] || [];
                                     if (typeof compl == "function")
                                         compl = compl();
                                     let filter = quoteArg(sub[optname.length + 1])
-                                    return [i + optname.length + 1, liberator.completion.filter(compl.map(filter), filter(arg))];
+                                    return [i + optname.length + 1, completion.filter(compl.map(filter), filter(arg))];
                                 }
 
                                 if (!invalid)
@@ -554,7 +554,7 @@ liberator.Commands = function () //{{{
                                         arg = type.parse(arg);
                                         if (arg == null || arg == NaN)
                                         {
-                                            liberator.echoerr("Invalid argument for " + type.description + "option: " + optname);
+                                            echoerr("Invalid argument for " + type.description + "option: " + optname);
                                             return null;
                                         }
                                     }
@@ -564,7 +564,7 @@ liberator.Commands = function () //{{{
                                     {
                                         if (opt[2].call(this, arg) == false)
                                         {
-                                            liberator.echoerr("Invalid argument for option: " + optname);
+                                            echoerr("Invalid argument for option: " + optname);
                                             return null;
                                         }
                                     }
@@ -589,12 +589,12 @@ liberator.Commands = function () //{{{
                 var [count, arg] = getNextArg(sub);
                 if (count == -1)
                 {
-                    liberator.echoerr("Error parsing arguments: " + arg);
+                    echoerr("Error parsing arguments: " + arg);
                     return null;
                 }
                 else if (!onlyArgumentsRemaining && /^-/.test(arg))
                 {
-                    liberator.echoerr("Invalid option: " + arg);
+                    echoerr("Invalid option: " + arg);
                     return null;
                 }
 
@@ -610,13 +610,13 @@ liberator.Commands = function () //{{{
             // check for correct number of arguments
             if (args.arguments.length == 0 && (argCount == "1" || argCount == "+"))
             {
-                liberator.echoerr("E471: Argument required");
+                echoerr("E471: Argument required");
                 return null;
             }
             else if (args.arguments.length == 1 && (argCount == "0") ||
                      args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?"))
             {
-                liberator.echoerr("E488: Trailing characters");
+                echoerr("E488: Trailing characters");
                 return null;
             }
 
@@ -705,7 +705,7 @@ liberator.Commands = function () //{{{
             count: this.count && count
         };
 
-        liberator.execute(liberator.commands.replaceTokens(this.replacementText, tokens));
+        execute(commands.replaceTokens(this.replacementText, tokens));
     }
 
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
@@ -717,7 +717,7 @@ liberator.Commands = function () //{{{
             let cmd = args.arguments[0];
             if (cmd != null && /\W/.test(cmd))
             {
-                liberator.echoerr("E182: Invalid command name");
+                echoerr("E182: Invalid command name");
                 return;
             }
 
@@ -727,7 +727,7 @@ liberator.Commands = function () //{{{
                 let bangOpt  = "-bang"  in args;
                 let countOpt = "-count" in args;
 
-                if (!liberator.commands.addUserCommand(
+                if (!commands.addUserCommand(
                         [cmd],
                         "User defined command",
                         userCommand,
@@ -740,7 +740,7 @@ liberator.Commands = function () //{{{
                         special)
                     )
                 {
-                    liberator.echoerr("E174: Command already exists: add ! to replace it");
+                    echoerr("E174: Command already exists: add ! to replace it");
                 }
             }
             else
@@ -754,18 +754,18 @@ liberator.Commands = function () //{{{
 
                 if (cmds.length > 0)
                 {
-                    let str = liberator.template.tabular(["", "Name", "Args", "Range", "Definition"], ["padding-right: 2em;"],
+                    let str = template.tabular(["", "Name", "Args", "Range", "Definition"], ["padding-right: 2em;"],
                         ([cmd.bang ? "!" : " ",
                           cmd.name,
                           cmd.argCount,
                           cmd.count ? "0c" : "",
                           cmd.replacementText || "function () { ... }"] for each (cmd in cmds)));
 
-                    liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                    commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
                 else
                 {
-                    liberator.echo("No user-defined commands found");
+                    echo("No user-defined commands found");
                 }
             }
         },
@@ -773,7 +773,7 @@ liberator.Commands = function () //{{{
             literal: true,
             argCount: 1,
             bang: true,
-            completer: function (filter) liberator.completion.userCommand(filter),
+            completer: function (filter) completion.userCommand(filter),
             options: [
                 [["-nargs"], commandManager.OPTION_STRING, function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
                 [["-bang"],  commandManager.OPTION_NOARG],
@@ -785,7 +785,7 @@ liberator.Commands = function () //{{{
         "Delete all user-defined commands",
         function ()
         {
-            liberator.commands.getUserCommands().forEach(function (cmd) { liberator.commands.removeUserCommand(cmd.name); });
+            commands.getUserCommands().forEach(function (cmd) { commands.removeUserCommand(cmd.name); });
         },
         { argCount: "0" });
 
@@ -794,22 +794,22 @@ liberator.Commands = function () //{{{
         function (args)
         {
             var name = args.arguments[0];
-            var cmdlist = liberator.commands.getUserCommands();
+            var cmdlist = commands.getUserCommands();
 
             for (let i = 0; i < cmdlist.length; i++)
             {
                 if (cmdlist[i].name == name)
                 {
-                    liberator.commands.removeUserCommand(name);
+                    commands.removeUserCommand(name);
                     return;
                 }
             }
 
-            liberator.echoerr("E184: No such user-defined command: " + name);
+            echoerr("E184: No such user-defined command: " + name);
         },
         {
             argCount: "1",
-            completer: function (filter) liberator.completion.userCommand(filter)
+            completer: function (filter) completion.userCommand(filter)
         });
 
     //}}}

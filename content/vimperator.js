@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.config = { //{{{
+with (liberator) liberator.config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
@@ -68,7 +68,7 @@ liberator.config = { //{{{
         ["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],
         ["dominspector",     "DOM Inspector",
-            function () { try { inspectDOMDocument(content.document); } catch (e) { liberator.echoerr("DOM Inspector extension not installed"); } }],
+            function () { try { inspectDOMDocument(content.document); } catch (e) { echoerr("DOM Inspector extension not installed"); } }],
         ["downloads",        "Manage Downloads",
             function () { toOpenWindowByType("Download:Manager", "chrome://mozapps/content/downloads/downloads.xul", "chrome,dialog=no,resizable"); }],
         ["history",          "List your history",
@@ -98,7 +98,7 @@ liberator.config = { //{{{
         ["searchengines",    "Manage installed search engines",
             function () { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function () { liberator.buffer.viewSelectionSource(); }]
+            function () { buffer.viewSelectionSource(); }]
     ],
 
     // they are sorted by relevance, not alphabetically
@@ -114,12 +114,12 @@ liberator.config = { //{{{
     {
         function incrementURL(count)
         {
-            var url = liberator.buffer.URL;
+            var url = buffer.URL;
             var regex = /(.*?)(\d+)(\D*)$/;
 
             var matches = url.match(regex);
             if (!matches || !matches[2]) // no number to increment
-                return liberator.beep();
+                return beep();
 
             var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
             var nums = newNum.match(/^(-?)(\d+)$/);
@@ -129,71 +129,71 @@ liberator.config = { //{{{
                 newNum += "0"; // keep leading zeros
             newNum += nums[2];
 
-            liberator.open(matches[1] + newNum + matches[3]);
+            open(matches[1] + newNum + matches[3]);
         }
 
         // load Vimperator specific modules
-        liberator.loadModule("search",     liberator.Search);
-        liberator.loadModule("bookmarks",  liberator.Bookmarks);
-        liberator.loadModule("history",    liberator.History);
-        liberator.loadModule("tabs",       liberator.Tabs);
-        liberator.loadModule("marks",      liberator.Marks);
-        liberator.loadModule("quickmarks", liberator.QuickMarks);
-        liberator.loadModule("hints",      liberator.Hints);
+        loadModule("search",     Search);
+        loadModule("bookmarks",  Bookmarks);
+        loadModule("history",    History);
+        loadModule("tabs",       Tabs);
+        loadModule("marks",      Marks);
+        loadModule("quickmarks", QuickMarks);
+        loadModule("hints",      Hints);
 
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        liberator.mappings.add([liberator.modes.NORMAL],
+        mappings.add([modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { liberator.util.copyToClipboard(liberator.buffer.URL, true); });
+            function () { util.copyToClipboard(buffer.URL, true); });
 
         // opening websites
-        liberator.mappings.add([liberator.modes.NORMAL],
+        mappings.add([modes.NORMAL],
             ["o"], "Open one or more URLs",
-            function () { liberator.commandline.open(":", "open ", liberator.modes.EX); });
+            function () { commandline.open(":", "open ", modes.EX); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["O"],
+        mappings.add([modes.NORMAL], ["O"],
             "Open one or more URLs, based on current location",
-            function () { liberator.commandline.open(":", "open " + liberator.buffer.URL, liberator.modes.EX); });
+            function () { commandline.open(":", "open " + buffer.URL, modes.EX); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["t"],
+        mappings.add([modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
-            function () { liberator.commandline.open(":", "tabopen ", liberator.modes.EX); });
+            function () { commandline.open(":", "tabopen ", modes.EX); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["T"],
+        mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
-            function () { liberator.commandline.open(":", "tabopen " + liberator.buffer.URL, liberator.modes.EX); });
+            function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
 
-        liberator.mappings.add([liberator.modes.NORMAL],
+        mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(count > 1 ? count : 1); },
-            { flags: liberator.Mappings.flags.COUNT });
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL],
+        mappings.add([modes.NORMAL],
             ["<C-x>"], "Decrement last number in URL",
             function (count) { incrementURL(-(count > 1 ? count : 1)); },
-            { flags: liberator.Mappings.flags.COUNT });
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["~"],
+        mappings.add([modes.NORMAL], ["~"],
             "Open home directory",
-            function () { liberator.open("~"); });
+            function () { open("~"); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gh"],
+        mappings.add([modes.NORMAL], ["gh"],
             "Open homepage",
             function () { BrowserHome(); });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gH"],
+        mappings.add([modes.NORMAL], ["gH"],
             "Open homepage in a new tab",
             function ()
             {
                 var homepages = gHomeButton.getHomePage();
-                liberator.open(homepages, /\bhomepage\b/.test(liberator.options["activate"]) ?
-                        liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+                open(homepages, /\bhomepage\b/.test(options["activate"]) ?
+                        NEW_TAB : NEW_BACKGROUND_TAB);
             });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gu"],
+        mappings.add([modes.NORMAL], ["gu"],
             "Go to parent directory",
             function (count)
             {
@@ -202,7 +202,7 @@ liberator.config = { //{{{
                     if (/^file:\/|^\//.test(url))
                     {
                         //var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-                        var file = liberator.io.getFile(url);
+                        var file = io.getFile(url);
                         if (!file.exists() || !file.isDirectory())
                             return false;
                         else
@@ -216,7 +216,7 @@ liberator.config = { //{{{
                 if (count < 1)
                     count = 1;
 
-                var url = liberator.buffer.URL;
+                var url = buffer.URL;
                 for (let i = 0; i < count; i++)
                 {
                     if (isDirectory(url))
@@ -226,53 +226,53 @@ liberator.config = { //{{{
                 }
                 url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
 
-                if (url == liberator.buffer.URL)
+                if (url == buffer.URL)
                 {
-                    liberator.beep();
+                    beep();
                     return;
                 }
-                liberator.open(url);
+                open(url);
             },
-            { flags: liberator.Mappings.flags.COUNT });
+            { flags: Mappings.flags.COUNT });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["gU"],
+        mappings.add([modes.NORMAL], ["gU"],
             "Go to the root of the website",
             function ()
             {
                 var uri = content.document.location;
                 if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
                 {
-                    liberator.beep();
+                    beep();
                     return;
                 }
-                liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
+                open(uri.protocol + "//" + (uri.host || "") + "/");
             });
 
-        liberator.mappings.add([liberator.modes.NORMAL], ["<C-l>"],
+        mappings.add([modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { liberator.commands.get("redraw").execute(); });
+            function () { commands.get("redraw").execute(); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        liberator.commands.add(["downl[oads]", "dl"],
+        commands.add(["downl[oads]", "dl"],
             "Show progress of current downloads",
             function ()
             {
-                liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    liberator.options.get("newtab").has("all", "downloads")
-                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                open("chrome://mozapps/content/downloads/downloads.xul",
+                    options.get("newtab").has("all", "downloads")
+                        ? NEW_TAB : CURRENT_TAB);
             },
             { argCount: "0" });
 
-        liberator.commands.add(["o[pen]", "e[dit]"],
+        commands.add(["o[pen]", "e[dit]"],
             "Open one or more URLs in the current tab",
             function (args, special)
             {
                 if (args)
                 {
-                    liberator.open(args);
+                    open(args);
                 }
                 else
                 {
@@ -284,10 +284,10 @@ liberator.config = { //{{{
             },
             {
                 bang: true,
-                completer: function (filter) liberator.completion.url(filter)
+                completer: function (filter) completion.url(filter)
             });
 
-        liberator.commands.add(["redr[aw]"],
+        commands.add(["redr[aw]"],
             "Redraw the screen",
             function ()
             {
@@ -298,7 +298,7 @@ liberator.config = { //{{{
             { argCount: "0" });
 
         // TODO: move sidebar commands to ui.js?
-        liberator.commands.add(["sbcl[ose]"],
+        commands.add(["sbcl[ose]"],
             "Close the sidebar window",
             function ()
             {
@@ -307,7 +307,7 @@ liberator.config = { //{{{
             },
             { argCount: "0" });
 
-        liberator.commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
+        commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
             "Open the sidebar window",
             function (args)
             {
@@ -327,34 +327,34 @@ liberator.config = { //{{{
                         return;
                     }
                 }
-                liberator.echoerr("No sidebar " + args.string + " found");
+                echoerr("No sidebar " + args.string + " found");
             },
             {
                 argCount: "+",
-                completer: function (filter) liberator.completion.sidebar(filter)
+                completer: function (filter) completion.sidebar(filter)
             });
 
-        liberator.commands.add(["winc[lose]", "wc[lose]"],
+        commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
             function () { window.close(); },
             { argCount: "0" });
 
-        liberator.commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
+        commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
             "Open one or more URLs in a new window",
             function (args)
             {
                 if (args)
-                    liberator.open(args, liberator.NEW_WINDOW);
+                    open(args, NEW_WINDOW);
                 else
-                    liberator.open("about:blank", liberator.NEW_WINDOW);
+                    open("about:blank", NEW_WINDOW);
             },
-            { completer: function (filter) liberator.completion.url(filter) });
+            { completer: function (filter) completion.url(filter) });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        liberator.options.add(["online"],
+        options.add(["online"],
             "Set the 'work offline' option",
             "boolean", true,
             {
@@ -375,7 +375,7 @@ liberator.config = { //{{{
                 }
             });
 
-        liberator.options.add(["titlestring"],
+        options.add(["titlestring"],
             "Change the title of the window",
             "string", "Vimperator",
             {
@@ -383,7 +383,7 @@ liberator.config = { //{{{
                 {
                     try
                     {
-                        var id = liberator.config.mainWindowID || "main-window";
+                        var id = config.mainWindowID || "main-window";
                         document.getElementById(id).setAttribute("titlemodifier", value);
                         if (window.content.document.title.length > 0)
                             document.title = window.content.document.title + " - " + value;
@@ -392,14 +392,14 @@ liberator.config = { //{{{
                     }
                     catch (e)
                     {
-                        liberator.log("Couldn't set titlestring", 3);
+                        log("Couldn't set titlestring", 3);
                     }
 
                     return value;
                 }
             });
 
-        liberator.options.add(["urlseparator"],
+        options.add(["urlseparator"],
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");
     }

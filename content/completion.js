@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.Completion = function () //{{{
+with (liberator) liberator.Completion = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -49,9 +49,9 @@ liberator.Completion = function () //{{{
     var historyResult = null;
     var completionCache = [];
 
-    var historyTimer = new liberator.util.Timer(50, 100, function () {
+    var historyTimer = new util.Timer(50, 100, function () {
         let comp = [];
-        for (let i in liberator.util.range(0, historyResult.matchCount))
+        for (let i in util.range(0, historyResult.matchCount))
             comp.push([historyResult.getValueAt(i),
                        historyResult.getCommentAt(i),
                        historyResult.getImageAt(i)]);
@@ -59,7 +59,7 @@ liberator.Completion = function () //{{{
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
         historyCache = comp;
-        liberator.commandline.setCompletions(completionCache.concat(historyCache));
+        commandline.setCompletions(completionCache.concat(historyCache));
     });
 
     function Javascript()
@@ -153,7 +153,7 @@ liberator.Completion = function () //{{{
                     obj = obj.wrappedJSObject;
 
                 for (let [k, v] in this.iter(obj))
-                    compl.push([k, liberator.template.highlight(v, true)]);
+                    compl.push([k, template.highlight(v, true)]);
             }
             return compl;
         }
@@ -161,9 +161,9 @@ liberator.Completion = function () //{{{
         this.filter = function filter(compl, key, last, offset)
         {
             if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
-                key = liberator.util.escapeString(key.substr(offset), "");
+                key = util.escapeString(key.substr(offset), "");
 
-            liberator.completion.filterString = key;
+            completion.filterString = key;
             let res = buildLongestStartingSubstring(compl, key);
             if (res.length == 0)
             {
@@ -176,7 +176,7 @@ liberator.Completion = function () //{{{
 
             if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
             {
-                res.forEach(function (a) a[0] = liberator.util.escapeString(a[0].substr(offset), last));
+                res.forEach(function (a) a[0] = util.escapeString(a[0].substr(offset), last));
             }
             else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
             {
@@ -190,8 +190,8 @@ liberator.Completion = function () //{{{
         {
             try
             {
-                // liberator.dump("eval(" + liberator.util.escapeString(arg) + ")\n");
-                return liberator.eval(arg);
+                // dump("eval(" + util.escapeString(arg) + ")\n");
+                return eval(arg);
             }
             catch (e)
             {
@@ -226,7 +226,7 @@ liberator.Completion = function () //{{{
                 if (top[CHAR] != arg)
                     throw new Error("Invalid JS");
                 if (i == str.length - 1)
-                    liberator.completion.parenMatch = top[OFFSET];
+                    completion.parenMatch = top[OFFSET];
                 // The closing character of this stack frame will have pushed a new
                 // statement, leaving us with an empty statement. This doesn't matter,
                 // now, as we simply throw away the frame when we pop it, but it may later.
@@ -339,7 +339,7 @@ liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                liberator.dump(liberator.util.escapeString(string) + ": " + e + "\n" + e.stack);
+                dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return [0, []];
             }
@@ -490,7 +490,7 @@ liberator.Completion = function () //{{{
         let idx;
         while ((idx = str.indexOf(filter, start)) > -1)
         {
-            for (let end in liberator.util.range(idx + length, str.length + 1))
+            for (let end in util.range(idx + length, str.length + 1))
                 substrings.push(str.substring(idx, end));
             start = idx + 1;
         }
@@ -500,7 +500,7 @@ liberator.Completion = function () //{{{
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
     function buildLongestCommonSubstring(list, filter, favicon)
     {
-        liberator.completion.filterString = filter;
+        completion.filterString = filter;
         var filtered = [];
 
         var ignorecase = false;
@@ -508,7 +508,7 @@ liberator.Completion = function () //{{{
             ignorecase = true;
 
         var longest = false;
-        if (liberator.options["wildmode"].indexOf("longest") >= 0)
+        if (options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
         for (let [,item] in Iterator(list))
@@ -534,8 +534,8 @@ liberator.Completion = function () //{{{
                 break;
             }
         }
-        if (liberator.options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
+        if (options.get("wildoptions").has("sort"))
+            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -545,7 +545,7 @@ liberator.Completion = function () //{{{
         var filtered = [];
 
         var longest = false;
-        if (liberator.options["wildmode"].indexOf("longest") >= 0)
+        if (options["wildmode"].indexOf("longest") >= 0)
             longest = true;
 
         for (let [,item] in Iterator(list))
@@ -575,8 +575,8 @@ liberator.Completion = function () //{{{
                 break;
             }
         }
-        if (liberator.options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
+        if (options.get("wildoptions").has("sort"))
+            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -696,8 +696,8 @@ liberator.Completion = function () //{{{
             }
 
             filtered = filtered.concat(additionalCompletions);
-            if (liberator.options.get("wildoptions").has("sort"))
-                filtered = filtered.sort(function (a, b) liberator.util.ciCompare(a[0], b[0]));;
+            if (options.get("wildoptions").has("sort"))
+                filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
             return filtered;
         },
 
@@ -725,7 +725,7 @@ liberator.Completion = function () //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        bookmark: function bookmark(filter) [0, liberator.bookmarks.get(filter)],
+        bookmark: function bookmark(filter) [0, bookmarks.get(filter)],
 
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function buffer(filter)
@@ -772,23 +772,23 @@ liberator.Completion = function () //{{{
 
             if (!filter)
             {
-                for (let command in liberator.commands)
+                for (let command in commands)
                     completions.push([command.name, command.description]);
                 return [0, completions];
             }
 
-            for (let command in liberator.commands)
+            for (let command in commands)
                 completions.push([command.longNames, command.description]);
 
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        dialog: function dialog(filter) [0, this.filter(liberator.config.dialogs || [], filter)],
+        dialog: function dialog(filter) [0, this.filter(config.dialogs || [], filter)],
 
         environment: function environment(filter)
         {
             let command = WINDOWS ? "set" : "export";
-            let lines = liberator.io.system(command).split("\n");
+            let lines = io.system(command).split("\n");
 
             lines.splice(lines.length - 1, 1);
 
@@ -800,7 +800,7 @@ liberator.Completion = function () //{{{
             return [0, this.filter(vars, filter)];
         },
 
-        event: function event(filter) [0, this.filter(liberator.config.autocommands, filter)],
+        event: function event(filter) [0, this.filter(config.autocommands, filter)],
 
         // provides completions for ex commands, including their arguments
         ex: function ex(str)
@@ -815,7 +815,7 @@ liberator.Completion = function () //{{{
             }
             cacheFilter["ex"] = str;
 
-            var [count, cmd, special, args] = liberator.commands.parseCommand(str);
+            var [count, cmd, special, args] = commands.parseCommand(str);
             var completions = [];
             var start = 0;
             var exLength = 0;
@@ -827,7 +827,7 @@ liberator.Completion = function () //{{{
                 return [matches[1].length, this.command(cmd)[1]];
 
             // dynamically get completions as specified with the command's completer function
-            var command = liberator.commands.get(cmd);
+            var command = commands.get(cmd);
             if (command && command.completer)
             {
                 matches = str.match(/^:*\d*\w+[\s!]\s*/);
@@ -850,11 +850,11 @@ liberator.Completion = function () //{{{
 
                 try
                 {
-                    files = liberator.io.readDirectory(dir, true);
+                    files = io.readDirectory(dir, true);
 
-                    if (liberator.options["wildignore"])
+                    if (options["wildignore"])
                     {
-                        var wigRegexp = new RegExp("(^" + liberator.options["wildignore"].replace(",", "|", "g") + ")$");
+                        var wigRegexp = new RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
 
                         files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
                     }
@@ -871,12 +871,12 @@ liberator.Completion = function () //{{{
                 return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
             else
                 return [0, this.cached("file", filter, generate, "filter", [true])];
-            }catch(e){liberator.dump(e)}
+            }catch(e){dump(e)}
         },
 
         help: function help(filter)
         {
-            var files = liberator.config.helpFiles || [];
+            var files = config.helpFiles || [];
             var res = [];
 
             for (let i = 0; i < files.length; i++)
@@ -889,7 +889,7 @@ liberator.Completion = function () //{{{
                 }
                 catch (e)
                 {
-                    liberator.log("Error opening chrome://liberator/locale/" + files[i], 1);
+                    log("Error opening chrome://liberator/locale/" + files[i], 1);
                     continue;
                 }
                 var doc = xmlhttp.responseXML;
@@ -901,7 +901,7 @@ liberator.Completion = function () //{{{
             return [0, this.filter(res, filter)];
         },
 
-        history: function history(filter) [0, liberator.history.get(filter)],
+        history: function history(filter) [0, history.get(filter)],
 
         get javascriptCompleter() javascript,
 
@@ -913,14 +913,14 @@ liberator.Completion = function () //{{{
             }
             catch (e)
             {
-                liberator.dump(e);
+                dump(e);
                 return [0, []];
             }
         },
 
         macro: function macro(filter)
         {
-            var macros = [item for (item in liberator.events.getMacros())];
+            var macros = [item for (item in events.getMacros())];
 
             return [0, this.filter(macros, filter)];
         },
@@ -928,8 +928,8 @@ liberator.Completion = function () //{{{
         search: function search(filter)
         {
             let [, keyword, args] = filter.match(/^\s*(\S*)\s*(.*)/);
-            let keywords = liberator.bookmarks.getKeywords();
-            let engines = this.filter(keywords.concat(liberator.bookmarks.getSearchEngines()), filter, false, true);
+            let keywords = bookmarks.getKeywords();
+            let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), filter, false, true);
 
             let generate = function () {
                 let history = liberator.history.get();
@@ -964,7 +964,7 @@ liberator.Completion = function () //{{{
             if (!filter)
                 return [0, []];
 
-            var engineList = (engineAliases || liberator.options["suggestengines"]).split(",");
+            var engineList = (engineAliases || options["suggestengines"]).split(",");
             var responseType = "application/x-suggestions+json";
             var ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                .getService(Components.interfaces.nsIBrowserSearchService);
@@ -1021,7 +1021,7 @@ liberator.Completion = function () //{{{
 
         stylesheet: function stylesheet(filter)
         {
-            var completions = liberator.buffer.alternateStyleSheets.map(
+            var completions = buffer.alternateStyleSheets.map(
                 function (stylesheet) [stylesheet.title, stylesheet.href || "inline"]
             );
 
@@ -1050,17 +1050,17 @@ liberator.Completion = function () //{{{
             this.filterString = filter;
             var completions = [];
             var start = 0;
-            var skip = filter.match("^(.*" + liberator.options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
+            var skip = filter.match("^(.*" + options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
             if (skip)
             {
                 start += skip[1].length;
                 filter = skip[2];
             }
 
-            var cpt = complete || liberator.options["complete"];
-            var suggestEngineAlias = liberator.options["suggestengines"] || "google";
+            var cpt = complete || options["complete"];
+            var suggestEngineAlias = options["suggestengines"] || "google";
             // join all completion arrays together
-            for (let c in liberator.util.arrayIter(cpt))
+            for (let c in util.arrayIter(cpt))
             {
                 if (c == "s")
                     completions.push(this.search(filter)[1]);
@@ -1069,9 +1069,9 @@ liberator.Completion = function () //{{{
                 else if (c == "S")
                     completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b")
-                    completions.push(liberator.bookmarks.get(filter));
+                    completions.push(bookmarks.get(filter));
                 else if (c == "h")
-                    completions.push(liberator.history.get(filter));
+                    completions.push(history.get(filter));
                 else if (c == "l" && completionService) // add completions like Firefox's smart location bar
                 {
                     completionService.stopSearch();
@@ -1086,26 +1086,22 @@ liberator.Completion = function () //{{{
                 }
             }
 
-            completionCache = liberator.util.flatten(completions);
+            completionCache = util.flatten(completions);
             return [start, completionCache.concat(historyCache)];
         },
 
         userCommand: function userCommand(filter)
         {
-            var commands = liberator.commands.getUserCommands();
-            commands = commands.map(function (command) [command.name, ""]);
-            return [0, this.filter(commands, filter)];
+            let cmds = commands.getUserCommands();
+            cmds = cmds.map(function (cmd) [cmd.name, ""]);
+            return [0, this.filter(cmds, filter)];
         },
 
         userMapping: function userMapping(filter, modes)
         {
             // TODO: add appropriate getters to l.mappings
-            var mappings = [];
-
-            for (let map in liberator.mappings.getUserIterator(modes))
-                mappings.push([map.names[0], ""]);
-
-            return [0, this.filter(mappings, filter)];
+            let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
+            return [0, this.filter(maps, filter)];
         }
     // }}}
     };

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.util = { //{{{
+with (liberator) liberator.util = { //{{{
 
     Timer: function Timer(minInterval, maxInterval, callback)
     {
@@ -104,7 +104,7 @@ liberator.util = { //{{{
         clipboardHelper.copyString(str);
 
         if (verbose)
-            liberator.echo("Yanked " + str, liberator.commandline.FORCE_SINGLELINE);
+            echo("Yanked " + str, commandline.FORCE_SINGLELINE);
     },
 
     createURI: function (str)
@@ -184,9 +184,9 @@ liberator.util = { //{{{
     generateHelp: function (command, extraHelp)
     {
         var start = "", end = "";
-        if (command instanceof liberator.Command)
+        if (command instanceof Command)
             start = ":";
-        else if (command instanceof liberator.Option)
+        else if (command instanceof Option)
             start = end = "'";
 
         var ret = "";
@@ -275,7 +275,7 @@ liberator.util = { //{{{
                 }
                 catch (e) {}
 
-                value = liberator.template.highlight(value, true);
+                value = template.highlight(value, true);
                 if (color)
                 {
                     value = value.toXMLString();
@@ -303,8 +303,8 @@ liberator.util = { //{{{
             if (Date.now() > endTime)
             {
                 liberator.interrupted = false;
-                liberator.threadYield();
-                if (liberator.interrupted)
+                threadYield();
+                if (interrupted)
                     throw new Error("Interrupted");
                 endTime = Date.now() + time;
             }
@@ -346,13 +346,13 @@ liberator.util = { //{{{
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
     stringToURLArray: function (str)
     {
-        var urls = str.split(new RegExp("\s*" + liberator.options["urlseparator"] + "\s*"));
+        var urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
 
         for (let url = 0; url < urls.length; url++)
         {
             try
             {
-                var file = liberator.io.getFile(urls[url]);
+                var file = io.getFile(urls[url]);
                 if (file.exists() && file.isReadable())
                 {
                     urls[url] = file.path;
@@ -376,7 +376,7 @@ liberator.util = { //{{{
                 // like the comments below ;-)
 
                 // check for a search engine match in the string
-                var searchURL = liberator.bookmarks.getSearchURL(urls[url], false);
+                var searchURL = bookmarks.getSearchURL(urls[url], false);
                 if (searchURL)
                 {
                     urls[url] = searchURL;
@@ -384,7 +384,7 @@ liberator.util = { //{{{
                 }
                 else // no search engine match, search for the whole string in the default engine
                 {
-                    searchURL = liberator.bookmarks.getSearchURL(urls[url], true);
+                    searchURL = bookmarks.getSearchURL(urls[url], true);
                     if (searchURL)
                     {
                         urls[url] = searchURL;
@@ -464,6 +464,7 @@ liberator.util.Struct = function Struct()
     ConStructor.prototype = self;
     return self.constructor = ConStructor;
 }
+
 liberator.util.Struct.prototype = {
     clone: function () 
     {
@@ -472,6 +473,7 @@ liberator.util.Struct.prototype = {
     // Iterator over our named members
     __iterator__: function () ([v, this[v]] for ([k, v] in this.members))
 }
+
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or
 // get length() won't work.
 for (let [,k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",

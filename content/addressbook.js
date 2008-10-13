@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.Addressbook = function () //{{{
+with (liberator) liberator.Addressbook = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -71,9 +71,9 @@ liberator.Addressbook = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = liberator.config.mailModes || [liberator.modes.NORMAL];
+    var myModes = config.mailModes || [modes.NORMAL];
 
-    liberator.mappings.add(modes, ["a"],
+    mappings.add(myModes, ["a"],
         "Open a prompt to save a new addressbook entry for the sender of the selected message",
         function ()
         {
@@ -84,7 +84,7 @@ liberator.Addressbook = function () //{{{
             }
             catch (e)
             {
-                liberator.beep();
+                beep();
             }
 
             if (!to)
@@ -104,14 +104,14 @@ liberator.Addressbook = function () //{{{
                 displayName = "-name=\"" + displayName.replace(/"/g, "") + "\"";
             }
 
-            liberator.commandline.open(":", "contact " + address + " " + displayName, liberator.modes.EX);
+            commandline.open(":", "contact " + address + " " + displayName, modes.EX);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["con[tact]"],
+    commands.add(["con[tact]"],
         "Add an address book entry",
         function (args)
         {
@@ -122,22 +122,22 @@ liberator.Addressbook = function () //{{{
             if (!displayName)
                 displayName = generateDisplayName(firstName, lastName);
 
-            if (liberator.addressbook.add(mailAddr, firstName, lastName, displayName))
-                liberator.echo("Added address: " + displayName + " <" + mailAddr + ">", liberator.commandline.FORCE_SINGLELINE);
+            if (addressbook.add(mailAddr, firstName, lastName, displayName))
+                echo("Added address: " + displayName + " <" + mailAddr + ">", commandline.FORCE_SINGLELINE);
             else
-                liberator.echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", liberator.commandline.FORCE_SINGLELINE);
+                echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
 
         },
         {
             argCount: "+",
-            options: [[["-firstname", "-f"], liberator.commands.OPTION_STRING],
-                      [["-lastname", "-l"],  liberator.commands.OPTION_STRING],
-                      [["-name", "-n"],      liberator.commands.OPTION_STRING]]
+            options: [[["-firstname", "-f"], commands.OPTION_STRING],
+                      [["-lastname", "-l"],  commands.OPTION_STRING],
+                      [["-name", "-n"],      commands.OPTION_STRING]]
         });
 
-    liberator.commands.add(["contacts", "addr[essbook]"],
+    commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
-        function (args, special) { liberator.addressbook.list(args, special); },
+        function (args, special) { addressbook.list(args, special); },
         { bang: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -189,7 +189,7 @@ liberator.Addressbook = function () //{{{
             }
             if (addresses.length < 1)
             {
-                liberator.echoerr("E94: No matching contact for " + filter, liberator.commandline.FORCE_SINGLELINE);
+                echoerr("E94: No matching contact for " + filter, commandline.FORCE_SINGLELINE);
                 return false;
             }
 
@@ -201,21 +201,21 @@ liberator.Addressbook = function () //{{{
                     function (address) "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""
                 ).join(", ");
 
-                liberator.mail.composeNewMail(args);
+                mail.composeNewMail(args);
             }
             else
             {
-                var list = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>" +
+                var list = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>" +
                            "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
                 for (let i = 0; i < addresses.length; i++)
                 {
-                    var displayName = liberator.util.escapeHTML(liberator.util.clip(addresses[i][0], 50));
-                    var mailAddr = liberator.util.escapeHTML(addresses[i][1]);
+                    var displayName = util.escapeHTML(util.clip(addresses[i][0], 50));
+                    var mailAddr = util.escapeHTML(addresses[i][1]);
                     list += "<tr><td>" + displayName + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + mailAddr + "</a></td></tr>";
                 }
                 list += "</table>";
 
-                liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
             return true;
         }

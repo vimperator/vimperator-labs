@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
-liberator.Editor = function () //{{{
+with (liberator) liberator.Editor = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -56,15 +56,15 @@ liberator.Editor = function () //{{{
 
     function selectPreviousLine()
     {
-        liberator.editor.executeCommand("cmd_selectLinePrevious");
-        if ((liberator.modes.extended & liberator.modes.LINE) && !liberator.editor.selectedText())
-            liberator.editor.executeCommand("cmd_selectLinePrevious");
+        editor.executeCommand("cmd_selectLinePrevious");
+        if ((modes.extended & modes.LINE) && !editor.selectedText())
+            editor.executeCommand("cmd_selectLinePrevious");
     }
     function selectNextLine()
     {
-        liberator.editor.executeCommand("cmd_selectLineNext");
-        if ((liberator.modes.extended & liberator.modes.LINE) && !liberator.editor.selectedText())
-            liberator.editor.executeCommand("cmd_selectLineNext");
+        editor.executeCommand("cmd_selectLineNext");
+        if ((modes.extended & modes.LINE) && !editor.selectedText())
+            editor.executeCommand("cmd_selectLineNext");
     }
 
     // add mappings for commands like h,j,k,l,etc. in CARET, VISUAL and TEXTAREA mode
@@ -72,9 +72,9 @@ liberator.Editor = function () //{{{
     {
         var extraInfo = {};
         if (hasCount)
-            extraInfo.flags = liberator.Mappings.flags.COUNT;
+            extraInfo.flags = Mappings.flags.COUNT;
 
-        liberator.mappings.add([liberator.modes.CARET], keys, "",
+        mappings.add([modes.CARET], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1)
@@ -90,7 +90,7 @@ liberator.Editor = function () //{{{
             },
             extraInfo);
 
-        liberator.mappings.add([liberator.modes.VISUAL], keys, "",
+        mappings.add([modes.VISUAL], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1 || !hasCount)
@@ -103,12 +103,12 @@ liberator.Editor = function () //{{{
 
                 while (count--)
                 {
-                    if (liberator.modes.extended & liberator.modes.TEXTAREA)
+                    if (modes.extended & modes.TEXTAREA)
                     {
                         if (typeof visualTextareaCommand == "function")
                             visualTextareaCommand();
                         else
-                            liberator.editor.executeCommand(visualTextareaCommand);
+                            editor.executeCommand(visualTextareaCommand);
                     }
                     else
                         controller[caretModeMethod](caretModeArg, true);
@@ -116,13 +116,13 @@ liberator.Editor = function () //{{{
             },
             extraInfo);
 
-        liberator.mappings.add([liberator.modes.TEXTAREA], keys, "",
+        mappings.add([modes.TEXTAREA], keys, "",
             function (count)
             {
                 if (typeof count != "number" || count < 1)
                     count = 1;
 
-                liberator.editor.executeCommand(textareaCommand, count);
+                editor.executeCommand(textareaCommand, count);
             },
             extraInfo);
     }
@@ -130,22 +130,21 @@ liberator.Editor = function () //{{{
     // add mappings for commands like i,a,s,c,etc. in TEXTAREA mode
     function addBeginInsertModeMap(keys, commands)
     {
-        liberator.mappings.add([liberator.modes.TEXTAREA], keys, "",
+        mappings.add([modes.TEXTAREA], keys, "",
             function (count)
             {
-                for (let c = 0; c < commands.length; c++)
-                    liberator.editor.executeCommand(commands[c], 1);
-
-                liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                commands.forEach(function (cmd)
+                    editor.executeCommand(cmd, 1));
+                modes.set(modes.INSERT, modes.TEXTAREA);
             });
     }
 
     function addMotionMap(key)
     {
-        liberator.mappings.add([liberator.modes.TEXTAREA], [key],
+        mappings.add([modes.TEXTAREA], [key],
             "Motion command",
-            function (motion, count) { liberator.editor.executeCommandWithMotion(key, motion, count); },
-            { flags: liberator.Mappings.flags.MOTION | liberator.Mappings.flags.COUNT });
+            function (motion, count) { editor.executeCommandWithMotion(key, motion, count); },
+            { flags: Mappings.flags.MOTION | Mappings.flags.COUNT });
     }
 
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
@@ -154,31 +153,31 @@ liberator.Editor = function () //{{{
         var mode = ch || "!";
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
-        liberator.commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
+        commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
                 if (!args)
                 {
-                    liberator.editor.listAbbreviations(mode, "");
+                    editor.listAbbreviations(mode, "");
                     return;
                 }
 
                 var matches = args.match(/^(\S+)(?:\s+(.+))?$/);
                 var [lhs, rhs] = [matches[1], matches[2]];
                 if (rhs)
-                    liberator.editor.addAbbreviation(mode, lhs, rhs);
+                    editor.addAbbreviation(mode, lhs, rhs);
                 else
-                    liberator.editor.listAbbreviations(mode, lhs);
+                    editor.listAbbreviations(mode, lhs);
             });
 
-        liberator.commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
+        commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) { liberator.editor.removeAbbreviation(mode, args); });
+            function (args) { editor.removeAbbreviation(mode, args); });
 
-        liberator.commands.add([ch + "abc[lear]"],
+        commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,
-            function () { liberator.editor.removeAllAbbreviations(mode); },
+            function () { editor.removeAllAbbreviations(mode); },
             { argCount: "0" });
     }
 
@@ -186,11 +185,11 @@ liberator.Editor = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["editor"],
+    options.add(["editor"],
         "Set the external text editor",
         "string", "gvim -f");
 
-    liberator.options.add(["insertmode", "im"],
+    options.add(["insertmode", "im"],
         "Use Insert mode as the default for text areas",
         "boolean", true);
 
@@ -198,7 +197,7 @@ liberator.Editor = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = [liberator.modes.INSERT, liberator.modes.COMMAND_LINE];
+    var myModes = [modes.INSERT, modes.COMMAND_LINE];
 
     /*             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA */
     addMovementMap(["k", "<Up>"],                true,  "lineMove", false,      "cmd_linePrevious", selectPreviousLine);
@@ -227,253 +226,253 @@ liberator.Editor = function () //{{{
     addMotionMap("y"); // yank
 
     // insert mode mappings
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-o>", "<C-f>", "<C-g>", "<C-n>", "<C-p>"],
-        "Ignore certain " + liberator.config.hostApplication + " key bindings",
-        function () { /*liberator.beep();*/ });
+        "Ignore certain " + config.hostApplication + " key bindings",
+        function () { /*beep();*/ });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-w>"], "Delete previous word",
-        function () { liberator.editor.executeCommand("cmd_deleteWordBackward", 1); });
+        function () { editor.executeCommand("cmd_deleteWordBackward", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-u>"], "Delete until beginning of current line",
         function ()
         {
             // broken in FF3, deletes the whole line:
-            // liberator.editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
-            liberator.editor.executeCommand("cmd_selectBeginLine", 1);
+            // editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
+            editor.executeCommand("cmd_selectBeginLine", 1);
             if (getController().isCommandEnabled("cmd_delete"))
-                liberator.editor.executeCommand("cmd_delete", 1);
+                editor.executeCommand("cmd_delete", 1);
         });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-k>"], "Delete until end of current line",
-        function () { liberator.editor.executeCommand("cmd_deleteToEndOfLine", 1); });
+        function () { editor.executeCommand("cmd_deleteToEndOfLine", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-a>"], "Move cursor to beginning of current line",
-        function () { liberator.editor.executeCommand("cmd_beginLine", 1); });
+        function () { editor.executeCommand("cmd_beginLine", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-e>"], "Move cursor to end of current line",
-        function () { liberator.editor.executeCommand("cmd_endLine", 1); });
+        function () { editor.executeCommand("cmd_endLine", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-h>"], "Delete character to the left",
-        function () { liberator.editor.executeCommand("cmd_deleteCharBackward", 1); });
+        function () { editor.executeCommand("cmd_deleteCharBackward", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-d>"], "Delete character to the right",
-        function () { liberator.editor.executeCommand("cmd_deleteCharForward", 1); });
+        function () { editor.executeCommand("cmd_deleteCharForward", 1); });
 
-    /*liberator.mappings.add(modes,
+    /*mappings.add(myModes,
         ["<C-Home>"], "Move cursor to beginning of text field",
-        function () { liberator.editor.executeCommand("cmd_moveTop", 1); });
+        function () { editor.executeCommand("cmd_moveTop", 1); });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<C-End>"], "Move cursor to end of text field",
-        function () { liberator.editor.executeCommand("cmd_moveBottom", 1); });*/
+        function () { editor.executeCommand("cmd_moveBottom", 1); });*/
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["<S-Insert>"], "Insert clipboard/selection",
-        function () { liberator.editor.pasteClipboard(); });
+        function () { editor.pasteClipboard(); });
 
-    liberator.mappings.add([liberator.modes.INSERT, liberator.modes.TEXTAREA, liberator.modes.COMPOSE],
+    mappings.add([modes.INSERT, modes.TEXTAREA, modes.COMPOSE],
         ["<C-i>"], "Edit text field with an external editor",
-        function () { liberator.editor.editWithExternalEditor(); });
+        function () { editor.editWithExternalEditor(); });
 
     // FIXME: <esc> does not work correctly
-    liberator.mappings.add([liberator.modes.INSERT],
+    mappings.add([modes.INSERT],
         ["<C-t>"], "Edit text field in vi mode",
         function () { liberator.mode = liberator.modes.TEXTAREA; });
 
-    liberator.mappings.add([liberator.modes.INSERT],
+    mappings.add([modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
-        function () { liberator.editor.expandAbbreviation("i"); },
-        { flags: liberator.Mappings.flags.ALLOW_EVENT_ROUTING });
+        function () { editor.expandAbbreviation("i"); },
+        { flags: Mappings.flags.ALLOW_EVENT_ROUTING });
 
-    liberator.mappings.add([liberator.modes.INSERT],
+    mappings.add([modes.INSERT],
         ["<Tab>"], "Expand insert mode abbreviation",
-        function () { liberator.editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); });
+        function () { editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); });
 
-    liberator.mappings.add([liberator.modes.INSERT],
+    mappings.add([modes.INSERT],
         ["<C-]>", "<C-5>"], "Expand insert mode abbreviation",
-        function () { liberator.editor.expandAbbreviation("i"); });
+        function () { editor.expandAbbreviation("i"); });
 
     // textarea mode
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["u"], "Undo",
         function (count)
         {
-            liberator.editor.executeCommand("cmd_undo", count);
+            editor.executeCommand("cmd_undo", count);
             liberator.mode = liberator.modes.TEXTAREA;
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["<C-r>"], "Redo",
         function (count)
         {
-            liberator.editor.executeCommand("cmd_redo", count);
+            editor.executeCommand("cmd_redo", count);
             liberator.mode = liberator.modes.TEXTAREA;
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["D"], "Delete the characters under the cursor until the end of the line",
-        function () { liberator.editor.executeCommand("cmd_deleteToEndOfLine"); });
+        function () { editor.executeCommand("cmd_deleteToEndOfLine"); });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["o"], "Open line below current",
         function (count)
         {
-            liberator.editor.executeCommand("cmd_endLine", 1);
-            liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
-            liberator.events.feedkeys("<Return>");
+            editor.executeCommand("cmd_endLine", 1);
+            modes.set(modes.INSERT, modes.TEXTAREA);
+            events.feedkeys("<Return>");
         });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["O"], "Open line above current",
         function (count)
         {
-            liberator.editor.executeCommand("cmd_beginLine", 1);
-            liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
-            liberator.events.feedkeys("<Return>");
-            liberator.editor.executeCommand("cmd_linePrevious", 1);
+            editor.executeCommand("cmd_beginLine", 1);
+            modes.set(modes.INSERT, modes.TEXTAREA);
+            events.feedkeys("<Return>");
+            editor.executeCommand("cmd_linePrevious", 1);
         });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["X"], "Delete character to the left",
-        function (count) { liberator.editor.executeCommand("cmd_deleteCharBackward", count); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { editor.executeCommand("cmd_deleteCharBackward", count); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["x"], "Delete character to the right",
-        function (count) { liberator.editor.executeCommand("cmd_deleteCharForward", count); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { editor.executeCommand("cmd_deleteCharForward", count); },
+        { flags: Mappings.flags.COUNT });
 
     // visual mode
-    liberator.mappings.add([liberator.modes.CARET, liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.CARET, modes.TEXTAREA, modes.VISUAL],
         ["v"], "Start visual mode",
-        function (count) { liberator.modes.set(liberator.modes.VISUAL, liberator.mode); });
+        function (count) { modes.set(modes.VISUAL, mode); });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA],
+    mappings.add([modes.TEXTAREA],
         ["V"], "Start visual line mode",
         function (count)
         {
-            liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA | liberator.modes.LINE);
-            liberator.editor.executeCommand("cmd_beginLine", 1);
-            liberator.editor.executeCommand("cmd_selectLineNext", 1);
+            modes.set(modes.VISUAL, modes.TEXTAREA | modes.LINE);
+            editor.executeCommand("cmd_beginLine", 1);
+            editor.executeCommand("cmd_selectLineNext", 1);
         });
 
-    liberator.mappings.add([liberator.modes.VISUAL],
+    mappings.add([modes.VISUAL],
         ["c", "s"], "Change selected text",
         function (count)
         {
-            if (liberator.modes.extended & liberator.modes.TEXTAREA)
+            if (modes.extended & modes.TEXTAREA)
             {
-                liberator.editor.executeCommand("cmd_cut");
-                liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                editor.executeCommand("cmd_cut");
+                modes.set(modes.INSERT, modes.TEXTAREA);
             }
             else
-                liberator.beep();
+                beep();
         });
 
-    liberator.mappings.add([liberator.modes.VISUAL],
+    mappings.add([modes.VISUAL],
         ["d"], "Delete selected text",
         function (count)
         {
-            if (liberator.modes.extended & liberator.modes.TEXTAREA)
+            if (modes.extended & modes.TEXTAREA)
             {
-                liberator.editor.executeCommand("cmd_cut");
-                liberator.modes.set(liberator.modes.TEXTAREA);
+                editor.executeCommand("cmd_cut");
+                modes.set(modes.TEXTAREA);
             }
             else
-                liberator.beep();
+                beep();
         });
 
-    liberator.mappings.add([liberator.modes.VISUAL],
+    mappings.add([modes.VISUAL],
         ["y"], "Yank selected text",
         function (count)
         {
-            if (liberator.modes.extended & liberator.modes.TEXTAREA)
+            if (modes.extended & modes.TEXTAREA)
             {
-                liberator.editor.executeCommand("cmd_copy");
-                liberator.modes.set(liberator.modes.TEXTAREA);
+                editor.executeCommand("cmd_copy");
+                modes.set(modes.TEXTAREA);
             }
             else
             {
                 var sel = window.content.document.getSelection();
                 if (sel)
-                    liberator.util.copyToClipboard(sel, true);
+                    util.copyToClipboard(sel, true);
                 else
-                    liberator.beep();
+                    beep();
             }
         });
 
-    liberator.mappings.add([liberator.modes.VISUAL, liberator.modes.TEXTAREA],
+    mappings.add([modes.VISUAL, modes.TEXTAREA],
         ["p"], "Paste clipboard contents",
         function (count)
         {
-            if (!(liberator.modes.extended & liberator.modes.CARET))
+            if (!(modes.extended & modes.CARET))
             {
                 if (!count) count = 1;
                 while (count--)
-                    liberator.editor.executeCommand("cmd_paste");
+                    editor.executeCommand("cmd_paste");
                 liberator.mode = liberator.modes.TEXTAREA;
             }
             else
-                liberator.beep();
+                beep();
         });
 
     // finding characters
-    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["f"], "Move to a character on the current line after the cursor",
         function (count, arg)
         {
-            var pos = liberator.editor.findCharForward(arg, count);
+            var pos = editor.findCharForward(arg, count);
             if (pos >= 0)
-                liberator.editor.moveToPosition(pos, true, liberator.mode == liberator.modes.VISUAL);
+                editor.moveToPosition(pos, true, mode == modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["F"], "Move to a charater on the current line before the cursor",
         function (count, arg)
         {
-            var pos = liberator.editor.findCharBackward(arg, count);
+            var pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
-                liberator.editor.moveToPosition(pos, false, liberator.mode == liberator.modes.VISUAL);
+                editor.moveToPosition(pos, false, mode == modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["t"], "Move before a character on the current line",
         function (count, arg)
         {
-            var pos = liberator.editor.findCharForward(arg, count);
+            var pos = editor.findCharForward(arg, count);
             if (pos >= 0)
-                liberator.editor.moveToPosition(pos - 1, true, liberator.mode == liberator.modes.VISUAL);
+                editor.moveToPosition(pos - 1, true, mode == modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
-    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["T"], "Move before a character on the current line, backwards",
         function (count, arg)
         {
-            var pos = liberator.editor.findCharBackward(arg, count);
+            var pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
-                liberator.editor.moveToPosition(pos + 1, false, liberator.mode == liberator.modes.VISUAL);
+                editor.moveToPosition(pos + 1, false, mode == modes.VISUAL);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
         // textarea and visual mode
-    liberator.mappings.add([liberator.modes.TEXTAREA, liberator.modes.VISUAL],
+    mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["~"], "Switch case of the character under the cursor and move the cursor to the right",
         function (count)
         {
-            if (liberator.modes.main == liberator.modes.VISUAL)
+            if (modes.main == modes.VISUAL)
             {
                 count = editor().selectionEnd - editor().selectionStart;
             }
@@ -488,18 +487,18 @@ liberator.Editor = function () //{{{
                 var pos = editor().selectionStart;
                 if (pos >= text.length)
                 {
-                    liberator.beep();
+                    beep();
                     return;
                 }
                 var chr = text[pos];
                 editor().value = text.substring(0, pos) +
                     (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
                     text.substring(pos + 1);
-                liberator.editor.moveToPosition(pos + 1, true, false);
+                editor.moveToPosition(pos + 1, true, false);
             }
-            liberator.modes.set(liberator.modes.TEXTAREA);
+            modes.set(modes.TEXTAREA);
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -555,14 +554,14 @@ liberator.Editor = function () //{{{
         {
             var elt = window.document.commandDispatcher.focusedElement;
 
-            if (elt.setSelectionRange && liberator.util.readFromClipboard())
+            if (elt.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
                 var rangeStart = elt.selectionStart; // caret position
                 var rangeEnd = elt.selectionEnd;
                 var tempStr1 = elt.value.substring(0, rangeStart);
-                var tempStr2 = liberator.util.readFromClipboard();
+                var tempStr2 = util.readFromClipboard();
                 var tempStr3 = elt.value.substring(rangeEnd);
                 elt.value = tempStr1 + tempStr2 + tempStr3;
                 elt.selectionStart = rangeStart + tempStr2.length;
@@ -576,7 +575,7 @@ liberator.Editor = function () //{{{
             var controller = getController();
             if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
             {
-                liberator.beep();
+                beep();
                 return false;
             }
 
@@ -597,7 +596,7 @@ liberator.Editor = function () //{{{
                 catch (e)
                 {
                     if (!didCommand)
-                        liberator.beep();
+                        beep();
                     return false;
                 }
             }
@@ -618,7 +617,7 @@ liberator.Editor = function () //{{{
                 count--;
             }
 
-            liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
+            modes.set(modes.VISUAL, modes.TEXTAREA);
 
             switch (motion)
             {
@@ -663,7 +662,7 @@ liberator.Editor = function () //{{{
                     break;
 
                 default:
-                    liberator.beep();
+                    beep();
                     return false;
             }
 
@@ -672,11 +671,11 @@ liberator.Editor = function () //{{{
                 case "d":
                     this.executeCommand("cmd_delete", 1);
                     // need to reset the mode as the visual selection changes it
-                    liberator.modes.main = liberator.modes.TEXTAREA;
+                    modes.main = modes.TEXTAREA;
                     break;
                 case "c":
                     this.executeCommand("cmd_delete", 1);
-                    liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                    modes.set(modes.INSERT, modes.TEXTAREA);
                     break;
                 case "y":
                     this.executeCommand("cmd_copy", 1);
@@ -684,7 +683,7 @@ liberator.Editor = function () //{{{
                     break;
 
                 default:
-                    liberator.beep();
+                    beep();
                     return false;
             }
             return true;
@@ -749,7 +748,7 @@ liberator.Editor = function () //{{{
                     return i + 1; // always position the cursor after the char
             }
 
-            liberator.beep();
+            beep();
             return -1;
         },
 
@@ -776,7 +775,7 @@ liberator.Editor = function () //{{{
                     return i;
             }
 
-            liberator.beep();
+            beep();
             return -1;
         },
 
@@ -784,7 +783,7 @@ liberator.Editor = function () //{{{
         editWithExternalEditor: function ()
         {
             var textBox = null;
-            if (!(liberator.config.isComposeWindow))
+            if (!(config.isComposeWindow))
                 textBox = document.commandDispatcher.focusedElement;
 
             var text = "";
@@ -795,30 +794,30 @@ liberator.Editor = function () //{{{
             else
                 return false;
 
-            var editor = liberator.options["editor"];
-            var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
+            var editor = options["editor"];
+            var args = commands.parseArgs(editor, [], "*", true).arguments;
             if (args.length < 1)
             {
-                liberator.echoerr("No editor specified");
+                echoerr("No editor specified");
                 return false;
             }
 
             try
             {
-                var tmpfile = liberator.io.createTempFile();
+                var tmpfile = io.createTempFile();
             }
             catch (e)
             {
-                liberator.echoerr("Could not create temporary file: " + e.message);
+                echoerr("Could not create temporary file: " + e.message);
                 return false;
             }
             try
             {
-                liberator.io.writeFile(tmpfile, text);
+                io.writeFile(tmpfile, text);
             }
             catch (e)
             {
-                liberator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
+                echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
                 return false;
             }
 
@@ -834,7 +833,7 @@ liberator.Editor = function () //{{{
             }
 
             // TODO: save return value in v:shell_error
-            liberator.callFunctionInThread(null, liberator.io.run, [prog, args, true]);
+            callFunctionInThread(null, io.run, [prog, args, true]);
 
             if (textBox)
                 textBox.removeAttribute("readonly");
@@ -842,13 +841,13 @@ liberator.Editor = function () //{{{
     //        if (v:shell_error != 0)
     //        {
     //            tmpBg = "red";
-    //            liberator.echoerr("External editor returned with exit code " + retcode);
+    //            echoerr("External editor returned with exit code " + retcode);
     //        }
     //        else
     //        {
                 try
                 {
-                    var val = liberator.io.readFile(tmpfile);
+                    var val = io.readFile(tmpfile);
                     if (textBox)
                         textBox.value = val;
                     else
@@ -869,7 +868,7 @@ liberator.Editor = function () //{{{
                 catch (e)
                 {
                     tmpBg = "red";
-                    liberator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
+                    echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
                 }
     //        }
 
@@ -916,11 +915,11 @@ liberator.Editor = function () //{{{
                     for (let i = 0; i < abbrev[lhs].length; i++)
                     {
                         if (abbrev[lhs][i][0] == filter)
-                            liberator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
+                            echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
                         return true;
                     }
                 }
-                liberator.echoerr("No abbreviations found");
+                echoerr("No abbreviations found");
                 return false;
             }
             else // list all (for that filter {i,c,!})
@@ -931,8 +930,8 @@ liberator.Editor = function () //{{{
                 let list =
                     <table>
                     {
-                        liberator.template.map(abbrev, function ([lhs, rhs])
-                            liberator.template.map(rhs, function (abbr)
+                        template.map(abbrev, function ([lhs, rhs])
+                            template.map(rhs, function (abbr)
                             searchFilter.indexOf(abbr[0]) < 0 ? undefined :
                             <tr>
                                 <td>{abbr[0]}</td>
@@ -942,9 +941,9 @@ liberator.Editor = function () //{{{
                     }
                     </table>;
                 if (list.*.length())
-                    liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                    commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 else
-                    liberator.echoerr("No abbreviations found");
+                    echoerr("No abbreviations found");
             }
         },
 
@@ -1034,7 +1033,7 @@ liberator.Editor = function () //{{{
         {
             if (!lhs)
             {
-                liberator.echoerr("E474: Invalid argument");
+                echoerr("E474: Invalid argument");
                 return false;
             }
 
@@ -1072,7 +1071,7 @@ liberator.Editor = function () //{{{
                 }
             }
 
-            liberator.echoerr("E24: No such abbreviation");
+            echoerr("E24: No such abbreviation");
             return false;
         },
 

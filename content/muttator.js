@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.config = { //{{{
+with (liberator) liberator.config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
@@ -37,7 +37,7 @@ liberator.config = { //{{{
     guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
 
     get isComposeWindow() window.wintype == "msgcompose",
-    get browserModes() [liberator.modes.MESSAGE],
+    get browserModes() [modes.MESSAGE],
     // focusContent() focuses this widget
     get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
     get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
@@ -92,7 +92,7 @@ liberator.config = { //{{{
         /*["searchengines",    "Manage installed search engines",
             function () { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function () { liberator.buffer.viewSelectionSource(); }]*/
+            function () { buffer.viewSelectionSource(); }]*/
     ],
 
     // they are sorted by relevance, not alphabetically
@@ -111,7 +111,7 @@ liberator.config = { //{{{
         // 0: never automatically edit externally
         // 1: automatically edit externally when message window is shown the first time
         // 2: automatically edit externally, once the message text gets focus (not working currently)
-        liberator.options.add(["autoexternal", "ae"],
+        options.add(["autoexternal", "ae"],
             "Edit message with external editor by default",
             "boolean", false);
 
@@ -119,39 +119,39 @@ liberator.config = { //{{{
         if (this.isComposeWindow)
         {
             this.features = ["addressbook"]; // the composer has no special features
-            //liberator.loadModule("addressbook", liberator.Addressbook);
+            //loadModule("addressbook", Addressbook);
 
             // TODO: move mappings elsewhere, probably compose.js
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["e"], "Edit message",
-                function () { liberator.editor.editWithExternalEditor(); });
+                function () { editor.editWithExternalEditor(); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["y"], "Send message now",
                 function () { goDoCommand("cmd_sendNow"); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["Y"], "Send message later",
                 function () { goDoCommand("cmd_sendLater"); });
 
             // FIXME: does not really work reliably
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["t"], "Select To: field",
                 function () { awSetFocus(0, awGetInputElement(1)); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["s"], "Select Subject: field",
                 function () { GetMsgSubjectElement().focus(); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["i"], "Select message body",
                 function () { SetMsgBodyFrameFocus(); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["q"], "Close composer, ask when for unsaved changes",
                 function () { DoCommandClose(); });
 
-            liberator.mappings.add([liberator.modes.COMPOSE],
+            mappings.add([modes.COMPOSE],
                 ["Q", "ZQ"], "Force closing composer",
                 function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
 
@@ -168,10 +168,10 @@ liberator.config = { //{{{
                 NotifyDocumentStateChanged: function (nowDirty)
                 {
                     // only edit with external editor if this window was not cached!
-                    if (liberator.options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
+                    if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
                     {
                         window.messageWasEditedExternally = true;
-                        liberator.editor.editWithExternalEditor();
+                        editor.editWithExternalEditor();
                     }
 
                 },
@@ -195,16 +195,16 @@ liberator.config = { //{{{
             }, true);
 
             /*window.document.addEventListener("unload", function () {
-                GetCurrentEditor().removeDocumentStateListener(liberator.config.stateListener);
+                GetCurrentEditor().removeDocumentStateListener(config.stateListener);
             }, true);*/
         }
         else
         {
-            liberator.loadModule("mail",        liberator.Mail);
-            liberator.loadModule("addressbook", liberator.Addressbook);
-            liberator.loadModule("tabs",        liberator.Tabs);
-            liberator.loadModule("marks",       liberator.Marks);
-            liberator.loadModule("hints",       liberator.Hints);
+            loadModule("mail",        Mail);
+            loadModule("addressbook", Addressbook);
+            loadModule("tabs",        Tabs);
+            loadModule("marks",       Marks);
+            loadModule("hints",       Hints);
         }
     }
 }; //}}}

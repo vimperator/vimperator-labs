@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.AutoCommands = function () //{{{
+with (liberator) liberator.AutoCommands = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -44,23 +44,22 @@ liberator.AutoCommands = function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["eventignore", "ei"],
+    options.add(["eventignore", "ei"],
         "List of autocommand event names which should be ignored",
         "stringlist", "",
         {
-            completer: function (value) Array(liberator.config.autocommands).push(["all", "All events"]),
+            completer: function (value) Array(config.autocommands).push(["all", "All events"]),
             validator: function (value)
             {
                 let values = value.split(",");
-                let events = liberator.config.autocommands.map(function (event) event[0]);
-
+                let events = config.autocommands.map(function (event) event[0]);
                 events.push("all");
 
                 return values.every(function (event) events.indexOf(event) >= 0);
             }
         });
 
-    liberator.options.add(["focuscontent", "fc"],
+    options.add(["focuscontent", "fc"],
         "Try to stay in normal mode after loading a web page",
         "boolean", false);
 
@@ -68,7 +67,7 @@ liberator.AutoCommands = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["au[tocmd]"],
+    commands.add(["au[tocmd]"],
         "Execute commands automatically on events",
         function (args, special)
         {
@@ -78,13 +77,13 @@ liberator.AutoCommands = function () //{{{
             if (event)
             {
                 // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
-                let validEvents = liberator.config.autocommands.map(function (event) event[0]);
+                let validEvents = config.autocommands.map(function (event) event[0]);
                 validEvents.push("*");
 
                 events = event.split(",");
                 if (!events.every(function (event) validEvents.indexOf(event) >= 0))
                 {
-                    liberator.echoerr("E216: No such group or event: " + event);
+                    echoerr("E216: No such group or event: " + event);
                     return;
                 }
             }
@@ -92,8 +91,8 @@ liberator.AutoCommands = function () //{{{
             if (cmd) // add new command, possibly removing all others with the same event/pattern
             {
                 if (special)
-                    liberator.autocommands.remove(event, regex);
-                liberator.autocommands.add(events, regex, cmd);
+                    autocommands.remove(event, regex);
+                autocommands.add(events, regex, cmd);
             }
             else
             {
@@ -103,11 +102,11 @@ liberator.AutoCommands = function () //{{{
                 {
                     // TODO: "*" only appears to work in Vim when there is a {group} specified
                     if (args.arguments[0] != "*" || regex)
-                        liberator.autocommands.remove(event, regex); // remove all
+                        autocommands.remove(event, regex); // remove all
                 }
                 else
                 {
-                    liberator.autocommands.list(event, regex);   // list all
+                    autocommands.list(event, regex);   // list all
                 }
             }
         },
@@ -115,56 +114,56 @@ liberator.AutoCommands = function () //{{{
             argCount: 2,
             bang: true,
             literal: true,
-            completer: function (filter) liberator.completion.event(filter)
+            completer: function (filter) completion.event(filter)
         });
 
     // TODO: expand target to all buffers
-    liberator.commands.add(["doauto[all]"],
+    commands.add(["doauto[all]"],
         "Apply the autocommands matching the specified URL pattern to all buffers",
         function (args)
         {
-            liberator.commands.get("doautocmd").action.call(this, args);
+            commands.get("doautocmd").action.call(this, args);
         },
         {
             argCount: "+",
-            completer: function (filter) liberator.completion.event(filter)
+            completer: function (filter) completion.event(filter)
         }
     );
 
     // TODO: restrict target to current buffer
-    liberator.commands.add(["do[autocmd]"],
+    commands.add(["do[autocmd]"],
         "Apply the autocommands matching the specified URL pattern to the current buffer",
         function (args)
         {
             args = args.string;
 
             let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
-            url = url || liberator.buffer.URL;
+            url = url || buffer.URL;
 
-            let validEvents = liberator.config.autocommands.map(function (e) e[0]);
+            let validEvents = config.autocommands.map(function (e) e[0]);
 
             if (event == "*")
             {
-                liberator.echoerr("E217: Can't execute autocommands for ALL events");
+                echoerr("E217: Can't execute autocommands for ALL events");
             }
             else if (validEvents.indexOf(event) == -1)
             {
-                liberator.echoerr("E216: No such group or event: " + args);
+                echoerr("E216: No such group or event: " + args);
             }
             else
             {
                 // TODO: perhaps trigger could return the number of autocmds triggered
                 // TODO: Perhaps this should take -args to pass to the command?
-                if (!liberator.autocommands.get(event).some(function (c) c.pattern.test(url)))
-                    liberator.echo("No matching autocommands");
+                if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
+                    echo("No matching autocommands");
                 else
-                    liberator.autocommands.trigger(event, {url: url});
+                    autocommands.trigger(event, {url: url});
             }
         },
         {
             // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
             argCount: "+",
-            completer: function (filter) liberator.completion.event(filter)
+            completer: function (filter) completion.event(filter)
         }
     );
 
@@ -185,12 +184,10 @@ liberator.AutoCommands = function () //{{{
             if (typeof events == "string")
             {
                 events = events.split(",");
-                liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
+                log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
-
-            events.forEach(
-                function (event) { store.push({event: event, pattern: RegExp(regex), command: cmd}); }
-            );
+            events.forEach(function (event)
+                store.push({event: event, pattern: RegExp(regex), command: cmd}));
         },
 
         get: function (event, regex)
@@ -216,18 +213,18 @@ liberator.AutoCommands = function () //{{{
                 }
             });
 
-            var list = liberator.template.generic(
+            var list = template.generic(
                 <table>
                     <tr>
                         <td class="hl-Title" colspan="2">----- Auto Commands -----</td>
                     </tr>
                     {
-                        liberator.template.map(cmds, function ([event, items])
+                        template.map(cmds, function ([event, items])
                         <tr>
                             <td class="hl-Title" colspan="2">{event}</td>
                         </tr>
                         +
-                        liberator.template.map(items, function (item)
+                        template.map(items, function (item)
                         <tr>
                             <td>&#160;{item.pattern.source}</td>
                             <td>{item.command}</td>
@@ -235,19 +232,17 @@ liberator.AutoCommands = function () //{{{
                     }
                 </table>);
 
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
         trigger: function (event, args)
         {
-            let events = liberator.options["eventignore"].split(",");
-
-            if (liberator.options.get("eventignore").has("all", event))
+            if (options.get("eventignore").has("all", event))
                 return;
 
             let autoCmds = store.filter(function (autoCmd) autoCmd.event == event);
 
-            liberator.echomsg("Executing " + event + " Auto commands for \"*\"", 8);
+            echomsg("Executing " + event + " Auto commands for \"*\"", 8);
 
             let lastPattern = null;
 
@@ -257,12 +252,12 @@ liberator.AutoCommands = function () //{{{
                 if (autoCmd.pattern.test(url))
                 {
                     if (!lastPattern || lastPattern.source != autoCmd.pattern.source)
-                        liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
+                        echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
 
                     lastPattern = autoCmd.pattern;
 
-                    liberator.echomsg("autocommand " + autoCmd.command, 9);
-                    liberator.execute(liberator.commands.replaceTokens(autoCmd.command, args));
+                    echomsg("autocommand " + autoCmd.command, 9);
+                    execute(commands.replaceTokens(autoCmd.command, args));
                 }
             }
         }
@@ -270,7 +265,7 @@ liberator.AutoCommands = function () //{{{
     //}}}
 }; //}}}
 
-liberator.Events = function () //{{{
+with (liberator) liberator.Events = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -279,7 +274,7 @@ liberator.Events = function () //{{{
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
-    var macros = liberator.storage.newMap('macros', true);
+    var macros = storage.newMap('macros', true);
 
     var currentMacro = "";
     var lastMacro = "";
@@ -291,27 +286,27 @@ liberator.Events = function () //{{{
         {
             tabcontainer.addEventListener("TabMove", function (event)
             {
-                liberator.statusline.updateTabCount();
+                statusline.updateTabCount();
             }, false);
             tabcontainer.addEventListener("TabOpen", function (event)
             {
-                liberator.statusline.updateTabCount();
+                statusline.updateTabCount();
             }, false);
             tabcontainer.addEventListener("TabClose", function (event)
             {
-                liberator.statusline.updateTabCount();
+                statusline.updateTabCount();
             }, false);
             tabcontainer.addEventListener("TabSelect", function (event)
             {
                 // TODO: is all of that necessary?
-                liberator.modes.reset();
-                liberator.commandline.clear();
-                liberator.modes.show();
-                liberator.statusline.updateTabCount();
-                liberator.tabs.updateSelectionHistory();
+                modes.reset();
+                commandline.clear();
+                modes.show();
+                statusline.updateTabCount();
+                tabs.updateSelectionHistory();
 
-                if (liberator.options["focuscontent"])
-                    setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
+                if (options["focuscontent"])
+                    setTimeout(function () { focusContent(true); }, 10); // just make sure, that no widget has focus
             }, false);
         }
 
@@ -324,8 +319,8 @@ liberator.Events = function () //{{{
         // called when the active document is scrolled
         getBrowser().addEventListener("scroll", function (event)
         {
-            liberator.statusline.updateBufferPosition();
-            liberator.modes.show();
+            statusline.updateBufferPosition();
+            modes.show();
         }, null);
     }
     catch (e) {}
@@ -334,7 +329,7 @@ liberator.Events = function () //{{{
 //    {
 //        // reset buffer loading state as early as possible, important for macros
 //        dump("submit\n");
-//        liberator.buffer.loaded = 0;
+//        buffer.loaded = 0;
 //    }, null);
 
     /////////////////////////////////////////////////////////
@@ -345,23 +340,23 @@ liberator.Events = function () //{{{
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
             return;
 
-        liberator.modes.add(liberator.modes.MENU);
+        modes.add(modes.MENU);
     }
     function exitPopupMode()
     {
         // gContextMenu is set to NULL by Firefox, when a context menu is closed
         if (typeof gContextMenu != "undefined" && gContextMenu == null && !activeMenubar)
-            liberator.modes.remove(liberator.modes.MENU);
+            modes.remove(modes.MENU);
     }
     function enterMenuMode()
     {
         activeMenubar = true;
-        liberator.modes.add(liberator.modes.MENU);
+        modes.add(modes.MENU);
     }
     function exitMenuMode()
     {
         activeMenubar = false;
-        liberator.modes.remove(liberator.modes.MENU);
+        modes.remove(modes.MENU);
     }
     window.addEventListener("popupshown", enterPopupMode, true);
     window.addEventListener("popuphidden", exitPopupMode, true);
@@ -370,7 +365,7 @@ liberator.Events = function () //{{{
 
     // window.document.addEventListener("DOMTitleChanged", function (event)
     // {
-    //     liberator.log("titlechanged");
+    //     log("titlechanged");
     // }, null);
 
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
@@ -471,9 +466,9 @@ liberator.Events = function () //{{{
             title: doc.title
         }
         if (liberator.has("tabs"))
-            args.tab = liberator.tabs.getContentIndex(doc) + 1;
+            args.tab = tabs.getContentIndex(doc) + 1;
 
-        liberator.autocommands.trigger(name, args);
+        autocommands.trigger(name, args);
     }
 
     function onDOMContentLoaded(event)
@@ -494,7 +489,7 @@ liberator.Events = function () //{{{
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
                 // is not triggered there (firefox bug?)
-                setTimeout(liberator.statusline.updateUrl, 10);
+                setTimeout(statusline.updateUrl, 10);
                 return;
             }
 
@@ -504,10 +499,10 @@ liberator.Events = function () //{{{
             let title = doc.title;
 
             // update history
-            if (url && liberator.history)
-                liberator.history.add(url, title);
+            if (url && history)
+                history.add(url, title);
 
-            // mark the buffer as loaded, we can't use liberator.buffer.loaded
+            // mark the buffer as loaded, we can't use buffer.loaded
             // since that always refers to the current buffer, while doc can be
             // any buffer, even in a background tab
             doc.pageIsFullyLoaded = 1;
@@ -517,7 +512,7 @@ liberator.Events = function () //{{{
             {
                 // we want to stay in command mode after a page has loaded
                 // TODO: move somehwere else, as focusing can already happen earlier than on "load"
-                if (liberator.options["focuscontent"])
+                if (options["focuscontent"])
                 {
                     setTimeout(function () {
                         var focused = document.commandDispatcher.focusedElement;
@@ -528,7 +523,7 @@ liberator.Events = function () //{{{
             }
             else // background tab
             {
-                liberator.echomsg("Background tab loaded: " + title || url, 1);
+                echomsg("Background tab loaded: " + title || url, 1);
             }
 
             triggerLoadAutocmd("PageLoad", doc);
@@ -546,9 +541,9 @@ liberator.Events = function () //{{{
             catch (e)
             {
                 if (e.message == "Interrupted")
-                    liberator.echoerr("Interrupted");
+                    echoerr("Interrupted");
                 else
-                    liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
+                    echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
             }
@@ -558,63 +553,63 @@ liberator.Events = function () //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded()
     {
-        liberator.dump("start waiting in loaded state: " + liberator.buffer.loaded);
-        liberator.threadYield(true); // clear queue
+        dump("start waiting in loaded state: " + buffer.loaded);
+        threadYield(true); // clear queue
 
-        if (liberator.buffer.loaded == 1)
+        if (buffer.loaded == 1)
             return true;
 
         var ms = 25000; // maximum time to wait - TODO: add option
         var then = new Date().getTime();
         for (let now = then; now - then < ms; now = new Date().getTime())
         {
-            liberator.threadYield();
+            threadYield();
             if ((now - then) % 1000 < 10)
-                liberator.dump("waited: " + (now - then) + " ms");
+                dump("waited: " + (now - then) + " ms");
 
-            if (!liberator.events.feedingKeys)
+            if (!events.feedingKeys)
                 return false;
 
-            if (liberator.buffer.loaded > 0)
+            if (buffer.loaded > 0)
             {
-                liberator.sleep(250);
+                sleep(250);
                 break;
             }
             else
-                liberator.echo("Waiting for page to load...");
+                echo("Waiting for page to load...");
         }
-        liberator.modes.show();
+        modes.show();
 
         // TODO: allow macros to be continued when page does not fully load with an option
-        var ret = (liberator.buffer.loaded == 1);
+        var ret = (buffer.loaded == 1);
         if (!ret)
-            liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
-        liberator.dump("done waiting: " + ret);
+            echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+        dump("done waiting: " + ret);
 
         // sometimes the input widget had focus when replaying a macro
         // maybe this call should be moved somewhere else?
-        // liberator.focusContent(true);
+        // focusContent(true);
 
         return ret;
     }
 
     // load all macros inside ~/.vimperator/macros/
-    // setTimeout needed since liberator.io. is loaded after liberator.events.
+    // setTimeout needed since io. is loaded after events.
     setTimeout (function () {
         // FIXME: largely duplicated for loading plugins
         try
         {
-            let dirs = liberator.io.getRuntimeDirectories("macros");
+            let dirs = io.getRuntimeDirectories("macros");
 
             if (dirs.length > 0)
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    liberator.echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
+                    echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
 
-                    liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
+                    log("Sourcing macros directory: " + dir.path + "...", 3);
 
-                    let files = liberator.io.readDirectory(dir.path);
+                    let files = io.readDirectory(dir.path);
 
                     files.forEach(function (file) {
                         if (!file.exists() || file.isDirectory() ||
@@ -622,21 +617,21 @@ liberator.Events = function () //{{{
                                 return;
 
                         let name = file.leafName.replace(/\.vimp$/i, "");
-                        macros.set(name, liberator.io.readFile(file).split("\n")[0]);
+                        macros.set(name, io.readFile(file).split("\n")[0]);
 
-                        liberator.log("Macro " + name + " added: " + macros.get(name), 5);
+                        log("Macro " + name + " added: " + macros.get(name), 5);
                     });
                 }
             }
             else
             {
-                liberator.log("No user macros directory found", 3);
+                log("No user macros directory found", 3);
             }
         }
         catch (e)
         {
             // thrown if directory does not exist
-            liberator.log("Error sourcing macros directory: " + e, 9);
+            log("Error sourcing macros directory: " + e, 9);
         }
     }, 100);
 
@@ -644,86 +639,86 @@ liberator.Events = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.mappings.add(liberator.modes.all,
+    mappings.add(modes.all,
         ["<Esc>", "<C-[>"], "Focus content",
-        function () { liberator.events.onEscape(); });
+        function () { events.onEscape(); });
 
     // add the ":" mapping in all but insert mode mappings
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.HINTS, liberator.modes.MESSAGE, liberator.modes.COMPOSE, liberator.modes.CARET, liberator.modes.TEXTAREA],
+    mappings.add([modes.NORMAL, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
         [":"], "Enter command line mode",
-        function () { liberator.commandline.open(":", "", liberator.modes.EX); });
+        function () { commandline.open(":", "", modes.EX); });
 
     // focus events
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.CARET],
+    mappings.add([modes.NORMAL, modes.VISUAL, modes.CARET],
         ["<Tab>"], "Advance keyboard focus",
         function () { document.commandDispatcher.advanceFocus(); });
 
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.VISUAL, liberator.modes.CARET, liberator.modes.INSERT, liberator.modes.TEXTAREA],
+    mappings.add([modes.NORMAL, modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
         ["<S-Tab>"], "Rewind keyboard focus",
         function () { document.commandDispatcher.rewindFocus(); });
 
-    liberator.mappings.add(liberator.modes.all,
-        ["<C-z>"], "Temporarily ignore all " + liberator.config.name + " key bindings",
-        function () { liberator.modes.passAllKeys = true; });
+    mappings.add(modes.all,
+        ["<C-z>"], "Temporarily ignore all " + config.name + " key bindings",
+        function () { modes.passAllKeys = true; });
 
-    liberator.mappings.add(liberator.modes.all,
+    mappings.add(modes.all,
         ["<C-v>"], "Pass through next key",
-        function () { liberator.modes.passNextKey = true; });
+        function () { modes.passNextKey = true; });
 
-    liberator.mappings.add(liberator.modes.all,
+    mappings.add(modes.all,
         ["<Nop>"], "Do nothing",
         function () { return; });
 
     // macros
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.MESSAGE],
+    mappings.add([modes.NORMAL, modes.MESSAGE],
         ["q"], "Record a key sequence into a macro",
-        function (arg) { liberator.events.startRecording(arg); },
-        { flags: liberator.Mappings.flags.ARGUMENT });
+        function (arg) { events.startRecording(arg); },
+        { flags: Mappings.flags.ARGUMENT });
 
-    liberator.mappings.add([liberator.modes.NORMAL, liberator.modes.MESSAGE],
+    mappings.add([modes.NORMAL, modes.MESSAGE],
         ["@"], "Play a macro",
         function (count, arg)
         {
             if (count < 1) count = 1;
-            while (count-- && liberator.events.playMacro(arg))
+            while (count-- && events.playMacro(arg))
                 ;
         },
-        { flags: liberator.Mappings.flags.ARGUMENT | liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["delmac[ros]"],
+    commands.add(["delmac[ros]"],
         "Delete macros",
         function (args, special)
         {
             if (special)
                 args = ".*"; // XXX
 
-            liberator.events.deleteMacros(args);
+            events.deleteMacros(args);
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.macro(filter)
+            completer: function (filter) completion.macro(filter)
         });
 
-    liberator.commands.add(["macros"],
+    commands.add(["macros"],
         "List all macros",
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = liberator.template.tabular(["Macro", "Keys"], [], liberator.events.getMacros(args));
-            liberator.echo(str, liberator.commandline.FORCE_MULTILINE);
+            var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args));
+            echo(str, commandline.FORCE_MULTILINE);
         },
-        { completer: function (filter) liberator.completion.macro(filter) });
+        { completer: function (filter) completion.macro(filter) });
 
-    liberator.commands.add(["pl[ay]"],
+    commands.add(["pl[ay]"],
         "Replay a recorded macro",
-        function (args) { liberator.events.playMacro(args.arguments[0]); },
+        function (args) { events.playMacro(args.arguments[0]); },
         {
             argCount: "1",
-            completer: function (filter) liberator.completion.macro(filter)
+            completer: function (filter) completion.macro(filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -739,7 +734,7 @@ liberator.Events = function () //{{{
         destroy: function ()
         {
             // removeEventListeners() to avoid mem leaks
-            liberator.dump("TODO: remove all eventlisteners");
+            dump("TODO: remove all eventlisteners");
 
             if (typeof getBrowser != "undefined")
                 getBrowser().removeProgressListener(this.progressListener);
@@ -758,11 +753,11 @@ liberator.Events = function () //{{{
             if (!/[a-zA-Z0-9]/.test(macro))
             {
                 // TODO: ignore this like Vim?
-                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+                echoerr("E354: Invalid register name: '" + macro + "'");
                 return;
             }
 
-            liberator.modes.isRecording = true;
+            modes.isRecording = true;
 
             if (/[A-Z]/.test(macro)) // uppercase (append)
             {
@@ -782,7 +777,7 @@ liberator.Events = function () //{{{
             var res = false;
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
-                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+                echoerr("E354: Invalid register name: '" + macro + "'");
                 return false;
             }
 
@@ -790,7 +785,7 @@ liberator.Events = function () //{{{
             {
                 if (!lastMacro)
                 {
-                    liberator.echoerr("E748: No previously used register");
+                    echoerr("E748: No previously used register");
                     return false;
                 }
             }
@@ -811,18 +806,18 @@ liberator.Events = function () //{{{
                 }
                 catch (e) {}
 
-                liberator.buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
-                liberator.modes.isReplaying = true;
-                res = liberator.events.feedkeys(macros.get(lastMacro), true); // true -> noremap
-                liberator.modes.isReplaying = false;
+                buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
+                modes.isReplaying = true;
+                res = events.feedkeys(macros.get(lastMacro), true); // true -> noremap
+                modes.isReplaying = false;
             }
             else
             {
                 if (lastMacro.length == 1)
                     // TODO: ignore this like Vim?
-                    liberator.echoerr("Exxx: Register " + lastMacro + " not set");
+                    echoerr("Exxx: Register " + lastMacro + " not set");
                 else
-                    liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
+                    echoerr("Exxx: Named macro '" + lastMacro + "' not set");
             }
             return res;
         },
@@ -923,10 +918,10 @@ liberator.Events = function () //{{{
                 if (!this.feedingKeys)
                     break;
                 // stop feeding keys if page loading failed
-                if (liberator.modes.isReplaying && !waitForPageLoaded())
+                if (modes.isReplaying && !waitForPageLoaded())
                     break;
                 // else // a short break between keys often helps
-                //     liberator.sleep(50);
+                //     sleep(50);
             }
             this.feedingKeys = wasFeeding;
             return i == keys.length;
@@ -1029,7 +1024,7 @@ liberator.Events = function () //{{{
         onFocusChange: function (event)
         {
             // command line has it's own focus change handler
-            if (liberator.mode == liberator.modes.COMMAND_LINE)
+            if (mode == modes.COMMAND_LINE)
                 return;
 
             var win  = window.document.commandDispatcher.focusedWindow;
@@ -1037,9 +1032,9 @@ liberator.Events = function () //{{{
             if (elem && elem.readOnly)
                 return;
 
-            //liberator.log("onFocusChange: " + elem);
-            //liberator.dump("=+++++++++=\n" + liberator.util.objectToString(event.target) + "\n")
-            //liberator.dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
+            //log("onFocusChange: " + elem);
+            //dump("=+++++++++=\n" + util.objectToString(event.target) + "\n")
+            //dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
 
             if (elem && (
                    (elem instanceof HTMLInputElement && (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password")) ||
@@ -1048,53 +1043,53 @@ liberator.Events = function () //{{{
             {
                 this.wantsModeReset = false;
                 liberator.mode = liberator.modes.INSERT;
-                liberator.buffer.lastInputField = elem;
+                buffer.lastInputField = elem;
                 return;
             }
 
             if (elem && elem instanceof HTMLTextAreaElement)
             {
                 this.wantsModeReset = false;
-                if (liberator.options["insertmode"])
-                    liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                if (options["insertmode"])
+                    modes.set(modes.INSERT, modes.TEXTAREA);
                 else if (elem.selectionEnd - elem.selectionStart > 0)
-                    liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
+                    modes.set(modes.VISUAL, modes.TEXTAREA);
                 else
-                    liberator.modes.main = liberator.modes.TEXTAREA;
-                liberator.buffer.lastInputField = elem;
+                    modes.main = modes.TEXTAREA;
+                buffer.lastInputField = elem;
                 return;
             }
 
-            if (liberator.config.name == "Muttator")
+            if (config.name == "Muttator")
             {
                 // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
                 if ((win && win.document && win.document instanceof HTMLDocument)
                     || elem instanceof HTMLAnchorElement)
                 {
-                    if (liberator.config.isComposeWindow)
+                    if (config.isComposeWindow)
                     {
-                        liberator.dump("Compose editor got focus");
-                        liberator.modes.set(liberator.modes.INSERT, liberator.modes.TEXTAREA);
+                        dump("Compose editor got focus");
+                        modes.set(modes.INSERT, modes.TEXTAREA);
                     }
-                    else if (liberator.mode != liberator.modes.MESSAGE)
+                    else if (mode != modes.MESSAGE)
                         liberator.mode = liberator.modes.MESSAGE;
                     return;
                 }
             }
 
-            if (liberator.mode == liberator.modes.INSERT ||
-                liberator.mode == liberator.modes.TEXTAREA ||
-                liberator.mode == liberator.modes.MESSAGE ||
-                liberator.mode == liberator.modes.VISUAL)
+            if (mode == modes.INSERT ||
+                mode == modes.TEXTAREA ||
+                mode == modes.MESSAGE ||
+                mode == modes.VISUAL)
             {
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
                // setTimeout(function () {
-               //     liberator.dump("cur: " + liberator.mode + "\n");
-               //     if (liberator.events.wantsModeReset)
+               //     dump("cur: " + mode + "\n");
+               //     if (events.wantsModeReset)
                //     {
-               //         liberator.events.wantsModeReset = false;
-                        liberator.modes.reset();
+               //         events.wantsModeReset = false;
+                        modes.reset();
                //     }
                // }, 0);
             }
@@ -1107,22 +1102,22 @@ liberator.Events = function () //{{{
             if (controller && controller.isCommandEnabled("cmd_copy"))
                 couldCopy = true;
 
-            if (liberator.mode != liberator.modes.VISUAL)
+            if (mode != modes.VISUAL)
             {
                 if (couldCopy)
                 {
-                    if ((liberator.mode == liberator.modes.TEXTAREA ||
-                         (liberator.modes.extended & liberator.modes.TEXTAREA))
-                            && !liberator.options["insertmode"])
-                        liberator.modes.set(liberator.modes.VISUAL, liberator.modes.TEXTAREA);
-                    else if (liberator.mode == liberator.modes.CARET)
-                        liberator.modes.set(liberator.modes.VISUAL, liberator.modes.CARET);
+                    if ((mode == modes.TEXTAREA ||
+                         (modes.extended & modes.TEXTAREA))
+                            && !options["insertmode"])
+                        modes.set(modes.VISUAL, modes.TEXTAREA);
+                    else if (mode == modes.CARET)
+                        modes.set(modes.VISUAL, modes.CARET);
                 }
             }
             // XXX: disabled, as i think automatically starting visual caret mode does more harm than help
             // else
             // {
-            //     if (!couldCopy && liberator.modes.extended & liberator.modes.CARET)
+            //     if (!couldCopy && modes.extended & modes.CARET)
             //         liberator.mode = liberator.modes.CARET;
             // }
         },
@@ -1130,17 +1125,17 @@ liberator.Events = function () //{{{
         // global escape handler, is called in ALL modes
         onEscape: function ()
         {
-            if (!liberator.modes.passNextKey)
+            if (!modes.passNextKey)
             {
-                if (liberator.modes.passAllKeys)
+                if (modes.passAllKeys)
                 {
-                    liberator.modes.passAllKeys = false;
+                    modes.passAllKeys = false;
                     return;
                 }
 
-                switch (liberator.mode)
+                switch (mode)
                 {
-                    case liberator.modes.NORMAL:
+                    case modes.NORMAL:
                         // clear any selection made
                         var selection = window.content.getSelection();
                         try
@@ -1148,39 +1143,39 @@ liberator.Events = function () //{{{
                             selection.collapseToStart();
                         }
                         catch (e) {}
-                        liberator.commandline.clear();
+                        commandline.clear();
 
-                        liberator.modes.reset();
-                        liberator.focusContent(true);
+                        modes.reset();
+                        focusContent(true);
                         break;
 
-                    case liberator.modes.VISUAL:
-                        if (liberator.modes.extended & liberator.modes.TEXTAREA)
+                    case modes.VISUAL:
+                        if (modes.extended & modes.TEXTAREA)
                             liberator.mode = liberator.modes.TEXTAREA;
-                        else if (liberator.modes.extended & liberator.modes.CARET)
+                        else if (modes.extended & modes.CARET)
                             liberator.mode = liberator.modes.CARET;
                         break;
 
-                    case liberator.modes.CARET:
+                    case modes.CARET:
                         // setting this option will trigger an observer which will
                         // care about all other details like setting the NORMAL mode
-                        liberator.options.setPref("accessibility.browsewithcaret", false);
+                        options.setPref("accessibility.browsewithcaret", false);
                         break;
 
-                    case liberator.modes.INSERT:
-                        if ((liberator.modes.extended & liberator.modes.TEXTAREA) && !liberator.options["insertmode"])
+                    case modes.INSERT:
+                        if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
                         {
                             liberator.mode = liberator.modes.TEXTAREA;
                         }
                         else
                         {
-                            liberator.modes.reset();
-                            liberator.focusContent(true);
+                            modes.reset();
+                            focusContent(true);
                         }
                         break;
 
                     default: // HINTS, CUSTOM or COMMAND_LINE
-                        liberator.modes.reset();
+                        modes.reset();
                         break;
                 }
             }
@@ -1190,26 +1185,26 @@ liberator.Events = function () //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
-            var key = liberator.events.toString(event);
+            var key = events.toString(event);
             if (!key)
                  return true;
 
-            //liberator.log(key + " in mode: " + liberator.mode);
-            //liberator.dump(key + " in mode: " + liberator.mode + "\n");
+            //log(key + " in mode: " + mode);
+            //dump(key + " in mode: " + mode + "\n");
 
-            if (liberator.modes.isRecording)
+            if (modes.isRecording)
             {
                 if (key == "q") // TODO: should not be hardcoded
                 {
-                    liberator.modes.isRecording = false;
-                    liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
-                    liberator.echo("Recorded macro '" + currentMacro + "'");
+                    modes.isRecording = false;
+                    log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
+                    echo("Recorded macro '" + currentMacro + "'");
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
                 }
-                else if (!(liberator.modes.extended & liberator.modes.INACTIVE_HINT) &&
-                         !liberator.mappings.hasMap(liberator.mode, liberator.input.buffer + key))
+                else if (!(modes.extended & modes.INACTIVE_HINT) &&
+                         !mappings.hasMap(mode, input.buffer + key))
                 {
                     macros.set(currentMacro, macros.get(currentMacro) + key);
                 }
@@ -1222,12 +1217,12 @@ liberator.Events = function () //{{{
             // we can differentiate between a recorded <C-c>
             // interrupting whatever it's started and a real <C-c>
             // interrupting our playback.
-            if (liberator.events.feedingKeys)
+            if (events.feedingKeys)
             {
                 if (key == "<C-c>" && !event.isMacro)
                 {
-                    liberator.events.feedingKeys = false;
-                    setTimeout(function () { liberator.echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
+                    events.feedingKeys = false;
+                    setTimeout(function () { echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1237,24 +1232,24 @@ liberator.Events = function () //{{{
             var stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
             var win = document.commandDispatcher.focusedWindow;
-            if (win && win.document.designMode == "on" && !liberator.config.isComposeWindow)
+            if (win && win.document.designMode == "on" && !config.isComposeWindow)
                 return false;
 
             // menus have their own command handlers
-            if (liberator.modes.extended & liberator.modes.MENU)
+            if (modes.extended & modes.MENU)
                 return false;
 
             // handle Escape-one-key mode (Ctrl-v)
-            if (liberator.modes.passNextKey && !liberator.modes.passAllKeys)
+            if (modes.passNextKey && !modes.passAllKeys)
             {
-                liberator.modes.passNextKey = false;
+                modes.passNextKey = false;
                 return false;
             }
             // handle Escape-all-keys mode (Ctrl-q)
-            if (liberator.modes.passAllKeys)
+            if (modes.passAllKeys)
             {
-                if (liberator.modes.passNextKey)
-                    liberator.modes.passNextKey = false; // and then let flow continue
+                if (modes.passNextKey)
+                    modes.passNextKey = false; // and then let flow continue
                 else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                     ; // let flow continue to handle these keys to cancel escape-all-keys mode
                 else
@@ -1262,10 +1257,10 @@ liberator.Events = function () //{{{
             }
 
             // just forward event without checking any mappings when the MOW is open
-            if (liberator.mode == liberator.modes.COMMAND_LINE &&
-                (liberator.modes.extended & liberator.modes.OUTPUT_MULTILINE))
+            if (mode == modes.COMMAND_LINE &&
+                (modes.extended & modes.OUTPUT_MULTILINE))
             {
-                liberator.commandline.onMultilineOutputEvent(event);
+                commandline.onMultilineOutputEvent(event);
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
@@ -1274,8 +1269,8 @@ liberator.Events = function () //{{{
             // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if ((liberator.config.name == "Vimperator" && liberator.mode == liberator.modes.NORMAL)
-                 || liberator.mode == liberator.modes.INSERT)
+            if ((config.name == "Vimperator" && mode == modes.NORMAL)
+                 || mode == modes.INSERT)
             {
                 if (key == "<Return>")
                     return false;
@@ -1306,17 +1301,17 @@ liberator.Events = function () //{{{
             if (key != "<Esc>" && key != "<C-[>")
             {
                 // custom mode...
-                if (liberator.mode == liberator.modes.CUSTOM)
+                if (mode == modes.CUSTOM)
                 {
-                    liberator.plugins.onEvent(event);
+                    plugins.onEvent(event);
                     event.preventDefault();
                     event.stopPropagation();
                     return false;
                 }
                 // if Hint mode is on, special handling of keys is required
-                if (liberator.mode == liberator.modes.HINTS)
+                if (mode == modes.HINTS)
                 {
-                    liberator.hints.onEvent(event);
+                    hints.onEvent(event);
                     event.preventDefault();
                     event.stopPropagation();
                     return false;
@@ -1330,102 +1325,102 @@ liberator.Events = function () //{{{
             // whatever reason).  if that happens to be correct, well..
             // XXX: why not just do that as well for HINTS mode actually?
 
-            if (liberator.mode == liberator.modes.CUSTOM)
+            if (mode == modes.CUSTOM)
                 return true;
 
-            var countStr = liberator.input.buffer.match(/^[0-9]*/)[0];
-            var candidateCommand = (liberator.input.buffer + key).replace(countStr, "");
+            var countStr = input.buffer.match(/^[0-9]*/)[0];
+            var candidateCommand = (input.buffer + key).replace(countStr, "");
             var map;
             if (event.noremap)
-                map = liberator.mappings.getDefault(liberator.mode, candidateCommand);
+                map = mappings.getDefault(mode, candidateCommand);
             else
-                map = liberator.mappings.get(liberator.mode, candidateCommand);
+                map = mappings.get(mode, candidateCommand);
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if (/^[1-9][0-9]*$/.test(liberator.input.buffer + key))
+            if (/^[1-9][0-9]*$/.test(input.buffer + key))
             {
                 // no count for insert mode mappings
-                if (liberator.mode == liberator.modes.INSERT || liberator.mode == liberator.modes.COMMAND_LINE)
+                if (mode == modes.INSERT || mode == modes.COMMAND_LINE)
                     stop = false;
                 else
                 {
-                    liberator.input.buffer += key;
+                    input.buffer += key;
                     inputBufferLength++;
                 }
             }
-            else if (liberator.input.pendingArgMap)
+            else if (input.pendingArgMap)
             {
-                liberator.input.buffer = "";
+                input.buffer = "";
                 inputBufferLength = 0;
-                var tmp = liberator.input.pendingArgMap; // must be set to null before .execute; if not
-                liberator.input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
+                var tmp = input.pendingArgMap; // must be set to null before .execute; if not
+                input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
-                    if (liberator.modes.isReplaying && !waitForPageLoaded())
+                    if (modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    tmp.execute(null, liberator.input.count, key);
+                    tmp.execute(null, input.count, key);
                 }
             }
             // only follow a map if there isn't a longer possible mapping
             // (allows you to do :map z yy, when zz is a longer mapping than z)
             // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
             else if (map && !skipMap && (map.rhs ||
-                     liberator.mappings.getCandidates(liberator.mode, candidateCommand).length == 0))
+                     mappings.getCandidates(mode, candidateCommand).length == 0))
             {
-                liberator.input.count = parseInt(countStr, 10);
-                if (isNaN(liberator.input.count))
-                    liberator.input.count = -1;
-                if (map.flags & liberator.Mappings.flags.ARGUMENT)
+                input.count = parseInt(countStr, 10);
+                if (isNaN(input.count))
+                    input.count = -1;
+                if (map.flags & Mappings.flags.ARGUMENT)
                 {
-                    liberator.input.pendingArgMap = map;
-                    liberator.input.buffer += key;
+                    input.pendingArgMap = map;
+                    input.buffer += key;
                     inputBufferLength++;
                 }
-                else if (liberator.input.pendingMotionMap)
+                else if (input.pendingMotionMap)
                 {
                     if (key != "<Esc>" && key != "<C-[>")
                     {
-                        liberator.input.pendingMotionMap.execute(candidateCommand, liberator.input.count, null);
+                        input.pendingMotionMap.execute(candidateCommand, input.count, null);
                     }
-                    liberator.input.pendingMotionMap = null;
-                    liberator.input.buffer = "";
+                    input.pendingMotionMap = null;
+                    input.buffer = "";
                     inputBufferLength = 0;
                 }
                 // no count support for these commands yet
-                else if (map.flags & liberator.Mappings.flags.MOTION)
+                else if (map.flags & Mappings.flags.MOTION)
                 {
-                    liberator.input.pendingMotionMap = map;
-                    liberator.input.buffer = "";
+                    input.pendingMotionMap = map;
+                    input.buffer = "";
                     inputBufferLength = 0;
                 }
                 else
                 {
-                    liberator.input.buffer = "";
+                    input.buffer = "";
                     inputBufferLength = 0;
 
-                    if (liberator.modes.isReplaying && !waitForPageLoaded())
+                    if (modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    var ret = map.execute(null, liberator.input.count);
-                    if (map.flags & liberator.Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                    var ret = map.execute(null, input.count);
+                    if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
             }
-            else if (liberator.mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !skipMap)
+            else if (mappings.getCandidates(mode, candidateCommand).length > 0 && !skipMap)
             {
-                liberator.input.buffer += key;
+                input.buffer += key;
                 inputBufferLength++;
             }
             else // if the key is neither a mapping nor the start of one
             {
                 // the mode checking is necessary so that things like g<esc> do not beep
-                if (liberator.input.buffer != "" && !skipMap && (liberator.mode == liberator.modes.INSERT ||
-                    liberator.mode == liberator.modes.COMMAND_LINE || liberator.mode == liberator.modes.TEXTAREA))
+                if (input.buffer != "" && !skipMap && (mode == modes.INSERT ||
+                    mode == modes.COMMAND_LINE || mode == modes.TEXTAREA))
                 {
                     // no map found -> refeed stuff in v.input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so
-                    liberator.events.feedkeys(liberator.input.buffer, true);
+                    events.feedkeys(input.buffer, true);
                 }
                 if (skipMap)
                 {
@@ -1433,23 +1428,23 @@ liberator.Events = function () //{{{
                         skipMap = false; // done...
                 }
 
-                liberator.input.buffer = "";
-                liberator.input.pendingArgMap = null;
-                liberator.input.pendingMotionMap = null;
+                input.buffer = "";
+                input.pendingArgMap = null;
+                input.pendingMotionMap = null;
 
                 if (key != "<Esc>" && key != "<C-[>")
                 {
                     // allow key to be passed to firefox if we can't handle it
                     stop = false;
 
-                    if (liberator.mode == liberator.modes.COMMAND_LINE)
+                    if (mode == modes.COMMAND_LINE)
                     {
-                        if (!(liberator.modes.extended & liberator.modes.INPUT_MULTILINE))
-                            liberator.commandline.onEvent(event); // reroute event in command line mode
+                        if (!(modes.extended & modes.INPUT_MULTILINE))
+                            commandline.onEvent(event); // reroute event in command line mode
                     }
-                    else if (liberator.mode != liberator.modes.INSERT && liberator.mode != liberator.modes.TEXTAREA)
+                    else if (mode != modes.INSERT && mode != modes.TEXTAREA)
                     {
-                        liberator.beep();
+                        beep();
                     }
                 }
             }
@@ -1460,15 +1455,15 @@ liberator.Events = function () //{{{
                 event.stopPropagation();
             }
 
-            var motionMap = (liberator.input.pendingMotionMap && liberator.input.pendingMotionMap.names[0]) || "";
-            liberator.statusline.updateInputBuffer(motionMap + liberator.input.buffer);
+            var motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
+            statusline.updateInputBuffer(motionMap + input.buffer);
             return false;
         },
 
         // this is need for sites like msn.com which focus the input field on keydown
         onKeyUpOrDown: function (event)
         {
-            if (liberator.modes.passNextKey ^ liberator.modes.passAllKeys || isFormElemFocused())
+            if (modes.passNextKey ^ modes.passAllKeys || isFormElemFocused())
                 return true;
 
             event.stopPropagation();
@@ -1499,23 +1494,23 @@ liberator.Events = function () //{{{
                     // only thrown for the current tab, not when another tab changes
                     if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
                     {
-                        liberator.buffer.loaded = 0;
-                        liberator.statusline.updateProgress(0);
+                        buffer.loaded = 0;
+                        statusline.updateProgress(0);
 
-                        liberator.autocommands.trigger("PageLoadPre", {url: liberator.buffer.URL});
+                        autocommands.trigger("PageLoadPre", {url: buffer.URL});
 
                         // don't reset mode if a frame of the frameset gets reloaded which
                         // is not the focused frame
                         if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow)
                         {
-                            setTimeout(function () { liberator.modes.reset(false); },
-                                liberator.mode == liberator.modes.HINTS ? 500 : 0);
+                            setTimeout(function () { modes.reset(false); },
+                                mode == modes.HINTS ? 500 : 0);
                         }
                     }
                     else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
                     {
-                        liberator.buffer.loaded = (status == 0 ? 1 : 2);
-                        liberator.statusline.updateUrl();
+                        buffer.loaded = (status == 0 ? 1 : 2);
+                        statusline.updateUrl();
                     }
                 }
             },
@@ -1524,53 +1519,53 @@ liberator.Events = function () //{{{
             {
                 const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
                 if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
-                    liberator.statusline.setClass("insecure");
+                    statusline.setClass("insecure");
                 else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
-                    liberator.statusline.setClass("broken");
+                    statusline.setClass("broken");
                 else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
-                    liberator.statusline.setClass("secure");
+                    statusline.setClass("secure");
             },
             onStatusChange: function (webProgress, request, status, message)
             {
-                liberator.statusline.updateUrl(message);
+                statusline.updateUrl(message);
             },
             onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
             {
-                liberator.statusline.updateProgress(curTotalProgress/maxTotalProgress);
+                statusline.updateProgress(curTotalProgress/maxTotalProgress);
             },
             // happens when the users switches tabs
             onLocationChange: function ()
             {
-                liberator.statusline.updateUrl();
-                liberator.statusline.updateProgress();
+                statusline.updateUrl();
+                statusline.updateProgress();
 
-                liberator.autocommands.trigger("LocationChange", {url: liberator.buffer.URL});
+                autocommands.trigger("LocationChange", {url: buffer.URL});
 
                 // if this is not delayed we get the position of the old buffer
-                setTimeout(function () { liberator.statusline.updateBufferPosition(); }, 100);
+                setTimeout(function () { statusline.updateBufferPosition(); }, 100);
             },
             // called at the very end of a page load
             asyncUpdateUI: function ()
             {
-                setTimeout(liberator.statusline.updateUrl, 100);
+                setTimeout(statusline.updateUrl, 100);
             },
             setOverLink : function (link, b)
             {
-                var ssli = liberator.options["showstatuslinks"];
+                var ssli = options["showstatuslinks"];
                 if (link && ssli)
                 {
                     if (ssli == 1)
-                        liberator.statusline.updateUrl("Link: " + link);
+                        statusline.updateUrl("Link: " + link);
                     else if (ssli == 2)
-                        liberator.echo("Link: " + link, liberator.commandline.DISALLOW_MULTILINE);
+                        echo("Link: " + link, commandline.DISALLOW_MULTILINE);
                 }
 
                 if (link == "")
                 {
                     if (ssli == 1)
-                        liberator.statusline.updateUrl();
+                        statusline.updateUrl();
                     else if (ssli == 2)
-                        liberator.modes.show();
+                        modes.show();
                 }
             },
 
@@ -1608,7 +1603,7 @@ liberator.Events = function () //{{{
                 switch (aData)
                 {
                     case "accessibility.browsewithcaret":
-                        var value = liberator.options.getPref("accessibility.browsewithcaret", false);
+                        var value = options.getPref("accessibility.browsewithcaret", false);
                         liberator.mode = value ? liberator.modes.CARET : liberator.modes.NORMAL;
                         break;
                 }
@@ -1630,7 +1625,7 @@ liberator.Events = function () //{{{
     catch (e) {}
 
     eventManager.prefObserver.register();
-    liberator.registerObserver("shutdown", function () {
+    registerObserver("shutdown", function () {
             eventManager.destroy();
             eventManager.prefObserver.unregister();
     });

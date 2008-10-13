@@ -28,14 +28,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // TODO: why are we passing around strings rather than file objects?
-liberator.IO = function () //{{{
+with (liberator) liberator.IO = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const WINDOWS = navigator.platform == "Win32";
-    const EXTENSION_NAME = liberator.config.name.toLowerCase(); // "vimperator" or "muttator"
+    const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
     var environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                        .getService(Components.interfaces.nsIEnvironment);
@@ -69,7 +69,7 @@ liberator.IO = function () //{{{
 
     function expandPathList(list)
     {
-        return list.split(",").map(liberator.io.expandPath).join(",");
+        return list.split(",").map(io.expandPath).join(",");
     }
 
     // TODO: why are we passing around so many strings? I know that the XPCOM
@@ -89,22 +89,22 @@ liberator.IO = function () //{{{
     ////////////////////// OPTIONS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.options.add(["cdpath", "cd"],
+    options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
         "stringlist", cdpath,
         { setter: function (value) expandPathList(value) });
 
-    liberator.options.add(["runtimepath", "rtp"],
+    options.add(["runtimepath", "rtp"],
         "List of directories searched for runtime files",
         "stringlist", runtimepath,
         { setter: function (value) expandPathList(value) });
 
-    liberator.options.add(["shell", "sh"],
+    options.add(["shell", "sh"],
         "Shell to use for executing :! and :run commands",
         "string", shell,
-        { setter: function (value) liberator.io.expandPath(value) });
+        { setter: function (value) io.expandPath(value) });
 
-    liberator.options.add(["shellcmdflag", "shcf"],
+    options.add(["shellcmdflag", "shcf"],
         "Flag passed to shell when executing :! and :run commands",
         "string", shellcmdflag);
 
@@ -112,7 +112,7 @@ liberator.IO = function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["cd", "chd[ir]"],
+    commands.add(["cd", "chd[ir]"],
         "Change the current directory",
         function (args)
         {
@@ -128,28 +128,28 @@ liberator.IO = function () //{{{
                 }
                 else
                 {
-                    liberator.echoerr("E186: No previous directory");
+                    echoerr("E186: No previous directory");
                     return;
                 }
             }
 
-            args = liberator.io.expandPath(args);
+            args = io.expandPath(args);
 
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
             if (/^(~|\/|[a-z]:|\.\/|\.\.\/)/i.test(args))
             {
                 // TODO: apparently we don't handle ../ or ./ paths yet
-                if (liberator.io.setCurrentDirectory(args))
-                    liberator.echo(liberator.io.getCurrentDirectory());
+                if (io.setCurrentDirectory(args))
+                    echo(io.getCurrentDirectory());
             }
             else
             {
-                var directories = liberator.options["cdpath"].replace(/^,$|^,,|,,$/, "").split(",");
+                var directories = options["cdpath"].replace(/^,$|^,,|,,$/, "").split(",");
 
                 // empty 'cdpath' items mean the current directory
                 directories = directories.map(
-                    function (directory) directory == "" ? liberator.io.getCurrentDirectory() : directory
+                    function (directory) directory == "" ? io.getCurrentDirectory() : directory
                 );
 
                 var directoryFound = false;
@@ -157,11 +157,11 @@ liberator.IO = function () //{{{
                 for (let i = 0; i < directories.length; i++)
                 {
                     var dir = joinPaths(directories[i], args);
-                    if (liberator.io.setCurrentDirectory(dir))
+                    if (io.setCurrentDirectory(dir))
                     {
                         // FIXME: we're just overwriting the error message from
                         // setCurrentDirectory here
-                        liberator.echo(liberator.io.getCurrentDirectory());
+                        echo(io.getCurrentDirectory());
                         directoryFound = true;
                         break;
                     }
@@ -169,27 +169,27 @@ liberator.IO = function () //{{{
 
                 if (!directoryFound)
                 {
-                    liberator.echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
+                    echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
                                     + "\n"
                                     + "E472: Command failed");
                 }
             }
         },
-        { completer: function (filter) liberator.completion.file(filter, true) });
+        { completer: function (filter) completion.file(filter, true) });
 
     // NOTE: this command is only used in :source
-    liberator.commands.add(["fini[sh]"],
+    commands.add(["fini[sh]"],
         "Stop sourcing a script file",
-        function () { liberator.echoerr("E168: :finish used outside of a sourced file"); },
+        function () { echoerr("E168: :finish used outside of a sourced file"); },
         { argCount: "0" });
 
-    liberator.commands.add(["pw[d]"],
+    commands.add(["pw[d]"],
         "Print the current directory name",
-        function () { liberator.echo(liberator.io.getCurrentDirectory()); },
+        function () { echo(io.getCurrentDirectory()); },
         { argCount: "0" });
 
     // "mkv[imperatorrc]" or "mkm[uttatorrc]"
-    liberator.commands.add([EXTENSION_NAME.replace(/(.)(.*)/, "mk$1[$2rc]")],
+    commands.add([EXTENSION_NAME.replace(/(.)(.*)/, "mk$1[$2rc]")],
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
@@ -200,27 +200,26 @@ liberator.IO = function () //{{{
             else
                 filename = "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
 
-            var file = liberator.io.getFile(filename);
+            var file = io.getFile(filename);
             if (file.exists() && !special)
             {
-                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+                echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
             }
 
-            var line = "\" " + liberator.version + "\n";
+            var line = "\" " + version + "\n";
             line += "\" Mappings\n";
 
-            var modes = [[[liberator.modes.NORMAL], ""], [[liberator.modes.COMMAND_LINE], "c"],
-                         [[liberator.modes.INSERT, liberator.modes.TEXTAREA], "i"]];
-            for (let i = 0; i < modes.length; i++)
-            {
+            [[[modes.NORMAL], ""],
+             [[modes.COMMAND_LINE], "c"],
+             [[modes.INSERT, modes.TEXTAREA], "i"]].forEach(function ([modes, modechar]) {
                 // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
-                for (let map in liberator.mappings.getUserIterator(modes[i][0]))
-                        line += modes[i][1] + (map.noremap ? "nore" : "") + "map " + map.names[0] + " " + map.rhs + "\n";
-            }
+                for (let map in mappings.getUserIterator(modes))
+                    line += modechar + (map.noremap ? "noremap" : "map") + " " + map.names[0] + " " + map.rhs + "\n";
+            });
 
             line += "\n\" Options\n";
-            for (let option in liberator.options)
+            for (let option in options)
             {
                 // TODO: options should be queried for this info
                 // TODO: string/list options might need escaping in future
@@ -235,15 +234,15 @@ liberator.IO = function () //{{{
 
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
             // line += "\n\" Auto-Commands\n";
-            // for (let item in liberator.autocommands)
+            // for (let item in autocommands)
             //     line += "autocmd " + item.event + " " + item.pattern.source + " " + item.command + "\n";
 
             line += "\n\" Abbreviations\n";
-            for (let abbrCmd in liberator.editor.abbreviations)
+            for (let abbrCmd in editor.abbreviations)
                 line += abbrCmd;
 
-            // if (liberator.mappings.getMapLeader() != "\\")
-            //    line += "\nlet mapleader = \"" + liberator.mappings.getMapLeader() + "\"\n";
+            // if (mappings.getMapLeader() != "\\")
+            //    line += "\nlet mapleader = \"" + mappings.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
             line += "\nsource! " + filename + ".local\n";
@@ -251,20 +250,20 @@ liberator.IO = function () //{{{
 
             try
             {
-                liberator.io.writeFile(file, line);
+                io.writeFile(file, line);
             }
             catch (e)
             {
-                liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
-                liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
+                echoerr("E190: Cannot open \"" + filename + "\" for writing");
+                log("Could not write to " + file.path + ": " + e.message); // XXX
             }
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.file(filter, true)
+            completer: function (filter) completion.file(filter, true)
         });
 
-    liberator.commands.add(["ru[ntime]"],
+    commands.add(["ru[ntime]"],
         "Source the specified file from each directory in 'runtimepath'",
         function (args, special)
         {
@@ -272,25 +271,25 @@ liberator.IO = function () //{{{
             //     : wildcards/regexp
             //     : unify with startup sourcing loop
             let paths = args.arguments;
-            let runtimeDirs = liberator.options["runtimepath"].split(",");
+            let runtimeDirs = options["runtimepath"].split(",");
             let found = false;
 
             // FIXME: should use original arg string
-            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + liberator.options["runtimepath"] + "\"", 2);
+            echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
             for (let [,runtimeDir] in Iterator(runtimeDirs))
             {
                 for (let [,path] in Iterator(paths))
                 {
-                    let file = liberator.io.getFile(joinPaths(runtimeDir, path));
+                    let file = io.getFile(joinPaths(runtimeDir, path));
 
-                    liberator.echomsg("Searching for \"" + file.path + "\" in \"", 3);
+                    echomsg("Searching for \"" + file.path + "\" in \"", 3);
 
                     if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
                     {
                         found = true;
-                        liberator.io.source(file.path, false);
+                        io.source(file.path, false);
 
                         if (!special)
                             break outer;
@@ -299,7 +298,7 @@ liberator.IO = function () //{{{
             }
 
             if (!found)
-                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+                echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
         },
         {
             argCount: "+",
@@ -307,36 +306,36 @@ liberator.IO = function () //{{{
         }
     );
 
-    liberator.commands.add(["scrip[tnames]"],
+    commands.add(["scrip[tnames]"],
         "List all sourced script names",
         function ()
         {
-            var list = liberator.template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
+            var list = template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
                 ([i + 1, file] for ([i, file] in Iterator(scriptNames))));  // TODO: add colon?
 
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
 
-    liberator.commands.add(["so[urce]"],
+    commands.add(["so[urce]"],
         "Read Ex commands from a file",
         function (args, special)
         {
             // FIXME: implement proper filename quoting - "E172: Only one file name allowed"
             if (!args)
             {
-                liberator.echoerr("E471: Argument required");
+                echoerr("E471: Argument required");
                 return;
             }
 
-            liberator.io.source(args, special);
+            io.source(args, special);
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.file(filter, true)
+            completer: function (filter) completion.file(filter, true)
         });
 
-    liberator.commands.add(["!", "run"],
+    commands.add(["!", "run"],
         "Run a command",
         function (args, special)
         {
@@ -349,12 +348,12 @@ liberator.IO = function () //{{{
             args = args.replace(/(^|[^\\])!/g, "$1" + lastRunCommand);
             lastRunCommand = args;
 
-            var output = liberator.io.system(args);
-            var command = ":" + liberator.util.escapeHTML(liberator.commandline.getCommand()) + "<br/>";
+            var output = io.system(args);
+            var command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
 
-            liberator.echo(command + liberator.util.escapeHTML(output));
+            echo(command + util.escapeHTML(output));
 
-            liberator.autocommands.trigger("ShellCmdPost", {});
+            autocommands.trigger("ShellCmdPost", {});
         },
         { bang: true });
 
@@ -440,7 +439,7 @@ liberator.IO = function () //{{{
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
-                    liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
+                    echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
                     return null;
                 }
 
@@ -452,9 +451,9 @@ liberator.IO = function () //{{{
 
         getRuntimeDirectories: function (specialDirectory)
         {
-            let dirs = liberator.options["runtimepath"].split(",");
+            let dirs = options["runtimepath"].split(",");
 
-            dirs = dirs.map(function (dir) liberator.io.getFile(joinPaths(dir, specialDirectory)))
+            dirs = dirs.map(function (dir) io.getFile(joinPaths(dir, specialDirectory)))
                        .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
 
             return dirs;
@@ -671,7 +670,7 @@ lookup:
 
             if (!file.exists())
             {
-                liberator.echoerr("Command not found: " + program);
+                echoerr("Command not found: " + program);
                 return -1;
             }
 
@@ -688,7 +687,7 @@ lookup:
         // is fixed, should use that instead of a tmpfile
         system: function (command, input)
         {
-            liberator.echomsg("Calling shell to execute: " + command, 4);
+            echomsg("Calling shell to execute: " + command, 4);
 
             var stdoutFile = ioManager.createTempFile();
             var stderrFile = ioManager.createTempFile();
@@ -714,7 +713,7 @@ lookup:
                 command += " < \"" + escapeQuotes(stdinFile.path) + "\"";
             }
 
-            var res = ioManager.run(liberator.options["shell"], [liberator.options["shellcmdflag"], command], true);
+            var res = ioManager.run(options["shell"], [options["shellcmdflag"], command], true);
 
             if (res > 0)
                 var output = ioManager.readFile(stderrFile) + "\nshell returned " + res;
@@ -747,20 +746,20 @@ lookup:
                     if (!silent)
                     {
                         if (file.exists() && file.isDirectory())
-                            liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
+                            echomsg("Cannot source a directory: \"" + filename + "\"", 0);
                         else
-                            liberator.echomsg("could not source: \"" + filename + "\"", 1);
+                            echomsg("could not source: \"" + filename + "\"", 1);
 
-                        liberator.echoerr("E484: Can't open file " + filename);
+                        echoerr("E484: Can't open file " + filename);
                     }
 
                     return;
                 }
 
-                liberator.echomsg("sourcing \"" + filename + "\"", 2);
+                echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = ioManager.readFile(file);
-                let uri = liberator.util.createURI(file.path);
+                let uri = util.createURI(file.path);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -779,7 +778,7 @@ lookup:
                 }
                 else if (/\.css$/.test(filename))
                 {
-                    liberator.storage.styles.registerSheet(uri.spec, !silent, true);
+                    storage.styles.registerSheet(uri.spec, !silent, true);
                 }
                 else
                 {
@@ -808,8 +807,8 @@ lookup:
                             if (/^\s*(".*)?$/.test(line))
                                 continue;
 
-                            var [count, cmd, special, args] = liberator.commands.parseCommand(line);
-                            var command = liberator.commands.get(cmd);
+                            var [count, cmd, special, args] = commands.parseCommand(line);
+                            var command = commands.get(cmd);
 
                             if (!command)
                             {
@@ -818,11 +817,11 @@ lookup:
                                 // FIXME: messages need to be able to specify
                                 // whether they can be cleared/overwritten or
                                 // should be appended to and the MOW opened
-                                liberator.echoerr("Error detected while processing " + file.path,
-                                    liberator.commandline.FORCE_MULTILINE);
-                                liberator.commandline.echo("line " + lineNumber + ":", liberator.commandline.HL_LINENR,
-                                    liberator.commandline.APPEND_TO_MESSAGES);
-                                liberator.echoerr("E492: Not an editor command: " + line);
+                                echoerr("Error detected while processing " + file.path,
+                                    commandline.FORCE_MULTILINE);
+                                commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR,
+                                    commandline.APPEND_TO_MESSAGES);
+                                echoerr("E492: Not an editor command: " + line);
                             }
                             else
                             {
@@ -850,7 +849,7 @@ lookup:
                                 else
                                 {
                                     // execute a normal liberator command
-                                    liberator.execute(line);
+                                    execute(line);
                                 }
                             }
                         }
@@ -858,15 +857,15 @@ lookup:
 
                     // if no heredoc-end delimiter is found before EOF then
                     // process the heredoc anyway - Vim compatible ;-)
-                    liberator.eval(heredoc);
+                    eval(heredoc);
                 }
 
                 if (scriptNames.indexOf(file.path) == -1)
                     scriptNames.push(file.path);
 
-                liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
+                echomsg("finished sourcing \"" + filename + "\"", 2);
 
-                liberator.log("Sourced: " + file.path, 3);
+                log("Sourced: " + file.path, 3);
             }
             catch (e)
             {
@@ -874,7 +873,7 @@ lookup:
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
                 if (!silent)
-                    liberator.echoerr(message);
+                    echoerr(message);
             }
         }
     }; //}}}

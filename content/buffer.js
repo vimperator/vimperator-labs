@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-liberator.Buffer = function () //{{{
+with (liberator) liberator.Buffer = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -44,14 +44,14 @@ liberator.Buffer = function () //{{{
             ];
     const highlightDocs = "chrome://liberator/content/buffer.xhtml,chrome://browser/content/browser.xul";
 
-    var highlight = liberator.storage.newMap("highlight", false);
+    var highlight = storage.newMap("highlight", false);
 
     var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
+    const util = liberator.util;
     const arrayIter = liberator.util.arrayIter;
 
-    const util = liberator.util;
     function Styles(name, store, serial)
     {
         /* Can't reference liberator or Components inside Styles --
@@ -269,10 +269,10 @@ liberator.Buffer = function () //{{{
         get sites() util.uniq(util.flatten([v.sites for ([k, v] in this.userSheets)])),
     };
 
-    let styles = liberator.storage.newObject("styles", Styles, false);
+    let styles = storage.newObject("styles", Styles, false);
 
     /* FIXME: This doesn't belong here. */
-    let mainWindowID = liberator.config.mainWindowID || "main-window";
+    let mainWindowID = config.mainWindowID || "main-window";
     let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
                                        .getPropertyValue("font-size");
 
@@ -284,7 +284,7 @@ liberator.Buffer = function () //{{{
     {
         if (value < 1 || value > 2000)
         {
-            liberator.echoerr("Zoom value out of range (1-2000%)");
+            echoerr("Zoom value out of range (1-2000%)");
             return;
         }
 
@@ -293,13 +293,13 @@ liberator.Buffer = function () //{{{
         else
             getBrowser().markupDocumentViewer.textZoom = value / 100.0;
 
-        liberator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
+        echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
 
         // TODO: shouldn't this just recalculate hint coords, rather than
         // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
         // on the recalculation side effect? -- djk
         // NOTE: we could really do with a zoom event...
-        // liberator.hints.reshowHints();
+        // hints.reshowHints();
     }
 
     function bumpZoomLevel(steps, fullZoom)
@@ -334,7 +334,7 @@ liberator.Buffer = function () //{{{
         }
         if (index < 0 || index >= zoomLevels.length)
         {
-            liberator.beep();
+            beep();
             return;
         }
         setZoom(zoomLevels[index], fullZoom);
@@ -344,7 +344,7 @@ liberator.Buffer = function () //{{{
     {
         // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
         if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY == 0)
-            liberator.beep();
+            beep();
     }
 
     function findScrollableWindow()
@@ -395,9 +395,9 @@ liberator.Buffer = function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // override this stupid pref, because otherwise zoom is lost after switching tabs
-    liberator.options.setPref("browser.zoom.siteSpecific", false);
+    options.setPref("browser.zoom.siteSpecific", false);
 
-    liberator.options.add(["fullscreen", "fs"],
+    options.add(["fullscreen", "fs"],
         "Show the current window fullscreen",
         "boolean", false,
         {
@@ -409,23 +409,23 @@ liberator.Buffer = function () //{{{
             getter: function () window.fullScreen
         });
 
-    liberator.options.add(["nextpattern"],
+    options.add(["nextpattern"],
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
 
-    liberator.options.add(["previouspattern"],
+    options.add(["previouspattern"],
         "Patterns to use when guessing the 'previous' page in a document sequence",
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
 
-    liberator.options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
+    options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         { completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))] });
 
-    liberator.options.add(["scroll", "scr"],
+    options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
         "number", 0,
         { validator: function (value) value >= 0 });
 
-    liberator.options.add(["showstatuslinks", "ssli"],
+    options.add(["showstatuslinks", "ssli"],
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
@@ -437,7 +437,7 @@ liberator.Buffer = function () //{{{
             validator: function (value) value >= 0 && value <= 2
         });
 
-    liberator.options.add(["usermode", "um"],
+    options.add(["usermode", "um"],
         "Show current website with a minimal style sheet to make it easily accessible",
         "boolean", false,
         {
@@ -465,142 +465,142 @@ liberator.Buffer = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
+    var myModes = config.browserModes || [modes.NORMAL];
 
-    liberator.mappings.add(modes, ["."],
+    mappings.add(myModes, ["."],
         "Repeat the last key event",
         function (count)
         {
-            if (liberator.mappings.repeat)
+            if (mappings.repeat)
             {
-                for (let i in liberator.util.rangeInterruptable(0, count || 1, 100))
-                    liberator.mappings.repeat();
+                for (let i in util.rangeInterruptable(0, count || 1, 100))
+                    mappings.repeat();
             }
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["i", "<Insert>"],
+    mappings.add(myModes, ["i", "<Insert>"],
         "Start caret mode",
         function ()
         {
             // setting this option triggers an observer which takes care of the mode setting
-            liberator.options.setPref("accessibility.browsewithcaret", true);
+            options.setPref("accessibility.browsewithcaret", true);
         });
 
-    liberator.mappings.add(modes, ["<C-c>"],
+    mappings.add(myModes, ["<C-c>"],
         "Stop loading",
         function () { BrowserStop(); });
 
     // scrolling
-    liberator.mappings.add(modes, ["j", "<Down>", "<C-e>"],
+    mappings.add(myModes, ["j", "<Down>", "<C-e>"],
         "Scroll document down",
-        function (count) { liberator.buffer.scrollLines(count > 1 ? count : 1); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollLines(count > 1 ? count : 1); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["k", "<Up>", "<C-y>"],
+    mappings.add(myModes, ["k", "<Up>", "<C-y>"],
         "Scroll document up",
-        function (count) { liberator.buffer.scrollLines(-(count > 1 ? count : 1)); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollLines(-(count > 1 ? count : 1)); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, liberator.has("mail") ? ["h"] : ["h", "<Left>"],
+    mappings.add(myModes, liberator.has("mail") ? ["h"] : ["h", "<Left>"],
         "Scroll document to the left",
-        function (count) { liberator.buffer.scrollColumns(-(count > 1 ? count : 1)); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollColumns(-(count > 1 ? count : 1)); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, liberator.has("mail") ? ["l"] : ["l", "<Right>"],
+    mappings.add(myModes, liberator.has("mail") ? ["l"] : ["l", "<Right>"],
         "Scroll document to the right",
-        function (count) { liberator.buffer.scrollColumns(count > 1 ? count : 1); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollColumns(count > 1 ? count : 1); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["0", "^"],
+    mappings.add(myModes, ["0", "^"],
         "Scroll to the absolute left of the document",
-        function () { liberator.buffer.scrollStart(); });
+        function () { buffer.scrollStart(); });
 
-    liberator.mappings.add(modes, ["$"],
+    mappings.add(myModes, ["$"],
         "Scroll to the absolute right of the document",
-        function () { liberator.buffer.scrollEnd(); });
+        function () { buffer.scrollEnd(); });
 
-    liberator.mappings.add(modes, ["gg", "<Home>"],
+    mappings.add(myModes, ["gg", "<Home>"],
         "Go to the top of the document",
-        function (count) { liberator.buffer.scrollToPercentile(count > 0 ? count : 0); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollToPercentile(count > 0 ? count : 0); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["G", "<End>"],
+    mappings.add(myModes, ["G", "<End>"],
         "Go to the end of the document",
-        function (count) { liberator.buffer.scrollToPercentile(count >= 0 ? count : 100); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollToPercentile(count >= 0 ? count : 100); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["%"],
+    mappings.add(myModes, ["%"],
         "Scroll to {count} percent of the document",
         function (count)
         {
             if (count > 0 && count <= 100)
-                liberator.buffer.scrollToPercentile(count);
+                buffer.scrollToPercentile(count);
             else
-                liberator.beep();
+                beep();
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["<C-d>"],
+    mappings.add(myModes, ["<C-d>"],
         "Scroll window downwards in the buffer",
-        function (count) { liberator.buffer.scrollByScrollSize(count, 1); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollByScrollSize(count, 1); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["<C-u>"],
+    mappings.add(myModes, ["<C-u>"],
         "Scroll window upwards in the buffer",
-        function (count) { liberator.buffer.scrollByScrollSize(count, -1); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollByScrollSize(count, -1); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["<C-b>", "<PageUp>", "<S-Space>"],
+    mappings.add(myModes, ["<C-b>", "<PageUp>", "<S-Space>"],
         "Scroll up a full page",
-        function (count) { liberator.buffer.scrollPages(-(count > 1 ? count : 1)); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollPages(-(count > 1 ? count : 1)); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["<C-f>", "<PageDown>", "<Space>"],
+    mappings.add(myModes, ["<C-f>", "<PageDown>", "<Space>"],
         "Scroll down a full page",
-        function (count) { liberator.buffer.scrollPages(count > 1 ? count : 1); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.scrollPages(count > 1 ? count : 1); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["]f"],
+    mappings.add(myModes, ["]f"],
         "Focus next frame",
-        function (count) { liberator.buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.shiftFrameFocus(count > 1 ? count : 1, true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["[f"],
+    mappings.add(myModes, ["[f"],
         "Focus previous frame",
-        function (count) { liberator.buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.shiftFrameFocus(count > 1 ? count : 1, false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["]]"],
+    mappings.add(myModes, ["]]"],
         "Follow the link labeled 'next' or '>' if it exists",
-        function (count) { liberator.buffer.followDocumentRelationship("next"); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.followDocumentRelationship("next"); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["[["],
+    mappings.add(myModes, ["[["],
         "Follow the link labeled 'prev', 'previous' or '<' if it exists",
-        function (count) { liberator.buffer.followDocumentRelationship("previous"); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.followDocumentRelationship("previous"); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["gf"],
+    mappings.add(myModes, ["gf"],
         "View source",
-        function () { liberator.buffer.viewSource(null, false); });
+        function () { buffer.viewSource(null, false); });
 
-    liberator.mappings.add(modes, ["gF"],
+    mappings.add(myModes, ["gF"],
         "View source with an external editor",
-        function () { liberator.buffer.viewSource(null, true); });
+        function () { buffer.viewSource(null, true); });
 
-    liberator.mappings.add(modes, ["gi"],
+    mappings.add(myModes, ["gi"],
         "Focus last used input field",
         function (count)
         {
-            if (count < 1 && liberator.buffer.lastInputField)
+            if (count < 1 && buffer.lastInputField)
             {
-                liberator.buffer.lastInputField.focus();
+                buffer.lastInputField.focus();
             }
             else
             {
                 var elements = [];
-                var matches = liberator.buffer.evaluateXPath(
+                var matches = buffer.evaluateXPath(
                     // TODO: type="file"
                     "//input[not(@type) or @type='text' or @type='password'] | //textarea[not(@disabled) and not(@readonly)] |" +
                     "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
@@ -625,184 +625,184 @@ liberator.Buffer = function () //{{{
                 }
                 else
                 {
-                    liberator.beep();
+                    beep();
                 }
             }
         },
-        { flags: liberator.Mappings.flags.COUNT });
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["gP"],
+    mappings.add(myModes, ["gP"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            liberator.open(liberator.util.readFromClipboard(),
-                /\bpaste\b/.test(liberator.options["activate"]) ?
-                liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
+            open(util.readFromClipboard(),
+                /\bpaste\b/.test(options["activate"]) ?
+                NEW_BACKGROUND_TAB : NEW_TAB);
         });
 
-    liberator.mappings.add(modes, ["p", "<MiddleMouse>"],
+    mappings.add(myModes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
-        function () { liberator.open(liberator.util.readFromClipboard()); });
+        function () { open(util.readFromClipboard()); });
 
-    liberator.mappings.add(modes, ["P"],
+    mappings.add(myModes, ["P"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            liberator.open(liberator.util.readFromClipboard(),
-                /\bpaste\b/.test(liberator.options["activate"]) ?
-                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+            open(util.readFromClipboard(),
+                /\bpaste\b/.test(options["activate"]) ?
+                NEW_TAB : NEW_BACKGROUND_TAB);
         });
 
     // reloading
-    liberator.mappings.add(modes, ["r"],
+    mappings.add(myModes, ["r"],
         "Reload current page",
-        function () { liberator.tabs.reload(getBrowser().mCurrentTab, false); });
+        function () { tabs.reload(getBrowser().mCurrentTab, false); });
 
-    liberator.mappings.add(modes, ["R"],
+    mappings.add(myModes, ["R"],
         "Reload while skipping the cache",
-        function () { liberator.tabs.reload(getBrowser().mCurrentTab, true); });
+        function () { tabs.reload(getBrowser().mCurrentTab, true); });
 
     // yanking
-    liberator.mappings.add(modes, ["Y"],
+    mappings.add(myModes, ["Y"],
         "Copy selected text or current word",
         function ()
         {
-            var sel = liberator.buffer.getCurrentWord();
+            var sel = buffer.getCurrentWord();
             if (sel)
-                liberator.util.copyToClipboard(sel, true);
+                util.copyToClipboard(sel, true);
             else
-                liberator.beep();
+                beep();
         });
 
     // zooming
-    liberator.mappings.add(modes, ["zi", "+"],
+    mappings.add(myModes, ["zi", "+"],
         "Enlarge text zoom of current web page",
-        function (count) { liberator.buffer.zoomIn(count > 1 ? count : 1, false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomIn(count > 1 ? count : 1, false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zm"],
+    mappings.add(myModes, ["zm"],
         "Enlarge text zoom of current web page by a larger amount",
-        function (count) { liberator.buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomIn((count > 1 ? count : 1) * 3, false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zo", "-"],
+    mappings.add(myModes, ["zo", "-"],
         "Reduce text zoom of current web page",
-        function (count) { liberator.buffer.zoomOut(count > 1 ? count : 1, false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomOut(count > 1 ? count : 1, false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zr"],
+    mappings.add(myModes, ["zr"],
         "Reduce text zoom of current web page by a larger amount",
-        function (count) { liberator.buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomOut((count > 1 ? count : 1) * 3, false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zz"],
+    mappings.add(myModes, ["zz"],
         "Set text zoom value of current web page",
-        function (count) { liberator.buffer.textZoom = count > 1 ? count : 100; },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.textZoom = count > 1 ? count : 100; },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zI"],
+    mappings.add(myModes, ["zI"],
         "Enlarge full zoom of current web page",
-        function (count) { liberator.buffer.zoomIn(count > 1 ? count : 1, true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomIn(count > 1 ? count : 1, true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zM"],
+    mappings.add(myModes, ["zM"],
         "Enlarge full zoom of current web page by a larger amount",
-        function (count) { liberator.buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomIn((count > 1 ? count : 1) * 3, true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zO"],
+    mappings.add(myModes, ["zO"],
         "Reduce full zoom of current web page",
-        function (count) { liberator.buffer.zoomOut(count > 1 ? count : 1, true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomOut(count > 1 ? count : 1, true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zR"],
+    mappings.add(myModes, ["zR"],
         "Reduce full zoom of current web page by a larger amount",
-        function (count) { liberator.buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.zoomOut((count > 1 ? count : 1) * 3, true); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["zZ"],
+    mappings.add(myModes, ["zZ"],
         "Set full zoom value of current web page",
-        function (count) { liberator.buffer.fullZoom = count > 1 ? count : 100; },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.fullZoom = count > 1 ? count : 100; },
+        { flags: Mappings.flags.COUNT });
 
     // page info
-    liberator.mappings.add(modes, ["<C-g>"],
+    mappings.add(myModes, ["<C-g>"],
         "Print the current file name",
-        function (count) { liberator.buffer.showPageInfo(false); },
-        { flags: liberator.Mappings.flags.COUNT });
+        function (count) { buffer.showPageInfo(false); },
+        { flags: Mappings.flags.COUNT });
 
-    liberator.mappings.add(modes, ["g<C-g>"],
+    mappings.add(myModes, ["g<C-g>"],
         "Print file information",
-        function () { liberator.buffer.showPageInfo(true); });
+        function () { buffer.showPageInfo(true); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["ha[rdcopy]"],
+    commands.add(["ha[rdcopy]"],
         "Print current document",
         function (args, special)
         {
-            var aps = liberator.options.getPref("print.always_print_silent");
-            var spp = liberator.options.getPref("print.show_print_progress");
+            var aps = options.getPref("print.always_print_silent");
+            var spp = options.getPref("print.show_print_progress");
 
-            liberator.echo("Sending to printer...");
-            liberator.options.setPref("print.always_print_silent", special);
-            liberator.options.setPref("print.show_print_progress", !special);
+            echo("Sending to printer...");
+            options.setPref("print.always_print_silent", special);
+            options.setPref("print.show_print_progress", !special);
 
             getBrowser().contentWindow.print();
 
-            liberator.options.setPref("print.always_print_silent", aps);
-            liberator.options.setPref("print.show_print_progress", spp);
-            liberator.echo("Print job sent.");
+            options.setPref("print.always_print_silent", aps);
+            options.setPref("print.show_print_progress", spp);
+            echo("Print job sent.");
         },
         {
             argCount: "0",
             bang: true
         });
 
-    liberator.commands.add(["pa[geinfo]"],
+    commands.add(["pa[geinfo]"],
         "Show various page information",
-        function () { liberator.buffer.showPageInfo(true); },
+        function () { buffer.showPageInfo(true); },
         { argCount: "0" });
 
-    liberator.commands.add(["pagest[yle]"],
+    commands.add(["pagest[yle]"],
         "Select the author style sheet to apply",
         function (args)
         {
-            var titles = liberator.buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
+            var titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
             if (args && titles.indexOf(args) == -1)
             {
-                liberator.echoerr("E475: Invalid argument: " + args);
+                echoerr("E475: Invalid argument: " + args);
                 return;
             }
 
-            if (liberator.options["usermode"])
-                liberator.options["usermode"] = false;
+            if (options["usermode"])
+                options["usermode"] = false;
 
             stylesheetSwitchAll(window.content, args);
         },
-        { completer: function (filter) liberator.completion.stylesheet(filter) });
+        { completer: function (filter) completion.stylesheet(filter) });
 
-    liberator.commands.add(["re[load]"],
+    commands.add(["re[load]"],
         "Reload current page",
-        function (args, special) { liberator.tabs.reload(getBrowser().mCurrentTab, special); },
+        function (args, special) { tabs.reload(getBrowser().mCurrentTab, special); },
         {
             bang: true,
             argCount: "0"
         });
 
-    liberator.commands.add(["sav[eas]", "w[rite]"],
+    commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
         function (args, special)
         {
             let doc = window.content.document;
-            let file = liberator.io.getFile(args || "");
+            let file = io.getFile(args || "");
             if (args && file.exists() && !special)
-                return liberator.echoerr("E13: File exists (add ! to override)");
+                return echoerr("E13: File exists (add ! to override)");
 
-            liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
+            options.setPref("browser.download.lastDir", io.getCurrentDirectory());
             try
             {
                 var contentDisposition = window.content
@@ -819,15 +819,15 @@ liberator.Buffer = function () //{{{
         },
         {
             bang: true,
-            completer: function (filter) liberator.completion.file(filter)
+            completer: function (filter) completion.file(filter)
         });
 
-    liberator.commands.add(["st[op]"],
+    commands.add(["st[op]"],
         "Stop loading",
         function () { BrowserStop(); },
         { argCount: "0" });
 
-    liberator.commands.add(["sty[le]"],
+    commands.add(["sty[le]"],
         "Add or list user styles",
         function (args, special)
         {
@@ -839,18 +839,18 @@ liberator.Buffer = function () //{{{
             {
                 let list = Array.concat([i for (i in styles.userNames)],
                                         [i for (i in styles.userSheets) if (!i[1].ref.length)]);
-                let str = liberator.template.tabular(["", "Filter", "CSS"],
+                let str = template.tabular(["", "Filter", "CSS"],
                     ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
                     ([k, v[1].join(","), v[2]]
                      for ([i, [k, v]] in Iterator(list))
                      if ((!filter || v[1].indexOf(filter) >= 0) && (!name || v[0] == name))));
-                liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
             else
             {
                 let err = styles.addSheet(name, filter, css, false, special);
                 if (err)
-                    liberator.echoerr(err);
+                    echoerr(err);
             }
         },
         {
@@ -863,34 +863,34 @@ liberator.Buffer = function () //{{{
                 }
                 catch (e) {}
                 comp = compl.concat([[s, ""] for each (s in styles.sites)])
-                return [0, liberator.completion.filter(compl, filter)];
+                return [0, completion.filter(compl, filter)];
             },
             argCount: 1,
             bang: true,
             hereDoc: true,
             literal: true,
-            options: [[["-name", "-n"], liberator.commands.OPTION_STRING]]
+            options: [[["-name", "-n"], commands.OPTION_STRING]]
         });
 
-    liberator.commands.add(["dels[tyle]"],
+    commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
         function (args) {
             styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
         },
         {
             argCount: 1,
-            completer: function (filter) [0, liberator.completion.filter(
+            completer: function (filter) [0, completion.filter(
                     [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
                         for ([i, s] in styles.userSheets)
                     ]
                     .concat([[s, ""] for each (s in styles.sites)])
                     , filter)],
             literal: true,
-            options: [[["-index", "-i"], liberator.commands.OPTION_INT],
-                      [["-name", "-n"],  liberator.commands.OPTION_STRING]],
+            options: [[["-index", "-i"], commands.OPTION_INT],
+                      [["-name", "-n"],  commands.OPTION_STRING]],
         });
 
-    liberator.commands.add(["hi[ghlight]"],
+    commands.add(["hi[ghlight]"],
         "Set the style of certain display elements",
         function (args, special)
         {
@@ -898,19 +898,19 @@ liberator.Buffer = function () //{{{
             let css = args.literalArg;
             if (!css && !(key && special))
             {
-                let str = liberator.template.tabular(["Key", "CSS"],
+                let str = template.tabular(["Key", "CSS"],
                     ["padding: 0 1em 0 0; vertical-align: top"],
                     (h for (h in highlight) if (!key || h[0].indexOf(key) > -1)));
-                liberator.commandline.echo(str, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }
-            liberator.buffer.highlight(key, css, special);
+            buffer.highlight(key, css, special);
         },
         {
             // TODO: add this as a standard highlight completion function?
             // I agree. It could (should) be much more sophisticated. --Kris
             completer: function (filter) [0,
-                    liberator.completion.filter([[v instanceof Array ? v[0] : v, ""] for ([k, v] in Iterator(highlightClasses))], filter)
+                    completion.filter([[v instanceof Array ? v[0] : v, ""] for ([k, v] in Iterator(highlightClasses))], filter)
                 ],
             argCount: 1,
             bang: true,
@@ -918,15 +918,15 @@ liberator.Buffer = function () //{{{
             literal: true,
         });
 
-    liberator.commands.add(["vie[wsource]"],
+    commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { liberator.buffer.viewSource(args.arguments[0], special); },
+        function (args, special) { buffer.viewSource(args.arguments[0], special); },
         {
             argCount: "1",
             bang: true
         });
 
-    liberator.commands.add(["zo[om]"],
+    commands.add(["zo[om]"],
         "Set zoom value of current web page",
         function (args, special)
         {
@@ -943,9 +943,9 @@ liberator.Buffer = function () //{{{
             else if (/^[+-]\d+$/.test(args))
             {
                 if (special)
-                    level = liberator.buffer.fullZoom + parseInt(args, 10);
+                    level = buffer.fullZoom + parseInt(args, 10);
                 else
-                    level = liberator.buffer.textZoom + parseInt(args, 10);
+                    level = buffer.textZoom + parseInt(args, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < 1)
@@ -955,14 +955,14 @@ liberator.Buffer = function () //{{{
             }
             else
             {
-                liberator.echoerr("E488: Trailing characters");
+                echoerr("E488: Trailing characters");
                 return;
             }
 
             if (special)
-                liberator.buffer.fullZoom = level;
+                buffer.fullZoom = level;
             else
-                liberator.buffer.textZoom = level;
+                buffer.textZoom = level;
         },
         { bang: true });
 
@@ -1039,7 +1039,7 @@ liberator.Buffer = function () //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield [feed.title, liberator.template.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
+                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info"> ({type})</span>];
                 }
             }
         }
@@ -1073,8 +1073,8 @@ liberator.Buffer = function () //{{{
         var pageSize = []; // [0] bytes; [1] kbytes
         if (cacheEntryDescriptor)
         {
-            pageSize[0] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
-            pageSize[1] = liberator.util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
+            pageSize[0] = util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
+            pageSize[1] = util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
             if (pageSize[1] == pageSize[0])
                 pageSize.length = 1; // don't output "xx Bytes" twice
         }
@@ -1094,11 +1094,11 @@ liberator.Buffer = function () //{{{
         }
 
         yield ["Title", doc.title];
-        yield ["URL", liberator.template.highlightURL(doc.location.toString(), true)];
+        yield ["URL", template.highlightURL(doc.location.toString(), true)];
 
         var ref = "referrer" in doc && doc.referrer;
         if (ref)
-            yield ["Referrer", liberator.template.highlightURL(ref, true)];
+            yield ["Referrer", template.highlightURL(ref, true)];
 
         if (pageSize[0])
             yield ["File Size", pageSize[1] ? pageSize[1] + " (" + pageSize[0] + ")"
@@ -1116,7 +1116,7 @@ liberator.Buffer = function () //{{{
         // get meta tag data, sort and put into pageMeta[]
         var metaNodes = window.content.document.getElementsByTagName("meta");
 
-        return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), liberator.template.highlightURL(node.content)])
+        return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
                     .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
     });
 
@@ -1207,7 +1207,7 @@ liberator.Buffer = function () //{{{
             class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
             if (!class)
             {
-                liberator.echoerr("Unknown highlight keyword");
+                echoerr("Unknown highlight keyword");
                 return;
             }
             if (!(class instanceof Array))
@@ -1228,7 +1228,7 @@ liberator.Buffer = function () //{{{
 
             let error = styles.addSheet("hl-" + key, scope, css, true, force);
             if (error)
-                liberator.echoerr(error);
+                echoerr(error);
             else
                 highlight.set(key, style);
         },
@@ -1292,7 +1292,7 @@ liberator.Buffer = function () //{{{
         // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
         getElement: function (args, index)
         {
-            return liberator.buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0);
+            return buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0);
         },
 
         // more advanced than a simple elem.focus() as it also works for iframes
@@ -1338,16 +1338,16 @@ liberator.Buffer = function () //{{{
                 switch (relationship)
                 {
                     case "next":
-                        regexps = liberator.options["nextpattern"].split(",");
+                        regexps = options["nextpattern"].split(",");
                         revString = "previous";
                         break;
                     case "previous":
                         // TODO: accept prev\%[ious]
-                        regexps = liberator.options["previouspattern"].split(",");
+                        regexps = options["previouspattern"].split(",");
                         revString = "next";
                         break;
                     default:
-                        liberator.echoerr("Bad document relationship: " + relationship);
+                        echoerr("Bad document relationship: " + relationship);
                 }
 
                 relText = new RegExp(relationship, "i");
@@ -1358,7 +1358,7 @@ liberator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                            liberator.open(elems[i].href);
+                            open(elems[i].href);
                             return true;
                     }
                 }
@@ -1369,7 +1369,7 @@ liberator.Buffer = function () //{{{
                 {
                     if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
                     {
-                        liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                        buffer.followLink(elems[i], CURRENT_TAB);
                         return true;
                     }
                 }
@@ -1381,7 +1381,7 @@ liberator.Buffer = function () //{{{
                     {
                         if (patternText.test(elems[i].textContent))
                         {
-                            liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                            buffer.followLink(elems[i], CURRENT_TAB);
                             return true;
                         }
                         else
@@ -1392,7 +1392,7 @@ liberator.Buffer = function () //{{{
                             {
                                 if (patternText.test(children[j].alt))
                                 {
-                                    liberator.buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                                    buffer.followLink(elems[i], CURRENT_TAB);
                                     return true;
                                 }
                             }
@@ -1423,7 +1423,7 @@ liberator.Buffer = function () //{{{
             }
 
             if (!retVal)
-                liberator.beep();
+                beep();
         },
 
         // artificially "clicks" a link in order to open it
@@ -1450,18 +1450,18 @@ liberator.Buffer = function () //{{{
             var ctrlKey = false, shiftKey = false;
             switch (where)
             {
-                case liberator.NEW_TAB:
-                case liberator.NEW_BACKGROUND_TAB:
+                case NEW_TAB:
+                case NEW_BACKGROUND_TAB:
                     ctrlKey = true;
-                    shiftKey = (where == liberator.NEW_BACKGROUND_TAB);
+                    shiftKey = (where == NEW_BACKGROUND_TAB);
                     break;
-                case liberator.NEW_WINDOW:
+                case NEW_WINDOW:
                     shiftKey = true;
                     break;
-                case liberator.CURRENT_TAB:
+                case CURRENT_TAB:
                     break;
                 default:
-                    liberator.log("Invalid where argument for followLink()", 0);
+                    log("Invalid where argument for followLink()", 0);
             }
 
             elem.focus();
@@ -1485,12 +1485,12 @@ liberator.Buffer = function () //{{{
             {
                 urlSecurityCheck(url, doc.nodePrincipal);
                 // we always want to save that link relative to the current working directory
-                liberator.options.setPref("browser.download.lastDir", liberator.io.getCurrentDirectory());
+                options.setPref("browser.download.lastDir", io.getCurrentDirectory());
                 saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
             }
             catch (e)
             {
-                liberator.echoerr(e);
+                echoerr(e);
             }
         },
 
@@ -1505,7 +1505,7 @@ liberator.Buffer = function () //{{{
             const COL_WIDTH = 20;
 
             if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
-                liberator.beep();
+                beep();
 
             win.scrollBy(COL_WIDTH * cols, 0);
         },
@@ -1532,13 +1532,13 @@ liberator.Buffer = function () //{{{
         scrollByScrollSize: function (count, direction)
         {
             if (count > 0)
-                liberator.options["scroll"] = count;
+                options["scroll"] = count;
 
             var win = findScrollableWindow();
             checkScrollYBounds(win, direction);
 
-            if (liberator.options["scroll"] > 0)
-                this.scrollLines(liberator.options["scroll"] * direction);
+            if (options["scroll"] > 0)
+                this.scrollLines(options["scroll"] * direction);
             else // scroll half a page down in pixels
                 win.scrollBy(0, win.innerHeight / 2 * direction);
         },
@@ -1604,7 +1604,7 @@ liberator.Buffer = function () //{{{
                 if (next > frames.length - 1)
                 {
                     if (current == frames.length - 1)
-                        liberator.beep(); // still allow the frame indicator to be activated
+                        beep(); // still allow the frame indicator to be activated
 
                     next = frames.length - 1;
                 }
@@ -1619,7 +1619,7 @@ liberator.Buffer = function () //{{{
                 if (next < 0)
                 {
                     if (current == 0)
-                        liberator.beep(); // still allow the frame indicator to be activated
+                        beep(); // still allow the frame indicator to be activated
 
                     next = 0;
                 }
@@ -1632,7 +1632,7 @@ liberator.Buffer = function () //{{{
 
             // add the frame indicator
             var doc = frames[next].document;
-            var indicator = liberator.util.xmlToDom(<div id="liberator-frame-indicator"/>, doc);
+            var indicator = util.xmlToDom(<div id="liberator-frame-indicator"/>, doc);
             doc.body.appendChild(indicator);
 
             // remove the frame indicator
@@ -1643,7 +1643,7 @@ liberator.Buffer = function () //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            liberator.echo(<>Element:<br/></> + liberator.util.objectToString(elem), liberator.commandline.FORCE_MULTILINE);
+            echo(<>Element:<br/></> + util.objectToString(elem), commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)
@@ -1654,27 +1654,27 @@ liberator.Buffer = function () //{{{
                 let file = content.document.location.pathname.split("/").pop() || "[No Name]";
                 let title = content.document.title || "[No Title]";
 
-                let info = liberator.template.map("gf", function (opt)
-                        liberator.template.map(pageInfo[opt][0](),
+                let info = template.map("gf", function (opt)
+                        template.map(pageInfo[opt][0](),
                             function (val) val, ", "),
                     ", ");
 
-                if (liberator.bookmarks.isBookmarked(this.URL))
+                if (bookmarks.isBookmarked(this.URL))
                     info += ", bookmarked";
 
                 var pageInfoText = <>"{file}" [{info}] {title}</>;
-                liberator.echo(pageInfoText, liberator.commandline.FORCE_SINGLELINE);
+                echo(pageInfoText, commandline.FORCE_SINGLELINE);
                 return;
             }
 
-            let option = liberator.options["pageinfo"];
-            let list = liberator.template.map(option, function (option)
+            let option = options["pageinfo"];
+            let list = template.map(option, function (option)
             {
                 let opt = pageInfo[option];
                 if (opt)
-                    return liberator.template.table(opt[1], opt[0](true));
+                    return template.table(opt[1], opt[0](true));
             }, <br/>);
-            liberator.echo(list, liberator.commandline.FORCE_MULTILINE);
+            echo(list, commandline.FORCE_MULTILINE);
         },
 
         viewSelectionSource: function ()
@@ -1700,27 +1700,27 @@ liberator.Buffer = function () //{{{
         // url is optional
         viewSource: function (url, useExternalEditor)
         {
-            url = url || liberator.buffer.URL;
+            url = url || buffer.URL;
 
             if (useExternalEditor)
             {
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
-                var editor = liberator.options["editor"];
-                var args = liberator.commands.parseArgs(editor, [], "*", true).arguments;
+                var editor = options["editor"];
+                var args = commands.parseArgs(editor, [], "*", true).arguments;
                 if (args.length < 1)
                 {
-                    liberator.echoerr("No editor specified");
+                    echoerr("No editor specified");
                     return;
                 }
 
                 var prog = args.shift();
                 args.push(url);
-                liberator.callFunctionInThread(null, liberator.io.run, [prog, args, true]);
+                callFunctionInThread(null, io.run, [prog, args, true]);
             }
             else
             {
-                liberator.open("view-source:" + url);
+                open("view-source:" + url);
             }
         },
 
@@ -1737,14 +1737,14 @@ liberator.Buffer = function () //{{{
     //}}}
 }; //}}}
 
-liberator.Marks = function () //{{{
+with (liberator) liberator.Marks = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = liberator.storage.newMap('local-marks', true);
-    var urlMarks = liberator.storage.newMap('url-marks', true);
+    var localMarks = storage.newMap('local-marks', true);
+    var urlMarks = storage.newMap('url-marks', true);
 
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");
@@ -1772,7 +1772,7 @@ liberator.Marks = function () //{{{
         return name + ", " + mark.location +
                 ", (" + Math.round(mark.position.x * 100) +
                 "%, " + Math.round(mark.position.y * 100) + "%)" +
-                (('tab' in mark) ? ", tab: " + liberator.tabs.index(mark.tab) : "");
+                (('tab' in mark) ? ", tab: " + tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)
@@ -1785,7 +1785,7 @@ liberator.Marks = function () //{{{
             {
                 if (localmark[i].location == win.location.href)
                 {
-                    liberator.log("Deleting local mark: " + markToString(mark, localmark[i]), 5);
+                    log("Deleting local mark: " + markToString(mark, localmark[i]), 5);
                     localmark.splice(i, 1);
                     if (localmark.length == 0)
                         localMarks.remove(mark);
@@ -1800,7 +1800,7 @@ liberator.Marks = function () //{{{
         var urlmark = urlMarks.get(mark);
         if (urlmark)
         {
-            liberator.log("Deleting URL mark: " + markToString(mark, urlmark), 5);
+            log("Deleting URL mark: " + markToString(mark, urlmark), 5);
             urlMarks.remove(mark);
         }
     }
@@ -1841,43 +1841,43 @@ liberator.Marks = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
+    var myModes = config.browserModes || [modes.NORMAL];
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["m"], "Set mark at the cursor position",
         function (arg)
         {
             if (/[^a-zA-Z]/.test(arg))
             {
-                liberator.beep();
+                beep();
                 return;
             }
 
-            liberator.marks.add(arg);
+            marks.add(arg);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT });
+        { flags: Mappings.flags.ARGUMENT });
 
-    liberator.mappings.add(modes,
+    mappings.add(myModes,
         ["'", "`"], "Jump to the mark in the current buffer",
-        function (arg) { liberator.marks.jumpTo(arg); },
-        { flags: liberator.Mappings.flags.ARGUMENT });
+        function (arg) { marks.jumpTo(arg); },
+        { flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.commands.add(["delm[arks]"],
+    commands.add(["delm[arks]"],
         "Delete the specified marks",
         function (args, special)
         {
             if (!special && !args)
             {
-                liberator.echoerr("E471: Argument required");
+                echoerr("E471: Argument required");
                 return;
             }
             if (special && args)
             {
-                liberator.echoerr("E474: Invalid argument");
+                echoerr("E474: Invalid argument");
                 return;
             }
             var matches;
@@ -1886,7 +1886,7 @@ liberator.Marks = function () //{{{
                 // NOTE: this currently differs from Vim's behavior which
                 // deletes any valid marks in the arg list, up to the first
                 // invalid arg, as well as giving the error message.
-                liberator.echoerr("E475: Invalid argument: " + matches[0]);
+                echoerr("E475: Invalid argument: " + matches[0]);
                 return;
             }
             // check for illegal ranges - only allow a-z A-Z 0-9
@@ -1901,49 +1901,49 @@ liberator.Marks = function () //{{{
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
                         start > end)
                     {
-                        liberator.echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
+                        echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
                         return;
                     }
                 }
             }
 
-            liberator.marks.remove(args, special);
+            marks.remove(args, special);
         },
         { bang: true });
 
-    liberator.commands.add(["ma[rk]"],
+    commands.add(["ma[rk]"],
         "Mark current location within the web page",
         function (args)
         {
             var mark = args.arguments[0];
             if (mark.length > 1)
             {
-                liberator.echoerr("E488: Trailing characters");
+                echoerr("E488: Trailing characters");
                 return;
             }
             if (!/[a-zA-Z]/.test(mark))
             {
-                liberator.echoerr("E191: Argument must be a letter or forward/backward quote");
+                echoerr("E191: Argument must be a letter or forward/backward quote");
                 return;
             }
 
-            liberator.marks.add(mark);
+            marks.add(mark);
         },
         { argCount: "1" });
 
-    liberator.commands.add(["marks"],
+    commands.add(["marks"],
         "Show all location marks of current web page",
         function (args)
         {
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
             {
-                liberator.echoerr("E283: No marks matching \"" + args + "\"");
+                echoerr("E283: No marks matching \"" + args + "\"");
                 return;
             }
 
             var filter = args.replace(/[^a-zA-Z]/g, "");
-            liberator.marks.list(filter);
+            marks.list(filter);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1959,7 +1959,7 @@ liberator.Marks = function () //{{{
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                liberator.echoerr("Marks support for frameset pages not implemented yet");
+                echoerr("Marks support for frameset pages not implemented yet");
                 return;
             }
 
@@ -1969,8 +1969,8 @@ liberator.Marks = function () //{{{
 
             if (isURLMark(mark))
             {
-                urlMarks.set(mark, { location: win.location.href, position: position, tab: liberator.tabs.getTab() });
-                liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
+                urlMarks.set(mark, { location: win.location.href, position: position, tab: tabs.getTab() });
+                log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
             }
             else if (isLocalMark(mark))
             {
@@ -1980,7 +1980,7 @@ liberator.Marks = function () //{{{
                     localMarks.set(mark, []);
                 let vals = { location: win.location.href, position: position };
                 localMarks.get(mark).push(vals);
-                liberator.log("Adding local mark: " + markToString(mark, vals), 5);
+                log("Adding local mark: " + markToString(mark, vals), 5);
             }
         },
 
@@ -2022,13 +2022,13 @@ liberator.Marks = function () //{{{
                         pendingJumps.push(slice);
                         // NOTE: this obviously won't work on generated pages using
                         // non-unique URLs :(
-                        liberator.open(slice.location, liberator.NEW_TAB);
+                        open(slice.location, NEW_TAB);
                         return;
                     }
-                    var index = liberator.tabs.index(slice.tab);
+                    var index = tabs.index(slice.tab);
                     if (index != -1)
                     {
-                        liberator.tabs.select(index);
+                        tabs.select(index);
                         var win = slice.tab.linkedBrowser.contentWindow;
                         if (win.location.href != slice.location)
                         {
@@ -2036,7 +2036,7 @@ liberator.Marks = function () //{{{
                             win.location.href = slice.location;
                             return;
                         }
-                        liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
+                        log("Jumping to URL mark: " + markToString(mark, slice), 5);
                         win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -2051,7 +2051,7 @@ liberator.Marks = function () //{{{
                 {
                     if (win.location.href == slice[i].location)
                     {
-                        liberator.log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
+                        log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
                         win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
                         ok = true;
                     }
@@ -2059,7 +2059,7 @@ liberator.Marks = function () //{{{
             }
 
             if (!ok)
-                liberator.echoerr("E20: Mark not set"); // FIXME: move up?
+                echoerr("E20: Mark not set"); // FIXME: move up?
         },
 
         list: function (filter)
@@ -2068,7 +2068,7 @@ liberator.Marks = function () //{{{
 
             if (marks.length == 0)
             {
-                liberator.echoerr("No marks set");
+                echoerr("No marks set");
                 return;
             }
 
@@ -2077,19 +2077,19 @@ liberator.Marks = function () //{{{
                 marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
                 if (marks.length == 0)
                 {
-                    liberator.echoerr("E283: No marks matching \"" + filter + "\"");
+                    echoerr("E283: No marks matching \"" + filter + "\"");
                     return;
                 }
             }
 
-            let list = liberator.template.tabular(["mark", "line", "col", "file"],
+            let list = template.tabular(["mark", "line", "col", "file"],
                 ["", "text-align: right", "text-align: right", "color: green"],
                 ([mark[0],
                   Math.round(mark[1].position.x * 100) + "%",
                   Math.round(mark[1].position.y * 100) + "%",
                   mark[1].location]
                   for each (mark in marks)));
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
 
     };

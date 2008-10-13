@@ -27,8 +27,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // Do NOT create instances of this class yourself, use the helper method
-// liberator.mappings.add() instead
-liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
+// mappings.add() instead
+with (liberator) liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
 {
     if (!modes || (!cmds || !cmds.length) || !action)
         return null;
@@ -47,7 +47,7 @@ liberator.Map = function (modes, cmds, description, action, extraInfo) //{{{
     this.noremap = extraInfo.noremap || false;
 };
 
-liberator.Map.prototype = {
+with (liberator) liberator.Map.prototype = {
 
     hasName: function (name)
     {
@@ -58,23 +58,23 @@ liberator.Map.prototype = {
     {
         var args = [];
 
-        if (this.flags & liberator.Mappings.flags.MOTION)
+        if (this.flags & Mappings.flags.MOTION)
             args.push(motion);
-        if (this.flags & liberator.Mappings.flags.COUNT)
+        if (this.flags & Mappings.flags.COUNT)
             args.push(count);
-        if (this.flags & liberator.Mappings.flags.ARGUMENT)
+        if (this.flags & Mappings.flags.ARGUMENT)
             args.push(argument);
 
         let self = this;
         // FIXME: Kludge.
         if (this.names[0] != ".")
-            liberator.mappings.repeat = function () self.action.apply(self, args);
+            mappings.repeat = function () self.action.apply(self, args);
         return this.action.apply(this, args);
     }
 
 }; //}}}
 
-liberator.Mappings = function () //{{{
+with (liberator) liberator.Mappings = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -83,7 +83,7 @@ liberator.Mappings = function () //{{{
     var main = []; // default mappings
     var user = []; // user created mappings
 
-    for (let mode in liberator.modes)
+    for (let mode in modes)
     {
         main[mode] = [];
         user[mode] = [];
@@ -99,10 +99,10 @@ liberator.Mappings = function () //{{{
     {
         var maps = stack[mode];
 
-        for (let i = 0; i < maps.length; i++)
+        for (let [,map] in Iterator(maps))
         {
-            if (maps[i].hasName(cmd))
-                return maps[i];
+            if (map.hasName(cmd))
+                return map;
         }
 
         return null;
@@ -113,18 +113,15 @@ liberator.Mappings = function () //{{{
         var maps = user[mode];
         var names;
 
-        for (let i = 0; i < maps.length; i++)
+        for (let [i, map] in Iterator(maps))
         {
-            names = maps[i].names;
-            for (let j = 0; j < names.length; j++)
+            for (let [j, name] in Iterator(map.names))
             {
-                if (names[j] == cmd)
+                if (name == cmd)
                 {
-                    names.splice(j, 1);
-
-                    if (names.length == 0)
+                    map.names.splice(j, 1);
+                    if (map.names.length == 0)
                         maps.splice(i, 1);
-
                     return;
                 }
             }
@@ -134,7 +131,7 @@ liberator.Mappings = function () //{{{
     function expandLeader(keyString)
     {
         var leaderRegexp = /<Leader>/i;
-        var currentLeader = liberator.mappings.getMapLeader();
+        var currentLeader = mappings.getMapLeader();
         return keyString.replace(leaderRegexp, currentLeader);
     }
 
@@ -175,7 +172,7 @@ liberator.Mappings = function () //{{{
         {
             if (!args)
             {
-                liberator.mappings.list(mode);
+                mappings.list(mode);
                 return;
             }
 
@@ -184,17 +181,17 @@ liberator.Mappings = function () //{{{
 
             if (!rhs) // list the mapping
             {
-                liberator.mappings.list(mode, expandLeader(lhs));
+                mappings.list(mode, expandLeader(lhs));
             }
             else
             {
-                for (let index = 0; index < mode.length; index++)
+                for (let [,m] in Iterator(mode))
                 {
-                    liberator.mappings.addUserMap([mode[index]], [lhs],
+                    mappings.addUserMap([m], [lhs],
                             "User defined mapping",
-                            function (count) { liberator.events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                            function (count) { events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
                             {
-                                flags: liberator.Mappings.flags.COUNT,
+                                flags: Mappings.flags.COUNT,
                                 rhs: rhs,
                                 noremap: noremap
                             });
@@ -204,65 +201,65 @@ liberator.Mappings = function () //{{{
 
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
-        liberator.commands.add([ch ? ch + "m[ap]" : "map"],
+        commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
             function (args) { map(args, modes, false); },
-            { completer: function (filter) liberator.completion.userMapping(filter, modes) });
+            { completer: function (filter) completion.userMapping(filter, modes) });
 
-        liberator.commands.add([ch + "no[remap]"],
+        commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
             function (args) { map(args, modes, true); });
 
-        liberator.commands.add([ch + "mapc[lear]"],
+        commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
             function ()
             {
                 for (let i = 0; i < modes.length; i++)
-                    liberator.mappings.removeAll(modes[i]);
+                    mappings.removeAll(modes[i]);
             },
             { argCount: "0" });
 
-        liberator.commands.add([ch + "unm[ap]"],
+        commands.add([ch + "unm[ap]"],
             "Remove a mapping" + modeDescription,
             function (args)
             {
                 if (!args)
                 {
-                    liberator.echoerr("E474: Invalid argument");
+                    echoerr("E474: Invalid argument");
                     return;
                 }
 
-                var found = false;
-                for (let i = 0; i < modes.length; i++)
+                let found = false;
+                for (let [,mode] in Iterator(modes))
                 {
-                    if (liberator.mappings.hasMap(modes[i], args))
+                    if (mappings.hasMap(mode, args))
                     {
-                        liberator.mappings.remove(modes[i], args);
+                        mappings.remove(mode, args);
                         found = true;
                     }
                 }
                 if (!found)
-                    liberator.echoerr("E31: No such mapping");
+                    echoerr("E31: No such mapping");
             },
-            { completer: function (filter) liberator.completion.userMapping(filter, modes) });
+            { completer: function (filter) completion.userMapping(filter, modes) });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addMapCommands("",  [liberator.modes.NORMAL], "");
-    addMapCommands("c", [liberator.modes.COMMAND_LINE], "command line");
-    addMapCommands("i", [liberator.modes.INSERT, liberator.modes.TEXTAREA], "insert");
+    addMapCommands("",  [modes.NORMAL], "");
+    addMapCommands("c", [modes.COMMAND_LINE], "command line");
+    addMapCommands("i", [modes.INSERT, modes.TEXTAREA], "insert");
     if (liberator.has("mail"))
-        addMapCommands("m", [liberator.modes.MESSAGE], "message");
+        addMapCommands("m", [modes.MESSAGE], "message");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // FIXME:
-    liberator.Mappings.flags = {
+    Mappings.flags = {
         ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox
         MOTION:              1 << 1,
         COUNT:               1 << 2,
@@ -274,7 +271,7 @@ liberator.Mappings = function () //{{{
         // NOTE: just normal mode for now
         __iterator__: function ()
         {
-            return mappingsIterator([liberator.modes.NORMAL], main);
+            return mappingsIterator([modes.NORMAL], main);
         },
 
         // used by :mkvimperatorrc to save mappings
@@ -285,13 +282,13 @@ liberator.Mappings = function () //{{{
 
         add: function (modes, keys, description, action, extra)
         {
-            addMap(new liberator.Map(modes, keys, description, action, extra), false);
+            addMap(new Map(modes, keys, description, action, extra), false);
         },
 
         addUserMap: function (modes, keys, description, action, extra)
         {
             keys = keys.map(function (key) expandLeader(key));
-            var map = new liberator.Map(modes, keys, description || "User defined mapping", action, extra);
+            var map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
             for (let i = 0; i < map.names.length; i++)
@@ -305,31 +302,30 @@ liberator.Mappings = function () //{{{
 
         get: function (mode, cmd)
         {
-            mode = mode || liberator.modes.NORMAL;
+            mode = mode || modes.NORMAL;
             return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
         getDefault: function (mode, cmd)
         {
-            mode = mode || liberator.modes.NORMAL;
+            mode = mode || modes.NORMAL;
             return getMap(mode, cmd, main);
         },
 
         // returns an array of mappings with names which START with "cmd" (but are NOT "cmd")
         getCandidates: function (mode, cmd)
         {
-            var mappings = user[mode].concat(main[mode]);
-            var matches = [];
+            let mappings = user[mode].concat(main[mode]);
+            let matches = [];
 
-            for (let i = 0; i < mappings.length; i++)
+            for (let [,map] in Iterator(mappings))
             {
-                var map = mappings[i];
-                for (let j = 0; j < map.names.length; j++)
+                for (let [,name] in Iterator(map.names))
                 {
-                    if (map.names[j].indexOf(cmd) == 0 && map.names[j].length > cmd.length)
+                    if (name.indexOf(cmd) == 0 && name.length > cmd.length)
                     {
                         // for < only return a candidate if it doesn't look like a <c-x> mapping
-                        if (cmd != "<" || !/^<.+>/.test(map.names[j]))
+                        if (cmd != "<" || !/^<.+>/.test(name))
                             matches.push(map);
                     }
                 }
@@ -340,7 +336,7 @@ liberator.Mappings = function () //{{{
 
         getMapLeader: function ()
         {
-            var leaderRef = liberator.variableReference("mapleader");
+            var leaderRef = variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 
@@ -368,7 +364,7 @@ liberator.Mappings = function () //{{{
 
             if (!maps || maps.length == 0)
             {
-                liberator.echo("No mappings found");
+                echo("No mappings found");
                 return;
             }
 
@@ -398,20 +394,20 @@ liberator.Mappings = function () //{{{
             var flag = output.some(function (x) x);
             if (!flag)
             {
-                liberator.echo("No mappings found");
+                echo("No mappings found");
                 return;
             }
 
             var modeSign = "";
             modes.forEach(function (mode)
             {
-                if (mode == liberator.modes.NORMAL)
+                if (mode == modes.NORMAL)
                     modeSign += "n";
-                if ((mode == liberator.modes.INSERT || mode == liberator.modes.TEXTAREA) && modeSign.indexOf("i") == -1)
+                if ((mode == modes.INSERT || mode == modes.TEXTAREA) && modeSign.indexOf("i") == -1)
                     modeSign += "i";
-                if (mode == liberator.modes.COMMAND_LINE)
+                if (mode == modes.COMMAND_LINE)
                     modeSign += "c";
-                if (mode == liberator.modes.MESSAGRE)
+                if (mode == modes.MESSAGRE)
                     modeSign += "m";
             });
 
@@ -419,8 +415,8 @@ liberator.Mappings = function () //{{{
                              if (output[i]));
             let list = <table>
                     {
-                        liberator.template.map(_maps, function (map)
-                            liberator.template.map(map.names, function (name)
+                        template.map(_maps, function (map)
+                            template.map(map.names, function (name)
                             <tr>
                                 <td>{modeSign} {name}</td>
                                 <td>{map.noremap ? "*" : " "}</td>
@@ -428,7 +424,7 @@ liberator.Mappings = function () //{{{
                             </tr>))
                     }
                     </table>;
-            liberator.commandline.echo(list, liberator.commandline.HL_NORMAL, liberator.commandline.FORCE_MULTILINE);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
 
     };

@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.modes = (function () //{{{
+with (liberator) liberator.modes = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -50,44 +50,44 @@ liberator.modes = (function () //{{{
             return "-- PASS THROUGH --";
 
         var ext = "";
-        if (extended & liberator.modes.QUICK_HINT)
+        if (extended & modes.QUICK_HINT)
             ext += " (quick)";
-        if (extended & liberator.modes.EXTENDED_HINT)
+        if (extended & modes.EXTENDED_HINT)
             ext += " (extended)";
-        if (extended & liberator.modes.ALWAYS_HINT)
+        if (extended & modes.ALWAYS_HINT)
             ext += " (always)";
-        if (extended & liberator.modes.INACTIVE_HINT)
+        if (extended & modes.INACTIVE_HINT)
             ext += " (inactive)";
-        if (extended & liberator.modes.MENU) // TODO: desirable?
+        if (extended & modes.MENU) // TODO: desirable?
             ext += " (menu)";
 
         // when recording a macro
         var macromode = "";
-        if (liberator.modes.isRecording)
+        if (modes.isRecording)
             macromode = "recording";
-        else if (liberator.modes.isReplaying)
+        else if (modes.isReplaying)
             macromode = "replaying";
 
         ext += " --" + macromode;
 
         switch (main)
         {
-            case liberator.modes.INSERT:
+            case modes.INSERT:
                 return "-- INSERT" + ext;
-            case liberator.modes.VISUAL:
-                return (extended & liberator.modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
-            case liberator.modes.HINTS:
+            case modes.VISUAL:
+                return (extended & modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
+            case modes.HINTS:
                 return "-- HINTS" + ext;
-            case liberator.modes.CARET:
+            case modes.CARET:
                 return "-- CARET" + ext;
-            case liberator.modes.TEXTAREA:
+            case modes.TEXTAREA:
                 return "-- TEXTAREA" + ext;
-            case liberator.modes.MESSAGE:
+            case modes.MESSAGE:
                 return "-- MESSAGE" + ext;
-            case liberator.modes.COMPOSE:
+            case modes.COMPOSE:
                 return "-- COMPOSE" + ext;
-            case liberator.modes.CUSTOM:
-                return "-- " + liberator.plugins.mode + ext;
+            case modes.CUSTOM:
+                return "-- " + plugins.mode + ext;
             default: // NORMAL mode
                 return macromode;
         }
@@ -95,23 +95,23 @@ liberator.modes = (function () //{{{
 
     // NOTE: Pay attention that you don't run into endless loops
     // Usually you should only indicate to leave a special mode like HINTS
-    // by calling liberator.modes.reset() and adding the stuff which is needed
+    // by calling modes.reset() and adding the stuff which is needed
     // for its cleanup here
     function handleModeChange(oldMode, newMode)
     {
         // TODO: fix v.log() to work with verbosity level
-        //liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
-        //liberator.dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
+        //log("switching from mode " + oldMode + " to mode " + newMode, 7);
+        //dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
-            case liberator.modes.TEXTAREA:
-            case liberator.modes.INSERT:
-                liberator.editor.unselectText();
+            case modes.TEXTAREA:
+            case modes.INSERT:
+                editor.unselectText();
                 break;
 
-            case liberator.modes.VISUAL:
-                if (newMode == liberator.modes.CARET)
+            case modes.VISUAL:
+                if (newMode == modes.CARET)
                 {
                     // clear any selection made
                     var selection = window.content.getSelection();
@@ -122,31 +122,31 @@ liberator.modes = (function () //{{{
                     catch (e) {}
                 }
                 else
-                    liberator.editor.unselectText();
+                    editor.unselectText();
                 break;
 
-            case liberator.modes.CUSTOM:
-                liberator.plugins.stop();
+            case modes.CUSTOM:
+                plugins.stop();
                 break;
 
-            case liberator.modes.HINTS:
-                liberator.hints.hide();
+            case modes.HINTS:
+                hints.hide();
                 break;
 
-            case liberator.modes.COMMAND_LINE:
-                liberator.commandline.close();
+            case modes.COMMAND_LINE:
+                commandline.close();
                 break;
         }
 
-        if (newMode == liberator.modes.NORMAL)
+        if (newMode == modes.NORMAL)
         {
             // disable caret mode when we want to switch to normal mode
-            var value = liberator.options.getPref("accessibility.browsewithcaret", false);
+            var value = options.getPref("accessibility.browsewithcaret", false);
             if (value)
-                liberator.options.setPref("accessibility.browsewithcaret", false);
+                options.setPref("accessibility.browsewithcaret", false);
 
-            liberator.statusline.updateUrl();
-            liberator.focusContent(false);
+            statusline.updateUrl();
+            focusContent(false);
         }
     }
 
@@ -183,13 +183,7 @@ liberator.modes = (function () //{{{
         RECORDING:        1 << 21,
         PROMPT:           1 << 22,
 
-        __iterator__: function ()
-        {
-            var modes = this.all;
-
-            for (let i = 0; i < modes.length; i++)
-                yield modes[i];
-        },
+        __iterator__: function () util.arrayIter(this.all),
 
         get all() [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
                    this.HINTS, this.COMMAND_LINE, this.CARET,
@@ -198,15 +192,15 @@ liberator.modes = (function () //{{{
         // show the current mode string in the command line
         show: function ()
         {
-            if (!liberator.options["showmode"])
+            if (!options["showmode"])
                 return;
 
             // never show mode messages if we are in command line mode
-            if (main == liberator.modes.COMMAND_LINE)
+            if (main == modes.COMMAND_LINE)
                 return;
 
-            liberator.commandline.echo(getModeMessage(), liberator.commandline.HL_MODEMSG,
-                                        liberator.commandline.DISALLOW_MULTILINE);
+            commandline.echo(getModeMessage(), commandline.HL_MODEMSG,
+                                        commandline.DISALLOW_MULTILINE);
         },
 
         // add/remove always work on the extended mode only
@@ -228,7 +222,7 @@ liberator.modes = (function () //{{{
 
                 main = mainMode;
                 if (!extendedMode)
-                    extended = liberator.modes.NONE;
+                    extended = modes.NONE;
             }
             if (typeof extendedMode === "number")
                 extended = extendedMode;
@@ -255,24 +249,24 @@ liberator.modes = (function () //{{{
         setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
             // TODO this.plugin[id]... ('id' maybe submode or what..)
-            liberator.plugins.mode = modestr;
-            liberator.plugins.onEvent = oneventfunc;
-            liberator.plugins.stop = stopfunc;
+            plugins.mode = modestr;
+            plugins.onEvent = oneventfunc;
+            plugins.stop = stopfunc;
         },
 
         // keeps recording state
         reset: function (silent)
         {
             modeStack = [];
-            if (liberator.config.isComposeWindow)
-                this.set(liberator.modes.COMPOSE, liberator.modes.NONE, silent);
+            if (config.isComposeWindow)
+                this.set(modes.COMPOSE, modes.NONE, silent);
             else
-                this.set(liberator.modes.NORMAL, liberator.modes.NONE, silent);
+                this.set(modes.NORMAL, modes.NONE, silent);
         },
 
         remove: function (mode)
         {
-            extended = (extended | mode) ^ mode;
+            extended &= ~mode;
             this.show();
         },
 
@@ -295,7 +289,7 @@ liberator.modes = (function () //{{{
 
             main = value;
             // setting the main mode always resets any extended mode
-            extended = liberator.modes.NONE;
+            extended = modes.NONE;
             this.show();
         },
 

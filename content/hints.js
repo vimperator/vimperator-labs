@@ -26,13 +26,13 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-liberator.Hints = function () //{{{
+with (liberator) liberator.Hints = function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var modes = liberator.config.browserModes || [liberator.modes.NORMAL];
+    var myModes = config.browserModes || [modes.NORMAL];
 
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
@@ -54,7 +54,7 @@ liberator.Hints = function () //{{{
     // reset all important variables
     function reset()
     {
-        liberator.statusline.updateInputBuffer("");
+        statusline.updateInputBuffer("");
         hintString = "";
         hintNumber = 0;
         usedTabKey = false;
@@ -71,7 +71,7 @@ liberator.Hints = function () //{{{
 
     function updateStatusline()
     {
-        liberator.statusline.updateInputBuffer((escapeNumbers ? liberator.mappings.getMapLeader() + " " : "") + // sign for escapeNumbers
+        statusline.updateInputBuffer((escapeNumbers ? mappings.getMapLeader() + " " : "") + // sign for escapeNumbers
                 (hintString ? "\"" + hintString + "\"" : "") +
                 (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
     }
@@ -87,11 +87,11 @@ liberator.Hints = function () //{{{
         var scrollX = doc.defaultView.scrollX;
         var scrollY = doc.defaultView.scrollY;
 
-        var baseNodeAbsolute = liberator.util.xmlToDom(
+        var baseNodeAbsolute = util.xmlToDom(
             <span class="liberator-hint"/>, doc);
 
         var elem, tagname, text, span, rect;
-        var res = liberator.buffer.evaluateXPath(liberator.options["hinttags"], doc, null, true);
+        var res = buffer.evaluateXPath(options["hinttags"], doc, null, true);
 
         var fragment = doc.createDocumentFragment();
         var start = hints.length;
@@ -147,19 +147,19 @@ liberator.Hints = function () //{{{
     {
         var oldElem = validHints[oldID - 1];
         if (oldElem)
-            oldElem.style.backgroundColor = liberator.options["linkbgcolor"];
+            oldElem.style.backgroundColor = options["linkbgcolor"];
 
         var newElem = validHints[newID - 1];
         if (newElem)
-            newElem.style.backgroundColor = liberator.options["activelinkbgcolor"];
+            newElem.style.backgroundColor = options["activelinkbgcolor"];
     }
 
     function showHints()
     {
-        var linkfgcolor       = liberator.options["linkfgcolor"];
-        var linkbgcolor       = liberator.options["linkbgcolor"];
-        var activelinkfgcolor = liberator.options["activelinkfgcolor"];
-        var activelinkbgcolor = liberator.options["activelinkbgcolor"];
+        var linkfgcolor       = options["linkfgcolor"];
+        var linkbgcolor       = options["linkbgcolor"];
+        var activelinkfgcolor = options["activelinkfgcolor"];
+        var activelinkbgcolor = options["activelinkbgcolor"];
 
         var elem, tagname, text, rect, span, imgspan;
         var hintnum = 1;
@@ -176,12 +176,10 @@ liberator.Hints = function () //{{{
             var scrollY = doc.defaultView.scrollY;
 
         inner:
-            for (let i = start; i <= end; i++)
+            for (let i in (util.rangeInterruptable(start, end + 1, 500)))
             {
-                elem = hints[i][0];
-                text = hints[i][1];
-                span = hints[i][2];
-                imgspan = hints[i][3];
+                let hint = hints[i];
+                [elem, text, span, imgspan] = hint;
 
                 if (!validHint(text))
                 {
@@ -190,8 +188,8 @@ liberator.Hints = function () //{{{
                         imgspan.style.display = "none";
 
                     // reset background color
-                    elem.style.backgroundColor = hints[i][4];
-                    elem.style.color = hints[i][5];
+                    elem.style.backgroundColor = hint[4];
+                    elem.style.color = hint[5];
                     continue inner;
                 }
 
@@ -212,7 +210,7 @@ liberator.Hints = function () //{{{
                         imgspan.style.width = (rect.right - rect.left) + "px";
                         imgspan.style.height = (rect.bottom - rect.top) + "px";
                         imgspan.className = "liberator-hint";
-                        hints[i][3] = imgspan;
+                        hint[3] = imgspan;
                         doc.body.appendChild(imgspan);
                     }
                     imgspan.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
@@ -245,22 +243,23 @@ liberator.Hints = function () //{{{
 
             for (let i = start; i <= end; i++)
             {
+                let hint = hits[i];
                 // remove the span for the numeric display part
-                doc.body.removeChild(hints[i][2]);
-                if (hints[i][3]) // a transparent span for images
-                    doc.body.removeChild(hints[i][3]);
+                doc.body.removeChild(hint[2]);
+                if (hint[3]) // a transparent span for images
+                    doc.body.removeChild(hint[3]);
 
-                if (timeout && firstElem == hints[i][0])
+                if (timeout && firstElem == hint[0])
                 {
-                    firstElemBgColor = hints[i][4];
-                    firstElemColor = hints[i][5];
+                    firstElemBgColor = hint[4];
+                    firstElemColor = hint[5];
                 }
                 else
                 {
                     // restore colors
-                    var elem = hints[i][0];
-                    elem.style.backgroundColor = hints[i][4];
-                    elem.style.color = hints[i][5];
+                    var elem = hint[0];
+                    elem.style.backgroundColor = hint[4];
+                    elem.style.color = hint[5];
                 }
             }
 
@@ -304,7 +303,7 @@ liberator.Hints = function () //{{{
     {
         if (validHints.length == 0)
         {
-            liberator.beep();
+            beep();
             return false;
         }
 
@@ -326,50 +325,50 @@ liberator.Hints = function () //{{{
         var loc = elem.href || "";
         switch (submode)
         {
-            case ";": liberator.buffer.focusElement(elem); break;
-            case "?": liberator.buffer.showElementInfo(elem); break;
-            case "a": liberator.buffer.saveLink(elem, false); break;
-            case "s": liberator.buffer.saveLink(elem, true); break;
-            case "o": liberator.buffer.followLink(elem, liberator.CURRENT_TAB); break;
-            case "O": liberator.commandline.open(":", "open " + loc, liberator.modes.EX); break;
-            case "t": liberator.buffer.followLink(elem, liberator.NEW_TAB); break;
-            case "b": liberator.buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB); break;
-            case "T": liberator.commandline.open(":", "tabopen " + loc, liberator.modes.EX); break;
-            case "v": liberator.buffer.viewSource(loc, false); break;
-            case "V": liberator.buffer.viewSource(loc, true); break;
-            case "w": liberator.buffer.followLink(elem, liberator.NEW_WINDOW);  break;
-            case "W": liberator.commandline.open(":", "winopen " + loc, liberator.modes.EX); break;
-            case "y": setTimeout(function () { liberator.util.copyToClipboard(loc, true); }, timeout + 50); break;
-            case "Y": setTimeout(function () { liberator.util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
+            case ";": buffer.focusElement(elem); break;
+            case "?": buffer.showElementInfo(elem); break;
+            case "a": buffer.saveLink(elem, false); break;
+            case "s": buffer.saveLink(elem, true); break;
+            case "o": buffer.followLink(elem, CURRENT_TAB); break;
+            case "O": commandline.open(":", "open " + loc, modes.EX); break;
+            case "t": buffer.followLink(elem, NEW_TAB); break;
+            case "b": buffer.followLink(elem, NEW_BACKGROUND_TAB); break;
+            case "T": commandline.open(":", "tabopen " + loc, modes.EX); break;
+            case "v": buffer.viewSource(loc, false); break;
+            case "V": buffer.viewSource(loc, true); break;
+            case "w": buffer.followLink(elem, NEW_WINDOW);  break;
+            case "W": commandline.open(":", "winopen " + loc, modes.EX); break;
+            case "y": setTimeout(function () { util.copyToClipboard(loc, true); }, timeout + 50); break;
+            case "Y": setTimeout(function () { util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
             default:
-                liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
+                echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
         removeHints(timeout);
 
-        if (liberator.modes.extended & liberator.modes.ALWAYS_HINT)
+        if (modes.extended & modes.ALWAYS_HINT)
         {
             setTimeout(function () {
                 canUpdate = true;
                 hintString = "";
                 hintNumber = 0;
-                liberator.statusline.updateInputBuffer("");
+                statusline.updateInputBuffer("");
             }, timeout);
         }
         else
         {
-            if (timeout == 0 || liberator.modes.isReplaying)
+            if (timeout == 0 || modes.isReplaying)
             {
                 // force a possible mode change, based on wheter an input field has focus
-                liberator.events.onFocusChange();
-                if (liberator.mode == liberator.modes.HINTS)
-                    liberator.modes.reset(false);
+                events.onFocusChange();
+                if (mode == modes.HINTS)
+                    modes.reset(false);
             }
             else
             {
-                liberator.modes.add(liberator.modes.INACTIVE_HINT);
+                modes.add(modes.INACTIVE_HINT);
                 setTimeout(function () {
-                    if (liberator.mode == liberator.modes.HINTS)
-                        liberator.modes.pop();
+                    if (mode == modes.HINTS)
+                        modes.pop();
                 }, timeout);
             }
         }
@@ -400,7 +399,7 @@ liberator.Hints = function () //{{{
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
         {
             var hintStrings    = hintString.split(/ +/);
-            var wordSplitRegex = new RegExp(liberator.options["wordseparators"]);
+            var wordSplitRegex = new RegExp(options["wordseparators"]);
 
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
@@ -530,14 +529,14 @@ liberator.Hints = function () //{{{
             return wordStartsWith;
         } //}}}
 
-        var hintMatching = liberator.options["hintmatching"];
+        var hintMatching = options["hintmatching"];
         switch (hintMatching)
         {
             case "contains"      : return containsMatcher(hintString);
             case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
             case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
-            case "custom"        : return liberator.plugins.customHintMatcher(hintString);
-            default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
+            case "custom"        : return plugins.customHintMatcher(hintString);
+            default              : echoerr("Invalid hintmatching type: " + hintMatching);
         }
         return null;
     } //}}}
@@ -551,36 +550,36 @@ liberator.Hints = function () //{{{
                              "//xhtml:*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @class='s'] | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
 
-    liberator.options.add(["extendedhinttags", "eht"],
+    options.add(["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
         "string", DEFAULT_HINTTAGS);
 
-    liberator.options.add(["hinttags", "ht"],
+    options.add(["hinttags", "ht"],
         "XPath string of hintable elements activated by 'f' and 'F'",
         "string", DEFAULT_HINTTAGS);
 
-    liberator.options.add(["hinttimeout", "hto"],
+    options.add(["hinttimeout", "hto"],
         "Automatically follow non unique numerical hint",
         "number", 0,
         { validator: function (value) value >= 0 });
 
-    liberator.options.add(["linkfgcolor", "lfc"],
+    options.add(["linkfgcolor", "lfc"],
         "Foreground color of a link during hint mode",
         "string", "black");
 
-    liberator.options.add(["linkbgcolor", "lbc"],
+    options.add(["linkbgcolor", "lbc"],
         "Background color of a link during hint mode",
         "string", "yellow");
 
-    liberator.options.add(["activelinkfgcolor", "alfc"],
+    options.add(["activelinkfgcolor", "alfc"],
         "Foreground color of the current active link during hint mode",
         "string", "black");
 
-    liberator.options.add(["activelinkbgcolor", "albc"],
+    options.add(["activelinkbgcolor", "albc"],
         "Background color of the current active link during hint mode",
         "string", "#88FF00");
 
-    liberator.options.add(["hintmatching", "hm"],
+    options.add(["hintmatching", "hm"],
         "How links are matched",
         "string", "contains",
         {
@@ -591,7 +590,7 @@ liberator.Hints = function () //{{{
             validator: function (value) /^(contains|wordstartswith|firstletters|custom)$/.test(value)
         });
 
-    liberator.options.add(["wordseparators", "wsp"],
+    options.add(["wordseparators", "wsp"],
         "How words are split for hintmatching",
         "string", '[\\.,!\\?:;/\\\"\\^\\$%&?\\(\\)\\[\\]\\{\\}<>#\\*\\+\\|=~ _\\-]');
 
@@ -599,26 +598,26 @@ liberator.Hints = function () //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.mappings.add(modes, ["f"],
+    mappings.add(myModes, ["f"],
         "Start QuickHint mode",
-        function () { liberator.hints.show(liberator.modes.QUICK_HINT); });
+        function () { hints.show(modes.QUICK_HINT); });
 
-    liberator.mappings.add(modes, ["F"],
+    mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { liberator.hints.show(liberator.modes.QUICK_HINT, "t"); });
+        function () { hints.show(modes.QUICK_HINT, "t"); });
 
-    liberator.mappings.add(modes, [";"],
+    mappings.add(myModes, [";"],
         "Start an extended hint mode",
         function (arg)
         {
             if (arg == "f")
-                liberator.hints.show(liberator.modes.ALWAYS_HINT, "o");
+                hints.show(modes.ALWAYS_HINT, "o");
             else if (arg == "F")
-                liberator.hints.show(liberator.modes.ALWAYS_HINT, "t");
+                hints.show(modes.ALWAYS_HINT, "t");
             else
-                liberator.hints.show(liberator.modes.EXTENDED_HINT, arg);
+                hints.show(modes.EXTENDED_HINT, arg);
         },
-        { flags: liberator.Mappings.flags.ARGUMENT });
+        { flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -628,13 +627,13 @@ liberator.Hints = function () //{{{
 
         show: function (mode, minor, filter, win)
         {
-            if (mode == liberator.modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
+            if (mode == modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
             {
-                liberator.beep();
+                beep();
                 return;
             }
 
-            liberator.modes.push(liberator.modes.HINTS, mode, win != undefined);
+            modes.push(modes.HINTS, mode, win != undefined);
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
             hintNumber = 0;
@@ -643,15 +642,15 @@ liberator.Hints = function () //{{{
             generate(win);
 
             // get all keys from the input queue
-            liberator.threadYield(true);
+            threadYield(true);
 
             canUpdate = true;
             showHints();
 
             if (validHints.length == 0)
             {
-                liberator.beep();
-                liberator.modes.reset();
+                beep();
+                modes.reset();
                 return false;
             }
             else if (validHints.length == 1)
@@ -670,7 +669,7 @@ liberator.Hints = function () //{{{
 
         onEvent: function (event)
         {
-            var key = liberator.events.toString(event);
+            var key = events.toString(event);
             var followFirst = false;
 
             // clear any timeout which might be active after pressing a number
@@ -726,7 +725,7 @@ liberator.Hints = function () //{{{
                     {
                         usedTabKey = false;
                         hintNumber = 0;
-                        liberator.beep();
+                        beep();
                         return;
                     }
                     break;
@@ -737,7 +736,7 @@ liberator.Hints = function () //{{{
                     hintNumber = 0;
                     break;
 
-               case liberator.mappings.getMapLeader():
+               case mappings.getMapLeader():
                    escapeNumbers = !escapeNumbers;
                    if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                        hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
@@ -750,14 +749,14 @@ liberator.Hints = function () //{{{
                     if (/^<./.test(key) || key == ":")
                     {
                         var map = null;
-                        if ((map = liberator.mappings.get(liberator.modes.NORMAL, key)) ||
-                            (map = liberator.mappings.get(liberator.modes.HINTS, key)))
+                        if ((map = mappings.get(modes.NORMAL, key)) ||
+                            (map = mappings.get(modes.HINTS, key)))
                         {
                             map.execute(null, -1);
                             return;
                         }
 
-                        liberator.beep();
+                        beep();
                         return;
                     }
 
@@ -786,7 +785,7 @@ liberator.Hints = function () //{{{
 
                         if (hintNumber == 0 || hintNumber > validHints.length)
                         {
-                            liberator.beep();
+                            beep();
                             return;
                         }
 
@@ -794,7 +793,7 @@ liberator.Hints = function () //{{{
                         // the hint after a timeout, as the user might have wanted to follow link 34
                         if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
                         {
-                            var timeout = liberator.options["hinttimeout"];
+                            var timeout = options["hinttimeout"];
                             if (timeout > 0)
                                 activeTimeout = setTimeout(function () { processHints(true); }, timeout);
 
