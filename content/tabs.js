@@ -792,10 +792,10 @@ function Tabs() //{{{
                 return;
             }
 
-            var index = this.index(tab);
+            let index = this.index(tab);
             if (focusLeftTab)
             {
-                var lastRemovedTab = 0;
+                let lastRemovedTab = 0;
                 for (let i = index; i > index - count && i >= 0; i--)
                 {
                     removeOrBlankTab(this.getTab(i));
@@ -805,12 +805,13 @@ function Tabs() //{{{
             }
             else
             {
-                var i = index + count - 1;
+                let i = index + count - 1;
                 if (i >= this.count)
                     i = this.count - 1;
 
                 for (; i >= index; i--)
                     removeOrBlankTab(this.getTab(i));
+                getBrowser().mTabContainer.selectedIndex = index;
             }
         },
 
