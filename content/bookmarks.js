@@ -515,8 +515,8 @@ with (liberator) liberator.Bookmarks = function () //{{{
                 {
                     url:   item.url,
                     title: item.title,
-                    extra: [['keyword', item.keyword,         "hl-Keyword"],
-                            ['tags',    item.tags.join(', '), "hl-Tag"]
+                    extra: [['keyword', item.keyword,        "hl-Keyword"],
+                            ['tags',    item.tags.join(','), "hl-Tag"]
                            ].filter(function (i) i[1])
                 } for each (item in items)));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
