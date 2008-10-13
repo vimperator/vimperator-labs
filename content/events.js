@@ -546,6 +546,7 @@ with (liberator) liberator.Events = function () //{{{
                     echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
+                liberator.dump(e);
             }
         }
     }

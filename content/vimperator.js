@@ -250,7 +250,7 @@ with (liberator) liberator.config = { //{{{
 
         mappings.add([modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { commands.get("redraw").execute(); });
+            function () { commands.get("redraw").execute("", false); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -291,9 +291,10 @@ with (liberator) liberator.config = { //{{{
             "Redraw the screen",
             function ()
             {
-                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-                                getInterface(Components.interfaces.nsIDOMWindowUtils);
+                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                               .getInterface(Components.interfaces.nsIDOMWindowUtils);
                 wu.redraw();
+                modes.show(); // Clears the shadow of the last command, as in vim.
             },
             { argCount: "0" });
 

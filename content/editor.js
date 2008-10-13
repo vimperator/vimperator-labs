@@ -40,14 +40,14 @@ with (liberator) liberator.Editor = function () //{{{
     var lastFindCharFunc = null;
     var abbrev = {}; // abbrev["lhr"][0]["{i,c,!}","rhs"]
 
-    function editor()
+    function getEditor()
     {
         return window.document.commandDispatcher.focusedElement;
     }
 
     function getController()
     {
-        var ed = editor();
+        var ed = getEditor();
         if (!ed || !ed.controllers)
             return null;
 
@@ -474,7 +474,7 @@ with (liberator) liberator.Editor = function () //{{{
         {
             if (modes.main == modes.VISUAL)
             {
-                count = editor().selectionEnd - editor().selectionStart;
+                count = getEditor().selectionEnd - getEditor().selectionStart;
             }
             if (typeof count != "number" || count < 1)
             {
@@ -483,15 +483,15 @@ with (liberator) liberator.Editor = function () //{{{
 
             while (count-- > 0)
             {
-                var text = editor().value;
-                var pos = editor().selectionStart;
+                var text = getEditor().value;
+                var pos = getEditor().selectionStart;
                 if (pos >= text.length)
                 {
                     beep();
                     return;
                 }
                 var chr = text[pos];
-                editor().value = text.substring(0, pos) +
+                getEditor().value = text.substring(0, pos) +
                     (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
                     text.substring(pos + 1);
                 editor.moveToPosition(pos + 1, true, false);
@@ -517,8 +517,8 @@ with (liberator) liberator.Editor = function () //{{{
         line: function ()
         {
             var line = 1;
-            var text = editor().value;
-            for (let i = 0; i < editor().selectionStart; i++)
+            var text = getEditor().value;
+            for (let i = 0; i < getEditor().selectionStart; i++)
                 if (text[i] == "\n")
                     line++;
             return line;
@@ -527,8 +527,8 @@ with (liberator) liberator.Editor = function () //{{{
         col: function ()
         {
             var col = 1;
-            var text = editor().value;
-            for (let i = 0; i < editor().selectionStart; i++)
+            var text = getEditor().value;
+            for (let i = 0; i < getEditor().selectionStart; i++)
             {
                 col++;
                 if (text[i] == "\n")
@@ -546,8 +546,8 @@ with (liberator) liberator.Editor = function () //{{{
 
         selectedText: function ()
         {
-            var text = editor().value;
-            return text.substring(editor().selectionStart, editor().selectionEnd);
+            var text = getEditor().value;
+            return text.substring(getEditor().selectionStart, getEditor().selectionEnd);
         },
 
         pasteClipboard: function ()
@@ -697,48 +697,48 @@ with (liberator) liberator.Editor = function () //{{{
         {
             if (!select)
             {
-                editor().setSelectionRange(pos, pos);
+                getEditor().setSelectionRange(pos, pos);
                 return;
             }
 
             if (forward)
             {
-                if (pos <= editor().selectionEnd || pos > editor().value.length)
+                if (pos <= getEditor().selectionEnd || pos > getEditor().value.length)
                     return false;
 
                 do // TODO: test code for endless loops
                 {
                     this.executeCommand("cmd_selectCharNext", 1);
                 }
-                while (editor().selectionEnd != pos);
+                while (getEditor().selectionEnd != pos);
             }
             else
             {
-                if (pos >= editor().selectionStart || pos < 0)
+                if (pos >= getEditor().selectionStart || pos < 0)
                     return false;
 
                 do // TODO: test code for endless loops
                 {
                     this.executeCommand("cmd_selectCharPrevious", 1);
                 }
-                while (editor().selectionStart != pos);
+                while (getEditor().selectionStart != pos);
             }
         },
 
         // returns the position of char
         findCharForward: function (ch, count)
         {
-            if (!editor())
+            if (!getEditor())
                 return -1;
 
             lastFindChar = ch;
             lastFindCharFunc = this.findCharForward;
 
-            var text = editor().value;
+            var text = getEditor().value;
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
-            for (let i = editor().selectionEnd + 1; i < text.length; i++)
+            for (let i = getEditor().selectionEnd + 1; i < text.length; i++)
             {
                 if (text[i] == "\n")
                     break;
@@ -755,17 +755,17 @@ with (liberator) liberator.Editor = function () //{{{
         // returns the position of char
         findCharBackward: function (ch, count)
         {
-            if (!editor())
+            if (!getEditor())
                 return -1;
 
             lastFindChar = ch;
             lastFindCharFunc = this.findCharBackward;
 
-            var text = editor().value;
+            var text = getEditor().value;
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
-            for (let i = editor().selectionStart - 1; i >= 0; i--)
+            for (let i = getEditor().selectionStart - 1; i >= 0; i--)
             {
                 if (text[i] == "\n")
                     break;
@@ -1096,7 +1096,7 @@ with (liberator) liberator.Editor = function () //{{{
 
         expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
         {
-            var textbox   = editor();
+            var textbox   = getEditor();
             var text      = textbox.value;
             var currStart = textbox.selectionStart;
             var currEnd   = textbox.selectionEnd;
