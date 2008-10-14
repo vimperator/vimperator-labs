@@ -134,6 +134,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 .hl-TabNumber {
     font-weight: bold;
     padding-right: .3ex;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 #liberator-container  {
