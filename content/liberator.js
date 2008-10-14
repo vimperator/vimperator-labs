@@ -1111,6 +1111,7 @@ const liberator = (function () //{{{
         // this function is called when the chrome is ready
         startup: function ()
         {
+            let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
             // commands must always be the first module to be initialized
@@ -1180,6 +1181,7 @@ const liberator = (function () //{{{
 
             statusline.update();
 
+            liberator.dump("loaded in " + (Date.now() - start) + " ms");
             liberator.log(config.name + " fully initialized", 0);
         },
 
