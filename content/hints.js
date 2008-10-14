@@ -40,7 +40,7 @@ function Hints() //{{{
     var usedTabKey = false; // when we used <Tab> to select an element
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
-    var hints = [];
+    var pageHints = [];
     var validHints = []; // store the indices of the "hints" array with valid elements
 
     var escapeNumbers = false; // escape mode for numbers. true -> treated as hint-text
@@ -58,7 +58,7 @@ function Hints() //{{{
         hintString = "";
         hintNumber = 0;
         usedTabKey = false;
-        hints = [];
+        pageHints = [];
         validHints = [];
         canUpdate = false;
         docs = [];
@@ -94,7 +94,7 @@ function Hints() //{{{
         var res = buffer.evaluateXPath(options["hinttags"], doc, null, true);
 
         var fragment = doc.createDocumentFragment();
-        var start = hints.length;
+        var start = pageHints.length;
         for (let elem in res)
         {
             // TODO: for iframes, this calculation is wrong
@@ -129,11 +129,11 @@ function Hints() //{{{
             span.style.top = (rect.top + scrollY) + "px";
             fragment.appendChild(span);
 
-            hints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
+            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
         }
 
         doc.body.appendChild(fragment);
-        docs.push({ doc: doc, start: start, end: hints.length - 1 });
+        docs.push({ doc: doc, start: start, end: pageHints.length - 1 });
 
         // also generate hints for frames
         for (let i = 0; i < win.frames.length; i++)
@@ -178,7 +178,7 @@ function Hints() //{{{
         inner:
             for (let i in (util.rangeInterruptable(start, end + 1, 500)))
             {
-                let hint = hints[i];
+                let hint = pageHints[i];
                 [elem, text, span, imgspan] = hint;
 
                 if (!validHint(text))
