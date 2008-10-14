@@ -1,6 +1,4 @@
-
 <!ENTITY liberator.mainWindow "msgcomposeWindow">
 <!ENTITY liberator.name "muttator">
 <!ENTITY liberator.statusBefore "">
 <!ENTITY liberator.statusAfter "statusText">
-
