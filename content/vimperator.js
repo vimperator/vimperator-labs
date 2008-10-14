@@ -255,7 +255,7 @@ const config = { //{{{
 
         mappings.add([modes.NORMAL], ["<C-l>"],
             "Redraw the screen",
-            function () { commands.get("redraw").execute(); });
+            function () { commands.get("redraw").execute("", false); });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -299,6 +299,7 @@ const config = { //{{{
                 var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
                                 getInterface(Components.interfaces.nsIDOMWindowUtils);
                 wu.redraw();
+                modes.show();
             },
             { argCount: "0" });
 
