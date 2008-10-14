@@ -243,7 +243,7 @@ function Hints() //{{{
 
             for (let i = start; i <= end; i++)
             {
-                let hint = hits[i];
+                let hint = pageHints[i];
                 // remove the span for the numeric display part
                 doc.body.removeChild(hint[2]);
                 if (hint[3]) // a transparent span for images
