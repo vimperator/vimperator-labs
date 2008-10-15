@@ -784,7 +784,7 @@ function CommandLine() //{{{
                         else if (historyIndex >= inputHistory.length + 1)
                         {
                             historyIndex = inputHistory.length;
-                            beep();
+                            liberator.beep();
                             break;
                         }
 

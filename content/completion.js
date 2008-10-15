@@ -954,7 +954,7 @@ function Completion() //{{{
             return [0, this.filter(res, filter)];
         },
 
-        history: function history(filter) [0, history.get(filter)],
+        history: function _history(filter) [0, history.get(filter)],
 
         get javascriptCompleter() javascript,
 
