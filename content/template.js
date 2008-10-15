@@ -129,7 +129,7 @@ const template = {
                                     ({
                                         template.map(item.extra, function (e)
                                         <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                                        <![CDATA[\u00a0]]>/* Non-breaking space */)
+                                        <>&#xa0;</>/* Non-breaking space */)
                                     })
                                 </span>
                             }
