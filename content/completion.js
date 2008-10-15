@@ -26,6 +26,13 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+// An eval with a cleaner lexical scope.
+const EVAL_TMP = "__liberator_eval_tmp";
+function __eval(__liberator_eval_arg, __liberator_eval_tmp)
+{
+    return window.eval(__liberator_eval_arg);
+}
+
 function Completion() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +179,7 @@ function Completion() //{{{
 
         }
 
-        this.eval = function eval(arg, key)
+        this.eval = function eval(arg, key, tmp)
         {
             if (!("eval" in cacheResults))
                 cacheResults.eval = {};
@@ -184,7 +191,7 @@ function Completion() //{{{
                 return cache[key];
             try
             {
-                return cache[key] = window.eval(arg);
+                return cache[key] = __eval(arg, tmp);
             }
             catch (e)
             {
@@ -365,10 +372,9 @@ function Completion() //{{{
             // we'll still use the old value. But, it's worth it.
             let getObj = function (frame, stop)
             {
-                const TMP = "__liberator_eval_tmp";
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let prev = statement;
-                window[TMP] = null;
+                let obj;
                 for (let [i, dot] in Iterator(get(frame)[DOTS]))
                 {
                     if (dot < statement)
@@ -379,9 +385,9 @@ function Completion() //{{{
                     if (prev != statement)
                         s = TMP + "." + s;
                     prev = dot + 1;
-                    window[TMP] = self.eval(s, str.substring(statement, dot));
+                    obj = self.eval(s, str.substring(statement, dot), obj);
                 }
-                return window[TMP];
+                return obj;
             }
 
             let getObjKey = function (frame)
