@@ -89,14 +89,13 @@ function IO() //{{{
         {
             if (download.state == downloadManager.DOWNLOAD_FINISHED)
             {
-                autocommands.trigger("DownloadPost",
-                    {
-                        url:   download.source.spec,
-                        file:  download.targetFile.path,
-                        title: download.displayName,
-                        size:  download.size
-                    }
-                );
+                let url   = download.source.spec;
+                let title = download.displayName;
+                let file  = download.targetFile.path;
+                let size  = download.size;
+
+                liberator.echomsg("Download of " + title + " to " + file + " finished", 1);
+                autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
             }
         }
     };
