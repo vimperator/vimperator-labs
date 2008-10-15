@@ -1163,7 +1163,7 @@ const liberator = (function () //{{{
                     liberator.log("No user RC file found", 3);
 
                 if (options["loadplugins"])
-                    liberator.loadPlugins;
+                    liberator.loadPlugins();
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
