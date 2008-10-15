@@ -744,6 +744,10 @@ function Options() //{{{
                 let opt = parseOpt(filter, modifiers);
                 let option = opt.option;
 
+                commandline.highlight(0, 0, "SPELLCHECK");
+                if (!option) /* FIXME: Kludge. */
+                    commandline.highlight(0, name.length, "SPELLCHECK");
+
                 if (opt.get || opt.reset || !option || prefix)
                     return [0, []];
 
