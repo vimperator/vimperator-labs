@@ -640,14 +640,13 @@ const liberator = (function () //{{{
             liberator.dump((msg || "") + (new Error()).stack.replace(/.*\n/, ""));
         },
 
-        // with (liberator) means, liberator is the default namespace "inside" eval
         eval: function (str)
         {
             const fileName = "chrome://liberator/content/liberator.js";
             const line = new Error().lineNumber + 3;
             try
             {
-                return eval("with (liberator) {" + str + "}");
+                return window.eval(str);
             }
             catch (e)
             {

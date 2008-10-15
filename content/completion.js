@@ -72,7 +72,6 @@ function Completion() //{{{
         let last = ""; /* The last opening char pushed onto the stack. */
         let lastNonwhite = ""; /* Last non-whitespace character we saw. */
         let lastChar = "";     /* Last character we saw, used for \ escaping quotes. */
-        let lastObjs = [];
         let lastKey = null;
         let compl = [];
         let str = "";
@@ -129,23 +128,10 @@ function Completion() //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
-            // See if we can use the cached member list from a previous call.
-            if (continuing && objects != lastObjs)
-            {
-                let k = 0;
-                continuing = objects.every(function (obj) obj == lastObjs[k++]);
-            }
-
-            lastObjs = objects;
-            if (continuing)
-                return compl;
-
             // Can't use the cache. Build a member list.
             compl = [];
             for (let [,obj] in Iterator(objects))
             {
-                if (typeof obj == "string")
-                    obj = eval("with (liberator) {" + obj + "}");
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
                     continue;
@@ -186,12 +172,19 @@ function Completion() //{{{
 
         }
 
-        function eval(arg)
+        this.eval = function eval(arg, key)
         {
+            if (!("eval" in cacheResults))
+                cacheResults.eval = {};
+            let cache = cacheResults.eval;
+            if (!key)
+                key = arg;
+
+            if (key in cache)
+                return cache[key];
             try
             {
-                // liberator.dump("eval(" + util.escapeString(arg) + ")\n");
-                return liberator.eval(arg);
+                return cache[key] = window.eval(arg);
             }
             catch (e)
             {
@@ -331,6 +324,7 @@ function Completion() //{{{
 
         this.complete = function complete(string)
         {
+            let self = this;
             try
             {
                 continuing = lastIdx && string.indexOf(str) == 0;
@@ -348,22 +342,53 @@ function Completion() //{{{
 
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
-            let end = get(0, 0, FULL_STATEMENTS) || 0;
-            let preEval = str.substring(0, end) + ";";
+            let prev = 0;
+            for (let [,v] in Iterator(get(0)[FULL_STATEMENTS]))
+            {
+                    this.eval(str.substring(prev, v + 1));
+                    prev = v + 1;
+            }
+
+            // For each DOT in a statement, prefix it with TMP, eval it,
+            // and save the result back to TMP. The point of this is to
+            // cache the entire path through an object chain, mainly in
+            // the presence of function calls. There are drawbacks. For
+            // instance, if the value of a variable changes in the course
+            // of inputting a command (let foo=bar; frob(foo); foo=foo.bar; ...),
+            // we'll still use the old value. But, it's worth it.
+            let getObj = function (frame, stop)
+            {
+                const TMP = "__liberator_eval_tmp";
+                let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
+                let prev = statement;
+                window[TMP] = null;
+                for (let [i, dot] in Iterator(get(frame)[DOTS]))
+                {
+                    if (dot < statement)
+                        continue;
+                    if (dot > stop)
+                        break;
+                    let s = str.substring(prev, dot);
+                    if (prev != statement)
+                        s = TMP + "." + s;
+                    prev = dot + 1;
+                    window[TMP] = self.eval(s, str.substring(statement, dot));
+                }
+                return window[TMP];
+            }
 
             let getObjKey = function (frame)
             {
-                let obj = [liberator, window]; // Default objects;
-
                 let dot = get(frame, 0, DOTS) || -1; // Last dot in frame.
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
+                let obj = [liberator, window]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
                     dot = statement - 1;
                 else // Yes. Set the object to the string before the dot.
-                    obj = preEval + str.substring(statement, dot);
+                    obj = getObj(frame, dot);
 
                 let [, space, key] = str.substring(dot + 1, end).match(/^(\s*)(.*)/);
                 return [dot + 1 + space.length, obj, key];
@@ -400,11 +425,11 @@ function Completion() //{{{
                         return [0, []];
 
                     // Begining of the statement upto the opening [
-                    let obj = preEval + str.substring(get(-3, 0, STATEMENTS), get(-2)[OFFSET]);
+                    let obj = getObj(-3, get(-2)[OFFSET]);
                     // After the opening [ upto the opening ", plus '' to take care of any operators before it
-                    let key = preEval + str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
+                    let key = str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
                     // Now eval the key, to process any referenced variables.
-                    key = eval(key);
+                    key = this.eval(key);
 
                     let compl = this.objectKeys(obj);
                     return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
@@ -430,9 +455,10 @@ function Completion() //{{{
                     try
                     {
                         if (!completer)
-                            completer = eval(obj)[func].liberatorCompleter;
+                            completer = obj[func].liberatorCompleter;
                     }
                     catch (e) {}
+                    liberator.dump({call: completer, func: func, obj: obj, string: string, args: "args"});
                     if (!completer)
                         return [0, []];
 
@@ -446,8 +472,8 @@ function Completion() //{{{
                     });
                     args.push(key);
 
-                    let compl = completer.call(this, func, preEval, obj, string, args);
-                    key = eval(preEval + key);
+                    let compl = completer.call(this, func, obj, string, args);
+                    key = this.eval(key);
                     return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
                 }
 
