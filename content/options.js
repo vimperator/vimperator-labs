@@ -380,7 +380,7 @@ function Options() //{{{
         },
         {
             argCount: "0",
-            bang: true,
+            bang: true
         });
 
     commands.add(["setl[ocal]"],
@@ -419,6 +419,7 @@ function Options() //{{{
     function parseOpt(args, modifiers)
     {
         let ret = {};
+        let matches, prefix, postfix, valueGiven;
 
         [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
         args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
@@ -893,7 +894,7 @@ function Options() //{{{
                         name:      opt.name,
                         default:   opt.defaultValue,
                         pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
-                        value:     <></>,
+                        value:     <></>
                     };
 
                     if (onlyNonDefault && option.isDefault)
@@ -942,7 +943,7 @@ function Options() //{{{
                         default:   loadPreference(pref, null, true),
                         value:     <>={template.highlight(value)}</>,
                         name:      pref,
-                        pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0" /* Unicode nonbreaking space. */
                     };
 
                     yield option;

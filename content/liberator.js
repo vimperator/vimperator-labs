@@ -101,7 +101,7 @@ const liberator = (function () //{{{
                         ["b", "Bookmark bar"]
                     ].concat(!liberator.has("tabs") ? [] : tabopts);
                 },
-                validator: function (value) Array.every(value, function (c) c in config.guioptions || tabopts.some(function (a) a[0] == c)),
+                validator: function (value) Array.every(value, function (c) c in config.guioptions || tabopts.some(function (a) a[0] == c))
             });
 
         options.add(["helpfile", "hf"],
@@ -333,7 +333,7 @@ const liberator = (function () //{{{
             {
                 bang: true,
                 completer: function (filter) completion.javascript(filter),
-                hereDoc: true,
+                hereDoc: true
             });
 
         commands.add(["loadplugins", "lpl"],

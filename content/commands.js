@@ -532,7 +532,7 @@ function Commands() //{{{
                                     invalid = true;
                                 }
 
-                                if (quote) 
+                                if (quote)
                                 {
                                     if (!complete)
                                     {
@@ -748,7 +748,7 @@ function Commands() //{{{
                 let filter = {
                     argCount: args["-nargs"],
                     bang:     "-bang" in args && true,
-                    count:    args["-count"],
+                    count:    args["-count"]
                 };
                 let cmds = getMatchingUserCommands(cmd, filter);
 

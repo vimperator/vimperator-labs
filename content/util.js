@@ -436,7 +436,7 @@ const util = { //{{{
                     domnode.appendChild(arguments.callee(child, doc));
                 return domnode;
         }
-    },
+    }
 }; //}}}
 
 function Struct()
@@ -466,7 +466,7 @@ function Struct()
 }
 
 Struct.prototype = {
-    clone: function () 
+    clone: function ()
     {
         return this.constructor.apply(null, this.slice());
     },

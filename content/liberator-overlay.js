@@ -10,7 +10,7 @@
     function load(script) {
         try
         {
-            dump("liberator: Loading script: " + script + "\n");	
+            dump("liberator: Loading script: " + script + "\n");
             loader.loadSubScript(BASE + script, modules)
         }
         catch (e)

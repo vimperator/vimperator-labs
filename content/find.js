@@ -221,7 +221,7 @@ function Search() //{{{
             aNode.appendChild(docfrag);
             parent.insertBefore(aNode, before);
             return aNode;
-        },
+        }
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}

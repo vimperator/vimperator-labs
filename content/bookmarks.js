@@ -520,7 +520,7 @@ function Bookmarks() //{{{
                            ].filter(function (i) i[1])
                 } for each (item in items)));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-        },
+        }
     };
     //}}}
 }; //}}}
@@ -816,7 +816,7 @@ function History() //{{{
                 let list = template.bookmarks("title", (
                     {
                         title: item[1],
-                        url:   item[0],
+                        url:   item[0]
                     } for each (item in items)));
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }

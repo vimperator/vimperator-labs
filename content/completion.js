@@ -866,12 +866,17 @@ function Completion() //{{{
                 return mapped;
             };
 
-            try {
-            if (tail)
-                return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
-            else
-                return [0, this.cached("file", filter, generate, "filter", [true])];
-            }catch(e){liberator.dump(e)}
+            try
+            {
+                if (tail)
+                    return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
+                else
+                    return [0, this.cached("file", filter, generate, "filter", [true])];
+            }
+            catch (e)
+            {
+                liberator.dump(e);
+            }
         },
 
         help: function help(filter)

@@ -1493,7 +1493,7 @@ function StatusLine() //{{{
             const highlightGroup = {
                 secure:   "StatusLineSecure",
                 broken:   "StatusLineBroken",
-                insecure: "StatusLine",
+                insecure: "StatusLine"
             };
 
             statusBar.setAttribute("class", "chromeclass-status hl-" + highlightGroup[type]);

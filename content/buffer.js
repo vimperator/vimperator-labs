@@ -266,7 +266,7 @@ function Buffer() //{{{
         }
     }
     Styles.prototype = {
-        get sites() util.uniq(util.flatten([v.sites for ([k, v] in this.userSheets)])),
+        get sites() util.uniq(util.flatten([v.sites for ([k, v] in this.userSheets)]))
     };
 
     let styles = storage.newObject("styles", Styles, false);
@@ -887,7 +887,7 @@ function Buffer() //{{{
                     , filter)],
             literal: true,
             options: [[["-index", "-i"], commands.OPTION_INT],
-                      [["-name", "-n"],  commands.OPTION_STRING]],
+                      [["-name", "-n"],  commands.OPTION_STRING]]
         });
 
     commands.add(["hi[ghlight]"],
@@ -915,7 +915,7 @@ function Buffer() //{{{
             argCount: 1,
             bang: true,
             hereDoc: true,
-            literal: true,
+            literal: true
         });
 
     commands.add(["vie[wsource]"],

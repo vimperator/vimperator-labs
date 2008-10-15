@@ -231,6 +231,6 @@ const template = {
                 </tr>)
             }
             </table>);
-    },
+    }
 };
 
