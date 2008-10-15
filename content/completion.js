@@ -30,6 +30,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 const EVAL_TMP = "__liberator_eval_tmp";
 function __eval(__liberator_eval_arg, __liberator_eval_tmp)
 {
+    liberator.dump({__liberator_eval_tmp: __liberator_eval_tmp, __liberator_eval_arg: __liberator_eval_arg})
     return window.eval(__liberator_eval_arg);
 }
 
@@ -56,7 +57,7 @@ function Completion() //{{{
     var historyResult = null;
     var completionCache = [];
 
-    var historyTimer = new util.Timer(50, 100, function () {
+    var historyTimer = new util.Timer(50, 100, function histTimer() {
         let comp = [];
         for (let i in util.range(0, historyResult.matchCount))
             comp.push([historyResult.getValueAt(i),
@@ -90,7 +91,7 @@ function Completion() //{{{
 
         this.iter = function iter(obj)
         {
-            let iterator = (function ()
+            let iterator = (function objIter()
             {
                 for (let k in obj)
                 {
@@ -169,11 +170,11 @@ function Completion() //{{{
 
             if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
             {
-                res.forEach(function (a) a[0] = util.escapeString(a[0].substr(offset), last));
+                res.forEach(function strEscape(a) a[0] = util.escapeString(a[0].substr(offset), last));
             }
             else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
             {
-                res = res.filter(function (a) /^[\w$][\w\d$]*$/.test(a[0]));
+                res = res.filter(function isIdent(a) /^[\w$][\w\d$]*$/.test(a[0]));
             }
             return res;
 
@@ -370,7 +371,7 @@ function Completion() //{{{
             // instance, if the value of a variable changes in the course
             // of inputting a command (let foo=bar; frob(foo); foo=foo.bar; ...),
             // we'll still use the old value. But, it's worth it.
-            let getObj = function (frame, stop)
+            function getObj(frame, stop)
             {
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let prev = statement;
@@ -383,14 +384,14 @@ function Completion() //{{{
                         break;
                     let s = str.substring(prev, dot);
                     if (prev != statement)
-                        s = TMP + "." + s;
+                        s = EVAL_TMP + "." + s;
                     prev = dot + 1;
                     obj = self.eval(s, str.substring(statement, dot), obj);
                 }
                 return obj;
             }
 
-            let getObjKey = function (frame)
+            function getObjKey(frame)
             {
                 let dot = get(frame, 0, DOTS) || -1; // Last dot in frame.
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
@@ -477,7 +478,7 @@ function Completion() //{{{
 
                     // Split up the arguments
                     let prev = get(-2)[OFFSET];
-                    let args = get(-2)[FULL_STATEMENTS].map(function (s)
+                    let args = get(-2)[FULL_STATEMENTS].map(function splitArgs(s)
                     {
                         let ret = str.substring(prev + 1, s);
                         prev = s;
@@ -568,13 +569,13 @@ function Completion() //{{{
                     if (substrings.length == 0)
                         buildSubstrings(str, filter);
                     else
-                        substrings = substrings.filter(function (s) str.indexOf(s) >= 0);
+                        substrings = substrings.filter(function strIndex(s) str.indexOf(s) >= 0);
                 }
                 break;
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -608,14 +609,14 @@ function Completion() //{{{
                     }
                     else
                     {
-                        substrings = substrings.filter(function (s) compitem.indexOf(s) == 0);
+                        substrings = substrings.filter(function strIndex(s) compitem.indexOf(s) == 0);
                     }
                 }
                 break;
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -687,7 +688,7 @@ function Completion() //{{{
             filterTags = filterTags || [];
 
             // TODO: use ignorecase and smartcase settings
-            var ignorecase = (filter == filter.toLowerCase() && filterTags.every(function (t) t == t.toLowerCase()));
+            var ignorecase = (filter == filter.toLowerCase() && filterTags.every(function checkMixedCase(t) t == t.toLowerCase()));
 
             if (ignorecase)
             {
@@ -712,7 +713,7 @@ function Completion() //{{{
                 }
 
                 // filter on tags
-                if (filterTags.some(function (tag) tag && tags.indexOf(tag) == -1))
+                if (filterTags.some(function aryIndex(tag) tag && tags.indexOf(tag) == -1))
                         continue;
 
                 if (url.indexOf(filter) == -1)
@@ -729,14 +730,14 @@ function Completion() //{{{
                 if (substrings.length == 0)   // Build the substrings
                     buildSubstrings(url, filter);
                 else
-                    substrings = substrings.filter(function (s) url.indexOf(s) >= 0);
+                    substrings = substrings.filter(function strIndex(s) url.indexOf(s) >= 0);
 
                 filtered.push(elem);
             }
 
             filtered = filtered.concat(additionalCompletions);
             if (options.get("wildoptions").has("sort"))
-                filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
+                filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
             return filtered;
         },
 
@@ -754,7 +755,7 @@ function Completion() //{{{
                 itemsStr = itemsStr.toLowerCase();
             }
 
-            if (filter.split(/\s+/).every(function (str) itemsStr.indexOf(str) > -1))
+            if (filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1))
                 return true;
 
             return false;
