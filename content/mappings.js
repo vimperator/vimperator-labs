@@ -170,14 +170,15 @@ function Mappings() //{{{
         // 2 args -> map arg1 to arg*
         function map(args, mode, noremap)
         {
-            if (!args)
+            if (!args.arguments.length)
             {
                 mappings.list(mode);
                 return;
             }
 
             // ?:\s+ <- don't remember; (...)? optional = rhs
-            var [, lhs, rhs] = args.match(/(\S+)(?:\s+(.+))?/);
+            let [lhs] = args.arguments;
+            let rhs = args.literalArg;
 
             if (!rhs) // list the mapping
             {
@@ -189,11 +190,11 @@ function Mappings() //{{{
                 {
                     mappings.addUserMap([m], [lhs],
                             "User defined mapping",
-                            function (count) { events.feedkeys((count > 1 ? count : "") + rhs, noremap); },
+                            function (count) { events.feedkeys((count > 1 ? count : "") + rhs, noremap, "<silent>" in args); },
                             {
                                 flags: Mappings.flags.COUNT,
                                 rhs: rhs,
-                                noremap: noremap
+                                noremap: noremap,
                             });
                 }
             }
@@ -201,10 +202,19 @@ function Mappings() //{{{
 
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
+        const opts = {
+                completer: function (filter) completion.userMapping(filter, modes),
+                options: [
+                    [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
+                ],
+                argCount: 1,
+                literal: true
+        };
+
         commands.add([ch ? ch + "m[ap]" : "map"],
             "Map a key sequence" + modeDescription,
             function (args) { map(args, modes, false); },
-            { completer: function (filter) completion.userMapping(filter, modes) });
+            opts);
 
         commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,

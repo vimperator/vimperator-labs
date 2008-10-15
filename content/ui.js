@@ -94,6 +94,8 @@ function CommandLine() //{{{
     };
     var lastMowOutput = null;
 
+    var silent = false;
+
     var completionList = new ItemList("liberator-completions");
     var completions = [];
     // for the example command "open sometext| othertext" (| is the cursor pos):
@@ -108,7 +110,7 @@ function CommandLine() //{{{
     var statusTimer = new util.Timer(5, 100, function ()
         statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
     var autocompleteTimer = new util.Timer(201, 300, function (command) {
-        if (modes.isReplaying)
+        if (events.feedingKeys)
             return;
         let [start, compl] = completion.ex(command);
         commandline.setCompletions(compl, start);
@@ -549,6 +551,15 @@ function CommandLine() //{{{
 
         get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
+        get silent() silent,
+        set silent(val) {
+            silent = val;
+            if(silent)
+                storage.styles.addSheet("silent-mode", "chrome://*", "#liberator-commandline > * { opacity: 0 }", true, true);
+            else
+                storage.styles.removeSheet("silent-mode", null, null, null, true);
+        },
+
         getCommand: function ()
         {
             return commandWidget.value;
@@ -717,7 +728,7 @@ function CommandLine() //{{{
                     let mode = currentExtendedMode; // save it here, as setMode() resets it
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
                     inputHistory.add(command);
-                    modes.pop(true);
+                    modes.pop(!commandline.silent);
                     autocompleteTimer.reset();
                     completionList.hide();
                     liberator.focusContent(false);

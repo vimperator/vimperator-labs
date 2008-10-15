@@ -851,7 +851,7 @@ function Events() //{{{
         //
         // @param keys: a string like "2<C-f>" to pass
         //              if you want < to be taken literally, prepend it with a \\
-        feedkeys: function (keys, noremap)
+        feedkeys: function (keys, noremap, silent)
         {
             var doc = window.document;
             var view = window.document.defaultView;
@@ -859,74 +859,85 @@ function Events() //{{{
 
             var wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
+            var wasSilent = commandline.silent;
+            if(silent)
+                commandline.silent = silent;
 
-            noremap = !!noremap;
-
-            for (var i = 0; i < keys.length; i++)
+            try
             {
-                var charCode = keys.charCodeAt(i);
-                var keyCode = 0;
-                var shift = false, ctrl = false, alt = false, meta = false;
+                noremap = !!noremap;
 
-                //if (charCode == 92) // the '\' key FIXME: support the escape key
-                if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
+                for (var i = 0; i < keys.length; i++)
                 {
-                    var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
-                    if (matches && matches[2])
+                    var charCode = keys.charCodeAt(i);
+                    var keyCode = 0;
+                    var shift = false, ctrl = false, alt = false, meta = false;
+
+                    //if (charCode == 92) // the '\' key FIXME: support the escape key
+                    if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
                     {
-                        if (matches[1]) // check for modifiers
+                        var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
+                        if (matches && matches[2])
                         {
-                            ctrl  = /[cC]-/.test(matches[1]);
-                            alt   = /[aA]-/.test(matches[1]);
-                            shift = /[sS]-/.test(matches[1]);
-                            meta  = /[mM]-/.test(matches[1]);
-                        }
-                        if (matches[2].length == 1)
-                        {
-                            if (!ctrl && !alt && !shift && !meta)
-                                return false; // an invalid key like <a>
-                            charCode = matches[2].charCodeAt(0);
-                        }
-                        else if (matches[2].toLowerCase() == "space")
-                        {
-                            charCode = 32;
-                        }
-                        else if (keyCode = getKeyCode(matches[2]))
-                        {
-                            charCode = 0;
-                        }
-                        else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
-                        {
-                            break;
-                        }
+                            if (matches[1]) // check for modifiers
+                            {
+                                ctrl  = /[cC]-/.test(matches[1]);
+                                alt   = /[aA]-/.test(matches[1]);
+                                shift = /[sS]-/.test(matches[1]);
+                                meta  = /[mM]-/.test(matches[1]);
+                            }
+                            if (matches[2].length == 1)
+                            {
+                                if (!ctrl && !alt && !shift && !meta)
+                                    return false; // an invalid key like <a>
+                                charCode = matches[2].charCodeAt(0);
+                            }
+                            else if (matches[2].toLowerCase() == "space")
+                            {
+                                charCode = 32;
+                            }
+                            else if (keyCode = getKeyCode(matches[2]))
+                            {
+                                charCode = 0;
+                            }
+                            else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
+                            {
+                                break;
+                            }
 
-                        i += matches[0].length + 1;
+                            i += matches[0].length + 1;
+                        }
                     }
-                }
-                else // a simple key
-                {
-                    // FIXME: does not work for non A-Z keys like Ö,Ä,...
-                    shift = (keys[i] >= "A" && keys[i] <= "Z");
-                }
+                    else // a simple key
+                    {
+                        // FIXME: does not work for non A-Z keys like Ö,Ä,...
+                        shift = (keys[i] >= "A" && keys[i] <= "Z");
+                    }
 
-                var elem = window.document.commandDispatcher.focusedElement;
-                if (!elem)
-                    elem = window.content;
+                    var elem = window.document.commandDispatcher.focusedElement;
+                    if (!elem)
+                        elem = window.content;
 
-                var evt = doc.createEvent("KeyEvents");
-                evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
-                evt.noremap = noremap;
-                evt.isMacro = true;
-                elem.dispatchEvent(evt);
-                if (!this.feedingKeys)
-                    break;
-                // stop feeding keys if page loading failed
-                if (modes.isReplaying && !waitForPageLoaded())
-                    break;
-                // else // a short break between keys often helps
-                //     liberator.sleep(50);
+                    var evt = doc.createEvent("KeyEvents");
+                    evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
+                    evt.noremap = noremap;
+                    evt.isMacro = true;
+                    elem.dispatchEvent(evt);
+                    if (!this.feedingKeys)
+                        break;
+                    // stop feeding keys if page loading failed
+                    if (modes.isReplaying && !waitForPageLoaded())
+                        break;
+                    // else // a short break between keys often helps
+                    //     liberator.sleep(50);
+                }
             }
-            this.feedingKeys = wasFeeding;
+            finally
+            {
+                this.feedingKeys = wasFeeding;
+                if(silent)
+                    commandline.silent = wasSilent;
+            }
             return i == keys.length;
         },
 
