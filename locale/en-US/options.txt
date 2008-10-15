@@ -773,8 +773,9 @@ ____
 ____
 (default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
 
-A regex which defines the word separators which are used for the 'hintmatching' types
-"wordstartswith" and "firstletters" to split the words in the text of a link.
+A regexp which defines the word separators which are used for the
+'hintmatching' types "wordstartswith" and "firstletters" to split the words in
+the text of a link.
 ____
 
 // vim: set syntax=asciidoc:

@@ -137,14 +137,14 @@ ________________________________________________________________________________
 |<C-x>|
 ||[count]<C-x>||
 ________________________________________________________________________________
-Decrements the last number in URL by 1, or by count if given.
+Decrements the last number in URL by 1, or by [count] if given.
 ________________________________________________________________________________
 
 
 |<C-a>|
 ||[count]<C-a>||
 ________________________________________________________________________________
-Increments the last number in URL by 1, or by count if given.
+Increments the last number in URL by 1, or by [count] if given.
 ________________________________________________________________________________
 
 

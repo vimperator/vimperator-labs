@@ -59,7 +59,8 @@ section:Motion{nbsp}commands[motion,scrolling]
 |^| |0| +
 ||0||
 ________________________________________________________________________________
-Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m] work exactly the same way.
+Scroll to the absolute left of the document. Unlike in Vim, [m]0[m] and [m]^[m]
+work exactly the same way.
 ________________________________________________________________________________
 
 

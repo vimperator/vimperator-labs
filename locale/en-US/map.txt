@@ -262,7 +262,7 @@ ________________________________________________________________________________
 
 ||:com[mand][!] [{attr}...] {cmd} {rep}|| +
 ________________________________________________________________________________
-Define a new user command. The name of the command is {cmd} and its relacement
+Define a new user command. The name of the command is {cmd} and its replacement
 text is {rep}. The command's attributes are {attr}. If a command with this name
 already exists an error is reported unless [!] is specified, in which case the
 command is redefined. Unlike Vim, the command may start with a lowercase

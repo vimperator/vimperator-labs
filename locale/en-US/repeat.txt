@@ -18,8 +18,8 @@ ____________________________________________________________________________
 |:macros|
 ||:mac[ros] [args]|| +
 ________________________________________________________________________________
-List recorded macros matching the optional regular expression [args]. If no regex is
-given, list all macros.
+List recorded macros matching the optional regular expression [args]. If no
+regexp is given, list all macros.
 ________________________________________________________________________________
 
 
@@ -51,7 +51,7 @@ ____________________________________________________________________________
 |.|
 ||[count].|
 ____________________________________________________________________________
-Repeat the last keyboard mapping [count] times. Note that, unlike in vim, this
+Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
 does not apply solely to editing commands, mainly because Vimperator doesn't
 have them.
 ____________________________________________________________________________

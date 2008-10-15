@@ -82,7 +82,7 @@ section:Normal{nbsp}mode[normal-index]
 
 ||@|| Play a macro +
 
-||.|| Repeat the last keyborad command
+||.|| Repeat the last keyboard command +
 
 ||]f|| Focus next frame +
 ||[f|| Focus previous frame +
@@ -303,6 +303,6 @@ section:Options[option-index]
 ||'wildignore'|| List of file patterns to ignore when completing files +
 ||'wildmode'|| Define how command-line completion works +
 ||'wildoptions'|| Change how command-line completion is done +
-||'wordseparators'|| How words are splitted for hintmatching +
+||'wordseparators'|| How words are split for hintmatching +
 
 // vim: set syntax=asciidoc:
