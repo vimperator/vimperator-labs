@@ -190,6 +190,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:macros|| List all macros +
 ||:map|| Map a key sequence +
 ||:mapclear|| Remove all mappings +
+||:map-<silent>|| Map a silent key sequence +
 ||:mark|| Mark current location within the web page +
 ||:marks|| Show all location marks of current web page +
 ||:mkvimperatorrc|| Write current key mappings and changed options to the config file +

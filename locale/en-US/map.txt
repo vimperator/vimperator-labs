@@ -141,6 +141,15 @@ Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
 ________________________________________________________________________________
 
 
+|:map-<silent>| +
+________________________________________________________________________________
+When the first argument to one of the mapping commands is <silent>, {rhs}
+is not echoed to the commandline, nor, for that matter, is anything else
+until the command has completed.
+________________________________________________________________________________
+
+
+
 |:unm| |:unmap| +
 ||:unm[ap] {lhs}||
 ________________________________________________________________________________
