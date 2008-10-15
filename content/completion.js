@@ -80,12 +80,13 @@ function Completion() //{{{
         let last = ""; /* The last opening char pushed onto the stack. */
         let lastNonwhite = ""; /* Last non-whitespace character we saw. */
         let lastChar = "";     /* Last character we saw, used for \ escaping quotes. */
-        let lastKey = null;
         let compl = [];
         let str = "";
 
         let lastIdx = 0;
         let continuing = false;
+
+        let cacheKey = null;
 
         this.completers = {};
 
@@ -136,6 +137,10 @@ function Completion() //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
+            if (cacheFilter.js === cacheKey)
+                return cacheResults.js;
+            cacheFilter.js = cacheKey;
+
             // Can't use the cache. Build a member list.
             compl = [];
             for (let [,obj] in Iterator(objects))
@@ -149,7 +154,7 @@ function Completion() //{{{
                 for (let [k, v] in this.iter(obj))
                     compl.push([k, template.highlight(v, true)]);
             }
-            return compl;
+            return cacheResults.js = compl;
         }
 
         this.filter = function filter(compl, key, last, offset)
@@ -177,7 +182,6 @@ function Completion() //{{{
                 res = res.filter(function isIdent(a) /^[\w$][\w\d$]*$/.test(a[0]));
             }
             return res;
-
         }
 
         this.eval = function eval(arg, key, tmp)
@@ -386,7 +390,8 @@ function Completion() //{{{
                     if (prev != statement)
                         s = EVAL_TMP + "." + s;
                     prev = dot + 1;
-                    obj = self.eval(s, str.substring(statement, dot), obj);
+                    cacheKey = str.substring(statement, dot);
+                    obj = self.eval(s, cacheKey, obj);
                 }
                 return obj;
             }
@@ -397,6 +402,7 @@ function Completion() //{{{
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
+                cacheKey = null;
                 let obj = [liberator, window]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
