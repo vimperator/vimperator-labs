@@ -97,7 +97,10 @@ function IO() //{{{
                 liberator.echomsg("Download of " + title + " to " + file + " finished", 1);
                 autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
             }
-        }
+        },
+        onStateChange:    function () {},
+        onProgressChange: function () {},
+        onSecurityChange: function () {}
     };
 
     downloadManager.addListener(downloadListener);
