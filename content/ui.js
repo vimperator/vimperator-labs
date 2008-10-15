@@ -1281,6 +1281,13 @@ function ItemList(id) //{{{
     // TODO: temporary, to be changed/removed
     function createRow([b, c, a], dom)
     {
+        /* Kludge until we have completion contexts. */
+        let map = completion.filterMap;
+        if (map)
+        {
+            b = map[0] ? map[0](b) : b;
+            c = map[1] ? map[1](c) : c;
+        }
         /* Obviously, ItemList shouldn't know or care about this. */
         let filter = completion.filterString;
         if (filter)

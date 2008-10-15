@@ -30,7 +30,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 const EVAL_TMP = "__liberator_eval_tmp";
 function __eval(__liberator_eval_arg, __liberator_eval_tmp)
 {
-    liberator.dump({__liberator_eval_tmp: __liberator_eval_tmp, __liberator_eval_arg: __liberator_eval_arg})
     return window.eval(__liberator_eval_arg);
 }
 
@@ -137,6 +136,8 @@ function Completion() //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
+            completion.filterMap = [null, function (v) template.highlight(v, true)];
+
             if (cacheFilter.js === cacheKey)
                 return cacheResults.js;
             cacheFilter.js = cacheKey;
@@ -152,7 +153,7 @@ function Completion() //{{{
                     obj = obj.wrappedJSObject;
 
                 for (let [k, v] in this.iter(obj))
-                    compl.push([k, template.highlight(v, true)]);
+                    compl.push([k, v]);
             }
             return cacheResults.js = compl;
         }
@@ -851,6 +852,7 @@ function Completion() //{{{
         // provides completions for ex commands, including their arguments
         ex: function ex(str)
         {
+            this.filterMap = null;
             this.filterString = "";
             this.parenMatch = null;
             substrings = [];
