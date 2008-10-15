@@ -37,10 +37,12 @@ function IO() //{{{
     const WINDOWS = navigator.platform == "Win32";
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
-    var environmentService = Components.classes["@mozilla.org/process/environment;1"]
-                                       .getService(Components.interfaces.nsIEnvironment);
-    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"]
-                                     .getService(Components.interfaces.nsIProperties);
+    const environmentService = Components.classes["@mozilla.org/process/environment;1"]
+                                         .getService(Components.interfaces.nsIEnvironment);
+    const directoryService   = Components.classes["@mozilla.org/file/directory_service;1"]
+                                         .getService(Components.interfaces.nsIProperties);
+    const downloadManager    = Components.classes["@mozilla.org/download-manager;1"]
+                                         .createInstance(Components.interfaces.nsIDownloadManager);
 
     var processDir = directoryService.get("CurWorkD", Components.interfaces.nsIFile);
     var cwd = processDir.path;
@@ -67,10 +69,7 @@ function IO() //{{{
         shellcmdflag = "-c";
     }
 
-    function expandPathList(list)
-    {
-        return list.split(",").map(io.expandPath).join(",");
-    }
+    function expandPathList(list) list.split(",").map(io.expandPath).join(",")
 
     // TODO: why are we passing around so many strings? I know that the XPCOM
     // file API is limited but...
@@ -84,6 +83,28 @@ function IO() //{{{
 
         return head + pathSeparator + tail;
     }
+
+    var downloadListener = {
+        onDownloadStateChange: function (state, download)
+        {
+            if (download.state == downloadManager.DOWNLOAD_FINISHED)
+            {
+                autocommands.trigger("DownloadPost",
+                    {
+                        url:   download.source.spec,
+                        file:  download.targetFile.path,
+                        title: download.displayName,
+                        size:  download.size
+                    }
+                );
+            }
+        }
+    };
+
+    downloadManager.addListener(downloadListener);
+    liberator.registerObserver("shutdown", function () {
+        downloadManager.removeListener(downloadListener);
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS ////////////////////////////////////////////////

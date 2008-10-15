@@ -33,7 +33,7 @@
     * add 'helpfile' option
     * add 'wildignore' option
     * add :finish command
-    * new events BookmarkAdd, ShellCmdPost, VimperatorLeavePre
+    * new events BookmarkAdd, ShellCmdPost, VimperatorLeavePre, DownloadPost
     * add 'cdpath' option
     * allow :dialog to open the cookies manager
     * add 'loadplugins' option

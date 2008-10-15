@@ -40,6 +40,7 @@ const config = { //{{{
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
                    ["DOMLoad",            "Triggered when a page's DOM content has fully loaded"],
+                   ["DownloadPost",       "Triggered when a download has completed"],
                    ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
