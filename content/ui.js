@@ -1164,32 +1164,33 @@ function CommandLine() //{{{
             }
         },
 
+        highlight: function (start, end, type)
+        {
+            // FIXME: Kludge.
+            try // Firefox <3.1 doesn't have repaintSelection
+            {
+                const selType = Components.interfaces.nsISelectionController["SELECTION_" + type];
+                let editor = document.getElementById("liberator-commandline-command")
+                                            .inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement).editor;
+                let sel = editor.selectionController.getSelection(selType);
+                sel.removeAllRanges();
+
+                let range = editor.selection.getRangeAt(0).cloneRange();
+                let n = this.getCommand().indexOf(" ") + 1;
+                let node = range.startContainer;
+                range.setStart(node, start + n);
+                range.setEnd(node, end + n);
+                sel.addRange(range);
+                editor.selectionController.repaintSelection(selType);
+            }
+            catch (e) {}
+        },
+
         // to allow asynchronous adding of completions
         setCompletions: function (compl, start)
         {
             if (liberator.mode != modes.COMMAND_LINE)
                 return;
-
-            // FIXME: Kludge.
-            try // Firefox <3.1 doesn't have repaintSelection
-            {
-                const SEL_TYPE = Components.interfaces.nsISelectionController.SELECTION_FIND;
-                let editor = document.getElementById("liberator-commandline-command")
-                                            .inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement).editor;
-                let sel = editor.selectionController.getSelection(SEL_TYPE);
-                sel.removeAllRanges();
-                if (completion.parenMatch != null)
-                {
-                    let range = editor.selection.getRangeAt(0).cloneRange();
-                    let paren = completion.parenMatch + this.getCommand().indexOf(" ") + 1;
-                    let node = range.startContainer;
-                    range.setStart(node, paren);
-                    range.setEnd(node, paren + 1);
-                    sel.addRange(range);
-                    editor.selectionController.repaintSelection(SEL_TYPE);
-                }
-            }
-            catch (e) {}
 
             /* Only hide if not pending.
             if (compl.length == 0)

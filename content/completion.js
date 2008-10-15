@@ -217,9 +217,13 @@ function Completion() //{{{
             let pop = function pop(arg)
             {
                 if (top[CHAR] != arg)
+                {
+                    commandline.highlight(top[OFFSET] + 1, i + 1, "SPELLCHECK");
+                    commandline.highlight(top[OFFSET], top[OFFSET] + 1, "FIND");
                     throw new Error("Invalid JS");
+                }
                 if (i == str.length - 1)
-                    completion.parenMatch = top[OFFSET];
+                    commandline.highlight(top[OFFSET], top[OFFSET] + 1, "FIND");
                 // The closing character of this stack frame will have pushed a new
                 // statement, leaving us with an empty statement. This doesn't matter,
                 // now, as we simply throw away the frame when we pop it, but it may later.
@@ -324,6 +328,9 @@ function Completion() //{{{
 
         this.complete = function complete(string)
         {
+            commandline.highlight(0, 0, "SPELLCHECK");
+            commandline.highlight(0, 0, "FIND");
+
             let self = this;
             try
             {
