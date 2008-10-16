@@ -90,6 +90,7 @@ const template = {
         let i;
         while ((i = lcstr.indexOf(lcfilter, start)) > -1)
         {
+	    XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += <span class="hl-Filter">{str.substr(i, filter.length)}</span>;
             start = i + filter.length;
