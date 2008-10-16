@@ -908,33 +908,31 @@ const liberator = (function () //{{{
             {
                 let dirs = io.getRuntimeDirectories("plugin");
 
-                if (dirs.length > 0)
-                {
-                    for (let [,dir] in Iterator(dirs))
-                    {
-                        // TODO: search plugins/**/* for plugins
-                        liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
-
-                        liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-
-                        let files = io.readDirectory(dir.path, true);
-
-                        files.forEach(function (file) {
-                            if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in pluginFiles))
-                            {
-                                try
-                                {
-                                    io.source(file.path, false);
-                                    pluginFiles[file.path] = true;
-                                }
-                                catch (e) {};
-                            }
-                        });
-                    }
-                }
-                else
+                if (dirs.length == 0)
                 {
                     liberator.log("No user plugin directory found", 3);
+                    return;
+                }
+                for (let [,dir] in Iterator(dirs))
+                {
+                    // TODO: search plugins/**/* for plugins
+                    liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
+
+                    liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+
+                    let files = io.readDirectory(dir.path, true);
+
+                    files.forEach(function (file) {
+                        if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                        {
+                            try
+                            {
+                                io.source(file.path, false);
+                                liberator.pluginFiles[file.path] = true;
+                            }
+                            catch (e) {};
+                        }
+                    });
                 }
             }
             catch (e)
