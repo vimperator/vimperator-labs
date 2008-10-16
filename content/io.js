@@ -762,10 +762,11 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
+            var wasSourcing = ioManager.sourcing;
             try
             {
                 var file = ioManager.getFile(filename);
-                this.sourcing = {
+                ioManager.sourcing = {
                     file: file.path,
                     line: 0
                 };
@@ -832,7 +833,7 @@ lookup:
                         }
                         else
                         {
-                            this.sourcing.line = i + 1;
+                            ioManager.sourcing.line = i + 1;
                             // skip line comments and blank lines
                             if (/^\s*(".*)?$/.test(line))
                                 continue;
@@ -908,7 +909,7 @@ lookup:
             }
             finally
             {
-                this.sourcing = null;
+                ioManager.sourcing = wasSourcing;
             }
         }
     }; //}}}

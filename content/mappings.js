@@ -218,7 +218,8 @@ function Mappings() //{{{
 
         commands.add([ch + "no[remap]"],
             "Map a key sequence without remapping keys" + modeDescription,
-            function (args) { map(args, modes, true); });
+            function (args) { map(args, modes, true); },
+            opts);
 
         commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
