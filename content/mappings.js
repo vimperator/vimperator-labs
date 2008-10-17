@@ -223,11 +223,7 @@ function Mappings() //{{{
 
         commands.add([ch + "mapc[lear]"],
             "Remove all mappings" + modeDescription,
-            function ()
-            {
-                for (let i = 0; i < modes.length; i++)
-                    mappings.removeAll(modes[i]);
-            },
+            function () { modes.forEach(function (mode) { mappings.removeAll(mode); }); },
             { argCount: "0" });
 
         commands.add([ch + "unm[ap]"],
