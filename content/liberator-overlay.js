@@ -7,7 +7,8 @@
 
     var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                            .getService(Components.interfaces.mozIJSSubScriptLoader);
-    function load(script) {
+    function load(script)
+    {
         try
         {
             loader.loadSubScript(BASE + script, modules)
@@ -42,3 +43,4 @@
 
 })()
 
+// vim: set fdm=marker sw=4 ts=4 et:

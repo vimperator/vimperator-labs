@@ -479,7 +479,7 @@ function Completion() //{{{
                             completer = obj[func].liberatorCompleter;
                     }
                     catch (e) {}
-                    liberator.dump({call: completer, func: func, obj: obj, string: string, args: "args"});
+                    liberator.dump({ call: completer, func: func, obj: obj, string: string, args: "args" });
                     if (!completer)
                         return [0, []];
 

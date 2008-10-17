@@ -54,7 +54,7 @@ function Mail() //{{{
                 if (folder)
                 {
                     var msgFolder = folder.QueryInterface(Components.interfaces.nsIMsgFolder);
-                    autocommands.trigger("FolderLoaded", {url: msgFolder});
+                    autocommands.trigger("FolderLoaded", { url: msgFolder });
 
                     // Jump to a message when requested
                     var indices = [];

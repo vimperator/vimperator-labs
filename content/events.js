@@ -157,7 +157,7 @@ function AutoCommands() //{{{
                 if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
                     liberator.echo("No matching autocommands");
                 else
-                    autocommands.trigger(event, {url: url});
+                    autocommands.trigger(event, { url: url });
             }
         },
         {
@@ -187,7 +187,7 @@ function AutoCommands() //{{{
                 liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
             events.forEach(function (event)
-                store.push({event: event, pattern: RegExp(regex), command: cmd}));
+                store.push({ event: event, pattern: RegExp(regex), command: cmd }));
         },
 
         get: function (event, regex)
@@ -862,7 +862,7 @@ function Events() //{{{
             var wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
             var wasSilent = commandline.silent;
-            if(silent)
+            if (silent)
                 commandline.silent = silent;
 
             try
@@ -937,7 +937,7 @@ function Events() //{{{
             finally
             {
                 this.feedingKeys = wasFeeding;
-                if(silent)
+                if (silent)
                     commandline.silent = wasSilent;
             }
             return i == keys.length;
@@ -1513,7 +1513,7 @@ function Events() //{{{
                         buffer.loaded = 0;
                         statusline.updateProgress(0);
 
-                        autocommands.trigger("PageLoadPre", {url: buffer.URL});
+                        autocommands.trigger("PageLoadPre", { url: buffer.URL });
 
                         // don't reset mode if a frame of the frameset gets reloaded which
                         // is not the focused frame
@@ -1555,7 +1555,7 @@ function Events() //{{{
                 statusline.updateUrl();
                 statusline.updateProgress();
 
-                autocommands.trigger("LocationChange", {url: buffer.URL});
+                autocommands.trigger("LocationChange", { url: buffer.URL });
 
                 // if this is not delayed we get the position of the old buffer
                 setTimeout(function () { statusline.updateBufferPosition(); }, 100);
