@@ -136,8 +136,7 @@ function Hints() //{{{
         docs.push({ doc: doc, start: start, end: pageHints.length - 1 });
 
         // also generate hints for frames
-        for (let i = 0; i < win.frames.length; i++)
-            generate(win.frames[i]);
+        Array.forEach(win.frames, function (frame) { generate(frame); });
 
         return true;
     }
