@@ -157,6 +157,8 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
+                args = args.string;
+
                 if (!args)
                 {
                     editor.listAbbreviations(mode, "");
@@ -173,7 +175,7 @@ function Editor() //{{{
 
         commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) { editor.removeAbbreviation(mode, args); });
+            function (args) { editor.removeAbbreviation(mode, args.string); });
 
         commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,

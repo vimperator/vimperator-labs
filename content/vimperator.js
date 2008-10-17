@@ -276,6 +276,8 @@ const config = { //{{{
             "Open one or more URLs in the current tab",
             function (args, special)
             {
+                args = args.string;
+
                 if (args)
                 {
                     liberator.open(args);
@@ -318,8 +320,10 @@ const config = { //{{{
             "Open the sidebar window",
             function (args)
             {
+                args = args.string;
+
                 // do nothing if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == args.string)
+                if (document.getElementById("sidebar-title").value == args)
                 {
                     document.getElementById("sidebar-box").contentWindow.focus();
                     return;
@@ -328,13 +332,13 @@ const config = { //{{{
                 var menu = document.getElementById("viewSidebarMenu");
                 for (let i = 0; i < menu.childNodes.length; i++)
                 {
-                    if (menu.childNodes[i].label == args.string)
+                    if (menu.childNodes[i].label == args)
                     {
                         menu.childNodes[i].doCommand();
                         return;
                     }
                 }
-                liberator.echoerr("No sidebar " + args.string + " found");
+                liberator.echoerr("No sidebar " + args + " found");
             },
             {
                 argCount: "+",
@@ -350,6 +354,8 @@ const config = { //{{{
             "Open one or more URLs in a new window",
             function (args)
             {
+                args = args.string;
+
                 if (args)
                     liberator.open(args, liberator.NEW_WINDOW);
                 else

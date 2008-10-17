@@ -261,7 +261,7 @@ const liberator = (function () //{{{
             {
                 try
                 {
-                    var cmd = liberator.eval(args);
+                    var cmd = liberator.eval(args.string);
                     liberator.execute(cmd);
                 }
                 catch (e)
@@ -301,7 +301,7 @@ const liberator = (function () //{{{
                     return;
                 }
 
-                liberator.help(args);
+                liberator.help(args.string);
             },
             {
                 bang: true,
@@ -322,7 +322,7 @@ const liberator = (function () //{{{
                 {
                     try
                     {
-                        liberator.eval(args);
+                        liberator.eval(args.string);
                     }
                     catch (e)
                     {
@@ -392,6 +392,7 @@ const liberator = (function () //{{{
             function (args, special, count)
             {
                 args = args.string;
+
                 let method = args[0] == ":" ? "execute" : "eval";
 
                 try

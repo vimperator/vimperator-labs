@@ -299,7 +299,7 @@ function Bookmarks() //{{{
         "Delete a bookmark",
         function (args)
         {
-            let url = args || buffer.URL;
+            let url = args.string || buffer.URL;
             let deletedCount = bookmarks.remove(url);
 
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
@@ -610,6 +610,8 @@ function History() //{{{
         "Go back in the browser history",
         function (args, special, count)
         {
+            args = args.string;
+
             if (special)
             {
                 history.goToStart();
@@ -658,6 +660,8 @@ function History() //{{{
         "Go forward in the browser history",
         function (args, special, count)
         {
+            args = args.string;
+
             if (special)
             {
                 history.goToEnd();
@@ -704,7 +708,7 @@ function History() //{{{
 
     commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args, special) { history.list(args, special); },
+        function (args, special) { history.list(args.string, special); },
         {
             bang: true,
             completer: function (filter) completion.history(filter)
@@ -876,6 +880,8 @@ function QuickMarks() //{{{
         "Delete the specified QuickMarks",
         function (args, special)
         {
+            args = args.string;
+
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!special && !args)
             {
@@ -914,6 +920,8 @@ function QuickMarks() //{{{
         "Show all QuickMarks",
         function (args)
         {
+            args = args.string;
+
             // ignore invalid qmark characters unless there are no valid qmark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
             {

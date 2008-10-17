@@ -234,6 +234,8 @@ function Mappings() //{{{
             "Remove a mapping" + modeDescription,
             function (args)
             {
+                args = args.string;
+
                 if (!args)
                 {
                     liberator.echoerr("E474: Invalid argument");

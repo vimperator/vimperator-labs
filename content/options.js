@@ -279,6 +279,8 @@ function Options() //{{{
         "Set or list a variable",
         function (args)
         {
+            args = args.string;
+
             if (!args)
             {
                 var str =
@@ -387,7 +389,7 @@ function Options() //{{{
         "Set local option",
         function (args, special, count)
         {
-            commands.get("set").execute(args, special, count, { scope: options.OPTION_SCOPE_LOCAL });
+            commands.get("set").execute(args.string, special, count, { scope: options.OPTION_SCOPE_LOCAL });
         },
         {
             bang: true,
@@ -403,7 +405,7 @@ function Options() //{{{
         "Set global option",
         function (args, special, count)
         {
-            commands.get("set").execute(args, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
+            commands.get("set").execute(args.string, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
         },
         {
             bang: true,
@@ -474,6 +476,8 @@ function Options() //{{{
         "Set an option",
         function (args, special, count, modifiers)
         {
+            args = args.string;
+
             if (special)
             {
                 var onlyNonDefault = false;

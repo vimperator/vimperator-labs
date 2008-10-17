@@ -139,6 +139,8 @@ function IO() //{{{
         "Change the current directory",
         function (args)
         {
+            args = args.string;
+
             if (!args)
             {
                 args = "~";
@@ -216,6 +218,8 @@ function IO() //{{{
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
+            args = args.string;
+
             // TODO: "E172: Only one file name allowed"
             var filename;
             if (args)
@@ -344,6 +348,8 @@ function IO() //{{{
         "Read Ex commands from a file",
         function (args, special)
         {
+            args = args.string;
+
             // FIXME: implement proper filename quoting - "E172: Only one file name allowed"
             if (!args)
             {
@@ -362,6 +368,8 @@ function IO() //{{{
         "Run a command",
         function (args, special)
         {
+            args = args.string;
+
             // :!! needs to be treated specially as the command parser sets the
             // special flag but removes the ! from args
             if (special)

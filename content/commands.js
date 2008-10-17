@@ -94,28 +94,32 @@ Command.prototype = {
         special = !!special;
         count = (count === undefined) ? -1 : count;
         modifiers = modifiers || {};
+
         let self = this;
 
-        // whenever the user specifies special options or fixed number of arguments
-        // we use our args parser instead of passing a string to the callback
-        if (this.options.length > 0 || this.argCount)
-        {
-            args = commands.parseArgs(args, this.options, this.argCount, false, this.literal);
-            if (args == null)
-                return false;
-        }
-        else if (this.hereDoc)
+        function parseArgs(args) commands.parseArgs(args, this.options, this.argCount, false, this.literal);
+
+        if (this.hereDoc)
         {
             let matches = args.match(/(.*)<<\s*(\S+)$/);
             if (matches && matches[2])
             {
                 commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                    function (args) self.action.call(self, matches[1] + "\n" + args, special, count, modifiers));
+                    function (args)
+                    {
+                        args = parseArgs.call(self, matches[1] + "\n" + args);
+
+                        if (args)
+                            self.action.call(self, args, special, count, modifiers);
+                    });
                 return;
             }
         }
 
-        return this.action.call(this, args, special, count, modifiers);
+        args = parseArgs.call(this, args);
+
+        if (args)
+            this.action.call(this, args, special, count, modifiers);
     },
 
     // return true if the candidate name matches one of the command's aliases
@@ -464,7 +468,8 @@ function Commands() //{{{
             args.literalArg = "";
 
             var invalid = false;
-            var onlyArgumentsRemaining = allowUnknownOptions || false; // after a -- has been found
+            // FIXME: best way to specify these requirements?
+            var onlyArgumentsRemaining = allowUnknownOptions || options.length == 0 || false; // after a -- has been found
             var arg = null;
             var count = 0; // the length of the argument
             var i = 0;

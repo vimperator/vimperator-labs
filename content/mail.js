@@ -720,12 +720,12 @@ function Mail() //{{{
 
     commands.add(["copy[to]"],
         "Copy selected messages",
-        function (args) { moveOrCopy(true, args); },
+        function (args) { moveOrCopy(true, args.string); },
         { completer: function (filter) getFolderCompletions(filter) });
 
     commands.add(["move[to]"],
         "Move selected messages",
-        function (args) { moveOrCopy(false, args); },
+        function (args) { moveOrCopy(false, args.string); },
         { completer: function (filter) getFolderCompletions(filter) });
 
     commands.add(["empty[trash]"],

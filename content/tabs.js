@@ -307,6 +307,8 @@ function Tabs() //{{{
         "Delete current buffer",
         function (args, special, count)
         {
+            args = args.string;
+
             if (args)
             {
                 args = args.toLowerCase();
@@ -373,6 +375,8 @@ function Tabs() //{{{
         "Switch to the previous tab or go [count] tabs back",
         function (args, special, count)
         {
+            args = args.string;
+
             // count is ignored if an arg is specified, as per Vim
             if (args)
             {
@@ -397,6 +401,8 @@ function Tabs() //{{{
         "Switch to the next or [count]th tab",
         function (args, special, count)
         {
+            args = args.string;
+
             if (args || count > 0)
             {
                 var index;
@@ -443,6 +449,8 @@ function Tabs() //{{{
             "Switch to a buffer",
             function (args, special, count)
             {
+                args = args.string;
+
                 // if a numeric arg is specified any count is ignored; if a
                 // count and non-numeric arg are both specified then E488
                 if (args && count > 0)
@@ -493,6 +501,8 @@ function Tabs() //{{{
             "Move the current tab after tab N",
             function (args, special)
             {
+                args = args.string;
+
                 // FIXME: tabmove! N should probably produce an error
                 if (!/^([+-]?\d+|)$/.test(args))
                 {
@@ -516,6 +526,8 @@ function Tabs() //{{{
             "Open one or more URLs in a new tab",
             function (args, special)
             {
+                args = args.string;
+
                 var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
                 if (/\btabopen\b/.test(options["activate"]))
                     where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
@@ -565,6 +577,8 @@ function Tabs() //{{{
             "Undo closing of a tab",
             function (args, special, count)
             {
+                args = args.string;
+
                 if (count < 1)
                     count = 1;
 

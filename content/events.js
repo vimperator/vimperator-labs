@@ -122,7 +122,7 @@ function AutoCommands() //{{{
         "Apply the autocommands matching the specified URL pattern to all buffers",
         function (args)
         {
-            commands.get("doautocmd").action.call(this, args);
+            commands.get("doautocmd").action.call(this, args.string);
         },
         {
             argCount: "+",
@@ -696,6 +696,8 @@ function Events() //{{{
         "Delete macros",
         function (args, special)
         {
+            args = args.string;
+
             if (special)
                 args = ".*"; // XXX
 
@@ -711,7 +713,7 @@ function Events() //{{{
         function (args)
         {
             XML.prettyPrinting = false;
-            var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args));
+            var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args.string));
             liberator.echo(str, commandline.FORCE_MULTILINE);
         },
         { completer: function (filter) completion.macro(filter) });

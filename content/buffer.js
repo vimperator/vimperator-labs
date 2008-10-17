@@ -770,6 +770,8 @@ function Buffer() //{{{
         "Select the author style sheet to apply",
         function (args)
         {
+            args = args.string;
+
             var titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
             if (args && titles.indexOf(args) == -1)
@@ -797,6 +799,8 @@ function Buffer() //{{{
         "Save current document to disk",
         function (args, special)
         {
+            args = args.string;
+
             let doc = window.content.document;
             let file = io.getFile(args || "");
             if (args && file.exists() && !special)
@@ -930,6 +934,8 @@ function Buffer() //{{{
         "Set zoom value of current web page",
         function (args, special)
         {
+            args = args.string;
+
             var level;
 
             if (!args)
@@ -1870,6 +1876,8 @@ function Marks() //{{{
         "Delete the specified marks",
         function (args, special)
         {
+            args = args.string;
+
             if (!special && !args)
             {
                 liberator.echoerr("E471: Argument required");
@@ -1935,6 +1943,8 @@ function Marks() //{{{
         "Show all location marks of current web page",
         function (args)
         {
+            args = args.string;
+
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
             {
