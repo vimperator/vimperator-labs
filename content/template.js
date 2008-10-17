@@ -1,4 +1,3 @@
-
 const template = {
     add: function (a, b) a + b,
     join: function (c) function (a, b) a + c + b,
@@ -40,11 +39,11 @@ const template = {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
         try
         {
-	    switch (arg == null ? "undefined" : typeof arg)
-	    {
-		case "number":
-		    return <span class="hl-Number">{arg}</span>;
-		case "string":
+        switch (arg == null ? "undefined" : typeof arg)
+        {
+        case "number":
+            return <span class="hl-Number">{arg}</span>;
+        case "string":
                     if (processStrings)
                         arg = <>{util.escapeString(arg)}</>;
                     return <span class="hl-String">{arg}</span>;
@@ -90,7 +89,7 @@ const template = {
         let i;
         while ((i = lcstr.indexOf(lcfilter, start)) > -1)
         {
-	    XML.ignoreWhitespace = false;
+        XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += <span class="hl-Filter">{str.substr(i, filter.length)}</span>;
             start = i + filter.length;
@@ -148,7 +147,7 @@ const template = {
                     <th colspan="2">jump</th><th>title</th><th>URI</th>
                 </tr>
                 {
-                    this.map(elems, function (idx, val)
+                    this.map(Iterator(elems), function ([idx, val])
                     <tr>
                         <td class="indicator">{idx == index ? ">" : ""}</td>
                         <td>{Math.abs(idx - index)}</td>
@@ -235,3 +234,4 @@ const template = {
     }
 };
 
+// vim: set fdm=marker sw=4 ts=4 et:
