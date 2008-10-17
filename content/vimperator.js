@@ -322,22 +322,24 @@ const config = { //{{{
             {
                 args = args.string;
 
-                // do nothing if the requested sidebar is already open
+                // focus if the requested sidebar is already open
                 if (document.getElementById("sidebar-title").value == args)
                 {
-                    document.getElementById("sidebar-box").contentWindow.focus();
+                    document.getElementById("sidebar-box").focus();
                     return;
                 }
 
-                var menu = document.getElementById("viewSidebarMenu");
-                for (let i = 0; i < menu.childNodes.length; i++)
+                let menu = document.getElementById("viewSidebarMenu");
+
+                for (let [,panel] in Iterator(menu.childNodes))
                 {
-                    if (menu.childNodes[i].label == args)
+                    if (panel.label == args)
                     {
-                        menu.childNodes[i].doCommand();
+                        panel.doCommand();
                         return;
                     }
                 }
+
                 liberator.echoerr("No sidebar " + args + " found");
             },
             {

@@ -1063,13 +1063,10 @@ function Completion() //{{{
 
         sidebar: function sidebar(filter)
         {
-            var menu = document.getElementById("viewSidebarMenu");
-            var nodes = [];
+            let menu = document.getElementById("viewSidebarMenu");
+            let panels = Array.map(menu.childNodes, function (n) [n.label, ""]);
 
-            for (let i = 0; i < menu.childNodes.length; i++)
-                nodes.push([menu.childNodes[i].label, ""]);
-
-            return [0, this.filter(nodes, filter)];
+            return [0, this.filter(panels, filter)];
         },
 
         stylesheet: function stylesheet(filter)
