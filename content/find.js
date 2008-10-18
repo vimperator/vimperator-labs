@@ -212,7 +212,10 @@ function Search() //{{{
             {
                 liberator.dump(this.wrapped);
                 if (this.wrapped)
+                {
+                    this.cancel();
                     return null;
+                }
                 this.wrapped = true;
                 lastRange = this.backward ? pageEnd : pageStart;
                 return this.search(again ? null : word, reverse);
