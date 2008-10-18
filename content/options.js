@@ -286,7 +286,7 @@ function Options() //{{{
                 var str =
                     <table>
                     {
-                        template.map(globalVariables, function ([i, value]) {
+                        template.map(liberator.globalVariables, function ([i, value]) {
                             let prefix = typeof value == "number"   ? "#" :
                                          typeof value == "function" ? "*" :
                                                                       " ";
@@ -328,7 +328,7 @@ function Options() //{{{
                         if (!reference[0])
                         {
                             if (reference[2] == "g")
-                                reference[0] = globalVariables;
+                                reference[0] = liberator.globalVariables;
                             else
                                 return; // for now
                         }
