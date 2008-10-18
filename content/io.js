@@ -426,20 +426,12 @@ function IO() //{{{
                 path = path.replace("~", home);
             }
 
-            // expand any $ENV vars
-            var envVars = path.match(/\$\w+\b/g); // this is naive but so is Vim and we like to be compatible
-
-            if (envVars)
-            {
-                var expansion;
-
-                for (let i = 0; i < envVars.length; i++)
-                {
-                    expansion = environmentService.get(envVars[i].replace("$", ""));
-                    if (expansion)
-                        path = path.replace(envVars[i], expansion);
-                }
-            }
+            // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
+            // TODO: Vim does not expand variables set to an empty string - are we just matching a bug?
+            path = path.replace(
+                /\$(?:{\w+}|\w+\b)/g,
+                function (v) environmentService.get(v.replace(/\${?(\w+)}?/, "$1")) || v
+            );
 
             return path;
         },
