@@ -28,6 +28,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
+const Point = new Struct("x", "y");
+
 function Buffer() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1278,17 +1280,13 @@ function Buffer() //{{{
 
             if (!selection)
             {
-                var selectionController = getBrowser().docShell
-                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                    .getInterface(Components.interfaces.nsISelectionDisplay)
-                    .QueryInterface(Components.interfaces.nsISelectionController);
-
-                var caretmode = selectionController.getCaretEnabled();
-                selectionController.setCaretEnabled(true);
-                selectionController.wordMove(false, false);
-                selectionController.wordMove(true, true);
+                let selController = this.selectionController;
+                let caretmode = selController.getCaretEnabled();
+                selController.setCaretEnabled(true);
+                selController.wordMove(false, false);
+                selController.wordMove(true, true);
                 selection = window.content.getSelection().toString();
-                selectionController.setCaretEnabled(caretmode);
+                selController.setCaretEnabled(caretmode);
             }
 
             return selection;
@@ -1480,6 +1478,11 @@ function Buffer() //{{{
                 elem.dispatchEvent(evt);
             })
         },
+
+        get selectionController() getBrowser().docShell
+                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                .getInterface(Components.interfaces.nsISelectionDisplay)
+                .QueryInterface(Components.interfaces.nsISelectionController),
 
         saveLink: function (elem, skipPrompt)
         {

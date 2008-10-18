@@ -149,8 +149,16 @@ function Completion() //{{{
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
                     continue;
+                /* Try harder.
                 if (/^\[XPCNativeWrapper /.test(obj))
                     obj = obj.wrappedJSObject;
+                */
+                try
+                {
+                    if (obj.wrappedJSObject)
+                        obj = obj.wrappedJSObject;
+                }
+                catch (e) {}
 
                 for (let [k, v] in this.iter(obj))
                     compl.push([k, v]);
@@ -381,7 +389,7 @@ function Completion() //{{{
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let prev = statement;
                 let obj;
-                for (let [i, dot] in Iterator(get(frame)[DOTS]))
+                for (let [i, dot] in Iterator(get(frame)[DOTS].concat(stop)))
                 {
                     if (dot < statement)
                         continue;
