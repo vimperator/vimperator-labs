@@ -173,11 +173,7 @@ function AutoCommands() //{{{
 
     return {
 
-        __iterator__: function ()
-        {
-            for (let i = 0; i < store.length; i++)
-                yield autoCmd[i];
-        },
+        __iterator__: function () util.Array.iterator(store),
 
         add: function (events, regex, cmd)
         {

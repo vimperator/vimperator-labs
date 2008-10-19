@@ -5,7 +5,7 @@ const template = {
     map: function (iter, fn, sep)
     {
         if (iter.length) /* Kludge? */
-            iter = util.arrayIter(iter);
+            iter = util.Array.iterator(iter);
         let ret = <></>;
         let n = 0;
         for each (let i in Iterator(iter))

@@ -28,6 +28,44 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 const util = { //{{{
 
+    Array: {
+        // flatten an array: [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
+        flatten: function (ary)
+        {
+            if (ary.length == 0)
+                return [];
+            return Array.concat.apply(Array, ary);
+        },
+
+        iterator: function (ary)
+        {
+            let length = ary.length;
+            for (let i = 0; i < length; i++)
+                yield ary[i];
+        },
+
+        uniq: function (ary, unsorted)
+        {
+            let ret = [];
+            if (unsorted)
+            {
+                for (let [, item] in Iterator(ary))
+                    if (ret.indexOf(item) == -1)
+                        ret.push(item);
+            }
+            else
+            {
+                for (let [,item] in Iterator(ary.sort()))
+                {
+                    if (item != last || !ret.length)
+                        ret.push(item);
+                    var last = item;
+                }
+            }
+            return ret;
+        }
+    },
+
     Timer: function Timer(minInterval, maxInterval, callback)
     {
         let timer = Components.classes["@mozilla.org/timer;1"]
@@ -80,13 +118,6 @@ const util = { //{{{
         }
     },
 
-    arrayIter: function (ary)
-    {
-        let length = ary.length;
-        for (let i = 0; i < length; i++)
-            yield ary[i];
-    },
-
     ciCompare: function (a, b)
     {
         return String.localeCompare(a.toLowerCase(), b.toLowerCase());
@@ -135,15 +166,6 @@ const util = { //{{{
         if (delimiter == undefined)
             delimiter = '"';
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n").replace("\t", "\\t") + delimiter;
-    },
-
-    // Flatten an array:
-    //  [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
-    flatten: function (ary)
-    {
-        if (ary.length == 0)
-            return [];
-        return Array.concat.apply(Array, ary);
     },
 
     formatBytes: function (num, decimalPlaces, humanReadable)
@@ -397,27 +419,6 @@ const util = { //{{{
         }
 
         return urls;
-    },
-
-    uniq: function (ary, unsorted)
-    {
-        let ret = [];
-        if (unsorted)
-        {
-            for (let [, item] in Iterator(ary))
-                if (ret.indexOf(item) == -1)
-                    ret.push(item);
-        }
-        else
-        {
-            for (let [,item] in Iterator(ary.sort()))
-            {
-                if (item != last || !ret.length)
-                    ret.push(item);
-                var last = item;
-            }
-        }
-        return ret;
     },
 
     xmlToDom: function (node, doc)

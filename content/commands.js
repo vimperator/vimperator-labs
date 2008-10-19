@@ -234,9 +234,8 @@ function Commands() //{{{
 
         __iterator__: function ()
         {
-            var sorted = exCommands.sort(function (cmd1, cmd2) cmd1.name > cmd2.name);
-            for (let i = 0; i < sorted.length; i++)
-                yield sorted[i];
+            let sorted = exCommands.sort(function (a, b) a.name > b.name);
+            return util.Array.iterator(sorted);
         },
 
         add: function (names, description, action, extra)

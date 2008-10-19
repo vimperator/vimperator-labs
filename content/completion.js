@@ -1118,7 +1118,7 @@ function Completion() //{{{
             var cpt = complete || options["complete"];
             var suggestEngineAlias = options["suggestengines"] || "google";
             // join all completion arrays together
-            for (let c in util.arrayIter(cpt))
+            for (let c in util.Array.iterator(cpt))
             {
                 if (c == "s")
                     completions.push(this.search(filter)[1]);
@@ -1144,7 +1144,7 @@ function Completion() //{{{
                 }
             }
 
-            completionCache = util.flatten(completions);
+            completionCache = util.Array.flatten(completions);
             return [start, completionCache.concat(historyCache)];
         },
 

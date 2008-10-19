@@ -278,16 +278,10 @@ function Mappings() //{{{
     return {
 
         // NOTE: just normal mode for now
-        __iterator__: function ()
-        {
-            return mappingsIterator([modes.NORMAL], main);
-        },
+        __iterator__: function () mappingsIterator([modes.NORMAL], main),
 
         // used by :mkvimperatorrc to save mappings
-        getUserIterator: function (mode)
-        {
-            return mappingsIterator(mode, user);
-        },
+        getUserIterator: function (mode) mappingsIterator(mode, user),
 
         add: function (modes, keys, description, action, extra)
         {

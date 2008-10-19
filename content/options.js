@@ -624,11 +624,11 @@ function Options() //{{{
                         switch (opt.operator)
                         {
                             case "+":
-                                newValue = util.uniq(Array.concat(opt.optionHas, opt.valueHas), true);
+                                newValue = util.Array.uniq(Array.concat(opt.optionHas, opt.valueHas), true);
                                 break;
                             case "^":
                                 // NOTE: Vim doesn't prepend if there's a match in the current value
-                                newValue = util.uniq(Array.concat(opt.valueHas, opt.optionHas), true);
+                                newValue = util.Array.uniq(Array.concat(opt.valueHas, opt.optionHas), true);
                                 break;
                             case "-":
                                 newValue = opt.optionHas.filter(function (item) opt.valueHas.indexOf(item) == -1);
@@ -735,8 +735,7 @@ function Options() //{{{
                         optionCompletions.push([[prefix + name, option.description]
                             for each (name in option.names)
                             if (name.indexOf(filter) == 0)]);
-                    // Flatten array.
-                    optionCompletions = Array.concat.apply(Array, optionCompletions);
+                    optionCompletions = util.Array.flatten(optionCompletions);
 
                     return [0, completion.filter(optionCompletions, prefix + filter, true)];
                 }

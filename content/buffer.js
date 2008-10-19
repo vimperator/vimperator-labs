@@ -52,7 +52,7 @@ function Buffer() //{{{
                         120, 150, 200, 300, 500, 1000, 2000 ];
 
     const util = modules.util;
-    const arrayIter = util.arrayIter;
+    const arrayIter = util.Array.iterator;
 
     function Styles(name, store, serial)
     {
@@ -268,7 +268,7 @@ function Buffer() //{{{
         }
     }
     Styles.prototype = {
-        get sites() util.uniq(util.flatten([v.sites for ([k, v] in this.userSheets)]))
+        get sites() util.Array.uniq(util.Array.flatten([v.sites for ([k, v] in this.userSheets)]))
     };
 
     let styles = storage.newObject("styles", Styles, false);

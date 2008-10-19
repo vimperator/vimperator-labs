@@ -183,7 +183,7 @@ const modes = (function () //{{{
         RECORDING:        1 << 21,
         PROMPT:           1 << 22,
 
-        __iterator__: function () util.arrayIter(this.all),
+        __iterator__: function () util.Array.iterator(this.all),
 
         get all() [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
                    this.HINTS, this.COMMAND_LINE, this.CARET,
