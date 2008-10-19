@@ -218,23 +218,17 @@ function IO() //{{{
         "Write current key mappings and changed options to the config file",
         function (args, special)
         {
-            args = args.string;
-
             // TODO: "E172: Only one file name allowed"
-            var filename;
-            if (args)
-                filename = args;
-            else
-                filename = "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
+            let filename = args.arguments[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
+            let file = io.getFile(filename);
 
-            var file = io.getFile(filename);
             if (file.exists() && !special)
             {
                 liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
             }
 
-            var line = "\" " + liberator.version + "\n";
+            let line = "\" " + liberator.version + "\n";
             line += "\" Mappings\n";
 
             [[[modes.NORMAL], ""],
@@ -286,6 +280,7 @@ function IO() //{{{
             }
         },
         {
+            argCount: "?",
             bang: true,
             completer: function (filter) completion.file(filter, true)
         });
@@ -348,18 +343,11 @@ function IO() //{{{
         "Read Ex commands from a file",
         function (args, special)
         {
-            args = args.string;
-
-            // FIXME: implement proper filename quoting - "E172: Only one file name allowed"
-            if (!args)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
-
-            io.source(args, special);
+            // FIXME: "E172: Only one file name allowed"
+            io.source(args.arguments[0], special);
         },
         {
+            argCount: "1",
             bang: true,
             completer: function (filter) completion.file(filter, true)
         });
@@ -414,7 +402,7 @@ function IO() //{{{
             // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
             if (/^~/.test(path))
             {
-                var home = environmentService.get("VIMPERATOR_HOME");
+                let home = environmentService.get("VIMPERATOR_HOME");
 
                 if (!home)
                     home = environmentService.get("HOME");
@@ -433,6 +421,8 @@ function IO() //{{{
                 RegExp("(?:\\$(\\w+)\\b|" + (WINDOWS ? "%(\\w+)%" : "\\${(\\w+)}") + ")", "g"),
                 function (m, n1, n2, i, s) environmentService.get((n1 || n2), "$1")
             );
+
+            path = path.replace("\\ ", " ", "g");
 
             return path;
         },

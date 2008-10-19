@@ -897,28 +897,32 @@ function Completion() //{{{
         // if "tail" is true, only return names without any directory components
         file: function file(filter, tail)
         {
-            let [matches, dir, compl] = filter.match(/^((?:.*[\/\\])?)(.*?)$/);
+            let [, dir, compl] = filter.match(/^((?:.*[\/\\])?)(.*?)$/);
             // dir == "" is expanded inside readDirectory to the current dir
 
             let generate = function ()
             {
-                var files = [], mapped = [];
+                let files = [], mapped = [];
 
                 try
                 {
+                    dir = dir.replace("\\ ", " ", "g");
                     files = io.readDirectory(dir, true);
 
                     if (options["wildignore"])
                     {
-                        var wigRegexp = new RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
+                        let wigRegexp = RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
 
                         files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
                     }
 
-                    mapped = files.map(function (file) [tail ? file.leafName : (dir + file.leafName),
-                                                        file.isDirectory() ? "Directory" : "File"]);
+                    mapped = files.map(
+                        function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
+                            file.isDirectory() ? "Directory" : "File"]
+                    );
                 }
                 catch (e) {}
+
                 return mapped;
             };
 

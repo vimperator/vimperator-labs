@@ -797,18 +797,33 @@ function Buffer() //{{{
             argCount: "0"
         });
 
+    // TODO: we're prompted if download.useDownloadDir isn't set and no arg specified - intentional?
     commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
         function (args, special)
         {
-            args = args.string;
-
             let doc = window.content.document;
-            let file = io.getFile(args || "");
-            if (args && file.exists() && !special)
-                return liberator.echoerr("E13: File exists (add ! to override)");
+            let chosenData = null;
+            let filename = args.arguments[0];
 
+            if (filename)
+            {
+                let file = io.getFile(filename);
+
+                if (file.exists() && !special)
+                {
+                    liberator.echoerr("E13: File exists (add ! to override)");
+                    return;
+                }
+
+                chosenData = { file: file, uri: makeURI(doc.location.href, doc.characterSet) };
+            }
+
+            // if browser.download.useDownloadDir = false then the "Save As"
+            // dialog is used with this as the default directory
+            // TODO: if we're going to do this shouldn't it be done in setCWD or the value restored?
             options.setPref("browser.download.lastDir", io.getCurrentDirectory());
+
             try
             {
                 var contentDisposition = window.content
@@ -818,12 +833,11 @@ function Buffer() //{{{
             } catch (e) {}
 
             internalSave(doc.location.href, doc, null, contentDisposition,
-                doc.contentType, false, null,
-                args && { file: file, uri: makeURI(doc.location.href, doc.characterSet) },
-                doc.referrer ? makeURI(doc.referrer) : null,
-                true);
+                doc.contentType, false, null, chosenData, doc.referrer ?
+                makeURI(doc.referrer) : null, true);
         },
         {
+            argCount: "?",
             bang: true,
             completer: function (filter) completion.file(filter)
         });
