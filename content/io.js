@@ -427,10 +427,11 @@ function IO() //{{{
             }
 
             // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
-            // TODO: Vim does not expand variables set to an empty string - are we just matching a bug?
+            // TODO: Vim does not expand variables set to an empty string, nor does it recognise
+            // ${VAR} on WINDOWS - are we just matching bugs?
             path = path.replace(
-                /\$(?:{\w+}|\w+\b)/g,
-                function (v) environmentService.get(v.replace(/\${?(\w+)}?/, "$1")) || v
+                RegExp("(?:\\$(\\w+)\\b|" + (WINDOWS ? "%(\\w+)%" : "\\${(\\w+)}") + ")", "g"),
+                function (m, n1, n2, i, s) environmentService.get((n1 || n2), "$1")
             );
 
             return path;
