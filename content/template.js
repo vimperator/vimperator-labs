@@ -39,11 +39,11 @@ const template = {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
         try
         {
-        switch (arg == null ? "undefined" : typeof arg)
-        {
-        case "number":
-            return <span class="hl-Number">{arg}</span>;
-        case "string":
+            switch (arg == null ? "undefined" : typeof arg)
+            {
+                case "number":
+                    return <span class="hl-Number">{arg}</span>;
+                case "string":
                     if (processStrings)
                         arg = <>{util.escapeString(arg)}</>;
                     return <span class="hl-String">{arg}</span>;
