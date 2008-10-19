@@ -355,12 +355,12 @@ function Commands() //{{{
                 switch (quote)
                 {
                     case "'":
-                        return function (str) "'" + str.substitute(/[\\']/g, "\\$&") + "'";
+                        return function (str) "'" + str.replace(/[\\']/g, "\\$&") + "'";
                     case '"':
-                        return function (str) '"' + str.substitute(/[\\"\t\n]/g,
+                        return function (str) '"' + str.replace(/[\\"\t\n]/g,
                                     function (c) (c == "\n" ? "\\n" : c == "\t" ? "\\t" : "\\" + c));
                     default:
-                        return function (str) str.substitute(/[\\ ]/g, "\\$&");
+                        return function (str) str.replace(/[\\ ]/g, "\\$&");
                 }
             }
 
