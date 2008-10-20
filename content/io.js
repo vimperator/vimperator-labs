@@ -363,18 +363,21 @@ function IO() //{{{
             if (special)
                 args = "!" + (args || "");
 
-            // TODO: better escaping of ! to also substitute \\! correctly
-            args = args.replace(/(^|[^\\])!/g, "$1" + lastRunCommand);
+            // TODO: Hmmm, actually Vim doesn't handle multiple backslashes and documents it - desirable?
+            args = args.replace(/((?:^|[^\\])(?:\\\\)*)!/g, function(m, n) n != null ? n + lastRunCommand : m)
             lastRunCommand = args;
 
-            var output = io.system(args);
-            var command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
+            let output = io.system(args);
+            let command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
 
             liberator.echo(command + util.escapeHTML(output));
 
             autocommands.trigger("ShellCmdPost", {});
         },
-        { bang: true });
+        {
+            bang: true,
+            completer: function (filter) completion.shellCommand(filter)
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

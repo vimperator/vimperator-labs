@@ -886,7 +886,7 @@ function Completion() //{{{
             var command = commands.get(cmd);
             if (command && command.completer)
             {
-                matches = str.match(/^:*\d*\w+[\s!]\s*/);
+                matches = str.match(/^:*\d*(?:\w+[\s!]|!)\s*/);
                 exLength = matches ? matches[0].length : 0;
                 [start, completions] = command.completer.call(this, args, special);
             }
@@ -1071,6 +1071,34 @@ function Completion() //{{{
             });
 
             return [0, completions];
+        },
+
+        shellCommand: function shellCommand(filter)
+        {
+            let generate = function ()
+            {
+                const environmentService = Components.classes["@mozilla.org/process/environment;1"]
+                                                     .getService(Components.interfaces.nsIEnvironment);
+
+                let dirNames = environmentService.get("PATH").split(RegExp(WINDOWS ? ";" : ":"));
+                let commands = [];
+
+                for (let [,dirName] in Iterator(dirNames))
+                {
+                    let dir = io.getFile(dirName);
+                    if (dir.exists() && dir.isDirectory())
+                    {
+                        io.readDirectory(dir).forEach(function (file) {
+                            if (file.isFile() && file.isExecutable())
+                                commands.push([file.leafName, dir.path]);
+                        });
+                    }
+                }
+
+                return commands;
+            }
+
+            return [0, this.cached("shell-command", filter, generate, "filter")];
         },
 
         sidebar: function sidebar(filter)
