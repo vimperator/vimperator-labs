@@ -282,6 +282,13 @@ The XPath string of hintable elements activated by [m];[m].
 ____
 
 
+|\'noeb'| |\'noerrorbells'| |\'eb'| |\'errorbells'|
+||'errorbells' 'eb'|| boolean (default: off)
+____
+Ring the bell when an error message is displayed.
+____
+
+
 |\'ei'| |\'eventignore'|
 ||'eventignore'|| stringlist (default: "")
 ____

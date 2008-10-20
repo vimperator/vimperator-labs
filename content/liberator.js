@@ -59,6 +59,10 @@ const liberator = (function () //{{{
     // Only general options are added here, which are valid for all vimperator like extensions
     function addOptions()
     {
+        options.add(["errorbells", "eb"],
+            "Ring the bell when an error message is displayed",
+            "boolean", false);
+
         const tabopts = [
             ["n", "Tab number", null, ".hl-TabNumber"],
             ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
@@ -606,6 +610,7 @@ const liberator = (function () //{{{
 
         beep: function ()
         {
+            // FIXME: popups clear the command-line
             if (options["visualbell"])
             {
                 // flash the visual bell
@@ -825,6 +830,9 @@ const liberator = (function () //{{{
             else if (str instanceof Error)
                 str = str.fileName + ":" + str.lineNumber + ": " + str;
 
+            if (options["errorbells"])
+                liberator.beep();
+
             commandline.echo(str, commandline.HL_ERRORMSG, flags);
         },
 
@@ -840,7 +848,7 @@ const liberator = (function () //{{{
                 commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
-        // return true, if this VIM-like extension has a certain feature
+        // return true, if this liberator extension has a certain feature
         has: function (feature)
         {
             var features = config.features || [];

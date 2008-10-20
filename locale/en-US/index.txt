@@ -255,6 +255,7 @@ section:Options[option-index]
 ||'defsearch'|| Set the default search engine +
 ||'disabledcssheets'|| Set disabled CSS stylesheets +
 ||'editor'|| Set the external text editor +
+||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'extendedhinttags'|| XPath string of hintable elements activated by ';' +
 ||'fileencoding'|| set the charactor encoding for the current page +
