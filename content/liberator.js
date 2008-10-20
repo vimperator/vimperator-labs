@@ -91,9 +91,14 @@ const liberator = (function () //{{{
                     let classes = tabopts.filter(function (o) value.indexOf(o[0]) == -1)
                                          .map(function (a) a[3])
                     if (!classes.length)
+                    {
                         storage.styles.removeSheet("taboptions", null, null, null, true);
+                    }
                     else
+                    {
                         storage.styles.addSheet("taboptions", "chrome://*", classes.join(",") + "{ display: none; }", true, true);
+                        statusline.updateTabCount();
+                    }
 
                     return value;
                 },

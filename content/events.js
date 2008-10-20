@@ -497,7 +497,7 @@ function Events() //{{{
             let title = doc.title;
 
             // update history
-            if (url && history)
+            if (url && liberator.has("history"))
                 history.add(url, title);
 
             // mark the buffer as loaded, we can't use buffer.loaded

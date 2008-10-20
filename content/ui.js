@@ -456,7 +456,7 @@ function CommandLine() //{{{
     // FIXME: Should be "g<" but that doesn't work unless it has a non-null
     // rhs, getCandidates broken?
     mappings.add([modes.NORMAL],
-        ["gm"], "Redisplay the last command output",
+        ["g."], "Redisplay the last command output",
         function ()
         {
             if (lastMowOutput)
@@ -1615,8 +1615,14 @@ function StatusLine() //{{{
                 return;
             }
 
-            for (let [i, tab] in Iterator(Array.slice(getBrowser().mTabs)))
-                tab.setAttribute("ordinal", i + 1);
+            // update the ordinal which is used for numbered tabs only when the user has
+            // tab numbers set, and the host application supports it
+            if (config.hostApplication == "Firefox" &&
+                (options.get("guioptions").has("n") || options.get("guioptions").has("N")))
+            {
+                for (let [i, tab] in Iterator(Array.slice(getBrowser().mTabs)))
+                    tab.setAttribute("ordinal", i + 1);
+            }
 
             if (!currentIndex || typeof currentIndex != "number")
                 currentIndex = tabs.index() + 1;
