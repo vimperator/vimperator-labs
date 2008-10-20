@@ -1061,7 +1061,7 @@ function Buffer() //{{{
                     nFeed++;
                     var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
-                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">\u00a0({type})</span>];
+                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
                 }
             }
         }

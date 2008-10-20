@@ -438,9 +438,9 @@ const liberator = (function () //{{{
                                     <tr class="hl-Title" align="left">
                                         <th colspan="3">Code execution summary</th>
                                     </tr>
-                                    <tr><td>\u00a0\u00a0Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
-                                    <tr><td>\u00a0\u00a0Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>\u00a0\u00a0Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                    <tr><td>&#xa0;&#xa0;Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
+                                    <tr><td>&#xa0;&#xa0;Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>&#xa0;&#xa0;Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
                                 </table>);
                         commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
