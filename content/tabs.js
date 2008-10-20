@@ -584,18 +584,28 @@ function Tabs() //{{{
 
                 if (args)
                 {
-                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                    let ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
                                        .getService(Components.interfaces.nsISessionStore);
-                    var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                    let undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                    let found = false;
+
                     for (let i = 0; i < undoItems.length; i++)
                     {
                         if (undoItems[i].state.entries[0].url == args)
                         {
                             count = i + 1;
+                            found = true;
                             break;
                         }
                     }
+
+                    if (!found)
+                    {
+                        liberator.echoerr("Exxx: No matching closed tab");
+                        return;
+                    }
                 }
+
                 undoCloseTab(count - 1);
             },
             {
