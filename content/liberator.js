@@ -613,7 +613,8 @@ const liberator = (function () //{{{
                 let win = config.visualbellWindow;
                 let box = document.getBoxObjectFor(win);
 
-                popup.openPopup(win, "overlap", 0, 0, false, false);
+                // NOTE: this doesn't seem to work in FF3 with full box dimensions
+                popup.openPopup(win, "overlap", 1, 1, false, false);
                 popup.sizeTo(box.width - 2, box.height - 2);
                 setTimeout(function () { popup.hidePopup(); }, 20);
             }
