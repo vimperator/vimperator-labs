@@ -12,6 +12,8 @@ JavaScript files found in the plugin directory. The RC file may be named
 * Unix and Mac: [a]\~/.vimperatorrc[a] then [a]\~/_vimperatorrc[a]
 * Windows - [a]\~/_vimperatorrc[a] then [a]\~/.vimperatorrc[a]
 
+If 'exrc' is set then any RC file in the current directory is also sourced.
+
 The plugin directory can be in any of the directories in 'runtimepath'. Using
 the default value of 'runtimepath' this would be:
 

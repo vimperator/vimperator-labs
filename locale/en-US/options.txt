@@ -266,6 +266,12 @@ Warning: Vimperator will not behave correctly if the editor forks its own
 process, such as with gvim without the -f argument.
 ____
 
+|\'noex'| |\'noexrc'| |\'ex'| |\'exrc'|
+||'exrc' 'ex'|| boolean (default: off)
+____
+Allow reading of an RC file in the current directory. This file is sourced in
+addition to, and after, your default RC file.
+____
 
 |\'eht'| |\'extendedhinttags'|
 ||'extendedhinttags' 'eht'|| string

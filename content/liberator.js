@@ -63,6 +63,10 @@ const liberator = (function () //{{{
             "Ring the bell when an error message is displayed",
             "boolean", false);
 
+        options.add(["exrc", "ex"],
+            "Allow reading of an RC file in the current directory",
+            "boolean", false);
+
         const tabopts = [
             ["n", "Tab number", null, ".hl-TabNumber"],
             ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
@@ -1168,12 +1172,19 @@ const liberator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                var rcFile = io.getRCFile();
+                let rcFile = io.getRCFile("~");
 
                 if (rcFile)
                     io.source(rcFile.path, true);
                 else
                     liberator.log("No user RC file found", 3);
+
+                if (options["exrc"])
+                {
+                    let localRcFile = io.getRCFile(io.getCurrentDirectory());
+                    if (localRcFile)
+                        io.source(localRcFile.path, true);
+                }
 
                 if (options["loadplugins"])
                     liberator.loadPlugins();

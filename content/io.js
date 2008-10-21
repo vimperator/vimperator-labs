@@ -478,10 +478,12 @@ function IO() //{{{
             return dirs;
         },
 
-        getRCFile: function ()
+        getRCFile: function (dir)
         {
-            var rcFile1 = ioManager.getFile("~/." + EXTENSION_NAME + "rc");
-            var rcFile2 = ioManager.getFile("~/_" + EXTENSION_NAME + "rc");
+            dir = dir || "~";
+
+            let rcFile1 = ioManager.getFile(joinPaths(dir, "/." + EXTENSION_NAME + "rc"));
+            let rcFile2 = ioManager.getFile(joinPaths(dir, "/_" + EXTENSION_NAME + "rc"));
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1];

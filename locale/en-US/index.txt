@@ -257,6 +257,7 @@ section:Options[option-index]
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
+||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by ';' +
 ||'fileencoding'|| set the charactor encoding for the current page +
 ||'focuscontent'|| Try to stay in normal mode after loading a web page +
