@@ -1,4 +1,3 @@
-<pre>
 2008-XX-XX:
     * version 2.0 (probably)
     * IMPORTANT: command actions now take an args object, returned from
@@ -361,5 +360,3 @@
 11/04/2007:
     * version 0.2
     * first public release
-</pre>
-<!-- vim: set sw=4 ts=4 et: -->
