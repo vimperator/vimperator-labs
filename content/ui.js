@@ -107,8 +107,12 @@ function CommandLine() //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
-    var statusTimer = new util.Timer(5, 100, function ()
-        statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length));
+    var statusTimer = new util.Timer(5, 100, function () {
+        if (completionIndex >= completions.length)
+            statusline.updateProgress("");
+        else
+            statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+    });
     var autocompleteTimer = new util.Timer(201, 300, function (command) {
         if (events.feedingKeys)
             return;
