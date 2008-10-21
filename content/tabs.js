@@ -630,19 +630,17 @@ function Tabs() //{{{
 
         commands.add(["undoa[ll]"],
             "Undo closing of all closed tabs",
-            function (args, special, count)
+            function (args)
             {
-                var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                let ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
                                    .getService(Components.interfaces.nsISessionStore);
-                var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+                let undoItems = eval("(" + ss.getClosedTabData(window) + ")");
+
                 for (let i = 0; i < undoItems.length; i++)
                     undoCloseTab(); // doesn't work with i as the index to undoCloseTab
+
             },
-            {
-                argCount: "0",
-                bang: true,
-                count: true
-            });
+            { argCount: "0" });
 
         commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
