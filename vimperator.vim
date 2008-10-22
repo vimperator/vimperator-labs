@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Oct 8
+" Last Change:      2008 Oct 22
 
 if exists("b:current_syntax")
   finish
@@ -50,13 +50,13 @@ syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcol
     \ contained nextgroup=vimperatorSetMod
 
 " toggle options
-syn match vimperatorOption "\<\%(no\|inv\)\=\%(focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\|incsearch\|is\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(errorbells\|eb\|exrc\|ex\|focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\)\>!\="
     \ contained nextgroup=vimperatorSetMod
-syn match vimperatorOption "\<\%(no\|inv\)\=\%(insertmode\|im\|hlsearch\|hls\|linksearch\|lks\|loadplugins\|lpl\|more\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(incsearch\|is\|insertmode\|im\|hlsearch\|hls\|linksearch\|lks\)\>!\="
     \ contained nextgroup=vimperatorSetMod
-syn match vimperatorOption "\<\%(no\|inv\)\=\%(online\|preload\|showmode\|smd\|smartcase\|scs\|online \|visualbell\|vb\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|preload\|showmode\|smd\|smartcase\|scs\)\>!\="
     \ contained nextgroup=vimperatorSetMod
-syn match vimperatorOption "\<\%(no\|inv\)\=\%(usermode\|um\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(online\|visualbell\|vb\|usermode\|um\)\>!\="
     \ contained nextgroup=vimperatorSetMod
 
 syn match vimperatorSetMod "\%(\<[a-z_]\+\)\@<=&" contained
