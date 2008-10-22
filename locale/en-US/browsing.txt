@@ -137,7 +137,9 @@ ________________________________________________________________________________
 |<C-x>|
 ||[count]<C-x>||
 ________________________________________________________________________________
-Decrements the last number in URL by 1, or by [count] if given.
+Decrements the last number in URL by 1, or by [count] if given. Negative
+numbers are not supported, as this not generally useful, so the number cannot
+be decremented past 0.
 ________________________________________________________________________________
 
 

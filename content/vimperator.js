@@ -118,24 +118,21 @@ const config = { //{{{
 
     init: function ()
     {
+        // TODO: support 'nrformats'?
         function incrementURL(count)
         {
-            var url = buffer.URL;
-            var regex = /(.*?)(\d+)(\D*)$/;
+            let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
 
-            var matches = url.match(regex);
-            if (!matches || !matches[2]) // no number to increment
-                return liberator.beep();
+            if (!matches)
+            {
+                liberator.beep();
+                return;
+            }
 
-            var newNum = parseInt(matches[2], 10) + count + ""; // "" to make sure its a string
-            var nums = newNum.match(/^(-?)(\d+)$/);
-            var oldLength = matches[2].replace(/-/, "").length, newLength = nums[2].length;
-            newNum = nums[1] || "";
-            for (let i = 0; i < oldLength - newLength; i++)
-                newNum += "0"; // keep leading zeros
-            newNum += nums[2];
+            [, pre, number, post] = matches;
+            let newNumber = parseInt(number, 10) + count;
 
-            liberator.open(matches[1] + newNum + matches[3]);
+            liberator.open(pre + (newNumber > 0 ? newNumber : 0) + post);
         }
 
         // load Vimperator specific modules
