@@ -364,7 +364,7 @@ function IO() //{{{
                 args = "!" + (args || "");
 
             // TODO: Hmmm, actually Vim doesn't handle multiple backslashes and documents it - desirable?
-            args = args.replace(/((?:^|[^\\])(?:\\\\)*)!/g, function(m, n) n != null ? n + lastRunCommand : m)
+            args = args.replace(/((?:^|[^\\])(?:\\\\)*)!/g, function (m, n) n != null ? n + lastRunCommand : m)
             lastRunCommand = args;
 
             let output = io.system(args);

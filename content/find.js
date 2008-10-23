@@ -148,15 +148,15 @@ function Search() //{{{
                         var last = cur;
                         sel.lineMove(forward, false);
                         cur = selection.getRangeAt(0);
-                        if(equal(cur, last))
+                        if (equal(cur, last))
                             break;
                         yield cur;
                     }
                 }
                 yield orig;
-                for(let range in getRanges(true))
+                for (let range in getRanges(true))
                     yield range;
-                for(let range in getRanges(false))
+                for (let range in getRanges(false))
                     yield range;
             }
             for (let range in getLines())
