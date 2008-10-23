@@ -860,8 +860,8 @@ const liberator = (function () //{{{
         // return true, if this liberator extension has a certain feature
         has: function (feature)
         {
-            var features = config.features || [];
-            return features.some(function (feat) feat == feature);
+            let features = config.features || [];
+            return features.indexOf(feature) >= 0;
         },
 
         help: function (topic)
@@ -1130,6 +1130,9 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
+            // TODO: only checked for "Win32" currently, other values should be normalised
+            config.features.push(navigator.platform);
+
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands); addCommands();
             loadModule("options",      Options);  addOptions();
@@ -1143,7 +1146,7 @@ const liberator = (function () //{{{
             loadModule("io",           IO);
             loadModule("completion",   Completion);
 
-            // This adds options/mappings/commands which are only valid in this particular extension
+            // add options/mappings/commands which are only valid in this particular extension
             if (config.init)
                 config.init();
 
@@ -1154,11 +1157,12 @@ const liberator = (function () //{{{
             liberator.registerCallback("complete", modes.EX, function (str) { return completion.ex(str); });
 
             // first time intro message
-            if (options.getPref("extensions." + config.name.toLowerCase() + ".firsttime", true))
+            const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";
+            if (options.getPref(firstTime, true))
             {
                 setTimeout(function () {
                     liberator.help();
-                    options.setPref("extensions." + config.name.toLowerCase() + ".firsttime", false);
+                    options.setPref(firstTime, false);
                 }, 1000);
             }
 

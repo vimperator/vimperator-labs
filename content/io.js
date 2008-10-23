@@ -34,7 +34,7 @@ function IO() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const WINDOWS = navigator.platform == "Win32";
+    const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
     const environmentService = Components.classes["@mozilla.org/process/environment;1"]

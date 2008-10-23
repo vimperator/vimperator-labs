@@ -39,8 +39,6 @@ function Completion() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const WINDOWS = navigator.platform == "Win32";
-
     try
     {
         var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
@@ -842,7 +840,7 @@ function Completion() //{{{
 
         environment: function environment(filter)
         {
-            let command = WINDOWS ? "set" : "export";
+            let command = liberator.has("Win32") ? "set" : "export";
             let lines = io.system(command).split("\n");
 
             lines.splice(lines.length - 1, 1);
@@ -1080,7 +1078,7 @@ function Completion() //{{{
                 const environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                                      .getService(Components.interfaces.nsIEnvironment);
 
-                let dirNames = environmentService.get("PATH").split(RegExp(WINDOWS ? ";" : ":"));
+                let dirNames = environmentService.get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
                 for (let [,dirName] in Iterator(dirNames))
