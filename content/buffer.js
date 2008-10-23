@@ -942,8 +942,9 @@ function Buffer() //{{{
         "View source code of current document",
         function (args, special) { buffer.viewSource(args.arguments[0], special); },
         {
-            argCount: "1",
-            bang: true
+            argCount: "?",
+            bang: true,
+            completer: function (filter) completion.url(filter, "bhf")
         });
 
     commands.add(["zo[om]"],

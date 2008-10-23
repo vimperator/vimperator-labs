@@ -13,6 +13,7 @@ Inactive/former developers:
   * Marco Candrian (mac@calmar.ws)
  
 Patches (in no special order):
+  * Juergen Descher
   * Kazuo (count support for ctrl-^)
   * Daniel Schaffrath (;b support)
   * Dominik Meister (:b# support and other buffer related commands)
