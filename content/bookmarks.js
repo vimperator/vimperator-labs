@@ -996,7 +996,7 @@ function QuickMarks() //{{{
                 }
             }
 
-            let items = ({ title: mark, url: qmarks.get(mark) } for each (mark in marks));
+            let items = ({ title: String(mark), url: qmarks.get(mark) } for each (mark in marks));
             let list = template.bookmarks("QuickMark", items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
