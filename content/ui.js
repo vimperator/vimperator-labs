@@ -621,6 +621,8 @@ function CommandLine() //{{{
             var focused = document.commandDispatcher.focusedElement;
             if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
                 return false;
+            if (silent)
+                return false;
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
 

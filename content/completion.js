@@ -410,7 +410,7 @@ function Completion() //{{{
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
                 cacheKey = null;
-                let obj = [liberator, window]; // Default objects;
+                let obj = [modules, window]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
                     dot = statement - 1;

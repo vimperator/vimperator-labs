@@ -73,7 +73,7 @@ function Buffer() //{{{
                           "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
         const Sheet = new Struct("name", "sites", "css", "ref");
 
-        let cssUri = function (css) "data:text/css," + encodeURI(css);
+        let cssUri = function (css) "chrome-data:text/css," + encodeURI(css);
 
         let userSheets = [];
         let systemSheets = [];
@@ -259,7 +259,7 @@ function Buffer() //{{{
             }
             if (errors.length)
             {
-                let err = new Error("", errors[0].sourceName.replace(/^(data:text\/css,).*/, "$1..."), errors[0].lineNumber);
+                let err = new Error("", errors[0].sourceName.replace(/^(chrome-data:text\/css,).*/, "$1..."), errors[0].lineNumber);
                 err.name = "CSSError"
                 err.message = errors.reduce(function (msg, e) msg + "; " + e.lineNumber + ": " + e.errorMessage, errors.shift().errorMessage);
                 err.echoerr = err.fileName + ":" + err.lineNumber + ": " + err.message;

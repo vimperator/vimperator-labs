@@ -798,8 +798,11 @@ lookup:
                     }
                     catch (e)
                     {
-                        e.echoerr = file.path + ":" + e.lineNumber + ": " + e;
-                        throw e;
+                        let err = new Error();
+                        for (let [k, v] in Iterator(e))
+                            err[k] = v;
+                        err.echoerr = file.path + ":" + e.lineNumber + ": " + e;
+                        throw err;
                     }
                 }
                 else if (/\.css$/.test(filename))
