@@ -929,7 +929,7 @@ function Completion() //{{{
                 if (tail)
                     return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
                 else
-                    return [0, this.cached("file", filter, generate, "filter", [true])];
+                    return [0, this.cached("file-" + dir, filter, generate, "filter", [true])];
             }
             catch (e)
             {
