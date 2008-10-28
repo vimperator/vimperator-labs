@@ -476,7 +476,7 @@ function Search() //{{{
         // Called when the current search needs to be repeated
         findAgain: function (reverse)
         {
-            if (!rangeFind || !rangeFind.search(null, reverse))
+            if (!rangeFind || !(found = rangeFind.search(null, reverse)))
                 liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
             else if (rangeFind.wrapped)
             {
@@ -504,7 +504,7 @@ function Search() //{{{
         searchKeyPressed: function (command)
         {
             if (options["incsearch"])
-                rangeFind.search(command);
+                found = rangeFind.search(command);
         },
 
         // Called when the enter key is pressed to trigger a search
