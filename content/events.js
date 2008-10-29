@@ -220,11 +220,11 @@ function AutoCommands() //{{{
                             <td class="hl-Title" colspan="2">{event}</td>
                         </tr>
                         +
-                        template.map(items, function (item)
-                        <tr>
-                            <td>&#160;{item.pattern.source}</td>
-                            <td>{item.command}</td>
-                        </tr>))
+                            template.map(items, function (item)
+                            <tr>
+                                <td>&#160;{item.pattern.source}</td>
+                                <td>{item.command}</td>
+                            </tr>))
                     }
                 </table>);
 

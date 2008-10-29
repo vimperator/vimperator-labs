@@ -651,7 +651,7 @@ function CommandLine() //{{{
             if (flags & this.FORCE_MULTILINE)
                 where = setMultiline;
             else if (flags & this.FORCE_SINGLELINE)
-                where = setLine;
+                where = function () setLine(str, highlightGroup, true);
             else if (!outputContainer.collapsed)
             {
                 if (flags & this.DISALLOW_MULTILINE)
