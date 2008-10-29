@@ -48,9 +48,6 @@ function Buffer() //{{{
 
     var highlight = storage.newMap("highlight", false);
 
-    var zoomLevels = [ 1, 10, 25, 50, 75, 90, 100,
-                        120, 150, 200, 300, 500, 1000, 2000 ];
-
     const util = modules.util;
     const arrayIter = util.Array.iterator;
 
@@ -282,64 +279,34 @@ function Buffer() //{{{
     let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
         "body { font-size: " + fontSize + "; }", true);
 
+    const ZOOM_MIN = Math.round(ZoomManager.MIN * 100);
+    const ZOOM_MAX = Math.round(ZoomManager.MAX * 100);
+
     function setZoom(value, fullZoom)
     {
-        if (value < 1 || value > 2000)
+        if (value < ZOOM_MIN || value > ZOOM_MAX)
         {
-            liberator.echoerr("Zoom value out of range (1-2000%)");
+            liberator.echoerr("Zoom value out of range (" + ZOOM_MIN + " - " + ZOOM_MAX + "%)");
             return;
         }
 
-        if (fullZoom)
-            getBrowser().markupDocumentViewer.fullZoom = value / 100.0;
-        else
-            getBrowser().markupDocumentViewer.textZoom = value / 100.0;
-
-        liberator.echo((fullZoom ? "Full zoom: " : "Text zoom: ") + value + "%");
-
-        // TODO: shouldn't this just recalculate hint coords, rather than
-        // unsuccessfully attempt to reshow hints?  i.e. isn't it just relying
-        // on the recalculation side effect? -- djk
-        // NOTE: we could really do with a zoom event...
-        // hints.reshowHints();
+        ZoomManager.useFullZoom = fullZoom;
+        ZoomManager.zoom = value / 100;
+        FullZoom._applySettingToPref();
+        liberator.echo((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
     }
 
     function bumpZoomLevel(steps, fullZoom)
     {
-        if (fullZoom)
-            var value = getBrowser().markupDocumentViewer.fullZoom * 100.0;
-        else
-            var value = getBrowser().markupDocumentViewer.textZoom * 100.0;
+        let values = ZoomManager.zoomValues;
+        let i = values.indexOf(ZoomManager.snap(ZoomManager.zoom)) + steps;
 
-        var index = -1;
-        if (steps <= 0)
-        {
-            for (let i = zoomLevels.length - 1; i >= 0; i--)
-            {
-                if ((zoomLevels[i] + 0.01) < value) // 0.01 for float comparison
-                {
-                    index = i + 1 + steps;
-                    break;
-                }
-            }
-        }
+        if (i >= 0 && i < values.length)
+            setZoom(Math.round(values[i] * 100), fullZoom);
+        // TODO: I'll leave the behaviour as is for now, but I think this
+        // should probably just take you to the respective bounds -- djk
         else
-        {
-            for (let i = 0; i < zoomLevels.length; i++)
-            {
-                if ((zoomLevels[i] - 0.01) > value) // 0.01 for float comparison
-                {
-                    index = i - 1 + steps;
-                    break;
-                }
-            }
-        }
-        if (index < 0 || index >= zoomLevels.length)
-        {
             liberator.beep();
-            return;
-        }
-        setZoom(zoomLevels[index], fullZoom);
     }
 
     function checkScrollYBounds(win, direction)
@@ -395,9 +362,6 @@ function Buffer() //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
-    // override this stupid pref, because otherwise zoom is lost after switching tabs
-    options.setPref("browser.zoom.siteSpecific", false);
 
     options.add(["fullscreen", "fs"],
         "Show the current window fullscreen",
@@ -953,7 +917,7 @@ function Buffer() //{{{
         {
             args = args.string;
 
-            var level;
+            let level;
 
             if (!args)
             {
@@ -971,10 +935,10 @@ function Buffer() //{{{
                     level = buffer.textZoom + parseInt(args, 10);
 
                 // relative args shouldn't take us out of range
-                if (level < 1)
-                    level = 1;
-                if (level > 2000)
-                    level = 2000;
+                if (level < ZOOM_MIN)
+                    level = ZOOM_MIN;
+                if (level > ZOOM_MAX)
+                    level = ZOOM_MAX;
             }
             else
             {

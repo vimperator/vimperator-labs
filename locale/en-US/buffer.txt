@@ -215,7 +215,21 @@ browsing forums or documentation. Change 'previouspattern' to modify its
 behavior. It follows relations between files too.
 ________________________________________________________________________________
 
-section:Zooming[zooming]
+section:Zooming[zooming,zoom]
+
+The zooming commands are dependent on two properties - a zoom range and a
+series of levels within that range.
+
+The absolute value of the page zoom is limited to a value within the configured
+zoom range (default: 30% - 300%). The zoom levels are used by
+[m]zi[m]/[m]zo[m], and similar commands, to change the zoom value in steps. The
+default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
+170%, 200%, 240%, 300%.
+
+The available zoom range can be changed by setting the \'zoom.minPercent' and
+\'zoom.maxPercent' Firefox preferences. The zoom levels can be changed using
+the \'toolkit.ZoomManager.zoomLevels' preference. Note: The latter is specified
+as a list of values between 0 and 1, not as a percentage.
 
 |+| |zi| +
 ||[count]zi||
@@ -248,8 +262,8 @@ ________________________________________________________________________________
 |zz| +
 ||[count]zz||
 ________________________________________________________________________________
-Set text zoom value of current web page. Zoom value can be between 1 and
-2000%. If it is omitted, text zoom is reset to 100%.
+Set text zoom value of current web page. Zoom value can be between 30 and 300%.
+If it is omitted, text zoom is reset to 100%.
 ________________________________________________________________________________
 
 
@@ -284,8 +298,8 @@ ________________________________________________________________________________
 |zZ| +
 ||[count]zZ||
 ________________________________________________________________________________
-Set full zoom value of current web page. Zoom value can be between 1 and
-2000%. If it is omitted, full zoom is reset to 100%.
+Set full zoom value of current web page. Zoom value can be between 30 and
+300%. If it is omitted, full zoom is reset to 100%.
 ________________________________________________________________________________
 
 
@@ -293,9 +307,9 @@ ________________________________________________________________________________
 ||:zo[om][!] [value]|| +
 ||:zo[om][!] +{value} | -{value}|| +
 ________________________________________________________________________________
-Set zoom value of current web page. If [value] can be an absolute value
-between 1 and 2000% or a relative value if prefixed with "-" or "+". If
-[value] is omitted, zoom is reset to 100%.
+Set zoom value of current web page. [value] can be an absolute value between 30
+and 300% or a relative value if prefixed with "-" or "+". If [value] is
+omitted, zoom is reset to 100%.
 
 Normally this command operates on the text zoom, if used with [!] it operates
 on full zoom.
