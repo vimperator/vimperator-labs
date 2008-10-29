@@ -625,34 +625,15 @@ function Hints() //{{{
 
     mappings.add(myModes, ["f"],
         "Start QuickHint mode",
-        function ()
-        {
-            commandline.input("Follow hint:", null, { onChange: onInput });
-            modes.extended = modes.HINTS | modes.QUICK_HINT;
-            hints.show(modes.QUICK_HINT);
-        });
+        function () { hints.show(modes.QUICK_HINT, "o") });
 
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function ()
-        {
-            commandline.input("Follow hint in a new tab:", null, { onChange: onInput });
-            modes.extended = modes.HINTS | modes.QUICK_HINT;
-            hints.show(modes.QUICK_HINT, "t");
-        });
+        function () { hints.show(modes.QUICK_HINT, "t") });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (arg)
-        {
-            let prompt = hintDescriptions[arg];
-            if (!prompt)
-                return liberator.beep();
-
-            commandline.input(prompt, null, { onChange: onInput });
-            modes.extended = modes.HINTS | modes.EXTENDED_HINT;
-            hints.show(modes.EXTENDED_HINT, arg);
-        },
+        function (arg) { hints.show(modes.EXTENDED_HINT, arg) },
         { flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -663,11 +644,14 @@ function Hints() //{{{
 
         show: function (mode, minor, filter, win)
         {
-            if (mode == modes.EXTENDED_HINT && !/^[;?asoOtbTvVwWyY]$/.test(minor))
+            let prompt = hintDescriptions[minor];
+            if (!prompt)
             {
                 liberator.beep();
                 return;
             }
+            commandline.input(prompt, null, { onChange: onInput });
+            modes.extended = modes.HINTS | mode;
 
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
