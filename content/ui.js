@@ -126,6 +126,7 @@ function CommandLine() //{{{
     var promptWidget = document.getElementById("liberator-commandline-prompt");
     // the command bar which contains the current command
     var commandWidget = document.getElementById("liberator-commandline-command");
+    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
 
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
@@ -203,11 +204,18 @@ function CommandLine() //{{{
         commandWidget.value = cmd;
     }
 
-    function setLine(str, highlightGroup)
+    function setLine(str, highlightGroup, forceSingle)
     {
         setHighlightGroup(highlightGroup);
         setPrompt("");
         setCommand(str);
+        if (!forceSingle &&
+            commandWidget.inputField.editor
+                         .selection.getRangeAt(0)
+                         .startContainer.parentNode
+                         .scrollWidth > commandWidget.inputField.scrollWidth)
+            // Yeah, the min-width is stupid. Somehow, it doesn't work otherwise.
+            setMultiline(<p style={"white-space: normal; min-width: " + commandWidget.inputField.scrollWidth + "px; width: 100%"}>{str}</p>, highlightGroup);
     }
 
     // TODO: extract CSS
@@ -257,14 +265,14 @@ function CommandLine() //{{{
             elements[elements.length - 1].scrollIntoView(true);
 
             if (win.scrollY >= win.scrollMaxY)
-                setLine("Press ENTER or type command to continue", commandline.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", commandline.HL_QUESTION, true);
             else
-                setLine("-- More --", commandline.HL_QUESTION);
+                setLine("-- More --", commandline.HL_QUESTION, true);
         }
         else
         {
             win.scrollTo(0, contentHeight);
-            setLine("Press ENTER or type command to continue", commandline.HL_QUESTION);
+            setLine("Press ENTER or type command to continue", commandline.HL_QUESTION, true);
         }
 
         win.focus();
@@ -1185,7 +1193,7 @@ function CommandLine() //{{{
             {
                 const selType = Components.interfaces.nsISelectionController["SELECTION_" + type];
                 let editor = document.getElementById("liberator-commandline-command")
-                                            .inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement).editor;
+                                     .inputField.editor;
                 let sel = editor.selectionController.getSelection(selType);
                 sel.removeAllRanges();
 
