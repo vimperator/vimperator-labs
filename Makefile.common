@@ -37,7 +37,7 @@ XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.t
 			-a -path '*.jsm'	\
 		}
 XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
-XPI_BIN_FILES = ${JAR} Makefile.common Makefile
+XPI_BIN_FILES = ${JAR} Makefile.common Makefile components/*
 XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
 XPI_NAME      = ${NAME}_${VERSION}.xpi
 XPI           = ../downloads/${XPI_NAME}
