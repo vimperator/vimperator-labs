@@ -1,0 +1,87 @@
+HEADER
+
+|styling| +
+
+Vimperator allows you to style both the browser and any web
+pages you view. All styling is specified via CSS. Although you
+may style any user interface element via the [c]:style[c] command,
+most Vimperator elements can be styled with the [c]:highlight[c]
+command, for convenience.
+
+|:hi| |:highlight| +
+||:hi[light][!] {group}[{selector}] [{css}]|| +
+________________________________________________________________________________
+Highlight {group} with {css}. Normally, {css} is checked for
+valid syntax before it's applied. Once you're certain it's
+valid, [!] will override the check, to speed Vimperator startup.
+{selector} can be any valid CSS selector, such as {:hover}, and
+if provided will restrict the match to matching elements.
+
+Valid groups are:
+`------------------`-----------------------------------
+*Bell*             Vimperator's visual bell
+*Boolean*          A Javascript Boolean object
+*ErrorMsg*         Error messages
+*Filter*           The matching text in a completion list
+*Function*         A Javascript Function object
+*Hint*             A hint indicator. See [c]:help hints[c].
+*InfoMsg*          Information messages
+*Keyword*          A bookmark keyword for a URL
+*LineNr*           The line number of an error
+*ModeMsg*          The mode indicator in the command line
+*MoreMsg*          The indicator that there is more text to view
+*Normal*           Normal text in the command line
+*Null*             A Javascript Null object
+*Number*           A Javascript Number object
+*Object*           A Javascript Object
+*Question*         A prompt for a decision
+*Search*           Highlighted search results in a web page
+*StatusLine*       The status bar
+*StatusLineBroken* The status bar for a broken web page
+*StatusLineSecure* The status bar for a secure web page
+*String*           A Javascript String object
+*TabClose*         The close button of a browser tab
+*TabIcon*          The icon of a browser tab
+*TabIconNumber*    The number of a browser tab, over its icon
+*TabNumber*        The number of a browser tab, next to its icon
+*TabText*          The text of a browser tab
+*Tag*              A bookmark tag for a URL
+*Title*            The title of a listing, including [c]:bmarks[c], [c]:jumps[c]
+*URL*              A URL
+*WarningMsg*       A warning message
+-------------------------------------------------------
+
+Every invocation completely replaces the styling of any previous
+invocation. If {css} is not provided and [!] is, any styles
+matching {group} are listed. If neither {css} nor [!] is
+provided, the style for {group} is reset to its default value.
+________________________________________________________________________________
+
+|:sty| |:style| +
+||:sty[le][!] [-name={name}] {filter} [{css}]|| +
+________________________________________________________________________________
+Add CSS styles to the browser or to web pages. {filter} is a
+comma separated list of URLs to match. URLs ending with [c]*[c]
+are matched as prefixes, URLs not containing any [c]:[c] or
+[c]/[c] characters are matched as domains. If {name} (short
+option: [c]-n[c]) is provided, any existing style with the same
+name is overridden, and the style may later be deleted using
+{name}.
+
+If {css} isn't provided, matching styles are listed.
+________________________________________________________________________________
+
+|:dels| |:delstyle| +
+||:dels[tyle] [-name={name}] [-index={index}] [{filter}] [{css}]|| +
+________________________________________________________________________________
+Delete any matching styles. If {filter} is provided, only
+matching elements of the filter are disabled. For instance, a
+filter [c]mozilla.org[c], given a style for
+[c]www.google.com,mozilla.org[c], will result in a style for
+[c]www.google.com[c]. The available options are:
+
+ - -name:  The name provided to :sty (short option: -n)
+ - -index: For unnamed styles, the index listed by [c]:style[c] (short option: -i)
+________________________________________________________________________________
+
+// vim: set syntax=asciidoc:

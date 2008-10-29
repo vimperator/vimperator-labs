@@ -175,6 +175,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:forward|| Go forward in the browser history +
 ||:hardcopy|| Print current document +
 ||:help|| Display help +
+||:highlight|| Style Vimperator +
 ||:history|| Show recently visited URLs +
 ||:iabbrev|| Abbreviate a key sequence in insert mode +
 ||:iabclear|| Remove all abbreviations in insert mode +
@@ -218,6 +219,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:setglobal|| Set global option +
 ||:setlocal|| Set local option +
 ||:sidebar|| Open the sidebar window +
+||:style|| Style Vimperator and web sites +
 ||:source|| Read Ex commands from a file +
 ||:stop|| Stop loading +
 ||:tab|| Execute a command and tell it to output in a new tab +
