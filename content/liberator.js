@@ -625,11 +625,13 @@ const liberator = (function () //{{{
                 // flash the visual bell
                 let popup = document.getElementById("liberator-visualbell");
                 let win = config.visualbellWindow;
-                let box = document.getBoxObjectFor(win);
+                let rect = win.getBoundingClientRect();
+                let width = rect.right - rect.left;
+                let height = rect.bottom - rect.top;
 
                 // NOTE: this doesn't seem to work in FF3 with full box dimensions
                 popup.openPopup(win, "overlap", 1, 1, false, false);
-                popup.sizeTo(box.width - 2, box.height - 2);
+                popup.sizeTo(width - 2, height - 2);
                 setTimeout(function () { popup.hidePopup(); }, 20);
             }
             else
