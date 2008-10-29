@@ -706,8 +706,12 @@ function CommandLine() //{{{
                 setTimeout(function () {
                     if (liberator.mode == modes.COMMAND_LINE &&
                         !(modes.extended & modes.INPUT_MULTILINE) &&
-                        !(modes.extended & modes.OUTPUT_MULTILINE))
-                                commandWidget.inputField.focus();
+                        !(modes.extended & modes.OUTPUT_MULTILINE) &&
+                        event.originalTarget == commandWidget.inputField)
+                    {
+                        commandWidget.inputField.focus();
+                        liberator.beep();
+                    }
                 }, 0);
             }
             else if (event.type == "focus")
