@@ -1,7 +1,7 @@
 2008-XX-XX:
     * version 2.0 (probably)
-	* IMPORTANT: AlwaysHint modes were removed as they didn't make too 
-	  much sense with the new hint system
+    * IMPORTANT: AlwaysHint modes were removed as they didn't make too 
+      much sense with the new hint system
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
       not using the args parser explicitly.  The old string value is now
@@ -12,7 +12,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
-	* multibyte support for hints (thanks Xie&Tian)
+    * multibyte support for hints (thanks Xie&Tian)
     * add 'exrc'
     * add 'errorbells'
     * add shell command completion for :!
