@@ -295,7 +295,8 @@ function Buffer() //{{{
 
         ZoomManager.useFullZoom = fullZoom;
         ZoomManager.zoom = value / 100;
-        FullZoom._applySettingToPref();
+        if ("FullZoom" in window)
+            FullZoom._applySettingToPref();
         liberator.echo((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
     }
 
