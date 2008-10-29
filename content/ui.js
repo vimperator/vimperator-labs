@@ -990,7 +990,7 @@ function CommandLine() //{{{
             {
                 statusline.updateInputBuffer("");
                 startHints = false;
-                hints.show(modes.EXTENDED_HINT, key, undefined, win);
+                hints.show(key, undefined, win);
                 return;
             }
 

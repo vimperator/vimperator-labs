@@ -50,10 +50,6 @@ const modes = (function () //{{{
             return "-- PASS THROUGH --";
 
         var ext = "";
-        if (extended & modes.QUICK_HINT)
-            ext += " (quick)";
-        if (extended & modes.EXTENDED_HINT)
-            ext += " (extended)";
         if (extended & modes.MENU) // TODO: desirable?
             ext += " (menu)";
 
@@ -72,12 +68,9 @@ const modes = (function () //{{{
                 return "-- INSERT" + ext;
             case modes.VISUAL:
                 return (extended & modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
-	    // under modes.COMMAND_LINE, this block will never be reached
-            case modes.COMMAND_LINE:		// since modes.HINTS is actually not a main mode
-		if (extended & modes.HINTS)
-	            return "-- HINTS" + ext;
-		else
-		    return macromode;
+            case modes.COMMAND_LINE:
+                // under modes.COMMAND_LINE, this block will never be reached
+                return macromode;
             case modes.CARET:
                 return "-- CARET" + ext;
             case modes.TEXTAREA:
@@ -130,9 +123,9 @@ const modes = (function () //{{{
                 break;
 
             case modes.COMMAND_LINE:
-		// clean up for HINT mode
-		if (modes.extended & modes.HINTS)
-			hints.hide();
+                // clean up for HINT mode
+                if (modes.extended & modes.HINTS)
+                        hints.hide();
                 commandline.close();
                 break;
         }
@@ -160,25 +153,23 @@ const modes = (function () //{{{
         NORMAL:           1 << 0,
         INSERT:           1 << 1,
         VISUAL:           1 << 2,
-        HINTS:            1 << 3,
-        COMMAND_LINE:     1 << 4,
-        CARET:            1 << 5, // text cursor is visible
-        TEXTAREA:         1 << 6, // text cursor is in a HTMLTextAreaElement
-        MESSAGE:          1 << 7, // for now only used in Muttator when the message has focus
-        COMPOSE:          1 << 8,
-        CUSTOM:           1 << 9,
+        COMMAND_LINE:     1 << 3,
+        CARET:            1 << 4, // text cursor is visible
+        TEXTAREA:         1 << 5, // text cursor is in a HTMLTextAreaElement
+        MESSAGE:          1 << 6, // for now only used in Muttator when the message has focus
+        COMPOSE:          1 << 7,
+        CUSTOM:           1 << 8,
         // extended modes, can include multiple modes, and even main modes
-        EX:               1 << 10,
+        EX:               1 << 9,
+        HINTS:            1 << 10,
         INPUT_MULTILINE:  1 << 11,
         OUTPUT_MULTILINE: 1 << 12,
         SEARCH_FORWARD:   1 << 13,
         SEARCH_BACKWARD:  1 << 14,
-        QUICK_HINT:       1 << 15,
-        EXTENDED_HINT:    1 << 16,
-        MENU:             1 << 17, // a popupmenu is active
-        LINE:             1 << 18, // linewise visual mode
-        RECORDING:        1 << 19,
-        PROMPT:           1 << 20,
+        MENU:             1 << 15, // a popupmenu is active
+        LINE:             1 << 16, // linewise visual mode
+        RECORDING:        1 << 17,
+        PROMPT:           1 << 18,
 
         __iterator__: function () util.Array.iterator(this.all),
 

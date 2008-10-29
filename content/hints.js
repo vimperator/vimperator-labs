@@ -625,15 +625,15 @@ function Hints() //{{{
 
     mappings.add(myModes, ["f"],
         "Start QuickHint mode",
-        function () { hints.show(modes.QUICK_HINT, "o") });
+        function () { hints.show("o") });
 
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { hints.show(modes.QUICK_HINT, "t") });
+        function () { hints.show("t") });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (arg) { hints.show(modes.EXTENDED_HINT, arg) },
+        function (arg) { hints.show(arg) },
         { flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -642,7 +642,7 @@ function Hints() //{{{
 
     return {
 
-        show: function (mode, minor, filter, win)
+        show: function (minor, filter, win)
         {
             let prompt = hintDescriptions[minor];
             if (!prompt)
@@ -651,7 +651,7 @@ function Hints() //{{{
                 return;
             }
             commandline.input(prompt, null, { onChange: onInput });
-            modes.extended = modes.HINTS | mode;
+            modes.extended = modes.HINTS;
 
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
