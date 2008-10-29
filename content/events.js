@@ -1215,8 +1215,7 @@ function Events() //{{{
                     event.stopPropagation();
                     return true;
                 }
-                else if (!(modes.extended & modes.INACTIVE_HINT) &&
-                         !mappings.hasMap(liberator.mode, input.buffer + key))
+                else if (!mappings.hasMap(liberator.mode, input.buffer + key))
                 {
                     macros.set(currentMacro, macros.get(currentMacro) + key);
                 }
@@ -1320,13 +1319,23 @@ function Events() //{{{
                     event.stopPropagation();
                     return false;
                 }
-                // if Hint mode is on, special handling of keys is required
-                if (liberator.mode == modes.HINTS)
+
+                if (modes.extended & modes.HINTS)
                 {
-                    hints.onEvent(event);
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return false;
+  	                // under HINT mode, certain keys are redirected to hints.onEvent 
+                	if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
+                		|| key == mappings.getMapLeader()
+                		|| (key == "<BS>" && hints.previnput == "number")
+                		|| (/^[0-9]$/.test(key) && !hints.escNumbers))
+                	{
+                		hints.onEvent(event);
+                		event.preventDefault();
+                		event.stopPropagation();
+                		return false;
+                	}
+
+                	// others are left to generate the 'input' event or handled by firefox
+                	return ;
                 }
             }
 

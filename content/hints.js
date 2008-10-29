@@ -38,6 +38,7 @@ function Hints() //{{{
     var hintString = ""; // the typed string part of the hint is in this string
     var hintNumber = 0;  // only the numerical part of the hint
     var usedTabKey = false; // when we used <Tab> to select an element
+    var prevInput = "";    // record previous user input type, "text" || "number"
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var pageHints = [];
@@ -50,6 +51,23 @@ function Hints() //{{{
     // keep track of the documents which we generated the hints for
     // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
     var docs = [];
+    
+    const hintDescriptions = {
+        a: "Save hint with prompt:",
+        s: "Save hint:",
+        o: "Follow hint:",
+        t: "Follow hint in a new tab:",
+        b: "Follow hint in a background tab:",
+        O: "Open location based on hint:",
+        T: "Open new tab based on hint:",
+        v: "View hint source:",
+        w: "Follow hint in a new window:",
+        W: "Open new window based on hint:",
+        y: "Yank hint location:",
+        Y: "Yank hint description:"
+    }
+    hintDescriptions[";"] = "Focus hint:";
+    hintDescriptions["?"] = "Show information for hint:";
 
     // reset all important variables
     function reset()
@@ -58,6 +76,7 @@ function Hints() //{{{
         hintString = "";
         hintNumber = 0;
         usedTabKey = false;
+        prevInput = ""; 
         pageHints = [];
         validHints = [];
         canUpdate = false;
@@ -71,9 +90,7 @@ function Hints() //{{{
 
     function updateStatusline()
     {
-        statusline.updateInputBuffer((escapeNumbers ? mappings.getMapLeader() + " " : "") + // sign for escapeNumbers
-                (hintString ? "\"" + hintString + "\"" : "") +
-                (hintNumber > 0 ? " <" + hintNumber + ">" : ""));
+        statusline.updateInputBuffer((escapeNumbers ? mappings.getMapLeader() : "") + (hintNumber || ""));
     }
 
     function generate(win)
@@ -162,7 +179,7 @@ function Hints() //{{{
 
         var elem, tagname, text, rect, span, imgspan;
         var hintnum = 1;
-        var validHint = hintMatcher(hintString);
+        var validHint = hintMatcher(hintString.toLowerCase());
         var activeHint = hintNumber || 1;
         validHints = [];
 
@@ -325,54 +342,63 @@ function Hints() //{{{
         switch (submode)
         {
             case ";": buffer.focusElement(elem); break;
-            case "?": buffer.showElementInfo(elem); break;
             case "a": buffer.saveLink(elem, false); break;
             case "s": buffer.saveLink(elem, true); break;
             case "o": buffer.followLink(elem, liberator.CURRENT_TAB); break;
-            case "O": commandline.open(":", "open " + loc, modes.EX); break;
             case "t": buffer.followLink(elem, liberator.NEW_TAB); break;
             case "b": buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB); break;
-            case "T": commandline.open(":", "tabopen " + loc, modes.EX); break;
             case "v": buffer.viewSource(loc, false); break;
             case "V": buffer.viewSource(loc, true); break;
-            case "w": buffer.followLink(elem, liberator.NEW_WINDOW);  break;
-            case "W": commandline.open(":", "winopen " + loc, modes.EX); break;
+            case "w": buffer.followLink(elem, liberator.NEW_WINDOW); break;
+
+            // some modes need a timeout as they depend on the command line which is still blocked
+            // 500ms because otherwise `fad' would delete a tab, if "a" would make an "address" link unique
+            case "?": setTimeout(function () { buffer.showElementInfo(elem); }, timeout + 50); break;
             case "y": setTimeout(function () { util.copyToClipboard(loc, true); }, timeout + 50); break;
             case "Y": setTimeout(function () { util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
+            case "O": setTimeout(function () { commandline.open(":", "open " + loc, modes.EX); }, timeout); break;
+            case "T": setTimeout(function () { commandline.open(":", "tabopen " + loc, modes.EX); }, timeout); break;
+            case "W": setTimeout(function () { commandline.open(":", "winopen " + loc, modes.EX); }, timeout); break;
             default:
                 liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
         }
         removeHints(timeout);
 
-        if (modes.extended & modes.ALWAYS_HINT)
+        if (timeout == 0 || modes.isReplaying)
         {
-            setTimeout(function () {
-                canUpdate = true;
-                hintString = "";
-                hintNumber = 0;
-                statusline.updateInputBuffer("");
-            }, timeout);
+            // force a possible mode change, based on wheter an input field has focus
+            events.onFocusChange();
+            if (modes.extended & modes.HINTS)
+                modes.reset(false);
         }
         else
         {
-            if (timeout == 0 || modes.isReplaying)
-            {
-                // force a possible mode change, based on wheter an input field has focus
-                events.onFocusChange();
-                if (liberator.mode == modes.HINTS)
-                    modes.reset(false);
-            }
-            else
-            {
-                modes.add(modes.INACTIVE_HINT);
-                setTimeout(function () {
-                    if (liberator.mode == modes.HINTS)
-                        modes.pop();
-                }, timeout);
-            }
+            setTimeout(function () {
+                if (modes.extended & modes.HINTS)
+                    modes.reset();
+            }, timeout);
         }
 
         return true;
+    }
+    
+    function onInput (event) 
+    {
+        prevInput = "text";
+
+        // clear any timeout which might be active after pressing a number
+        if (activeTimeout)
+        {
+            clearTimeout(activeTimeout);
+            activeTimeout = null;
+        }
+
+        hintNumber = 0;
+        hintString = commandline.getCommand();
+        updateStatusline();
+        showHints();
+        if (validHints.length == 1)
+            processHints(false);
     }
 
     function hintMatcher(hintString) //{{{
@@ -599,22 +625,33 @@ function Hints() //{{{
 
     mappings.add(myModes, ["f"],
         "Start QuickHint mode",
-        function () { hints.show(modes.QUICK_HINT); });
+        function ()
+        {
+            commandline.input("Follow hint:", null, { onChange: onInput });
+            modes.extended = modes.HINTS | modes.QUICK_HINT;
+            hints.show(modes.QUICK_HINT);
+        });
 
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { hints.show(modes.QUICK_HINT, "t"); });
+        function ()
+        {
+            commandline.input("Follow hint in a new tab:", null, { onChange: onInput });
+            modes.extended = modes.HINTS | modes.QUICK_HINT;
+            hints.show(modes.QUICK_HINT, "t");
+        });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
         function (arg)
         {
-            if (arg == "f")
-                hints.show(modes.ALWAYS_HINT, "o");
-            else if (arg == "F")
-                hints.show(modes.ALWAYS_HINT, "t");
-            else
-                hints.show(modes.EXTENDED_HINT, arg);
+            let prompt = hintDescriptions[arg];
+            if (!prompt)
+                return liberator.beep();
+
+            commandline.input(prompt, null, { onChange: onInput });
+            modes.extended = modes.HINTS | modes.EXTENDED_HINT;
+            hints.show(modes.EXTENDED_HINT, arg);
         },
         { flags: Mappings.flags.ARGUMENT });
 
@@ -632,10 +669,11 @@ function Hints() //{{{
                 return;
             }
 
-            modes.push(modes.HINTS, mode, win != undefined);
             submode = minor || "o"; // open is the default mode
             hintString = filter || "";
             hintNumber = 0;
+            usedTab = false;
+            prevInput = "";
             canUpdate = false;
 
             generate(win);
@@ -684,11 +722,6 @@ function Hints() //{{{
                     followFirst = true;
                     break;
 
-                case "<Space>":
-                    hintString += " ";
-                    escapeNumbers = false;
-                    break;
-
                 case "<Tab>":
                 case "<S-Tab>":
                     usedTabKey = true;
@@ -707,32 +740,23 @@ function Hints() //{{{
                             hintNumber = validHints.length;
                     }
                     showActiveHint(hintNumber, oldID);
+                    updateStatusline();
                     return;
 
                 case "<BS>":
                     if (hintNumber > 0 && !usedTabKey)
                     {
                         hintNumber = Math.floor(hintNumber / 10);
+                        if (hintNumber == 0)
+                            prevInput = "text";
                     }
-                    else if (hintString != "")
-                    {
-                        usedTabKey = false;
-                        hintNumber = 0;
-                        hintString = hintString.substr(0, hintString.length - 1);
-                    }
-                    else
+                    else 
                     {
                         usedTabKey = false;
                         hintNumber = 0;
                         liberator.beep();
                         return;
                     }
-                    break;
-
-                case "<C-w>":
-                case "<C-u>":
-                    hintString = "";
-                    hintNumber = 0;
                     break;
 
                case mappings.getMapLeader():
@@ -744,23 +768,10 @@ function Hints() //{{{
                    return;
 
                 default:
-                    // pass any special or ctrl- etc. prefixed key back to the main liberator loop
-                    if (/^<./.test(key) || key == ":")
+                    if (/^[0-9]$/.test(key))
                     {
-                        var map = null;
-                        if ((map = mappings.get(modes.NORMAL, key)) ||
-                            (map = mappings.get(modes.HINTS, key)))
-                        {
-                            map.execute(null, -1);
-                            return;
-                        }
-
-                        liberator.beep();
-                        return;
-                    }
-
-                    if (/^[0-9]$/.test(key) && !escapeNumbers)
-                    {
+                        prevInput = "number";
+                        
                         var oldHintNumber = hintNumber;
                         if (hintNumber == 0 || usedTabKey)
                         {
@@ -801,14 +812,6 @@ function Hints() //{{{
                         // we have a unique hint
                         processHints(true);
                         return;
-                    }
-
-                    hintString += key;
-                    hintNumber = 0; // after some text input
-                    if (usedTabKey)
-                    {
-                        usedTabKey = false;
-                        showActiveHint(1, hintNumber);
                     }
             }
 

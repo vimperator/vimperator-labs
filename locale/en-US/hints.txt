@@ -52,15 +52,8 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 * [m]y[m] to yank its destination location
 * [m]Y[m] to yank its text description
 
-Additionally there are two {mode}s, which will start an AlwaysHint mode:
-
-* [m]f[m] to open its location in the current tab
-* [m]F[m] to open its location in a new tab
-
-These work like the [m]f[m] or [m]F[m] mappings but will keep you in
-AlwaysHint mode. This is useful if you want to open many links of one page
-without pressing [m]f[m] or [m]F[m] each time. Hintable elements for all
-extended hint modes can be set in the 'extendedhinttags' XPath string.
+Hintable elements for all extended hint modes can be set in the
+'extendedhinttags' XPath string.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

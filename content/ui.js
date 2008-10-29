@@ -148,7 +148,8 @@ function CommandLine() //{{{
     var multilineCallback = null;
 
     // callback for prompt mode
-    var promptCallback = null;
+    var promptSubmitCallback = null;
+    var promptChangeCallback = null;
     var promptCompleter = null;
 
     liberator.registerCallback("change", modes.EX, function (command) {
@@ -160,8 +161,8 @@ function CommandLine() //{{{
 
     function closePrompt(value)
     {
-        let callback = promptCallback;
-        promptCallback = null;
+        let callback = promptSubmitCallback;
+        promptSubmitCallback = null;
         currentExtendedMode = null;
         commandline.clear();
         if (callback)
@@ -169,6 +170,8 @@ function CommandLine() //{{{
     }
     liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
+    liberator.registerCallback("change", modes.PROMPT,
+        function (str) { if (promptChangeCallback) return promptChangeCallback(str); });
     liberator.registerCallback("complete", modes.PROMPT,
         function (str) { if (promptCompleter) return promptCompleter(str); });
 
@@ -665,7 +668,8 @@ function CommandLine() //{{{
         {
             extra = extra || {};
 
-            promptCallback = callback;
+            promptSubmitCallback = callback;
+            promptChangeCallback = extra.onChange;
             promptCompleter = extra.completer;
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
             currentExtendedMode = modes.PROMPT;

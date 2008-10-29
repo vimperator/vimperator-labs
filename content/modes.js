@@ -54,10 +54,6 @@ const modes = (function () //{{{
             ext += " (quick)";
         if (extended & modes.EXTENDED_HINT)
             ext += " (extended)";
-        if (extended & modes.ALWAYS_HINT)
-            ext += " (always)";
-        if (extended & modes.INACTIVE_HINT)
-            ext += " (inactive)";
         if (extended & modes.MENU) // TODO: desirable?
             ext += " (menu)";
 
@@ -76,8 +72,12 @@ const modes = (function () //{{{
                 return "-- INSERT" + ext;
             case modes.VISUAL:
                 return (extended & modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
-            case modes.HINTS:
-                return "-- HINTS" + ext;
+	    // under modes.COMMAND_LINE, this block will never be reached
+            case modes.COMMAND_LINE:		// since modes.HINTS is actually not a main mode
+		if (extended & modes.HINTS)
+	            return "-- HINTS" + ext;
+		else
+		    return macromode;
             case modes.CARET:
                 return "-- CARET" + ext;
             case modes.TEXTAREA:
@@ -129,11 +129,10 @@ const modes = (function () //{{{
                 plugins.stop();
                 break;
 
-            case modes.HINTS:
-                hints.hide();
-                break;
-
             case modes.COMMAND_LINE:
+		// clean up for HINT mode
+		if (modes.extended & modes.HINTS)
+			hints.hide();
                 commandline.close();
                 break;
         }
@@ -176,12 +175,10 @@ const modes = (function () //{{{
         SEARCH_BACKWARD:  1 << 14,
         QUICK_HINT:       1 << 15,
         EXTENDED_HINT:    1 << 16,
-        ALWAYS_HINT:      1 << 17,
-        INACTIVE_HINT:    1 << 18, // a short time after following a hint, we do not accept any input
-        MENU:             1 << 19, // a popupmenu is active
-        LINE:             1 << 20, // linewise visual mode
-        RECORDING:        1 << 21,
-        PROMPT:           1 << 22,
+        MENU:             1 << 17, // a popupmenu is active
+        LINE:             1 << 18, // linewise visual mode
+        RECORDING:        1 << 19,
+        PROMPT:           1 << 20,
 
         __iterator__: function () util.Array.iterator(this.all),
 
