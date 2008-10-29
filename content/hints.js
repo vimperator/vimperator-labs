@@ -51,7 +51,7 @@ function Hints() //{{{
     // keep track of the documents which we generated the hints for
     // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
     var docs = [];
-    
+
     const hintDescriptions = {
         a: "Save hint with prompt:",
         s: "Save hint:",
@@ -76,7 +76,7 @@ function Hints() //{{{
         hintString = "";
         hintNumber = 0;
         usedTabKey = false;
-        prevInput = ""; 
+        prevInput = "";
         pageHints = [];
         validHints = [];
         canUpdate = false;
@@ -381,8 +381,8 @@ function Hints() //{{{
 
         return true;
     }
-    
-    function onInput (event) 
+
+    function onInput (event)
     {
         prevInput = "text";
 
@@ -734,7 +734,7 @@ function Hints() //{{{
                         if (hintNumber == 0)
                             prevInput = "text";
                     }
-                    else 
+                    else
                     {
                         usedTabKey = false;
                         hintNumber = 0;
@@ -755,7 +755,7 @@ function Hints() //{{{
                     if (/^[0-9]$/.test(key))
                     {
                         prevInput = "number";
-                        
+
                         var oldHintNumber = hintNumber;
                         if (hintNumber == 0 || usedTabKey)
                         {

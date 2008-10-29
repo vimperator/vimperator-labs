@@ -6,7 +6,7 @@
  * By Kris Maglione, ideas from Ed Anuff's nsChromeExtensionHandler.
  *
  * Licenced under the MIT License, which allows for sublicensing
- * under any compatible license, includeing the GNU GPL and the MPL.
+ * under any compatible license, including the GNU GPL and the MPL.
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -26,31 +26,32 @@ channel.cancel(NS_BINDING_ABORTED);
 delete channel;
 
 var instance;
-function ChromeData() {
-}
+function ChromeData() {}
 ChromeData.prototype = {
     contractID:       "@mozilla.org/network/protocol;1?name=chrome-data",
     classID:          Components.ID("{c1b67a07-18f7-4e13-b361-2edcc35a5a0d}"),
     classDescription: "Data URIs with chrome privileges",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
     _xpcom_factory: {
-	createInstance: function(outer, iid) {
-	    if(!instance)
-		instance = new ChromeData();
-	    if(outer != null)
-		throw Components.results.NS_ERROR_NO_AGGREGATION;
-	    return instance.QueryInterface(iid);
-	}
+        createInstance: function (outer, iid)
+        {
+            if (!instance)
+            instance = new ChromeData();
+            if (outer != null)
+            throw Components.results.NS_ERROR_NO_AGGREGATION;
+            return instance.QueryInterface(iid);
+        }
     },
 
     scheme: "chrome-data",
     defaultPort: -1,
-    allowPort: function(port, scheme) false,
+    allowPort: function (port, scheme) false,
     protocolFlags: nsIProtocolHandler.URI_NORELATIVE
 		 | nsIProtocolHandler.URI_NOAUTH
 		 | nsIProtocolHandler.URI_IS_UI_RESOURCE,
 
-    newURI: function(spec, charset, baseURI) {
+    newURI: function (spec, charset, baseURI)
+    {
         var uri = Components.classes["@mozilla.org/network/standard-url;1"]
                             .createInstance(Components.interfaces.nsIStandardURL)
                             .QueryInterface(Components.interfaces.nsIURI);
@@ -58,10 +59,12 @@ ChromeData.prototype = {
         return uri;
     },
 
-    newChannel: function(uri) {
+    newChannel: function (uri)
+    {
         try
-	{
-            if (uri.scheme == this.scheme) {
+        {
+            if (uri.scheme == this.scheme)
+            {
                 let newURI = ioService.newURI(uri.spec.replace(/^.*?:\/*(.*)(?:#.*)?/, "data:$1"), null, null);
                 let channel = ioService.newChannelFromURI(newURI);
                 channel.owner = systemPrincipal;
@@ -69,14 +72,16 @@ ChromeData.prototype = {
                 return channel;
             }
         }
-	catch (e) {}
+        catch (e) {}
         throw Components.results.NS_ERROR_FAILURE;
     }
 };
 
 var components = [ChromeData];
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule(components);
+function NSGetModule(compMgr, fileSpec)
+{
+    return XPCOMUtils.generateModule(components);
 }
 
+// vim: set fdm=marker sw=4 ts=4 et:
