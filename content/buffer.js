@@ -279,8 +279,11 @@ function Buffer() //{{{
     let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
         "body { font-size: " + fontSize + "; }", true);
 
-    const ZOOM_MIN = Math.round(ZoomManager.MIN * 100);
-    const ZOOM_MAX = Math.round(ZoomManager.MAX * 100);
+    if ("ZoomManager" in window)
+    {
+        const ZOOM_MIN = Math.round(ZoomManager.MIN * 100);
+        const ZOOM_MAX = Math.round(ZoomManager.MAX * 100);
+    }
 
     function setZoom(value, fullZoom)
     {
