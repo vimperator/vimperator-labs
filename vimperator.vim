@@ -13,6 +13,9 @@ set cpo&vim
 syn include @javascriptTop syntax/javascript.vim
 unlet b:current_syntax
 
+syn include @cssTop syntax/css.vim
+unlet b:current_syntax
+
 syn match vimperatorCommandStart "\%(^\s*:\=\)\@<=" nextgroup=vimperatorCommand,vimperatorAutoCmd
 
 syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] b[uffer] ba[ck] bd[elete] beep bf[irst] bl[ast] bma[rk] bmarks
@@ -61,9 +64,14 @@ syn match vimperatorOption "\<\%(no\|inv\)\=\%(online\|visualbell\|vb\|usermode\
 
 syn match vimperatorSetMod "\%(\<[a-z_]\+\)\@<=&" contained
 
-syn region vimperatorJavascript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
-syn region vimperatorJavascript matchgroup=vimperatorJavascriptDelimiter
+syn region vimperatorJavaScript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
+syn region vimperatorJavaScript matchgroup=vimperatorJavascriptDelimiter
 	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
+
+let s:cssRegionStart = '\%(^\s*sty\%[le]!\=\s\+\%(-\%(n\s\+\|name=\)\S\+\s\+\)\=[^-]\S\+\s\+\)\@<='
+execute 'syn region vimperatorCss start="' . s:cssRegionStart . '" end="$" contains=@cssTop keepend oneline'
+execute 'syn region vimperatorCss matchgroup=vimperatorCssDelimiter'
+	\ 'start="' . s:cssRegionStart . '<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@cssTop fold'
 
 syn match vimperatorNotation "<[0-9A-Za-z-]\+>"
 
@@ -80,6 +88,7 @@ hi def link vimperatorAutoEvent             Type
 hi def link vimperatorCommand			    Statement
 hi def link vimperatorComment			    Comment
 hi def link vimperatorJavascriptDelimiter	Delimiter
+hi def link vimperatorCssDelimiter      	Delimiter
 hi def link vimperatorNotation			    Special
 hi def link vimperatorLineComment		    Comment
 hi def link vimperatorOption			    PreProc
