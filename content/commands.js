@@ -796,6 +796,7 @@ function Commands() //{{{
             serial: function () [
                 {
                     command: this.name,
+                    bang: true,
                     // Yeah, this is a bit scary. Perhaps I'll fix it when I'm
                     // awake.
                     options: util.Array.assocToObj(util.map({argCount: "-nargs", bang: "-bang", count: "-count"},
