@@ -1,6 +1,6 @@
 HEADER
 
-|hints| +
+|quick-hints| |hints| +
 
 INTRO TO BE WRITTEN...
 
@@ -26,6 +26,8 @@ Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
 (activated with [m]f[m]) but opens the link in a new tab.
 ________________________________________________________________________________
 
+
+|extended-hints| +
 
 |;| +
 ||;\\{mode\\}\\{hint\\}||
