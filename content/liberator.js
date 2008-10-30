@@ -886,9 +886,9 @@ const liberator = (function () //{{{
             function jumpToTag(file, tag)
             {
                 liberator.open("chrome://liberator/locale/" + file, where);
-                // TODO: it would be better wo wait for pageLoad
+                // TODO: it would be better to wait for pageLoad
                 setTimeout(function () {
-                    var elem = buffer.getElement('@class="tag" and text()="' + tag + '"');
+                    let elem = buffer.evaluateXPath("//*[@class='tag' and text()='" + tag + "']").snapshotItem(0);
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else

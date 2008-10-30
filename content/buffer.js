@@ -1292,13 +1292,6 @@ function Buffer() //{{{
             return selection;
         },
 
-        // quick function to get elements inside the document reliably
-        // argument "args" is something like: @id='myid' or @type='text' (don't forget the quotes around myid)
-        getElement: function (args, index)
-        {
-            return buffer.evaluateXPath("//*[" + (args || "") + "]").snapshotItem(index || 0);
-        },
-
         // more advanced than a simple elem.focus() as it also works for iframes
         // and image maps
         // TODO: merge with followLink()?
