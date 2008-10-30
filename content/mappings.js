@@ -132,30 +132,10 @@ function Mappings() //{{{
 
     function mappingsIterator(modes, stack)
     {
-        var output;
-        var maps = stack[modes[0]];
-
-        for (let i = 0; i < maps.length; i++)
-        {
-            output = true;
-            for (let index = 1; index < modes.length; index++) // check other modes
-            {
-                output = false; // toggle false, only true whan also found in this mode
-                for (let j = 0; j < user[modes[index]].length; j++) // maps
-                {
-                    // NOTE: when other than user maps, there might be more than only one names[x].
-                    //       since only user mappings gets queried here, only names[0] gets checked for equality.
-                    if (maps[i].rhs == user[modes[index]][j].rhs && maps[i].names[0] == user[modes[index]][j].names[0])
-                    {
-                        output = true;
-                        break; // found on this mode - check next mode, if there is one, where it could still fail...
-                    }
-                }
-                break; // not found in this mode -> map wont' match all modes...
-            }
-            if (output)
-                yield maps[i];
-        }
+        modes = modes.slice();
+        return (map for ([i, map] in Iterator(stack[modes.shift()]))
+            if (modes.every(function (mode) stack[mode].some(
+                        function (m) m.rhs == map.rhs && m.names[0] == map.names[0]))))
     }
 
     function addMapCommands(ch, modes, modeDescription)
@@ -203,7 +183,20 @@ function Mappings() //{{{
                     [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
                 ],
                 argCount: 1,
-                literal: true
+                literal: true,
+                serial: function () {
+                    let noremap = this.name.indexOf("noremap") > -1;
+                    return [
+                        {
+                            command: this.name,
+                            options: map.silent ? {"<silent>": null} : {},
+                            arguments: [map.names[0]],
+                            literalArg: map.rhs
+                        }
+                        for (map in mappingsIterator(modes, user))
+                        if (map.rhs && map.noremap == noremap)
+                    ]
+                }
         };
 
         commands.add([ch ? ch + "m[ap]" : "map"],

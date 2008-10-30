@@ -228,50 +228,31 @@ function IO() //{{{
                 return;
             }
 
-            let line = "\" " + liberator.version + "\n";
-            line += "\" Mappings\n";
+            let lines = [['"' + liberator.version]];
 
-            [[[modes.NORMAL], ""],
-             [[modes.COMMAND_LINE], "c"],
-             [[modes.INSERT, modes.TEXTAREA], "i"]].forEach(function ([modes, modechar]) {
-                // NOTE: names.length is always 1 on user maps. If that changes, also fix getUserIterator and v.m.list
-                for (let map in mappings.getUserIterator(modes))
-                    line += modechar + (map.noremap ? "noremap" : "map") + " " + map.names[0] + " " + map.rhs + "\n";
-            });
-
-            line += "\n\" Options\n";
-            for (let option in options)
+            // FIXME: Use a set/specifiable list here:
+            for (let cmd in commands)
             {
-                // TODO: options should be queried for this info
-                // TODO: string/list options might need escaping in future
-                if (!/fullscreen|usermode/.test(option.name) && option.value != option.defaultValue)
-                {
-                    if (option.type == "boolean")
-                        line += "set " + (option.value ? option.name : "no" + option.name) + "\n";
-                    else
-                        line += "set " + option.name + "=" + option.value + "\n";
-                }
+                if (cmd.serial)
+                    lines.push(cmd.serial().map(commands.commandToString));
             }
+            lines = util.Array.flatten(lines);
 
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
             // line += "\n\" Auto-Commands\n";
             // for (let item in autocommands)
             //     line += "autocmd " + item.event + " " + item.pattern.source + " " + item.command + "\n";
 
-            line += "\n\" Abbreviations\n";
-            for (let abbrCmd in editor.abbreviations)
-                line += abbrCmd;
-
             // if (mappings.getMapLeader() != "\\")
             //    line += "\nlet mapleader = \"" + mappings.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
-            line += "\nsource! " + filename + ".local\n";
-            line += "\n\" vim: set ft=vimperator:";
+            lines.push("\nsource! " + filename + ".local");
+            lines.push("\n\" vim: set ft=vimperator:");
 
             try
             {
-                io.writeFile(file, line);
+                io.writeFile(file, lines.join("\n"));
             }
             catch (e)
             {

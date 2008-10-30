@@ -857,7 +857,16 @@ function Buffer() //{{{
             bang: true,
             hereDoc: true,
             literal: true,
-            options: [[["-name", "-n"], commands.OPTION_STRING]]
+            options: [[["-name", "-n"], commands.OPTION_STRING]],
+            serial: function () [
+                {
+                    command: this.name,
+                    bang: true,
+                    options: sty.name ? {"-name": sty.name} : {},
+                    arguments: [sty.sites.join(",")],
+                    literalArg: sty.css
+                } for ([k, sty] in styles.userSheets)
+            ]
         });
 
     commands.add(["dels[tyle]"],

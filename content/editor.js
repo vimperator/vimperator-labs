@@ -147,6 +147,15 @@ function Editor() //{{{
             { flags: Mappings.flags.MOTION | Mappings.flags.COUNT });
     }
 
+    // For the record, some of this code I've just finished throwing
+    // away makes me want to pull someone else's hair out. --Kris
+    function abbrevs()
+    {
+        for (let [lhs, abbr] in Iterator(abbrev))
+            for (let [,rhs] in Iterator(abbr))
+                yield [lhs, rhs];
+    }
+
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
     function addAbbreviationCommands(ch, modeDescription)
     {
@@ -157,20 +166,25 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
-                args = args.string;
-
-                if (!args)
-                {
-                    editor.listAbbreviations(mode, "");
-                    return;
-                }
-
-                var matches = args.match(/^(\S+)(?:\s+(.+))?$/);
-                var [lhs, rhs] = [matches[1], matches[2]];
+                let lhs = args.arguments[0];
+                let rhs = args.literalArg;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
                 else
-                    editor.listAbbreviations(mode, lhs);
+                    editor.listAbbreviations(mode, lhs || "");
+            },
+            {
+                argCount: 1,
+                literal: true,
+                serial: function () [
+                    {
+                        command: this.name,
+                        arguments: [lhs],
+                        literalArg: abbr[1]
+                    }
+                    for ([lhs, abbr] in abbrevs())
+                    if (abbr[0] == mode)
+                ]
             });
 
         commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
@@ -892,21 +906,6 @@ function Editor() //{{{
 
         // Abbreviations {{{
 
-        abbreviations: {
-            __iterator__: function ()
-            {
-                var tmpCmd;
-                for (let lhs in abbrev)
-                {
-                    for (let i = 0; i < abbrev[lhs].length; i++)
-                    {
-                        tmpCmd = (abbrev[lhs][i][0] == "!") ? "abbreviate" : abbrev[lhs][i][0] + "abbrev";
-                        yield (tmpCmd + " " + lhs + " " + abbrev[lhs][i][1] + "\n");
-                    }
-                }
-            }
-        },
-
         // filter is i, c or "!" (insert or command abbreviations or both)
         listAbbreviations: function (filter, lhs)
         {
@@ -914,10 +913,11 @@ function Editor() //{{{
             {
                 if (abbrev[lhs])
                 {
-                    for (let i = 0; i < abbrev[lhs].length; i++)
+                    for (let [,abbr] in Iterator(abbrev[lhs]))
                     {
-                        if (abbrev[lhs][i][0] == filter)
-                            liberator.echo(abbrev[lhs][i][0] + "    " + lhs + "        " + abbrev[lhs][i][1]);
+                        if (abbr[0] == filter)
+                            liberator.echo(abbr[0] + "    " + lhs + "        " + abbr[1]);
+                        // Is it me, or is this clearly very wrong? --Kris
                         return true;
                     }
                 }
@@ -932,14 +932,13 @@ function Editor() //{{{
                 let list =
                     <table>
                     {
-                        template.map(abbrev, function ([lhs, rhs])
-                            template.map(rhs, function (abbr)
-                            searchFilter.indexOf(abbr[0]) < 0 ? undefined :
-                            <tr>
-                                <td>{abbr[0]}</td>
-                                <td>{lhs}</td>
-                                <td>{abbr[1]}</td>
-                            </tr>))
+                        template.map(abbrevs(), function ([lhs, rhs])
+                        searchFilter.indexOf(rhs[0]) < 0 ? undefined :
+                        <tr>
+                            <td>{rhs[0]}</td>
+                            <td>{lhs}</td>
+                            <td>{rhs[1]}</td>
+                        </tr>)
                     }
                     </table>;
                 if (list.*.length())

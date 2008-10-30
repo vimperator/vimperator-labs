@@ -29,6 +29,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
 const util = { //{{{
 
     Array: {
+        // [["a", "b"], ["c", "d"]] -> {a: "b", c: "d"}
+        // From Common Lisp, more or less
+        assocToObj: function (assoc)
+        {
+            let obj = {};
+            assoc.forEach(function ([k, v]) { obj[k] = v });
+            return obj;
+        },
+
         // flatten an array: [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
         flatten: function (ary)
         {
@@ -165,7 +174,7 @@ const util = { //{{{
     {
         if (delimiter == undefined)
             delimiter = '"';
-        return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n").replace("\t", "\\t") + delimiter;
+        return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
     formatBytes: function (num, decimalPlaces, humanReadable)
@@ -252,6 +261,14 @@ const util = { //{{{
         ret += "\n________________________________________________________________________________\n\n\n";
 
         return ret;
+    },
+
+    map: function (obj, fn)
+    {
+        let ary = [];
+        for (let i in Iterator(obj))
+            ary.push(fn(i));
+        return ary;
     },
 
     // if color = true it uses HTML markup to color certain items

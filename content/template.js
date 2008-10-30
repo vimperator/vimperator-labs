@@ -53,7 +53,7 @@ const template = {
                     // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
                     // Using /foo*(:?)/ instead.
                     if (processStrings)
-                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*(?:)/, "{ ... }")}</span>;
+                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
                     return <>{arg}</>;
                 case "undefined":
                     return <span class="hl-Null">{arg}</span>;

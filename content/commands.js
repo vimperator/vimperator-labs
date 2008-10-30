@@ -81,6 +81,7 @@ function Command(specs, description, action, extraInfo) //{{{
     this.bang        = extraInfo.bang || false;
     this.count       = extraInfo.count || false;
     this.literal     = extraInfo.literal || false;
+    this.serial      = extraInfo.serial;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
     this.replacementText = extraInfo.replacementText || null;
@@ -166,24 +167,14 @@ function Commands() //{{{
     function getMatchingUserCommands(name, filter)
     {
         var matches = [];
-        outer:
         for (let [,cmd] in Iterator(exCommands))
         {
             if (cmd.isUserCommand)
             {
-                for (let [k, v] in Iterator(filter))
+                if (!name || cmd.name.match("^" + name))
                 {
-                    if (v != null && cmd[k] != v)
-                        continue outer;
-                }
-                if (name)
-                {
-                    if (cmd.name.match("^" + name))
+                    if (util.map(filter, function (f) f).every(function ([k, v]) v == null || cmd[k] == v))
                         matches.push(cmd);
-                }
-                else
-                {
-                    matches.push(cmd);
                 }
             }
         }
@@ -197,6 +188,17 @@ function Commands() //{{{
         if (arg == "false" || arg == "0" || arg == "off")
             return false;
         return NaN;
+    }
+
+    function quote(q, list) list.reduce(function (acc, [k,v])
+    {
+        v = "\\" + (v || k);
+        return function (str) acc(String.replace(str, k, v, "g"))
+    }, function (val) q + val + q);
+    const quoteArg = {
+        '"': quote('"', [["\n", "n"], ["\t", "t"], ['"'], ["\\"]]),
+        "'": quote("'", [["\\"], ["'"]]),
+        "":  quote("",  [["\\"], [" "]])
     }
 
     const ArgType = new Struct("description", "parse");
@@ -291,6 +293,26 @@ function Commands() //{{{
             return true;
         },
 
+        commandToString: function (args)
+        {
+            let res = [args.command + (args.bang ? "!" : "")];
+            function quote(str) quoteArg[/\s/.test(str) ? '"' : ""](str);
+
+            for (let [opt, val] in Iterator(args.options || {}))
+            {
+                res.push(opt);
+                if (val != null)
+                    res.push(quote(val));
+            }
+            for (let [,arg] in Iterator(args.arguments || []))
+                res.push(quote(arg));
+
+            let str = args.literalArg;
+            if (str)
+                res.push(/\n/.test(str) ? "<<EOF\n" + str + "EOF" : str);
+            return res.join(" ");
+        },
+
         get: function (name)
         {
             for (let i = 0; i < exCommands.length; i++)
@@ -350,20 +372,6 @@ function Commands() //{{{
         // TODO: should it handle comments?
         parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete)
         {
-            function quoteArg(quote)
-            {
-                switch (quote)
-                {
-                    case "'":
-                        return function (str) "'" + str.replace(/[\\']/g, "\\$&") + "'";
-                    case '"':
-                        return function (str) '"' + str.replace(/[\\"\t\n]/g,
-                                    function (c) (c == "\n" ? "\\n" : c == "\t" ? "\\t" : "\\" + c));
-                    default:
-                        return function (str) str.replace(/[\\ ]/g, "\\$&");
-                }
-            }
-
             // returns [count, parsed_argument]
             function getNextArg(str)
             {
@@ -546,8 +554,8 @@ function Commands() //{{{
                                     let compl = opt[3] || [];
                                     if (typeof compl == "function")
                                         compl = compl();
-                                    let filter = quoteArg(sub[optname.length + 1])
-                                    return [i + optname.length + 1, completion.filter(compl.map(filter), filter(arg))];
+                                    let quote = quoteArg[sub[optname.length + 1]] || quoteArg[""];
+                                    return [i + optname.length + 1, completion.filter(compl.map(quote), quote(arg))];
                                 }
 
                                 if (!invalid)
@@ -668,6 +676,8 @@ function Commands() //{{{
             return matches;
         },
 
+        get quoteArg() quoteArg,
+
         removeUserCommand: function (name)
         {
             for (let i = 0; i < exCommands.length; i++)
@@ -690,7 +700,7 @@ function Commands() //{{{
                 if (res == undefined) // Ignore anything undefined
                     res = "<" + token + ">";
                 if (quote && typeof res != "number")
-                    return '"' + String.replace(res, '"', '\\"', "g") + '"';
+                    return quoteArg['"'](res);
                 return res;
             });
         }
@@ -782,6 +792,20 @@ function Commands() //{{{
                 [["-nargs"], commandManager.OPTION_STRING, function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
                 [["-bang"],  commandManager.OPTION_NOARG],
                 [["-count"], commandManager.OPTION_NOARG],
+            ],
+            serial: function () [
+                {
+                    command: this.name,
+                    // Yeah, this is a bit scary. Perhaps I'll fix it when I'm
+                    // awake.
+                    options: util.Array.assocToObj(util.map({argCount: "-nargs", bang: "-bang", count: "-count"},
+                            function ([k, v]) k in cmd && cmd[k] != "0" && [v, typeof cmd[k] == "boolean" ? null : cmd[k]])
+                            .filter(function(k) k)),
+                    arguments: [cmd.name],
+                    literalArg: cmd.replacementText
+                }
+                for ([k,cmd] in Iterator(exCommands))
+                if (cmd.isUserCommand && cmd.replacementText)
             ]
         });
 

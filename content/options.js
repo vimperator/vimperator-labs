@@ -799,7 +799,16 @@ function Options() //{{{
                     }
                 }
                 return [len, completion.filter(completions, filter, true)];
-            }
+            },
+            serial: function () [
+                {
+                    command: this.name,
+                    literalArg: opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                                                      : opt.name + "=" + opt.value
+                }
+                for (opt in options)
+                if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & options.OPTION_SCOPE_GLOBAL))
+            ]
         });
 
     commands.add(["unl[et]"],
