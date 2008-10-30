@@ -912,7 +912,15 @@ function Buffer() //{{{
             argCount: 1,
             bang: true,
             hereDoc: true,
-            literal: true
+            literal: true,
+            serial: function () [
+                {
+                    command: this.name,
+                    arguments: [k],
+                    literalArg: v
+                }
+                for ([k, v] in Iterator(highlight))
+            ]
         });
 
     commands.add(["vie[wsource]"],
