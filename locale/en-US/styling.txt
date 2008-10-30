@@ -2,20 +2,18 @@ HEADER
 
 |styling| +
 
-Vimperator allows you to style both the browser and any web
-pages you view. All styling is specified via CSS. Although you
-may style any user interface element via the [c]:style[c] command,
-most Vimperator elements can be styled with the [c]:highlight[c]
-command, for convenience.
+Vimperator allows you to style both the browser and any web pages you view. All
+styling is specified via CSS. Although you may style any user interface element
+via the [c]:style[c] command, most Vimperator elements can be styled with the
+[c]:highlight[c] command, for convenience.
 
 |:hi| |:highlight| +
 ||:hi[light][!] {group}[{selector}] [{css}]|| +
 ________________________________________________________________________________
-Highlight {group} with {css}. Normally, {css} is checked for
-valid syntax before it's applied. Once you're certain it's
-valid, [!] will override the check, to speed Vimperator startup.
-{selector} can be any valid CSS selector, such as {:hover}, and
-if provided will restrict the match to matching elements.
+Highlight {group} with {css}. Normally, {css} is checked for valid syntax
+before it's applied. Once you're certain it's valid, [!] will override the
+check, to speed Vimperator startup. {selector} can be any valid CSS selector,
+such as {:hover}, and if provided will restrict the match to matching elements.
 
 Valid groups are:
 `------------------`-----------------------------------
@@ -51,22 +49,20 @@ Valid groups are:
 *WarningMsg*       A warning message
 -------------------------------------------------------
 
-Every invocation completely replaces the styling of any previous
-invocation. If {css} is not provided and [!] is, any styles
-matching {group} are listed. If neither {css} nor [!] is
-provided, the style for {group} is reset to its default value.
+Every invocation completely replaces the styling of any previous invocation. If
+{css} is not provided and [!] is, any styles matching {group} are listed. If
+neither {css} nor [!] is provided, the style for {group} is reset to its
+default value.
 ________________________________________________________________________________
 
 |:sty| |:style| +
 ||:sty[le][!] [-name={name}] {filter} [{css}]|| +
 ________________________________________________________________________________
-Add CSS styles to the browser or to web pages. {filter} is a
-comma separated list of URLs to match. URLs ending with [c]*[c]
-are matched as prefixes, URLs not containing any [c]:[c] or
-[c]/[c] characters are matched as domains. If {name} (short
-option: [c]-n[c]) is provided, any existing style with the same
-name is overridden, and the style may later be deleted using
-{name}.
+Add CSS styles to the browser or to web pages. {filter} is a comma separated
+list of URLs to match. URLs ending with [c]*[c] are matched as prefixes, URLs
+not containing any [c]:[c] or [c]/[c] characters are matched as domains. If
+{name} (short option: [c]-n[c]) is provided, any existing style with the same
+name is overridden, and the style may later be deleted using {name}.
 
 If {css} isn't provided, matching styles are listed.
 ________________________________________________________________________________
@@ -74,13 +70,12 @@ ________________________________________________________________________________
 |:dels| |:delstyle| +
 ||:dels[tyle] [-name={name}] [-index={index}] [{filter}] [{css}]|| +
 ________________________________________________________________________________
-Delete any matching styles. If {filter} is provided, only
-matching elements of the filter are disabled. For instance, a
-filter [c]mozilla.org[c], given a style for
-[c]www.google.com,mozilla.org[c], will result in a style for
+Delete any matching styles. If {filter} is provided, only matching elements of
+the filter are disabled. For instance, a filter [c]mozilla.org[c], given a
+style for [c]www.google.com,mozilla.org[c], will result in a style for
 [c]www.google.com[c]. The available options are:
 
- - -name:  The name provided to :sty (short option: -n)
+ - -name:  The name provided to [c]:style[c] (short option: -n)
  - -index: For unnamed styles, the index listed by [c]:style[c] (short option: -i)
 ________________________________________________________________________________
 

@@ -335,7 +335,7 @@ ________________________________________________________________________________
 Copy currently selected text to the system clipboard.
 ________________________________________________________________________________
 
-section:Alternate{nbsp}style{nbsp}sheets[stylesheet,style]
+section:Alternate{nbsp}style{nbsp}sheets[alternate-stylesheet]
 
 Page authors may specify alternate style sheets for an HTML document.  Users
 can then switch between these various style sheets, selecting their favorite.

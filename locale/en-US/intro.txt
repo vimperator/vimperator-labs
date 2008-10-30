@@ -67,6 +67,7 @@ section:Help{nbsp}topics[overview]
   events.
 - help:Print[print.html]: Printing pages.
 - help:GUI[gui.html]: Accessing Firefox menus, dialogs and the sidebar.
+- help:Styling[styling.html]: Changing the styling of content pages and Vimperator itself.
 - help:Messages[message.html]: A description of messages and error messages.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
