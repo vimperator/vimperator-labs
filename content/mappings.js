@@ -128,12 +128,7 @@ function Mappings() //{{{
         }
     }
 
-    function expandLeader(keyString)
-    {
-        var leaderRegexp = /<Leader>/i;
-        var currentLeader = mappings.getMapLeader();
-        return keyString.replace(leaderRegexp, currentLeader);
-    }
+    function expandLeader(keyString) keyString.replace(/<Leader>/i, mappings.getMapLeader())
 
     function mappingsIterator(modes, stack)
     {
