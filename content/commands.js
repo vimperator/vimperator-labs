@@ -39,32 +39,33 @@ function Command(specs, description, action, extraInfo) //{{{
     // convert command name abbreviation specs of the form
     // 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
     // 'abc', 'abcdef'
-    var parseSpecs = function (specs)
+    function parseSpecs(specs)
     {
-        var shortNames = [];
-        var longNames  = [];
-        var names = [];
-        for (let i = 0; i < specs.length; i++)
+        let shortNames = longNames = names = [];
+
+        for (let [,spec] in Iterator(specs))
         {
-            var match;
-            if (match = specs[i].match(/(\w+|!)\[(\w+)\]/))
+            let matches = spec.match(/(\w+|!)\[(\w+)\]/);
+
+            if (matches)
             {
-                shortNames.push(match[1]);
-                longNames.push(match[1] + match[2]);
+                shortNames.push(matches[1]);
+                longNames.push(matches[1] + matches[2]);
                 // order as long1, short1, long2, short2
-                names.push(match[1] + match[2]);
-                names.push(match[1]);
+                names.push(matches[1] + matches[2]);
+                names.push(matches[1]);
             }
             else
             {
-                longNames.push(specs[i]);
-                names.push(specs[i]);
+                longNames.push(spec);
+                names.push(spec);
             }
         }
+
         return { names: names, longNames: longNames, shortNames: shortNames };
     };
 
-    var expandedSpecs = parseSpecs(specs);
+    let expandedSpecs = parseSpecs(specs);
     this.specs      = specs;
     this.shortNames = expandedSpecs.shortNames;
     this.longNames  = expandedSpecs.longNames;

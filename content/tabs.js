@@ -312,21 +312,22 @@ function Tabs() //{{{
             if (args)
             {
                 args = args.toLowerCase();
-                var removed = 0;
-                var match;
-                if (match = args.match(/^(\d+):?/))
+                let removed = 0;
+                let matches = args.match(/^(\d+):?/);
+
+                if (matches)
                 {
-                    tabs.remove(tabs.getTab(parseInt(match[1], 10) - 1));
+                    tabs.remove(tabs.getTab(parseInt(matches[1], 10) - 1));
                     removed = 1;
                 }
                 else
                 {
-                    var browsers = getBrowser().browsers;
+                    let browsers = getBrowser().browsers;
                     for (let i = browsers.length - 1; i >= 0; i--)
                     {
-                        var title = browsers[i].contentTitle.toLowerCase() || "";
-                        var uri = browsers[i].currentURI.spec.toLowerCase();
-                        var host = browsers[i].currentURI.host.toLowerCase();
+                        let title = browsers[i].contentTitle.toLowerCase() || "";
+                        let uri = browsers[i].currentURI.spec.toLowerCase();
+                        let host = browsers[i].currentURI.host.toLowerCase();
 
                         if (host.indexOf(args) >= 0 || uri == args ||
                             (special && (title.indexOf(args) >= 0 || uri.indexOf(args) >= 0)))
@@ -922,10 +923,10 @@ function Tabs() //{{{
             if (typeof reverse != "boolean")
                 reverse = false;
 
-            var match;
-            if (match = buffer.match(/^(\d+):?/))
+            var matches = buffer.match(/^(\d+):?/);
+            if (matches)
             {
-                tabs.select(parseInt(match[1], 10) - 1, false); // make it zero-based
+                tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
                 return;
             }
 
