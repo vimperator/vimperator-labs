@@ -783,38 +783,32 @@ function Completion() //{{{
         // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function buffer(filter)
         {
-            var items = [];
-            var num = getBrowser().browsers.length;
-            var title, url;
+            let items = [];
+            // FIXME: liberator.has("tabs")
 
-            for (let i = 0; i < num; i++)
+            for (let [i, browser] in tabs.browsers)
             {
+                i = i + 1;
+                let title = "";
                 try
                 {
-                    title = getBrowser().getBrowserAtIndex(i).contentDocument.title;
+                    title = browser.contentDocument.title;
                 }
-                catch (e)
-                {
-                    title = "";
-                }
+                catch (e) {}
 
-                url = getBrowser().getBrowserAtIndex(i).contentDocument.location.href;
-
-                if (title.indexOf(filter) == -1 && url.indexOf(filter) == -1 &&
-                        (i + 1).toString().indexOf(filter) == -1)
-                    continue;
+                let url = browser.contentDocument.location.href;
 
                 if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1 ||
-                        (i + 1).toString().indexOf(filter) != -1)
+                        String.indexOf(i, filter) != -1)
                 {
                     if (title == "")
                         title = "(Untitled)";
-                    items.push([[(i + 1) + ": " + title, (i + 1) + ": " + url], url]);
+                    items.push([[i + ": " + title, i + ": " + url], url]);
                 }
             }
 
             if (!filter)
-                return [0, items.map(function (i) [i[0][0], i[1]])];
+                return [0, items.map(function ([a, b]) [a[0], b])];
 
             return [0, buildLongestCommonSubstring(items, filter)];
         },

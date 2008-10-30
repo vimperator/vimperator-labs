@@ -923,21 +923,22 @@ function Tabs() //{{{
             if (typeof reverse != "boolean")
                 reverse = false;
 
-            var matches = buffer.match(/^(\d+):?/);
+            let matches = buffer.match(/^(\d+):?/);
             if (matches)
             {
                 tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
                 return;
             }
 
-            var matches = [];
-            var lowerBuffer = buffer.toLowerCase();
-            var first = tabs.index() + (reverse ? 0 : 1);
-            for (let i = 0; i < getBrowser().browsers.length; i++)
+            matches = [];
+            let lowerBuffer = buffer.toLowerCase();
+            let first = tabs.index() + (reverse ? 0 : 1);
+            let nbrowsers = getBrowser().browsers.length;
+            for (let [i,] in tabs.browsers)
             {
-                var index = (i + first) % getBrowser().browsers.length;
-                var url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
-                var title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
+                let index = (i + first) % nbrowsers;
+                let url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+                let title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
                 if (url == buffer)
                 {
                     tabs.select(index, false);

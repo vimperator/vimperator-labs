@@ -34,6 +34,7 @@ function Hints() //{{{
 
     var myModes = config.browserModes || [modes.NORMAL];
 
+    var hintMode;
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
     var hintString = ""; // the typed string part of the hint is in this string
     var hintNumber = 0;  // only the numerical part of the hint
@@ -52,22 +53,25 @@ function Hints() //{{{
     // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
     var docs = [];
 
-    const hintDescriptions = {
-        a: "Save hint with prompt:",
-        s: "Save hint:",
-        o: "Follow hint:",
-        t: "Follow hint in a new tab:",
-        b: "Follow hint in a background tab:",
-        O: "Open location based on hint:",
-        T: "Open new tab based on hint:",
-        v: "View hint source:",
-        w: "Follow hint in a new window:",
-        W: "Open new window based on hint:",
-        y: "Yank hint location:",
-        Y: "Yank hint description:"
-    }
-    hintDescriptions[";"] = "Focus hint:";
-    hintDescriptions["?"] = "Show information for hint:";
+    const Mode = new Struct("prompt", "action", "extended");
+    const hintModes = {
+        ";": Mode("Focus hint",		    		 function (elem) buffer.focusElement(elem),                             true),
+        a: Mode("Save hint with prompt",		 function (elem) buffer.saveLink(elem, false)),
+        s: Mode("Save hint",					 function (elem) buffer.saveLink(elem, true)),
+        o: Mode("Follow hint",					 function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
+        t: Mode("Follow hint in a new tab",		 function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
+        b: Mode("Follow hint in a background tab",	 function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
+        v: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, false),                    true),
+        V: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, true),                     true),
+        w: Mode("Follow hint in a new window",	 function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         true),
+
+        "?": Mode("Show information for hint",	 function (elem) buffer.showElementInfo(elem),                          true),
+        O: Mode("Open location based on hint",	 function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode("Open new tab based on hint",	 function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode("Open new window based on hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        y: Mode("Yank hint location",			 function (elem, loc) util.copyToClipboard(loc, true)),
+        Y: Mode("Yank hint description",		 function (elem) util.copyToClipboard(elem.textContent || "", true),    true),
+    };
 
     // reset all important variables
     function reset()
@@ -108,7 +112,7 @@ function Hints() //{{{
             <span class="liberator-hint"/>, doc);
 
         var elem, tagname, text, span, rect;
-        var res = buffer.evaluateXPath(options["hinttags"], doc, null, true);
+        var res = buffer.evaluateXPath(options[hintMode.extended ? "extendedhinttags" : "hinttags"], doc, null, true);
 
         var fragment = doc.createDocumentFragment();
         var start = pageHints.length;
@@ -335,50 +339,19 @@ function Hints() //{{{
                 return false;
         }
 
-        var timeout = followFirst ? 0 : 500;
+        var timeout = followFirst || events.feedingKeys ? 0 : 500;
         var activeIndex = (hintNumber ? hintNumber - 1 : 0);
         var elem = validHints[activeIndex];
-        var loc = elem.href || "";
-        switch (submode)
-        {
-            case ";": buffer.focusElement(elem); break;
-            case "a": buffer.saveLink(elem, false); break;
-            case "s": buffer.saveLink(elem, true); break;
-            case "o": buffer.followLink(elem, liberator.CURRENT_TAB); break;
-            case "t": buffer.followLink(elem, liberator.NEW_TAB); break;
-            case "b": buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB); break;
-            case "v": buffer.viewSource(loc, false); break;
-            case "V": buffer.viewSource(loc, true); break;
-            case "w": buffer.followLink(elem, liberator.NEW_WINDOW); break;
-
-            // some modes need a timeout as they depend on the command line which is still blocked
-            // 500ms because otherwise `fad' would delete a tab, if "a" would make an "address" link unique
-            case "?": setTimeout(function () { buffer.showElementInfo(elem); }, timeout + 50); break;
-            case "y": setTimeout(function () { util.copyToClipboard(loc, true); }, timeout + 50); break;
-            case "Y": setTimeout(function () { util.copyToClipboard(elem.textContent || "", true); }, timeout + 50); break;
-            case "O": setTimeout(function () { commandline.open(":", "open " + loc, modes.EX); }, timeout); break;
-            case "T": setTimeout(function () { commandline.open(":", "tabopen " + loc, modes.EX); }, timeout); break;
-            case "W": setTimeout(function () { commandline.open(":", "winopen " + loc, modes.EX); }, timeout); break;
-            default:
-                liberator.echoerr("INTERNAL ERROR: unknown submode: " + submode);
-        }
         removeHints(timeout);
 
-        if (timeout == 0 || modes.isReplaying)
-        {
+        if (timeout == 0)
             // force a possible mode change, based on wheter an input field has focus
             events.onFocusChange();
+        setTimeout(function () {
             if (modes.extended & modes.HINTS)
-                modes.reset(false);
-        }
-        else
-        {
-            setTimeout(function () {
-                if (modes.extended & modes.HINTS)
-                    modes.reset();
-            }, timeout);
-        }
-
+                modes.reset();
+            hintMode.action(elem, elem.href || "");
+        }, timeout);
         return true;
     }
 
@@ -644,16 +617,16 @@ function Hints() //{{{
 
         show: function (minor, filter, win)
         {
-            let prompt = hintDescriptions[minor];
-            if (!prompt)
+            hintMode = hintModes[minor];
+            if (!hintMode)
             {
                 liberator.beep();
                 return;
             }
-            commandline.input(prompt, null, { onChange: onInput });
+            commandline.input(hintMode.prompt + ":", null, { onChange: onInput });
             modes.extended = modes.HINTS;
 
-            submode = minor || "o"; // open is the default mode
+            submode = minor;
             hintString = filter || "";
             hintNumber = 0;
             usedTab = false;
@@ -752,7 +725,7 @@ function Hints() //{{{
                    return;
 
                 default:
-                    if (/^[0-9]$/.test(key))
+                    if (/^\d$/.test(key))
                     {
                         prevInput = "number";
 

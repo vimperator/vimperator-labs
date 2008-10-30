@@ -1807,33 +1807,27 @@ function Marks() //{{{
         }
     }
 
-    function isLocalMark(mark)
-    {
-        return /^[a-z]$/.test(mark);
-    }
+    function isLocalMark(mark) /^[a-z]$/.test(mark);
+    function isURLMark(mark) /^[A-Z0-9]$/.test(mark);
 
-    function isURLMark(mark)
+    function localMarkIter()
     {
-        return /^[A-Z0-9]$/.test(mark);
+        for (let [mark, value] in localMarks)
+            for (let [,val] in Iterator(value))
+                yield [mark, val];
     }
 
     function getSortedMarks()
     {
-        var location = window.content.location.href;
-        var lmarks = [];
-
         // local marks
-        for (let [mark, value] in Iterator(localMarks))
-        {
-            for (let [,val] in Iterator(value.filter(function (val) val.location == location)))
-                lmarks.push([mark, val]);
-        }
+        let location = window.content.location.href;
+        let lmarks = [i for (i in localMarkIter()) if (i[1].location == location)];
         lmarks.sort();
 
         // URL marks
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        var umarks = [[key, mark] for ([key, mark] in urlMarks)];
+        let umarks = [i for (i in urlMarks)];
         umarks.sort(function (a, b) a[0].localeCompare(b[0]));
 
         return lmarks.concat(umarks);
@@ -2020,7 +2014,7 @@ function Marks() //{{{
 
             if (isURLMark(mark))
             {
-                var slice = urlMarks.get(mark);
+                let slice = urlMarks.get(mark);
                 if (slice && slice.tab && slice.tab.linkedBrowser)
                 {
                     if (slice.tab.parentNode != getBrowser().tabContainer)
@@ -2050,16 +2044,17 @@ function Marks() //{{{
             }
             else if (isLocalMark(mark))
             {
-                var win = window.content;
-                var slice = localMarks.get(mark) || [];
+                let win = window.content;
+                let slice = localMarks.get(mark) || [];
 
-                for (let i = 0; i < slice.length; i++)
+                for (let [,lmark] in Iterator(slice))
                 {
-                    if (win.location.href == slice[i].location)
+                    if (win.location.href == mark.location)
                     {
-                        liberator.log("Jumping to local mark: " + markToString(mark, slice[i]), 5);
-                        win.scrollTo(slice[i].position.x * win.scrollMaxX, slice[i].position.y * win.scrollMaxY);
+                        liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
+                        win.scrollTo(lmark.position.x * win.scrollMaxX, lmark.position.y * win.scrollMaxY);
                         ok = true;
+                        break;
                     }
                 }
             }
