@@ -521,7 +521,7 @@ function Events() //{{{
             }
             else // background tab
             {
-                liberator.echomsg("Background tab loaded: " + title || url, 1);
+                liberator.echomsg("Background tab loaded: " + title || url, 3);
             }
 
             triggerLoadAutocmd("PageLoad", doc);

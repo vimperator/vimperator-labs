@@ -333,7 +333,7 @@ function Mail() //{{{
     // SENDING MESSAGES
     mappings.add(myModes, ["m"],
         "Compose a new message",
-        function () { commandline.open(":", "message -subject=", modes.EX); });
+        function () { commandline.open(":", "mail -subject=", modes.EX); });
 
     mappings.add(myModes, ["M"],
         "Compose a new message to the sender of selected mail",
@@ -342,7 +342,7 @@ function Mail() //{{{
           try
           {
             var to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
-            commandline.open(":", "message " + to + " -subject=", modes.EX);
+            commandline.open(":", "mail " + to + " -subject=", modes.EX);
           }
           catch (e)
           {
@@ -683,7 +683,7 @@ function Mail() //{{{
             count: true
         });
 
-    commands.add(["m[essage]"],
+    commands.add(["m[ail]"],
         "Write a new message",
         function (args)
         {

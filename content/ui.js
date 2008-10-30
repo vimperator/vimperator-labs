@@ -718,7 +718,9 @@ function CommandLine() //{{{
                         event.originalTarget == commandWidget.inputField)
                     {
                         commandWidget.inputField.focus();
-                        liberator.beep();
+                        // a beep would be nice, but unfortunately firefox also fires
+                        // this event when switching windows while the command line has focus
+                        // liberator.beep();
                     }
                 }, 0);
             }
