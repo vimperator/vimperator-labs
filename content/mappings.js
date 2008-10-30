@@ -45,6 +45,7 @@ function Map(modes, cmds, description, action, extraInfo) //{{{
     this.description = description || "";
     this.rhs = extraInfo.rhs || null;
     this.noremap = extraInfo.noremap || false;
+    this.silent = extraInfo.silent || false;
 };
 
 Map.prototype = {
@@ -165,11 +166,12 @@ function Mappings() //{{{
                 {
                     mappings.addUserMap([m], [lhs],
                             "User defined mapping",
-                            function (count) { events.feedkeys((count > 1 ? count : "") + rhs, noremap, "<silent>" in args); },
+                            function (count) { events.feedkeys((count > 1 ? count : "") + this.rhs, this.noremap, this.silent); },
                             {
                                 flags: Mappings.flags.COUNT,
                                 rhs: rhs,
                                 noremap: noremap,
+                                silent: "<silent>" in args
                             });
                 }
             }
