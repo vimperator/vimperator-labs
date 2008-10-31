@@ -21,7 +21,7 @@ function Highlights(name, store, serial)
         Normal      color: black; background: white;
         ErrorMsg    color: white; background: red;
         InfoMsg     color: black; background: white;
-        ModeMsg     color: white; background: white;
+        ModeMsg     color: black; background: white;
         MoreMsg     color: green; background: white;
         WarningMsg  color: red;   background: white;
         Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
@@ -436,13 +436,23 @@ liberator.registerObserver("load_commands", function ()
         "Set the style of certain display elements",
         function (args, special)
         {
+            let style = <![CDATA[
+                display: inline-block !important;
+                position: static !important;
+                width: 3em !important; min-width: 3em !important; max-width: 3em !important;
+                height: 1em !important; min-height: 1em !important; max-height: 1em !important;
+                margin: 0px !important; padding: 0px !important;
+                overflow: hidden !important;
+            ]]>;
             let key = args.arguments[0];
             let css = args.literalArg;
             if (!css && !(key && special))
             {
-                let str = template.tabular(["Key", "CSS"],
+                let str = template.tabular(["Key", "Sample", "CSS"],
                     ["padding: 0 1em 0 0; vertical-align: top"],
-                    ([h.class, h.value]
+                    ([h.class,
+		      <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
+		      h.value]
                         for (h in highlight)
                         if (!key || h.class.indexOf(key) > -1)));
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
