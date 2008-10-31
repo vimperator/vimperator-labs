@@ -1272,21 +1272,23 @@ function Buffer() //{{{
         },
 
         // in contrast to vim, returns the selection if one is made,
-        // otherwise tries to guess the current word unter the text cursor
+        // otherwise tries to guess the current word under the text cursor
         // NOTE: might change the selection
+        // FIXME: getSelection() doesn't always preserve line endings, see:
+        // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
         getCurrentWord: function ()
         {
-            var selection = window.content.getSelection().toString();
+            let selection = window.content.getSelection().toString();
 
             if (!selection)
             {
-                let selController = this.selectionController;
-                let caretmode = selController.getCaretEnabled();
-                selController.setCaretEnabled(true);
-                selController.wordMove(false, false);
-                selController.wordMove(true, true);
+                let controller = this.selectionController;
+                let caretmode = controller.getCaretEnabled();
+                controller.setCaretEnabled(true);
+                controller.wordMove(false, false);
+                controller.wordMove(true, true);
                 selection = window.content.getSelection().toString();
-                selController.setCaretEnabled(caretmode);
+                controller.setCaretEnabled(caretmode);
             }
 
             return selection;
