@@ -348,9 +348,12 @@ function Styles(name, store, serial)
         }
     }
 }
-Styles.prototype = {
-    get sites() util.Array.uniq(util.Array.flatten([v.sites for ([k, v] in this.userSheets)]))
-};
+let (array = util.Array)
+{
+    Styles.prototype = {
+        get sites() array.uniq(array.flatten([v.sites for ([k, v] in this.userSheets)]))
+    };
+}
 
 const styles = storage.newObject("styles", Styles, false);
 const highlight = storage.newObject("highlight", Highlights, false);
