@@ -866,7 +866,14 @@ const liberator = (function () //{{{
             return features.indexOf(feature) >= 0;
         },
 
-        hasExtension: function (name) Application.extensions.all.some(function (e) e.name == name),
+        hasExtension: function (name)
+        {
+            let manager = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager);
+            let extensions = manager.getItemList(Components.interfaces.nsIUpdateItem.TYPE_EXTENSION, {});
+
+            return extensions.some(function (e) e.name == name);
+        },
 
         help: function (topic)
         {
