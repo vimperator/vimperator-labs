@@ -272,8 +272,7 @@ function Buffer() //{{{
 
     /* FIXME: This doesn't belong here. */
     let mainWindowID = config.mainWindowID || "main-window";
-    let fontSize = document.defaultView.getComputedStyle(document.getElementById(mainWindowID), null)
-                                       .getPropertyValue("font-size");
+    let fontSize = util.computedStyle(document.getElementById(mainWindowID))["font-size"];
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
     let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
@@ -578,9 +577,8 @@ function Buffer() //{{{
 
                 for (match in matches)
                 {
-                    let computedStyle = window.content.getComputedStyle(match, null);
-
-                    if (computedStyle.getPropertyValue("visibility") != "hidden" && computedStyle.getPropertyValue("display") != "none")
+                    let computedStyle = util.computedStyle(match);
+                    if (computedStyle.visibility != "hidden" && computedStyle.display != "none")
                         elements.push(match);
                 }
 
@@ -1278,7 +1276,7 @@ function Buffer() //{{{
         // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
         getCurrentWord: function ()
         {
-            var selection = window.content.getSelection();
+            let selection = window.content.getSelection();
             if (selection.isCollapsed)
             {
                 let selController = this.selectionController;
@@ -1288,7 +1286,11 @@ function Buffer() //{{{
                 selController.wordMove(true, true);
                 selController.setCaretEnabled(caretmode);
             }
-            return String(selection.getRangeAt(0));
+            let range = selection.getRangeAt(0);
+            if (util.computedStyle(range.startContainer)["white-space"] == "pre"
+                && util.computedStyle(range.endContainer)["white-space"] == "pre")
+                return String(range);
+            return String(selection);
         },
 
         // more advanced than a simple elem.focus() as it also works for iframes

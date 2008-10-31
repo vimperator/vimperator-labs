@@ -137,6 +137,14 @@ const util = { //{{{
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
 
+    computedStyle: function (node)
+    {
+        while (node instanceof Text && node.parentNode)
+            node = node.parentNode;
+        let style = node.ownerDocument.defaultView.getComputedStyle(node, null);
+        return util.Array.assocToObj(Array.map(style, function (k) [k, style.getPropertyValue(k)]));
+    },
+
     copyToClipboard: function (str, verbose)
     {
         var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
