@@ -2049,7 +2049,7 @@ function Marks() //{{{
 
                 for (let [,lmark] in Iterator(slice))
                 {
-                    if (win.location.href == mark.location)
+                    if (win.location.href == lmark.location)
                     {
                         liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
                         win.scrollTo(lmark.position.x * win.scrollMaxX, lmark.position.y * win.scrollMaxY);
