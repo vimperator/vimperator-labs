@@ -214,8 +214,10 @@ function CommandLine() //{{{
                          .selection.getRangeAt(0)
                          .startContainer.parentNode
                          .scrollWidth > commandWidget.inputField.scrollWidth)
-            // Yeah, the min-width is stupid. Somehow, it doesn't work otherwise.
-            setMultiline(<p style={"white-space: normal; min-width: " + commandWidget.inputField.scrollWidth + "px; width: 100%"}>{str}</p>, highlightGroup);
+        {
+            setCommand("");
+            setMultiline(<span class="hl-Message">{str}</span>, highlightGroup);
+        }
     }
 
     // TODO: extract CSS
@@ -233,7 +235,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str == "xml";
-        var output = <div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>;
+        var output = <div class={"ex-command-output " + highlightGroup} style={"min-width: " + commandlineWidget.scrollWidth + "px"}>{template.maybeXML(str)}</div>;
         XML.ignoreWhiteSpace = true;
 
         lastMowOutput = output;
@@ -267,7 +269,7 @@ function CommandLine() //{{{
             if (win.scrollY >= win.scrollMaxY)
                 setLine("Press ENTER or type command to continue", commandline.HL_QUESTION, true);
             else
-                setLine("-- More --", commandline.HL_QUESTION, true);
+                setLine("-- More --", commandline.HL_MOREMSG, true);
         }
         else
         {
@@ -278,7 +280,7 @@ function CommandLine() //{{{
         win.focus();
 
         startHints = false;
-        modes.push(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
+        modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
     }
 
     function autosizeMultilineInputWidget()
@@ -532,7 +534,7 @@ function CommandLine() //{{{
                 let list = <></>;
 
                 for (let [,message] in Iterator(messageHistory.messages))
-                    list += <div class={message.highlight}>{message.str}</div>;
+                    list += <div class={message.highlight + " hl-Message"}>{message.str}</div>;
 
                 liberator.echo(list, commandline.FORCE_MULTILINE);
             }
@@ -591,7 +593,7 @@ function CommandLine() //{{{
             historyIndex = UNINITIALIZED;
             completionIndex = UNINITIALIZED;
 
-            modes.push(modes.COMMAND_LINE, currentExtendedMode);
+            modes.set(modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
             setPrompt(currentPrompt);
             setCommand(currentCommand);

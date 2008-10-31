@@ -484,10 +484,23 @@ function Struct()
     {
         let self = this instanceof arguments.callee ? this : new arguments.callee();
         for (let [k, v] in Iterator(Array.slice(arguments)))
-            self[k] = v;
+        {
+            if (v != undefined)
+                self[k] = v;
+        }
         return self;
     }
     ConStructor.prototype = self;
+    ConStructor.defaultValue = function (key, val)
+    {
+        let i = args.indexOf(key);
+        let _i = "_" + i;
+        ConStructor.prototype.__defineGetter__(i, val);
+        ConStructor.prototype.__defineSetter__(i, function (val) {
+            this.__defineGetter__(i, function () this[_i]);
+            this[_i] = val;
+        });
+    };
     return self.constructor = ConStructor;
 }
 
@@ -497,7 +510,11 @@ Struct.prototype = {
         return this.constructor.apply(null, this.slice());
     },
     // Iterator over our named members
-    __iterator__: function () ([v, this[v]] for ([k, v] in this.members))
+    __iterator__: function ()
+    {
+        let self = this;
+        return ([v, self[v]] for ([k, v] in Iterator(self.members)))
+    }
 }
 
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or

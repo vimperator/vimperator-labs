@@ -284,7 +284,7 @@ function Search() //{{{
 
             if (!aWord)
             {
-                let elems = doc.getElementsByClassName("__liberator-search");
+                let elems = doc.getElementsByClassName("liberator-search");
                 for (let i = elems.length; --i >= 0;)
                 {
                     let elem = elems[i];
@@ -303,7 +303,7 @@ function Search() //{{{
                 return;
             }
 
-            var baseNode = <span class="__liberator-search"/>
+            var baseNode = <span class="liberator-search"/>
             baseNode = util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
@@ -551,7 +551,7 @@ function Search() //{{{
         highlight: function (text)
         {
             // already highlighted?
-            if (window.content.document.getElementsByClassName("__liberator-search").length > 0)
+            if (window.content.document.getElementsByClassName("liberator-search").length > 0)
                 return;
 
             if (!text)

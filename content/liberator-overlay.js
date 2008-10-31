@@ -25,6 +25,7 @@
 
     ["liberator.js",
      "util.js",
+     "style.js",
      "config.js",
      "buffer.js",
      "commands.js",

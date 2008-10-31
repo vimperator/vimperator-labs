@@ -26,8 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-
 const Point = new Struct("x", "y");
 
 function Buffer() //{{{
@@ -35,241 +33,6 @@ function Buffer() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
-    const highlightClasses = ["Boolean", "ErrorMsg", "Filter", "Function", "InfoMsg", "Keyword",
-            "LineNr", "ModeMsg", "MoreMsg", "Normal", "Null", "Number", "Object", "Question",
-            "StatusLine", "StatusLineBroken", "StatusLineSecure", "String", "TabClose", "TabIcon",
-            "TabIconNumber", "TabNumber", "TabText", "Tag", "Title", "URL", "WarningMsg",
-            ["Hint",   ".liberator-hint",     "*"],
-            ["Search", ".__liberator-search", "*"],
-            ["Bell",   "#liberator-visualbell"],
-            ];
-    const highlightDocs = "chrome://liberator/content/buffer.xhtml,chrome://browser/content/browser.xul";
-
-    var highlight = storage.newMap("highlight", false);
-
-    const util = modules.util;
-    const arrayIter = util.Array.iterator;
-
-    function Styles(name, store, serial)
-    {
-        /* Can't reference liberator or Components inside Styles --
-         * they're members of the window object, which disappear
-         * with this window.
-         */
-        const sleep = liberator.sleep;
-        const storage = modules.storage;
-        const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                         .getService(Components.interfaces.nsIConsoleService);
-        const ios = Components.classes["@mozilla.org/network/io-service;1"]
-                              .getService(Components.interfaces.nsIIOService);
-        const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
-                              .getService(Components.interfaces.nsIStyleSheetService);
-        const XHTML = "http://www.w3.org/1999/xhtml";
-        const namespace = "@namespace html url(" + XHTML + ");\n" +
-                          "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
-        const Sheet = new Struct("name", "sites", "css", "ref");
-
-        let cssUri = function (css) "chrome-data:text/css," + encodeURI(css);
-
-        let userSheets = [];
-        let systemSheets = [];
-        let userNames = {};
-        let systemNames = {};
-
-        this.__iterator__ = function () Iterator(userSheets.concat(systemSheets));
-        this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
-        this.__defineGetter__("userSheets", function () Iterator(userSheets));
-        this.__defineGetter__("systemNames", function () Iterator(systemNames));
-        this.__defineGetter__("userNames", function () Iterator(userNames));
-
-        this.addSheet = function (name, filter, css, system, force)
-        {
-            let sheets = system ? systemSheets : userSheets;
-            let names = system ? systemNames : userNames;
-            if (name && name in names)
-                this.removeSheet(name, null, null, null, system);
-
-            let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
-            if (!sheet)
-                sheet = new Sheet(name, filter.split(","), css, null);
-
-            if (sheet.ref == null) // Not registered yet
-            {
-                sheet.ref = [];
-                try
-                {
-                    this.registerSheet(cssUri(wrapCSS(sheet)), !force);
-                }
-                catch (e)
-                {
-                    return e.echoerr || e;
-                }
-                sheets.push(sheet);
-            }
-            if (name)
-            {
-                sheet.ref.push(name);
-                names[name] = sheet;
-            }
-            return null;
-        }
-
-        this.findSheets = function (name, filter, css, index, system)
-        {
-            let sheets = system ? systemSheets : userSheets;
-            let names = system ? systemNames : userNames;
-
-            // Grossly inefficient.
-            let matches = [k for ([k, v] in sheets)];
-            if (index)
-                matches = String(index).split(",").filter(function (i) i in sheets);
-            if (name)
-                matches = matches.filter(function (i) sheets[i] == names[name]);
-            if (css)
-                matches = matches.filter(function (i) sheets[i].css == css);
-            if (filter)
-                matches = matches.filter(function (i) sheets[i].sites.indexOf(filter) >= 0);
-            return matches;
-        },
-
-        this.removeSheet = function (name, filter, css, index, system)
-        {
-            let self = this;
-            let sheets = system ? systemSheets : userSheets;
-            let names = system ? systemNames : userNames;
-
-            if (filter && filter.indexOf(",") > -1)
-                return filter.split(",").reduce(
-                    function (n, f) n + self.removeSheet(name, f, index, system), 0);
-
-            if (filter == undefined)
-                filter = "";
-
-            let matches = this.findSheets(name, filter, css, index, system);
-            if (matches.length == 0)
-                return;
-
-            for (let [,i] in Iterator(matches.reverse()))
-            {
-                let sheet = sheets[i];
-                if (name)
-                {
-                    sheet.ref.splice(sheet.ref.indexOf(name));
-                    delete names[name];
-                }
-                if (!sheet.ref.length)
-                {
-                    sheets.splice(i);
-                    this.unregisterSheet(cssUri(wrapCSS(sheet)));
-                }
-                // Filter out the given site, and re-add if there are any left
-                if (filter)
-                {
-                    let sites = sheet.sites.filter(function (f) f != filter);
-                    if (sites.length)
-                        this.addSheet(name, sites.join(","), css, system, true);
-                }
-            }
-            return matches.length;
-        }
-
-        this.registerSheet = function (uri, doCheckSyntax, reload)
-        {
-            if (doCheckSyntax)
-                checkSyntax(uri);
-            if (reload)
-                this.unregisterSheet(uri);
-            uri = ios.newURI(uri, null, null);
-            if (reload || !sss.sheetRegistered(uri, sss.USER_SHEET))
-                sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
-        }
-
-        this.unregisterSheet = function (uri)
-        {
-            uri = ios.newURI(uri, null, null);
-            if (sss.sheetRegistered(uri, sss.USER_SHEET))
-                sss.unregisterSheet(uri, sss.USER_SHEET);
-        }
-
-        function wrapCSS(sheet)
-        {
-            let filter = sheet.sites;
-            let css = sheet.css;
-            if (filter[0] == "*")
-                return namespace + css;
-            let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
-                                                        /[\/:]/.test(part)  ? "url"
-                                                                            : "domain")
-                                                + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
-                                  .join(", ");
-            return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
-        }
-
-        let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
-        /* What happens if more than one thread tries to use this? */
-        let testDoc = document.implementation.createDocument(XHTML, "doc", null);
-        function checkSyntax(uri)
-        {
-            let errors = [];
-            let listener = {
-                QueryInterface: queryinterface,
-                observe: function (message)
-                {
-                    try
-                    {
-                        message = message.QueryInterface(Components.interfaces.nsIScriptError);
-                        if (message.sourceName == uri)
-                            errors.push(message);
-                    }
-                    catch (e) {}
-                }
-            };
-
-            try
-            {
-                consoleService.registerListener(listener);
-                if (testDoc.documentElement.firstChild)
-                    testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
-                testDoc.documentElement.appendChild(util.xmlToDom(
-                        <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
-
-                while (true)
-                {
-                    try
-                    {
-                        // Throws NS_ERROR_DOM_INVALID_ACCESS_ERR if not finished loading
-                        testDoc.styleSheets[0].cssRules.length;
-                        break;
-                    }
-                    catch (e)
-                    {
-                        if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
-                            return [e.toString()];
-                        sleep(10);
-                    }
-                }
-            }
-            finally
-            {
-                consoleService.unregisterListener(listener);
-            }
-            if (errors.length)
-            {
-                let err = new Error("", errors[0].sourceName.replace(/^(chrome-data:text\/css,).*/, "$1..."), errors[0].lineNumber);
-                err.name = "CSSError"
-                err.message = errors.reduce(function (msg, e) msg + "; " + e.lineNumber + ": " + e.errorMessage, errors.shift().errorMessage);
-                err.echoerr = err.fileName + ":" + err.lineNumber + ": " + err.message;
-                throw err;
-            }
-        }
-    }
-    Styles.prototype = {
-        get sites() util.Array.uniq(util.Array.flatten([v.sites for ([k, v] in this.userSheets)]))
-    };
-
-    let styles = storage.newObject("styles", Styles, false);
-
     /* FIXME: This doesn't belong here. */
     let mainWindowID = config.mainWindowID || "main-window";
     let fontSize = util.computedStyle(document.getElementById(mainWindowID))["font-size"];
@@ -813,114 +576,6 @@ function Buffer() //{{{
         function () { BrowserStop(); },
         { argCount: "0" });
 
-    commands.add(["sty[le]"],
-        "Add or list user styles",
-        function (args, special)
-        {
-            let [filter] = args.arguments;
-            let name = args["-name"];
-            let css = args.literalArg;
-
-            if (!css)
-            {
-                let list = Array.concat([i for (i in styles.userNames)],
-                                        [i for (i in styles.userSheets) if (!i[1].ref.length)]);
-                let str = template.tabular(["", "Filter", "CSS"],
-                    ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([k, v[1].join(","), v[2]]
-                     for ([i, [k, v]] in Iterator(list))
-                     if ((!filter || v[1].indexOf(filter) >= 0) && (!name || v[0] == name))));
-                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-            }
-            else
-            {
-                let err = styles.addSheet(name, filter, css, false, special);
-                if (err)
-                    liberator.echoerr(err);
-            }
-        },
-        {
-            completer: function (filter) {
-                let compl = [];
-                try
-                {
-                    compl.push([content.location.host, "Current Host"]);
-                    compl.push([content.location.href, "Current URL"]);
-                }
-                catch (e) {}
-                comp = compl.concat([[s, ""] for each (s in styles.sites)])
-                return [0, completion.filter(compl, filter)];
-            },
-            argCount: 1,
-            bang: true,
-            hereDoc: true,
-            literal: true,
-            options: [[["-name", "-n"], commands.OPTION_STRING]],
-            serial: function () [
-                {
-                    command: this.name,
-                    bang: true,
-                    options: sty.name ? {"-name": sty.name} : {},
-                    arguments: [sty.sites.join(",")],
-                    literalArg: sty.css
-                } for ([k, sty] in styles.userSheets)
-            ]
-        });
-
-    commands.add(["dels[tyle]"],
-        "Remove a user stylesheet",
-        function (args) {
-            styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
-        },
-        {
-            argCount: 1,
-            completer: function (filter) [0, completion.filter(
-                    [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
-                        for ([i, s] in styles.userSheets)
-                    ]
-                    .concat([[s, ""] for each (s in styles.sites)])
-                    , filter)],
-            literal: true,
-            options: [[["-index", "-i"], commands.OPTION_INT],
-                      [["-name", "-n"],  commands.OPTION_STRING]]
-        });
-
-    commands.add(["hi[ghlight]"],
-        "Set the style of certain display elements",
-        function (args, special)
-        {
-            let key = args.arguments[0];
-            let css = args.literalArg;
-            if (!css && !(key && special))
-            {
-                let str = template.tabular(["Key", "CSS"],
-                    ["padding: 0 1em 0 0; vertical-align: top"],
-                    (h for (h in highlight) if (!key || h[0].indexOf(key) > -1)));
-                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-                return;
-            }
-            buffer.highlight(key, css, special);
-        },
-        {
-            // TODO: add this as a standard highlight completion function?
-            // I agree. It could (should) be much more sophisticated. --Kris
-            completer: function (filter) [0,
-                    completion.filter([[v instanceof Array ? v[0] : v, ""] for ([k, v] in Iterator(highlightClasses))], filter)
-                ],
-            argCount: 1,
-            bang: true,
-            hereDoc: true,
-            literal: true,
-            serial: function () [
-                {
-                    command: this.name,
-                    arguments: [k],
-                    literalArg: v
-                }
-                for ([k, v] in Iterator(highlight))
-            ]
-        });
-
     commands.add(["vie[wsource]"],
         "View source code of current document",
         function (args, special) { buffer.viewSource(args.arguments[0], special); },
@@ -1030,7 +685,7 @@ function Buffer() //{{{
         // put feeds rss into pageFeeds[]
         let nFeed = 0;
         var linkNodes = doc.getElementsByTagName("link");
-        for (link in arrayIter(linkNodes))
+        for (link in util.arrayIter(linkNodes))
         {
             if (!link.href)
                 return;
@@ -1065,7 +720,7 @@ function Buffer() //{{{
                                        .getService(nsICacheService);
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
-        for (let proto in arrayIter(["HTTP", "FTP"]))
+        for (let proto in util.arrayIter(["HTTP", "FTP"]))
         {
             try
             {
@@ -1205,39 +860,6 @@ function Buffer() //{{{
         },
 
         addPageInfoSection: addPageInfoSection,
-
-        highlight: function (key, style, force)
-        {
-            let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
-
-            class = highlightClasses.filter(function (i) i == class || i[0] == class)[0];
-            if (!class)
-            {
-                liberator.echoerr("Unknown highlight keyword");
-                return;
-            }
-            if (!(class instanceof Array))
-                class = [class];
-
-            styles.removeSheet("hl-" + key, null, null, null, true);
-            highlight.remove(key);
-
-            if (/^\s*$/.test(style))
-                return;
-
-            let cssClass = class[1] || ".hl-" + class[0];
-            let scope = class[2] || highlightDocs;
-
-            let css = style.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
-                           .replace(";!important;", ";", "g") // Seeming Spidermonkey bug
-            css = cssClass + selectors + " { " + css + " }";
-
-            let error = styles.addSheet("hl-" + key, scope, css, true, force);
-            if (error)
-                liberator.echoerr(error);
-            else
-                highlight.set(key, style);
-        },
 
         // returns an XPathResult object
         evaluateXPath: function (expression, doc, elem, asIterator)

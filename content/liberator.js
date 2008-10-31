@@ -37,6 +37,10 @@ const liberator = (function () //{{{
 
     var callbacks = [];
     var observers = [];
+    function registerObserver(type, callback)
+    {
+        observers.push([type, callback]);
+    }
 
     function loadModule(name, func)
     {
@@ -46,6 +50,7 @@ const liberator = (function () //{{{
             liberator.log(message, 0);
             liberator.dump(message);
             modules[name] = func();
+            liberator.triggerObserver("load_" + name, name);
         }
         catch (e)
         {
@@ -57,7 +62,7 @@ const liberator = (function () //{{{
     }
 
     // Only general options are added here, which are valid for all vimperator like extensions
-    function addOptions()
+    registerObserver("load_options", function ()
     {
         options.add(["errorbells", "eb"],
             "Ring the bell when an error message is displayed",
@@ -140,9 +145,9 @@ const liberator = (function () //{{{
                     return value;
                 }
             });
-    }
+    })
 
-    function addMappings()
+    registerObserver("load_mappings", function ()
     {
         mappings.add(modes.all, ["<F1>"],
             "Open help window",
@@ -158,9 +163,9 @@ const liberator = (function () //{{{
         mappings.add([modes.NORMAL], ["ZZ"],
             "Quit and save the session",
             function () { liberator.quit(true); });
-    }
+    })
 
-    function addCommands()
+    registerObserver("load_commands", function ()
     {
         commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
@@ -529,7 +534,7 @@ const liberator = (function () //{{{
                 argCount: "0",
                 bang: true
             });
-    }
+    })
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
     // similar in his config
@@ -603,10 +608,7 @@ const liberator = (function () //{{{
             return false;
         },
 
-        registerObserver: function (type, callback)
-        {
-            observers.push([type, callback]);
-        },
+        registerObserver: registerObserver,
 
         triggerObserver: function (type, data)
         {
@@ -1145,9 +1147,9 @@ const liberator = (function () //{{{
             config.features.push(navigator.platform);
 
             // commands must always be the first module to be initialized
-            loadModule("commands",     Commands); addCommands();
-            loadModule("options",      Options);  addOptions();
-            loadModule("mappings",     Mappings); addMappings();
+            loadModule("commands",     Commands);
+            loadModule("options",      Options);
+            loadModule("mappings",     Mappings);
             loadModule("buffer",       Buffer);
             loadModule("events",       Events);
             loadModule("commandline",  CommandLine);
