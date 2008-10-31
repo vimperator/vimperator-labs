@@ -1278,20 +1278,17 @@ function Buffer() //{{{
         // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
         getCurrentWord: function ()
         {
-            let selection = window.content.getSelection().toString();
-
-            if (!selection)
+            var selection = window.content.getSelection();
+            if (selection.isCollapsed)
             {
-                let controller = this.selectionController;
-                let caretmode = controller.getCaretEnabled();
-                controller.setCaretEnabled(true);
-                controller.wordMove(false, false);
-                controller.wordMove(true, true);
-                selection = window.content.getSelection().toString();
-                controller.setCaretEnabled(caretmode);
+                let selController = this.selectionController;
+                let caretmode = selController.getCaretEnabled();
+                selController.setCaretEnabled(true);
+                selController.wordMove(false, false);
+                selController.wordMove(true, true);
+                selController.setCaretEnabled(caretmode);
             }
-
-            return selection;
+            return String(selection.getRangeAt(0));
         },
 
         // more advanced than a simple elem.focus() as it also works for iframes
