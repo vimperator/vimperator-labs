@@ -866,6 +866,8 @@ const liberator = (function () //{{{
             return features.indexOf(feature) >= 0;
         },
 
+        hasExtension: function (name) Application.extensions.all.some(function (e) e.name == name),
+
         help: function (topic)
         {
             var where = (options["newtab"] && options.get("newtab").has("all", "help"))
