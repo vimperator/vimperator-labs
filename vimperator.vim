@@ -43,7 +43,7 @@ syn keyword vimperatorAutoEvent BookmarkAdd DOMLoad LocationChange PageLoadPre P
 syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperatorAutoEvent
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
-    \ end="$" keepend oneline contains=vimperatorOption
+    \ end="$" keepend oneline contains=vimperatorOption,vimperatorComment,vimperatorString
 
 syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc cdpath cd complete cpt defsearch ds editor
     \ extendedhinttags eht eventignore ei guioptions go helpfile hf hintmatching hm hs hinttags ht hinttimeout hto history hi
