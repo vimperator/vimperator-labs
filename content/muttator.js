@@ -42,6 +42,7 @@ const config = { //{{{
     get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
     get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
     get visualbellWindow() document.getElementById(this.mainWindowID),
+    styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
 
     autocommands: [["FolderLoaded",  "Triggered after switching folders in Thunderbird"],
                    ["PageLoadPre",   "Triggered after a page load is initiated"],

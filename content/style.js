@@ -81,7 +81,7 @@ function Highlights(name, store, serial)
     var styles = storage.styles;
 
     const Highlight = Struct("class", "selector", "filter", "default", "value");
-    Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml,chrome://browser/content/browser.xul");
+    Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
     Highlight.defaultValue("selector", function () ".hl-" + this.class);
     Highlight.defaultValue("value", function () this.default);
     Highlight.prototype.toString = function () [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join(", ");
@@ -261,6 +261,7 @@ function Styles(name, store, serial)
 
     this.registerSheet = function (uri, doCheckSyntax, reload)
     {
+        //dump (uri + "\n\n");
         if (doCheckSyntax)
             checkSyntax(uri);
         if (reload)
@@ -357,11 +358,13 @@ let (array = util.Array)
     };
 }
 
+
 const styles = storage.newObject("styles", Styles, false);
-const highlight = storage.newObject("highlight", Highlights, false);
 
 liberator.registerObserver("load_commands", function ()
 {
+    const highlight = storage.newObject("highlight", Highlights, false);
+
     // TODO: :colo default needs :hi clear
     commands.add(["colo[rscheme]"],
         "Load a color scheme",

@@ -37,6 +37,7 @@ const config = { //{{{
     guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
 
     get visualbellWindow() getBrowser().mPanelContainer,
+    styleableChrome: "chrome://browser/content/browser.xul",
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
                    ["ColorScheme",        "Triggered after a color scheme has been loaded"],
