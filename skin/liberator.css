@@ -166,13 +166,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /* MOW */
 
-#liberator-completions, #liberator-multiline-output {
+#liberator-completions, #liberator-multiline-output, #liberator-multiline-input {
     overflow: hidden;
     background-color: white;
     color: black;
 }
 
-#liberator-completions-content, #liberator-multiline-output-content {
+#liberator-completions-content, #liberator-multiline-output-content, #liberator-multiline-input {
     white-space: pre;
     font-family: -moz-fixed;
     margin: 0px;

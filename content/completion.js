@@ -780,7 +780,6 @@ function Completion() //{{{
 
         bookmark: function bookmark(filter) [0, bookmarks.get(filter)],
 
-        // FIXME: items shouldn't be [[[a], b]], but [[a, b]] and only mapped if at all for bLCS --mst
         buffer: function buffer(filter)
         {
             let items = [];

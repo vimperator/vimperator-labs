@@ -131,7 +131,6 @@ function CommandLine() //{{{
     // the widget used for multiline output
     var multilineOutputWidget = document.getElementById("liberator-multiline-output");
     multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
-
     var outputContainer = multilineOutputWidget.parentNode;
 
     // the widget used for multiline intput
