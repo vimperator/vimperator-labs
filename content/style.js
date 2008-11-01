@@ -485,10 +485,9 @@ liberator.registerObserver("load_commands", function ()
                     ["padding: 0 1em 0 0; vertical-align: top", "text-align: center"],
                     ([h.class,
                       <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
-                      template.maybeXML(h.value.replace(/\s+/g, "\u00a0")
-                                               .replace(/\b([-\w]+):/g, "<span class=\"hl-Filter\">$1:</span>"))]
+                      template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g)]
                         for (h in highlight)
-                            if (!key || h.class.indexOf(key) > -1)));
+                        if (!key || h.class.indexOf(key) > -1)));
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }

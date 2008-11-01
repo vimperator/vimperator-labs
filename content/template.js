@@ -79,21 +79,48 @@ const template = {
     {
         if (typeof str == "xml")
             return str;
+
+        return this.highlightSubstrings(str, (function ()
+        {
+            let lcstr = String.toLowerCase(str);
+            let lcfilter = filter.toLowerCase();
+            let start = 0;
+            while ((start = lcstr.indexOf(lcfilter, start)) > -1)
+            {
+                yield [start, filter.length];
+                start += filter.length;
+            }
+        })());
+    },
+
+    highlightRegexp: function (str, re)
+    {
+        if (typeof str == "xml")
+            return str;
+
+        return this.highlightSubstrings(str, (function ()
+        {
+            while (res = re.exec(str))
+                yield [res.index, res[0].length];
+        })());
+    },
+
+    highlightSubstrings: function (str, iter)
+    {
+        if (typeof str == "xml")
+            return str;
         if (str == "")
             return <>{str}</>;
 
-        let lcstr = String(str).toLowerCase();
-        let lcfilter = filter.toLowerCase();
+        XML.ignoreWhitespace = false;
         str = String(str).replace(" ", "\u00a0");
         let s = <></>;
         let start = 0;
-        let i;
-        while ((i = lcstr.indexOf(lcfilter, start)) > -1)
+        for (let [i, length] in iter)
         {
-            XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
-            s += <span class="hl-Filter">{str.substr(i, filter.length)}</span>;
-            start = i + filter.length;
+            s += <span class="hl-Filter">{str.substr(i, length)}</span>;
+            start = i + length;
         }
         return s + <>{str.substr(start)}</>;
     },
