@@ -61,11 +61,19 @@ the terms of any one of the MPL, the GPL or the LGPL.
     vertical-align: middle;
     padding: 0 .5ex;
 }
-.compitem-td-span { height: 1.5em; line-height: 1.5em !important; display: block; min-height: 16px; }
+.td-span {
+    height: 1.5em; line-height: 1.5em !important;
+}
+.td-strut {
+    display: inline-block;
+    vertical-align: middle;
+    height: 16px;
+    width: 0px;
+}
 
 .compitem[selected=true] { background-color: yellow; }
 .compitem > .favicon     { width: 16px; }
-.favicon > img           { max-width: 16px; max-height: 16px; }
+.favicon > img           { max-width: 16px; max-height: 16px; vertical-align: middle; }
 .compitem > .completion  { width: 45%; overflow: hidden; }
 .compitem > .description { color: gray; }
 

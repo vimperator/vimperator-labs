@@ -37,7 +37,7 @@
     </binding>
     <binding id="compitem-td">
         <!-- No white space. The table is white-space: pre; :( -->
-        <content><html:span class="compitem-td-span"><children/></html:span></content>
+        <content><html:span class="td-strut"/><html:span class="td-span"><children/></html:span></content>
     </binding>
 </bindings>
 
