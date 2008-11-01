@@ -42,6 +42,7 @@ function Command(specs, description, action, extraInfo) //{{{
     function parseSpecs(specs)
     {
         // Whoever wrote the following should be ashamed. :(
+        // Good grief! I have no words... -- djk ;-)
         // let shortNames = longNames = names = [];
         let names = [];
         let longNames = [];
@@ -49,7 +50,7 @@ function Command(specs, description, action, extraInfo) //{{{
 
         for (let [,spec] in Iterator(specs))
         {
-            let matches = spec.match(/(\w+|!)\[(\w+)\]/);
+            let matches = spec.match(/(\w+)\[(\w+)\]/);
 
             if (matches)
             {
