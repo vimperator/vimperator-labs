@@ -1324,6 +1324,7 @@ function ItemList(id) //{{{
         if (typeof a == "function")
             a = a();
 
+        XML.ignoreWhitespace = true;
         let row =
             <ul class="compitem">
                 <li class="favicon">{a ? <img src={a}/> : <></>}</li>

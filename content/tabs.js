@@ -657,7 +657,7 @@ function Tabs() //{{{
 
         get alternate() alternates[1],
 
-        get browsers() function ()
+        get browsers()
         {
             let browsers = getBrowser().browsers;
             for (let i = 0; i < browsers.length; i++)
