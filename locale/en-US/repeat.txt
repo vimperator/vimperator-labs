@@ -102,7 +102,7 @@ ________________________________________________________________________________
 
 
 |:ru| |:runtime|
-||:ru[ntime][!]| {file} ...|| +
+||:runt[ime][!]| {file} ...|| +
 ________________________________________________________________________________
 Source the specified file from each directory in 'runtimepath'. Example: +
 [c]:runtime plugin/foobar.vimp[c] +

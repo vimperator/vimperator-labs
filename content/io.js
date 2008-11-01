@@ -266,7 +266,7 @@ function IO() //{{{
             completer: function (filter) completion.file(filter, true)
         });
 
-    commands.add(["ru[ntime]"],
+    commands.add(["runt[ime]"],
         "Source the specified file from each directory in 'runtimepath'",
         function (args, special)
         {
