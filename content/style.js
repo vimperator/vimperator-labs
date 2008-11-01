@@ -473,6 +473,8 @@ liberator.registerObserver("load_commands", function ()
                 display: inline-block !important;
                 position: static !important;
                 margin: 0px !important; padding: 0px !important;
+                width: 3em !important; min-width: 3em !important; max-width: 3em !important;
+                height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 overflow: hidden !important;
             ]]>;
             let key = args.arguments[0];
