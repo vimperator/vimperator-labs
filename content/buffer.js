@@ -685,7 +685,7 @@ function Buffer() //{{{
         // put feeds rss into pageFeeds[]
         let nFeed = 0;
         var linkNodes = doc.getElementsByTagName("link");
-        for (link in util.arrayIter(linkNodes))
+        for (link in util.Array.iterator(linkNodes))
         {
             if (!link.href)
                 return;
@@ -720,7 +720,7 @@ function Buffer() //{{{
                                        .getService(nsICacheService);
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
-        for (let proto in util.arrayIter(["HTTP", "FTP"]))
+        for (let proto in util.Array.iterator(["HTTP", "FTP"]))
         {
             try
             {
