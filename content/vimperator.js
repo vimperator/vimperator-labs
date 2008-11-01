@@ -39,6 +39,7 @@ const config = { //{{{
     get visualbellWindow() getBrowser().mPanelContainer,
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
+                   ["ColorScheme",        "Triggered after a color scheme has been loaded"],
                    ["DOMLoad",            "Triggered when a page's DOM content has fully loaded"],
                    ["DownloadPost",       "Triggered when a download has completed"],
                    ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],

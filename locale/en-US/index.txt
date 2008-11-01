@@ -153,6 +153,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:cmap|| Map a key sequence in command-line mode +
 ||:cmapclear|| Remove all mappings in command-line mode +
 ||:cnoremap|| Map a key sequence without remapping keys in command-line mode +
+||:colorscheme|| Load a color scheme +
 ||:comclear|| Delete all user-defined commands +
 ||:command|| List and define commands +
 ||:cunabbrev|| Remove an abbreviation in command-line mode +

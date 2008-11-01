@@ -7,6 +7,16 @@ styling is specified via CSS. Although you may style any user interface element
 via the [c]:style[c] command, most Vimperator elements can be styled with the
 [c]:highlight[c] command, for convenience.
 
+|E185| |:colo| |:colorscheme| +
+||:colo[rscheme] {name}|| +
+________________________________________________________________________________
+Load a color scheme. {name} is found by searching the 'runtimepath' for the
+first file matching colors/{name}.vimp.
+
+The ColorScheme autocommand is triggered after the color scheme has been
+sourced.
+________________________________________________________________________________
+
 |:hi| |:highlight| +
 ||:hi[light][!] [-append] {group}[{selector}] [{css}]|| +
 ________________________________________________________________________________

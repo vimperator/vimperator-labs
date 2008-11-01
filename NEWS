@@ -12,6 +12,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+    * add :colorscheme
     * multibyte support for hints (thanks Xie&Tian)
     * add 'exrc'
     * add 'errorbells'

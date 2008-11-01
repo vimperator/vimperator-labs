@@ -813,6 +813,19 @@ function Completion() //{{{
             return [0, buildLongestCommonSubstring(items, filter)];
         },
 
+        colorScheme: function colorScheme(filter)
+        {
+            let schemes = [];
+            let rtp = options["runtimepath"].split(",");
+
+            rtp.forEach(function (path) {
+                schemes = schemes.concat([[c[0].replace(/\.vimp$/, ""), ""]
+                    for each (c in completion.file(path + "/colors/", true)[1])]);
+            });
+
+            return [0, completion.filter(schemes, filter)];
+        },
+
         command: function command(filter)
         {
             var completions = [];

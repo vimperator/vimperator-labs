@@ -362,30 +362,21 @@ const highlight = storage.newObject("highlight", Highlights, false);
 
 liberator.registerObserver("load_commands", function ()
 {
+    // TODO: :colo default needs :hi clear
     commands.add(["colo[rscheme]"],
         "Load a color scheme",
         function (args)
         {
             let scheme = args.arguments[0];
 
-            if (!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
+            if (io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
+                autocommands.trigger("ColorScheme", {});
+            else
                 liberator.echoerr("E185: Cannot find color scheme " + scheme);
         },
         {
             argCount: 1,
-            completer: function (filter)
-            {
-                let rtp = options["runtimepath"].split(",");
-                let schemes = [];
-
-                rtp.forEach(function (path) {
-                    schemes = schemes.concat(
-                        [[c[0].replace(/\.vimp$/, ""), ""] for each (c in completion.file(path + "/colors/", true)[1])]
-                    )
-                });
-
-                return [0, completion.filter(schemes, filter)];
-            }
+            completer: function (filter) completion.colorScheme(filter)
         });
 
     commands.add(["sty[le]"],

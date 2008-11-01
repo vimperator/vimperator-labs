@@ -19,11 +19,11 @@ unlet b:current_syntax
 syn match vimperatorCommandStart "\%(^\s*:\=\)\@<=" nextgroup=vimperatorCommand,vimperatorAutoCmd
 
 syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] b[uffer] ba[ck] bd[elete] beep bf[irst] bl[ast] bma[rk] bmarks
-    \ bn[ext] bN[ext] bp[revious] br[ewind] buffers bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cuna[bbrev] cm[ap]
-    \ cmapc[lear] cno[remap] comc[lear] com[mand] cu[nmap] do[autocmd] doautoa[ll] delbm[arks] delc[ommand] delmac[ros] delm[arks]
-    \ delqm[arks] dels[tyle] dia[log] dl downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute] exu[sage] fini[sh] files
-    \ fo[rward] fw h[elp] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iuna[bbrev]
-    \ iu[nmap] javas[cript] ju[mps] js let ls macros ma[rk] map mapc[lear] marks mes[sages] mkv[imperatorrc] no[remap]
+    \ bn[ext] bN[ext] bp[revious] br[ewind] buffers bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] colo[rscheme] cuna[bbrev]
+    \ cm[ap] cmapc[lear] cno[remap] comc[lear] com[mand] cu[nmap] do[autocmd] doautoa[ll] delbm[arks] delc[ommand] delmac[ros]
+    \ delm[arks] delqm[arks] dels[tyle] dia[log] dl downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute] exu[sage]
+    \ fini[sh] files fo[rward] fw h[elp] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap]
+    \ iuna[bbrev] iu[nmap] javas[cript] ju[mps] js let ls macros ma[rk] map mapc[lear] marks mes[sages] mkv[imperatorrc] no[remap]
     \ noh[lsearch] norm[al] o[pen] optionu[sage] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] qa[ll]
     \ qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sty[le] sav[eas] sb[ar] sb[open] sbcl[ose]
     \ scrip[tnames] se[t] setg[lobal] setl[ocal] sideb[ar] so[urce] st[op] tN[ext] t[open] tab tabde[tach] tabd[uplicate]
