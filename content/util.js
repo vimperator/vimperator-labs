@@ -287,6 +287,7 @@ const util = { //{{{
          * when they expect :map <C-f> :foo.
          */
         XML.prettyPrinting = false;
+        XML.ignoreWhitespace = false;
 
         if (object === null)
             return "null";
@@ -294,45 +295,53 @@ const util = { //{{{
         if (typeof object != "object")
             return false;
 
-        var string = "";
-        var obj = "";
         try
         { // for window.JSON
-            obj = object.toString();
+            var obj = String(object);
         }
         catch (e)
         {
-            obj = "<Object>";
+            obj = "[Object]";
         }
-
-        if (color)
-            obj = <span class="hl-Title hl-Object">{obj}</span>.toXMLString();
-        string += obj + "::\n";
+        let string = <><span class="hl-Title hl-Object">{obj}</span>::<br/>&#xa;</>;
 
         let keys = [];
         try // window.content often does not want to be queried with "var i in object"
         {
+            let hasValue = !("__iterator__" in object);
             for (let i in object)
             {
-                let value = "<no value>";
+                let value = <![CDATA[<no value>]]>;
                 try
                 {
                     value = object[i];
                 }
                 catch (e) {}
-
-                value = template.highlight(value, true);
-                if (color)
+                if (!hasValue)
                 {
-                    value = value.toXMLString();
-                    i = <span style="font-weight: bold;">{i}</span>.toXMLString();
+                    if(i instanceof Array && i.length == 2)
+                        [i, value] = i;
+                    else
+                        var noVal = true;
                 }
-                keys.push(i + ": " + value);
+                value = template.highlight(value, true);
+                // FIXME: Inline style.
+                key = <span style="font-weight: bold;">{i}</span>;
+                if (!isNaN(i))
+                    i = parseInt(i);
+                keys.push([i, <>{key}{noVal ? "" : <>:{value}</>}<br/>&#xa;</>]);
             }
         }
         catch (e) {}
 
-        return string + keys.sort().join("\n") + "\n";
+        function compare(a, b)
+        {
+            if (!isNaN(a[0]) && !isNaN(b[0]))
+                return a[0] - b[0];
+            return String.localeCompare(a, b);
+        }
+        string += template.map(keys.sort(compare), function (f) f[1]);
+        return color ? string : [s for each (s in string)].join("");
     },
 
     range: function (start, end)

@@ -310,12 +310,8 @@ function CommandLine() //{{{
 
         if (typeof arg === "object")
             arg = util.objectToString(arg, useColor);
-        else if (typeof arg === "function")
-            arg = util.escapeHTML(arg.toString());
-        else if (typeof arg === "number" || typeof arg === "boolean")
-            arg = "" + arg;
-        else if (typeof arg === "undefined")
-            arg = "undefined";
+        else if (typeof arg != "xml")
+            arg = String(arg);
 
         return arg;
     }
