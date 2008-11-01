@@ -764,7 +764,7 @@ function CommandLine() //{{{
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
                 {
-                    function gotoHistoryItem(index)
+                    function loadHistoryItem(index)
                     {
                         setCommand(inputHistory.get(historyIndex));
                         liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
@@ -818,13 +818,13 @@ function CommandLine() //{{{
                         {
                             if (inputHistory.get(historyIndex).indexOf(historyStart) == 0)
                             {
-                                gotoHistoryItem(historyIndex);
+                                loadHistoryItem(historyIndex);
                                 break;
                             }
                         }
                         else
                         {
-                            gotoHistoryItem(historyIndex);
+                            loadHistoryItem(historyIndex);
                             break;
                         }
                     }
