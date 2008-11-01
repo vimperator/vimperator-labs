@@ -215,7 +215,7 @@ function Styles(name, store, serial)
             matches = matches.filter(function (i) sheets[i].css == css);
         if (filter)
             matches = matches.filter(function (i) sheets[i].sites.indexOf(filter) >= 0);
-        return matches.map(function (i) [i, sheets[i]]);
+        return matches.map(function (i) sheets[i]);
     };
 
     this.removeSheet = function (name, filter, css, index, system)
@@ -235,20 +235,20 @@ function Styles(name, store, serial)
         if (matches.length == 0)
             return;
 
-        for (let [,[i, sheet]] in Iterator(matches.reverse()))
+        for (let [,sheet] in Iterator(matches.reverse()))
         {
             if (name)
             {
-                sheet.ref.splice(sheet.ref.indexOf(name));
+                if (sheet.ref.indexOf(name) > -1)
+                    sheet.ref.splice(sheet.ref.indexOf(name), 1);
                 delete names[name];
             }
             if (!sheet.ref.length)
             {
-                sheets.splice(i);
                 this.unregisterSheet(cssUri(wrapCSS(sheet)));
+                if (sheets.indexOf(sheet) > -1)
+                    sheets.splice(sheets.indexOf(sheet), 1);
             }
-            // Filter out the given site, and re-add if there are any left
-            // This could have unintended consequences
             if (filter)
             {
                 let sites = sheet.sites.filter(function (f) f != filter);
@@ -388,8 +388,8 @@ liberator.registerObserver("load_commands", function ()
                     let sheet = styles.findSheets(name, null, null, null, false)[0];
                     if (sheet)
                     {
-                        filter = sheet[1].sites.concat(filter).join(",");
-                        css = sheet[1].css.replace(/;?\s*$/, "; " + css);
+                        filter = sheet.sites.concat(filter).join(",");
+                        css = sheet.css.replace(/;?\s*$/, "; " + css);
                     }
                 }
                 let err = styles.addSheet(name, filter, css, false, special);
