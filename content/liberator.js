@@ -1194,7 +1194,7 @@ const liberator = (function () //{{{
 
                 if (options["exrc"])
                 {
-                    let localRcFile = io.getRCFile(io.getCurrentDirectory());
+                    let localRcFile = io.getRCFile(io.getCurrentDirectory().path);
                     if (localRcFile)
                         io.source(localRcFile.path, true);
                 }

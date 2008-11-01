@@ -45,7 +45,7 @@ function IO() //{{{
                                          .createInstance(Components.interfaces.nsIDownloadManager);
 
     var processDir = directoryService.get("CurWorkD", Components.interfaces.nsIFile);
-    var cwd = processDir.path;
+    var cwd = processDir;
     var oldcwd = null;
 
     var lastRunCommand = ""; // updated whenever the users runs a command with :!
@@ -149,7 +149,7 @@ function IO() //{{{
             {
                 if (oldcwd)
                 {
-                    args = oldcwd;
+                    args = oldcwd.path;
                 }
                 else
                 {
@@ -166,7 +166,7 @@ function IO() //{{{
             {
                 // TODO: apparently we don't handle ../ or ./ paths yet
                 if (io.setCurrentDirectory(args))
-                    liberator.echo(io.getCurrentDirectory());
+                    liberator.echo(io.getCurrentDirectory().path);
             }
             else
             {
@@ -174,7 +174,7 @@ function IO() //{{{
 
                 // empty 'cdpath' items mean the current directory
                 directories = directories.map(
-                    function (directory) directory == "" ? io.getCurrentDirectory() : directory
+                    function (directory) directory == "" ? io.getCurrentDirectory().path : directory
                 );
 
                 var directoryFound = false;
@@ -186,7 +186,7 @@ function IO() //{{{
                     {
                         // FIXME: we're just overwriting the error message from
                         // setCurrentDirectory here
-                        liberator.echo(io.getCurrentDirectory());
+                        liberator.echo(io.getCurrentDirectory().path);
                         directoryFound = true;
                         break;
                     }
@@ -210,7 +210,7 @@ function IO() //{{{
 
     commands.add(["pw[d]"],
         "Print the current directory name",
-        function () { liberator.echo(io.getCurrentDirectory()); },
+        function () { liberator.echo(io.getCurrentDirectory().path); },
         { argCount: "0" });
 
     // "mkv[imperatorrc]" or "mkm[uttatorrc]"
@@ -426,14 +426,14 @@ function IO() //{{{
         // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
         getCurrentDirectory: function ()
         {
-            let dir = ioManager.getFile(cwd);
+            let dir = ioManager.getFile(cwd.path);
 
             // NOTE: the directory could have been deleted underneath us so
             // fallback to Firefox's CWD
             if (dir.exists() && dir.isDirectory())
-                return dir.path;
+                return dir;
             else
-                return processDir.path;
+                return processDir;
         },
 
         setCurrentDirectory: function (newdir)
@@ -454,7 +454,7 @@ function IO() //{{{
                     return null;
                 }
 
-                [cwd, oldcwd] = [dir.path, this.getCurrentDirectory()];
+                [cwd, oldcwd] = [dir, this.getCurrentDirectory()];
             }
 
             return ioManager.getCurrentDirectory();
@@ -507,7 +507,7 @@ function IO() //{{{
                 let expandedPath = ioManager.expandPath(path);
 
                 if (!/^([a-zA-Z]:|\/)/.test(expandedPath)) // doesn't start with /, C:
-                    expandedPath = joinPaths(ioManager.getCurrentDirectory(), expandedPath);
+                    expandedPath = joinPaths(ioManager.getCurrentDirectory().path, expandedPath);
 
                 file.initWithPath(expandedPath);
             }
@@ -711,10 +711,10 @@ lookup:
                 return "";
 
             if (WINDOWS)
-                command = "cd /D " + cwd + " && " + command + " > " + stdoutFile.path + " 2> " + stderrFile.path;
+                command = "cd /D " + cwd.path + " && " + command + " > " + stdoutFile.path + " 2> " + stderrFile.path;
             else
                 // TODO: should we only attempt the actual command conditionally on a successful cd?
-                command = "cd " + escapeQuotes(cwd) + "; " + command + " > \"" + escapeQuotes(stdoutFile.path) + "\""
+                command = "cd " + escapeQuotes(cwd.path) + "; " + command + " > \"" + escapeQuotes(stdoutFile.path) + "\""
                             + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
 
             var stdinFile = null;
