@@ -35,7 +35,7 @@ function Buffer() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
     /* FIXME: This doesn't belong here. */
     let mainWindowID = config.mainWindowID || "main-window";
-    let fontSize = util.computedStyle(document.getElementById(mainWindowID))["font-size"];
+    let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
     let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
@@ -909,8 +909,8 @@ function Buffer() //{{{
                 selController.setCaretEnabled(caretmode);
             }
             let range = selection.getRangeAt(0);
-            if (util.computedStyle(range.startContainer)["white-space"] == "pre"
-                && util.computedStyle(range.endContainer)["white-space"] == "pre")
+            if (util.computedStyle(range.startContainer).whiteSpace == "pre"
+                && util.computedStyle(range.endContainer).whiteSpace == "pre")
                 return String(range);
             return String(selection);
         },

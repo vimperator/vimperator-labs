@@ -141,8 +141,7 @@ const util = { //{{{
     {
         while (node instanceof Text && node.parentNode)
             node = node.parentNode;
-        let style = node.ownerDocument.defaultView.getComputedStyle(node, null);
-        return util.Array.assocToObj(Array.map(style, function (k) [k, style.getPropertyValue(k)]));
+        return node.ownerDocument.defaultView.getComputedStyle(node, null);
     },
 
     copyToClipboard: function (str, verbose)
