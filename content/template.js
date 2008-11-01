@@ -81,6 +81,7 @@ const template = {
             return str;
         if (str == "")
             return <>{str}</>;
+
         let lcstr = String(str).toLowerCase();
         let lcfilter = filter.toLowerCase();
         str = String(str).replace(" ", "\u00a0");
@@ -89,7 +90,7 @@ const template = {
         let i;
         while ((i = lcstr.indexOf(lcfilter, start)) > -1)
         {
-        XML.ignoreWhitespace = false;
+            XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += <span class="hl-Filter">{str.substr(i, filter.length)}</span>;
             start = i + filter.length;

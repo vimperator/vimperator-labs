@@ -19,11 +19,11 @@ function Highlights(name, store, serial)
         String      color: green;
 
         Normal      color: black; background: white;
-        ErrorMsg    color: white; background: red;
+        ErrorMsg    color: white; background: red; font-weight: bold;
         InfoMsg     color: black; background: white;
         ModeMsg     color: black; background: white;
         MoreMsg     color: green; background: white;
-        WarningMsg  color: red;   background: white;
+        WarningMsg  color: red; background: white;
         Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
 
         Filter      font-weight: bold;
@@ -58,7 +58,7 @@ function Highlights(name, store, serial)
             z-index: 5000;
             font-family: monospace;
             font-size: 10px;
-            font-weight:  bold;
+            font-weight: bold;
             color: white;
             background-color: red;
             border-color: ButtonShadow;
@@ -478,8 +478,6 @@ liberator.registerObserver("load_commands", function ()
                 ;
                 display: inline-block !important;
                 position: static !important;
-                width: 3em !important; min-width: 3em !important; max-width: 3em !important;
-                height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 margin: 0px !important; padding: 0px !important;
                 overflow: hidden !important;
             ]]>;
@@ -490,10 +488,11 @@ liberator.registerObserver("load_commands", function ()
                 let str = template.tabular(["Key", "Sample", "CSS"],
                     ["padding: 0 1em 0 0; vertical-align: top"],
                     ([h.class,
-		      <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
-		      h.value]
+                      <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
+                      template.maybeXML(h.value.replace(/\s+/g, "\u00a0")
+                                               .replace(/\b([-\w]+):/g, "<span class=\"hl-Filter\">$1:</span>"))]
                         for (h in highlight)
-                        if (!key || h.class.indexOf(key) > -1)));
+                            if (!key || h.class.indexOf(key) > -1)));
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }
