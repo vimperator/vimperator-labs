@@ -83,7 +83,7 @@ function Mail() //{{{
         }
     };
 
-    var mailSession = Components.classes[mailSessionContractID]
+    var mailSession = Components.classes["@mozilla.org/messenger/services/session;1"]
                                 .getService(Components.interfaces.nsIMsgMailSession);
     var nsIFolderListener = Components.interfaces.nsIFolderListener;
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
