@@ -129,7 +129,7 @@ function Highlights(name, store, serial)
                 .split("\n").filter(function (s) /\S/.test(s))
                 .forEach(function (style)
     {
-        let style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+))?(?:,([^,\s]+))?(?:\s+(.*))?/), 1));
+        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+))?(?:,([^,\s]+))?(?:\s+(.*))?/), 1));
         highlight[style.class] = style;
         self.set(style.class);
     });
