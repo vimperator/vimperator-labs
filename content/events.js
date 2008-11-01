@@ -269,6 +269,8 @@ function Events() //{{{
 
     const input = liberator.input;
 
+    var fullscreen = window.fullScreen;
+
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
@@ -360,6 +362,7 @@ function Events() //{{{
     window.addEventListener("popuphidden", exitPopupMode, true);
     window.addEventListener("DOMMenuBarActive", enterMenuMode, true);
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
+    window.addEventListener("resize", onResize, true);
 
     // window.document.addEventListener("DOMTitleChanged", function (event)
     // {
@@ -467,6 +470,16 @@ function Events() //{{{
             args.tab = tabs.getContentIndex(doc) + 1;
 
         autocommands.trigger(name, args);
+    }
+
+    function onResize(event)
+    {
+        if (window.fullScreen != fullscreen)
+        {
+            fullscreen = window.fullScreen;
+            liberator.triggerObserver("fullscreen", fullscreen);
+            autocommands.trigger("Fullscreen", {url: "", fullscreen: fullscreen});
+        }
     }
 
     function onDOMContentLoaded(event)

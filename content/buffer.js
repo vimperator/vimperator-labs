@@ -133,11 +133,7 @@ function Buffer() //{{{
         "Show the current window fullscreen",
         "boolean", false,
         {
-            setter: function (value)
-            {
-                window.fullScreen = value;
-                return value;
-            },
+            setter: function (value) window.fullScreen = value,
             getter: function () window.fullScreen
         });
 
