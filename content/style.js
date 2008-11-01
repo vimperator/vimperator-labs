@@ -482,7 +482,7 @@ liberator.registerObserver("load_commands", function ()
             if (!css && !(key && special))
             {
                 let str = template.tabular(["Key", "Sample", "CSS"],
-                    ["padding: 0 1em 0 0; vertical-align: top"],
+                    ["padding: 0 1em 0 0; vertical-align: top", "text-align: center"],
                     ([h.class,
                       <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
                       template.maybeXML(h.value.replace(/\s+/g, "\u00a0")
