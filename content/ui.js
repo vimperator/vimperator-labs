@@ -649,12 +649,12 @@ function CommandLine() //{{{
                 where = setMultiline;
             else if (flags & this.FORCE_SINGLELINE)
                 where = function () setLine(str, highlightGroup, true);
-            else if (!outputContainer.collapsed)
+            else if (flags & this.DISALLOW_MULTILINE)
             {
-                if (flags & this.DISALLOW_MULTILINE)
+                if (!outputContainer.collapsed)
                     where = null;
                 else
-                    where = setMultiline;
+                    where = function () setLine(str, highlightGroup, true);
             }
             else if (/\n|<br\/?>/.test(str))
                 where = setMultiline;
