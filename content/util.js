@@ -329,6 +329,8 @@ const util = { //{{{
                 key = <span style="font-weight: bold;">{i}</span>;
                 if (!isNaN(i))
                     i = parseInt(i);
+                else if (/^[A-Z_]+$/.test(i))
+                    i = "";
                 keys.push([i, <>{key}{noVal ? "" : <>:{value}</>}<br/>&#xa;</>]);
             }
         }
@@ -338,7 +340,7 @@ const util = { //{{{
         {
             if (!isNaN(a[0]) && !isNaN(b[0]))
                 return a[0] - b[0];
-            return String.localeCompare(a, b);
+            return String.localeCompare(a[0], b[0]);
         }
         string += template.map(keys.sort(compare), function (f) f[1]);
         return color ? string : [s for each (s in string)].join("");
