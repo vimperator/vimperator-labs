@@ -362,6 +362,32 @@ const highlight = storage.newObject("highlight", Highlights, false);
 
 liberator.registerObserver("load_commands", function ()
 {
+    commands.add(["colo[rscheme]"],
+        "Load a color scheme",
+        function (args)
+        {
+            let scheme = args.arguments[0];
+
+            if (!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
+                liberator.echoerr("E185: Cannot find color scheme " + scheme);
+        },
+        {
+            argCount: 1,
+            completer: function (filter)
+            {
+                let rtp = options["runtimepath"].split(",");
+                let schemes = [];
+
+                rtp.forEach(function (path) {
+                    schemes = schemes.concat(
+                        [[c[0].replace(/\.vimp$/, ""), ""] for each (c in completion.file(path + "/colors/", true)[1])]
+                    )
+                });
+
+                return [0, completion.filter(schemes, filter)];
+            }
+        });
+
     commands.add(["sty[le]"],
         "Add or list user styles",
         function (args, special)
@@ -498,3 +524,4 @@ liberator.registerObserver("load_commands", function ()
         });
 });
 
+// vim: set fdm=marker sw=4 ts=4 et:

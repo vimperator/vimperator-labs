@@ -268,41 +268,7 @@ function IO() //{{{
 
     commands.add(["runt[ime]"],
         "Source the specified file from each directory in 'runtimepath'",
-        function (args, special)
-        {
-            // TODO: support backslash escaped whitespace in filenames
-            //     : wildcards/regexp
-            //     : unify with startup sourcing loop
-            let paths = args.arguments;
-            let runtimeDirs = options["runtimepath"].split(",");
-            let found = false;
-
-            // FIXME: should use original arg string
-            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
-
-            outer:
-            for (let [,runtimeDir] in Iterator(runtimeDirs))
-            {
-                for (let [,path] in Iterator(paths))
-                {
-                    let file = io.getFile(joinPaths(runtimeDir, path));
-
-                    liberator.echomsg("Searching for \"" + file.path + "\" in \"", 3);
-
-                    if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
-                    {
-                        found = true;
-                        io.source(file.path, false);
-
-                        if (!special)
-                            break outer;
-                    }
-                }
-            }
-
-            if (!found)
-                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
-        },
+        function (args, special) { io.sourceFromRuntimePath(args.arguments, special); },
         {
             argCount: "+",
             bang: true
@@ -744,6 +710,41 @@ lookup:
                 output = output.substr(0, output.length - 1);
 
             return output;
+        },
+
+        // FIXME: multiple paths?
+        sourceFromRuntimePath: function (paths, all)
+        {
+            let runtimeDirs = options["runtimepath"].split(",");
+            let found = false;
+
+            // FIXME: should use original arg string
+            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
+
+            outer:
+            for (let [,runtimeDir] in Iterator(runtimeDirs))
+            {
+                for (let [,path] in Iterator(paths))
+                {
+                    let file = io.getFile(joinPaths(runtimeDir, path));
+
+                    liberator.echomsg("Searching for \"" + file.path, 3);
+
+                    if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
+                    {
+                        found = true;
+                        io.source(file.path, false);
+
+                        if (!all)
+                            break outer;
+                    }
+                }
+            }
+
+            if (!found)
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+            
+            return found;
         },
 
         // files which end in .js are sourced as pure javascript files,
