@@ -8,7 +8,7 @@ happen.
 |:au| |:autocmd| +
 ||:au[tocmd]|| Execute commands automatically on events.
 ________________________________________________________________________________
-[c]:au[tocmd][c] {event} {pat} {cmd}.
+[c]:au[tocmd][c] {event} {pat} {cmd}
 
 Add {cmd} to the list of commands Vimperator will execute on {event} for a URL matching {pat}:
 
