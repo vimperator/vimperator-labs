@@ -804,7 +804,7 @@ function Commands() //{{{
                     // awake.
                     options: util.Array.assocToObj(util.map({argCount: "-nargs", bang: "-bang", count: "-count"},
                             function ([k, v]) k in cmd && cmd[k] != "0" && [v, typeof cmd[k] == "boolean" ? null : cmd[k]])
-                            .filter(function(k) k)),
+                            .filter(function (k) k)),
                     arguments: [cmd.name],
                     literalArg: cmd.replacementText
                 }
