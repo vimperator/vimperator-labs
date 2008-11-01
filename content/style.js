@@ -86,22 +86,24 @@ function Highlights(name, store, serial)
     Highlight.defaultValue("value", function () this.default);
     Highlight.prototype.toString = function () [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join(", ");
 
-    this.__iterator__ = function () (v for ([k,v] in Iterator(highlight)));
+    function keys() [k for ([k, v] in Iterator(highlight))].sort();
+    this.__iterator__ = function () (highlight[v] for ([k,v] in Iterator(keys())));
 
     this.get = function (k) highlight[k];
-    this.set = function (key, newStyle, force)
+    this.set = function (key, newStyle, force, append)
     {
         let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
         if (!(class in highlight))
             return "Unknown highlight keyword";
 
+        let style = highlight[key] || new Highlight(key);
+        styles.removeSheet(style.selector, null, null, null, true);
+
+        if (append)
+            newStyle = (style.value || "").replace(/;?\s*$/, "; " + newStyle);
         if (/^\s*$/.test(newStyle))
             newStyle = null;
-
-        let style = highlight[key] || new Highlight(key);
-        styles.removeSheet(style.selector, null, null, true);
-
         if (newStyle == null)
         {
             if (style.default == null)
@@ -175,7 +177,7 @@ function Styles(name, store, serial)
 
         let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
         if (!sheet)
-            sheet = new Sheet(name, filter.split(","), css, null);
+            sheet = new Sheet(name, filter.split(",").filter(function (s) s), css, null);
 
         if (sheet.ref == null) // Not registered yet
         {
@@ -204,7 +206,7 @@ function Styles(name, store, serial)
         let names = system ? systemNames : userNames;
 
         // Grossly inefficient.
-        let matches = [k for ([k, v] in sheets)];
+        let matches = [k for ([k, v] in Iterator(sheets))];
         if (index)
             matches = String(index).split(",").filter(function (i) i in sheets);
         if (name)
@@ -213,8 +215,8 @@ function Styles(name, store, serial)
             matches = matches.filter(function (i) sheets[i].css == css);
         if (filter)
             matches = matches.filter(function (i) sheets[i].sites.indexOf(filter) >= 0);
-        return matches;
-    },
+        return matches.map(function (i) [i, sheets[i]]);
+    };
 
     this.removeSheet = function (name, filter, css, index, system)
     {
@@ -233,9 +235,8 @@ function Styles(name, store, serial)
         if (matches.length == 0)
             return;
 
-        for (let [,i] in Iterator(matches.reverse()))
+        for (let [,[i, sheet]] in Iterator(matches.reverse()))
         {
-            let sheet = sheets[i];
             if (name)
             {
                 sheet.ref.splice(sheet.ref.indexOf(name));
@@ -247,6 +248,7 @@ function Styles(name, store, serial)
                 this.unregisterSheet(cssUri(wrapCSS(sheet)));
             }
             // Filter out the given site, and re-add if there are any left
+            // This could have unintended consequences
             if (filter)
             {
                 let sites = sheet.sites.filter(function (f) f != filter);
@@ -381,6 +383,15 @@ liberator.registerObserver("load_commands", function ()
             }
             else
             {
+                if ("-append" in args)
+                {
+                    let sheet = styles.findSheets(name, null, null, null, false)[0];
+                    if (sheet)
+                    {
+                        filter = sheet[1].sites.concat(filter).join(",");
+                        css = sheet[1].css.replace(/;?\s*$/, "; " + css);
+                    }
+                }
                 let err = styles.addSheet(name, filter, css, false, special);
                 if (err)
                     liberator.echoerr(err);
@@ -402,7 +413,8 @@ liberator.registerObserver("load_commands", function ()
             bang: true,
             hereDoc: true,
             literal: true,
-            options: [[["-name", "-n"], commands.OPTION_STRING]],
+            options: [[["-name", "-n"], commands.OPTION_STRING],
+                      [["-append", "-a"], commands.OPTION_NOARG]],
             serial: function () [
                 {
                     command: this.name,
@@ -437,6 +449,7 @@ liberator.registerObserver("load_commands", function ()
         function (args, special)
         {
             let style = <![CDATA[
+                ;
                 display: inline-block !important;
                 position: static !important;
                 width: 3em !important; min-width: 3em !important; max-width: 3em !important;
@@ -458,7 +471,7 @@ liberator.registerObserver("load_commands", function ()
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }
-            let error = highlight.set(key, css, special);
+            let error = highlight.set(key, css, special, "-append" in args);
             if (error)
                 liberator.echoerr(error);
         },
@@ -472,6 +485,7 @@ liberator.registerObserver("load_commands", function ()
             bang: true,
             hereDoc: true,
             literal: true,
+            options: [[["-append", "-a"], commands.OPTION_NOARG]],
             serial: function () [
                 {
                     command: this.name,

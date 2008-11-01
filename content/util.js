@@ -494,11 +494,11 @@ function Struct()
     ConStructor.defaultValue = function (key, val)
     {
         let i = args.indexOf(key);
-        let _i = "_" + i;
         ConStructor.prototype.__defineGetter__(i, val);
         ConStructor.prototype.__defineSetter__(i, function (val) {
-            this.__defineGetter__(i, function () this[_i]);
-            this[_i] = val;
+            let value = val;
+            this.__defineGetter__(i, function () value);
+            this.__defineSetter__(i, function (val) { value = val });
         });
     };
     return self.constructor = ConStructor;

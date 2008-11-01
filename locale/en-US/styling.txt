@@ -8,12 +8,13 @@ via the [c]:style[c] command, most Vimperator elements can be styled with the
 [c]:highlight[c] command, for convenience.
 
 |:hi| |:highlight| +
-||:hi[light][!] {group}[{selector}] [{css}]|| +
+||:hi[light][!] [-append] {group}[{selector}] [{css}]|| +
 ________________________________________________________________________________
-Highlight {group} with {css}. Normally, {css} is checked for valid syntax
-before it's applied. Once you're certain it's valid, [!] will override the
-check, to speed Vimperator startup. {selector} can be any valid CSS selector,
-such as {:hover}, and if provided will restrict the match to matching elements.
+Highlight {group} with {css}. Normally, {css} is checked for
+valid syntax before it's applied. Once you're certain it's
+valid, [!] will override the check, to speed Vimperator startup.
+{selector} can be any valid CSS selector, such as [c]:hover[c], and
+if provided will restrict the match to matching elements.
 
 Valid groups are:
 `------------------`-----------------------------------
@@ -49,20 +50,24 @@ Valid groups are:
 *WarningMsg*       A warning message
 -------------------------------------------------------
 
-Every invocation completely replaces the styling of any previous invocation. If
-{css} is not provided and [!] is, any styles matching {group} are listed. If
-neither {css} nor [!] is provided, the style for {group} is reset to its
-default value.
+Every invocation completely replaces the styling of any previous invocation,
+unless [-append] (short option: -a) is provided, in which case, {css} is
+appended to its current value. If {css} is not provided and [!] is, any
+styles matching {group} are listed. If neither {css} nor [!] is provided, the
+style for {group} is reset to its default value.
 ________________________________________________________________________________
 
 |:sty| |:style| +
-||:sty[le][!] [-name={name}] {filter} [{css}]|| +
+||:sty[le][!] [-name={name}] [-append] {filter} [{css}]|| +
 ________________________________________________________________________________
-Add CSS styles to the browser or to web pages. {filter} is a comma separated
-list of URLs to match. URLs ending with [c]*[c] are matched as prefixes, URLs
-not containing any [c]:[c] or [c]/[c] characters are matched as domains. If
-{name} (short option: [c]-n[c]) is provided, any existing style with the same
-name is overridden, and the style may later be deleted using {name}.
+Add CSS styles to the browser or to web pages. {filter} is a
+comma separated list of URLs to match. URLs ending with [c]*[c]
+are matched as prefixes, URLs not containing any [c]:[c] or
+[c]/[c] characters are matched as domains. If {name} (short
+option: [c]-n[c]) is provided, any existing style with the same
+name is overridden, and the style may later be deleted using
+{name}. If -append (short option: -a) is provided along with -name,
+{css} and {filter} are appended to its current value.
 
 If {css} isn't provided, matching styles are listed.
 ________________________________________________________________________________

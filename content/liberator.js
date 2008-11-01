@@ -82,26 +82,22 @@ const liberator = (function () //{{{
             {
                 setter: function (value)
                 {
-                    var guioptions = config.guioptions || {};
-
-                    for (let option in guioptions)
+                    for (let [opt, ids] in Iterator(config.guioptions || {}))
                     {
-                        if (option in guioptions)
+                        ids.forEach(function (id)
                         {
-                            guioptions[option].forEach(function (elem) {
-                                try
-                                {
-                                    document.getElementById(elem).collapsed = (value.indexOf(option.toString()) < 0);
-                                }
-                                catch (e) {}
-                            });
-                        }
+                            try
+                            {
+                                document.getElementById(id).collapsed = (value.indexOf(opt) < 0);
+                            }
+                            catch (e) {}
+                        });
                     }
                     let classes = tabopts.filter(function (o) value.indexOf(o[0]) == -1)
                                          .map(function (a) a[3])
                     if (!classes.length)
                     {
-                        storage.styles.removeSheet("taboptions", null, null, null, true);
+                        styles.removeSheet("taboptions", null, null, null, true);
                     }
                     else
                     {
@@ -652,7 +648,7 @@ const liberator = (function () //{{{
                 message = util.objectToString(message);
             else
                 message += "\n";
-            dump(config.name.toLowerCase() + ": " + message);
+            dump(("config" in modules && config.name.toLowerCase()) + ": " + message);
         },
 
         dumpStack: function (msg)

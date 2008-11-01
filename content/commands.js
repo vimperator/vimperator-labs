@@ -41,7 +41,11 @@ function Command(specs, description, action, extraInfo) //{{{
     // 'abc', 'abcdef'
     function parseSpecs(specs)
     {
-        let shortNames = longNames = names = [];
+        // Whoever wrote the following should be ashamed. :(
+        // let shortNames = longNames = names = [];
+        let names = [];
+        let longNames = [];
+        let shortNames = [];
 
         for (let [,spec] in Iterator(specs))
         {
@@ -247,14 +251,11 @@ function Commands() //{{{
             if (!command)
                 return false;
 
-            for (let i = 0; i < exCommands.length; i++)
+            if (exCommands.some(function (c) c.name == command.name))
             {
-                if (exCommands[i].name == command.name)
-                {
-                    // never replace for now
-                    liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
-                    return false;
-                }
+                // never replace for now
+                liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
+                return false;
             }
 
             exCommands.push(command);

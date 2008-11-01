@@ -170,7 +170,7 @@ function Mappings() //{{{
                             {
                                 flags: Mappings.flags.COUNT,
                                 rhs: rhs,
-                                noremap: noremap,
+                                noremap: !!noremap,
                                 silent: "<silent>" in args
                             });
                 }

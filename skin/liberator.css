@@ -42,30 +42,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     right: 0;
 }
 
-.__liberator-search {
-    display: inline;
-    font-size: inherit;
-    padding: 0;
-    color: black;
-    background-color: yellow;
-    padding: 0;
-    display: inline;
-}
-
-.liberator-hint {
-    z-index: 5000;
-    font-family: monospace;
-    font-size: 10px;
-    font-weight:  bold;
-    color: white;
-    background-color: red;
-    border-color: ButtonShadow;
-    border-width: 0px;
-    border-style: solid;
-    padding: 0px 1px 0px 1px;
-    position: absolute;
-}
-
 /* Applied only to completion buffer and MOW */
 @-moz-document
     url-prefix(chrome://liberator/) {
@@ -100,20 +76,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 .indicator  { color: blue; }
 
-.hl-Number  { color: red; }
-.hl-String  { color: green; }
-.hl-Boolean { color: blue; }
-.hl-Null    { color: blue; }
-.hl-Object  { color: maroon; }
-.hl-Function{ color: navy; }
-
-.hl-Keyword { color: red; }
-.hl-Tag     { color: blue; }
-
-.hl-NonText { color: blue; }
-
-.hl-Filter  { font-weight: bold !important; }
-
 }
 
 /* Applied to completion buffer, MOW, browser window */
@@ -122,20 +84,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 .tabbrowser-tab {
     -moz-binding: url(chrome://liberator/content/bindings.xml#tab);
-}
-
-.hl-TabIconNumber {
-    font-weight: bold;
-    text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
-    text-align: center;
-    color: white;
-}
-
-.hl-TabNumber {
-    font-weight: bold;
-    padding-right: .3ex;
-    margin-left: 0px;
-    margin-right: 0px;
 }
 
 #liberator-container  {
@@ -206,72 +154,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 #sidebar {
     max-width: 90% !important;
     min-width: 10% !important;
-}
-
-/* highlight groups */
-
-.hl-Normal {
-    background-color: white;
-    color: black;
-}
-.hl-ErrorMsg {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-}
-.hl-InfoMsg {
-    background-color: white;
-    color: black;
-}
-.hl-ModeMsg {
-    background-color: white;
-    color: black;
-}
-.hl-LineNr {
-    background-color: white;
-    color: orange;
-}
-.hl-MoreMsg {
-    background-color: white;
-    color: green;
-}
-.hl-Question {
-    background-color: white;
-    color: green;
-}
-.hl-Title {
-    background-color: white;
-    color: magenta;
-    font-weight: bold !important;
-}
-.hl-WarningMsg {
-    background-color: white;
-    color: red;
-}
-.hl-StatusLine {
-    background: none !important;
-    background-color: black !important;
-    color: white !important;
-}
-.hl-StatusLineSecure {
-    background: none !important;
-    background-color: #B0FF00 !important; /* light green */
-    color: black !important;
-}
-.hl-StatusLineBroken {
-    background: none !important;
-    background-color: #FF6060 !important; /* light red */
-    color: black !important;
-}
-.hl-URL {
-    background-color: inherit;
-    color: green;
-    text-decoration: none;
-}
-/* NOTE: .aClass:hover not supported in quirks mode: http://developer.mozilla.org/en/docs/Mozilla_Quirks_Mode_Behavior */
-a.hl-URL:hover {
-    text-decoration: underline;
-    cursor: pointer;
 }
 
 /* MOW */
