@@ -549,6 +549,13 @@ const liberator = (function () //{{{
         }
     }
 
+    function getPlatformFeature()
+    {
+        let platform = navigator.platform;
+
+        return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -1140,7 +1147,8 @@ const liberator = (function () //{{{
             liberator.log("Initializing liberator object...", 0);
 
             // TODO: only checked for "Win32" currently, other values should be normalised
-            config.features.push(navigator.platform);
+
+            config.features.push(getPlatformFeature());
 
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
