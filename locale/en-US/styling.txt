@@ -19,10 +19,10 @@ if provided will restrict the match to matching elements.
 Valid groups are:
 `------------------`-----------------------------------
 *Bell*             Vimperator's visual bell
-*Boolean*          A Javascript Boolean object
+*Boolean*          A JavaScript Boolean object
 *ErrorMsg*         Error messages
 *Filter*           The matching text in a completion list
-*Function*         A Javascript Function object
+*Function*         A JavaScript Function object
 *Hint*             A hint indicator. See [c]:help hints[c].
 *InfoMsg*          Information messages
 *Keyword*          A bookmark keyword for a URL
@@ -30,15 +30,15 @@ Valid groups are:
 *ModeMsg*          The mode indicator in the command line
 *MoreMsg*          The indicator that there is more text to view
 *Normal*           Normal text in the command line
-*Null*             A Javascript Null object
-*Number*           A Javascript Number object
-*Object*           A Javascript Object
+*Null*             A JavaScript Null object
+*Number*           A JavaScript Number object
+*Object*           A JavaScript Object
 *Question*         A prompt for a decision
 *Search*           Highlighted search results in a web page
 *StatusLine*       The status bar
 *StatusLineBroken* The status bar for a broken web page
 *StatusLineSecure* The status bar for a secure web page
-*String*           A Javascript String object
+*String*           A JavaScript String object
 *TabClose*         The close button of a browser tab
 *TabIcon*          The icon of a browser tab
 *TabIconNumber*    The number of a browser tab, over its icon
