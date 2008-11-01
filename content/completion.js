@@ -786,7 +786,7 @@ function Completion() //{{{
             let items = [];
             // FIXME: liberator.has("tabs")
 
-            for (let [i, browser] in tabs.browsers)
+            for (let [i, browser] in tabs.browsers())
             {
                 i = i + 1;
                 let title = "";
