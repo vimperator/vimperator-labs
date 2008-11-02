@@ -47,6 +47,7 @@ function Tabs() //{{{
                     tabmail.__defineGetter__('mTabs', function () this.tabContainer.childNodes);
                     tabmail.__defineGetter__('mCurrentTab', function () this.tabContainer.selectedItem);
                     tabmail.__defineGetter__('mStrip', function () this.tabStrip);
+                    tabmail.__defineGetter__('browsers', function () [browser for (browser in Iterator(this.mTabs))] );
                 }
                 return tabmail;
             };
