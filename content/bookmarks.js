@@ -68,7 +68,7 @@ function Bookmarks() //{{{
             let uri = ioService.newURI(node.uri, null, null);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
-            let icon = faviconService.getFaviconImageForPage(uri).spec;
+            let icon = faviconService.getFaviconImageForPage(uri).spec; // for performance reasons, use this rather than getFavicon
             return bookmarks.push(new Bookmark(node.uri, node.title, icon, keyword, tags, node.itemId));
         }
 
@@ -181,6 +181,18 @@ function Bookmarks() //{{{
         };
 
         bookmarksService.addObserver(observer, false);
+    }
+
+    function getFavicon(uri)
+    {
+        try
+        {
+            return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
+        }
+        catch (e)
+        {
+            return "";
+        }
     }
 
     let bookmarkObserver = function (key, event, arg)
@@ -319,8 +331,8 @@ function Bookmarks() //{{{
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
-            return completion.cached("bookmarks", filter, function () cache.bookmarks,
-                                            "filterURLArray", tags);
+
+            return completion.cached("bookmarks", filter, function () cache.bookmarks, "filterURLArray", tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
@@ -425,6 +437,8 @@ function Bookmarks() //{{{
             return count.value;
         },
 
+        getFavicon: function (url) { return getFavicon(url); },
+
         // TODO: add filtering
         // also ensures that each search engine has a Vimperator-friendly alias
         getSearchEngines: function ()
@@ -515,10 +529,11 @@ function Bookmarks() //{{{
                 {
                     url:   item.url,
                     title: item.title,
+                    icon:  getFavicon(item.url),
                     extra: [['keyword', item.keyword,         "hl-Keyword"],
                             ['tags',    item.tags.join(', '), "hl-Tag"]
                            ].filter(function (i) i[1])
-                } for each (item in items)));
+               } for each ([i, item] in Iterator(items)) if (i < 1000)));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -533,14 +548,6 @@ function History() //{{{
 
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                      .getService(Components.interfaces.nsINavHistoryService);
-    const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
-                                       .getService(Components.interfaces.nsIIOService);
-    const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                                       .getService(Components.interfaces.nsIFaviconService);
-    function getIcon(uri)
-    {
-        return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
-    }
 
     var placesHistory;
     var cachedHistory = []; // add pages here after loading the initial Places history
@@ -564,7 +571,7 @@ function History() //{{{
             var node = rootNode.getChild(i);
             // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                placesHistory.push([node.uri, node.title || "[No title]", getIcon(node.uri)]);
+                placesHistory.push([node.uri, node.title || "[No title]"]);
         }
 
         // close a container after using it!
@@ -747,10 +754,11 @@ function History() //{{{
             }
             else
                 cachedHistory = cachedHistory.filter(filter);
+
             if (placesHistory.some(function (h) h[0] == url))
                 placesHistory = placesHistory.filter(filter);
 
-            cachedHistory.unshift([url, title || "[No title]", getIcon(url)]);
+            cachedHistory.unshift([url, title || "[No title]"]);
             return true;
         },
 
@@ -812,18 +820,16 @@ function History() //{{{
             }
 
             if (openItems)
-            {
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
-            }
-            else
-            {
-                let list = template.bookmarks("title", (
-                    {
-                        title: item[1],
-                        url:   item[0]
-                    } for each (item in items)));
-                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-            }
+
+            // TODO: is there a faster way to limit to max. 1000 items?
+            let list = template.bookmarks("title", (
+                {
+                     url:   item[0],
+                     title: item[1],
+                     icon:  bookmarks.getFavicon(item[0]),
+                     } for each ([i, item] in Iterator(items)) if (i < 1000)));
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
     //}}}

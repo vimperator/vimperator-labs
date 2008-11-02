@@ -735,32 +735,9 @@ function Tabs() //{{{
             return getBrowser().mTabContainer.selectedItem;
         },
 
-        // TODO: shouldn't that have a filter argument?
-        list: function ()
+        list: function (filter)
         {
-            // TODO: move this to tabs.get()
-
-            let items = <table/>
-            for (let [i, item] in Iterator(completion.buffer("")[1]))
-            {
-                if (i == tabs.index())
-                   indicator = "%"
-                else if (i == tabs.index(tabs.alternate))
-                   indicator = "#";
-                else
-                   indicator = " ";
-
-                let [number, title] = item[0].split(/:\s+/, 2);
-                items.* +=
-                    <tr>
-                        <td align="right">  {number}</td>
-                        <td><span class="hl-Indicator"> {indicator} </span></td>
-                        <td style="width: 250px; max-width: 500px; overflow: hidden">{title}</td>
-                        <td><a href="#" class="hl-URL buffer-list">{item[1]}</a></td>
-                    </tr>;
-            }
-
-            let list = template.generic(items);
+            let list = template.generic(completion.buffer(filter)[2]);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 

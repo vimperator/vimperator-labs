@@ -529,6 +529,8 @@ function Completion() //{{{
     };
     let javascript = new Javascript();
 
+    // FIXME: unused, remove? If not, document, what it does.
+    // Those one liners might be convinient to write, but not to read --mst
     function filterFavicon(array, want)
     {
         return want ? array : [a[2] ? a.slice(0, 2) : a for ([i, a] in Iterator(array))];
@@ -782,11 +784,20 @@ function Completion() //{{{
 
         buffer: function buffer(filter)
         {
-            let items = [];
             // FIXME: liberator.has("tabs")
+            let items = [];
+            let xml = <table/>
+            filter = filter || "";
 
             for (let [i, browser] in tabs.browsers)
             {
+                if (i == tabs.index())
+                   indicator = "%"
+                else if (i == tabs.index(tabs.alternate))
+                   indicator = "#";
+                else
+                   indicator = " ";
+
                 i = i + 1;
                 let title = "";
                 try
@@ -802,14 +813,28 @@ function Completion() //{{{
                 {
                     if (title == "")
                         title = "(Untitled)";
+
                     items.push([[i + ": " + title, i + ": " + url], url]);
+
+                    let icon = "";
+                    if (liberator.has("bookmarks"))
+                        icon = bookmarks.getFavicon(url);
+
+                    xml.* +=
+                        <ul class="hl-CompItem">
+                            <li align="right">  {i}</li>
+                            <li><span class="hl-Indicator"> {indicator} </span></li>
+                            <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
+                            <li class="hl-CompResult" style="width: 250px; max-width: 500px; overflow: hidden">{title}</li>
+                            <li class="hl-CompDesc"><a href="#" class="hl-URL buffer-list">{url}</a></li>
+                        </ul>;
                 }
             }
 
             if (!filter)
-                return [0, items.map(function ([a, b]) [a[0], b])];
+                return [0, items.map(function ([a, b]) [a[0], b]), xml];
 
-            return [0, buildLongestCommonSubstring(items, filter)];
+            return [0, buildLongestCommonSubstring(items, filter), xml];
         },
 
         colorScheme: function colorScheme(filter)
