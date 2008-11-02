@@ -96,7 +96,7 @@ const util = { //{{{
             {
                 this.doneAt = Date.now() + minInterval;
             }
-        }
+        };
         this.tell = function (arg)
         {
             if (arg !== undefined)
@@ -115,17 +115,17 @@ const util = { //{{{
                 this.latest = now + maxInterval;
             timer.initWithCallback(this, Math.max(timeout, 0), timer.TYPE_ONE_SHOT);
             this.doneAt = -1;
-        }
+        };
         this.reset = function ()
         {
             timer.cancel();
             this.doneAt = 0;
-        }
+        };
         this.flush = function ()
         {
             if (this.latest)
                 this.notify();
-        }
+        };
     },
 
     ciCompare: function (a, b)

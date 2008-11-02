@@ -165,7 +165,7 @@ function Search() //{{{
                     return range;
             }
             return null;
-        }
+        };
 
         var start = new Point(win.pageXOffset, win.pageYOffset);
         let selection = sel.getSelection(sel.SELECTION_NORMAL);
@@ -226,14 +226,14 @@ function Search() //{{{
             sel.scrollSelectionIntoView(sel.SELECTION_NORMAL, 0, false);
             lastRange = range.cloneRange();
             return range;
-        }
+        };
 
         this.cancel = function ()
         {
             selection.removeAllRanges();
             selection.addRange(startRange);
             win.scrollTo(start.x, start.y);
-        }
+        };
     }
 
     /* Stolen from toolkit.jar in Firefox, for the time being. The private

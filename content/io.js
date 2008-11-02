@@ -323,7 +323,7 @@ function IO() //{{{
                 function (m) /^\\(\\\\)*!$/.test(m) ? m.replace("\\!", "!") : m.replace("!", lastRunCommand)
             );
 
-            lastRunCommand = args
+            lastRunCommand = args;
 
             let output = io.system(args);
             let command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
@@ -743,7 +743,7 @@ lookup:
 
             if (!found)
                 liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
-            
+
             return found;
         },
 
@@ -787,7 +787,7 @@ lookup:
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript(uri.spec, modules)
+                        loader.loadSubScript(uri.spec, modules);
                     }
                     catch (e)
                     {

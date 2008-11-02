@@ -336,7 +336,9 @@ function Hints() //{{{
                     return false;
             }
             else if (validHints.length > 1)
+            {
                 return false;
+            }
         }
 
         var timeout = followFirst || events.feedingKeys ? 0 : 500;
@@ -598,15 +600,15 @@ function Hints() //{{{
 
     mappings.add(myModes, ["f"],
         "Start QuickHint mode",
-        function () { hints.show("o") });
+        function () { hints.show("o"); });
 
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { hints.show("t") });
+        function () { hints.show("t"); });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (arg) { hints.show(arg) },
+        function (arg) { hints.show(arg); },
         { flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}

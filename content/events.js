@@ -465,7 +465,8 @@ function Events() //{{{
         let args = {
             url:   doc.location.href,
             title: doc.title
-        }
+        };
+
         if (liberator.has("tabs"))
             args.tab = tabs.getContentIndex(doc) + 1;
 
@@ -559,7 +560,7 @@ function Events() //{{{
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
             }
-        }
+        };
     }
 
     // return true when load successful, or false otherwise
@@ -1348,7 +1349,7 @@ function Events() //{{{
                 	}
 
                 	// others are left to generate the 'input' event or handled by firefox
-                	return ;
+                	return;
                 }
             }
 

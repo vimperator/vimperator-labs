@@ -216,7 +216,7 @@ function Commands() //{{{
         ["int",     parseInt],
         ["float",   parseFloat],
         ["list",    function (arg) arg && arg.split(/\s*,\s*/)]
-    ].map(function (x) x && ArgType.apply(null, x));;
+    ].map(function (x) x && ArgType.apply(null, x));
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

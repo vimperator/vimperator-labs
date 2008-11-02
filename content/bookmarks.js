@@ -200,7 +200,7 @@ function Bookmarks() //{{{
         if (event == "add")
             autocommands.trigger("BookmarkAdd", arg);
         statusline.updateUrl();
-    }
+    };
 
     var cache = storage.newObject("bookmark-cache", Cache, false);
     storage.addObserver("bookmark-cache", bookmarkObserver);
@@ -835,7 +835,7 @@ function History() //{{{
                 {
                      url:   item[0],
                      title: item[1],
-                     icon:  bookmarks.getFavicon(item[0]),
+                     icon:  bookmarks.getFavicon(item[0])
                      } for each ([i, item] in Iterator(items)) if (i < 1000)));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }

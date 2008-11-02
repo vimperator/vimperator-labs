@@ -171,13 +171,13 @@ function Options() //{{{
         // Trigger any setters.
         let opt = options.get(option);
         if (event == "change" && opt)
-            opt.set(opt.value, options.OPTION_SCOPE_GLOBAL)
+            opt.set(opt.value, options.OPTION_SCOPE_GLOBAL);
     }
 
     storage.newMap("options", false);
     storage.addObserver("options", optionObserver);
     liberator.registerObserver("shutdown", function () {
-        storage.removeObserver("options", optionObserver)
+        storage.removeObserver("options", optionObserver);
     });
 
     function storePreference(name, value)
@@ -440,8 +440,8 @@ function Options() //{{{
         ret.prefix = prefix;
         ret.postfix = postfix;
 
-        ret.all = (ret.name == "all")
-        ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven))
+        ret.all = (ret.name == "all");
+        ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven));
         ret.invert = (prefix == "inv" || postfix == "!");
         ret.reset = (postfix == "&");
         ret.unsetBoolean = (prefix == "no");
@@ -761,7 +761,7 @@ function Options() //{{{
                 switch (option.type)
                 {
                     case "boolean":
-                        completer = function () [["true", ""], ["false", ""]]
+                        completer = function () [["true", ""], ["false", ""]];
                         break;
                     case "stringlist":
                         len = opt.valueHas.pop().length;
@@ -930,7 +930,7 @@ function Options() //{{{
                     }
                     yield option;
                 }
-            }
+            };
 
             let list = template.options("Options", opts());
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -964,7 +964,7 @@ function Options() //{{{
 
                     yield option;
                 }
-            }
+            };
 
             let list = template.options(config.hostApplication + " Options", prefs());
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);

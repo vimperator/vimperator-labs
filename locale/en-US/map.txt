@@ -316,7 +316,7 @@ The valid escape sequences are:
 --------------------------------------------------------------------------------
 
 "q-" can be prefixed to the escape sequence so that the value is quoted, making
-it suitable for expression evaluation. Example: <q-args> 
+it suitable for expression evaluation. Example: <q-args>
 ________________________________________________________________________________
 
 

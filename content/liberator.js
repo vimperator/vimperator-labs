@@ -74,7 +74,7 @@ const liberator = (function () //{{{
 
         const tabopts = [
             ["n", "Tab number", null, ".hl-TabNumber"],
-            ["N", "Tab number over icon", null, ".hl-TabIconNumber"],
+            ["N", "Tab number over icon", null, ".hl-TabIconNumber"]
         ];
         options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
@@ -141,7 +141,7 @@ const liberator = (function () //{{{
                     return value;
                 }
             });
-    })
+    });
 
     registerObserver("load_mappings", function ()
     {
@@ -159,7 +159,7 @@ const liberator = (function () //{{{
         mappings.add([modes.NORMAL], ["ZZ"],
             "Quit and save the session",
             function () { liberator.quit(true); });
-    })
+    });
 
     registerObserver("load_commands", function ()
     {
@@ -530,7 +530,7 @@ const liberator = (function () //{{{
                 argCount: "0",
                 bang: true
             });
-    })
+    });
 
     // initially hide all GUI, it is later restored unless the user has :set go= or something
     // similar in his config

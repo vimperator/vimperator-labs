@@ -1083,12 +1083,11 @@ function Buffer() //{{{
             elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
-            ["mousedown", "mouseup", "click"].forEach(function (event)
-            {
+            ["mousedown", "mouseup", "click"].forEach(function (event) {
                 evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
                         ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
                 elem.dispatchEvent(evt);
-            })
+            });
         },
 
         get selectionController() getBrowser().docShell
@@ -1289,8 +1288,7 @@ function Buffer() //{{{
             }
 
             let option = options["pageinfo"];
-            let list = template.map(option, function (option)
-            {
+            let list = template.map(option, function (option) {
                 let opt = pageInfo[option];
                 if (opt)
                     return template.table(opt[1], opt[0](true));

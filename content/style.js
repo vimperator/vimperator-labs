@@ -31,11 +31,11 @@ function Highlights(name, store, serial)
         CompItem[selected] background: yellow;
         CompItem>*         padding: 0 .5ex;
         CompIcon           width: 16px; min-width: 16px;
-        CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle; 
-        CompResult         width: 45%; overflow: hidden; 
-        CompDesc           color: gray; 
+        CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
+        CompResult         width: 45%; overflow: hidden;
+        CompDesc           color: gray;
 
-        Indicator   color: blue; 
+        Indicator   color: blue;
         Filter      font-weight: bold;
 
         Keyword     color: red;
