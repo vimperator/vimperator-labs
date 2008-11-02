@@ -867,7 +867,7 @@ function Completion() //{{{
             return [0, buildLongestStartingSubstring(completions, filter)];
         },
 
-        dialog: function dialog(filter) [0, this.filter(config.dialogs || [], filter)],
+        dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
 
         environment: function environment(filter)
         {
@@ -970,7 +970,7 @@ function Completion() //{{{
 
         help: function help(filter)
         {
-            var files = config.helpFiles || [];
+            var files = config.helpFiles;
             var res = [];
 
             for (let i = 0; i < files.length; i++)

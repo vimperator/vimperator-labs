@@ -32,7 +32,7 @@ function Hints() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     var hintMode;
     var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.

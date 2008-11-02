@@ -82,7 +82,7 @@ const liberator = (function () //{{{
             {
                 setter: function (value)
                 {
-                    for (let [opt, ids] in Iterator(config.guioptions || {}))
+                    for (let [opt, ids] in Iterator(config.guioptions))
                     {
                         ids.forEach(function (id)
                         {
@@ -186,7 +186,7 @@ const liberator = (function () //{{{
 
                 try
                 {
-                    var dialogs = config.dialogs || [];
+                    var dialogs = config.dialogs;
                     for (let i = 0; i < dialogs.length; i++)
                     {
                         if (dialogs[i][0] == args)
@@ -536,7 +536,7 @@ const liberator = (function () //{{{
     // similar in his config
     function hideGUI()
     {
-        var guioptions = config.guioptions || {};
+        var guioptions = config.guioptions;
         for (let option in guioptions)
         {
             guioptions[option].forEach(function (elem) {
@@ -864,12 +864,8 @@ const liberator = (function () //{{{
                 commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
-        // return true, if this liberator extension has a certain feature
-        has: function (feature)
-        {
-            let features = config.features || [];
-            return features.indexOf(feature) >= 0;
-        },
+        // does this liberator extension have a certain feature?
+        has: function (feature) config.features.indexOf(feature) >= 0,
 
         hasExtension: function (name)
         {
@@ -1146,9 +1142,20 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
-            // TODO: only checked for "Win32" currently, other values should be normalised
-
+            config.features = config.features || [];
             config.features.push(getPlatformFeature());
+            config.defaults = config.defaults || {};
+            config.guioptions = config.guioptions || {};
+            config.browserModes = config.browserModes || [modes.NORMAL];
+            config.mailModes = config.mailModes || [modes.NORMAL];
+            // TODO: suitable defaults?
+            //config.mainWidget
+            //config.mainWindowID
+            //config.visualbellWindow
+            //config.styleableChrome
+            config.autocommands = config.autocommands || [];
+            config.dialogs = config.dialogs || [];
+            config.helpFiles = config.helpFiles || [];
 
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);

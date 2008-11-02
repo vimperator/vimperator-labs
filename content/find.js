@@ -390,7 +390,7 @@ function Search() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
     myModes = myModes.concat([modes.CARET]);
 
     mappings.add(myModes,

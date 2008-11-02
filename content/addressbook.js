@@ -71,7 +71,7 @@ function Addressbook() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.mailModes || [modes.NORMAL];
+    var myModes = config.mailModes;
 
     mappings.add(myModes, ["a"],
         "Open a prompt to save a new addressbook entry for the sender of the selected message",

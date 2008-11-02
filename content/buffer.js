@@ -193,7 +193,7 @@ function Buffer() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     mappings.add(myModes, ["."],
         "Repeat the last key event",
@@ -1454,7 +1454,7 @@ function Marks() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     mappings.add(myModes,
         ["m"], "Set mark at the cursor position",

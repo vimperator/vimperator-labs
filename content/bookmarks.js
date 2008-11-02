@@ -240,7 +240,7 @@ function Bookmarks() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     mappings.add(myModes, ["a"],
         "Open a prompt to bookmark the current URL",
@@ -595,7 +595,7 @@ function History() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     mappings.add(myModes,
         ["<C-o>"], "Go to an older position in the jump list",
@@ -855,7 +855,7 @@ function QuickMarks() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.browserModes || [modes.NORMAL];
+    var myModes = config.browserModes;
 
     mappings.add(myModes,
         ["go"], "Jump to a QuickMark",

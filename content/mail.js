@@ -241,7 +241,7 @@ function Mail() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var myModes = config.mailModes || [modes.NORMAL];
+    var myModes = config.mailModes;
 
     mappings.add(myModes, ["<Return>", "i"],
         "Inspect (focus) message",

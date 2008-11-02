@@ -40,7 +40,9 @@
      "options.js",
      "template.js",
      "ui.js"].forEach(load);
-    modules.config.scripts.forEach(load);
+
+    if (modules.config.scripts)
+        modules.config.scripts.forEach(load);
 
 })()
 
