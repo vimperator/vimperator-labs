@@ -12,6 +12,9 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+	* :buffers supports a filter now to only list buffers matching filter (vim incompatible,
+	  but consistent with other commands)
+	* Favicon support in many places
     * add 'Fullscreen' autocommmand
     * add :colorscheme
     * multibyte support for hints (thanks Xie&Tian)

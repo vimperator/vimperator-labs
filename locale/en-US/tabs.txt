@@ -9,10 +9,11 @@ result many buffer and tab commands are interchangeable.
 section:Listing{nbsp}tabs[listing-tabs]
 
 |B| |:tabs| |:ls| |:files| |:buffers|
-||:buffers|| +
+||:buffers [filter]|| +
 ||B||
 ________________________________________________________________________________
-Show a list of all buffers (=tabs).
+Show a list of buffers (=tabs) matching [filter]. Without [filter] list all
+tabs.
 ________________________________________________________________________________
 
 section:Opening{nbsp}tabs[listing-tabs]

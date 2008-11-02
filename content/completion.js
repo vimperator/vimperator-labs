@@ -787,7 +787,7 @@ function Completion() //{{{
             // FIXME: liberator.has("tabs")
             let items = [];
             let xml = <table/>
-            filter = filter || "";
+            filter = (filter || "").toLowerCase();
 
             for (let [i, browser] in tabs.browsers)
             {

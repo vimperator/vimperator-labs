@@ -478,8 +478,8 @@ function Tabs() //{{{
 
         commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
-            function (args) { tabs.list(); },
-            { argCount: "0" });
+            function (args) { tabs.list(args.string); },
+            { argCount: "*" });
 
         commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + config.name,
