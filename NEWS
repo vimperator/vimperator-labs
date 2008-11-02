@@ -1,6 +1,6 @@
 2008-XX-XX:
     * version 2.0 (probably)
-    * IMPORTANT: AlwaysHint modes were removed as they didn't make too 
+    * IMPORTANT: AlwaysHint modes were removed as they didn't make too
       much sense with the new hint system
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
@@ -12,9 +12,9 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
-	* :buffers supports a filter now to only list buffers matching filter (vim incompatible,
-	  but consistent with other commands)
-	* Favicon support in many places
+    * :buffers supports a filter now to only list buffers matching filter (vim
+      incompatible, but consistent with other commands)
+    * Favicon support in many places
     * add 'Fullscreen' autocommmand
     * add :colorscheme
     * multibyte support for hints (thanks Xie&Tian)
