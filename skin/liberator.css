@@ -48,18 +48,17 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 *:-moz-loading, *:-moz-broken { display: none !important; }
 
-.completion-items {
+.hl-Completions {
     width: 100%;
     display: table;
 }
-.compitem {
+.hl-CompItem {
     display: table-row;
 }
-.compitem > * {
+.hl-CompItem > * {
     -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
     display: table-cell;
     vertical-align: middle;
-    padding: 0 .5ex;
 }
 .td-span {
     height: 1.5em; line-height: 1.5em !important;
@@ -71,18 +70,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     width: 0px;
 }
 
-.compitem[selected=true] { background-color: yellow; }
-.compitem > .favicon     { width: 16px; }
-.favicon > img           { max-width: 16px; max-height: 16px; vertical-align: middle; }
-.compitem > .completion  { width: 45%; overflow: hidden; }
-.compitem > .description { color: gray; }
-
 .extra-info { color: gray; }
 
 .times-executed, .time-average { color: green; }
 .time-total { color: red; }
-
-.indicator  { color: blue; }
 
 }
 

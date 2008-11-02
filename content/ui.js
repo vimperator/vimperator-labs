@@ -1323,10 +1323,10 @@ function ItemList(id) //{{{
 
         XML.ignoreWhitespace = true;
         let row =
-            <ul class="compitem">
-                <li class="favicon">{a ? <img src={a}/> : <></>}</li>
-                <li class="completion">{b}</li>
-                <li class="description">{c}</li>
+            <ul class="hl-CompItem">
+                <li class="hl-CompIcon">{a ? <img src={a}/> : <></>}</li>
+                <li class="hl-CompResult">{b}</li>
+                <li class="hl-CompDesc">{c}</li>
             </ul>;
 
         if (dom)
@@ -1376,23 +1376,22 @@ function ItemList(id) //{{{
         XML.ignoreWhitespace = true;
         let div = <div class="ex-command-output hl-Normal">
                       <span class="hl-Title">Completions:</span>
-                      <div class="completion-items"/>
+                      <div class="hl-Completions">
+                      {
+                          template.map(util.range(offset, endIndex), function (i)
+                          createRow(completions[i]))
+                      }
+                      </div>
+                      <div class="hl-Completions">
+                      {
+                          template.map(util.range(0, maxItems), function (i)
+                          <ul class="hl-CompItem"><li class="hl-NonText">~</li></ul>)
+                      }
+                      </div>;
                   </div>;
 
-        let tbody = div.div;
-        for (let i in util.range(offset, endIndex))
-            tbody.* += createRow(completions[i]);
-
-        div.* +=
-            <div class="completion-items">
-            {
-                template.map(util.range(0, maxItems), function (i)
-                <ul class="compitem hl-NonText"><li>~</li></ul>)
-            }
-            </div>;
-
         let dom = util.xmlToDom(div, doc);
-        completionBody = dom.getElementsByClassName("completion-items")[0];
+        completionBody = dom.getElementsByClassName("hl-Completions")[0];
         completionElements = completionBody.childNodes;
         doc.body.replaceChild(dom, doc.body.firstChild);
     }

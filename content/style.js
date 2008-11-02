@@ -26,6 +26,16 @@ function Highlights(name, store, serial)
         WarningMsg  color: red; background: white;
         Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
 
+
+        CompItem
+        CompItem[selected] background: yellow;
+        CompItem>*         padding: 0 .5ex;
+        CompIcon           width: 16px; 
+        CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle; 
+        CompResult         width: 45%; overflow: hidden; 
+        CompDesc           color: gray; 
+
+        Indicator   color: blue; 
         Filter      font-weight: bold;
 
         Keyword     color: red;
@@ -84,7 +94,7 @@ function Highlights(name, store, serial)
     Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
     Highlight.defaultValue("selector", function () ".hl-" + this.class);
     Highlight.defaultValue("value", function () this.default);
-    Highlight.prototype.toString = function () [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join(", ");
+    Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
     function keys() [k for ([k, v] in Iterator(highlight))].sort();
     this.__iterator__ = function () (highlight[v] for ([k,v] in Iterator(keys())));
@@ -95,7 +105,7 @@ function Highlights(name, store, serial)
         let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
         if (!(class in highlight))
-            return "Unknown highlight keyword";
+            return "Unknown highlight keyword: " + class;
 
         let style = highlight[key] || new Highlight(key);
         styles.removeSheet(style.selector, null, null, null, true);
@@ -129,7 +139,7 @@ function Highlights(name, store, serial)
                 .split("\n").filter(function (s) /\S/.test(s))
                 .forEach(function (style)
     {
-        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+))?(?:,([^,\s]+))?(?:\s+(.*))?/), 1));
+        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+))?(?:,([^,\s]+))?\s*(.*)$/), 1));
         highlight[style.class] = style;
         self.set(style.class);
     });
