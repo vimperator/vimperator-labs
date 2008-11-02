@@ -25,6 +25,7 @@ function Highlights(name, store, serial)
         MoreMsg     color: green; background: white;
         WarningMsg  color: red; background: white;
         Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
+        NonText     color: blue; min-height: 16px; padding-left: 2px;
 
 
         CompItem

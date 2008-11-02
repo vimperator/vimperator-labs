@@ -55,6 +55,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 .hl-CompItem {
     display: table-row;
 }
+.hl-Completions > ul {
+    display: table-row;
+}
 .hl-CompItem > * {
     -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
     display: table-cell;

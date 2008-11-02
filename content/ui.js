@@ -1286,7 +1286,6 @@ function ItemList(id) //{{{
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
     var completionBody = null;
-    var completionElements = null;
     var minHeight = 0;
 
     function autoSize()
@@ -1381,14 +1380,15 @@ function ItemList(id) //{{{
                       <div class="hl-Completions">
                       {
                           template.map(util.range(0, maxItems), function (i)
-                          <ul class="hl-CompItem"><li class="hl-NonText">~</li></ul>)
+                          <ul><li class="hl-NonText">~</li></ul>)
                       }
                       </div>;
                   </div>;
 
         let dom = util.xmlToDom(div, doc);
         completionBody = dom.getElementsByClassName("hl-Completions")[0];
-        completionElements = completionBody.childNodes;
+        //completionElements = completionBody.childNodes;
+        completionElements = dom.getElementsByClassName("hl-CompItem");
         doc.body.replaceChild(dom, doc.body.firstChild);
     }
 
