@@ -714,10 +714,11 @@ function CommandLine() //{{{
                         !(modes.extended & modes.OUTPUT_MULTILINE) &&
                         event.originalTarget == commandWidget.inputField)
                     {
+                        let focus = document.commandDispatcher.focusedElement;
+                        if (focus && focus.ownerDocument == content.document
+                            || focus instanceof HTMLInputElement)
+                            liberator.beep();
                         commandWidget.inputField.focus();
-                        // a beep would be nice, but unfortunately firefox also fires
-                        // this event when switching windows while the command line has focus
-                        // liberator.beep();
                     }
                 }, 0);
             }
