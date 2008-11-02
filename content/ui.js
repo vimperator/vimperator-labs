@@ -714,10 +714,6 @@ function CommandLine() //{{{
                         !(modes.extended & modes.OUTPUT_MULTILINE) &&
                         event.originalTarget == commandWidget.inputField)
                     {
-                        let focus = document.commandDispatcher.focusedElement;
-                        if (focus && focus.ownerDocument == content.document
-                            || focus instanceof HTMLInputElement)
-                            liberator.beep();
                         commandWidget.inputField.focus();
                     }
                 }, 0);
