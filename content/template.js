@@ -112,12 +112,12 @@ const template = {
         if (str == "")
             return <>{str}</>;
 
-        XML.ignoreWhitespace = false;
         str = String(str).replace(" ", "\u00a0");
         let s = <></>;
         let start = 0;
         for (let [i, length] in iter)
         {
+            XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += <span class="hl-Filter">{str.substr(i, length)}</span>;
             start = i + length;

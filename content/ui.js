@@ -235,7 +235,7 @@ function CommandLine() //{{{
          */
         XML.ignoreWhitespace = typeof str == "xml";
         var output = <div class={"ex-command-output " + highlightGroup} style={"min-width: " + commandlineWidget.scrollWidth + "px"}>{template.maybeXML(str)}</div>;
-        XML.ignoreWhiteSpace = true;
+        XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
 
@@ -1321,7 +1321,6 @@ function ItemList(id) //{{{
         if (typeof a == "function")
             a = a();
 
-        XML.ignoreWhitespace = true;
         let row =
             <ul class="hl-CompItem">
                 <li class="hl-CompIcon">{a ? <img src={a}/> : <></>}</li>
@@ -1372,9 +1371,10 @@ function ItemList(id) //{{{
 
 
         // do a full refill of the list:
-
         XML.ignoreWhitespace = true;
-        let div = <div class="ex-command-output hl-Normal">
+        let minWidth = document.getElementById("liberator-commandline").scrollWidth;
+        let div = <div class="ex-command-output hl-Normal"
+                       style={"white-space: normal; min-width: " + minWidth + "px"}>
                       <span class="hl-Title">Completions:</span>
                       <div class="hl-Completions">
                       {
