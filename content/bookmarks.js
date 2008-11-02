@@ -210,7 +210,11 @@ function Bookmarks() //{{{
 
     liberator.registerObserver("enter", function () {
         if (options["preload"])
-            cache.bookmarks; // Forces a load, if not already loaded.
+        {
+            // Forces a load, if not already loaded but wait 10sec
+            // so most tabs should be restored and the CPU should be idle again usually
+            setTimeout(function() { cache.bookmarks; }, 10000);
+        }
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -580,7 +584,11 @@ function History() //{{{
 
     liberator.registerObserver("enter", function () {
         if (options["preload"])
-            load();
+        {
+            // Forces a load, if not already loaded but wait 15sec
+            // so that we don't load it at the same time as bookmarks
+            setTimeout(function() { load(); }, 15000);
+        }
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
