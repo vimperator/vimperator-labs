@@ -180,11 +180,11 @@ function Mappings() //{{{
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
         const opts = {
+                argCount: "2",
                 completer: function (filter) completion.userMapping(filter, modes),
                 options: [
                     [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
                 ],
-                argCount: 1,
                 literal: true,
                 serial: function () {
                     let noremap = this.name.indexOf("noremap") > -1;

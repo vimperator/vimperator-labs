@@ -429,6 +429,8 @@ liberator.registerObserver("load_commands", function ()
             }
         },
         {
+            argCount: "2",
+            bang: true,
             completer: function (filter) {
                 let compl = [];
                 try
@@ -440,8 +442,6 @@ liberator.registerObserver("load_commands", function ()
                 comp = compl.concat([[s, ""] for each (s in styles.sites)])
                 return [0, completion.filter(compl, filter)];
             },
-            argCount: 1,
-            bang: true,
             hereDoc: true,
             literal: true,
             options: [[["-name", "-n"], commands.OPTION_STRING],
@@ -463,7 +463,7 @@ liberator.registerObserver("load_commands", function ()
             styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
         },
         {
-            argCount: 1,
+            argCount: "2",
             completer: function (filter) [0, completion.filter(
                     [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
                         for ([i, s] in styles.userSheets)
@@ -507,13 +507,13 @@ liberator.registerObserver("load_commands", function ()
                 liberator.echoerr(error);
         },
         {
+            argCount: "2",
+            bang: true,
             // TODO: add this as a standard highlight completion function?
             // I agree. It could (should) be much more sophisticated. --Kris
             completer: function (filter) [0,
                     completion.filter([[v.class, ""] for (v in highlight)], filter)
                 ],
-            argCount: 1,
-            bang: true,
             hereDoc: true,
             literal: true,
             options: [[["-append", "-a"], commands.OPTION_NOARG]],

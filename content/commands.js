@@ -469,8 +469,9 @@ function Commands() //{{{
 
             if (!argCount)
                 argCount = "*";
+
             if (literal)
-                argCount = parseInt(argCount);
+                var literalIndex = parseInt(argCount) - 1 || 0;
 
             var args = {};       // parsed options
             args.arguments = []; // remaining arguments
@@ -594,9 +595,10 @@ function Commands() //{{{
                     }
                 }
 
-                if (literal && args.arguments.length == argCount)
+                if (literal && args.arguments.length == literalIndex)
                 {
                     args.literalArg = sub;
+                    args.arguments.push(sub);
                     break;
                 }
 
@@ -618,9 +620,6 @@ function Commands() //{{{
 
                 i += count; // hopefully count is always > 0, otherwise we get an endless loop
             }
-
-            if (literal)
-                return args;
 
             // check for correct number of arguments
             if (args.arguments.length == 0 && (argCount == "1" || argCount == "+"))
@@ -787,8 +786,7 @@ function Commands() //{{{
             }
         },
         {
-            literal: true,
-            argCount: 1,
+            argCount: "2",
             bang: true,
             completer: function (filter) completion.userCommand(filter),
             options: [
@@ -796,6 +794,7 @@ function Commands() //{{{
                 [["-bang"],  commandManager.OPTION_NOARG],
                 [["-count"], commandManager.OPTION_NOARG],
             ],
+            literal: true,
             serial: function () [
                 {
                     command: this.name,

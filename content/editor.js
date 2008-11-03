@@ -174,7 +174,7 @@ function Editor() //{{{
                     editor.listAbbreviations(mode, lhs || "");
             },
             {
-                argCount: 1,
+                argCount: "2",
                 literal: true,
                 serial: function () [
                     {

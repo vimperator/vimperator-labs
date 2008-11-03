@@ -111,10 +111,10 @@ function AutoCommands() //{{{
             }
         },
         {
-            argCount: 2,
+            argCount: "3",
             bang: true,
-            literal: true,
-            completer: function (filter) completion.event(filter)
+            completer: function (filter) completion.event(filter),
+            literal: true
         });
 
     // TODO: expand target to all buffers

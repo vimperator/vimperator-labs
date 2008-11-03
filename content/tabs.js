@@ -481,7 +481,7 @@ function Tabs() //{{{
             "Show a list of all buffers",
             function (args) { tabs.list(args.literalArg); },
             {
-                argCount: "0",
+                argCount: "?",
                 literal: true
             });
 
