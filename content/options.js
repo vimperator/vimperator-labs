@@ -685,8 +685,9 @@ function Options() //{{{
             {
                 var optionCompletions = [];
 
-                if (prefix)
-                    filter = filter.replace(ret.prefix, "");
+                // What is this all about then, eh? It's too late to guess... -- djk
+                //if (prefix)
+                //    filter = filter.replace(ret.prefix, "");
 
                 if (special) // list completions for about:config entries
                 {
@@ -725,9 +726,7 @@ function Options() //{{{
 
                 if (!filter)
                 {
-                    let opts = [[prefix + option.name, option.description]
-                                        for (option in opts)];
-                    return [0, opts];
+                    return [0, [[prefix + option.name, option.description] for (option in opts)]];
                 }
                 else if (filter.indexOf("=") == -1)
                 {
