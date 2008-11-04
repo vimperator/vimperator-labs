@@ -898,7 +898,7 @@ const liberator = (function () //{{{
                 liberator.open("chrome://liberator/locale/" + file, where);
                 // TODO: it would be better to wait for pageLoad
                 setTimeout(function () {
-                    let elem = buffer.evaluateXPath("//*[@class='tag' and text()='" + tag + "']").snapshotItem(0);
+                    let elem = buffer.evaluateXPath('//*[@class="tag" and text()="' + tag + '"]').snapshotItem(0);
                     if (elem)
                         window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
