@@ -198,7 +198,7 @@ const template = {
                     this.map(opts, function (opt)
                     <tr>
                         <td>
-                            <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}{opt.value}</span>
+                            <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}</span><span>{opt.value}</span>
                             {opt.isDefault || opt.default == null ? "" : <span class="extra-info"> (default: {opt.default})</span>}
                         </td>
                     </tr>)
