@@ -1369,7 +1369,7 @@ function ItemList(id) //{{{
         XML.ignoreWhitespace = true;
         let minWidth = document.getElementById("liberator-commandline").scrollWidth;
         let div = <div class="ex-command-output hl-Normal"
-                       style={"white-space: normal; min-width: " + minWidth + "px"}>
+                       style={"white-space: nowrap; min-width: " + minWidth + "px"}>
                       <span class="hl-Title">Completions:</span>
                       <div class="hl-Completions">
                       {
