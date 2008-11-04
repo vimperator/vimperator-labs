@@ -26,6 +26,7 @@ BUGS:
   window with j/k (the green slashdot thing for me).
 
 FEATURES:
+9 use the storage module for autocommands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
 7 adaptive learning for tab-completions
