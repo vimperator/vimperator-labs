@@ -70,6 +70,7 @@ Map.prototype = {
         // FIXME: Kludge.
         if (this.names[0] != ".")
             mappings.repeat = function () self.action.apply(self, args);
+
         return this.action.apply(this, args);
     }
 
