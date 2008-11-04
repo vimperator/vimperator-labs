@@ -84,9 +84,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 @-moz-document 
     url-prefix(chrome://) {
 
-.tabbrowser-tab {
+/*.tabbrowser-tab {
     -moz-binding: url(chrome://liberator/content/bindings.xml#tab);
-}
+}*/
 
 #liberator-container  {
     font-family: monospace;
