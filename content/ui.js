@@ -1382,7 +1382,7 @@ function ItemList(id) //{{{
                           template.map(util.range(0, maxItems), function (i)
                           <ul><li class="hl-NonText">~</li></ul>)
                       }
-                      </div>;
+                      </div>
                   </div>;
 
         let dom = util.xmlToDom(div, doc);
