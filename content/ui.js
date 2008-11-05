@@ -246,7 +246,7 @@ function CommandLine() //{{{
 
         doc.body.appendChild(output);
 
-        commandline.updateOutputHeight();
+        commandline.updateOutputHeight(true);
 
         if (options["more"] && win.scrollMaxY > 0)
         {
@@ -1197,8 +1197,10 @@ function CommandLine() //{{{
                 setLine("Press ENTER or type command to continue", this.HL_QUESTION);
         },
 
-        updateOutputHeight: function ()
+        updateOutputHeight: function (open)
         {
+            if (!open && outputContainer.collapsed)
+                return;
             let doc = multilineOutputWidget.contentDocument;
             outputContainer.collapsed = true;
             let availableHeight = 250;
@@ -1210,7 +1212,6 @@ function CommandLine() //{{{
             catch (e) {}
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
             outputContainer.height = Math.min(doc.height, availableHeight) + "px";
-            if (outputContainer.collapsed)
             outputContainer.collapsed = false;
         },
 
@@ -1307,7 +1308,7 @@ function ItemList(id) //{{{
         container.height = minHeight;
         div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.
-        commandline.updateOutputHeight();
+        commandline.updateOutputHeight(false);
     }
 
     // TODO: temporary, to be changed/removed
