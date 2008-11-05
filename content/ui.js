@@ -1307,7 +1307,7 @@ function ItemList(id) //{{{
         container.height = minHeight;
         div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.
-        commandline.updateContentHeight();
+        commandline.updateOutputHeight();
     }
 
     // TODO: temporary, to be changed/removed
