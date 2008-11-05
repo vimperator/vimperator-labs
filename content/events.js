@@ -1053,8 +1053,11 @@ function Events() //{{{
             if (liberator.mode == modes.COMMAND_LINE)
                 return;
 
+            function hasHTMLDocument(win) win && win.document && win.document instanceof HTMLDocument
+
             var win  = window.document.commandDispatcher.focusedWindow;
             var elem = window.document.commandDispatcher.focusedElement;
+
             if (elem && elem.readOnly)
                 return;
 
@@ -1069,7 +1072,8 @@ function Events() //{{{
             {
                 this.wantsModeReset = false;
                 liberator.mode = modes.INSERT;
-                buffer.lastInputField = elem;
+                if (hasHTMLDocument(win))
+                    buffer.lastInputField = elem;
                 return;
             }
 
@@ -1082,15 +1086,15 @@ function Events() //{{{
                     modes.set(modes.VISUAL, modes.TEXTAREA);
                 else
                     modes.main = modes.TEXTAREA;
-                buffer.lastInputField = elem;
+                if (hasHTMLDocument(win))
+                    buffer.lastInputField = elem;
                 return;
             }
 
             if (config.name == "Muttator")
             {
                 // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
-                if ((win && win.document && win.document instanceof HTMLDocument)
-                    || elem instanceof HTMLAnchorElement)
+                if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
                 {
                     if (config.isComposeWindow)
                     {
