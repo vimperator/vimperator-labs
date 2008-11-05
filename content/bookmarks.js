@@ -45,6 +45,11 @@ function Bookmarks() //{{{
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");
+    Bookmark.defaultValue("icon", function () getFavicon(this.url));
+    Bookmark.prototype.__defineGetter__("extra", function () [
+                            ['keyword', this.keyword,         "hl-Keyword"],
+                            ['tags',    this.tags.join(', '), "hl-Tag"]
+                        ].filter(function (item) item[1]));
 
     const storage = modules.storage;
     function Cache(name, store, serial)
@@ -68,8 +73,7 @@ function Bookmarks() //{{{
             let uri = ioService.newURI(node.uri, null, null);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
-            let icon = faviconService.getFaviconImageForPage(uri).spec; // for performance reasons, use this rather than getFavicon
-            return bookmarks.push(new Bookmark(node.uri, node.title, icon, keyword, tags, node.itemId));
+            return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
         }
 
         function readBookmark(id)
@@ -529,15 +533,7 @@ function Bookmarks() //{{{
             if (openItems)
                 return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.bookmarks("title", (
-                {
-                    url:   item.url,
-                    title: item.title,
-                    icon:  getFavicon(item.url),
-                    extra: [['keyword', item.keyword,         "hl-Keyword"],
-                            ['tags',    item.tags.join(', '), "hl-Tag"]
-                           ].filter(function (i) i[1])
-               } for each ([i, item] in Iterator(items)) if (i < 1000)));
+            let list = template.bookmarks("title", items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -552,6 +548,10 @@ function History() //{{{
 
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                      .getService(Components.interfaces.nsINavHistoryService);
+
+    const History = new Struct("url", "title", "icon");
+    History.defaultValue("title", function () "[No Title]");
+    History.defaultValue("icon", function () bookmarks.getFavicon(this.url));
 
     var placesHistory;
     var cachedHistory = []; // add pages here after loading the initial Places history
@@ -575,7 +575,7 @@ function History() //{{{
             var node = rootNode.getChild(i);
             // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                placesHistory.push([node.uri, node.title || "[No title]"]);
+                placesHistory.push(History(node.uri, node.title))
         }
 
         // close a container after using it!
@@ -766,7 +766,7 @@ function History() //{{{
             if (placesHistory.some(function (h) h[0] == url))
                 placesHistory = placesHistory.filter(filter);
 
-            cachedHistory.unshift([url, title || "[No title]"]);
+            cachedHistory.unshift(History(url, title));
             return true;
         },
 
@@ -831,12 +831,7 @@ function History() //{{{
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
             // TODO: is there a faster way to limit to max. 1000 items?
-            let list = template.bookmarks("title", (
-                {
-                     url:   item[0],
-                     title: item[1],
-                     icon:  bookmarks.getFavicon(item[0])
-                     } for each ([i, item] in Iterator(items)) if (i < 1000)));
+            let list = template.bookmarks("title", items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };

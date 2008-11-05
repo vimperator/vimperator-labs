@@ -71,17 +71,20 @@ function IO() //{{{
 
     function expandPathList(list) list.split(",").map(io.expandPath).join(",")
 
+    function replacePathSep(path)
+    {
+        if (WINDOWS)
+            return path.replace("/", "\\");
+        return path;
+    }
+
     // TODO: why are we passing around so many strings? I know that the XPCOM
     // file API is limited but...
     function joinPaths(head, tail)
     {
-        let pathSeparator = WINDOWS ? "\\" : "/";
-        let sep = pathSeparator.replace("\\", "\\\\");
-
-        head = head.replace(RegExp(sep + "$"), "");
-        tail = tail.replace(RegExp("^" + sep), "");
-
-        return head + pathSeparator + tail;
+        let path = ioManager.getFile(head);
+        path.appendRelativePath(tail);
+        return path;
     }
 
     var downloadListener = {
@@ -170,7 +173,7 @@ function IO() //{{{
             }
             else
             {
-                var directories = options["cdpath"].replace(/^,$|^,,|,,$/, "").split(",");
+                var directories = options["cdpath"].split(",");
 
                 // empty 'cdpath' items mean the current directory
                 directories = directories.map(
@@ -179,9 +182,9 @@ function IO() //{{{
 
                 var directoryFound = false;
 
-                for (let i = 0; i < directories.length; i++)
+                for (let [,dir] in Iterator(directories))
                 {
-                    var dir = joinPaths(directories[i], args);
+                    dir = joinPaths(dir, args).path;
                     if (io.setCurrentDirectory(dir))
                     {
                         // FIXME: we're just overwriting the error message from
@@ -372,20 +375,19 @@ function IO() //{{{
                     home = environmentService.get("USERPROFILE") ||
                            environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
 
-                path = path.replace("~", home);
+                path = home + path.substr(1);
             }
 
             // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
             // TODO: Vim does not expand variables set to an empty string, nor does it recognise
             // ${VAR} on WINDOWS - are we just matching bugs?
+            // Yes. --Kris
             path = path.replace(
-                RegExp("(?:\\$(\\w+)\\b|" + (WINDOWS ? "%(\\w+)%" : "\\${(\\w+)}") + ")", "g"),
+                WINDOWS ? /\$(\w+)\b|%(\w+)%/g : /\$(\w+)\b|\${(\w+)}/g,
                 function (m, n1, n2, i, s) environmentService.get((n1 || n2), "$1")
             );
 
-            path = path.replace("\\ ", " ", "g");
-
-            return path;
+            return path.replace("\\ ", " ", "g");
         },
 
         // TODO: there seems to be no way, short of a new component, to change
@@ -430,9 +432,8 @@ function IO() //{{{
         {
             let dirs = options["runtimepath"].split(",");
 
-            dirs = dirs.map(function (dir) io.getFile(joinPaths(dir, specialDirectory)))
+            dirs = dirs.map(function (dir) joinPaths(dir, specialDirectory))
                        .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
-
             return dirs;
         },
 
@@ -440,8 +441,8 @@ function IO() //{{{
         {
             dir = dir || "~";
 
-            let rcFile1 = ioManager.getFile(joinPaths(dir, "/." + EXTENSION_NAME + "rc"));
-            let rcFile2 = ioManager.getFile(joinPaths(dir, "/_" + EXTENSION_NAME + "rc"));
+            let rcFile1 = joinPaths(dir, "." + EXTENSION_NAME + "rc");
+            let rcFile2 = joinPaths(dir, "_" + EXTENSION_NAME + "rc");
 
             if (WINDOWS)
                 [rcFile1, rcFile2] = [rcFile2, rcFile1];
@@ -457,7 +458,7 @@ function IO() //{{{
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
         // also expands relative paths
-        getFile: function (path)
+        getFile: function (path, noCheckPWD)
         {
             let file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
@@ -472,10 +473,10 @@ function IO() //{{{
             {
                 let expandedPath = ioManager.expandPath(path);
 
-                if (!/^([a-zA-Z]:|\/)/.test(expandedPath)) // doesn't start with /, C:
-                    expandedPath = joinPaths(ioManager.getCurrentDirectory().path, expandedPath);
-
-                file.initWithPath(expandedPath);
+                if (!/^([a-zA-Z]:|\/)/.test(expandedPath) && !noCheckPWD) // doesn't start with /, C:
+                    file = joinPaths(ioManager.getCurrentDirectory().path, expandedPath);
+                else
+                    file.initWithPath(expandedPath);
             }
 
             return file;
@@ -603,9 +604,6 @@ function IO() //{{{
 
         run: function (program, args, blocking)
         {
-            var file = Components.classes["@mozilla.org/file/local;1"]
-                                 .createInstance(Components.interfaces.nsILocalFile);
-
             if (!args)
                 args = [];
 
@@ -614,18 +612,17 @@ function IO() //{{{
 
             try
             {
-                file.initWithPath(program);
+                var file = ioManager.getFile(program, !WINDOWS);
             }
             catch (e)
             {
                 var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
 lookup:
-                for (let i = 0; i < dirs.length; i++)
+                for (let [,dir] in Iterator(dirs))
                 {
-                    var path = joinPaths(dirs[i], program);
+                    file = joinPaths(dir, program);
                     try
                     {
-                        file.initWithPath(path);
                         if (file.exists())
                             break;
 
@@ -633,11 +630,10 @@ lookup:
                         // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
-                            var extensions = environmentService.get("PATHEXT").split(";");
-                            for (let j = 0; j < extensions.length; j++)
+                            let extensions = environmentService.get("PATHEXT").split(";");
+                            for (let [,extension] in Iterator(extension))
                             {
-                                path = joinPaths(dirs[i], program) + extensions[j];
-                                file.initWithPath(path);
+                                file = joinPaths(dir, program + extension);
                                 if (file.exists())
                                     break lookup;
                             }
@@ -726,7 +722,7 @@ lookup:
             {
                 for (let [,path] in Iterator(paths))
                 {
-                    let file = io.getFile(joinPaths(runtimeDir, path));
+                    let file = joinPaths(runtimeDir, path);
 
                     liberator.echomsg("Searching for \"" + file.path, 3);
 
@@ -778,7 +774,7 @@ lookup:
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = ioManager.readFile(file);
-                let uri = util.createURI(file.path);
+                let uri = makeFileURI(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))

@@ -66,7 +66,6 @@ function Highlights(name, store, serial)
 
         Bell,#liberator-visualbell border: none; background-color: black;
         Hint,.liberator-hint,* {
-            z-index: 5000;
             font-family: monospace;
             font-size: 10px;
             font-weight: bold;
@@ -76,10 +75,8 @@ function Highlights(name, store, serial)
             border-width: 0px;
             border-style: solid;
             padding: 0px 1px 0px 1px;
-            position: absolute;
         }
         Search,.liberator-search,* {
-            display: inline;
             font-size: inherit;
             padding: 0;
             color: black;

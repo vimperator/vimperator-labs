@@ -505,7 +505,7 @@ function Struct()
     ConStructor.defaultValue = function (key, val)
     {
         let i = args.indexOf(key);
-        ConStructor.prototype.__defineGetter__(i, val);
+        ConStructor.prototype.__defineGetter__(i, function () this[i] = val.call(this));
         ConStructor.prototype.__defineSetter__(i, function (val) {
             let value = val;
             this.__defineGetter__(i, function () value);

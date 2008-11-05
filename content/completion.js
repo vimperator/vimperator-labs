@@ -529,13 +529,6 @@ function Completion() //{{{
     };
     let javascript = new Javascript();
 
-    // FIXME: unused, remove? If not, document, what it does.
-    // Those one liners might be convinient to write, but not to read --mst
-    function filterFavicon(array, want)
-    {
-        return want ? array : [a[2] ? a.slice(0, 2) : a for ([i, a] in Iterator(array))];
-    }
-
     function buildSubstrings(str, filter)
     {
         if (filter == "")

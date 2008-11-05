@@ -1387,8 +1387,8 @@ function ItemList(id) //{{{
 
         let dom = util.xmlToDom(div, doc);
         completionBody = dom.getElementsByClassName("hl-Completions")[0];
-        //completionElements = completionBody.childNodes;
-        completionElements = dom.getElementsByClassName("hl-CompItem");
+        completionElements = completionBody.childNodes;
+        //completionElements = dom.getElementsByClassName("hl-CompItem");
         doc.body.replaceChild(dom, doc.body.firstChild);
     }
 
