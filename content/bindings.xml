@@ -18,7 +18,7 @@
             <children/>
         </content>
     </binding>
-    <!--binding id="tab"
+    <binding id="tab"
              extends="chrome://browser/content/tabbrowser.xml#tabbrowser-tab">
         <content chromedir="&locale.dir;"
                  closetabtext="&closeTab.label;">
@@ -34,7 +34,7 @@
             <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" class="tab-text hl-TabText"/>
             <xul:toolbarbutton anonid="close-button" tabindex="-1" class="tab-close-button hl-TabClose"/>
         </content>
-    </binding-->
+    </binding>
     <binding id="compitem-td">
         <!-- No white space. The table is white-space: pre; :( -->
         <content><html:span class="td-strut"/><html:span class="td-span"><children/></html:span></content>

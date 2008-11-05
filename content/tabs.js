@@ -229,6 +229,10 @@ function Tabs() //{{{
                 },
                 validator: function (value) value >= 0 && value <= 4
             });
+        // TODO: Add option, or only apply when go~=[nN]
+        styles.addSheet("tab-binding", "chrome://*",
+            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#tab); }", true);
+
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
