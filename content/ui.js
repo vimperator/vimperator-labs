@@ -1328,6 +1328,8 @@ function ItemList(id) //{{{
         return row;
     }
 
+    function getCompletion(index) completionElements[index - startIndex];
+
     /**
      * uses the entries in completions to fill the listbox
      * does incremental filling to speed up things
@@ -1436,7 +1438,7 @@ function ItemList(id) //{{{
             if (index == -1 || index == completions.length) // wrapped around
             {
                 if (selIndex >= 0)
-                    completionElements[selIndex - startIndex].removeAttribute("selected");
+                    getCompletion(selIndex).removeAttribute("selected");
                 else // list is shown the first time
                     fill(0);
                 selIndex = -1;
@@ -1454,20 +1456,16 @@ function ItemList(id) //{{{
             newOffset = Math.max(newOffset, 0);
 
             if (selIndex > -1)
-                completionElements[selIndex - startIndex].removeAttribute("selected");
+                getCompletion(selIndex).removeAttribute("selected");
 
             fill(newOffset);
             selIndex = index;
-            completionElements[index - startIndex].setAttribute("selected", "true");
+            getCompletion(index).setAttribute("selected", "true");
 
             return;
         },
 
-        onEvent: function (event)
-        {
-            return false;
-        }
-
+        onEvent: function (event) false
     };
     //}}}
 }; //}}}

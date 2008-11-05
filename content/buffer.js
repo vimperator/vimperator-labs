@@ -1045,8 +1045,8 @@ function Buffer() //{{{
         // artificially "clicks" a link in order to open it
         followLink: function (elem, where)
         {
-            var doc = window.content.document;
-            var view = window.document.defaultView;
+            var doc = elem.ownerDocument;
+            var view = doc.defaultView;
             var offsetX = 1;
             var offsetY = 1;
 

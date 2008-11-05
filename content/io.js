@@ -231,14 +231,8 @@ function IO() //{{{
                 return;
             }
 
-            let lines = [['"' + liberator.version]];
-
             // FIXME: Use a set/specifiable list here:
-            for (let cmd in commands)
-            {
-                if (cmd.serial)
-                    lines.push(cmd.serial().map(commands.commandToString));
-            }
+            let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
             lines = util.Array.flatten(lines);
 
             // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
@@ -250,6 +244,7 @@ function IO() //{{{
             //    line += "\nlet mapleader = \"" + mappings.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
+            lines.unshift('"' + liberator.version);
             lines.push("\nsource! " + filename + ".local");
             lines.push("\n\" vim: set ft=vimperator:");
 
