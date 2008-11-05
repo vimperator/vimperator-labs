@@ -234,7 +234,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str == "xml";
-        var output = <div class={"ex-command-output " + highlightGroup} style={"min-width: " + commandlineWidget.scrollWidth + "px"}>{template.maybeXML(str)}</div>;
+        var output = util.xmlToDom(<div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
@@ -244,37 +244,21 @@ function CommandLine() //{{{
         if (outputContainer.collapsed)
             doc.body.innerHTML = "";
 
-        doc.body.appendChild(util.xmlToDom(output, doc));
+        doc.body.appendChild(output);
 
-        var availableHeight = 250;
-        try
-        {
-            availableHeight = getBrowser().mPanelContainer != undefined ?
-                getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
-        }
-        catch (e) {}
-        var contentHeight = doc.height;
-        var height = contentHeight < availableHeight ? contentHeight : availableHeight;
-
-        outputContainer.height = height + "px";
-        outputContainer.collapsed = false;
+        commandline.updateOutputHeight();
 
         if (options["more"] && win.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
             var elements = doc.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
-
-            if (win.scrollY >= win.scrollMaxY)
-                setLine("Press ENTER or type command to continue", commandline.HL_QUESTION, true);
-            else
-                setLine("-- More --", commandline.HL_MOREMSG, true);
         }
         else
         {
-            win.scrollTo(0, contentHeight);
-            setLine("Press ENTER or type command to continue", commandline.HL_QUESTION, true);
+            win.scrollTo(0, doc.height);
         }
+        commandline.updateMorePrompt();
 
         win.focus();
 
@@ -1173,12 +1157,7 @@ function CommandLine() //{{{
             }
             else // set update the prompt string
             {
-                if (showMoreHelpPrompt)
-                    setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
-                else if (showMorePrompt || (options["more"] && isScrollable() && !atEnd()))
-                    setLine("-- More --", this.HL_MOREMSG);
-                else
-                    setLine("Press ENTER or type command to continue", this.HL_QUESTION);
+                commandline.updateMorePrompt(showMorePrompt, showMoreHelpPrompt);
             }
         },
 
@@ -1202,6 +1181,37 @@ function CommandLine() //{{{
                 editor.selectionController.repaintSelection(selType);
             }
             catch (e) {}
+        },
+
+        updateMorePrompt: function (force, showHelp)
+        {
+            let win = multilineOutputWidget.contentWindow;
+            function isScrollable() !win.scrollMaxY == 0;
+            function atEnd() win.scrollY / win.scrollMaxY >= 1;
+
+            if (showHelp)
+                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
+            else if (force || (options["more"] && isScrollable() && !atEnd()))
+                setLine("-- More --", this.HL_MOREMSG);
+            else
+                setLine("Press ENTER or type command to continue", this.HL_QUESTION);
+        },
+
+        updateOutputHeight: function ()
+        {
+            let doc = multilineOutputWidget.contentDocument;
+            outputContainer.collapsed = true;
+            let availableHeight = 250;
+            try
+            {
+                availableHeight = getBrowser().mPanelContainer ?
+                    getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
+            }
+            catch (e) {}
+            doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
+            outputContainer.height = Math.min(doc.height, availableHeight) + "px";
+            if (outputContainer.collapsed)
+            outputContainer.collapsed = false;
         },
 
         // to allow asynchronous adding of completions
@@ -1287,13 +1297,18 @@ function ItemList(id) //{{{
     var selIndex = -1;    // The index of the currently selected element
     var completionBody = null;
     var minHeight = 0;
+    var div = null;
 
     function autoSize()
     {
+        if (container.collapsed)
+            div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
         minHeight = Math.max(minHeight, completionBody.getBoundingClientRect().bottom);
         container.height = minHeight;
+        div.style.minWidth = undefined;
+        // FIXME: Belongs elsewhere.
+        commandline.updateContentHeight();
     }
-    doc.body.addEventListener("DOMSubtreeModified", autoSize, true);
 
     // TODO: temporary, to be changed/removed
     function createRow([b, c, a], dom)
@@ -1363,35 +1378,36 @@ function ItemList(id) //{{{
                 tbody.removeChild(tbody.lastChild);
                 tbody.insertBefore(row, tbody.firstChild);
             }
-            return;
         }
+        else
+        {
+            // do a full refill of the list:
+            XML.ignoreWhitespace = true;
+            let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
+                          <span class="hl-Title">Completions:</span>
+                          <div class="hl-Completions">
+                          {
+                              template.map(util.range(offset, endIndex), function (i)
+                              createRow(completions[i]))
+                          }
+                          </div>
+                          <div class="hl-Completions">
+                          {
+                              // Hmm. The problem with not making this a CompItem is that
+                              // the height and padding aren't the same.
+                              template.map(util.range(0, maxItems), function (i)
+                              <ul><li class="hl-NonText">~</li></ul>)
+                          }
+                          </div>
+                      </div>;
 
-
-        // do a full refill of the list:
-        XML.ignoreWhitespace = true;
-        let minWidth = document.getElementById("liberator-commandline").scrollWidth;
-        let div = <div class="ex-command-output hl-Normal"
-                       style={"white-space: nowrap; min-width: " + minWidth + "px"}>
-                      <span class="hl-Title">Completions:</span>
-                      <div class="hl-Completions">
-                      {
-                          template.map(util.range(offset, endIndex), function (i)
-                          createRow(completions[i]))
-                      }
-                      </div>
-                      <div class="hl-Completions">
-                      {
-                          template.map(util.range(0, maxItems), function (i)
-                          <ul><li class="hl-NonText">~</li></ul>)
-                      }
-                      </div>
-                  </div>;
-
-        let dom = util.xmlToDom(div, doc);
-        completionBody = dom.getElementsByClassName("hl-Completions")[0];
-        completionElements = completionBody.childNodes;
-        //completionElements = dom.getElementsByClassName("hl-CompItem");
-        doc.body.replaceChild(dom, doc.body.firstChild);
+            div = util.xmlToDom(xml, doc);
+            completionBody = div.getElementsByClassName("hl-Completions")[0];
+            completionElements = completionBody.childNodes;
+            //completionElements = div.getElementsByClassName("hl-CompItem");
+            doc.body.replaceChild(div, doc.body.firstChild);
+            autoSize();
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1410,7 +1426,6 @@ function ItemList(id) //{{{
             if (container.collapsed)
             {
                 minHeight = 0;
-                autoSize();
                 setTimeout(function () { fill(null); }, 0);
             }
             container.collapsed = false;
