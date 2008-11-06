@@ -231,7 +231,7 @@ function Tabs() //{{{
             });
         // TODO: Add option, or only apply when go~=[nN]
         styles.addSheet("tab-binding", "chrome://*",
-            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#tab); }", true);
+            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/vimperator/bindings.xml#tab); }", true);
 
     }
 
