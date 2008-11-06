@@ -46,10 +46,10 @@ The following keywords are available where relevant:
 *<tags>*       The tags applied to <url>. Only for *BookmarkAdd*.
 *<keyword>*    The keywords applied to the bookmark. Only for *BookmarkAdd*.
 *<icon>*       The icon associated with <url>. Only for *BookmarkAdd*.
-*<size>*       The size of a downloaded file.
-*<file>*       The target destination of a download.
-*<fullscreen>* The new fullscreen state.
-*<colors>*     The color scheme name.
+*<size>*       The size of a downloaded file. Only for *DownloadPost*.
+*<file>*       The target destination of a download. Only for *DownloadPost*.
+*<state>*      The new fullscreen state. Only for *Fullscreen*.
+*<name>*       The color scheme name. Only for *ColorScheme*.
 --------------------------------------------------------------
 
 ________________________________________________________________________________

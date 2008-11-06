@@ -479,7 +479,7 @@ function Events() //{{{
         {
             fullscreen = window.fullScreen;
             liberator.triggerObserver("fullscreen", fullscreen);
-            autocommands.trigger("Fullscreen", {url: "", fullscreen: fullscreen});
+            autocommands.trigger("Fullscreen", { state: fullscreen });
         }
     }
 

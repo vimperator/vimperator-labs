@@ -381,7 +381,7 @@ liberator.registerObserver("load_commands", function ()
             let scheme = args.arguments[0];
 
             if (io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
-                autocommands.trigger("ColorScheme", { colors: scheme }); // XXX: Best name?
+                autocommands.trigger("ColorScheme", { name: scheme });
             else
                 liberator.echoerr("E185: Cannot find color scheme " + scheme);
         },
