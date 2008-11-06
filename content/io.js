@@ -124,17 +124,14 @@ function IO() //{{{
     ////////////////////// OPTIONS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: path options need to be of type string now, not stringlist, since
-    // the original arg is, for some reason, no longer preserved for stringlist
-    // E.g. :set cdpath=,,  This comes at the expense of += etc
     options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
-        "string", cdpath,
+        "stringlist", cdpath,
         { setter: function (value) expandPathList(value) });
 
     options.add(["runtimepath", "rtp"],
         "List of directories searched for runtime files",
-        "string", runtimepath,
+        "stringlist", runtimepath,
         { setter: function (value) expandPathList(value) });
 
     options.add(["shell", "sh"],

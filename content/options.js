@@ -643,7 +643,12 @@ function Options() //{{{
                                 }
                                 break;
                         }
-                        newValue = newValue.filter(function (x) x != "").join(option.type == "charlist" ? "" : ",");
+
+                        // NOTE: empty elements are significant in stringlist options like 'cdpath'
+                        if (option.type == "stringlist")
+                            newValue = newValue.join(",");
+                        else
+                            newValue = newValue.filter(function (x) x != "").join("");
 
                         break;
 
