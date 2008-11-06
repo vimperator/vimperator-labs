@@ -71,6 +71,17 @@ function IO() //{{{
 
     function expandPathList(list) list.split(",").map(io.expandPath).join(",")
 
+    function getPathsFromPathList(list)
+    {
+        if (!list)
+            return [];
+        else
+            // empty list item means the current directory
+            return list.replace(/,$/, "")
+                       .split(",")
+                       .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
+    }
+
     function replacePathSep(path)
     {
         if (WINDOWS)
@@ -78,12 +89,10 @@ function IO() //{{{
         return path;
     }
 
-    // TODO: why are we passing around so many strings? I know that the XPCOM
-    // file API is limited but...
     function joinPaths(head, tail)
     {
         let path = ioManager.getFile(head);
-        path.appendRelativePath(tail);
+        path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
         return path;
     }
 
@@ -115,14 +124,17 @@ function IO() //{{{
     ////////////////////// OPTIONS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // FIXME: path options need to be of type string now, not stringlist, since
+    // the original arg is, for some reason, no longer preserved for stringlist
+    // E.g. :set cdpath=,,  This comes at the expense of += etc
     options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
-        "stringlist", cdpath,
+        "string", cdpath,
         { setter: function (value) expandPathList(value) });
 
     options.add(["runtimepath", "rtp"],
         "List of directories searched for runtime files",
-        "stringlist", runtimepath,
+        "string", runtimepath,
         { setter: function (value) expandPathList(value) });
 
     options.add(["shell", "sh"],
@@ -142,7 +154,7 @@ function IO() //{{{
         "Change the current directory",
         function (args)
         {
-            args = args.string;
+            args = args.literalArg;
 
             if (!args)
             {
@@ -173,29 +185,23 @@ function IO() //{{{
             }
             else
             {
-                var directories = options["cdpath"].split(",");
+                let dirs = getPathsFromPathList(options["cdpath"]);
+                let found = false;
 
-                // empty 'cdpath' items mean the current directory
-                directories = directories.map(
-                    function (directory) directory == "" ? io.getCurrentDirectory().path : directory
-                );
-
-                var directoryFound = false;
-
-                for (let [,dir] in Iterator(directories))
+                for (let [,dir] in Iterator(dirs))
                 {
-                    dir = joinPaths(dir, args).path;
-                    if (io.setCurrentDirectory(dir))
+                    dir = joinPaths(dir, args);
+
+                    if (dir.exists() && dir.isDirectory() && dir.isReadable())
                     {
-                        // FIXME: we're just overwriting the error message from
-                        // setCurrentDirectory here
+                        io.setCurrentDirectory(dir.path);
                         liberator.echo(io.getCurrentDirectory().path);
-                        directoryFound = true;
+                        found = true;
                         break;
                     }
                 }
 
-                if (!directoryFound)
+                if (!found)
                 {
                     liberator.echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
                                     + "\n"
@@ -203,7 +209,11 @@ function IO() //{{{
                 }
             }
         },
-        { completer: function (filter) completion.file(filter, true) });
+        {
+            argCount: "?",
+            completer: function (filter) completion.file(filter, true),
+            literal: true
+        });
 
     // NOTE: this command is only used in :source
     commands.add(["fini[sh]"],
@@ -425,10 +435,11 @@ function IO() //{{{
 
         getRuntimeDirectories: function (specialDirectory)
         {
-            let dirs = options["runtimepath"].split(",");
+            let dirs = getPathsFromPathList(options["runtimepath"]);
 
             dirs = dirs.map(function (dir) joinPaths(dir, specialDirectory))
                        .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
+
             return dirs;
         },
 
@@ -706,25 +717,25 @@ lookup:
         // FIXME: multiple paths?
         sourceFromRuntimePath: function (paths, all)
         {
-            let runtimeDirs = options["runtimepath"].split(",");
+            let dirs = getPathsFromPathList(options["runtimepath"]);
             let found = false;
 
             // FIXME: should use original arg string
             liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
-            for (let [,runtimeDir] in Iterator(runtimeDirs))
+            for (let [,dir] in Iterator(dirs))
             {
                 for (let [,path] in Iterator(paths))
                 {
-                    let file = joinPaths(runtimeDir, path);
+                    let file = joinPaths(dir, path);
 
                     liberator.echomsg("Searching for \"" + file.path, 3);
 
-                    if (file.exists() && file.isReadable() && !file.isDirectory()) // XXX
+                    if (file.exists() && file.isFile() && file.isReadable())
                     {
-                        found = true;
                         io.source(file.path, false);
+                        found = true;
 
                         if (!all)
                             break outer;
