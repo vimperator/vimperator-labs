@@ -42,6 +42,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
     right: 0;
 }
 
+.liberator-hint {
+    z-index: 5000;
+    position: absolute;
+}
+.liberator-search {
+    display: inline;
+}
+
 /* Applied only to completion buffer and MOW */
 @-moz-document
     url-prefix(chrome://liberator/) {
@@ -83,10 +91,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 /* Applied to completion buffer, MOW, browser window */
 @-moz-document 
     url-prefix(chrome://) {
-
-/*.tabbrowser-tab {
-    -moz-binding: url(chrome://liberator/content/bindings.xml#tab);
-}*/
 
 #liberator-container  {
     font-family: monospace;
