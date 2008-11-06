@@ -1404,8 +1404,8 @@ function ItemList(id) //{{{
 
             div = util.xmlToDom(xml, doc);
             completionBody = div.getElementsByClassName("hl-Completions")[0];
-            completionElements = completionBody.childNodes;
-            //completionElements = div.getElementsByClassName("hl-CompItem");
+            //completionElements = completionBody.childNodes;
+            completionElements = div.getElementsByClassName("hl-CompItem");
             doc.body.replaceChild(div, doc.body.firstChild);
             autoSize();
         }
