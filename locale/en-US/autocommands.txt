@@ -49,6 +49,7 @@ The following keywords are available where relevant:
 *<size>*       The size of a downloaded file.
 *<file>*       The target destination of a download.
 *<fullscreen>* The new fullscreen state.
+*<color>*      The color scheme name.
 --------------------------------------------------------------
 
 ________________________________________________________________________________
