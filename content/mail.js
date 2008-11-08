@@ -92,7 +92,7 @@ function Mail() //{{{
     function getFolderCompletions(filter)
     {
         var completions = [];
-        var folders = mail.getFolders();
+        var folders = mail.getFolders(filter);
 
         for (let folder = 0; folder < folders.length; folder++)
         {
@@ -101,7 +101,8 @@ function Mail() //{{{
                              "Unread: " + folders[folder].getNumUnread(false)]);
         }
 
-        return [0, completion.filter(completions, filter)];
+        //return [0, completion.filter(completions, filter)];
+        return [0, completions];
     }
 
     function getRSSUrl()

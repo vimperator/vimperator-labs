@@ -660,7 +660,8 @@ const liberator = (function () //{{{
 
         dumpStack: function (msg)
         {
-            liberator.dump((msg || "") + (new Error()).stack.replace(/.*\n/, ""));
+            //liberator.dump((msg || "") + (new Error()).stack.replace(/.*\n/, ""));
+            liberator.dump((msg || "") + (new Error()).stack);
         },
 
         eval: function (str)

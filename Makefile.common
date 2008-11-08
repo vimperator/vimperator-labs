@@ -8,7 +8,7 @@ DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
 
 # TODO: specify source files manually?
-JAR_TXT_FILES = ${shell find -L content skin locale	\
+JAR_TXT_FILES = ${shell find -L content skin locale	components \
 			-type f			\
 			-a ! -path '*CVS*'	\
 			-a \(			\
@@ -37,7 +37,7 @@ XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.t
 			-a -path '*.jsm'	\
 		}
 XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
-XPI_BIN_FILES = ${JAR} Makefile.common Makefile components/*
+XPI_BIN_FILES = ${JAR} Makefile.common Makefile
 XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
 XPI_NAME      = ${NAME}_${VERSION}.xpi
 XPI           = ../downloads/${XPI_NAME}
