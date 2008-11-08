@@ -43,7 +43,7 @@ function Highlights(name, store, serial)
         Tag         color: blue;
 
         LineNr      color: orange; background: white;
-        Question    color: green; background: white;
+        Question    color: green; background: white; font-weight; bold;
 
         StatusLine       color: white; background: black;
         StatusLineBroken color: black; background: #FF6060; /* light-red */
