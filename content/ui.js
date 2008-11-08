@@ -153,6 +153,7 @@ function CommandLine() //{{{
     var promptCompleter = null;
 
     liberator.registerCallback("change", modes.EX, function (command) {
+        completion.cancel(); // cancel any previous completion function
         if (options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(command);
         else

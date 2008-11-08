@@ -27,6 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // An eval with a cleaner lexical scope.
+// TODO: that shows up in ":echo modules", can we move it "inside" the Completion class? --mst
 const EVAL_TMP = "__liberator_eval_tmp";
 function __eval(__liberator_eval_arg, __liberator_eval_tmp)
 {
@@ -201,6 +202,7 @@ function Completion() //{{{
 
             if (key in cache)
                 return cache[key];
+
             try
             {
                 return cache[key] = __eval(arg, tmp);
@@ -673,6 +675,13 @@ function Completion() //{{{
             if (cacheResults[key].length)
                 return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.slice(arguments, 4)));
              return [];
+        },
+
+        // cancel any ongoing search
+        cancel: function()
+        {
+            if (completionService)
+                completionService.stopSearch();
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
@@ -1187,6 +1196,7 @@ function Completion() //{{{
                 else if (c == "l" && completionService) // add completions like Firefox's smart location bar
                 {
                     completionService.stopSearch();
+                    //dump("searching for " + filter + "\n");
                     completionService.startSearch(filter, "", historyResult, {
                         onSearchResult: function onSearchResult(search, result) {
                             historyResult = result;
