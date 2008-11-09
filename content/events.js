@@ -48,7 +48,7 @@ function AutoCommands() //{{{
         "List of autocommand event names which should be ignored",
         "stringlist", "",
         {
-            completer: function (value) Array(config.autocommands).push(["all", "All events"]),
+            completer: function (value) config.autocommands.concat([["all", "All events"]]),
             validator: function (value)
             {
                 let values = value.split(",");
