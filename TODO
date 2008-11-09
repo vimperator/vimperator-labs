@@ -24,6 +24,9 @@ BUGS:
 - http://apcmag.com/why_os_x_106_snow_leopard_should_leave_powerpc_in_the_cold.htm - scrolls the wrong
   window with j/k (the green slashdot thing for me).
 
+- A cached "awesomebar completion" result is still displayed, after the user removes "l" from the 'cpt' and
+  no other matches are found
+
 FEATURES:
 9 addaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
@@ -31,6 +34,8 @@ FEATURES:
 9 use the storage module for autocommands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
+8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
+  quick searches in the RC file.
 7 adaptive learning for tab-completions
   (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
@@ -42,6 +47,8 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
+7 The output of the pageinfo-command sould contain the security-information of ssl-encrypted sites
+7 Add :every command
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
 6 allow for multiple ex commands separated with |
@@ -52,7 +59,10 @@ FEATURES:
 6 use '' to jump between marks like vim
 6 pipe selected text/link/website to an external command
 6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
+6 Command :tags for getting a list of used tags
 6 ;?<hint> should show more information
+5 when looking at a zoomed out image (because it's large), zi should zoom in 
+  maybe with this? : http://mxr.mozilla.org/seamonkey/source/content/html/document/public/nsIImageDocument.idl
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
@@ -60,11 +70,12 @@ FEATURES:
   yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 4 Add -nargs, -complete, etc. to :command
 4 } { should jump to the next paragraph of the page (maybe impossible)
+3 A format for 'guitablabel' and 'statusline' 
+3 add a command-line window (:help cmdline-window in Vim). 
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
 - many other ideas are listed in the wiki
 
 RANDOM IDEAS:
-* numbered tabs
 * hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
 </pre>

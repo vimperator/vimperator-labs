@@ -210,7 +210,6 @@ function Search() //{{{
             lastString = word;
             if (range == null)
             {
-                liberator.dump(this.wrapped);
                 if (this.wrapped)
                 {
                     this.cancel();

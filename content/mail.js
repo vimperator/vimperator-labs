@@ -668,7 +668,7 @@ function Mail() //{{{
         "Select a folder",
         function (args, special, count)
         {
-            args = args || "Inbox";
+            args = args.string || "Inbox";
             count = count > 0 ? (count - 1) : 0;
 
             var folder = mail.getFolders(args, true, true)[count];
@@ -814,6 +814,8 @@ function Mail() //{{{
             var folders = [];
             if (!filter)
                 filter = "";
+            else
+                filter = filter.toLowerCase();
 
             if (includeServers === undefined)
                 includeServers = false;
@@ -829,9 +831,9 @@ function Mail() //{{{
 
                 var folderString = resource.server.prettyName + ": " + resource.name;
 
-                if (resource.prettiestName.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+                if (resource.prettiestName.toLowerCase().indexOf(filter) >= 0)
                     folders.push(resource);
-                else if (folderString.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+                else if (folderString.toLowerCase().indexOf(filter) >= 0)
                     folders.push(resource);
             }
             return folders;
