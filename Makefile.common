@@ -8,18 +8,18 @@ DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
 
 # TODO: specify source files manually?
-JAR_TXT_FILES = ${shell find -L content skin locale	components \
-			-type f			\
-			-a ! -path '*CVS*'	\
-			-a \(			\
-				-path '*.js'	\
-			     -o -path '*.css'	\
-			     -o -path '*.dtd'	\
-			     -o -path '*.xml'	\
-			     -o -path '*.xul'	\
-			     -o -path '*.html'	\
- 			     -o -path '*.xhtml'	\
-			   \)			\
+JAR_TXT_FILES = ${shell find -L content skin locale \
+			-type f				\
+			-a ! -path '*CVS*'		\
+			-a \(				\
+				-path '*.js'		\
+			     -o -path '*.css'		\
+			     -o -path '*.dtd'		\
+			     -o -path '*.xml'		\
+			     -o -path '*.xul'		\
+			     -o -path '*.html'		\
+ 			     -o -path '*.xhtml'		\
+			   \)				\
 		}
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
 JAR_BIN_FILES = ${shell find content skin	\
@@ -31,10 +31,13 @@ JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES} ${DOC_FILES}
 JAR           = chrome/${NAME}.jar
 
 XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.txt \
-		${shell find -L modules		\
-			-type f			\
-			-a ! -path '*CVS*'	\
-			-a -path '*.jsm'	\
+		${shell find -L modules components	\
+			-type f				\
+			-a ! -path '*CVS*'		\
+			-a \(				\
+				-path '*.js'		\
+			     -o	-path '*.jsm'		\
+			   \)				\
 		}
 XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
 XPI_BIN_FILES = ${JAR} Makefile.common Makefile
@@ -85,6 +88,7 @@ info:
 	@echo    "release file        ${XPI}"
 	@echo    "doc files           ${DOC_SRC_FILES}"
 	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
+	@echo    "xpi files           ${XPI_FILES}"
 
 doc: ${DOC_FILES}
 xpi: ${XPI}
