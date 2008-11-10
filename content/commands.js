@@ -717,7 +717,7 @@ function Commands() //{{{
     {
         let tokens = {
             args:  this.argCount && args.string,
-            bang:  this.bang  && bang ? "!" : "",
+            bang:  this.bang && special ? "!" : "",
             count: this.count && count
         };
 
@@ -763,7 +763,7 @@ function Commands() //{{{
             {
                 let filter = {
                     argCount: args["-nargs"],
-                    bang:     "-bang" in args && true,
+                    bang:     "-bang" in args && true, // XXX: ???
                     count:    args["-count"]
                 };
                 let cmds = getMatchingUserCommands(cmd, filter);
