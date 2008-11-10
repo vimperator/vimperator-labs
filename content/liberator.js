@@ -287,19 +287,7 @@ const liberator = (function () //{{{
 
         commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
-            function (args, special)
-            {
-                if (!special)
-                {
-                    liberator.help("ex-cmd-index");
-                }
-                else
-                {
-                    // TODO: clicking on these should open the help
-                    var usage = template.usage(commands);
-                    liberator.echo(usage, commandline.FORCE_MULTILINE);
-                }
-            },
+            function (args, special) { showHelpIndex("ex-cmd-index", commands, special); },
             {
                 argCount: "0",
                 bang: true
@@ -364,19 +352,7 @@ const liberator = (function () //{{{
 
         commands.add(["optionu[sage]"],
             "List all options with a short description",
-            function (args, special)
-            {
-                if (!special)
-                {
-                    liberator.help("option-index");
-                }
-                else
-                {
-                    // TODO: clicking on these should open the help
-                    var usage = template.usage(options);
-                    liberator.echo(usage, commandline.FORCE_MULTILINE);
-                }
-            },
+            function (args, special) { showHelpIndex("option-index", options, special); },
             {
                 argCount: "0",
                 bang: true
@@ -513,19 +489,7 @@ const liberator = (function () //{{{
 
         commands.add(["viu[sage]"],
             "List all mappings with a short description",
-            function (args, special)
-            {
-                if (!special)
-                {
-                    liberator.help("normal-index");
-                }
-                else
-                {
-                    // TODO: clicking on these should open the help
-                    var usage = template.usage(mappings);
-                    liberator.echo(usage, commandline.FORCE_MULTILINE);
-                }
-            },
+            function (args, special) { showHelpIndex("normal-index", mappings, special); },
             {
                 argCount: "0",
                 bang: true
@@ -549,11 +513,21 @@ const liberator = (function () //{{{
         }
     }
 
+    // return the platform normalised to Vim values
     function getPlatformFeature()
     {
         let platform = navigator.platform;
 
         return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
+    }
+
+    // show a usage index either in the MOW or as a full help page
+    function showHelpIndex(tag, items, inMow)
+    {
+        if (inMow)
+            liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
+        else
+            liberator.help(tag);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

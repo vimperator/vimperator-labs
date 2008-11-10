@@ -90,6 +90,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[[|| Follow the link labeled \'prev', \'previous' or \'<' if it exists +
 
 ||g$|| Go to the last tab +
+||g.|| Redisplay the last command output +
 ||g0|| Go to the first tab +
 ||g<C-g>|| Print file information +
 ||gB|| Repeat last :buffer[!] command in reverse direction +
@@ -163,6 +164,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:delmacros|| Delete macros +
 ||:delmarks|| Delete the specified marks +
 ||:delqmarks|| Delete the specified QuickMarks +
+||:delstyle|| Delete any matching styles +
 ||:dialog|| Open a undefined dialog +
 ||:doautoall|| Apply the autocommands matching the specified URL to all buffers +
 ||:doautocmd|| Apply the autocommands matching the specified URL to the current buffer +
@@ -195,11 +197,13 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:mapclear|| Remove all mappings +
 ||:mark|| Mark current location within the web page +
 ||:marks|| Show all location marks of current web page +
+||:messages|| Display previously given messages + 
 ||:mkvimperatorrc|| Write current key mappings and changed options to the config file +
 ||:nohlsearch|| Remove the search highlighting +
 ||:noremap|| Map a key sequence without remapping keys +
 ||:normal|| Execute Normal mode commands +
 ||:open|| Open one or more URLs in the current tab +
+||:optionusage|| List all options with a short description +
 ||:pageinfo|| Show various page information +
 ||:pagestyle|| Select the author style sheet to apply +
 ||:play|| Replay a recorded macro +

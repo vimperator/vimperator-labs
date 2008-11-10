@@ -1,6 +1,6 @@
 <pre>
 Priority list:
-1-9 as in vim (9=required for next release, 5=would be nice, 1=probably not)
+1-9 as in Vim (9=required for next release, 5=would be nice, 1=probably not)
 
 BUGS:
 - add window resize support to hints
@@ -28,7 +28,7 @@ BUGS:
   no other matches are found
 
 FEATURES:
-9 addaptive timeout for auto-completions, :set completions can be updated more often than
+9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 :highlight clear and :colorscheme default
 9 use the storage module for autocommands
@@ -40,10 +40,10 @@ FEATURES:
   (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
 7 implement QuickFix window based on ItemList
-7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currenty does not use a per tab jumplist)
-7 whereever possible: get rid of dialogs and ask console-like dialog questions
+7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currently does not use a per tab jumplist)
+7 wherever possible: get rid of dialogs and ask console-like dialog questions
   or write error prompts directly on the webpage or with :echo()
-7 [d could go to the last domain in the history stack. so if i browse from
+7 [d could go to the last domain in the history stack. So if I browse from
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
