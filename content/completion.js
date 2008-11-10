@@ -65,7 +65,7 @@ function Completion() //{{{
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
         historyCache = comp;
-        commandline.setCompletions(completionCache.concat(historyCache));
+        commandline.setCompletions({ start: 0, get completions() { return completionCache.concat(historyCache); } });
     });
 
     function Javascript()
@@ -782,7 +782,31 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        bookmark: function bookmark(filter) [0, bookmarks.get(filter)],
+        bookmark: function (filter)
+        {
+            return {
+                start: 0,
+                get completions() { return bookmarks.get(filter) },
+                createRow: function (item) 
+                        <ul class="hl-CompItem">
+                            <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
+                            <li class="hl-CompResult">{util.clip(item.title || "", 50)}</li>
+                            <li style="width: 100%">
+                                <a href="#" class="hl-URL">{item.url}</a>&#160;
+                                {
+                                    !(item.extra && item.extra.length) ? "" :
+                                    <span class="extra-info">
+                                        ({
+                                            template.map(item.extra, function (e)
+                                            <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
+                                            <>&#xa0;</>/* Non-breaking space */)
+                                        })
+                                    </span>
+                                }
+                            </li>
+                        </ul>
+            };
+        },
 
         buffer: function buffer(filter)
         {
@@ -902,26 +926,27 @@ function Completion() //{{{
             }
             cacheFilter["ex"] = str;
 
-            var [count, cmd, special, args] = commands.parseCommand(str);
-            var completions = [];
-            var start = 0;
-            var exLength = 0;
-
             // if there is no space between the command name and the cursor
             // then get completions of the command name
+            var [count, cmd, special, args] = commands.parseCommand(str);
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
-                return [matches[1].length, this.command(cmd)[1]];
+                return { start: matches[1].length, completions: this.command(cmd)[1] };
 
             // dynamically get completions as specified with the command's completer function
+            var compObject = { start: 0, completions: [] };
+            var exLength = 0;
             var command = commands.get(cmd);
             if (command && command.completer)
             {
                 matches = str.match(/^:*\d*(?:\w+[\s!]|!)\s*/);
                 exLength = matches ? matches[0].length : 0;
-                [start, completions] = command.completer.call(this, args, special);
+                compObject = command.completer.call(this, args, special);
+                if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                    compObject = { start: compObject[0], completions: compObject[1] };
             }
-            return [exLength + start, completions];
+            compObject.start += exLength;
+            return compObject;
         },
 
         // TODO: support file:// and \ or / path separators on both platforms

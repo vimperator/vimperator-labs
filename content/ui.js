@@ -116,8 +116,8 @@ function CommandLine() //{{{
     var autocompleteTimer = new util.Timer(201, 300, function (command) {
         if (events.feedingKeys)
             return;
-        let [start, compl] = completion.ex(command);
-        commandline.setCompletions(compl, start);
+
+        commandline.setCompletions(completion.ex(command));
     });
 
     // the containing box for the promptWidget and commandWidget
@@ -832,15 +832,18 @@ function CommandLine() //{{{
                         completionIndex = -1;
                         completionPrefix = command.substring(0, commandWidget.selectionStart);
                         completionPostfix = command.substring(commandWidget.selectionStart);
-                        var res = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
-                        if (res)
-                            [completionStartIndex, completions] = res;
+                        var compObject = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
+                        if (compObject)
+                        {
+                            completionStartIndex = compObject.start;
+                            completions = compObject.completions;
+                        }
 
                         // sort the completion list
                         if (options.get("wildoptions").has("sort"))
-                            completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
+                            compObject.completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
-                        completionList.setItems(completions);
+                        completionList.setItems(compObject);
                     }
 
                     if (completions.length == 0)
@@ -1217,7 +1220,7 @@ function CommandLine() //{{{
         },
 
         // to allow asynchronous adding of completions
-        setCompletions: function (compl, start)
+        setCompletions: function (completionObject)
         {
             if (liberator.mode != modes.COMMAND_LINE)
                 return;
@@ -1227,17 +1230,18 @@ function CommandLine() //{{{
                 return completionList.hide();
             */
 
-            completionList.setItems(compl);
+            let newCompletions = completionObject.completions;
+            completionList.setItems(completionObject);
 
-            if (completionIndex >= 0 && completionIndex < compl.length && completionIndex < completions.length)
+            if (completionIndex >= 0 && completionIndex < newCompletions.length && completionIndex < completions.length)
             {
-                if (compl[completionIndex][0] != completions[completionIndex][0])
+                if (newCompletions[completionIndex][0] != completions[completionIndex][0])
                     completionIndex = -1;
             }
             else
                 completionIndex = -1;
 
-            completions = compl;
+            completions = newCompletions;
             completionList.selectItem(completionIndex);
             if (options.get("wildoptions").has("auto"))
                 completionList.show();
@@ -1246,8 +1250,8 @@ function CommandLine() //{{{
             completionPrefix = command.substring(0, commandWidget.selectionStart);
             completionPostfix = command.substring(commandWidget.selectionStart);
 
-            if (typeof start == "number")
-                completionStartIndex = start;
+            if (typeof completionObject.start == "number")
+                completionStartIndex = completionObject.start;
         },
 
         resetCompletions: function ()
@@ -1276,8 +1280,6 @@ function ItemList(id) //{{{
 
     const CONTEXT_LINES = 3;
     var maxItems = 20;
-    var minItems = 2;
-    var incrementalFill = true; // make display faster, but does not show scrollbar
     var completionElements = [];
 
     var iframe = document.getElementById(id);
@@ -1294,6 +1296,7 @@ function ItemList(id) //{{{
     doc.body.appendChild(doc.createTextNode(""));
 
     var completions = []; // a reference to the Array of completions
+    var completionObject = {};
     var startIndex = -1;  // The index of the first displayed item
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
@@ -1312,8 +1315,8 @@ function ItemList(id) //{{{
         commandline.updateOutputHeight(false);
     }
 
-    // TODO: temporary, to be changed/removed
-    function createRow([b, c, a], dom)
+    // TODO: move to completions?
+    function createDefaultRow([b, c, a], dom)
     {
         /* Kludge until we have completion contexts. */
         let map = completion.filterMap;
@@ -1359,6 +1362,7 @@ function ItemList(id) //{{{
         if (offset == null || offset - startIndex == 0 || offset < 0 || completions.length && offset >= completions.length)
             return;
 
+        let createRow = ("createRow" in completionObject) ? completionObject.createRow : createDefaultRow;
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, completions.length);
 
@@ -1405,7 +1409,7 @@ function ItemList(id) //{{{
 
             div = util.xmlToDom(xml, doc);
             completionBody = div.getElementsByClassName("hl-Completions")[0];
-            //completionElements = completionBody.childNodes;
+            //completionElements = completionBody.childNodes; // Kris: This is broken for things like :dia pr<tab>
             completionElements = div.getElementsByClassName("hl-CompItem");
             doc.body.replaceChild(div, doc.body.firstChild);
             autoSize();
@@ -1418,7 +1422,7 @@ function ItemList(id) //{{{
 
     return {
 
-        clear: function () { this.setItems([]); doc.body.innerHTML = ""; },
+        clear: function () { this.setItems(); doc.body.innerHTML = ""; },
         hide: function () { container.collapsed = true; },
         show: function show()
         {
@@ -1438,7 +1442,8 @@ function ItemList(id) //{{{
         setItems: function setItems(items, selectedItem)
         {
             startIndex = endIndex = selIndex = -1;
-            completions = items || [];
+            completionObject = items || { start: 0, completions: [] };
+            completions = completionObject.completions || []; // TODO: remove?
             if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);

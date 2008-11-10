@@ -140,30 +140,14 @@ const template = {
 
     bookmarks: function (header, items)
     {
+        let createRow = completion.bookmark("").createRow;
         return this.generic(
             <table>
                 <tr align="left" class="hl-Title">
                     <th/><th>{header}</th><th>URL</th>
                 </tr>
                 {
-                    this.map(items, function (item)
-                    <ul class="hl-CompItem">
-                        <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
-                        <li class="hl-CompResult">{util.clip(item.title || "", 50)}</li>
-                        <li style="width: 100%">
-                            <a href="#" class="hl-URL">{item.url}</a>&#160;
-                            {
-                                !(item.extra && item.extra.length) ? "" :
-                                <span class="extra-info">
-                                    ({
-                                        template.map(item.extra, function (e)
-                                        <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                                        <>&#xa0;</>/* Non-breaking space */)
-                                    })
-                                </span>
-                            }
-                        </li>
-                    </ul>)
+                     this.map(items, function (item) createRow(item))
                 }
             </table>);
     },
