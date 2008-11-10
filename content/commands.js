@@ -682,16 +682,10 @@ function Commands() //{{{
 
         removeUserCommand: function (name)
         {
-            for (let i = 0; i < exCommands.length; i++)
-            {
-                if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
-                {
-                    exCommands.splice(i, 1);
-                    break;
-                }
-            }
+            exCommands = exCommands.filter(function (cmd) !(cmd.isUserCommand && cmd.hasName(name)));
         },
 
+        // FIXME: still belong here? Also used for autocommand parameters
         replaceTokens: function replaceTokens(str, tokens)
         {
             return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)
@@ -824,19 +818,12 @@ function Commands() //{{{
         "Delete the specified user-defined command",
         function (args)
         {
-            var name = args.arguments[0];
-            var cmdlist = commands.getUserCommands();
+            let name = args.arguments[0];
 
-            for (let i = 0; i < cmdlist.length; i++)
-            {
-                if (cmdlist[i].name == name)
-                {
-                    commands.removeUserCommand(name);
-                    return;
-                }
-            }
-
-            liberator.echoerr("E184: No such user-defined command: " + name);
+            if (commands.get(name))
+                commands.removeUserCommand(name);
+            else
+                liberator.echoerr("E184: No such user-defined command: " + name);
         },
         {
             argCount: "1",
