@@ -127,6 +127,7 @@ function Highlights(name, store, serial)
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
         css = style.selector + " { " + css + " }";
 
+        style.filter; // FIXME: needed for FF 3.0 (not 3.1) - track down when I'm awake...
         let error = styles.addSheet(style.selector, style.filter, css, true, force);
         if (!error)
             style.value = newStyle;
