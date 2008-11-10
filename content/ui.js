@@ -470,17 +470,17 @@ function CommandLine() //{{{
     var echoCommands = [
         {
             name: "ec[ho]",
-            description: "Display a string at the bottom of the window",
+            description: "Echo the expression",
             action: liberator.echo
         },
         {
             name: "echoe[rr]",
-            description: "Display an error string at the bottom of the window",
+            description: "Echo the expression as an error message",
             action: liberator.echoerr
         },
         {
             name: "echom[sg]",
-            description: "Display a message at the bottom of the window saving it in the message history",
+            description: "Echo the expression as an informational message",
             action: liberator.echomsg
         }
     ];

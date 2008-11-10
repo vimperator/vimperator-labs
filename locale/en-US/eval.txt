@@ -7,20 +7,27 @@ INTRO TO BE WRITTEN...
 |:ec| |:echo| +
 ||:ec[ho] {expr}||
 ________________________________________________________________________________
-Display a string at the bottom of the window. Useful for showing informational
-messages. Multiple lines can be separated by \n.
-{expr} can either be a quoted string, or any expression which can be fed to
-eval() like 4+5. You can also view the source code of objects and functions if
-the return value of {expr} is an object or function.
+Echo the expression. Useful for showing informational messages. Multiple lines
+can be separated by \n.  {expr} can either be a quoted string, or any
+expression which can be fed to eval() like 4+5. You can also view the source
+code of objects and functions if the return value of {expr} is an object or
+function.
 ________________________________________________________________________________
 
 
 |:echoe| |:echoerr|
 ||:echoe[rr] {expr}|| +
 ________________________________________________________________________________
-Display an error string at the bottom of the window. Just like [c]:ec[ho][c],
-but echoes the result highlighted in red. Useful for showing important
-messages.
+Echo the expression as an error message. Just like [c]:ec[ho][c], but echoes
+the result highlighted as ErrorMsg and saves it to the message history.
+________________________________________________________________________________
+
+
+|:echoe| |:echomsg|
+||:echom[sg] {expr}|| +
+________________________________________________________________________________
+Echo the expression as an infomational message. Just like [c]:ec[ho][c], but
+also saves the message in the the message history.
 ________________________________________________________________________________
 
 

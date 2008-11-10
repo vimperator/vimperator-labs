@@ -167,8 +167,9 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:doautoall|| Apply the autocommands matching the specified URL to all buffers +
 ||:doautocmd|| Apply the autocommands matching the specified URL to the current buffer +
 ||:downloads|| Show progress of current downloads +
-||:echo|| Display a string at the bottom of the window +
-||:echoerr|| Display an error string at the bottom of the window +
+||:echo|| Echo the expression +
+||:echoerr|| Echo the expression as an error message +
+||:echomsg|| Echo the expression as an informational message +
 ||:emenu|| Execute the specified menu item from the command-line +
 ||:execute|| Execute the argument as an Ex command +
 ||:exusage|| List all Ex commands with a short description +
