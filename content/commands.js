@@ -170,23 +170,6 @@ function Commands() //{{{
 
     var exCommands = [];
 
-    function getMatchingUserCommands(name, filter)
-    {
-        var matches = [];
-        for (let [,cmd] in Iterator(exCommands))
-        {
-            if (cmd.isUserCommand)
-            {
-                if (!name || cmd.name.match("^" + name))
-                {
-                    if (util.map(filter, function (f) f).every(function ([k, v]) v == null || cmd[k] == v))
-                        matches.push(cmd);
-                }
-            }
-        }
-        return matches;
-    }
-
     function parseBool(arg)
     {
         if (arg == "true" || arg == "1" || arg == "on")
@@ -725,6 +708,7 @@ function Commands() //{{{
         function (args, special)
         {
             let cmd = args.arguments[0];
+
             if (cmd != null && /\W/.test(cmd))
             {
                 liberator.echoerr("E182: Invalid command name");
@@ -755,12 +739,9 @@ function Commands() //{{{
             }
             else
             {
-                let filter = {
-                    argCount: args["-nargs"],
-                    bang:     "-bang" in args && true, // XXX: ???
-                    count:    args["-count"]
-                };
-                let cmds = getMatchingUserCommands(cmd, filter);
+                // TODO: using an array comprehension here generates flakey results across repeated calls
+                //     : perhaps we shouldn't allow options in a list call but just ignore them for now
+                let cmds = exCommands.filter(function (c) c.isUserCommand && (!cmd || c.name.match("^" + cmd)));
 
                 if (cmds.length > 0)
                 {
