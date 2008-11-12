@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+const plugins = {};
+
 const liberator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1055,7 +1057,7 @@ const liberator = (function () //{{{
         // v.plugins.mode = <str> string to show on v.modes.CUSTOM
         // v.plugins.stop = <func> hooked on a v.modes.reset()
         // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
-        plugins: {},
+        plugins: plugins,
 
         pluginFiles: {},
 

@@ -536,7 +536,6 @@ function CommandLine() //{{{
         HL_WARNINGMSG : "hl-WarningMsg",
         HL_LINENR     : "hl-LineNr",
 
-        // not yet used
         FORCE_MULTILINE    : 1 << 0,
         FORCE_SINGLELINE   : 1 << 1,
         DISALLOW_MULTILINE : 1 << 2, // if an echo() should try to use the single line
@@ -1205,6 +1204,7 @@ function CommandLine() //{{{
         {
             if (!open && outputContainer.collapsed)
                 return;
+
             let doc = multilineOutputWidget.contentDocument;
             outputContainer.collapsed = true;
             let availableHeight = 250;
