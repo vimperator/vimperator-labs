@@ -65,7 +65,7 @@ function Completion() //{{{
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
         historyCache = comp;
-        commandline.setCompletions({ start: 0, get completions() { return completionCache.concat(historyCache); } });
+        commandline.setCompletions({ get completions() { return completionCache.concat(historyCache); } });
     });
 
     function Javascript()
