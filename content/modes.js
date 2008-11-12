@@ -49,10 +49,6 @@ const modes = (function () //{{{
         else if (passAllKeys && !passNextKey)
             return "-- PASS THROUGH --";
 
-        var ext = "";
-        if (extended & modes.MENU) // TODO: desirable?
-            ext += " (menu)";
-
         // when recording a macro
         var macromode = "";
         if (modes.isRecording)
@@ -60,6 +56,9 @@ const modes = (function () //{{{
         else if (modes.isReplaying)
             macromode = "replaying";
 
+        var ext = "";
+        if (extended & modes.MENU) // TODO: desirable?
+            ext += " (menu)";
         ext += " --" + macromode;
 
         switch (main)
@@ -67,9 +66,9 @@ const modes = (function () //{{{
             case modes.INSERT:
                 return "-- INSERT" + ext;
             case modes.VISUAL:
-                return (extended & modes.LINE) ? "-- VISUAL LINE" + ext : "-- VISUAL" + ext;
+                return "-- VISUAL" + (extended & modes.LINE ? " LINE" : "") + ext;
             case modes.COMMAND_LINE:
-                // under modes.COMMAND_LINE, this block will never be reached
+                // under modes.COMMAND_LINE, this function will never be called
                 return macromode;
             case modes.CARET:
                 return "-- CARET" + ext;

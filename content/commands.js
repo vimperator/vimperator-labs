@@ -227,6 +227,11 @@ function Commands() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.registerObserver("load_completion", function ()
+    {
+        completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
+    });
+
     var commandManager = {
 
         // FIXME: remove later, when our option handler is better

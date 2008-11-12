@@ -847,6 +847,12 @@ function Options() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // TODO: Does this belong elsewhere?
+    liberator.registerObserver("load_completion", function ()
+    {
+        completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
+    });
+
     return {
 
         OPTION_SCOPE_GLOBAL: 1,

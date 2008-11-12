@@ -27,9 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // An eval with a cleaner lexical scope.
-// TODO: that shows up in ":echo modules", can we move it "inside" the Completion class? --mst
-const EVAL_TMP = "__liberator_eval_tmp";
-function __eval(__liberator_eval_arg, __liberator_eval_tmp)
+modules._cleanEval = function (__liberator_eval_arg, __liberator_eval_tmp)
 {
     return window.eval(__liberator_eval_arg);
 }
@@ -46,6 +44,10 @@ function Completion() //{{{
                                           .getService(Components.interfaces.nsIAutoCompleteSearch);
     }
     catch (e) {}
+
+    const EVAL_TMP = "__liberator_eval_tmp";
+    const cleanEval = _cleanEval;
+    delete modules._cleanEval;
 
     // the completion substrings, used for showing the longest common match
     var cacheFilter = {}
@@ -205,7 +207,7 @@ function Completion() //{{{
 
             try
             {
-                return cache[key] = __eval(arg, tmp);
+                return cache[key] = cleanEval(arg, tmp);
             }
             catch (e)
             {
@@ -361,7 +363,7 @@ function Completion() //{{{
             }
             catch (e)
             {
-                liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
+                // liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return [0, []];
             }
@@ -480,14 +482,13 @@ function Completion() //{{{
                     let [offset, obj, func] = getObjKey(-3);
                     let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
 
-                    let completer = this.completers[func];
                     try
                     {
-                        if (!completer)
-                            completer = obj[func].liberatorCompleter;
+                        var completer = obj[func].liberatorCompleter;
                     }
                     catch (e) {}
-                    liberator.dump({ call: completer, func: func, obj: obj, string: string, args: "args" });
+                    if (!completer) 
+                        completer = this.completers[func];
                     if (!completer)
                         return [0, []];
 
@@ -502,6 +503,8 @@ function Completion() //{{{
                     args.push(key);
 
                     let compl = completer.call(this, func, obj, string, args);
+                    if (!(compl instanceof Array))
+                        compl = [v for (v in compl)];
                     key = this.eval(key);
                     return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
                 }
@@ -635,6 +638,16 @@ function Completion() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        setFunctionCompleter: function (func, completers)
+        {
+            func.liberatorCompleter = function (func, obj, string, args) {
+                let completer = completers[args.length - 1];
+                if (!completer)
+                    return [];
+                return completer.call(this, this.eval(obj), this.eval(args.pop()) + string, args);
+            };
+        },
 
         // returns the longest common substring
         // used for the 'longest' setting for wildmode
@@ -982,17 +995,10 @@ function Completion() //{{{
                 return mapped;
             };
 
-            try
-            {
-                if (tail)
-                    return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
-                else
-                    return [0, this.cached("file-" + dir, filter, generate, "filter", [true])];
-            }
-            catch (e)
-            {
-                liberator.dump(e);
-            }
+            if (tail)
+                return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
+            else
+                return [0, this.cached("file-" + dir, filter, generate, "filter", [true])];
         },
 
         help: function help(filter)
@@ -1028,15 +1034,7 @@ function Completion() //{{{
 
         javascript: function _javascript(str)
         {
-            try
-            {
-                return javascript.complete(str);
-            }
-            catch (e)
-            {
-                liberator.dump(e);
-                return [0, []];
-            }
+            return javascript.complete(str);
         },
 
         macro: function macro(filter)

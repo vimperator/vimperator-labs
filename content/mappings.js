@@ -258,6 +258,23 @@ function Mappings() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.registerObserver("load_completion", function ()
+    {
+        completion.setFunctionCompleter(mappings.get,
+        [
+            null,
+            function (obj, filter, args)
+            {
+                let mode = this.eval(args[0]);
+                return util.Array.flatten(
+                [
+                    [[name, map.description] for ([i, name] in Iterator(map.names))]
+                    for ([i, map] in Iterator(user[mode].concat(main[mode])))
+                ])
+            }
+        ]);
+    });
+
     // FIXME:
     Mappings.flags = {
         ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox

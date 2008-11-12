@@ -171,6 +171,12 @@ function AutoCommands() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.registerObserver("load_completion", function ()
+    {
+        completion.setFunctionCompleter(autocommands.get, [function () config.autocommands]);
+    });
+
+
     return {
 
         __iterator__: function () util.Array.iterator(store),
