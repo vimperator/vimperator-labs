@@ -26,7 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-
 const util = { //{{{
 
     Array: {
@@ -150,8 +149,8 @@ const util = { //{{{
 
     copyToClipboard: function (str, verbose)
     {
-        var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                                        .getService(Components.interfaces.nsIClipboardHelper);
+        const clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+                                          .getService(Components.interfaces.nsIClipboardHelper);
         clipboardHelper.copyString(str);
 
         if (verbose)
@@ -191,9 +190,9 @@ const util = { //{{{
     formatBytes: function (num, decimalPlaces, humanReadable)
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-        var unitIndex = 0;
-        var tmpNum = parseInt(num, 10) || 0;
-        var strNum = [tmpNum + ""];
+        let unitIndex = 0;
+        let tmpNum = parseInt(num, 10) || 0;
+        let strNum = [tmpNum + ""];
 
         if (humanReadable)
         {
@@ -203,12 +202,14 @@ const util = { //{{{
                 if (++unitIndex > (unitVal.length - 1))
                     break;
             }
+
             let decPower = Math.pow(10, decimalPlaces);
             strNum = ((Math.round(tmpNum * decPower) / decPower) + "").split(".", 2);
 
             if (!strNum[1])
                 strNum[1] = "";
-            while (strNum[1].length < decimalPlaces) // padd with "0" to the desired decimalPlaces)
+
+            while (strNum[1].length < decimalPlaces) // pad with "0" to the desired decimalPlaces)
                 strNum[1] += "0";
         }
 
@@ -225,14 +226,14 @@ const util = { //{{{
     // generates an Asciidoc help entry, "command" can also be a mapping
     generateHelp: function (command, extraHelp)
     {
-        var start = "", end = "";
+        let start = "", end = "";
         if (command instanceof liberator.Command)
             start = ":";
         else if (command instanceof liberator.Option)
             start = end = "'";
 
-        var ret = "";
-        var longHelp = false;
+        let ret = "";
+        let longHelp = false;
         if ((command.help && command.description) && (command.help.length + command.description.length) > 50)
             longHelp = true;
 
@@ -246,7 +247,7 @@ const util = { //{{{
         ret += "\n";
 
         // the usage information for the command
-        var usage = command.names[0];
+        let usage = command.names[0];
         if (command.specs) // for :commands
             usage = command.specs[0];
 
@@ -376,22 +377,27 @@ const util = { //{{{
     // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
     readFromClipboard: function ()
     {
-        var url;
+        let url;
+
         try
         {
-            var clipboard = Components.classes['@mozilla.org/widget/clipboard;1']
-                                      .getService(Components.interfaces.nsIClipboard);
-            var trans = Components.classes['@mozilla.org/widget/transferable;1']
-                                  .createInstance(Components.interfaces.nsITransferable);
-            trans.addDataFlavor("text/unicode");
-            if (clipboard.supportsSelectionClipboard())
-                clipboard.getData(trans, clipboard.kSelectionClipboard);
-            else
-                clipboard.getData(trans, clipboard.kGlobalClipboard);
+            const clipboard = Components.classes['@mozilla.org/widget/clipboard;1']
+                                        .getService(Components.interfaces.nsIClipboard);
+            const transferable = Components.classes['@mozilla.org/widget/transferable;1']
+                                           .createInstance(Components.interfaces.nsITransferable);
 
-            var data = {};
-            var dataLen = {};
-            trans.getTransferData("text/unicode", data, dataLen);
+            transferable.addDataFlavor("text/unicode");
+
+            if (clipboard.supportsSelectionClipboard())
+                clipboard.getData(transferable, clipboard.kSelectionClipboard);
+            else
+                clipboard.getData(transferable, clipboard.kGlobalClipboard);
+
+            let data = {};
+            let dataLen = {};
+
+            transferable.getTransferData("text/unicode", data, dataLen);
+
             if (data)
             {
                 data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
@@ -407,13 +413,13 @@ const util = { //{{{
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
     stringToURLArray: function (str)
     {
-        var urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
+        let urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
 
         for (let url = 0; url < urls.length; url++)
         {
             try
             {
-                var file = io.getFile(urls[url]);
+                let file = io.getFile(urls[url]);
                 if (file.exists() && file.isReadable())
                 {
                     urls[url] = file.path;
@@ -437,7 +443,7 @@ const util = { //{{{
                 // like the comments below ;-)
 
                 // check for a search engine match in the string
-                var searchURL = bookmarks.getSearchURL(urls[url], false);
+                let searchURL = bookmarks.getSearchURL(urls[url], false);
                 if (searchURL)
                 {
                     urls[url] = searchURL;
