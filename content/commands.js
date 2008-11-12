@@ -179,8 +179,7 @@ function Commands() //{{{
         return NaN;
     }
 
-    function quote(q, list) list.reduce(function (acc, [k,v])
-    {
+    function quote(q, list) list.reduce(function (acc, [k,v]) {
         v = "\\" + (v || k);
         return function (str) acc(String.replace(str, k, v, "g"))
     }, function (val) q + val + q);
@@ -201,6 +200,29 @@ function Commands() //{{{
         ["list",    function (arg) arg && arg.split(/\s*,\s*/)]
     ].map(function (x) x && ArgType.apply(null, x));
 
+    function addCommand(command, isUserCommand, replace)
+    {
+        if (!command) // XXX
+            return false;
+
+        if (exCommands.some(function (c) c.hasName(command.name)))
+        {
+            if (isUserCommand && replace)
+            {
+                commands.removeUserCommand(command.name);
+            }
+            else
+            {
+                liberator.log("Warning: :" + command.name + " already exists, NOT replacing existing command.", 1);
+                return false;
+            }
+        }
+
+        exCommands.push(command);
+
+        return true;
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -208,9 +230,6 @@ function Commands() //{{{
     var commandManager = {
 
         // FIXME: remove later, when our option handler is better
-        //        Idea: If v.commands.add() specifies args or opts in extraInfo, don't call the function
-        //        with args as a string, but already pass an object like:
-        //        args = { -option: value, -anotheroption: true, arguments: [] }
         OPTION_ANY:    0, // can be given no argument or an argument of any type,
                           // caller is responsible for parsing the return value
         OPTION_NOARG:  1,
@@ -231,19 +250,7 @@ function Commands() //{{{
 
         add: function (names, description, action, extra)
         {
-            var command = new Command(names, description, action, extra);
-            if (!command)
-                return false;
-
-            if (exCommands.some(function (c) c.name == command.name))
-            {
-                // never replace for now
-                liberator.log("Warning: :" + names[0] + " already exists, NOT replacing existing command.", 1);
-                return false;
-            }
-
-            exCommands.push(command);
-            return true;
+            return addCommand(new Command(names, description, action, extra), false, false);
         },
 
         addUserCommand: function (names, description, action, extra, replace)
@@ -252,31 +259,7 @@ function Commands() //{{{
             extra.isUserCommand = true;
             description = description || "User defined command";
 
-            var command = new Command(names, description, action, extra);
-            // FIXME: shouldn't this be testing for an existing command by name?
-            // Requiring uppercase user command names like Vim would be easier
-            if (!command)
-                return false;
-
-            for (let i = 0; i < exCommands.length; i++)
-            {
-                if (exCommands[i].name == command.name)
-                {
-                    if (!replace)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        this.removeUserCommand(command.name);
-                        break;
-                    }
-                }
-            }
-
-            exCommands.push(command);
-
-            return true;
+            return addCommand(new Command(names, description, action, extra), true, replace);
         },
 
         commandToString: function (args)
@@ -301,37 +284,17 @@ function Commands() //{{{
 
         get: function (name)
         {
-            for (let i = 0; i < exCommands.length; i++)
-            {
-                if (exCommands[i].hasName(name))
-                    return exCommands[i];
-            }
-
-            return null;
+            return exCommands.filter(function (cmd) cmd.hasName(name))[0] || null;
         },
 
         getUserCommand: function (name)
         {
-            for (let i = 0; i < exCommands.length; i++)
-            {
-                if (exCommands[i].isUserCommand && exCommands[i].hasName(name))
-                    return exCommands[i];
-            }
-
-            return null;
+            return exCommands.filter(function (cmd) cmd.isUserCommand && cmd.hasName(name))[0] || null;
         },
 
         getUserCommands: function ()
         {
-            var userCommands = [];
-
-            for (let i = 0; i < exCommands.length; i++)
-            {
-                if (exCommands[i].isUserCommand)
-                    userCommands.push(exCommands[i]);
-            }
-
-            return userCommands;
+            return exCommands.filter(function (cmd) cmd.isUserCommand);
         },
 
         // in '-quoted strings, only ' and \ itself are escaped
@@ -683,7 +646,6 @@ function Commands() //{{{
                 return res;
             });
         }
-
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
