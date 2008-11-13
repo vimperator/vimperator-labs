@@ -34,6 +34,7 @@ BUGS:
   :b a<tab>  changes the (Untitled) title to "about:blank"
 
 FEATURES:
+9 find across frames
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 :highlight clear and :colorscheme default
