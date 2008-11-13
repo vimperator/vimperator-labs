@@ -26,6 +26,9 @@ BUGS:
 
 - A cached "awesomebar completion" result is still displayed, after the user removes "l" from the 'cpt' and
   no other matches are found
+- "History" struct is very slow, causing massive problems/delays at startup. Adding 1000 History structs to an array
+  takes about a second here, while adding the same amount of ['a', 'b'] arrays just takes 4ms. Probably all
+  Structs are slow, as removing the "icon" -> favicon field didn't make it faster.
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
@@ -49,6 +52,7 @@ FEATURES:
 7 make an option to disable session saving by default when you close Firefox
 7 The output of the pageinfo-command sould contain the security-information of ssl-encrypted sites
 7 Add :every command
+6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
 6 allow for multiple ex commands separated with |
