@@ -750,21 +750,17 @@ function History() //{{{
         // so just update our cached history here
         add: function (url, title)
         {
-            if (!placesHistory)
-                load();
-
             let filter = function (h) h[0] != url;
+
             // don't let cachedHistory grow too large
-            if (cachedHistory.length > 1000)
+            if (placesHistory && cachedHistory.length > 1000)
             {
                 placesHistory = cachedHistory.concat(placesHistory);
+                placesHistory = placesHistory.filter(filter);
                 cachedHistory = [];
             }
             else
                 cachedHistory = cachedHistory.filter(filter);
-
-            if (placesHistory.some(function (h) h[0] == url))
-                placesHistory = placesHistory.filter(filter);
 
             cachedHistory.unshift({ url: url, title: title, get icon() function() bookmarks.getFavicon(this.url) });
             return true;
