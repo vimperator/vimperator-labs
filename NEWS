@@ -27,7 +27,7 @@
     * add . mapping
     * add N% normal mode command
     * add interpolation for items such as <url> to autocommands
-    * add -nargs, -bang, and -count attribute support to :command
+    * add -nargs, -complete, -bang, and -count attribute support to :command
     * much improved completion support, including javascript, option, and search keyword
     * add <PageUp>/<S-Up> and <PageDown>/<S-Down> command-line mappings for
       selecting the previous and next history items

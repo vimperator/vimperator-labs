@@ -923,7 +923,7 @@ function Completion() //{{{
             return [0, this.filter(vars, filter)];
         },
 
-        event: function event(filter) [0, this.filter(config.autocommands, filter)],
+        autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
 
         // provides completions for ex commands, including their arguments
         ex: function ex(str)

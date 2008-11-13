@@ -53,6 +53,7 @@ function AutoCommands() //{{{
             {
                 let values = value.split(",");
                 let events = config.autocommands.map(function (event) event[0]);
+
                 events.push("all");
 
                 return values.every(function (event) events.indexOf(event) >= 0);
@@ -113,7 +114,7 @@ function AutoCommands() //{{{
         {
             argCount: "3",
             bang: true,
-            completer: function (filter) completion.event(filter),
+            completer: function (filter) completion.autocmdEvent(filter),
             literal: true
         });
 
@@ -126,7 +127,7 @@ function AutoCommands() //{{{
         },
         {
             argCount: "+",
-            completer: function (filter) completion.event(filter)
+            completer: function (filter) completion.autocmdEvent(filter)
         }
     );
 
@@ -163,7 +164,7 @@ function AutoCommands() //{{{
         {
             // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
             argCount: "+",
-            completer: function (filter) completion.event(filter)
+            completer: function (filter) completion.autocmdEvent(filter)
         }
     );
 

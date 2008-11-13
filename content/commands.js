@@ -668,6 +668,11 @@ function Commands() //{{{
         liberator.execute(commands.replaceTokens(this.replacementText, tokens));
     }
 
+    // TODO: add dir, highlight, menu, option completers
+    var completeOptionMap = { url: "url", buffer: "buffer", bookmark: "bookmark", command: "ex",
+        environment: "environment", event: "autocmdEvent", file: "file", shellcmd: "shellCommand",
+        javascript: "javascript", help: "help", mapping: "userMapping" };
+
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
     // specified - useful?
     commandManager.add(["com[mand]"],
@@ -684,9 +689,24 @@ function Commands() //{{{
 
             if (args.literalArg)
             {
-                let nargsOpt = args["-nargs"] || "0";
-                let bangOpt  = "-bang"  in args;
-                let countOpt = "-count" in args;
+                let nargsOpt    = args["-nargs"] || "0";
+                let bangOpt     = "-bang"  in args;
+                let countOpt    = "-count" in args;
+                let completeOpt = args["-complete"];
+
+                let completeFunc = null; // default to no completion for user commands
+
+                if (completeOpt)
+                {
+                    let func;
+
+                    if (/^custom,/.test(completeOpt))
+                        func = completeOpt.replace("custom,", "");
+                    else
+                        func = "completion." + completeOptionMap[completeOpt];
+
+                    completeFunc = eval(func);
+                }
 
                 if (!commands.addUserCommand(
                         [cmd],
@@ -696,6 +716,7 @@ function Commands() //{{{
                             argCount: nargsOpt,
                             bang: bangOpt,
                             count: countOpt,
+                            completer: completeFunc,
                             replacementText: args.literalArg
                         },
                         special)
@@ -706,17 +727,27 @@ function Commands() //{{{
             }
             else
             {
+                function completerToString(completer)
+                {
+                    if (completer)
+                        return [k for ([k, v] in Iterator(completeOptionMap))
+                                  if (v == completer.name)][0] || "custom";
+                    else
+                        return "";
+                }
+
                 // TODO: using an array comprehension here generates flakey results across repeated calls
                 //     : perhaps we shouldn't allow options in a list call but just ignore them for now
                 let cmds = exCommands.filter(function (c) c.isUserCommand && (!cmd || c.name.match("^" + cmd)));
 
                 if (cmds.length > 0)
                 {
-                    let str = template.tabular(["", "Name", "Args", "Range", "Definition"], ["padding-right: 2em;"],
+                    let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"], ["padding-right: 2em;"],
                         ([cmd.bang ? "!" : " ",
                           cmd.name,
                           cmd.argCount,
                           cmd.count ? "0c" : "",
+                          completerToString(cmd.completer),
                           cmd.replacementText || "function () { ... }"] for each (cmd in cmds)));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -732,9 +763,12 @@ function Commands() //{{{
             bang: true,
             completer: function (filter) completion.userCommand(filter),
             options: [
-                [["-nargs"], commandManager.OPTION_STRING, function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
-                [["-bang"],  commandManager.OPTION_NOARG],
+                [["-nargs"], commandManager.OPTION_STRING,
+                     function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
+                [["-bang"], commandManager.OPTION_NOARG],
                 [["-count"], commandManager.OPTION_NOARG],
+                [["-complete"], commandManager.OPTION_STRING,
+                     function (arg) arg in completeOptionMap || /custom,\w+/.test(arg)]
             ],
             literal: true,
             serial: function () [
