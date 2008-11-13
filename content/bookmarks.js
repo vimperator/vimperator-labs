@@ -549,9 +549,9 @@ function History() //{{{
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                      .getService(Components.interfaces.nsINavHistoryService);
 
-    const History = new Struct("url", "title", "icon");
-    History.defaultValue("title", function () "[No Title]");
-    History.defaultValue("icon", function () bookmarks.getFavicon(this.url));
+    // const History = new Struct("url", "title", "icon");
+    // History.defaultValue("title", function () "[No Title]");
+    // History.defaultValue("icon", function () bookmarks.getFavicon(this.url));
 
     var placesHistory;
     var cachedHistory = []; // add pages here after loading the initial Places history
@@ -575,7 +575,7 @@ function History() //{{{
             var node = rootNode.getChild(i);
             // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
             if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                placesHistory.push(History(node.uri, node.title))
+                placesHistory.push({ url: node.uri, title: node.title, get icon() function() bookmarks.getFavicon(this.url) });
         }
 
         // close a container after using it!
@@ -766,7 +766,7 @@ function History() //{{{
             if (placesHistory.some(function (h) h[0] == url))
                 placesHistory = placesHistory.filter(filter);
 
-            cachedHistory.unshift(History(url, title));
+            cachedHistory.unshift({ url: url, title: title, get icon() function() bookmarks.getFavicon(this.url) });
             return true;
         },
 

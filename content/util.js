@@ -485,6 +485,9 @@ const util = { //{{{
     }
 }; //}}}
 
+// Struct is really slow, AT LEAST 5 times slower than using structs or simple Objects
+// main reason is the function ConStructor(), which i couldn't get faster.
+// Maybe it's a TraceMonkey problem, for now don't use it for anything which must be fast (like bookmarks or history)
 function Struct()
 {
     let self = this instanceof Struct ? this : new Struct();
@@ -503,11 +506,13 @@ function Struct()
     function ConStructor()
     {
         let self = this instanceof arguments.callee ? this : new arguments.callee();
-        for (let [k, v] in Iterator(Array.slice(arguments)))
+        //for (let [k, v] in Iterator(Array.slice(arguments))) // That is makes using struct twice as slow as the following code:
+        for (let i = 0; i < arguments.length; i++)
         {
-            if (v != undefined)
-                self[k] = v;
+            if (arguments[i] != undefined)
+                self[i] = arguments[i];
         }
+
         return self;
     }
     ConStructor.prototype = self;
