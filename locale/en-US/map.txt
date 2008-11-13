@@ -300,7 +300,7 @@ Completion can be enabled by specifying one of the following arguments to the
 *event*          autocommand events
 *file*           files
 *help*           help tags
-*javascript*     javascript
+*javascript*     JavaScript expressions
 *mapping*        user mappings
 *shellcmd*       shell commands
 *url*            URLs
