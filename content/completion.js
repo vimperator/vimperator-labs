@@ -487,7 +487,7 @@ function Completion() //{{{
                         var completer = obj[func].liberatorCompleter;
                     }
                     catch (e) {}
-                    if (!completer) 
+                    if (!completer)
                         completer = this.completers[func];
                     if (!completer)
                         return [0, []];
@@ -800,7 +800,7 @@ function Completion() //{{{
             return {
                 start: 0,
                 get completions() { return bookmarks.get(filter) },
-                createRow: function (item) 
+                createRow: function (item)
                         <ul class="hl-CompItem">
                             <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
                             <li class="hl-CompResult">{util.clip(item.title || "", 50)}</li>

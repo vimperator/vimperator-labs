@@ -179,7 +179,7 @@ function Commands() //{{{
         return NaN;
     }
 
-    function quote(q, list) list.reduce(function (acc, [k,v]) {
+    function quote(q, list) list.reduce(function (acc, [k, v]) {
         v = "\\" + (v || k);
         return function (str) acc(String.replace(str, k, v, "g"))
     }, function (val) q + val + q);
@@ -783,7 +783,7 @@ function Commands() //{{{
                     arguments: [cmd.name],
                     literalArg: cmd.replacementText
                 }
-                for ([k,cmd] in Iterator(exCommands))
+                for ([k, cmd] in Iterator(exCommands))
                 if (cmd.isUserCommand && cmd.replacementText)
             ]
         });

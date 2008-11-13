@@ -95,7 +95,7 @@ function Highlights(name, store, serial)
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
     function keys() [k for ([k, v] in Iterator(highlight))].sort();
-    this.__iterator__ = function () (highlight[v] for ([k,v] in Iterator(keys())));
+    this.__iterator__ = function () (highlight[v] for ([k, v] in Iterator(keys())));
 
     this.get = function (k) highlight[k];
     this.set = function (key, newStyle, force, append)
