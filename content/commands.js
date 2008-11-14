@@ -668,10 +668,18 @@ function Commands() //{{{
         liberator.execute(commands.replaceTokens(this.replacementText, tokens));
     }
 
-    // TODO: add dir, highlight, menu, option completers
-    var completeOptionMap = { url: "url", buffer: "buffer", bookmark: "bookmark", command: "ex",
-        environment: "environment", event: "autocmdEvent", file: "file", shellcmd: "shellCommand",
-        javascript: "javascript", help: "help", mapping: "userMapping" };
+    // TODO: offer completion.ex?
+    var completeOptionMap = {
+        altstyle: "alternateStylesheet", bookmark: "bookmark",
+        buffer: "buffer", color: "colorScheme", command: "command",
+        dialog: "dialog", dir: "directory", environment: "environment",
+        event: "autocmdEvent", file: "file", help: "help",
+        highlight: "highlightGroup", javascript: "javascript", macro: "macro",
+        mapping: "userMapping", menu: "menuItem", option: "option",
+        preference: "preference", search: "search",
+        shellcmd: "shellCommand", sidebar: "sidebar", url: "url",
+        usercommand: "userCommand"
+    };
 
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
     // specified - useful?

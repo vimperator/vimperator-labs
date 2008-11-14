@@ -293,17 +293,29 @@ Completion for arguments to user defined commands is not available by default.
 Completion can be enabled by specifying one of the following arguments to the
 -complete option when defining the command.
 `----------------`--------------------------------------------------------------
+*altstyle*       alternate author style sheets
 *bookmark*       bookmarks
 *buffer*         buffers
+*color*          color schemes
 *command*        Ex commands
+*dialog*         Firefox dialogs
+*dir*            directories
 *environment*    environment variables
 *event*          autocommand events
 *file*           files
 *help*           help tags
+*highlight*      highlight groups
 *javascript*     JavaScript expressions
+*macro*          named macros
 *mapping*        user mappings
+*menu*           menu items
+*option*         Vimperator options
+*preference*     Firefox preferences
+*search*         search engines and keywords
 *shellcmd*       shell commands
+*sidebar*        sidebar panels
 *url*            URLs
+*usercommand*    user commands
 *custom,{func}*  custom completion, provided by {func} 
 --------------------------------------------------------------------------------
 

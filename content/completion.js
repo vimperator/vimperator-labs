@@ -795,6 +795,8 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
+
         bookmark: function (filter)
         {
             return {
@@ -908,6 +910,8 @@ function Completion() //{{{
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
 
+        directory: function (filter, tail) [0, this.file(filter, tail)[1].filter(function (f) f[1] == "Directory")],
+
         environment: function environment(filter)
         {
             let command = liberator.has("Win32") ? "set" : "export";
@@ -922,8 +926,6 @@ function Completion() //{{{
 
             return [0, this.filter(vars, filter)];
         },
-
-        autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
 
         // provides completions for ex commands, including their arguments
         ex: function ex(str)
@@ -1028,6 +1030,8 @@ function Completion() //{{{
             return [0, this.filter(res, filter)];
         },
 
+        highlightGroup: function highlightGroup(filter) commands.get("highlight").completer(filter), // XXX
+
         history: function _history(filter) [0, history.get(filter)],
 
         get javascriptCompleter() javascript,
@@ -1043,6 +1047,12 @@ function Completion() //{{{
 
             return [0, this.filter(macros, filter)];
         },
+
+        menuItem: function menuItem(filter) commands.get("emenu").completer(filter), // XXX
+
+        option: function option(filter) commands.get("set").completer(filter), // XXX
+
+        preference: function preference(filter) commands.get("set").completer(filter, true), // XXX
 
         search: function search(filter)
         {
@@ -1163,9 +1173,9 @@ function Completion() //{{{
             return [0, this.filter(panels, filter)];
         },
 
-        stylesheet: function stylesheet(filter)
+        alternateStylesheet: function alternateStylesheet(filter)
         {
-            var completions = buffer.alternateStyleSheets.map(
+            let completions = buffer.alternateStyleSheets.map(
                 function (stylesheet) [stylesheet.title, stylesheet.href || "inline"]
             );
 

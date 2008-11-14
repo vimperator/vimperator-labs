@@ -512,7 +512,7 @@ function Buffer() //{{{
 
             stylesheetSwitchAll(window.content, args);
         },
-        { completer: function (filter) completion.stylesheet(filter) });
+        { completer: function (filter) completion.alternateStylesheet(filter) });
 
     commands.add(["re[load]"],
         "Reload current page",
