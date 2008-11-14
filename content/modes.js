@@ -137,7 +137,12 @@ const modes = (function () //{{{
                 options.setPref("accessibility.browsewithcaret", false);
 
             statusline.updateUrl();
-            liberator.focusContent(false);
+            // Kludge to prevent the input field losing focus on MS/Mac
+            setTimeout(function () {
+                let focus = document.commandDispatcher.focusedElement;
+                if (focus != document.getElementById("urlbar").inputField)
+                    liberator.focusContent(false);
+            }, 100); 
         }
     }
 
