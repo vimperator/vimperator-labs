@@ -1,6 +1,6 @@
 HEADER
 
-|key-mapping| |abbreviations| |user-commands| +
+Key mappings, abbreviations, and user-defined commands.
 
 section:Key{nbsp}mapping[key-mapping,mapping,macro]
 
