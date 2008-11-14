@@ -893,19 +893,10 @@ function Completion() //{{{
 
         command: function command(filter)
         {
-            var completions = [];
-
             if (!filter)
-            {
-                for (let command in commands)
-                    completions.push([command.name, command.description]);
-                return [0, completions];
-            }
-
-            for (let command in commands)
-                completions.push([command.longNames, command.description]);
-
-            return [0, buildLongestStartingSubstring(completions, filter)];
+                return [0, [[c.name, c.description] for (c in commands)]];
+            else
+                return [0, this.filter([[c.longNames, c.description] for (c in commands)], filter, true)];
         },
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
