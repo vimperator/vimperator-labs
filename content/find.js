@@ -54,7 +54,6 @@ function Search() //{{{
     var lastSearchBackwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
     var caseSensitive = false;       // search string is case sensitive
     var linksOnly = false;           // search is limited to link text only
-    var rangeFind;
 
     // Event handlers for search - closure is needed
     liberator.registerCallback("change", modes.SEARCH_FORWARD, function (command) { search.searchKeyPressed(command); });
@@ -108,131 +107,6 @@ function Search() //{{{
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
         searchString = pattern;
-    }
-
-    function RangeFind(matchCase, backward)
-    {
-        var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
-                               .createInstance()
-                               .QueryInterface(Components.interfaces.nsIFind);
-        finder.caseSensitive = matchCase;
-        var sel = buffer.selectionController;
-        var doc = content.document;
-        var win = content;
-
-        var pageRange = doc.createRange();
-        pageRange.setStartBefore(doc.body);
-        pageRange.setEndAfter(doc.body);
-        var pageStart = pageRange.cloneRange();
-        var pageEnd = pageRange.cloneRange();
-        pageStart.collapse(true);
-        pageEnd.collapse(false);
-
-        // This doesn't work yet.
-        this.resetCaret = function ()
-        {
-            let equal = function (r1, r2) !r1.compareToRange(Range.START_TO_START, r2) && !r1.compareToRange(Range.END_TO_END, r2);
-            let selection = win.getSelection();
-            if (selection.rangeCount == 0)
-                selection.addRange(pageStart);
-            function getLines()
-            {
-                let orig = selection.getRangeAt(0);
-                function getRanges(forward)
-                {
-                    selection.removeAllRanges();
-                    selection.addRange(orig);
-                    let cur = orig;
-                    while (true)
-                    {
-                        var last = cur;
-                        sel.lineMove(forward, false);
-                        cur = selection.getRangeAt(0);
-                        if (equal(cur, last))
-                            break;
-                        yield cur;
-                    }
-                }
-                yield orig;
-                for (let range in getRanges(true))
-                    yield range;
-                for (let range in getRanges(false))
-                    yield range;
-            }
-            for (let range in getLines())
-            {
-                if (sel.checkVisibility(range.startContainer, range.startOffset, range.startOffset))
-                    return range;
-            }
-            return null;
-        };
-
-        var start = new Point(win.pageXOffset, win.pageYOffset);
-        let selection = sel.getSelection(sel.SELECTION_NORMAL);
-        var startRange = selection.rangeCount ? selection.getRangeAt(0) : pageStart;
-        startRange.collapse(true);
-
-        var lastString = "";
-        var lastRange;
-        var forward;
-
-        this.__defineGetter__("searchString", function () lastString);
-        this.__defineGetter__("backward", function () finder.findBackwards);
-
-        this.search = function (word, reverse)
-        {
-            finder.findBackwards = reverse ? !backward : backward;
-            let again = word == null;
-            if (again)
-                word = lastString;
-            if (!matchCase)
-                word = word.toLowerCase();
-
-            if (word == "")
-                var range = startRange;
-            else
-            {
-                if (lastRange)
-                {
-                    if (again)
-                        lastRange.collapse(this.backward);
-                    else if (word.indexOf(lastString) != 0 || this.backward)
-                        lastRange = null;
-                    else
-                        lastRange.collapse(true);
-                }
-
-                var range = finder.Find(word, pageRange,
-                                              lastRange || startRange,
-                                              pageEnd);
-            }
-
-            lastString = word;
-            if (range == null)
-            {
-                if (this.wrapped)
-                {
-                    this.cancel();
-                    return null;
-                }
-                this.wrapped = true;
-                lastRange = this.backward ? pageEnd : pageStart;
-                return this.search(again ? null : word, reverse);
-            }
-            this.wrapped = false;
-            selection.removeAllRanges();
-            selection.addRange(range);
-            sel.scrollSelectionIntoView(sel.SELECTION_NORMAL, 0, false);
-            lastRange = range.cloneRange();
-            return range;
-        };
-
-        this.cancel = function ()
-        {
-            selection.removeAllRanges();
-            selection.addRange(startRange);
-            win.scrollTo(start.x, start.y);
-        };
     }
 
     /* Stolen from toolkit.jar in Firefox, for the time being. The private
@@ -454,17 +328,19 @@ function Search() //{{{
                 backwards = false;
             }
 
-            this.find("", backwards);
             // TODO: focus the top of the currently visible screen
         },
 
         // Finds text in a page
+        // TODO: backwards seems impossible i fear :(
         find: function (str, backwards)
         {
+            var fastFind = getBrowser().fastFind;
+
             processUserPattern(str);
 
-            rangeFind = new RangeFind(caseSensitive, backwards);
-            found = rangeFind.search(searchString);
+            fastFind.caseSensitive = caseSensitive;
+            found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
                 setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
@@ -475,14 +351,25 @@ function Search() //{{{
         // Called when the current search needs to be repeated
         findAgain: function (reverse)
         {
-            if (!rangeFind || !(found = rangeFind.search(null, reverse)))
+            // this hack is needed to make n/N work with the correct string, if
+            // we typed /foo<esc> after the original search.  Since searchString is
+            // readonly we have to call find() again to update it.
+            if (getBrowser().fastFind.searchString != lastSearchString)
+                this.find(lastSearchString, false);
+
+            var up = reverse ? !lastSearchBackwards : lastSearchBackwards;
+            var result = getBrowser().fastFind.findAgain(up, linksOnly);
+
+            if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+            {
                 liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
-            else if (rangeFind.wrapped)
+            }
+            else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
             {
                 // hack needed, because wrapping causes a "scroll" event which clears
                 // our command line
                 setTimeout(function () {
-                    if (rangeFind.backward)
+                    if (up)
                         commandline.echo("search hit TOP, continuing at BOTTOM",
                             commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
                     else
@@ -492,7 +379,7 @@ function Search() //{{{
             }
             else
             {
-                liberator.echo((rangeFind.backward ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+                liberator.echo((up ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
 
                 if (options["hlsearch"])
                     this.highlight(lastSearchString);
@@ -503,7 +390,7 @@ function Search() //{{{
         searchKeyPressed: function (command)
         {
             if (options["incsearch"])
-                found = rangeFind.search(command);
+                this.find(command, backwards);
         },
 
         // Called when the enter key is pressed to trigger a search
@@ -528,8 +415,13 @@ function Search() //{{{
             lastSearchPattern = command;
             lastSearchString = searchString;
 
+            // TODO: move to find() when reverse incremental searching is kludged in
+            // need to find again for reverse searching
+            if (backwards)
+                setTimeout(function () { search.findAgain(false); }, 0);
+
             if (options["hlsearch"])
-                this.highlight(rangeFind.searchString);
+                this.highlight(searchString);
 
             modes.reset();
         },
@@ -540,15 +432,15 @@ function Search() //{{{
         {
             this.clear();
             // TODO: code to reposition the document to the place before search started
-            if (rangeFind)
-                rangeFind.cancel();
-            rangeFind = null;
         },
 
         // FIXME: thunderbird incompatible
         // this is not dependent on the value of 'hlsearch'
         highlight: function (text)
         {
+            if (config.name == "Muttator")
+                return;
+
             // already highlighted?
             if (window.content.document.getElementsByClassName("liberator-search").length > 0)
                 return;
@@ -559,8 +451,7 @@ function Search() //{{{
             highlightObj.highlightDoc(window.content, text);
 
             // recreate selection since _highlightDoc collapses the selection backwards
-            if (rangeFind)
-                rangeFind.search(null);
+            getBrowser().fastFind.findAgain(false, linksOnly);
 
             // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [type="simple"])
         },
@@ -568,9 +459,10 @@ function Search() //{{{
         clear: function ()
         {
             highlightObj.highlightDoc(window.content);
-        },
-
-        rangeFind: RangeFind
+            // need to manually collapse the selection if the document is not
+            // highlighted
+            getBrowser().fastFind.collapseSelection();
+        }
 
     };
     //}}}
