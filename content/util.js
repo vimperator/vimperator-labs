@@ -130,7 +130,7 @@ const util = { //{{{
         };
     },
 
-    ciCompare: function (a, b)
+    compareIgnoreCase: function (a, b)
     {
         return String.localeCompare(a.toLowerCase(), b.toLowerCase());
     },
@@ -357,7 +357,7 @@ const util = { //{{{
             yield start++;
     },
 
-    rangeInterruptable: function (start, end, time)
+    interruptableRange: function (start, end, time)
     {
         let endTime = Date.now() + time;
         while (start < end)

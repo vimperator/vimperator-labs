@@ -201,7 +201,7 @@ function Buffer() //{{{
         {
             if (mappings.repeat)
             {
-                for (let i in util.rangeInterruptable(0, Math.max(count, 1), 100))
+                for (let i in util.interruptableRange(0, Math.max(count, 1), 100))
                     mappings.repeat();
             }
         },

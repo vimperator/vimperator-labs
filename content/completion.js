@@ -588,7 +588,7 @@ function Completion() //{{{
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -629,7 +629,7 @@ function Completion() //{{{
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
         return filtered;
     }
 
@@ -767,7 +767,7 @@ function Completion() //{{{
 
             filtered = filtered.concat(additionalCompletions);
             if (options.get("wildoptions").has("sort"))
-                filtered = filtered.sort(function ciCompare(a, b) util.ciCompare(a[0], b[0]));;
+                filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
             return filtered;
         },
 

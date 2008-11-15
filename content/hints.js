@@ -196,7 +196,7 @@ function Hints() //{{{
             var scrollY = doc.defaultView.scrollY;
 
         inner:
-            for (let i in (util.rangeInterruptable(start, end + 1, 500)))
+            for (let i in (util.interruptableRange(start, end + 1, 500)))
             {
                 let hint = pageHints[i];
                 [elem, text, span, imgspan] = hint;
