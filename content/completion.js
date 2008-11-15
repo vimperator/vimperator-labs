@@ -588,7 +588,7 @@ function Completion() //{{{
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
         return filtered;
     }
 
@@ -629,7 +629,7 @@ function Completion() //{{{
             }
         }
         if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.ciCompare(a[0], b[0]));;
+            filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
         return filtered;
     }
 
@@ -639,14 +639,19 @@ function Completion() //{{{
 
     return {
 
-        setFunctionCompleter: function (func, completers)
+        setFunctionCompleter: function (funcs, completers)
         {
-            func.liberatorCompleter = function (func, obj, string, args) {
-                let completer = completers[args.length - 1];
-                if (!completer)
-                    return [];
-                return completer.call(this, this.eval(obj), this.eval(args.pop()) + string, args);
-            };
+            if (!(funcs instanceof Array))
+                funcs = [funcs];
+            for (let [,func] in Iterator(funcs))
+            {
+                func.liberatorCompleter = function (func, obj, string, args) {
+                    let completer = completers[args.length - 1];
+                    if (!completer)
+                        return [];
+                    return completer.call(this, this.eval(obj), this.eval(args.pop()) + string, args);
+                };
+            }
         },
 
         // returns the longest common substring

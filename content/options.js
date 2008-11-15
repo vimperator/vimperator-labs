@@ -847,14 +847,11 @@ function Options() //{{{
     liberator.registerObserver("load_completion", function ()
     {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
-        let listPrefs = [function () Components.classes["@mozilla.org/preferences-service;1"]
-                                               .getService(Components.interfaces.nsIPrefBranch)
-                                               .getChildList("", { value: 0 })
-                                               .map(function (pref) [pref, ""])];
-        completion.setFunctionCompleter(options.getPref, listPrefs);
-        completion.setFunctionCompleter(options.setPref, listPrefs);
-        completion.setFunctionCompleter(options.resetPref, listPrefs);
-        completion.setFunctionCompleter(options.invertPref, listPrefs);
+        completion.setFunctionCompleter([options.getPref, options.setPref, options.resetPref, options.invertPref],
+                [function () Components.classes["@mozilla.org/preferences-service;1"]
+                                       .getService(Components.interfaces.nsIPrefBranch)
+                                       .getChildList("", { value: 0 })
+                                       .map(function (pref) [pref, ""])]);
     });
 
     return {
