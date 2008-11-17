@@ -1335,7 +1335,7 @@ function Buffer() //{{{
 
                 var prog = args.shift();
                 args.push(url);
-                liberator.callFunctionInThread(null, io.run, [prog, args, true]);
+                liberator.callFunctionInThread(null, io.run, prog, args, true);
             }
             else
             {

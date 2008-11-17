@@ -1255,13 +1255,10 @@ const liberator = (function () //{{{
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
-        callFunctionInThread: function (thread, func, args)
+        callFunctionInThread: function (thread, func)
         {
             function CallbackEvent(func, args)
             {
-                if (!(args instanceof Array))
-                    args = [];
-
                 return {
                     QueryInterface: function (iid)
                     {
@@ -1279,10 +1276,10 @@ const liberator = (function () //{{{
             }
 
             if (!thread)
-                thread = Components.classes["@mozilla.org/thread-manager;1"].getService().newThread(0);
+                thread = threadManager.newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
-            thread.dispatch(new CallbackEvent(func, args), thread.DISPATCH_SYNC);
+            thread.dispatch(new CallbackEvent(func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
         }
 
     };

@@ -849,7 +849,7 @@ function Editor() //{{{
             }
 
             // TODO: save return value in v:shell_error
-            liberator.callFunctionInThread(null, io.run, [prog, args, true]);
+            liberator.callFunctionInThread(null, io.run, prog, args, true);
 
             if (textBox)
                 textBox.removeAttribute("readonly");
