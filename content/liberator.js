@@ -624,6 +624,34 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
+        // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
+        callFunctionInThread: function (thread, func)
+        {
+            function CallbackEvent(func, args)
+            {
+                return {
+                    QueryInterface: function (iid)
+                    {
+                        if (iid.equals(Components.interfaces.nsIRunnable) ||
+                            iid.equals(Components.interfaces.nsISupports))
+                            return this;
+                        throw Components.results.NS_ERROR_NO_INTERFACE;
+                    },
+
+                    run: function ()
+                    {
+                        func.apply(window, args);
+                    }
+                };
+            }
+
+            if (!thread)
+                thread = threadManager.newThread(0);
+
+            // DISPATCH_SYNC is necessary, otherwise strange things will happen
+            thread.dispatch(new CallbackEvent(func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
+        },
+
         // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
         dump: function (message)
         {
@@ -637,6 +665,39 @@ const liberator = (function () //{{{
         dumpStack: function (msg)
         {
             liberator.dump((msg || "") + (new Error()).stack);
+        },
+
+        echo: function (str, flags)
+        {
+            commandline.echo(str, commandline.HL_NORMAL, flags);
+        },
+
+        // TODO: Vim replaces unprintable characters in echoerr/echomsg
+        echoerr: function (str, flags)
+        {
+            flags |= commandline.APPEND_TO_MESSAGES;
+
+            if (typeof str == "object" && "echoerr" in str)
+                str = str.echoerr;
+            else if (str instanceof Error)
+                str = str.fileName + ":" + str.lineNumber + ": " + str;
+
+            if (options["errorbells"])
+                liberator.beep();
+
+            commandline.echo(str, commandline.HL_ERRORMSG, flags);
+        },
+
+        // TODO: add proper level constants
+        echomsg: function (str, verbosity, flags)
+        {
+            flags |= commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE;
+
+            if (verbosity == null)
+                verbosity = 0; // verbosity level is exclusionary
+
+            if (options["verbose"] >= verbosity)
+                commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
         eval: function (str)
@@ -663,6 +724,58 @@ const liberator = (function () //{{{
                 }
                 throw e;
             }
+        },
+
+        // partial sixth level expression evaluation
+        // TODO: what is that really needed for, and where could it be used?
+        //       Or should it be removed? (c) Viktor
+        //       Better name?  See other liberator.eval()
+        //       I agree, the name is confusing, and so is the
+        //           description --Kris
+        evalExpression: function (string)
+        {
+            string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
+            var matches = string.match(/^&(\w+)/);
+            if (matches)
+            {
+                var opt = this.options.get(matches[1]);
+                if (!opt)
+                {
+                    this.echoerr("E113: Unknown option: " + matches[1]);
+                    return;
+                }
+                var type = opt.type;
+                var value = opt.getter();
+                if (type != "boolean" && type != "number")
+                    value = value.toString();
+                return value;
+            }
+
+            // String
+            else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
+            {
+                if (matches)
+                    return matches[2].toString();
+                else
+                {
+                    this.echoerr("E115: Missing quote: " + string);
+                    return;
+                }
+            }
+
+            // Number
+            else if (matches = string.match(/^(\d+)$/))
+            {
+                return parseInt(match[1], 10);
+            }
+
+            var reference = this.variableReference(string);
+            if (!reference[0])
+                this.echoerr("E121: Undefined variable: " + string);
+            else
+                return reference[0][reference[1]];
+
+            return;
         },
 
         // Execute an Ex command like str=":zoom 300"
@@ -729,115 +842,6 @@ const liberator = (function () //{{{
             var elem = config.mainWidget || window.content;
             if (elem && (elem != document.commandDispatcher.focusedElement))
                 elem.focus();
-        },
-
-        // partial sixth level expression evaluation
-        // TODO: what is that really needed for, and where could it be used?
-        //       Or should it be removed? (c) Viktor
-        //       Better name?  See other liberator.eval()
-        evalExpression: function (string)
-        {
-            string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
-            var matches = string.match(/^&(\w+)/);
-            if (matches)
-            {
-                var opt = this.options.get(matches[1]);
-                if (!opt)
-                {
-                    this.echoerr("E113: Unknown option: " + matches[1]);
-                    return;
-                }
-                var type = opt.type;
-                var value = opt.getter();
-                if (type != "boolean" && type != "number")
-                    value = value.toString();
-                return value;
-            }
-
-            // String
-            else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
-            {
-                if (matches)
-                    return matches[2].toString();
-                else
-                {
-                    this.echoerr("E115: Missing quote: " + string);
-                    return;
-                }
-            }
-
-            // Number
-            else if (matches = string.match(/^(\d+)$/))
-            {
-                return parseInt(match[1], 10);
-            }
-
-            var reference = this.variableReference(string);
-            if (!reference[0])
-                this.echoerr("E121: Undefined variable: " + string);
-            else
-                return reference[0][reference[1]];
-
-            return;
-        },
-
-        variableReference: function (string)
-        {
-            if (!string)
-                return [null, null, null];
-
-            var matches = string.match(/^([bwtglsv]):(\w+)/);
-            if (matches) // Variable
-            {
-                // Other variables should be implemented
-                if (matches[1] == "g")
-                {
-                    if (matches[2] in this.globalVariables)
-                        return [this.globalVariables, matches[2], matches[1]];
-                    else
-                        return [null, matches[2], matches[1]];
-                }
-            }
-            else // Global variable
-            {
-                if (string in this.globalVariables)
-                    return [this.globalVariables, string, "g"];
-                else
-                    return [null, string, "g"];
-            }
-        },
-
-        echo: function (str, flags)
-        {
-            commandline.echo(str, commandline.HL_NORMAL, flags);
-        },
-
-        // TODO: Vim replaces unprintable characters in echoerr/echomsg
-        echoerr: function (str, flags)
-        {
-            flags |= commandline.APPEND_TO_MESSAGES;
-
-            if (typeof str == "object" && "echoerr" in str)
-                str = str.echoerr;
-            else if (str instanceof Error)
-                str = str.fileName + ":" + str.lineNumber + ": " + str;
-
-            if (options["errorbells"])
-                liberator.beep();
-
-            commandline.echo(str, commandline.HL_ERRORMSG, flags);
-        },
-
-        // TODO: add proper level constants
-        echomsg: function (str, verbosity, flags)
-        {
-            flags |= commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE;
-
-            if (verbosity == null)
-                verbosity = 0; // verbosity level is exclusionary
-
-            if (options["verbose"] >= verbosity)
-                commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
         // does this liberator extension have a certain feature?
@@ -1053,13 +1057,13 @@ const liberator = (function () //{{{
             return true;
         },
 
+        pluginFiles: {},
+
         // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
         // v.plugins.mode = <str> string to show on v.modes.CUSTOM
         // v.plugins.stop = <func> hooked on a v.modes.reset()
         // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
         plugins: plugins,
-
-        pluginFiles: {},
 
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession, force)
@@ -1243,6 +1247,32 @@ const liberator = (function () //{{{
             while (flush && mainThread.hasPendingEvents());
         },
 
+        variableReference: function (string)
+        {
+            if (!string)
+                return [null, null, null];
+
+            var matches = string.match(/^([bwtglsv]):(\w+)/);
+            if (matches) // Variable
+            {
+                // Other variables should be implemented
+                if (matches[1] == "g")
+                {
+                    if (matches[2] in this.globalVariables)
+                        return [this.globalVariables, matches[2], matches[1]];
+                    else
+                        return [null, matches[2], matches[1]];
+                }
+            }
+            else // Global variable
+            {
+                if (string in this.globalVariables)
+                    return [this.globalVariables, string, "g"];
+                else
+                    return [null, string, "g"];
+            }
+        },
+
         get windows()
         {
             var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -1252,36 +1282,7 @@ const liberator = (function () //{{{
             while (enumerator.hasMoreElements())
                 wa.push(enumerator.getNext());
             return wa;
-        },
-
-        // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
-        callFunctionInThread: function (thread, func)
-        {
-            function CallbackEvent(func, args)
-            {
-                return {
-                    QueryInterface: function (iid)
-                    {
-                        if (iid.equals(Components.interfaces.nsIRunnable) ||
-                            iid.equals(Components.interfaces.nsISupports))
-                            return this;
-                        throw Components.results.NS_ERROR_NO_INTERFACE;
-                    },
-
-                    run: function ()
-                    {
-                        func.apply(window, args);
-                    }
-                };
-            }
-
-            if (!thread)
-                thread = threadManager.newThread(0);
-
-            // DISPATCH_SYNC is necessary, otherwise strange things will happen
-            thread.dispatch(new CallbackEvent(func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
         }
-
     };
     //}}}
 })(); //}}}
