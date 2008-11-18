@@ -32,6 +32,8 @@ function Hints() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const ELEM = 0, TEXT = 1, SPAN = 2, IMGSPAN = 3, BGCOLOR = 4, COLOR = 5;
+
     var myModes = config.browserModes;
 
     var hintMode;
@@ -53,24 +55,26 @@ function Hints() //{{{
     // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
     var docs = [];
 
-    const Mode = new Struct("prompt", "action", "extended");
+    const Mode = new Struct("prompt", "action", "tags");
+    Mode.defaultValue("tags", function () function () options.hinttags);
+    function extended() options.extendedhinttags;
     const hintModes = {
-        ";": Mode("Focus hint",		    		 function (elem) buffer.focusElement(elem),                             true),
+        ";": Mode("Focus hint",		    		 function (elem) buffer.focusElement(elem),                             extended),
         a: Mode("Save hint with prompt",		 function (elem) buffer.saveLink(elem, false)),
         s: Mode("Save hint",					 function (elem) buffer.saveLink(elem, true)),
         o: Mode("Follow hint",					 function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
         t: Mode("Follow hint in a new tab",		 function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",	 function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
-        v: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, false),                    true),
-        V: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, true),                     true),
-        w: Mode("Follow hint in a new window",	 function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         true),
+        v: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, false),                    extended),
+        V: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, true),                     extended),
+        w: Mode("Follow hint in a new window",	 function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
 
-        "?": Mode("Show information for hint",	 function (elem) buffer.showElementInfo(elem),                          true),
+        "?": Mode("Show information for hint",	 function (elem) buffer.showElementInfo(elem),                          extended),
         O: Mode("Open location based on hint",	 function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
         T: Mode("Open new tab based on hint",	 function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
         W: Mode("Open new window based on hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
         y: Mode("Yank hint location",			 function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",		 function (elem) util.copyToClipboard(elem.textContent || "", true),    true),
+        Y: Mode("Yank hint description",		 function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
     };
 
     // reset all important variables
@@ -112,7 +116,7 @@ function Hints() //{{{
             <span class="liberator-hint"/>, doc);
 
         var elem, tagname, text, span, rect;
-        var res = buffer.evaluateXPath(options[hintMode.extended ? "extendedhinttags" : "hinttags"], doc, null, true);
+        var res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
         var fragment = doc.createDocumentFragment();
         var start = pageHints.length;
@@ -181,19 +185,16 @@ function Hints() //{{{
         var activelinkfgcolor = options["activelinkfgcolor"];
         var activelinkbgcolor = options["activelinkbgcolor"];
 
-        var elem, tagname, text, rect, span, imgspan;
-        var hintnum = 1;
-        var validHint = hintMatcher(hintString.toLowerCase());
-        var activeHint = hintNumber || 1;
+        let elem, tagname, text, rect, span, imgspan;
+        let hintnum = 1;
+        let validHint = hintMatcher(hintString.toLowerCase());
+        let activeHint = hintNumber || 1;
         validHints = [];
 
-        for (let j = 0; j < docs.length; j++)
+        for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
-            var doc = docs[j].doc;
-            var start = docs[j].start;
-            var end = docs[j].end;
-            var scrollX = doc.defaultView.scrollX;
-            var scrollY = doc.defaultView.scrollY;
+            let scrollX = doc.defaultView.scrollX;
+            let scrollY = doc.defaultView.scrollY;
 
         inner:
             for (let i in (util.interruptableRange(start, end + 1, 500)))
@@ -208,8 +209,8 @@ function Hints() //{{{
                         imgspan.style.display = "none";
 
                     // reset background color
-                    elem.style.backgroundColor = hint[4];
-                    elem.style.color = hint[5];
+                    elem.style.backgroundColor = hint[BGCOLOR];
+                    elem.style.color = hint[COLOR];
                     continue inner;
                 }
 
@@ -230,7 +231,7 @@ function Hints() //{{{
                         imgspan.style.width = (rect.right - rect.left) + "px";
                         imgspan.style.height = (rect.bottom - rect.top) + "px";
                         imgspan.className = "liberator-hint";
-                        hint[3] = imgspan;
+                        hint[IMGSPAN] = imgspan;
                         doc.body.appendChild(imgspan);
                     }
                     imgspan.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
@@ -240,7 +241,7 @@ function Hints() //{{{
                 if (!imgspan)
                     elem.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
                 elem.style.color = (activeHint == hintnum) ? activelinkfgcolor : linkfgcolor;
-                span.textContent = "" + (hintnum++);
+                span.textContent = String(hintnum++);
                 span.style.display = "inline";
                 validHints.push(elem);
             }
@@ -255,32 +256,27 @@ function Hints() //{{{
         var firstElemBgColor = "";
         var firstElemColor = "";
 
-        for (let j = 0; j < docs.length; j++)
+        for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
-            var doc = docs[j].doc;
-            var start = docs[j].start;
-            var end = docs[j].end;
-
-            for (let i = start; i <= end; i++)
+            for (let i in util.range(start, end + 1))
             {
                 let hint = pageHints[i];
                 // remove the span for the numeric display part
-                doc.body.removeChild(hint[2]);
-                if (hint[3]) // a transparent span for images
-                    doc.body.removeChild(hint[3]);
+                doc.body.removeChild(hint[SPAN]);
+                if (hint[IMGSPAN]) // a transparent span for images
+                    doc.body.removeChild(hint[IMGSPAN]);
 
-                if (timeout && firstElem == hint[0])
+                if (timeout && firstElem == hint[ELEM])
                 {
-                    firstElemBgColor = hint[4];
-                    firstElemColor = hint[5];
+                    firstElemBgColor = hint[BGCOLOR];
+                    firstElemColor = hint[COLOR];
                 }
                 else
                 {
                     // restore colors
-                    var elem = hint[0];
-                    elem.style.backgroundColor = hint[4];
-                    elem.style.color = hint[5];
-                }
+                    var elem = hint[ELEM];
+                    elem.style.backgroundColor = hint[BGCOLOR];
+                    elem.style.color = hint[COLOR]; }
             }
 
             // animate the disappearance of the first hint
@@ -381,19 +377,7 @@ function Hints() //{{{
         function containsMatcher(hintString) //{{{
         {
             var tokens = hintString.split(/ +/);
-
-            function contains(textOfLink)
-            {
-                for (let i = 0; i < tokens.length; i++)
-                {
-                    if (textOfLink.indexOf(tokens[i]) < 0)
-                        return false;
-                }
-
-                return true;
-            }
-
-            return contains;
+            return function (linkText) tokens.every(function (token) linkText.indexOf(token) >= 0);
         } //}}}
 
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
@@ -401,23 +385,23 @@ function Hints() //{{{
             var hintStrings    = hintString.split(/ +/);
             var wordSplitRegex = new RegExp(options["wordseparators"]);
 
+            // What the **** does this do? --Kris
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
                 var charIdx         = 0;
                 var numMatchedWords = 0;
-                for (let wIdx = 0; wIdx < words.length; wIdx++)
+                for (let [,word] in Iterator(words))
                 {
-                    var word = words[wIdx];
                     if (word.length == 0)
                         continue;
 
-                    var wcIdx = 0;
+                    let wcIdx = 0;
                     // Check if the current word matches same characters as the previous word.
                     // Each already matched word has matched at least one character.
                     if (charIdx > numMatchedWords)
                     {
-                        var matchingStarted = false;
-                        for (let i = numMatchedWords; i < charIdx; i++)
+                        let matchingStarted = false;
+                        for (let i in util.range(numMatchedWords, charIdx))
                         {
                             if (chars[i] == word[wcIdx])
                             {
@@ -433,9 +417,10 @@ function Hints() //{{{
                     }
 
                     // the current word matches same characters as the previous word
+                    var prevCharIdx;
                     if (wcIdx > 0)
                     {
-                        var prevCharIdx = charIdx;
+                        prevCharIdx = charIdx;
                         // now check if it matches additional characters
                         for (; wcIdx < word.length && charIdx < chars.length; wcIdx++, charIdx++)
                         {
@@ -461,7 +446,7 @@ function Hints() //{{{
                     // try to match the next characters
                     else
                     {
-                        var prevCharIdx = charIdx;
+                        prevCharIdx = charIdx;
                         for (let i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
                         {
                             if (word[i] != chars[charIdx])
@@ -487,16 +472,13 @@ function Hints() //{{{
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
                 var strIdx = 0;
-                for (let wIdx = 0; wIdx < words.length; wIdx++)
+                for (let [,word] in Iterator(words))
                 {
-                    var word = words[wIdx];
                     if (word.length == 0)
                         continue;
 
-                    var str = strings[strIdx];
-                    if (str.length == 0)
-                        strIdx++;
-                    else if (word.indexOf(str) == 0)
+                    let str = strings[strIdx];
+                    if (str.length == 0 || word.indexOf(str) == 0)
                         strIdx++;
                     else if (!allowWordOverleaping)
                         return false;
@@ -510,16 +492,15 @@ function Hints() //{{{
                     if (strings[strIdx].length != 0)
                         return false;
                 }
-
-                return (strIdx == strings.length);
+                return true;
             }
 
-            function wordStartsWith(textOfLink)
+            function wordStartsWith(linkText)
             {
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
-                var words = textOfLink.split(wordSplitRegex);
+                let words = linkText.split(wordSplitRegex);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
@@ -592,7 +573,7 @@ function Hints() //{{{
 
     options.add(["wordseparators", "wsp"],
         "How words are split for hintmatching",
-        "string", '[\\.,!\\?:;/\\\"\\^\\$%&?\\(\\)\\[\\]\\{\\}<>#\\*\\+\\|=~ _\\-]');
+        "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
@@ -616,6 +597,11 @@ function Hints() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        addMode: function (mode)
+        {
+            hintModes[mode] = Mode.apply(Mode, Array.slice(arguments, 1));
+        },
 
         show: function (minor, filter, win)
         {

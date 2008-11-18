@@ -179,14 +179,19 @@ function Commands() //{{{
         return NaN;
     }
 
-    function quote(q, list) list.reduce(function (acc, [k, v]) {
-        v = "\\" + (v || k);
-        return function (str) acc(String.replace(str, k, v, "g"))
-    }, function (val) q + val + q);
+    const quoteMap = {
+        "\n": "n",
+        "\t": "t"
+    }
+    function quote(q, list)
+    {
+        let re = RegExp("[" + list + "]", "g");
+        return function (str) q + str.replace(re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
+    }
     const quoteArg = {
-        '"': quote('"', [["\n", "n"], ["\t", "t"], ['"'], ["\\"]]),
-        "'": quote("'", [["\\"], ["'"]]),
-        "":  quote("",  [["\\"], [" "]])
+        '"': quote('"', '\n\t"\\\\'),
+        "'": quote("'", "\\\\'"),
+        "":  quote("",  "\\\\ ")
     }
 
     const ArgType = new Struct("description", "parse");
@@ -439,6 +444,9 @@ function Commands() //{{{
             while (i < str.length)
             {
                 // skip whitespace
+                //let re = /^\s*/;
+                //re.lastIndex = i;
+                //i += re.exec(str)[0].length;
                 if (/\s/.test(str[i]))
                 {
                     i++;
@@ -501,16 +509,16 @@ function Commands() //{{{
 
                                 if (quote)
                                 {
-                                    if (!complete)
+                                    if (complete)
                                     {
-                                        liberator.echoerr("Invalid argument for option " + optname);
-                                        return null;
+                                        args.completions = opt[3] || [];
+                                        if (typeof args.completions == "function")
+                                            args.completions = args.completions();
+                                        args.quote = quoteArg[sub[optname.length + 1]] || quoteArg[""];
+                                        return args;
                                     }
-                                    let compl = opt[3] || [];
-                                    if (typeof compl == "function")
-                                        compl = compl();
-                                    let quote = quoteArg[sub[optname.length + 1]] || quoteArg[""];
-                                    return [i + optname.length + 1, completion.filter(compl.map(quote), quote(arg))];
+                                    liberator.echoerr("Invalid argument for option " + optname);
+                                    return null;
                                 }
 
                                 if (!invalid)
