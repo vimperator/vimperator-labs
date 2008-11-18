@@ -1061,17 +1061,17 @@ function Completion() //{{{
                 let searches = [];
                 for (let [, k] in Iterator(keywords))
                 {
-                    if (k[0].toLowerCase() != keyword.toLowerCase() || k[3].indexOf("%s") == -1)
+                    if (k.keyword.toLowerCase() != keyword.toLowerCase() || k.url.indexOf("%s") == -1)
                         continue;
-                    let [begin, end] = k[3].split("%s");
+                    let [begin, end] = k.url.split("%s");
                     for (let [, h] in Iterator(hist))
                     {
-                        if (h[0].indexOf(begin) == 0 && (!end.length || h[0].substr(-end.length) == end))
+                        if (h.url.indexOf(begin) == 0 && (!end.length || h.url.substr(-end.length) == end))
                         {
-                            let query = h[0].substring(begin.length, h[0].length - end.length);
+                            let query = h.url.substring(begin.length, h.url.length - end.length);
                             searches.push([decodeURIComponent(query.replace("+", "%20")),
                                            <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
-                                           k[2]]);
+                                           k.icon]);
                         }
                     }
                 }
