@@ -150,20 +150,21 @@ function Completion() //{{{
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
                     continue;
-                /* Try harder.
-                if (/^\[XPCNativeWrapper /.test(obj))
-                    obj = obj.wrappedJSObject;
-                */
-                try
-                {
-                    if (obj.wrappedJSObject)
-                        obj = obj.wrappedJSObject;
-                }
-                catch (e) {}
 
-                for (let [k, v] in this.iter(obj))
-                    compl.push([k, v]);
+                // XPCNativeWrappers, etc, don't show all accessible
+                // members until they're accessed, so, we look at
+                // the wrappedJSObject instead, and return any keys
+                // available in the object itself.
+                let orig = obj;
+                if (obj.wrappedJSObject)
+                    obj = obj.wrappedJSObject;
+                compl.push([v for (v in this.iter(obj)) if (v[0] in orig)])
+                // And if wrappedJSObject happens to be available,
+                // return that, too.
+                if (orig.wrappedJSObject)
+                    compl.push([["wrappedJSObject", obj]]);
             }
+            compl = util.Array.flatten(compl);
             return cacheResults.js = compl;
         }
 
