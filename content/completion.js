@@ -158,7 +158,7 @@ function Completion() //{{{
                 let orig = obj;
                 if (obj.wrappedJSObject)
                     obj = obj.wrappedJSObject;
-                compl.push([v for (v in this.iter(obj)) if (v[0] in orig)])
+                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]])])
                 // And if wrappedJSObject happens to be available,
                 // return that, too.
                 if (orig.wrappedJSObject)
