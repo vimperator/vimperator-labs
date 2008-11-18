@@ -105,6 +105,12 @@ function Mail() //{{{
         return [0, completions];
     }
 
+    function getCurrentFolderIndex()
+    {
+        // for some reason, the index is interpreted as a string, therefore the parseInt
+        return parseInt(gFolderTreeView.getIndexOfFolder(gFolderTreeView.getSelectedFolders()[0]));
+    }
+
     function getRSSUrl()
     {
         return gDBView.hdrForFirstSelectedMessage.messageId.replace(/(#.*)?@.*$/, "");
@@ -166,17 +172,17 @@ function Mail() //{{{
         return parent;
     }
 
+    // does not wrap yet, intentional?
     function selectUnreadFolder(backwards, count)
     {
         count = (count > 0 ) ? count : 1;
         var direction = backwards ? -1 : 1;
-        var tree = GetFolderTree();
-        var c = tree.currentIndex;
+        var c = getCurrentFolderIndex();
         var i = direction;
         var folder;
-        while (count > 0 && (c + i) < tree.view.rowCount && (c + i) >= 0)
+        while (count > 0 && (c + i) < gFolderTreeView.rowCount && (c + i) >= 0)
         {
-            var resource = GetFolderResource(tree, (c + i)).QueryInterface(Components.interfaces.nsIMsgFolder);
+            let resource = gFolderTreeView._rowMap[c+i]._folder;
             if (!resource.isServer && resource.getNumUnread(false))
             {
                 count -= 1;
@@ -187,7 +193,7 @@ function Mail() //{{{
         if (!folder || count > 0)
             liberator.beep();
         else
-            tree.view.selection.timedSelect(c + folder, tree._selectDelay);
+            gFolderTreeView.selection.timedSelect(c + folder, 500);
     }
 
     function escapeRecipient(recipient)
@@ -472,14 +478,13 @@ function Mail() //{{{
         function (count)
         {
             count = (count > 0 ) ? count : 1;
-            var tree = GetFolderTree();
-            var c = tree.currentIndex;
-            if (c + count >= tree.view.rowCount)
+            let newPos = getCurrentFolderIndex() + count;
+            if (newPos >= gFolderTreeView.rowCount)
             {
-                liberator.beep();
-                return;
+                newPos = newPos % gFolderTreeView.rowCount;
+                commandline.echo("search hit BOTTOM, continuing at TOP", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }
-            tree.view.selection.timedSelect(c + count, tree._selectDelay );
+            gFolderTreeView.selection.timedSelect(newPos, 500);
         },
         { flags: Mappings.flags.COUNT });
 
@@ -496,14 +501,13 @@ function Mail() //{{{
         function (count)
         {
             count = (count > 0 ) ? count : 1;
-            var tree = GetFolderTree();
-            var c = tree.currentIndex;
-            if (c - count < 0)
+            let newPos = getCurrentFolderIndex() - count;
+            if (newPos < 0)
             {
-                liberator.beep();
-                return;
+                newPos = (newPos % gFolderTreeView.rowCount) + gFolderTreeView.rowCount;
+                commandline.echo("search hit TOP, continuing at BOTTOM", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }
-            tree.view.selection.timedSelect(c - count, tree._selectDelay );
+            gFolderTreeView.selection.timedSelect(newPos, 500);
         },
         { flags: Mappings.flags.COUNT });
 
@@ -752,9 +756,7 @@ function Mail() //{{{
 
         get currentFolder()
         {
-            var tree = GetFolderTree();
-            return GetFolderResource(tree, tree.currentIndex).
-                   QueryInterface(Components.interfaces.nsIMsgFolder);
+            return gFolderTreeView.getSelectedFolders()[0];
         },
 
         composeNewMail: function (args)
@@ -822,10 +824,9 @@ function Mail() //{{{
             if (includeMsgFolders === undefined)
                 includeMsgFolders = true;
 
-            var tree = GetFolderTree();
-            for (let i = 0; i < tree.view.rowCount; i++)
+            for (let i = 0; i < gFolderTreeView.rowCount; i++)
             {
-                var resource = GetFolderResource(tree, i).QueryInterface(Components.interfaces.nsIMsgFolder);
+                let resource = gFolderTreeView._rowMap[i]._folder;
                 if ((resource.isServer && !includeServers) || (!resource.isServer && !includeMsgFolders))
                     continue;
 
@@ -841,19 +842,10 @@ function Mail() //{{{
 
         getNewMessages: function (currentAccountOnly)
         {
-            var accounts = currentAccountOnly ? [this.currentAccount]
-                                              : this.getFolders("", true, false);
-
-            accounts.forEach(function (account) {
-                try
-                {
-                    account.getNewMessages(msgWindow, null);
-                }
-                catch (e)
-                {
-                    liberator.log("Error getting messages for account " + account.prettyName + ": " + e);
-                }
-            });
+            if (currentAccountOnly)
+                MsgGetMessagesForAccount();
+            else
+                GetMessagesForAllAuthenticatedAccounts();
         },
 
         getStatistics: function (currentAccountOnly)
@@ -987,7 +979,7 @@ function Mail() //{{{
                 selectMessageReverse = reverse;
 
                 var folders = this.getFolders("", true, true);
-                var ci = GetFolderTree().currentIndex;
+                var ci = getCurrentFolderIndex();
                 for (let i = 1; i < folders.length; i++)
                 {
                     let index = (i + ci) % folders.length;

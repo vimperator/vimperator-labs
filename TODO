@@ -32,6 +32,7 @@ BUGS:
   Structs are slow, as removing the "icon" -> favicon field didn't make it faster.
 - start with an empty window with an about:blank tab only:
   :b a<tab>  changes the (Untitled) title to "about:blank"
+- visual caret mode is broken
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than

@@ -73,7 +73,8 @@ function Bookmarks() //{{{
             let uri = ioService.newURI(node.uri, null, null);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
-            return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
+            //return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
+            return bookmarks.push({url: node.uri, title: node.title, icon: null, keyword: keyword, tags: tags, id: node.itemId});
         }
 
         function readBookmark(id)
@@ -735,6 +736,7 @@ function History() //{{{
 
     return {
 
+        load: function() { load(); }, // temporary only, for performance testing
         get: function (filter)
         {
             if (!placesHistory)
