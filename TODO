@@ -33,6 +33,7 @@ BUGS:
 - start with an empty window with an about:blank tab only:
   :b a<tab>  changes the (Untitled) title to "about:blank"
 - visual caret mode is broken
+- Tabbing between form elems triggers NORMAL mode
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
