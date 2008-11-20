@@ -164,7 +164,7 @@ function Completion() //{{{
                 let orig = obj;
                 if (obj.wrappedJSObject)
                     obj = obj.wrappedJSObject;
-                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]])])
+                compl.push([v for (v in this.iter(obj)) if (v[0] in orig)])
                 // And if wrappedJSObject happens to be available,
                 // return that, too.
                 if (orig.wrappedJSObject)
@@ -1063,30 +1063,33 @@ function Completion() //{{{
             let keywords = bookmarks.getKeywords();
             let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), filter, false, true);
 
-            let generate = function () {
-                let hist = history.get();
-                let searches = [];
-                for (let [, k] in Iterator(keywords))
-                {
-                    if (k.keyword.toLowerCase() != keyword.toLowerCase() || k.url.indexOf("%s") == -1)
-                        continue;
-                    let [begin, end] = k.url.split("%s");
-                    for (let [, h] in Iterator(hist))
-                    {
-                        if (h.url.indexOf(begin) == 0 && (!end.length || h.url.substr(-end.length) == end))
-                        {
-                            let query = h.url.substring(begin.length, h.url.length - end.length);
-                            searches.push([decodeURIComponent(query.replace("+", "%20")),
-                                           <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
-                                           k.icon]);
-                        }
-                    }
-                }
-                return searches;
-            }
-            let searches = this.cached("searches-" + keyword, args, generate, "filter", [false, true]);
-            searches = searches.map(function (a) (a = a.concat(), a[0] = keyword + " " + a[0], a));
-            return [0, searches.concat(engines)];
+            // NOTE: While i like the result of the code, due to the History simplification
+            // that code is too slow to be here. We might use a direct Places History query instead for better speed
+            // let generate = function () {
+            //     let hist = history.get();
+            //     let searches = [];
+            //     for (let [, k] in Iterator(keywords))
+            //     {
+            //         if (k.keyword.toLowerCase() != keyword.toLowerCase() || k.url.indexOf("%s") == -1)
+            //             continue;
+            //         let [begin, end] = k.url.split("%s");
+            //         for (let [, h] in Iterator(hist))
+            //         {
+            //             if (h.url.indexOf(begin) == 0 && (!end.length || h.url.substr(-end.length) == end))
+            //             {
+            //                 let query = h.url.substring(begin.length, h.url.length - end.length);
+            //                 searches.push([decodeURIComponent(query.replace("+", "%20")),
+            //                                <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
+            //                                k.icon]);
+            //             }
+            //         }
+            //     }
+            //     return searches;
+            // }
+            // let searches = this.cached("searches-" + keyword, args, generate, "filter", [false, true]);
+            // searches = searches.map(function (a) (a = a.concat(), a[0] = keyword + " " + a[0], a));
+            // return [0, searches.concat(engines)];
+            return [0, engines];
         },
 
         // XXX: Move to bookmarks.js?
@@ -1260,8 +1263,6 @@ function Completion() //{{{
                     completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b")
                     completions = completions.concat(bookmarks.get(filter));
-                else if (c == "h")
-                    completions = completions.concat(history.get(filter));
                 else if (c == "l" && completionService) // add completions like Firefox's smart location bar
                 {
                     historyCache = [];

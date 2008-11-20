@@ -1,5 +1,8 @@
 2008-XX-XX:
     * version 2.0 (probably)
+    * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
+      value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
+      to use 'h' in 'complete'.
     * IMPORTANT: AlwaysHint modes were removed as they didn't make too
       much sense with the new hint system
     * IMPORTANT: command actions now take an args object, returned from
@@ -12,6 +15,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+
     * :buffers supports a filter now to only list buffers matching filter (vim
       incompatible, but consistent with other commands)
     * Favicon support in many places

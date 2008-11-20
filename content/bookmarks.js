@@ -550,47 +550,6 @@ function History() //{{{
     const historyService = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                      .getService(Components.interfaces.nsINavHistoryService);
 
-    // const History = new Struct("url", "title", "icon");
-    // History.defaultValue("title", function () "[No Title]");
-    // History.defaultValue("icon", function () bookmarks.getFavicon(this.url));
-
-    var placesHistory;
-    var cachedHistory = []; // add pages here after loading the initial Places history
-
-    function load()
-    {
-        placesHistory = [];
-
-        // no query parameters will get all history
-        // XXX default sorting is... ?
-        var options = historyService.getNewQueryOptions();
-        var query = historyService.getNewQuery();
-
-        // execute the query
-        var result = historyService.executeQuery(query, options);
-        var rootNode = result.root;
-        rootNode.containerOpen = true;
-        // iterate over the immediate children of this folder
-        for (let i = 0; i < rootNode.childCount; i++)
-        {
-            var node = rootNode.getChild(i);
-            // liberator.dump("History child " + node.itemId + ": " + node.title + " - " + node.type);
-            if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                placesHistory.push({ url: node.uri, title: node.title, get icon() function() bookmarks.getFavicon(this.url) });
-        }
-
-        // close a container after using it!
-        rootNode.containerOpen = false;
-    }
-
-    liberator.registerObserver("enter", function () {
-        if (options["preload"])
-        {
-            // Forces a load, if not already loaded but wait 15sec
-            // so that we don't load it at the same time as bookmarks
-            setTimeout(function() { liberator.callFunctionInThread(null, load); }, 15000);
-        }
-    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
@@ -736,77 +695,57 @@ function History() //{{{
 
     return {
 
-        load: function() { load(); }, // temporary only, for performance testing
-        get: function (filter)
+        get: function (filter, maxItems)
         {
-            if (!placesHistory)
-                load();
+            let items = [];
 
-            if (!filter)
-                return cachedHistory.concat(placesHistory);
-            return completion.cached("history", filter, function () cachedHistory.concat(placesHistory),
-                                "filterURLArray");
-        },
+            // no query parameters will get all history
+            let query = historyService.getNewQuery();
+            query.searchTerms = filter;
 
-        // the history is automatically added to the Places global history
-        // so just update our cached history here
-        add: function (url, title)
-        {
-            let filter = function (h) h[0] != url;
+            let options = historyService.getNewQueryOptions();
+            options.sortingMode = options.SORT_BY_DATE_DESCENDING;
+            if (maxItems > 0)
+                options.maxResults = maxItems;
 
-            // don't let cachedHistory grow too large
-            if (placesHistory && cachedHistory.length > 1000)
+            // execute the query
+            let root = historyService.executeQuery(query, options).root;
+            root.containerOpen = true;
+            for (let i = 0; i < root.childCount; i++)
             {
-                placesHistory = cachedHistory.concat(placesHistory);
-                placesHistory = placesHistory.filter(filter);
-                cachedHistory = [];
+                let node = root.getChild(i);
+                if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
+                    items.push({ url: node.uri, title: node.title, get icon() function() bookmarks.getFavicon(node.uri) });
             }
-            else
-                cachedHistory = cachedHistory.filter(filter);
+            root.containerOpen = false; // close a container after using it!
 
-            cachedHistory.unshift({ url: url, title: title, get icon() function() bookmarks.getFavicon(this.url) });
-            return true;
+            return items;
         },
 
-        // TODO: better names?
-        //       and move to buffer.?
+        // TODO: better names and move to buffer.?
         stepTo: function (steps)
         {
-            var index = getWebNavigation().sessionHistory.index + steps;
-
+            let index = getWebNavigation().sessionHistory.index + steps;
             if (index >= 0 && index < getWebNavigation().sessionHistory.count)
-            {
                 getWebNavigation().gotoIndex(index);
-            }
             else
-            {
                 liberator.beep();
-            }
         },
 
         goToStart: function ()
         {
-            var index = getWebNavigation().sessionHistory.index;
-
+            let index = getWebNavigation().sessionHistory.index;
             if (index == 0)
-            {
-                liberator.beep();
-                return;
-            }
+                return liberator.beep(); // really wanted?
 
             getWebNavigation().gotoIndex(0);
         },
 
         goToEnd: function ()
         {
-            var index = getWebNavigation().sessionHistory.index;
-            var max = getWebNavigation().sessionHistory.count - 1;
-
-            if (index == max)
-            {
-                liberator.beep();
-                return;
-            }
+            let index = getWebNavigation().sessionHistory.index;
+            if (index == getWebNavigation().sessionHistory.count - 1)
+                return liberator.beep();
 
             getWebNavigation().gotoIndex(max);
         },
@@ -814,7 +753,7 @@ function History() //{{{
         // if openItems is true, open the matching history items in tabs rather than display
         list: function (filter, openItems)
         {
-            var items = this.get(filter);
+            var items = this.get(filter, 1000);
             if (items.length == 0)
             {
                 if (filter.length > 0)
@@ -828,7 +767,6 @@ function History() //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            // TODO: is there a faster way to limit to max. 1000 items?
             let list = template.bookmarks("title", items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }

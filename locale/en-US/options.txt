@@ -218,26 +218,20 @@ ____
 
 
 |\'cpt'| |\'complete'|
-||'complete' 'cpt'|| charlist (default: sfbh)
+||'complete' 'cpt'|| charlist (default: sfl)
 ____
 Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 
 `---`--------------------------------------------------------------------------------
 *s* Search engines and keyword URLs
 *f* Local files
-*b* Bookmarks
-*h* History
 *l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
+*b* Bookmarks
 *S* Suggest engines
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
-and then any available quick searches. Add "sort" to the 'wildoptions' option
-if you want all entries sorted. If 'wildoptions' contains "auto", "b" and "h"
-are not available for performance reasons but you can use "l" to achieve
-a similar effect. On the other hand "l" does not yet work, when 'wildoptions'
-does NOT contain "auto".
-
+and then any available quick searches.
 ____
 
 

@@ -517,10 +517,6 @@ function Events() //{{{
             let url = doc.location.href;
             let title = doc.title;
 
-            // update history
-            if (url && liberator.has("history"))
-                history.add(url, title);
-
             // mark the buffer as loaded, we can't use buffer.loaded
             // since that always refers to the current buffer, while doc can be
             // any buffer, even in a background tab
