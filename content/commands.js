@@ -444,9 +444,6 @@ function Commands() //{{{
             while (i < str.length)
             {
                 // skip whitespace
-                //let re = /^\s*/;
-                //re.lastIndex = i;
-                //i += re.exec(str)[0].length;
                 if (/\s/.test(str[i]))
                 {
                     i++;
