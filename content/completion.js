@@ -58,6 +58,11 @@ function Completion() //{{{
     var completionCache = [];
 
     var historyTimer = new util.Timer(50, 100, function histTimer() {
+        // don't set all completions again every time the timer fires, even
+        // though items might not have changed
+        if (historyCache.length == historyResult.matchCount)
+            return;
+
         let comp = [];
         for (let i in util.range(0, historyResult.matchCount))
             comp.push([historyResult.getValueAt(i),
@@ -66,8 +71,9 @@ function Completion() //{{{
 
         //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
 
+        // TODO: we need to have a "completionCacheAfter" to allow cpt=slf 
         historyCache = comp;
-        commandline.setCompletions({ get completions() { return completionCache.concat(historyCache); } });
+        commandline.setCompletions({ get items() { return completionCache.concat(historyCache); } });
     });
 
     function Javascript()
@@ -807,7 +813,7 @@ function Completion() //{{{
         {
             return {
                 start: 0,
-                get completions() { return bookmarks.get(filter) },
+                get items() { return bookmarks.get(filter) },
                 createRow: function (item)
                         <ul class="hl-CompItem">
                             <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
@@ -943,7 +949,7 @@ function Completion() //{{{
             var [count, cmd, special, args] = commands.parseCommand(str);
             var matches = str.match(/^(:*\d*)\w*$/);
             if (matches)
-                return { start: matches[1].length, completions: this.command(cmd)[1] };
+                return { start: matches[1].length, items: this.command(cmd)[1] };
 
             // dynamically get completions as specified with the command's completer function
             var compObject = { start: 0, completions: [] };
@@ -955,7 +961,7 @@ function Completion() //{{{
                 exLength = matches ? matches[0].length : 0;
                 compObject = command.completer.call(this, args, special);
                 if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
-                    compObject = { start: compObject[0], completions: compObject[1] };
+                    compObject = { start: compObject[0], items: compObject[1] };
             }
             compObject.start += exLength;
             return compObject;
@@ -1198,8 +1204,41 @@ function Completion() //{{{
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
         url: function url(filter, complete)
         {
+            function getMoreItems(count, maxTime)
+            {
+                maxTime = maxTime || 5000; // maximum time to wait, default 5 sec
+                count = count || 10;
+
+                var completions = [];
+                historyResult = null;
+                let then = new Date().getTime();
+                for (let now = then; now - then < maxTime; now = new Date().getTime())
+                {
+                    liberator.threadYield();
+                    if (!historyResult)
+                        continue;
+
+                    if (historyResult.searchResult == historyResult.RESULT_SUCCESS ||
+                        historyResult.searchResult == historyResult.RESULT_NOMATCH ||
+                        (historyResult.searchResult == historyResult.RESULT_SUCCESS_ONGOING &&
+                         historyResult.matchCount >= count + numLocationCompletions))
+                    {
+                        //liberator.dump("Got " + historyResult.matchCount + " more results after " + (now - then) + " ms with result: " + historyResult.searchResult);
+                        //completionService.stopSearch();
+                        for (let i in util.range(numLocationCompletions, historyResult.matchCount))
+                            completions.push([historyResult.getValueAt(i),
+                                            historyResult.getCommentAt(i),
+                                            historyResult.getImageAt(i)]);
+                        numLocationCompletions = historyResult.matchCount;
+                        break;
+                    }
+                }
+                return completions;
+            }
+
             this.filterString = filter;
             var completions = [];
+            var numLocationCompletions = 0; // how many async completions did we already return to the caller?
             var start = 0;
             var skip = filter.match("^(.*" + options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
             if (skip)
@@ -1214,32 +1253,34 @@ function Completion() //{{{
             for (let c in util.Array.iterator(cpt))
             {
                 if (c == "s")
-                    completions.push(this.search(filter)[1]);
+                    completions = completions.concat(this.search(filter)[1]);
                 else if (c == "f")
-                    completions.push(this.file(filter, false)[1]);
+                    completions = completions.concat(this.file(filter, false)[1]);
                 else if (c == "S")
-                    completions.push(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
+                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
                 else if (c == "b")
-                    completions.push(bookmarks.get(filter));
+                    completions = completions.concat(bookmarks.get(filter));
                 else if (c == "h")
-                    completions.push(history.get(filter));
+                    completions = completions.concat(history.get(filter));
                 else if (c == "l" && completionService) // add completions like Firefox's smart location bar
                 {
+                    historyCache = [];
+                    completionCache = completions.slice(); // make copy of current results
                     completionService.stopSearch();
-                    //dump("searching for " + filter + "\n");
                     completionService.startSearch(filter, "", historyResult, {
                         onSearchResult: function onSearchResult(search, result) {
                             historyResult = result;
+                            //liberator.dump("Search result in " + historyResult.matchCount + " results with retval: " + historyResult.searchResult);
                             historyTimer.tell();
                             if (result.searchResult <= result.RESULT_SUCCESS)
                                 historyTimer.flush();
                         }
                     });
+                    
                 }
             }
 
-            completionCache = util.Array.flatten(completions);
-            return [start, completionCache.concat(historyCache)];
+            return { start: start, items: completions, getMoreItems: getMoreItems };
         },
 
         userCommand: function userCommand(filter)

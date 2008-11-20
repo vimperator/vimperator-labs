@@ -1,6 +1,5 @@
-<pre>
 Priority list:
-1-9 as in Vim (9=required for next release, 5=would be nice, 1=probably not)
+1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
 BUGS:
 - add window resize support to hints
@@ -23,6 +22,7 @@ BUGS:
 - :set! browser.urlbar.clickSelectsAll=true -> clicking in the location bar unfocuses it immediately
 - http://apcmag.com/why_os_x_106_snow_leopard_should_leave_powerpc_in_the_cold.htm - scrolls the wrong
   window with j/k (the green slashdot thing for me).
+- http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
 
 (recent CVS regressions):
 - A cached "awesomebar completion" result is still displayed, after the user removes "l" from the 'cpt' and
@@ -34,6 +34,7 @@ BUGS:
   :b a<tab>  changes the (Untitled) title to "about:blank"
 - visual caret mode is broken
 - Tabbing between form elems triggers NORMAL mode
+- :bmarks, :hs output and 'cpt'=bh completions are broken
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
@@ -87,4 +88,3 @@ FEATURES:
 
 RANDOM IDEAS:
 * hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
-</pre>

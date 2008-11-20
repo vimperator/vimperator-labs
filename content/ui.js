@@ -97,9 +97,8 @@ function CommandLine() //{{{
     var silent = false;
 
     var completionList = new ItemList("liberator-completions");
-    var completions = [];
+    var completions = { start: 0, items: [] };
     // for the example command "open sometext| othertext" (| is the cursor pos):
-    var completionStartIndex = 0;  // will be 5 because we want to complete arguments for the :open command
     var completionPrefix = "";     // will be: "open sometext"
     var completionPostfix = "";    // will be: " othertext"
     var completionIndex = UNINITIALIZED;
@@ -108,10 +107,10 @@ function CommandLine() //{{{
     var startHints = false; // whether we're waiting to start hints mode
 
     var statusTimer = new util.Timer(5, 100, function () {
-        if (completionIndex >= completions.length)
+        if (completionIndex >= completions.items.length)
             statusline.updateProgress("");
         else
-            statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.length);
+            statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.items.length);
     });
     var autocompleteTimer = new util.Timer(201, 300, function (command) {
         if (events.feedingKeys)
@@ -543,8 +542,6 @@ function CommandLine() //{{{
                                      // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // add the string to the message history
 
-        get autocompleteTimer() autocompleteTimer,
-
         get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
         get silent() silent,
@@ -581,9 +578,9 @@ function CommandLine() //{{{
 
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
-                options.get("wildoptions").has("auto") >= 0 &&
+                options.get("wildoptions").has("auto") &&
                 extendedMode == modes.EX)
-                autocompleteTimer.tell(cmd);
+                    autocompleteTimer.tell(cmd);
         },
 
         // normally used when pressing esc, does not execute a command
@@ -599,9 +596,7 @@ function CommandLine() //{{{
         {
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
-            autocompleteTimer.reset();
             completionList.hide();
-            completions = [];
             this.resetCompletions();
 
             setLine("", this.HL_NORMAL);
@@ -731,7 +726,7 @@ function CommandLine() //{{{
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
                     inputHistory.add(command);
                     modes.pop(!commandline.silent);
-                    autocompleteTimer.reset();
+                    this.resetCompletions();
                     completionList.hide();
                     liberator.focusContent(false);
                     statusline.updateProgress(""); // we may have a "match x of y" visible
@@ -827,31 +822,37 @@ function CommandLine() //{{{
                     // we need to build our completion list first
                     if (completionIndex == UNINITIALIZED)
                     {
-                        completionStartIndex = 0;
                         completionIndex = -1;
                         completionPrefix = command.substring(0, commandWidget.selectionStart);
                         completionPostfix = command.substring(commandWidget.selectionStart);
-                        var compObject = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
-                        if (compObject)
-                        {
-                            completionStartIndex = compObject.start;
-                            completions = compObject.completions;
-                        }
+                        completions = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
 
                         // sort the completion list
+                        // TODO: might not make sense anymore with our advanced completions, we should just sort when necessary
                         if (options.get("wildoptions").has("sort"))
-                            compObject.completions.sort(function (a, b) String.localeCompare(a[0], b[0]));
+                            completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
-                        completionList.setItems(compObject);
+                        completionList.setItems(completions.items);
                     }
 
-                    if (completions.length == 0)
+                    if (completions.items.length == 0)
                     {
-                        liberator.beep();
-                        // prevent tab from moving to the next field:
-                        event.preventDefault();
-                        event.stopPropagation();
-                        return false;
+                        // try to fetch more items, if possible
+                        // TODO: also use that code when we DO have completions but too few
+                        if (completions.getMoreItems)
+                        {
+                            completions.items = completions.items.concat(completions.getMoreItems(1));
+                            completionList.setItems(completions.items);
+                        }
+
+                        if (completions.items.length == 0) // still not more matches
+                        {
+                            liberator.beep();
+                            // prevent tab from moving to the next field:
+                            event.preventDefault();
+                            event.stopPropagation();
+                            return false;
+                        }
                     }
 
                     if (full)
@@ -860,12 +861,12 @@ function CommandLine() //{{{
                         {
                             completionIndex--;
                             if (completionIndex < -1)
-                                completionIndex = completions.length - 1;
+                                completionIndex = completions.items.length - 1;
                         }
                         else
                         {
                             completionIndex++;
-                            if (completionIndex > completions.length)
+                            if (completionIndex > completions.items.length)
                                 completionIndex = 0;
                         }
 
@@ -877,30 +878,31 @@ function CommandLine() //{{{
                     if (hasList)
                         completionList.show();
 
-                    if ((completionIndex == -1 || completionIndex >= completions.length) && !longest) // wrapped around matches, reset command line
+                    if ((completionIndex == -1 || completionIndex >= completions.items.length) && !longest) // wrapped around matches, reset command line
                     {
-                        if (full && completions.length > 1)
+                        if (full)
                             setCommand(completionPrefix + completionPostfix);
                     }
                     else
                     {
                         var compl = null;
-                        if (longest && completions.length > 1)
+                        if (longest && completions.items.length > 1)
                             compl = completion.getLongestSubstring();
                         else if (full)
-                            compl = completions[completionIndex][0];
-                        else if (completions.length == 1)
-                            compl = completions[0][0];
+                            compl = completions.items[completionIndex][0];
+                        else if (completions.items.length == 1)
+                            compl = completion.items[0][0];
 
                         if (compl)
                         {
-                            setCommand(command.substring(0, completionStartIndex) + compl + completionPostfix);
-                            commandWidget.selectionStart = commandWidget.selectionEnd = completionStartIndex + compl.length;
+                            setCommand(command.substring(0, completions.start) + compl + completionPostfix);
+                            commandWidget.selectionStart = commandWidget.selectionEnd = completions.start + compl.length;
                             if (longest)
                                 liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
 
                             // Start a new completion in the next iteration. Useful for commands like :source
                             // RFC: perhaps the command can indicate whether the completion should be restarted
+                            //      -> should be doable now, since the completion items are objects
                             // Needed for :source to grab another set of completions after a file/directory has been filled out
                             // if (completions.length == 1 && !full)
                             //     completionIndex = UNINITIALIZED;
@@ -1220,7 +1222,7 @@ function CommandLine() //{{{
         },
 
         // to allow asynchronous adding of completions
-        setCompletions: function (completionObject)
+        setCompletions: function (newCompletions)
         {
             if (liberator.mode != modes.COMMAND_LINE)
                 return;
@@ -1230,32 +1232,41 @@ function CommandLine() //{{{
                 return completionList.hide();
             */
 
-            let newCompletions = completionObject.completions;
-            completionList.setItems(completionObject);
+            completionList.setItems(newCompletions.items);
 
-            if (completionIndex >= 0 && completionIndex < newCompletions.length && completionIndex < completions.length)
+            // try to keep the old item selected
+            if (completionIndex >= 0 && completionIndex < newCompletions.items.length && completionIndex < completions.items.length)
             {
-                if (newCompletions[completionIndex][0] != completions[completionIndex][0])
+                if (newCompletions.items[completionIndex][0] != completions.items[completionIndex][0])
                     completionIndex = -1;
             }
             else
                 completionIndex = -1;
 
+            let oldStart = completions.start;
             completions = newCompletions;
+            if (typeof completions.start != "number")
+                completions.start = oldStart;
+
             completionList.selectItem(completionIndex);
             if (options.get("wildoptions").has("auto"))
                 completionList.show();
 
+            // why do we have to set that here? Without that, we lose the
+            // prefix when wrapping around searches
+            // with that, we SOMETIMES have problems with <tab> followed by <s-tab> in :open completions
             var command = this.getCommand();
             completionPrefix = command.substring(0, commandWidget.selectionStart);
             completionPostfix = command.substring(commandWidget.selectionStart);
 
-            if (typeof completionObject.start == "number")
-                completionStartIndex = completionObject.start;
         },
 
+        // TODO: does that function need to be public?
         resetCompletions: function ()
         {
+            autocompleteTimer.reset();
+            completion.cancel();
+            completions = { start: 0, items: [] };
             completionIndex = historyIndex = UNINITIALIZED;
             wildIndex = 0;
         }
@@ -1269,8 +1280,6 @@ function CommandLine() //{{{
  * @param id: the id of the the XUL <iframe> which we want to fill
  *            it MUST be inside a <vbox> (or any other html element,
  *            because otherwise setting the height does not work properly
- *
- * TODO: get rid off "completion" variables, we are dealing with variables after all
  */
 function ItemList(id) //{{{
 {
@@ -1295,8 +1304,7 @@ function ItemList(id) //{{{
     doc.body.id = id + "-content";
     doc.body.appendChild(doc.createTextNode(""));
 
-    var completions = []; // a reference to the Array of completions
-    var completionObject = {};
+    var items = [];
     var startIndex = -1;  // The index of the first displayed item
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
@@ -1351,7 +1359,7 @@ function ItemList(id) //{{{
     function getCompletion(index) completionElements[index - startIndex];
 
     /**
-     * uses the entries in completions to fill the listbox
+     * uses the entries in "items" to fill the listbox
      * does incremental filling to speed up things
      *
      * @param offset: start at this index and show maxItems
@@ -1359,12 +1367,13 @@ function ItemList(id) //{{{
     function fill(offset)
     {
         let diff = offset - startIndex;
-        if (offset == null || offset - startIndex == 0 || offset < 0 || completions.length && offset >= completions.length)
+        if (offset == null || offset - startIndex == 0 || offset < 0 || items.length && offset >= items.length)
             return;
 
-        let createRow = ("createRow" in completionObject) ? completionObject.createRow : createDefaultRow;
+        //let createRow = ("createRow" in completionObject) ? completionObject.createRow : createDefaultRow;
+        let createRow = createDefaultRow;
         startIndex = offset;
-        endIndex = Math.min(startIndex + maxItems, completions.length);
+        endIndex = Math.min(startIndex + maxItems, items.length);
 
         if (selIndex > -1 && Math.abs(diff) == 1) /* Scroll one position */
         {
@@ -1372,14 +1381,14 @@ function ItemList(id) //{{{
 
             if (diff == 1) /* Scroll down */
             {
-                let item = completions[endIndex - 1];
+                let item = items[endIndex - 1];
                 let row = createRow(item, true);
                 tbody.removeChild(tbody.firstChild);
                 tbody.appendChild(row);
             }
             else /* Scroll up */
             {
-                let item = completions[offset];
+                let item = items[offset];
                 let row = createRow(item, true);
                 tbody.removeChild(tbody.lastChild);
                 tbody.insertBefore(row, tbody.firstChild);
@@ -1394,7 +1403,7 @@ function ItemList(id) //{{{
                           <div class="hl-Completions">
                           {
                               template.map(util.range(offset, endIndex), function (i)
-                              createRow(completions[i]))
+                              createRow(items[i]))
                           }
                           </div>
                           <div class="hl-Completions">
@@ -1439,11 +1448,10 @@ function ItemList(id) //{{{
         visible: function () !container.collapsed,
 
         // if @param selectedItem is given, show the list and select that item
-        setItems: function setItems(items, selectedItem)
+        setItems: function setItems(newItems, selectedItem)
         {
             startIndex = endIndex = selIndex = -1;
-            completionObject = items || { start: 0, completions: [] };
-            completions = completionObject.completions || []; // TODO: remove?
+            items = newItems || [];
             if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);
@@ -1457,7 +1465,7 @@ function ItemList(id) //{{{
             //if (container.collapsed) // fixme
             //    return;
 
-            if (index == -1 || index == completions.length) // wrapped around
+            if (index == -1 || index == items.length) // wrapped around
             {
                 if (selIndex >= 0)
                     getCompletion(selIndex).removeAttribute("selected");
@@ -1474,7 +1482,7 @@ function ItemList(id) //{{{
             else if (index <= startIndex + CONTEXT_LINES)
                 newOffset = index - CONTEXT_LINES;
 
-            newOffset = Math.min(newOffset, completions.length - maxItems);
+            newOffset = Math.min(newOffset, items.length - maxItems);
             newOffset = Math.max(newOffset, 0);
 
             if (selIndex > -1)
