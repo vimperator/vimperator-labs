@@ -166,7 +166,7 @@ function Completion() //{{{
                     obj = obj.wrappedJSObject;
                 // v[0] in orig and orig[v[0]] catch different cases. XPCOM
                 // objects are problematic, to say the least.
-                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] != undefined)])
+                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)])
                 // And if wrappedJSObject happens to be available,
                 // return that, too.
                 if (orig.wrappedJSObject)
@@ -961,7 +961,7 @@ function Completion() //{{{
             {
                 matches = str.match(/^:*\d*(?:\w+[\s!]|!)\s*/);
                 exLength = matches ? matches[0].length : 0;
-                compObject = command.completer.call(this, args, special);
+                compObject = command.completer.call(command, args, special);
                 if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                     compObject = { start: compObject[0], items: compObject[1] };
             }

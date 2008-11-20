@@ -104,8 +104,6 @@ Command.prototype = {
 
         let self = this;
 
-        function parseArgs(args) commands.parseArgs(args, this.options, this.argCount, false, this.literal);
-
         if (this.hereDoc)
         {
             let matches = args.match(/(.*)<<\s*(\S+)$/);
@@ -114,7 +112,7 @@ Command.prototype = {
                 commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
                     function (args)
                     {
-                        args = parseArgs.call(self, matches[1] + "\n" + args);
+                        args = this.parseArgs(matches[1] + "\n" + args);
 
                         if (args)
                             self.action.call(self, args, special, count, modifiers);
@@ -123,7 +121,7 @@ Command.prototype = {
             }
         }
 
-        args = parseArgs.call(this, args);
+        args = this.parseArgs(args);
 
         if (args)
             this.action.call(this, args, special, count, modifiers);
@@ -158,7 +156,9 @@ Command.prototype = {
             }
         }
         return false;
-    }
+    },
+
+    parseArgs: function (args, complete) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete)
 
 }; //}}}
 
@@ -186,7 +186,7 @@ function Commands() //{{{
     function quote(q, list)
     {
         let re = RegExp("[" + list + "]", "g");
-        return function (str) q + str.replace(re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
+        return function (str) q + String.replace(str, re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
     }
     const quoteArg = {
         '"': quote('"', '\n\t"\\\\'),
@@ -440,9 +440,38 @@ function Commands() //{{{
             var arg = null;
             var count = 0; // the length of the argument
             var i = 0;
+
+            // XXX
+            function matchOpts(arg)
+            {
+                // Push possible option matches into completions
+                if (!onlyArgumentsRemaining && !quote)
+                    args.completions = [[opt[0][0], opt[0][0]] for ([i, opt] in Iterator(options)) if (opt[0][0].indexOf(arg) == 0)];
+                    //args.completions = util.Array.flatten(
+                    //        options.map(function ([names]) names.filter(
+                    //                function (name) name.indexOf(arg) == 0)));
+            }
+            function resetCompletions()
+            {
+                args.completeArg = null;
+                args.completeOpt = null;
+                args.completeStart = i;
+                args.completions = [];
+                args.quote = quoteArg[""];
+            }
+            if (complete)
+            {
+                resetCompletions();
+                matchOpts("");
+                args.completeArg = 0;
+            }
+
             outer:
             while (i < str.length)
             {
+                if (complete)
+                    resetCompletions();
+
                 // skip whitespace
                 if (/\s/.test(str[i]))
                 {
@@ -471,6 +500,7 @@ function Commands() //{{{
                                 invalid = false;
                                 arg = null;
                                 quote = null;
+                                count = 0;
                                 // no value to the option
                                 if (optname.length >= sub.length)
                                 {
@@ -504,21 +534,28 @@ function Commands() //{{{
                                     invalid = true;
                                 }
 
-                                if (quote)
+                                if (complete)
                                 {
-                                    if (complete)
+                                    args.completeStart += optname.length + count;
+                                    if (quote || !invalid && count)
                                     {
-                                        args.completions = opt[3] || [];
-                                        if (typeof args.completions == "function")
-                                            args.completions = args.completions();
-                                        args.quote = quoteArg[sub[optname.length + 1]] || quoteArg[""];
+                                        args.completeOpt = opt[0][0];
+                                        args.quote = quoteArg[quote] || quoteArg[""];
+                                        if (typeof opt[3] == "function")
+                                            var compl = opt[3]();
+                                        else
+                                            compl = opt[3] || [];
+                                        args.completions = completion.filter(compl.map(function ([k, v]) [args.quote(k), v]), arg);;
                                         return args;
                                     }
+                                }
+                                else if (quote)
+                                {
                                     liberator.echoerr("Invalid argument for option " + optname);
                                     return null;
                                 }
 
-                                if (!invalid)
+                                if (!invalid && (!complete || count))
                                 {
                                     let type = argTypes[opt[1]];
                                     if (type)
@@ -526,7 +563,10 @@ function Commands() //{{{
                                         arg = type.parse(arg);
                                         if (arg == null || arg == NaN)
                                         {
-                                            liberator.echoerr("Invalid argument for " + type.description + "option: " + optname);
+                                            if (complete)
+                                                commandline.highlight(completions.completeStart, arg.length, "SPELLCHECK");
+                                            else
+                                                liberator.echoerr("Invalid argument for " + type.description + "option: " + optname);
                                             return null;
                                         }
                                     }
@@ -536,7 +576,10 @@ function Commands() //{{{
                                     {
                                         if (opt[2].call(this, arg) == false)
                                         {
-                                            liberator.echoerr("Invalid argument for option: " + optname);
+                                            if (complete)
+                                                commandline.highlight(completions.completeStart, arg.length, "SPELLCHECK");
+                                            else
+                                                liberator.echoerr("Invalid argument for option: " + optname);
                                             return null;
                                         }
                                     }
@@ -555,12 +598,20 @@ function Commands() //{{{
                 {
                     args.literalArg = sub;
                     args.arguments.push(sub);
+                    if (complete)
+                        args.completeArg = args.arguments.length;
                     break;
                 }
 
                 // if not an option, treat this token as an argument
-                var [count, arg] = getNextArg(sub);
-                if (count == -1)
+                var [count, arg, quote] = getNextArg(sub);
+                if (complete)
+                {
+                    args.quote = quoteArg[quote] || quoteArg[""];
+                    args.completeArg = args.arguments.length;
+                    matchOpts(arg);
+                }
+                else if (count == -1)
                 {
                     liberator.echoerr("Error parsing arguments: " + arg);
                     return null;
@@ -573,12 +624,16 @@ function Commands() //{{{
 
                 if (arg != null)
                     args.arguments.push(arg);
+                if (complete)
+                    args.completeArg = args.arguments.length;
 
-                i += count; // hopefully count is always > 0, otherwise we get an endless loop
+                if (count <= 0)
+                    throw Error("count <= 0"); // Shouldn't happen.
+                i += count;
             }
 
             // check for correct number of arguments
-            if (args.arguments.length == 0 && (argCount == "1" || argCount == "+"))
+            if (args.arguments.length == 0 && (argCount == "1" || argCount == "+") && !complete)
             {
                 liberator.echoerr("E471: Argument required");
                 return null;
@@ -586,7 +641,8 @@ function Commands() //{{{
             else if (args.arguments.length == 1 && (argCount == "0") ||
                      args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?"))
             {
-                liberator.echoerr("E488: Trailing characters");
+                if (!complete)
+                    liberator.echoerr("E488: Trailing characters");
                 return null;
             }
 
@@ -609,29 +665,26 @@ function Commands() //{{{
             }
 
             // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
-            var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
+            let matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
+            //var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
             if (!matches)
                 return [null, null, null, null, null];
-            matches.shift();
+            let [, count, cmd, special, args, heredoc] = matches;
 
             // parse count
-            if (matches[0])
-                matches[0] = matches[0] == "%" ? this.COUNT_ALL: parseInt(matches[0], 10);
+            if (count)
+                count = count == "%" ? this.COUNT_ALL: parseInt(count, 10);
             else
-                matches[0] = this.COUNT_NONE;
+                count = this.COUNT_NONE;
 
-            matches[2] = !!matches[2];
-            matches.push(null);
-            if (matches[3])
+            if (args)
             {
-                tag = matches[3].match(/<<\s*(\w+)\s*$/);
+                tag = args.match(/<<\s*(\w+)\s*$/);
                 if (tag && tag[1])
-                    matches[4] = tag[1];
+                    heredoc = tag[1];
             }
-            else
-                matches[3] = "";
 
-            return matches;
+            return [count, cmd, !!special, args || "", heredoc];
         },
 
         get quoteArg() quoteArg,

@@ -295,7 +295,7 @@ const util = { //{{{
         XML.ignoreWhitespace = false;
 
         if (object === null)
-            return "null";
+            return "null\n";
 
         if (typeof object != "object")
             return false;

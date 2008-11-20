@@ -430,7 +430,11 @@ liberator.registerObserver("load_commands", function ()
             argCount: "2",
             bang: true,
             completer: function (filter) {
-                let compl = [];
+                let args = this.parseArgs(filter, true);
+                let compl = args ? args.completions : [];
+                if (args && args.completeOpt)
+                    return [args.completeStart, compl];
+
                 try
                 {
                     compl.push([content.location.host, "Current Host"]);
@@ -442,7 +446,7 @@ liberator.registerObserver("load_commands", function ()
             },
             hereDoc: true,
             literal: true,
-            options: [[["-name", "-n"], commands.OPTION_STRING],
+            options: [[["-name", "-n"], commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]],
                       [["-append", "-a"], commands.OPTION_NOARG]],
             serial: function () [
                 {
