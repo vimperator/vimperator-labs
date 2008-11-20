@@ -1324,31 +1324,34 @@ function ItemList(id) //{{{
     }
 
     // TODO: move to completions?
-    function createDefaultRow([b, c, a], dom)
+    function createDefaultRow(item, dom)
     {
+        if (item instanceof Array)
+            item = { text: item[0], description: item[1], icon: item[2] };
+
         /* Kludge until we have completion contexts. */
         let map = completion.filterMap;
         if (map)
         {
-            b = map[0] ? map[0](b) : b;
-            c = map[1] ? map[1](c) : c;
+            item.text = map[0] ? map[0](item.text) : item.text;
+            item.description = map[1] ? map[1](item.description) : item.description;
         }
         /* Obviously, ItemList shouldn't know or care about this. */
         let filter = completion.filterString;
         if (filter)
         {
-            b = template.highlightFilter(b, filter);
-            c = template.highlightFilter(c, filter);
+            item.text = template.highlightFilter(item.text, filter);
+            item.description = template.highlightFilter(item.description, filter);
         }
 
-        if (typeof a == "function")
-            a = a();
+        if (typeof item.icon == "function")
+            item.icon = item.icon();
 
         let row =
             <ul class="hl-CompItem">
-                <li class="hl-CompIcon">{a ? <img src={a}/> : <></>}</li>
-                <li class="hl-CompResult">{b}</li>
-                <li class="hl-CompDesc">{c}</li>
+                <li class="hl-CompIcon">{item.icon ? <img src={item.icon}/> : <></>}</li>
+                <li class="hl-CompResult">{item.text}</li>
+                <li class="hl-CompDesc">{item.description}</li>
             </ul>;
 
         if (dom)

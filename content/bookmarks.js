@@ -26,6 +26,9 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+// TODO: with the new subscript loader, is there really no way to keep variable in per-file scope?
+const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
+
 // also includes methods for dealing with keywords and search engines
 function Bookmarks() //{{{
 {
@@ -74,7 +77,7 @@ function Bookmarks() //{{{
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
             //return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
-            return bookmarks.push({url: node.uri, title: node.title, icon: null, keyword: keyword, tags: tags, id: node.itemId});
+            return bookmarks.push({ url: node.uri, title: node.title, get icon() getFavicon(node.uri), keyword: keyword, tags: tags, id: node.itemId});
         }
 
         function readBookmark(id)
@@ -715,7 +718,7 @@ function History() //{{{
             {
                 let node = root.getChild(i);
                 if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                    items.push({ url: node.uri, title: node.title, get icon() function() bookmarks.getFavicon(node.uri) });
+                    items.push({ url: node.uri, title: node.title, icon: node.icon ? node.icon.spec : DEFAULT_FAVICON });
             }
             root.containerOpen = false; // close a container after using it!
 
@@ -942,6 +945,7 @@ function QuickMarks() //{{{
             }
 
             let items = ({ title: String(mark), url: qmarks.get(mark) } for each (mark in marks));
+            // TODO: template.bookmarks is not the best for quickmarks
             let list = template.bookmarks("QuickMark", items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
