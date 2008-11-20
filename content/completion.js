@@ -164,7 +164,9 @@ function Completion() //{{{
                 let orig = obj;
                 if (obj.wrappedJSObject)
                     obj = obj.wrappedJSObject;
-                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]])])
+                // v[0] in orig and orig[v[0]] catch different cases. XPCOM
+                // objects are problematic, to say the least.
+                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] != undefined)])
                 // And if wrappedJSObject happens to be available,
                 // return that, too.
                 if (orig.wrappedJSObject)
