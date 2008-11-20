@@ -16,6 +16,7 @@
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
 
+    * new 'followhints' option
     * :buffers supports a filter now to only list buffers matching filter (vim
       incompatible, but consistent with other commands)
     * Favicon support in many places

@@ -1035,8 +1035,6 @@ function Completion() //{{{
 
         highlightGroup: function highlightGroup(filter) commands.get("highlight").completer(filter), // XXX
 
-        history: function _history(filter) [0, history.get(filter)],
-
         get javascriptCompleter() javascript,
 
         javascript: function _javascript(str)

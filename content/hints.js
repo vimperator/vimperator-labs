@@ -323,6 +323,17 @@ function Hints() //{{{
             return false;
         }
 
+        if (options["followhints"] > 0)
+        {
+            if (!followFirst)
+                return false; // no return hit; don't examine uniqueness
+
+            // OK. return hit. But there's more than one hint. And
+            // there's no tab-selected current link. Do not follow in mode 2
+            if ((options["followhints"] == 2) && validHints.length > 1 && !hintNumber)
+                return liberator.beep();
+        }
+    
         if (!followFirst)
         {
             var firstHref = validHints[0].getAttribute("href") || null;
@@ -543,6 +554,11 @@ function Hints() //{{{
         "Automatically follow non unique numerical hint",
         "number", 0,
         { validator: function (value) value >= 0 });
+
+    options.add(["followhints", "fh"],
+        "Change the way when to automatically follow hints",
+        "number", 0,
+        { validator: function (value) value >= 0 && value < 3 });
 
     options.add(["linkfgcolor", "lfc"],
         "Foreground color of a link during hint mode",

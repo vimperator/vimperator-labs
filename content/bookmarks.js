@@ -686,7 +686,7 @@ function History() //{{{
         function (args, special) { history.list(args.string, special); },
         {
             bang: true,
-            completer: function (filter) completion.history(filter)
+            // completer: function (filter) completion.history(filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

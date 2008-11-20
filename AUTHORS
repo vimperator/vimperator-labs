@@ -13,6 +13,7 @@ Inactive/former developers:
   * Marco Candrian (mac@calmar.ws)
  
 Patches (in no special order):
+  * Ruud Grosmann ('followhints' option)
   * Xie&Tian (multibyte support for hints)
   * Juergen Descher
   * Kazuo (count support for ctrl-^)
