@@ -94,12 +94,16 @@ function Mappings() //{{{
     function addMap(map, userMap)
     {
         var where = userMap ? user : main;
-        map.modes.forEach(function (mode) { where[mode].push(map); });
+        map.modes.forEach(function (mode) {
+                if (!(mode in where))
+                    where[mode] = [];
+                where[mode].push(map);
+        });
     }
 
     function getMap(mode, cmd, stack)
     {
-        var maps = stack[mode];
+        var maps = stack[mode] || [];
 
         for (let [,map] in Iterator(maps))
         {
@@ -112,7 +116,7 @@ function Mappings() //{{{
 
     function removeMap(mode, cmd)
     {
-        var maps = user[mode];
+        var maps = user[mode] || [];
         var names;
 
         for (let [i, map] in Iterator(maps))

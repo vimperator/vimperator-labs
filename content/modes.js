@@ -61,28 +61,9 @@ const modes = (function () //{{{
             ext += " (menu)";
         ext += " --" + macromode;
 
-        switch (main)
-        {
-            case modes.INSERT:
-                return "-- INSERT" + ext;
-            case modes.VISUAL:
-                return "-- VISUAL" + (extended & modes.LINE ? " LINE" : "") + ext;
-            case modes.COMMAND_LINE:
-                // under modes.COMMAND_LINE, this function will never be called
-                return macromode;
-            case modes.CARET:
-                return "-- CARET" + ext;
-            case modes.TEXTAREA:
-                return "-- TEXTAREA" + ext;
-            case modes.MESSAGE:
-                return "-- MESSAGE" + ext;
-            case modes.COMPOSE:
-                return "-- COMPOSE" + ext;
-            case modes.CUSTOM:
-                return "-- " + plugins.mode + ext;
-            default: // NORMAL mode
-                return macromode;
-        }
+        if (main in modeMap && typeof modeMap[main].display == "function")
+            return "-- " + modeMap[main].display() + ext;
+        return macromode;
     }
 
     // NOTE: Pay attention that you don't run into endless loops
@@ -150,36 +131,25 @@ const modes = (function () //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    return {
-
-        // main modes, only one should ever be active
+    var self = {
         NONE:             0,
-        NORMAL:           1 << 0,
-        INSERT:           1 << 1,
-        VISUAL:           1 << 2,
-        COMMAND_LINE:     1 << 3,
-        CARET:            1 << 4, // text cursor is visible
-        TEXTAREA:         1 << 5, // text cursor is in a HTMLTextAreaElement
-        MESSAGE:          1 << 6, // for now only used in Muttator when the message has focus
-        COMPOSE:          1 << 7,
-        CUSTOM:           1 << 8,
-        // extended modes, can include multiple modes, and even main modes
-        EX:               1 << 9,
-        HINTS:            1 << 10,
-        INPUT_MULTILINE:  1 << 11,
-        OUTPUT_MULTILINE: 1 << 12,
-        SEARCH_FORWARD:   1 << 13,
-        SEARCH_BACKWARD:  1 << 14,
-        MENU:             1 << 15, // a popupmenu is active
-        LINE:             1 << 16, // linewise visual mode
-        RECORDING:        1 << 17,
-        PROMPT:           1 << 18,
 
         __iterator__: function () util.Array.iterator(this.all),
 
-        get all() [this.NONE, this.NORMAL, this.INSERT, this.VISUAL,
-                   this.HINTS, this.COMMAND_LINE, this.CARET,
-                   this.TEXTAREA, this.MESSAGE, this.COMPOSE, this.CUSTOM],
+        get all() mainModes.slice(),
+
+        addMode: function (name, extended, display) {
+            let disp = name.replace("_", " ", "g");
+            this[name] = 1 << lastMode++;
+            modeMap[name] = modeMap[this[name]] = {
+                extended: extended,
+                mask: this[name],
+                name: name,
+                display: display || function () disp
+            };
+            if (!extended)
+                mainModes.push(this[name]);
+        },
 
         // show the current mode string in the command line
         show: function ()
@@ -289,6 +259,34 @@ const modes = (function () //{{{
         set extended(value) { extended = value; this.show(); }
 
     };
+
+    var mainModes = [self.NONE];
+    var lastMode = 0;
+    var modeMap = {};
+
+    // main modes, only one should ever be active
+    self.addMode("NORMAL", false, -1);
+    self.addMode("INSERT");
+    self.addMode("VISUAL", false, function () "VISUAL" + (extended & modes.LINE ? " LINE" : ""));
+    self.addMode("COMMAND_LINE");
+    self.addMode("CARET"); // text cursor is visible
+    self.addMode("TEXTAREA"); // text cursor is in a HTMLTextAreaElement
+    self.addMode("MESSAGE"); // for now only used in Muttator when the message has focus
+    self.addMode("COMPOSE");
+    self.addMode("CUSTOM", false, function () plugins.mode);
+    // extended modes, can include multiple modes, and even main modes
+    self.addMode("EX", true);
+    self.addMode("HINTS", true);
+    self.addMode("INPUT_MULTILINE", true);
+    self.addMode("OUTPUT_MULTILINE", true);
+    self.addMode("SEARCH_FORWARD", true);
+    self.addMode("SEARCH_BACKWARD", true);
+    self.addMode("MENU", true); // a popupmenu is active
+    self.addMode("LINE", true); // linewise visual mode
+    self.addMode("RECORDING", true);
+    self.addMode("PROMPT", true);
+
+    return self;
     //}}}
 })(); //}}}
 

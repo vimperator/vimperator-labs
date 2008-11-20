@@ -475,7 +475,10 @@ function Events() //{{{
         };
 
         if (liberator.has("tabs"))
+        {
             args.tab = tabs.getContentIndex(doc) + 1;
+            args.doc = "tabs.getTab(" + (args.tab - 1) + ").linkedBrowser.contentDocument";
+        }
 
         autocommands.trigger(name, args);
     }
