@@ -616,8 +616,8 @@ function Mail() //{{{
         "Toggle HTML message display",
         function ()
         {
-            var want_html = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
-            mail.setHTML(want_html ? 1 : 0);
+            let wantHtml = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
+            mail.setHTML(wantHtml ? 1 : 0);
         });
 
     // YANKING TEXT

@@ -1381,14 +1381,14 @@ function ItemList(id) //{{{
             if (diff == 1) /* Scroll down */
             {
                 let item = items[endIndex - 1];
-                let row = "html" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
+                let row = "xml" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
                 tbody.removeChild(tbody.firstChild);
                 tbody.appendChild(row);
             }
             else /* Scroll up */
             {
                 let item = items[offset];
-                let row = "html" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
+                let row = "xml" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
                 tbody.removeChild(tbody.lastChild);
                 tbody.insertBefore(row, tbody.firstChild);
             }
@@ -1402,7 +1402,7 @@ function ItemList(id) //{{{
                           <div class="hl-Completions">
                           {
                               template.map(util.range(offset, endIndex), function (i)
-                              "html" in items[i] ? items[i].html : createDefaultRow(items[i]))
+                              "xml" in items[i] ? items[i].html : createDefaultRow(items[i]))
                           }
                           </div>
                           <div class="hl-Completions">

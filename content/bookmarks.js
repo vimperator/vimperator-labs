@@ -77,7 +77,14 @@ function Bookmarks() //{{{
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
             //return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
-            return bookmarks.push({ url: node.uri, title: node.title, get icon() getFavicon(node.uri), keyword: keyword, tags: tags, id: node.itemId});
+
+            return bookmarks.push({ url: node.uri,
+                                    title: node.title,
+                                    get icon() getFavicon(node.uri), // TODO; must be a direct way to get the icon
+                                    keyword: keyword,
+                                    tags: tags,
+                                    id: node.itemId,
+                                    get xml() template.bookmarkItem(this)});
         }
 
         function readBookmark(id)
@@ -537,7 +544,7 @@ function Bookmarks() //{{{
             if (openItems)
                 return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.bookmarks("title", items);
+            let list = template.genericTable(["", "title", "URL"], items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -718,7 +725,10 @@ function History() //{{{
             {
                 let node = root.getChild(i);
                 if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                    items.push({ url: node.uri, title: node.title, icon: node.icon ? node.icon.spec : DEFAULT_FAVICON });
+                items.push({ url: node.uri,
+                             title: node.title,
+                             icon: node.icon ? node.icon.spec : DEFAULT_FAVICON,
+                             get xml() template.bookmarkItem(this)});
             }
             root.containerOpen = false; // close a container after using it!
 
@@ -770,7 +780,7 @@ function History() //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.bookmarks("title", items);
+            let list = template.genericTable(["", "title", "URL"], items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -944,9 +954,12 @@ function QuickMarks() //{{{
                 }
             }
 
-            let items = ({ title: String(mark), url: qmarks.get(mark) } for each (mark in marks));
-            // TODO: template.bookmarks is not the best for quickmarks
-            let list = template.bookmarks("QuickMark", items);
+            let items = ({ title: String(mark),
+                           url: qmarks.get(mark),
+                           get xml() <tr><td>&#xa0;&#xa0;{this.title}</td><td>{this.url}</td></tr>
+                         } for each (mark in marks));
+
+            let list = template.genericTable(["QuickMark", "URL"], items);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
