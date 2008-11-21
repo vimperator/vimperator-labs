@@ -32,6 +32,82 @@ modules._cleanEval = function (__liberator_eval_arg, __liberator_eval_tmp)
     return window.eval(__liberator_eval_arg);
 }
 
+function CompletionContext(editor, offset)
+{
+    if (editor instanceof arguments.callee)
+    {
+        let parent = editor;
+        this.parent = parent;
+        this.editor = parent.editor;
+        this.offset = parent.offset + (offset || 0);
+        this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
+        this.contexts = this.parent.contexts;
+    }
+    else
+    {
+        this.editor = editor;
+        this.offset = offset || 0;
+        this.tabPressed = false;
+        this.contexts = {};
+    }
+    this.selectionTypes = {};
+}
+CompletionContext.prototype = {
+    get caret() this.editor.selection.getRangeAt(0).startOffset - this.offset,
+
+    get filter() this.value.substr(this.offset, this.caret),
+
+    get value() this.editor.rootElement.textContent,
+
+    advance: function (count)
+    {
+        this.offset += count;
+    },
+
+    fork: function (name, offset)
+    {
+        if (!(name in this.contexts))
+            this.contexts[name] = new CompletionContext(this);
+        this.contexts[name].offset = this.offset + offset;
+        return this.contexts[name];
+    },
+
+    highlight: function (start, length, type)
+    {
+        try // Firefox <3.1 doesn't have repaintSelection
+        {
+            this.selectionTypes[type] = null;
+            const selType = Components.interfaces.nsISelectionController["SELECTION_" + type];
+            const editor = this.editor;
+            let sel = editor.selectionController.getSelection(selType);
+            if (length == 0)
+            {
+                sel.removeAllRanges();
+                editor.selectionController.repaintSelection(selType);
+                return;
+            }
+
+            let range = editor.selection.getRangeAt(0).cloneRange();
+            range.setStart(range.startContainer, this.offset + start);
+            range.setEnd(range.startContainer, this.offset + start + length);
+            sel.addRange(range);
+            editor.selectionController.repaintSelection(selType);
+        }
+        catch (e) {}
+    },
+
+    reset: function ()
+    {
+        // Not ideal.
+        for (let type in this.selectionTypes)
+            this.highlight(0, 0, type);
+        this.selectionTypes = {};
+        this.tabPressed = false;
+        this.offset = 0;
+    },
+
+}
+
 function Completion() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -235,6 +311,7 @@ function Completion() //{{{
 
         function buildStack(start)
         {
+            let self = this;
             /* Push and pop the stack, maintaining references to 'top' and 'last'. */
             let push = function push(arg)
             {
@@ -246,12 +323,12 @@ function Completion() //{{{
             {
                 if (top[CHAR] != arg)
                 {
-                    commandline.highlight(top[OFFSET] + 1, i + 1, "SPELLCHECK");
-                    commandline.highlight(top[OFFSET], top[OFFSET] + 1, "FIND");
+                    self.context.highlight(top[OFFSET] + 1, i - top[OFFSET], "SPELLCHECK");
+                    self.context.highlight(top[OFFSET], 1, "FIND");
                     throw new Error("Invalid JS");
                 }
                 if (i == str.length - 1)
-                    commandline.highlight(top[OFFSET], top[OFFSET] + 1, "FIND");
+                    self.context.highlight(top[OFFSET], 1, "FIND");
                 // The closing character of this stack frame will have pushed a new
                 // statement, leaving us with an empty statement. This doesn't matter,
                 // now, as we simply throw away the frame when we pop it, but it may later.
@@ -354,20 +431,22 @@ function Completion() //{{{
             lastIdx = i;
         }
 
-        this.complete = function complete(string)
+        this.complete = function complete(context)
         {
-            commandline.highlight(0, 0, "SPELLCHECK");
-            commandline.highlight(0, 0, "FIND");
+            this.context = context;
+            let string = context.filter;
 
             let self = this;
             try
             {
                 continuing = lastIdx && string.indexOf(str) == 0;
                 str = string;
-                buildStack(continuing ? lastIdx : 0);
+                buildStack.call(this, continuing ? lastIdx : 0);
             }
             catch (e)
             {
+                if (e.message != "Invalid JS")
+                    Components.utils.reportError(e);
                 // liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return [0, []];
@@ -891,12 +970,12 @@ function Completion() //{{{
             return [0, completion.filter(schemes, filter)];
         },
 
-        command: function command(filter)
+        command: function command(context)
         {
-            if (!filter)
-                return [0, [[c.name, c.description] for (c in commands)]];
+            if (!context.filter)
+                return { start: 0, items: [[c.name, c.description] for (c in commands)] };
             else
-                return [0, this.filter([[c.longNames, c.description] for (c in commands)], filter, true)];
+                return { start: 0, items: this.filter([[c.longNames, c.description] for (c in commands)], context.filter, true) };
         },
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
@@ -919,39 +998,57 @@ function Completion() //{{{
         },
 
         // provides completions for ex commands, including their arguments
-        ex: function ex(str)
+        ex: function ex(context)
         {
             this.filterMap = null;
             this.filterString = "";
-            this.parenMatch = null;
             substrings = [];
-            if (str.indexOf(cacheFilter["ex"]) != 0)
+            if (context.filter.indexOf(cacheFilter["ex"]) != 0)
             {
                 cacheFilter = {};
                 cacheResults = {};
             }
-            cacheFilter["ex"] = str;
+            cacheFilter["ex"] = context.filter;
 
             // if there is no space between the command name and the cursor
             // then get completions of the command name
-            var [count, cmd, special, args] = commands.parseCommand(str);
-            var matches = str.match(/^(:*\d*)\w*$/);
-            if (matches)
-                return { start: matches[1].length, items: this.command(cmd)[1] };
+            let [count, cmd, special, args] = commands.parseCommand(context.filter);
+            let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
+            context.advance(junk.length)
+            if (!junk)
+                return this.command(context);
 
             // dynamically get completions as specified with the command's completer function
-            var compObject = { start: 0, completions: [] };
-            var exLength = 0;
-            var command = commands.get(cmd);
+            let command = commands.get(cmd);
+            let compObject = { start: 0, items: [] };
             if (command && command.completer)
             {
-                matches = str.match(/^:*\d*(?:\w+[\s!]|!)\s*/);
-                exLength = matches ? matches[0].length : 0;
-                compObject = command.completer.call(command, args, special);
-                if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
-                    compObject = { start: compObject[0], items: compObject[1] };
+                [prefix] = context.filter.match(/^(?:\w+[\s!]|!)\s*/);
+                context.advance((prefix || "").length);
+                args = command.parseArgs(context.filter, true);
+                liberator.dump(args);
+                if (args)
+                {
+                    // XXX, XXX, XXX
+                    compObject = command.completer.call(command, args.string, special, args, context);
+                    liberator.dump(compObject);
+                    if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                        compObject = { start: compObject[0], items: compObject[1] };
+                    if (compObject == null)
+                        compObject = { start: context.offset, items: context.items };
+                    else
+                        compObject.start += context.offset;
+                    if (args.completions)
+                    {
+                        if (!compObject.items.length)
+                            compObject.start = args.completeStart + context.offset;
+                        if (args.completeStart + context.offset == compObject.start)
+                            compObject.items = args.completions.concat(compObject.items);
+                    }
+                    liberator.dump(compObject);
+                    liberator.dump("\n");
+                }
             }
-            compObject.start += exLength;
             return compObject;
         },
 
@@ -1025,9 +1122,9 @@ function Completion() //{{{
 
         get javascriptCompleter() javascript,
 
-        javascript: function _javascript(str)
+        javascript: function (context)
         {
-            return javascript.complete(str);
+            return javascript.complete(context);
         },
 
         macro: function macro(filter)

@@ -336,7 +336,7 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter) completion.javascript(filter),
+                completer: function (filter, bang, args, context) completion.javascript(context),
                 hereDoc: true
             });
 
@@ -1160,10 +1160,6 @@ const liberator = (function () //{{{
                 config.init();
 
             liberator.log("All modules loaded", 3);
-
-            // TODO: move elsewhere
-            liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
-            liberator.registerCallback("complete", modes.EX, function (str) { return completion.ex(str); });
 
             // first time intro message
             const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";

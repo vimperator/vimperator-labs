@@ -98,6 +98,7 @@ function CommandLine() //{{{
 
     var completionList = new ItemList("liberator-completions");
     var completions = { start: 0, items: [] };
+    var completionContext = null;
     // for the example command "open sometext| othertext" (| is the cursor pos):
     var completionPrefix = "";     // will be: "open sometext"
     var completionPostfix = "";    // will be: " othertext"
@@ -112,11 +113,11 @@ function CommandLine() //{{{
         else
             statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.items.length);
     });
-    var autocompleteTimer = new util.Timer(201, 300, function (command) {
+    var autocompleteTimer = new util.Timer(201, 300, function (tabPressed) {
         if (events.feedingKeys)
             return;
-
-        commandline.setCompletions(completion.ex(command));
+        completionContext.reset();
+        commandline.setCompletions(completion.ex(completionContext));
     });
 
     // the containing box for the promptWidget and commandWidget
@@ -151,10 +152,16 @@ function CommandLine() //{{{
     var promptChangeCallback = null;
     var promptCompleter = null;
 
+    liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
+    liberator.registerCallback("complete", modes.EX, function (str) {
+        completionContext.reset();
+        completionContext.tabPressed = true;
+        return completion.ex(completionContext);
+    });
     liberator.registerCallback("change", modes.EX, function (command) {
         completion.cancel(); // cancel any previous completion function
         if (options.get("wildoptions").has("auto"))
-            autocompleteTimer.tell(command);
+            autocompleteTimer.tell(false);
         else
             completionIndex = UNINITIALIZED;
     });
@@ -209,9 +216,7 @@ function CommandLine() //{{{
         setPrompt("");
         setCommand(str);
         if (!forceSingle &&
-            commandWidget.inputField.editor
-                         .selection.getRangeAt(0)
-                         .startContainer.parentNode
+            commandWidget.inputField.editor.rootElement
                          .scrollWidth > commandWidget.inputField.scrollWidth)
         {
             setCommand("");
@@ -493,7 +498,7 @@ function CommandLine() //{{{
                 if (str != null)
                     command.action(str);
             },
-            { completer: function (filter) completion.javascript(filter) });
+            { completer: function (filter, bang, args, context) completion.javascript(context) });
     });
 
     commands.add(["mes[sages]"],
@@ -542,6 +547,8 @@ function CommandLine() //{{{
                                      // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // add the string to the message history
 
+        get completionContext() completionContext,
+
         get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
         get silent() silent,
@@ -576,11 +583,12 @@ function CommandLine() //{{{
 
             commandWidget.focus();
 
+            completionContext = new CompletionContext(commandWidget.inputField.editor);
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
                 options.get("wildoptions").has("auto") &&
                 extendedMode == modes.EX)
-                    autocompleteTimer.tell(cmd);
+                    autocompleteTimer.tell(false);
         },
 
         // normally used when pressing esc, does not execute a command

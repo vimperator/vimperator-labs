@@ -429,20 +429,20 @@ liberator.registerObserver("load_commands", function ()
         {
             argCount: "2",
             bang: true,
-            completer: function (filter) {
-                let args = this.parseArgs(filter, true);
-                let compl = args ? args.completions : [];
-                if (args && args.completeOpt)
-                    return [args.completeStart, compl];
-
-                try
+            completer: function (filter, bang, args) {
+                let compl = [];
+                if (args.completeArg == 0)
                 {
-                    compl.push([content.location.host, "Current Host"]);
-                    compl.push([content.location.href, "Current URL"]);
+                    try
+                    {
+                        compl.push([content.location.host, "Current Host"]);
+                        compl.push([content.location.href, "Current URL"]);
+                    }
+                    catch (e) {}
+                    comp = compl.concat([[s, ""] for each (s in styles.sites)])
+                    return [0, completion.filter(compl, args.arguments[0])];
                 }
-                catch (e) {}
-                comp = compl.concat([[s, ""] for each (s in styles.sites)])
-                return [0, completion.filter(compl, filter)];
+                return [0, []];
             },
             hereDoc: true,
             literal: true,
@@ -473,8 +473,8 @@ liberator.registerObserver("load_commands", function ()
                     .concat([[s, ""] for each (s in styles.sites)])
                     , filter)],
             literal: true,
-            options: [[["-index", "-i"], commands.OPTION_INT],
-                      [["-name", "-n"],  commands.OPTION_STRING]]
+            options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[k, v.name || v.sites.join(",") + " " + v.css] for ([k, v] in Iterator(styles.userNames))]],
+                      [["-name", "-n"],  commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]]]
         });
 
     commands.add(["hi[ghlight]"],

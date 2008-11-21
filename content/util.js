@@ -336,7 +336,7 @@ const util = { //{{{
                     i = parseInt(i);
                 else if (/^[A-Z_]+$/.test(i))
                     i = "";
-                keys.push([i, <>{key}{noVal ? "" : <>:{value}</>}<br/>&#xa;</>]);
+                keys.push([i, <>{key}{noVal ? "" : <>: {value}</>}<br/>&#xa;</>]);
             }
         }
         catch (e) {}
