@@ -708,8 +708,7 @@ function Completion() //{{{
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
-        // urls must be of type [["url", "title"], [...]] or optionally
-        //                      [["url", "title", keyword, [tags]], [...]]
+        // urls must be of type [{url: "..", title: "..", tags: [...], keyword: ".."}, ...]
         filterURLArray: function filterURLArray(urls, filter, filterTags)
         {
             var filtered = [];
@@ -720,7 +719,7 @@ function Completion() //{{{
             if (urls.length == 0)
                 return [];
 
-            var hasTags = urls[0].length >= 4;
+            var hasTags = urls[0].tags !== undefined;
             // TODO: create a copy of urls?
             if (!filter && (!hasTags || !filterTags))
                 return urls;
@@ -742,9 +741,9 @@ function Completion() //{{{
             let filterTokens = filter.split(/\s+/);
             for (let [,elem] in Iterator(urls))
             {
-                var url   = elem[0] || "";
-                var title = elem[1] || "";
-                var tags  = elem.tags || elem[3] || [];
+                var url   = elem.url || "";
+                var title = elem.title || "";
+                var tags  = elem.tags || [];
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
@@ -754,7 +753,7 @@ function Completion() //{{{
 
                 // filter on tags
                 if (filterTags.some(function aryIndex(tag) tag && tags.indexOf(tag) == -1))
-                        continue;
+                    continue;
 
                 if (url.indexOf(filter) == -1)
                 {
