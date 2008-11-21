@@ -891,7 +891,7 @@ function CommandLine() //{{{
                         else if (full)
                             compl = completions.items[completionIndex][0];
                         else if (completions.items.length == 1)
-                            compl = completion.items[0][0];
+                            compl = completions.items[0][0];
 
                         if (compl)
                         {
