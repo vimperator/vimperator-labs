@@ -1373,8 +1373,6 @@ function ItemList(id) //{{{
         if (offset == null || offset - startIndex == 0 || offset < 0 || items.length && offset >= items.length)
             return;
 
-        //let createRow = ("createRow" in completionObject) ? completionObject.createRow : createDefaultRow;
-        let createRow = createDefaultRow;
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.length);
 
@@ -1385,14 +1383,14 @@ function ItemList(id) //{{{
             if (diff == 1) /* Scroll down */
             {
                 let item = items[endIndex - 1];
-                let row = createRow(item, true);
+                let row = "html" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
                 tbody.removeChild(tbody.firstChild);
                 tbody.appendChild(row);
             }
             else /* Scroll up */
             {
                 let item = items[offset];
-                let row = createRow(item, true);
+                let row = "html" in item ? util.xmlToDom(item.html, doc) : createDefaultRow(item, true);
                 tbody.removeChild(tbody.lastChild);
                 tbody.insertBefore(row, tbody.firstChild);
             }
@@ -1406,7 +1404,7 @@ function ItemList(id) //{{{
                           <div class="hl-Completions">
                           {
                               template.map(util.range(offset, endIndex), function (i)
-                              createRow(items[i]))
+                              "html" in items[i] ? items[i].html : createDefaultRow(items[i]))
                           }
                           </div>
                           <div class="hl-Completions">

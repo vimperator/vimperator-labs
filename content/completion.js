@@ -813,9 +813,47 @@ function Completion() //{{{
 
         bookmark: function (filter)
         {
+            // TODO: move to template.js?
+            function createHtml(item)
+            {
+                var extra = [];
+                if (item.keyword)
+                    extra.push(['keyword', item.keyword, "hl-Keyword"]);
+                if (item.tags.length > 0)
+                    extra.push(["tags", item.tags.join(","), "hl-Tag"]); // no space, otherwise it looks strange, since we just have spaces to seperate tags from keywords
+
+                return <ul class="hl-CompItem">
+                    <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
+                    <li class="hl-CompResult">{util.clip(item.title || "", 50)}</li>
+                    <li style="width: 100%">
+                        <a href="#" class="hl-URL">{item.url}</a>&#160;
+                        {
+                            !(extra.length) ? "" :
+                            <span class="extra-info">
+                                ({
+                                    template.map(extra, function (e)
+                                    <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
+                                    <>&#xa0;</>/* Non-breaking space */)
+                                })
+                            </span>
+                        }
+                    </li>
+                </ul>
+            }
+
             return {
                 start: 0,
-                get items() { return bookmarks.get(filter) },
+                get items() {
+                    return bookmarks.get(filter).map(function (bmark) {
+                        // temporary, until we have moved all completions to objects
+                        bmark[0] = bmark.url;
+                        bmark[1] = bmark.title;
+
+                        bmark.text = bmark.url;
+                        bmark.__defineGetter__("html", function () createHtml(bmark));
+                        return bmark;
+                    });
+                },
                 createRow: function (item)
                         <ul class="hl-CompItem">
                             <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
