@@ -33,7 +33,8 @@ BUGS:
 - start with an empty window with an about:blank tab only:
   :b a<tab>  changes the (Untitled) title to "about:blank"
 - visual caret mode is broken
-- Tabbing between form elems triggers NORMAL mode
+- Form elements in iframes must be selected twice, whether by tabbing or
+  clicking.
 - :bmarks, :hs output and 'cpt'=bh completions are broken
 
 FEATURES:
