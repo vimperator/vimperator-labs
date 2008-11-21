@@ -674,14 +674,20 @@ function Tabs() //{{{
 
         get count() getBrowser().mTabs.length,
 
-        // used for :setlocal
         get options()
         {
-            var tab = this.getTab();
-            if (!tab.liberatorOptions)
-                tab.liberatorOptions = {};
+            let store = this.localStore;
+            if (!("options" in store))
+                store.options = {};
+            return store.options;
+        },
 
-            return tab.liberatorOptions;
+        get localStore()
+        {
+            let tab = this.getTab();
+            if (!tab.liberatorStore)
+                tab.liberatorStore = {};
+            return tab.liberatorStore;
         },
 
         get tabStrip()
@@ -696,15 +702,7 @@ function Tabs() //{{{
         index: function (tab)
         {
             if (tab)
-            {
-                var length = getBrowser().mTabs.length;
-                for (let i = 0; i < length; i++)
-                {
-                    if (getBrowser().mTabs[i] == tab)
-                        return i;
-                }
-                return -1;
-            }
+                return Array.indexOf(getBrowser().mTabs, tab);
 
             return getBrowser().mTabContainer.selectedIndex;
         },
@@ -737,7 +735,7 @@ function Tabs() //{{{
 
         getTab: function (index)
         {
-            if (index)
+            if (index != undefined)
                 return getBrowser().mTabs[index];
 
             return getBrowser().mTabContainer.selectedItem;

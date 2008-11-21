@@ -92,9 +92,9 @@ function Buffer() //{{{
         if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
             return win;
 
-        for (let i = 0; i < win.frames.length; i++)
-            if (win.frames[i].scrollMaxX > 0 || win.frames[i].scrollMaxY > 0)
-                return win.frames[i];
+        for (let frame in util.Array.iterator(win.frames))
+            if (frame.scrollMaxX > 0 || frame.scrollMaxY > 0)
+                return frame;
 
         return win;
     }
@@ -1184,6 +1184,7 @@ function Buffer() //{{{
             if (!window.content.document instanceof HTMLDocument)
                 return;
 
+            count = Math.max(count, 1);
             var frames = [];
 
             // find all frames - depth-first search
@@ -1216,32 +1217,24 @@ function Buffer() //{{{
             var next = current;
             if (forward)
             {
-                if (count > 1)
-                    next = current + count;
-                else
-                    next++;
+                next = current + count;
 
                 if (next > frames.length - 1)
                 {
                     if (current == frames.length - 1)
-                        liberator.beep(); // still allow the frame indicator to be activated
-
-                    next = frames.length - 1;
+                        liberator.beep();
+                    next = frames.length - 1; // still allow the frame indicator to be activated
                 }
             }
             else
             {
-                if (count > 1)
-                    next = current - count;
-                else
-                    next--;
+                next = current - count;
 
                 if (next < 0)
                 {
                     if (current == 0)
-                        liberator.beep(); // still allow the frame indicator to be activated
-
-                    next = 0;
+                        liberator.beep();
+                    next = 0; // still allow the frame indicator to be activated
                 }
             }
 
@@ -1263,7 +1256,7 @@ function Buffer() //{{{
         // TODO: print more useful information, just like the DOM inspector
         showElementInfo: function (elem)
         {
-            liberator.echo(<>Element:<br/></> + util.objectToString(elem), commandline.FORCE_MULTILINE);
+            liberator.echo(<>Element:<br/>{util.objectToString(elem, true)}</>, commandline.FORCE_MULTILINE);
         },
 
         showPageInfo: function (verbose)

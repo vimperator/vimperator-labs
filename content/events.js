@@ -1064,6 +1064,9 @@ function Events() //{{{
             var win  = window.document.commandDispatcher.focusedWindow;
             var elem = window.document.commandDispatcher.focusedElement;
 
+            if (win && win.top == content && liberator.has("tabs"))
+                tabs.localStore.focusedFrame = win;
+
             if (elem && elem.readOnly)
                 return;
 

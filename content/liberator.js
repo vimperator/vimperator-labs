@@ -820,8 +820,8 @@ const liberator = (function () //{{{
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
         {
-            var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                     .getService(Components.interfaces.nsIWindowWatcher);
+            let ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                               .getService(Components.interfaces.nsIWindowWatcher);
             if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
                 document.commandDispatcher.focusedElement.blur();
 
@@ -830,16 +830,21 @@ const liberator = (function () //{{{
             {
                 if (liberator.has("mail") && clearFocusedElement && !config.isComposeWindow)
                 {
-                    var i = gDBView.selection.currentIndex;
+                    let i = gDBView.selection.currentIndex;
                     if (i == -1 && gDBView.rowCount >= 0)
                         i = 0;
-
                     gDBView.selection.select(i);
                 }
             }
             catch (e) {}
 
-            var elem = config.mainWidget || window.content;
+            let elem = config.mainWidget || window.content;
+            if (this.has("tabs"))
+            {
+                let frame = tabs.localStore.focusedFrame;
+                if (frame && frame.top == window.content)
+                    elem = frame;
+            }
             if (elem && (elem != document.commandDispatcher.focusedElement))
                 elem.focus();
         },
