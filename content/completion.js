@@ -58,11 +58,6 @@ function Completion() //{{{
     var completionCache = [];
 
     var historyTimer = new util.Timer(50, 100, function histTimer() {
-        // don't set all completions again every time the timer fires, even
-        // though items might not have changed
-        if (historyCache.length == historyResult.matchCount)
-            return;
-
         let comp = [];
         for (let i in util.range(0, historyResult.matchCount))
             comp.push([historyResult.getValueAt(i),
@@ -73,7 +68,8 @@ function Completion() //{{{
 
         // TODO: we need to have a "completionCacheAfter" to allow cpt=slf 
         historyCache = comp;
-        commandline.setCompletions({ get items() { return completionCache.concat(historyCache); } });
+        commandline.setCompletions({ get items() completionCache.concat(historyCache),
+                                     incompleteResult: historyResult.searchResult >= historyResult.RESULT_NOMATCH_ONGOING ? true : false });
     });
 
     function Javascript()
@@ -1319,7 +1315,8 @@ function Completion() //{{{
                 }
             }
 
-            return { start: start, items: completions, getMoreItems: getMoreItems };
+            // TODO: incomplete result should be set conditionally
+            return { start: start, items: completions, getMoreItems: getMoreItems, incompleteResult: true };
         },
 
         userCommand: function userCommand(filter)

@@ -1227,10 +1227,9 @@ function CommandLine() //{{{
             if (liberator.mode != modes.COMMAND_LINE)
                 return;
 
-            /* Only hide if not pending.
-            if (compl.length == 0)
-                return completionList.hide();
-            */
+            // don't show an empty result, if we are just waiting for data to arrive
+            if (newCompletions.incompleteResult && newCompletions.items.length == 0)
+                return;
 
             completionList.setItems(newCompletions.items);
 
@@ -1258,7 +1257,6 @@ function CommandLine() //{{{
             var command = this.getCommand();
             completionPrefix = command.substring(0, commandWidget.selectionStart);
             completionPostfix = command.substring(commandWidget.selectionStart);
-
         },
 
         // TODO: does that function need to be public?
@@ -1266,7 +1264,7 @@ function CommandLine() //{{{
         {
             autocompleteTimer.reset();
             completion.cancel();
-            completions = { start: 0, items: [] };
+            completions = { start: completions.start, items: [] };
             completionIndex = historyIndex = UNINITIALIZED;
             wildIndex = 0;
         }
