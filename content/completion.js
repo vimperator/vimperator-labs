@@ -1080,7 +1080,7 @@ function Completion() //{{{
                 if (args)
                 {
                     // XXX, XXX, XXX
-                    compObject = command.completer.call(command, args.string, special, args, context);
+                    compObject = command.completer.call(command, context, args, special, count);
                     if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                         compObject = { start: compObject[0], items: compObject[1] };
                     if (args.completions)

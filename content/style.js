@@ -389,7 +389,7 @@ liberator.registerObserver("load_commands", function ()
         },
         {
             argCount: 1,
-            completer: function (filter) completion.colorScheme(filter)
+            completer: function (context) completion.colorScheme(context.filter)
         });
 
     commands.add(["sty[le]"],
@@ -430,7 +430,7 @@ liberator.registerObserver("load_commands", function ()
         {
             argCount: "2",
             bang: true,
-            completer: function (filter, bang, args) {
+            completer: function (context, args, bang) {
                 let compl = [];
                 if (args.completeArg == 0)
                 {
@@ -467,12 +467,13 @@ liberator.registerObserver("load_commands", function ()
         },
         {
             argCount: "2",
-            completer: function (filter) [0, completion.filter(
+            // FIXME: Ugly.
+            completer: function (context) [0, completion.filter(
                     [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
                         for ([i, s] in styles.userSheets)
                     ]
                     .concat([[s, ""] for each (s in styles.sites)])
-                    , filter)],
+                    , context.filter)],
             literal: true,
             options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[k, v.name || v.sites.join(",") + " " + v.css] for ([k, v] in Iterator(styles.userNames))]],
                       [["-name", "-n"],  commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]]]
@@ -513,9 +514,8 @@ liberator.registerObserver("load_commands", function ()
             argCount: "2",
             bang: true,
             // TODO: add this as a standard highlight completion function?
-            // I agree. It could (should) be much more sophisticated. --Kris
-            completer: function (filter) [0,
-                    completion.filter([[v.class, ""] for (v in highlight)], filter)
+            completer: function (context) [0,
+                    completion.filter([[v.class, ""] for (v in highlight)], context.filter)
                 ],
             hereDoc: true,
             literal: true,

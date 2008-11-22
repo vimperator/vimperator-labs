@@ -684,7 +684,7 @@ function Mail() //{{{
                 SelectFolder(folder.URI);
         },
         {
-            completer: function (filter) getFolderCompletions(filter),
+            completer: function (context) getFolderCompletions(context.filter),
             count: true
         });
 
@@ -726,12 +726,12 @@ function Mail() //{{{
     commands.add(["copy[to]"],
         "Copy selected messages",
         function (args) { moveOrCopy(true, args.string); },
-        { completer: function (filter) getFolderCompletions(filter) });
+        { completer: function (context) getFolderCompletions(context.filter) });
 
     commands.add(["move[to]"],
         "Move selected messages",
         function (args) { moveOrCopy(false, args.string); },
-        { completer: function (filter) getFolderCompletions(filter) });
+        { completer: function (context) getFolderCompletions(context.filter) });
 
     commands.add(["empty[trash]"],
         "Empty trash of the current account",

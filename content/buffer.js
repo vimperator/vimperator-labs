@@ -512,7 +512,7 @@ function Buffer() //{{{
 
             stylesheetSwitchAll(window.content, args);
         },
-        { completer: function (filter) completion.alternateStylesheet(filter) });
+        { completer: function (context) completion.alternateStylesheet(context.filter) });
 
     commands.add(["re[load]"],
         "Reload current page",
@@ -564,7 +564,7 @@ function Buffer() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter, bang, args, context) completion.file(context)
+            completer: function (context) completion.file(context)
         });
 
     commands.add(["st[op]"],
@@ -578,7 +578,7 @@ function Buffer() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter, bang, args, context) completion.url(context, "bhf")
+            completer: function (context) completion.url(context, "bhf")
         });
 
     commands.add(["zo[om]"],

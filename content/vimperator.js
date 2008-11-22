@@ -293,7 +293,7 @@ const config = { //{{{
             },
             {
                 bang: true,
-                completer: function (filter, args, bang, context) completion.url(context)
+                completer: function (context) completion.url(context)
             });
 
         commands.add(["redr[aw]"],
@@ -345,7 +345,7 @@ const config = { //{{{
             },
             {
                 argCount: "+",
-                completer: function (filter) completion.sidebar(filter)
+                completer: function (context) completion.sidebar(context.filter)
             });
 
         commands.add(["winc[lose]", "wc[lose]"],
@@ -364,7 +364,7 @@ const config = { //{{{
                 else
                     liberator.open("about:blank", liberator.NEW_WINDOW);
             },
-            { completer: function (filter, bang, args, context) completion.url(context) });
+            { completer: function (context) completion.url(context) });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////

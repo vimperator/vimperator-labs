@@ -114,7 +114,7 @@ function AutoCommands() //{{{
         {
             argCount: "3",
             bang: true,
-            completer: function (filter) completion.autocmdEvent(filter),
+            completer: function (context) completion.autocmdEvent(context.filter),
             literal: true
         });
 
@@ -127,7 +127,7 @@ function AutoCommands() //{{{
         },
         {
             argCount: "+",
-            completer: function (filter) completion.autocmdEvent(filter)
+            completer: function (context) completion.autocmdEvent(context.filter)
         }
     );
 
@@ -164,7 +164,7 @@ function AutoCommands() //{{{
         {
             // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
             argCount: "+",
-            completer: function (filter) completion.autocmdEvent(filter)
+            completer: function (context) completion.autocmdEvent(context.filter)
         }
     );
 
@@ -719,7 +719,7 @@ function Events() //{{{
         },
         {
             bang: true,
-            completer: function (filter) completion.macro(filter)
+            completer: function (context) completion.macro(context.filter)
         });
 
     commands.add(["macros"],
@@ -730,14 +730,14 @@ function Events() //{{{
             var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args.string));
             liberator.echo(str, commandline.FORCE_MULTILINE);
         },
-        { completer: function (filter) completion.macro(filter) });
+        { completer: function (context) completion.macro(context.filter) });
 
     commands.add(["pl[ay]"],
         "Replay a recorded macro",
         function (args) { events.playMacro(args.arguments[0]); },
         {
             argCount: "1",
-            completer: function (filter) completion.macro(filter)
+            completer: function (context) completion.macro(context.filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

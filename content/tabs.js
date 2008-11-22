@@ -354,7 +354,7 @@ function Tabs() //{{{
         {
             bang: true,
             count: true,
-            completer: function (filter) completion.buffer(filter)
+            completer: function (context) completion.buffer(context.filter)
         });
 
     // TODO: this should open in a new tab positioned directly after the current one, not at the end
@@ -368,7 +368,7 @@ function Tabs() //{{{
         },
         {
             argCount: "+",
-            completer: function (filter) completion.ex(filter)
+            completer: function (context) completion.ex(context.filter)
         });
 
     commands.add(["tabl[ast]", "bl[ast]"],
@@ -478,7 +478,7 @@ function Tabs() //{{{
             {
                 bang: true,
                 count: true,
-                completer: function (filter) completion.buffer(filter)
+                completer: function (context) completion.buffer(context.filter)
             });
 
         commands.add(["buffers", "files", "ls", "tabs"],
@@ -548,7 +548,7 @@ function Tabs() //{{{
             },
             {
                 bang: true,
-                completer: function (filter, bang, args, context) completion.url(context)
+                completer: function (context) completion.url(context)
             });
 
         commands.add(["tabde[tach]"],
@@ -618,7 +618,7 @@ function Tabs() //{{{
                 undoCloseTab(count - 1);
             },
             {
-                completer: function (filter)
+                completer: function (context)
                 {
                     // get closed-tabs from nsSessionStore
                     var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
@@ -629,7 +629,7 @@ function Tabs() //{{{
                     {
                         var url = undoItems[i].state.entries[0].url;
                         var title = undoItems[i].title;
-                        if (completion.match([url, title], filter, false))
+                        if (completion.match([url, title], context.filter, false))
                             completions.push([url, title]);
                     }
                     return [0, completions];

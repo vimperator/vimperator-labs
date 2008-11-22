@@ -202,7 +202,7 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (filter) completion.dialog(filter)
+                completer: function (context) completion.dialog(context.filter)
             });
 
         // TODO: move this
@@ -257,10 +257,10 @@ const liberator = (function () //{{{
             {
                 argCount: "+", // NOTE: single arg may contain unescaped whitespace
                 // TODO: add this as a standard menu completion function
-                completer: function (filter)
+                completer: function (context)
                 {
                     let completions = getMenuItems().map(function (item) [item.fullMenuPath, item.label]);
-                    return [0, completion.filter(completions, filter)];
+                    return [0, completion.filter(completions, context.filter)];
                 }
             });
 
@@ -307,7 +307,7 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter) completion.help(filter)
+                completer: function (context) completion.help(context.filter)
             });
 
         commands.add(["javas[cript]", "js"],
@@ -334,7 +334,7 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (filter, bang, args, context) completion.javascript(context),
+                completer: function (context) completion.javascript(context),
                 hereDoc: true
             });
 
@@ -461,12 +461,12 @@ const liberator = (function () //{{{
             {
                 argCount: "+",
                 bang: true,
-                completer: function (filter)
+                completer: function (context)
                 {
-                    if (/^:/.test(filter))
-                        return completion.ex(filter);
+                    if (/^:/.test(context.filter))
+                        return completion.ex(context);
                     else
-                        return completion.javascript(filter);
+                        return completion.javascript(context);
                 },
                 count: true
             });

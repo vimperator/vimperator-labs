@@ -394,9 +394,9 @@ function Options() //{{{
         {
             bang: true,
             count: true,
-            completer: function (filter, special, count)
+            completer: function (context, args, special, count)
             {
-                return commands.get("set").completer(filter, special, count, { scope: options.OPTION_SCOPE_LOCAL });
+                return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_LOCAL });
             }
         }
     );
@@ -410,9 +410,9 @@ function Options() //{{{
         {
             bang: true,
             count: true,
-            completer: function (filter, special, count)
+            completer: function (context, args, special, count)
             {
-                return commands.get("set").completer(filter, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
+                return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
             }
         }
     );
@@ -686,7 +686,7 @@ function Options() //{{{
         },
         {
             bang: true,
-            completer: function (filter, special, count, modifiers)
+            completer: function (context, args, special, count, modifiers)
             {
                 var optionCompletions = [];
 

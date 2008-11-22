@@ -208,7 +208,7 @@ function IO() //{{{
         },
         {
             argCount: "?",
-            completer: function (filter, bang, args, context) completion.file(context, true),
+            completer: function (context) completion.file(context, true),
             literal: true
         });
 
@@ -268,7 +268,7 @@ function IO() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter, bang, args, context) completion.file(context, true)
+            completer: function (context) completion.file(context, true)
         });
 
     commands.add(["runt[ime]"],
@@ -301,7 +301,7 @@ function IO() //{{{
         {
             argCount: "1",
             bang: true,
-            completer: function (filter, bang, args, context) completion.file(context, true)
+            completer: function (context) completion.file(context, true)
         });
 
     commands.add(["!", "run"],
@@ -339,7 +339,7 @@ function IO() //{{{
         },
         {
             bang: true,
-            completer: function (filter) completion.shellCommand(filter)
+            completer: function (context) completion.shellCommand(filter)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

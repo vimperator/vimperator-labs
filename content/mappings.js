@@ -186,7 +186,7 @@ function Mappings() //{{{
 
         const opts = {
                 argCount: "2",
-                completer: function (filter) completion.userMapping(filter, modes),
+                completer: function (context) completion.userMapping(context.filter, modes),
                 options: [
                     [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
                 ],
@@ -245,7 +245,7 @@ function Mappings() //{{{
                 if (!found)
                     liberator.echoerr("E31: No such mapping");
             },
-            { completer: function (filter) completion.userMapping(filter, modes) });
+            { completer: function (context) completion.userMapping(context.filter, modes) });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

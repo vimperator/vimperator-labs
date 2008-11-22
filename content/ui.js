@@ -500,7 +500,7 @@ function CommandLine() //{{{
                 if (str != null)
                     command.action(str);
             },
-            { completer: function (filter, bang, args, context) completion.javascript(context) });
+            { completer: function (context) completion.javascript(context) });
     });
 
     commands.add(["mes[sages]"],
