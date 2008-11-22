@@ -842,7 +842,7 @@ function CommandLine() //{{{
                         //if (options.get("wildoptions").has("sort"))
                         //    completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
-                        completionList.setItems(completionContext.allItems);
+                        completionList.setItems(completionContext);
                     }
 
                     if (completions.items.length == 0)
@@ -1243,7 +1243,7 @@ function CommandLine() //{{{
             //if (newCompletions.incompleteResult && newCompletions.items.length == 0)
             //    return;
 
-            completionList.setItems(newCompletions.items);
+            completionList.setItems(completionContext);
 
             // try to keep the old item selected
             if (completionIndex >= 0 && completionIndex < newCompletions.items.length && completionIndex < completions.items.length)
@@ -1314,7 +1314,7 @@ function ItemList(id) //{{{
     doc.body.id = id + "-content";
     doc.body.appendChild(doc.createTextNode(""));
 
-    var items = [];
+    var items = null;
     var startIndex = -1;  // The index of the first displayed item
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
@@ -1333,40 +1333,6 @@ function ItemList(id) //{{{
         commandline.updateOutputHeight(false);
     }
 
-    // TODO: move to completions?
-    function createDefaultRow(item, dom)
-    {
-        let { text: text, description: description, icon: icon } = item;
-        /* Kludge until we have completion contexts. */
-        let map = completion.filterMap;
-        if (map)
-        {
-            text = map[0] ? map[0](text) : text;
-            description = map[1] ? map[1](description) : description;
-        }
-        /* Obviously, ItemList shouldn't know or care about this. */
-        let filter = completion.filterString;
-        if (filter)
-        {
-            text = template.highlightFilter(text, filter);
-            description = template.highlightFilter(description, filter);
-        }
-
-        if (typeof icon == "function")
-            icon = icon();
-
-        let row =
-            <ul class="hl-CompItem">
-                <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
-                <li class="hl-CompResult">{text}</li>
-                <li class="hl-CompDesc">{description}</li>
-            </ul>;
-
-        if (dom)
-            return util.xmlToDom(row, doc);
-        return row;
-    }
-
     function getCompletion(index) completionElements[index - startIndex];
 
     /**
@@ -1378,60 +1344,56 @@ function ItemList(id) //{{{
     function fill(offset)
     {
         let diff = offset - startIndex;
-        if (offset == null || offset - startIndex == 0 || offset < 0 || items.length && offset >= items.length)
+        if (items == null || offset == null || offset - startIndex == 0 || offset < 0)
             return;
 
         startIndex = offset;
-        endIndex = Math.min(startIndex + maxItems, items.length);
+        endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
 
-        if (selIndex > -1 && Math.abs(diff) == 1) /* Scroll one position */
+        // do a full refill of the list:
+        XML.ignoreWhitespace = true;
+        let off = 0;
+        function range(context)
         {
-            let tbody = completionBody;
-
-            if (diff == 1) /* Scroll down */
-            {
-                let item = items[endIndex - 1];
-                let row = "xml" in item ? util.xmlToDom(item.xml, doc) : createDefaultRow(item, true);
-                tbody.removeChild(tbody.firstChild);
-                tbody.appendChild(row);
-            }
-            else /* Scroll up */
-            {
-                let item = items[offset];
-                let row = "xml" in item ? util.xmlToDom(item.xml, doc) : createDefaultRow(item, true);
-                tbody.removeChild(tbody.lastChild);
-                tbody.insertBefore(row, tbody.firstChild);
-            }
+            let len = context.items.length;
+            let start = off;
+            off += len;
+            return util.range(Math.max(offset - start, 0), Math.min(endIndex - start, len));
         }
-        else
-        {
-            // do a full refill of the list:
-            XML.ignoreWhitespace = true;
-            let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
-                          <span class="hl-Title">Completions:</span>
-                          <div class="hl-Completions">
-                          {
-                              template.map(util.range(offset, endIndex), function (i)
-                              "xml" in items[i] ? items[i].xml : createDefaultRow(items[i]))
-                          }
-                          </div>
-                          <div class="hl-Completions">
-                          {
-                              // Hmm. The problem with not making this a CompItem is that
-                              // the height and padding aren't the same.
-                              template.map(util.range(0, maxItems), function (i)
-                              <ul><li class="hl-NonText">~</li></ul>)
-                          }
-                          </div>
-                      </div>;
 
-            div = util.xmlToDom(xml, doc);
-            completionBody = div.getElementsByClassName("hl-Completions")[0];
-            //completionElements = completionBody.childNodes; // Kris: This is broken for things like :dia pr<tab>
-            completionElements = div.getElementsByClassName("hl-CompItem");
-            doc.body.replaceChild(div, doc.body.firstChild);
-            autoSize();
-        }
+        let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
+                    {
+                        items.allItems.items.length == 0 &&
+                        <div class="hl-Completions">
+                            <span class="hl-Title">No Completions</span>
+                        </div> || <></>
+                    }
+                    {
+                        template.map(items.contextList, function (context) context.hasItems &&
+                        <div class="hl-Completions">
+                        { context.createRow(context, context.title || {}, "hl-CompTitle") }
+                        {
+                            template.map(range(context), function (i) context.createRow(context, context.items[i]))
+                        }
+                        </div>
+                        || undefined)
+                    }
+                    <div class="hl-Completions">
+                    {
+                        // Hmm. The problem with not making this a CompItem is that
+                        // the height and padding aren't the same.
+                        template.map(util.range(0, maxItems), function (i)
+                        <ul><li class="hl-NonText">~</li></ul>)
+                    }
+                    </div>
+                  </div>;
+
+        div = util.xmlToDom(xml, doc);
+        completionBody = div.getElementsByClassName("hl-Completions")[0];
+        //completionElements = completionBody.childNodes; // Kris: This is broken for things like :dia pr<tab>
+        completionElements = div.getElementsByClassName("hl-CompItem");
+        doc.body.replaceChild(div, doc.body.firstChild);
+        autoSize();
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1460,7 +1422,7 @@ function ItemList(id) //{{{
         setItems: function setItems(newItems, selectedItem)
         {
             startIndex = endIndex = selIndex = -1;
-            items = newItems || [];
+            items = newItems;
             if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);
@@ -1474,7 +1436,8 @@ function ItemList(id) //{{{
             //if (container.collapsed) // fixme
             //    return;
 
-            if (index == -1 || index == items.length) // wrapped around
+            let len = items.allItems.items.length;
+            if (index == -1 || index == len) // wrapped around
             {
                 if (selIndex >= 0)
                     getCompletion(selIndex).removeAttribute("selected");
@@ -1491,7 +1454,7 @@ function ItemList(id) //{{{
             else if (index <= startIndex + CONTEXT_LINES)
                 newOffset = index - CONTEXT_LINES;
 
-            newOffset = Math.min(newOffset, items.length - maxItems);
+            newOffset = Math.min(newOffset, len - maxItems);
             newOffset = Math.max(newOffset, 0);
 
             if (selIndex > -1)

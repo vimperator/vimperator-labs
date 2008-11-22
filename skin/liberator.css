@@ -60,13 +60,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
     width: 100%;
     display: table;
 }
-.hl-CompItem {
+.hl-CompItem, .hl-CompTitle {
     display: table-row;
 }
 .hl-Completions > ul {
     display: table-row;
 }
-.hl-CompItem > * {
+.hl-CompItem > *, .hl-CompTitle > * {
     -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
     display: table-cell;
     vertical-align: middle;

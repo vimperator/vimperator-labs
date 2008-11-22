@@ -28,6 +28,7 @@ function Highlights(name, store, serial)
         NonText     color: blue; min-height: 16px; padding-left: 2px;
 
 
+        CompTitle          color: magenta; background: white; font-weight: bold;
         CompItem
         CompItem[selected] background: yellow;
         CompItem>*         padding: 0 .5ex;

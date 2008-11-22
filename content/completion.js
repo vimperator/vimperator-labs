@@ -43,13 +43,18 @@ function CompletionContext(editor, name, offset)
         name = parent.name + "/" + name;
         this.contexts = parent.contexts;
         if (name in this.contexts)
-            return this.contexts[name];
+        {
+            let self = this.contexts[name];
+            self.offset = parent.offset + (offset || 0);
+            return self;
+        }
         this.contexts[name] = this;
         this.parent = parent;
         this.editor = parent.editor;
         this.offset = parent.offset + (offset || 0);
         this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
         this.__defineGetter__("onUpdate", function () this.parent.onUpdate);
+        this.__defineGetter__("value", function () this.parent.value);
         this.incomplete = false;
     }
     else
@@ -94,6 +99,9 @@ CompletionContext.prototype = {
 
     get contextList() [v for ([k, v] in Iterator(this.contexts))],
 
+    get createRow() this._createRow || template.completionRow, // XXX
+    set createRow(createRow) this._createRow = createRow,
+
     get filter() this.value.substr(this.offset, this.caret),
 
     get items() this._items,
@@ -104,7 +112,8 @@ CompletionContext.prototype = {
         this.onUpdate.call(this);
     },
 
-    get value() this.editor.rootElement.textContent,
+    get title() this._title || ["Completions"], // XXX
+    set title(val) this._title = val,
 
     advance: function (count)
     {
@@ -154,6 +163,7 @@ CompletionContext.prototype = {
         this.selectionTypes = {};
         this.tabPressed = false;
         this.offset = 0;
+        this.value = this.editor.rootElement.textContent;
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
         //    delete this.contexts[key];
         for each (let context in this.contexts)
@@ -294,7 +304,6 @@ function Completion() //{{{
             if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
                 key = util.escapeString(key.substr(offset), "");
 
-            completion.filterString = key;
             let res = buildLongestStartingSubstring(compl, key);
             if (res.length == 0)
             {
@@ -529,7 +538,7 @@ function Completion() //{{{
                     cacheKey = str.substring(statement, dot);
                     obj = self.eval(s, cacheKey, obj);
                 }
-                return [[obj], str.substring(statement, stop + 1)];
+                return [[obj, str.substring(statement, stop + 1)]];
             }
 
             function getObjKey(frame)
@@ -692,7 +701,6 @@ function Completion() //{{{
     // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
     function buildLongestCommonSubstring(list, filter, favicon)
     {
-        completion.filterString = filter;
         var filtered = [];
 
         var ignorecase = false;
@@ -1027,13 +1035,13 @@ function Completion() //{{{
 
         environment: function environment(filter)
         {
-            let command = liberator.has("Win32") ? "set" : "export";
+            let command = liberator.has("Win32") ? "set" : "env";
             let lines = io.system(command).split("\n");
 
-            lines.splice(lines.length - 1, 1);
+            lines.pop();
 
             let vars = lines.map(function (line) {
-                let matches = line.match(/([^=]+)=(.+)/);
+                let matches = line.match(/([^=]+)=(.+)/) || [];
                 return [matches[1], matches[2]];
             });
 
@@ -1044,7 +1052,6 @@ function Completion() //{{{
         ex: function ex(context)
         {
             this.filterMap = null;
-            this.filterString = "";
             substrings = [];
             if (context.filter.indexOf(cacheFilter["ex"]) != 0)
             {
@@ -1069,7 +1076,6 @@ function Completion() //{{{
             {
                 [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
                 context = context.fork(cmd, prefix.length);
-                this.filterString = context.filter;
                 args = command.parseArgs(context.filter, true);
                 if (args)
                 {
@@ -1220,7 +1226,6 @@ function Completion() //{{{
         // XXX: Move to bookmarks.js?
         searchEngineSuggest: function (context, engineAliases)
         {
-            this.filterString = context.filter;
             if (!filter)
                 return [0, []];
 
@@ -1325,7 +1330,6 @@ function Completion() //{{{
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
         url: function url(context, complete)
         {
-            this.filterString = context.filter;
             var numLocationCompletions = 0; // how many async completions did we already return to the caller?
             var start = 0;
             var skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
@@ -1339,6 +1343,13 @@ function Completion() //{{{
                 b: function (context)
                 {
                     context.title = ["Bookmark", "Title"];
+                    context.createRow = function (context, item, class)
+                    {
+                        // FIXME
+                        if (class)
+                            return template.completionRow(context, item, class);
+                        return template.bookmarkItem(item);
+                    }
                     context.items = bookmarks.get(context.filter)
                 },
                 l: function (context)

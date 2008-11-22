@@ -32,6 +32,38 @@ const template = {
         return <>{xml}</>;
     },
 
+    completionRow: function (context, item, class)
+    {
+        let text = item.text || item[0] || "";
+        let description = item.description || item[1] || "";
+        let icon = item.icon || item[2];
+
+        /* Kludge until we have completion contexts. */
+        let map = completion.filterMap;
+        if (map)
+        {
+            text = map[0] ? map[0](text) : text;
+            description = map[1] ? map[1](description) : description;
+        }
+
+        // FIXME: Move.
+        let filter = context.filter;
+        if (filter)
+        {
+            text = template.highlightFilter(text, filter);
+            description = template.highlightFilter(description, filter);
+        }
+
+        if (typeof icon == "function")
+            icon = icon();
+
+        return <ul class={class || "hl-CompItem"}>
+                   <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
+                   <li class="hl-CompResult">{text}</li>
+                   <li class="hl-CompDesc">{description}</li>
+               </ul>;
+    },
+
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
     highlight: function (arg, processStrings)
