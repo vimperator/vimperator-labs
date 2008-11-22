@@ -77,7 +77,7 @@ function Bookmarks() //{{{
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
 
-            return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
+            return bookmarks.push(new Bookmark(node.uri, node.title, node.icon, keyword, tags, node.itemId));
         }
 
         function readBookmark(id)
