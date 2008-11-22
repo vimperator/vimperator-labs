@@ -32,30 +32,77 @@ modules._cleanEval = function (__liberator_eval_arg, __liberator_eval_tmp)
     return window.eval(__liberator_eval_arg);
 }
 
-function CompletionContext(editor, offset)
+function CompletionContext(editor, name, offset)
 {
+    if (!name)
+        name = "";
+
     if (editor instanceof arguments.callee)
     {
         let parent = editor;
+        name = parent.name + "/" + name;
+        this.contexts = parent.contexts;
+        if (name in this.contexts)
+            return this.contexts[name];
+        this.contexts[name] = this;
         this.parent = parent;
         this.editor = parent.editor;
         this.offset = parent.offset + (offset || 0);
         this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
-        this.contexts = this.parent.contexts;
+        this.__defineGetter__("onUpdate", function () this.parent.onUpdate);
+        this.incomplete = false;
     }
     else
     {
         this.editor = editor;
         this.offset = offset || 0;
         this.tabPressed = false;
-        this.contexts = {};
+        this.onUpdate = function () true;
+        this.contexts = { name: this };
+        this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
+        this.reset();
     }
+    this.name = name || "";
+    this._items = []; // FIXME
     this.selectionTypes = {};
 }
 CompletionContext.prototype = {
+    // Temporary
+    get allItems()
+    {
+        let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
+        let items = [];
+        for each (let [k, context] in Iterator(this.contexts))
+        {
+            let prefix = this.value.substring(minStart, context.offset);
+            if (context.hasItems)
+            {
+                items.push(context.items.map(function (item) {
+                    if (!("text" in item))
+                        item = { icon: item[2], text: item[0], description: item[1] };
+                    else // FIXME
+                        item = util.Array.assocToObj([x for (x in Iterator(item))]);
+                    item.text = prefix + item.text;
+                    return item;
+                }));
+            }
+        }
+        return { start: minStart, items: util.Array.flatten(items) }
+    },
+
     get caret() this.editor.selection.getRangeAt(0).startOffset - this.offset,
 
+    get contextList() [v for ([k, v] in Iterator(this.contexts))],
+
     get filter() this.value.substr(this.offset, this.caret),
+
+    get items() this._items,
+    set items(items)
+    {
+        this.hasItems = items.length > 0;
+        this._items = items;
+        this.onUpdate.call(this);
+    },
 
     get value() this.editor.rootElement.textContent,
 
@@ -64,12 +111,12 @@ CompletionContext.prototype = {
         this.offset += count;
     },
 
-    fork: function (name, offset)
+    fork: function (name, offset, completer, self)
     {
-        if (!(name in this.contexts))
-            this.contexts[name] = new CompletionContext(this);
-        this.contexts[name].offset = this.offset + offset;
-        return this.contexts[name];
+        let context = new CompletionContext(this, name, offset);
+        if (completer)
+            return completer.apply(self, [context].concat(Array.slice(arguments, 4)));
+        return context;
     },
 
     highlight: function (start, length, type)
@@ -98,14 +145,23 @@ CompletionContext.prototype = {
 
     reset: function ()
     {
+        let self = this;
+        if (this.parent)
+            throw Error();
         // Not ideal.
-        for (let type in this.selectionTypes)
+        for each (let type in this.selectionTypes)
             this.highlight(0, 0, type);
         this.selectionTypes = {};
         this.tabPressed = false;
         this.offset = 0;
+        //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
+        //    delete this.contexts[key];
+        for each (let context in this.contexts)
+        {
+            context.hasItems = false;
+            context.incomplete = false;
+        }
     },
-
 }
 
 function Completion() //{{{
@@ -130,23 +186,6 @@ function Completion() //{{{
     var cacheResults = {}
     var substrings = [];
     var historyCache = [];
-    var historyResult = null;
-    var completionCache = [];
-
-    var historyTimer = new util.Timer(50, 100, function histTimer() {
-        let comp = [];
-        for (let i in util.range(0, historyResult.matchCount))
-            comp.push([historyResult.getValueAt(i),
-                       historyResult.getCommentAt(i),
-                       historyResult.getImageAt(i)]);
-
-        //let foo = ["", "IGNORED", "FAILURE", "NOMATCH", "SUCCESS", "NOMATCH_ONGOING", "SUCCESS_ONGOING"];
-
-        // TODO: we need to have a "completionCacheAfter" to allow cpt=slf 
-        historyCache = comp;
-        commandline.setCompletions({ get items() completionCache.concat(historyCache),
-                                     incompleteResult: historyResult.searchResult >= historyResult.RESULT_NOMATCH_ONGOING ? true : false });
-    });
 
     function Javascript()
     {
@@ -227,6 +266,8 @@ function Completion() //{{{
             {
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
+                    continue;
+                if (!obj)
                     continue;
 
                 // XPCNativeWrappers, etc, don't show all accessible
@@ -431,7 +472,7 @@ function Completion() //{{{
             lastIdx = i;
         }
 
-        this.complete = function complete(context)
+        this.complete = function (context)
         {
             this.context = context;
             let string = context.filter;
@@ -446,10 +487,10 @@ function Completion() //{{{
             catch (e)
             {
                 if (e.message != "Invalid JS")
-                    Components.utils.reportError(e);
+                    liberator.reportError(e);
                 // liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
-                return [0, []];
+                return;
             }
 
             /* Okay, have parse stack. Figure out what we're completing. */
@@ -488,7 +529,7 @@ function Completion() //{{{
                     cacheKey = str.substring(statement, dot);
                     obj = self.eval(s, cacheKey, obj);
                 }
-                return obj;
+                return [[obj], str.substring(statement, stop + 1)];
             }
 
             function getObjKey(frame)
@@ -498,7 +539,7 @@ function Completion() //{{{
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
                 cacheKey = null;
-                let obj = [modules, window]; // Default objects;
+                let obj = [[modules, "modules"], [window, "window"]]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
                     dot = statement - 1;
@@ -507,6 +548,16 @@ function Completion() //{{{
 
                 let [, space, key] = str.substring(dot + 1, end).match(/^(\s*)(.*)/);
                 return [dot + 1 + space.length, obj, key];
+            }
+
+            function complete(objects, key, compl, string, last)
+            {
+                for (let [,obj] in Iterator(objects))
+                {
+                    let ctxt = this.context.fork(obj[1], top[OFFSET]);
+                    ctxt.title = [obj[1]];
+                    ctxt.items = this.filter(compl || this.objectKeys(obj[0]), key + (string || ""), last, key.length);
+                }
             }
 
             // In a string. Check if we're dereferencing an object.
@@ -537,7 +588,7 @@ function Completion() //{{{
                     // Yes. If the [ starts at the begining of a logical
                     // statement, we're in an array literal, and we're done.
                      if (get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
-                        return [0, []];
+                        return;
 
                     // Begining of the statement upto the opening [
                     let obj = getObj(-3, get(-2)[OFFSET]);
@@ -546,8 +597,7 @@ function Completion() //{{{
                     // Now eval the key, to process any referenced variables.
                     key = this.eval(key);
 
-                    let compl = this.objectKeys(obj);
-                    return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
+                    return complete.call(this, obj, key, null, string, last);
                 }
 
                 // Is this a function call?
@@ -561,7 +611,7 @@ function Completion() //{{{
 
                     // Does the opening "(" mark a function call?
                     if (get(-3, 0, FUNCTIONS) != get(-2)[OFFSET])
-                        return [0, []]; // No. We're done.
+                        return; // No. We're done.
 
                     let [offset, obj, func] = getObjKey(-3);
                     let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
@@ -574,7 +624,7 @@ function Completion() //{{{
                     if (!completer)
                         completer = this.completers[func];
                     if (!completer)
-                        return [0, []];
+                        return;
 
                     // Split up the arguments
                     let prev = get(-2)[OFFSET];
@@ -590,11 +640,11 @@ function Completion() //{{{
                     if (!(compl instanceof Array))
                         compl = [v for (v in compl)];
                     key = this.eval(key);
-                    return [top[OFFSET], this.filter(compl, key + string, last, key.length)];
+                    return complete.call(this, obj, key, compl, string, last);
                 }
 
                 // Nothing to do.
-                return [0, []];
+                return;
             }
 
             /*
@@ -603,23 +653,28 @@ function Completion() //{{{
              * key = "baz"
              *
              * str = "foo"
-             * obj = [liberator, window]
+             * obj = [modules, window]
              * key = "foo"
              */
 
             let [offset, obj, key] = getObjKey(-1);
 
             if (!/^(?:\w[\w\d]*)?$/.test(key))
-                return [0, []]; /* Not a word. Forget it. Can this even happen? */
+                return; /* Not a word. Forget it. Can this even happen? */
 
-            let compl = this.objectKeys(obj);
-            return [offset, this.filter(compl, key)];
+            top[OFFSET] = offset;
+            return complete.call(this, obj, key);
         }
     };
     let javascript = new Javascript();
 
     function buildSubstrings(str, filter)
     {
+        if (substrings.length)
+        {
+            substrings = substrings.filter(function strIndex(s) str.indexOf(s) >= 0);
+            return;
+        }
         if (filter == "")
             return;
         let length = filter.length;
@@ -662,12 +717,7 @@ function Completion() //{{{
                 filtered.push([compitem, item[1], favicon ? item[2] : null]);
 
                 if (longest)
-                {
-                    if (substrings.length == 0)
-                        buildSubstrings(str, filter);
-                    else
-                        substrings = substrings.filter(function strIndex(s) str.indexOf(s) >= 0);
-                }
+                    buildSubstrings(str, filter);
                 break;
             }
         }
@@ -740,19 +790,9 @@ function Completion() //{{{
 
         // returns the longest common substring
         // used for the 'longest' setting for wildmode
-        getLongestSubstring: function getLongestSubstring()
-        {
-            if (substrings.length == 0)
-                return "";
+        get longestSubstring () substrings.reduce(function (a, b) a.length > b.length ? a : b, ""),
 
-            var longest = substrings[0];
-            for (let i = 1; i < substrings.length; i++)
-            {
-                if (substrings[i].length > longest.length)
-                    longest = substrings[i];
-            }
-            return longest;
-        },
+        get substrings() substrings.slice(),
 
         // generic filter function, also builds substrings needed
         // for :set wildmode=list:longest, if necessary
@@ -853,10 +893,7 @@ function Completion() //{{{
                 filtered.push(elem);
             }
 
-            filtered = filtered.concat(additionalCompletions);
-            if (options.get("wildoptions").has("sort"))
-                filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
-            return filtered;
+            return filtered.concat(additionalCompletions);
         },
 
         // generic helper function which checks if the given "items" array pass "filter"
@@ -963,6 +1000,7 @@ function Completion() //{{{
             let rtp = options["runtimepath"].split(",");
 
             rtp.forEach(function (path) {
+                // FIXME: Now! Very, very broken.
                 schemes = schemes.concat([[c[0].replace(/\.vimp$/, ""), ""]
                     for each (c in completion.file(path + "/colors/", true)[1])]);
             });
@@ -972,15 +1010,20 @@ function Completion() //{{{
 
         command: function command(context)
         {
+            context.title = ["Command"];
             if (!context.filter)
-                return { start: 0, items: [[c.name, c.description] for (c in commands)] };
+                context.items = [[c.name, c.description] for (c in commands)];
             else
-                return { start: 0, items: this.filter([[c.longNames, c.description] for (c in commands)], context.filter, true) };
+                context.items = this.filter([[c.longNames, c.description] for (c in commands)], context.filter, true);
         },
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
 
-        directory: function (filter, tail) [0, this.file(filter, tail)[1].filter(function (f) f[1] == "Directory")],
+        directory: function (context, tail)
+        {
+            this.file(context, tail);
+            context.items = context.items.filter(function (i) i[1] == "Directory");
+        },
 
         environment: function environment(filter)
         {
@@ -1014,7 +1057,8 @@ function Completion() //{{{
             // then get completions of the command name
             let [count, cmd, special, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
-            context.advance(junk.length)
+            context.advance(prefix.length)
+            context.items = []; // XXX
             if (!junk)
                 return this.command(context);
 
@@ -1023,40 +1067,38 @@ function Completion() //{{{
             let compObject = { start: 0, items: [] };
             if (command && command.completer)
             {
-                [prefix] = context.filter.match(/^(?:\w+[\s!]|!)\s*/);
-                context.advance((prefix || "").length);
+                [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
+                context = context.fork(cmd, prefix.length);
+                this.filterString = context.filter;
                 args = command.parseArgs(context.filter, true);
-                liberator.dump(args);
                 if (args)
                 {
                     // XXX, XXX, XXX
                     compObject = command.completer.call(command, args.string, special, args, context);
-                    liberator.dump(compObject);
                     if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                         compObject = { start: compObject[0], items: compObject[1] };
-                    if (compObject == null)
-                        compObject = { start: context.offset, items: context.items };
-                    else
-                        compObject.start += context.offset;
                     if (args.completions)
                     {
-                        if (!compObject.items.length)
-                            compObject.start = args.completeStart + context.offset;
-                        if (args.completeStart + context.offset == compObject.start)
-                            compObject.items = args.completions.concat(compObject.items);
+                        let argContext = context.fork("args", args.completionStart);
+                        argContext.title = [args.completeOpt || "Options"];
+                        argContext.items = args.completions;
                     }
-                    liberator.dump(compObject);
-                    liberator.dump("\n");
+                    if (compObject != null)
+                    {
+                        context.advance(compObject.start);
+                        context.title = ["Completions"];
+                        context.items = compObject.items;
+                    }
                 }
+                //liberator.dump([[v.name, v.offset, v.items.length, v.hasItems] for each (v in context.contexts)]);
             }
-            return compObject;
         },
 
         // TODO: support file:// and \ or / path separators on both platforms
         // if "tail" is true, only return names without any directory components
-        file: function file(filter, tail)
+        file: function file(context, tail)
         {
-            let [, dir, compl] = filter.match(/^((?:.*[\/\\])?)(.*?)$/);
+            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
             // dir == "" is expanded inside readDirectory to the current dir
 
             let generate = function ()
@@ -1085,37 +1127,35 @@ function Completion() //{{{
                 return mapped;
             };
 
+            context.title = ["Path", "Type"];
             if (tail)
-                return [dir.length, this.cached("file-" + dir, compl, generate, "filter", [true])];
-            else
-                return [0, this.cached("file-" + dir, filter, generate, "filter", [true])];
+                context.advance(dir.length);
+            context.items = this.cached("file-" + dir, context.filter, generate, "filter", true);
         },
 
         help: function help(filter)
         {
-            var files = config.helpFiles;
-            var res = [];
+            let res = [];
 
-            for (let i = 0; i < files.length; i++)
+            for (let [, file] in Iterator(config.helpFiles))
             {
                 try
                 {
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://liberator/locale/" + files[i], false);
+                    xmlhttp.open("GET", "chrome://liberator/locale/" + file, false);
                     xmlhttp.send(null);
                 }
                 catch (e)
                 {
-                    liberator.log("Error opening chrome://liberator/locale/" + files[i], 1);
+                    liberator.log("Error opening chrome://liberator/locale/" + file, 1);
                     continue;
                 }
-                var doc = xmlhttp.responseXML;
-                var elems = doc.getElementsByClassName("tag");
-                for (let j = 0; j < elems.length; j++)
-                    res.push([elems[j].textContent, files[i]]);
+                let doc = xmlhttp.responseXML;
+                res.push(Array.map(doc.getElementsByClassName("tag"),
+                        function (elem) [elem.textContent, file]));
             }
 
-            return [0, this.filter(res, filter)];
+            return [0, this.filter(util.Array.flatten(res), filter)];
         },
 
         highlightGroup: function highlightGroup(filter) commands.get("highlight").completer(filter), // XXX
@@ -1140,11 +1180,14 @@ function Completion() //{{{
 
         preference: function preference(filter) commands.get("set").completer(filter, true), // XXX
 
-        search: function search(filter)
+        search: function search(context)
         {
-            let [, keyword, args] = filter.match(/^\s*(\S*)\s*(.*)/);
+            let [, keyword, args] = context.filter.match(/^\s*(\S*)\s*(.*)/);
             let keywords = bookmarks.getKeywords();
-            let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), filter, false, true);
+            let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), context.filter, false, true);
+
+            context.title = ["Search Keywords"];
+            context.items = engines;
 
             // NOTE: While i like the result of the code, due to the History simplification
             // that code is too slow to be here. We might use a direct Places History query instead for better speed
@@ -1172,58 +1215,50 @@ function Completion() //{{{
             // let searches = this.cached("searches-" + keyword, args, generate, "filter", [false, true]);
             // searches = searches.map(function (a) (a = a.concat(), a[0] = keyword + " " + a[0], a));
             // return [0, searches.concat(engines)];
-            return [0, engines];
         },
 
         // XXX: Move to bookmarks.js?
-        searchEngineSuggest: function searchEngineSuggest(filter, engineAliases)
+        searchEngineSuggest: function (context, engineAliases)
         {
-            this.filterString = filter;
+            this.filterString = context.filter;
             if (!filter)
                 return [0, []];
 
-            var engineList = (engineAliases || options["suggestengines"]).split(",");
-            var responseType = "application/x-suggestions+json";
-            var ss = Components.classes["@mozilla.org/browser/search-service;1"]
+            let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
+            let responseType = "application/x-suggestions+json";
+            let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                .getService(Components.interfaces.nsIBrowserSearchService);
+            let matches = query.match(RegExp("^\s*(" + name + "\\s+)(.*)$")) || [];
+            if (matches[1])
+                context.advance(matches[1].length);
+            query = context.filter;
 
-            var completions = [];
+            let completions = [];
             engineList.forEach(function (name) {
-                var query = filter;
-                var queryURI;
-                var engine = ss.getEngineByAlias(name);
-                var reg = new RegExp("^\s*(" + name + "\\s+)(.*)$");
-                var matches = query.match(reg);
-                if (matches)
-                    query = matches[2];
+                let engine = ss.getEngineByAlias(name);
 
                 if (engine && engine.supportsResponseType(responseType))
-                    queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
+                    var queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
                 else
-                    return [0, []];
+                    return;
 
-                var xhr = new XMLHttpRequest();
+                let xhr = new XMLHttpRequest();
                 xhr.open("GET", queryURI, false);
                 xhr.send(null);
 
-                var json = Components.classes["@mozilla.org/dom/json;1"]
+                let json = Components.classes["@mozilla.org/dom/json;1"]
                                      .createInstance(Components.interfaces.nsIJSON);
-                var results = json.decode(xhr.responseText)[1];
+                let results = json.decode(xhr.responseText)[1];
                 if (!results)
-                    return [0, []];
+                    return;
 
-                results.forEach(function (item) {
-                    // make sure we receive strings, otherwise a man-in-the-middle attack
-                    // could return objects which toString() method could be called to
-                    // execute untrusted code
-                    if (typeof item != "string")
-                        return [0, []];
-
-                    completions.push([(matches ? matches[1] : "") + item, engine.name + " suggestion"]);
-                });
+                let ctxt = context.fork(engine.name, (matches[1] || "").length);
+                ctxt.title = [engine.name + " Suggestions"];
+                // make sure we receive strings, otherwise a man-in-the-middle attack
+                // could return objects which toString() method could be called to
+                // execute untrusted code
+                ctxt.items = [[item, ""] for ([k, item] in results) if (typeof item == "string")];
             });
-
-            return [0, completions];
         },
 
         shellCommand: function shellCommand(filter)
@@ -1288,84 +1323,67 @@ function Completion() //{{{
         // may consist of search engines, filenames, bookmarks and history,
         // depending on the 'complete' option
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
-        url: function url(filter, complete)
+        url: function url(context, complete)
         {
-            function getMoreItems(count, maxTime)
-            {
-                maxTime = maxTime || 5000; // maximum time to wait, default 5 sec
-                count = count || 10;
-
-                var completions = [];
-                historyResult = null;
-                let then = new Date().getTime();
-                for (let now = then; now - then < maxTime; now = new Date().getTime())
-                {
-                    liberator.threadYield();
-                    if (!historyResult)
-                        continue;
-
-                    if (historyResult.searchResult == historyResult.RESULT_SUCCESS ||
-                        historyResult.searchResult == historyResult.RESULT_NOMATCH ||
-                        (historyResult.searchResult == historyResult.RESULT_SUCCESS_ONGOING &&
-                         historyResult.matchCount >= count + numLocationCompletions))
-                    {
-                        //liberator.dump("Got " + historyResult.matchCount + " more results after " + (now - then) + " ms with result: " + historyResult.searchResult);
-                        //completionService.stopSearch();
-                        for (let i in util.range(numLocationCompletions, historyResult.matchCount))
-                            completions.push([historyResult.getValueAt(i),
-                                            historyResult.getCommentAt(i),
-                                            historyResult.getImageAt(i)]);
-                        numLocationCompletions = historyResult.matchCount;
-                        break;
-                    }
-                }
-                return completions;
-            }
-
-            this.filterString = filter;
-            var completions = [];
+            this.filterString = context.filter;
             var numLocationCompletions = 0; // how many async completions did we already return to the caller?
             var start = 0;
-            var skip = filter.match("^(.*" + options["urlseparator"] + ")(.*)"); // start after the last 'urlseparator'
+            var skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
             if (skip)
-            {
-                start += skip[1].length;
-                filter = skip[2];
-            }
+                context.advance(skip[0].length);
 
-            var cpt = complete || options["complete"];
-            var suggestEngineAlias = options["suggestengines"] || "google";
-            // join all completion arrays together
-            for (let c in util.Array.iterator(cpt))
-            {
-                if (c == "s")
-                    completions = completions.concat(this.search(filter)[1]);
-                else if (c == "f")
-                    completions = completions.concat(this.file(filter, false)[1]);
-                else if (c == "S")
-                    completions = completions.concat(this.searchEngineSuggest(filter, suggestEngineAlias)[1]);
-                else if (c == "b")
-                    completions = completions.concat(bookmarks.get(filter));
-                else if (c == "l" && completionService) // add completions like Firefox's smart location bar
+            let opts = {
+                s: this.search,
+                f: this.file,
+                S: this.searchEngineSuggest,
+                b: function (context)
                 {
-                    historyCache = [];
-                    completionCache = completions.slice(); // make copy of current results
+                    context.title = ["Bookmark", "Title"];
+                    context.items = bookmarks.get(context.filter)
+                },
+                l: function (context)
+                {
+                    if (!completionService)
+                        return
+                    context.title = ["Smart Completions"];
+                    context.incomplete = true;
+                    if (context.items.length)
+                        context.hasItems = true; // XXX
+                    let timer = new util.Timer(50, 100, function () {
+                        let result = context.result;
+                        context.items = [
+                                [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
+                                for (i in util.range(0, result.matchCount))
+                        ];
+                        context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
+                        let filter = context.filter;
+                        context.items.forEach(function ([item]) buildSubstrings(item, filter));
+                    });
                     completionService.stopSearch();
-                    completionService.startSearch(filter, "", historyResult, {
+                    completionService.startSearch(context.filter, "", context.result, {
                         onSearchResult: function onSearchResult(search, result) {
-                            historyResult = result;
-                            //liberator.dump("Search result in " + historyResult.matchCount + " results with retval: " + historyResult.searchResult);
-                            historyTimer.tell();
+                            context.result = result;
+                            timer.tell();
                             if (result.searchResult <= result.RESULT_SUCCESS)
-                                historyTimer.flush();
+                                timer.flush();
                         }
                     });
                     
                 }
-            }
+            };
+            Array.forEach(complete || options["complete"],
+                function (c) context.fork(c, 0, opts[c], completion));
+        },
 
-            // TODO: incomplete result should be set conditionally
-            return { start: start, items: completions, getMoreItems: getMoreItems, incompleteResult: true };
+        // FIXME: Temporary
+        _url: function (filter, complete)
+        {
+            let context = new CompletionContext({
+                selection: { getRangeAt: function () ({ startOffset: filter.length }) },
+                rootElement: { textContent: filter }
+            });
+            this.url(context, complete);
+            return context.allItems;
         },
 
         userCommand: function userCommand(filter)

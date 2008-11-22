@@ -208,7 +208,7 @@ function IO() //{{{
         },
         {
             argCount: "?",
-            completer: function (filter) completion.file(filter, true),
+            completer: function (filter, bang, args, context) completion.file(context, true),
             literal: true
         });
 
@@ -268,7 +268,7 @@ function IO() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter) completion.file(filter, true)
+            completer: function (filter, bang, args, context) completion.file(context, true)
         });
 
     commands.add(["runt[ime]"],
@@ -301,7 +301,7 @@ function IO() //{{{
         {
             argCount: "1",
             bang: true,
-            completer: function (filter) completion.file(filter, true)
+            completer: function (filter, bang, args, context) completion.file(context, true)
         });
 
     commands.add(["!", "run"],
@@ -893,8 +893,7 @@ lookup:
             catch (e)
             {
                 let message = "Sourcing file: " + (e.echoerr || file.path + ": " + e);
-                if (Components.utils.reportError)
-                    Components.utils.reportError(e);
+                liberator.reportError(e);
                 if (!silent)
                     liberator.echoerr(message);
             }

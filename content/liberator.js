@@ -57,9 +57,7 @@ const liberator = (function () //{{{
         catch (e)
         {
             toJavaScriptConsole();
-            if (Components.utils.reportError)
-                Components.utils.reportError(e);
-            liberator.dump(e);
+            liberator.reportError(e);
         }
     }
 
@@ -1085,6 +1083,23 @@ const liberator = (function () //{{{
                           .quit(nsIAppStartup.eForceQuit);
             else
                 goQuitApplication();
+        },
+
+        reportError: function (error)
+        {
+            if (Components.utils.reportError)
+                Components.utils.reportError(error);
+            let obj = {
+                toString: function () error.toString(),
+                stack: { toString: function () "\n" + error.stack.replace(/^/mg, "\t") }
+            };
+            for (let [k, v] in Iterator(error))
+            {
+                if (!(k in obj))
+                    obj[k] = v;
+            }
+            liberator.dump(obj);
+            liberator.dump("");
         },
 
         restart: function ()

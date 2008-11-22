@@ -130,10 +130,7 @@ const util = { //{{{
         };
     },
 
-    compareIgnoreCase: function (a, b)
-    {
-        return String.localeCompare(a.toLowerCase(), b.toLowerCase());
-    },
+    compareIgnoreCase: function (a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
 
     clip: function (str, length)
     {

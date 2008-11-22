@@ -112,8 +112,7 @@ Command.prototype = {
                 commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
                     function (args)
                     {
-                        args = this.parseArgs(matches[1] + "\n" + args);
-
+                        args = self.parseArgs(matches[1] + "\n" + args);
                         if (args)
                             self.action.call(self, args, special, count, modifiers);
                     });
@@ -122,7 +121,6 @@ Command.prototype = {
         }
 
         args = this.parseArgs(args);
-
         if (args)
             this.action.call(this, args, special, count, modifiers);
     },

@@ -117,7 +117,8 @@ function CommandLine() //{{{
         if (events.feedingKeys)
             return;
         completionContext.reset();
-        commandline.setCompletions(completion.ex(completionContext));
+        completionContext.fork("ex", 0, completion.ex, completion);
+        commandline.setCompletions(completionContext.allItems);
     });
 
     // the containing box for the promptWidget and commandWidget
@@ -156,7 +157,8 @@ function CommandLine() //{{{
     liberator.registerCallback("complete", modes.EX, function (str) {
         completionContext.reset();
         completionContext.tabPressed = true;
-        return completion.ex(completionContext);
+        completionContext.fork("ex", 0, completion.ex, completion);
+        return completionContext.allItems;
     });
     liberator.registerCallback("change", modes.EX, function (command) {
         completion.cancel(); // cancel any previous completion function
@@ -584,6 +586,10 @@ function CommandLine() //{{{
             commandWidget.focus();
 
             completionContext = new CompletionContext(commandWidget.inputField.editor);
+            completionContext.onUpdate = function ()
+            {
+                commandline.setCompletions(this.allItems);
+            };
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
                 options.get("wildoptions").has("auto") &&
@@ -815,17 +821,12 @@ function CommandLine() //{{{
                     historyIndex = UNINITIALIZED;
 
                     // TODO: call just once, and not on each <Tab>
-                    var wim = options["wildmode"].split(",");
-                    var hasList = false;
-                    var longest = false;
-                    var full = false;
-                    var wildType = wim[wildIndex++] || wim[wim.length - 1];
-                    if (wildType == "list" || wildType == "list:full" || wildType == "list:longest")
-                        hasList = true;
-                    if (wildType == "longest" || wildType == "list:longest")
-                        longest = true;
-                    else if (wildType == "full" || wildType == "list:full")
-                        full = true;
+                    let wildmode = options["wildmode"].split(",");
+                    let wildType = wildmode[Math.min(wildIndex++, wildmode.length - 1)];
+
+                    let hasList = /^list(:|$)/.test(wildType);
+                    let longest = /(^|:)longest$/.test(wildType);
+                    let full = !longest && /(^|:)full/.test(wildType);
 
                     // we need to build our completion list first
                     if (completionIndex == UNINITIALIZED)
@@ -837,20 +838,22 @@ function CommandLine() //{{{
 
                         // sort the completion list
                         // TODO: might not make sense anymore with our advanced completions, we should just sort when necessary
-                        if (options.get("wildoptions").has("sort"))
-                            completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
+                        // FIXME: CompletionContext
+                        //if (options.get("wildoptions").has("sort"))
+                        //    completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
 
-                        completionList.setItems(completions.items);
+                        completionList.setItems(completionContext.allItems);
                     }
 
                     if (completions.items.length == 0)
                     {
-                        // try to fetch more items, if possible
+                        // Wait for items to come available
                         // TODO: also use that code when we DO have completions but too few
-                        if (completions.getMoreItems)
+                        let end = Date.now() + 5000;
+                        while (completionContext.incomplete && completions.items.length == 0 && Date.now() < end)
                         {
-                            completions.items = completions.items.concat(completions.getMoreItems(1));
-                            completionList.setItems(completions.items);
+                            liberator.threadYield();
+                            completions = completionContext.allItems;
                         }
 
                         if (completions.items.length == 0) // still not more matches
@@ -895,11 +898,11 @@ function CommandLine() //{{{
                     {
                         var compl = null;
                         if (longest && completions.items.length > 1)
-                            compl = completion.getLongestSubstring();
+                            compl = completion.longestSubstring;
                         else if (full)
-                            compl = completions.items[completionIndex][0];
+                            compl = completions.items[completionIndex].text;
                         else if (completions.items.length == 1)
-                            compl = completions.items[0][0];
+                            compl = completions.items[0].text;
 
                         if (compl)
                         {
@@ -1236,8 +1239,9 @@ function CommandLine() //{{{
                 return;
 
             // don't show an empty result, if we are just waiting for data to arrive
-            if (newCompletions.incompleteResult && newCompletions.items.length == 0)
-                return;
+            // FIXME: Maybe. CompletionContext
+            //if (newCompletions.incompleteResult && newCompletions.items.length == 0)
+            //    return;
 
             completionList.setItems(newCompletions.items);
 
@@ -1332,32 +1336,30 @@ function ItemList(id) //{{{
     // TODO: move to completions?
     function createDefaultRow(item, dom)
     {
-        if (item instanceof Array)
-            item = { text: item[0], description: item[1], icon: item[2] };
-
+        let { text: text, description: description, icon: icon } = item;
         /* Kludge until we have completion contexts. */
         let map = completion.filterMap;
         if (map)
         {
-            item.text = map[0] ? map[0](item.text) : item.text;
-            item.description = map[1] ? map[1](item.description) : item.description;
+            text = map[0] ? map[0](text) : text;
+            description = map[1] ? map[1](description) : description;
         }
         /* Obviously, ItemList shouldn't know or care about this. */
         let filter = completion.filterString;
         if (filter)
         {
-            item.text = template.highlightFilter(item.text, filter);
-            item.description = template.highlightFilter(item.description, filter);
+            text = template.highlightFilter(text, filter);
+            description = template.highlightFilter(description, filter);
         }
 
-        if (typeof item.icon == "function")
-            item.icon = item.icon();
+        if (typeof icon == "function")
+            icon = icon();
 
         let row =
             <ul class="hl-CompItem">
-                <li class="hl-CompIcon">{item.icon ? <img src={item.icon}/> : <></>}</li>
-                <li class="hl-CompResult">{item.text}</li>
-                <li class="hl-CompDesc">{item.description}</li>
+                <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
+                <li class="hl-CompResult">{text}</li>
+                <li class="hl-CompDesc">{description}</li>
             </ul>;
 
         if (dom)

@@ -548,7 +548,7 @@ function Tabs() //{{{
             },
             {
                 bang: true,
-                completer: function (filter) completion.url(filter)
+                completer: function (filter, bang, args, context) completion.url(context)
             });
 
         commands.add(["tabde[tach]"],

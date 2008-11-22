@@ -293,7 +293,7 @@ const config = { //{{{
             },
             {
                 bang: true,
-                completer: function (filter) completion.url(filter)
+                completer: function (filter, args, bang, context) completion.url(context)
             });
 
         commands.add(["redr[aw]"],
@@ -364,7 +364,7 @@ const config = { //{{{
                 else
                     liberator.open("about:blank", liberator.NEW_WINDOW);
             },
-            { completer: function (filter) completion.url(filter) });
+            { completer: function (filter, bang, args, context) completion.url(context) });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////

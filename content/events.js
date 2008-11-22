@@ -218,13 +218,13 @@ function AutoCommands() //{{{
 
             var list = template.generic(
                 <table>
-                    <tr>
-                        <td class="hl-Title" colspan="2">----- Auto Commands -----</td>
+                    <tr class="hl-Title">
+                        <td colspan="2">----- Auto Commands -----</td>
                     </tr>
                     {
                         template.map(cmds, function ([event, items])
-                        <tr>
-                            <td class="hl-Title" colspan="2">{event}</td>
+                        <tr class="hl-Title">
+                            <td colspan="2">{event}</td>
                         </tr>
                         +
                             template.map(items, function (item)
@@ -562,9 +562,7 @@ function Events() //{{{
                     liberator.echoerr("Interrupted");
                 else
                     liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
-                liberator.dump(e);
-                if (Components.utils.reportError)
-                    Components.utils.reportError(e);
+                liberator.reportError(e);
             }
         };
     }
@@ -1128,7 +1126,7 @@ function Events() //{{{
                //     if (events.wantsModeReset)
                //     {
                //         events.wantsModeReset = false;
-                        modes.reset();
+               modes.reset();
                //     }
                // }, 0);
             }

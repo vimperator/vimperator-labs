@@ -240,10 +240,10 @@ function Bookmarks() //{{{
         "Set the default search engine",
         "string", "google",
         {
-            completer: function (filter) completion.url("", "s")[1],
+            completer: function (filter) completion._url(filter, "s").items,
             validator: function (value)
             {
-                return completion.url("", "s")[1].some(function (s) s[0] == value);
+                return completion._url("", "s").items.some(function (s) s[0] == value);
             }
         });
 
@@ -350,7 +350,6 @@ function Bookmarks() //{{{
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
-
             return completion.cached("bookmarks", filter, function () cache.bookmarks, "filterURLArray", tags);
         },
 

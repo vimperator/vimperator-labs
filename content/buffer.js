@@ -564,7 +564,7 @@ function Buffer() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter) completion.file(filter)
+            completer: function (filter, bang, args, context) completion.file(context)
         });
 
     commands.add(["st[op]"],
@@ -578,7 +578,7 @@ function Buffer() //{{{
         {
             argCount: "?",
             bang: true,
-            completer: function (filter) completion.url(filter, "bhf")
+            completer: function (filter, bang, args, context) completion.url(context, "bhf")
         });
 
     commands.add(["zo[om]"],

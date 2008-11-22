@@ -62,7 +62,7 @@ const template = {
                     // that we cannot even try/catch it
                     if (/^\[JavaPackage.*\]$/.test(arg))
                         return <>[JavaPackage]</>;
-                    if (processStrings)
+                    if (processStrings && false)
                         arg = String(arg).replace("\n", "\\n", "g");
                     return <span class="hl-Object">{arg}</span>;
                 default:
