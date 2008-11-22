@@ -441,9 +441,8 @@ liberator.registerObserver("load_commands", function ()
                     }
                     catch (e) {}
                     compl = compl.concat([[s, ""] for each (s in styles.sites)])
-                    return [0, completion.filter(compl, args.arguments[0])];
+                    context.items = completion.filter(compl, args.arguments[0]);
                 }
-                return [0, []];
             },
             hereDoc: true,
             literal: true,

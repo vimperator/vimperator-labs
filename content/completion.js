@@ -1078,24 +1078,23 @@ function Completion() //{{{
             {
                 [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
                 context = context.fork(cmd, prefix.length);
-                args = command.parseArgs(context.filter, true);
+                let argContext = context.fork("args", args.completeStart);
+                args = command.parseArgs(context.filter, argContext);
                 if (args)
                 {
                     // XXX, XXX, XXX
-                    let argContext = context.fork("args", args.completeStart);
-                    compObject = command.completer.call(command, context, args, special, count);
-                    if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
-                        compObject = { start: compObject[0], items: compObject[1] };
-                    if (args.completions)
+                    if (!args.completeOpt)
                     {
-                        argContext.title = [args.completeOpt || "Options"];
-                        argContext.items = args.completions;
-                    }
-                    if (compObject != null)
-                    {
-                        context.advance(compObject.start);
-                        context.title = ["Completions"];
-                        context.items = compObject.items;
+                        context.advance(args.completeStart);
+                        compObject = command.completer.call(command, context, args, special, count);
+                        if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                            compObject = { start: compObject[0], items: compObject[1] };
+                        if (compObject != null)
+                        {
+                            context.advance(compObject.start);
+                            context.title = ["Completions"];
+                            context.items = compObject.items;
+                        }
                     }
                 }
                 //liberator.dump([[v.name, v.offset, v.items.length, v.hasItems] for each (v in context.contexts)]);

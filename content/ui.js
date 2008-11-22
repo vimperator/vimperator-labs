@@ -1362,22 +1362,23 @@ function ItemList(id) //{{{
         }
 
         let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
+                    <div class="hl-Completions">
                     {
-                        items.allItems.items.length == 0 &&
-                        <div class="hl-Completions">
+                        items.allItems.items.length == 0 ?
                             <span class="hl-Title">No Completions</span>
-                        </div> || <></>
+                            : <></>
                     }
                     {
-                        template.map(items.contextList, function (context) context.hasItems &&
-                        <div class="hl-Completions">
+                        template.map(items.contextList, function (context) context.hasItems ?
+                        <>
                         { context.createRow(context, context.title || {}, "hl-CompTitle") }
                         {
                             template.map(range(context), function (i) context.createRow(context, context.items[i]))
                         }
-                        </div>
-                        || undefined)
+                        </>
+                        : undefined)
                     }
+                    </div>
                     <div class="hl-Completions">
                     {
                         // Hmm. The problem with not making this a CompItem is that

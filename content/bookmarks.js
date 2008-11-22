@@ -280,8 +280,15 @@ function Bookmarks() //{{{
         },
         { argCount: "0" });
 
-    function tags() util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(cache.bookmarks))]))
-                        .map(function (tag) [tag, tag]);
+    function tags(context, args)
+    {
+        let filter = args.completeFilter;
+        let have = filter.split(",");
+        args.completeFilter = have.pop();
+        let prefix = filter.substr(0, filter.length - args.completeFilter.length);
+        let tags = util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(cache.bookmarks))]));
+        return [[prefix + tag, tag] for ([i, tag] in Iterator(tags)) if (have.indexOf(tag) < 0)];
+    }
 
     commands.add(["bma[rk]"],
         "Add a bookmark",
@@ -318,13 +325,7 @@ function Bookmarks() //{{{
         },
         {
             bang: true,
-            completer: function (context, args)
-            {
-                if (args.completeOpt)
-                    return;
-                context.advance(args.completeStart); // TODO: Move this to completion.ex?
-                completion.url(context, "b");
-            },
+            completer: function (context, args) completion.url(context, "b"),
             options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
         });
 
