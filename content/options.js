@@ -688,6 +688,7 @@ function Options() //{{{
             bang: true,
             completer: function (context, args, special, count, modifiers)
             {
+                let filter = context.filter;
                 var optionCompletions = [];
 
                 if (special) // list completions for about:config entries

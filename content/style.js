@@ -440,7 +440,7 @@ liberator.registerObserver("load_commands", function ()
                         compl.push([content.location.href, "Current URL"]);
                     }
                     catch (e) {}
-                    comp = compl.concat([[s, ""] for each (s in styles.sites)])
+                    compl = compl.concat([[s, ""] for each (s in styles.sites)])
                     return [0, completion.filter(compl, args.arguments[0])];
                 }
                 return [0, []];

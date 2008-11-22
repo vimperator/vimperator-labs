@@ -314,7 +314,7 @@ function CommandLine() //{{{
     // TODO: doesn't belong in ui.js
     options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
-        "charlist", "sfbh",
+        "charlist", "sfl",
         {
             completer: function (filter)
             {
