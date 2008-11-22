@@ -266,9 +266,9 @@ function Completion() //{{{
 
             completion.filterMap = [null, function (v) template.highlight(v, true)];
 
-            if (cacheFilter.js === cacheKey)
-                return cacheResults.js;
-            cacheFilter.js = cacheKey;
+            //if (cacheFilter.js === cacheKey)
+            //    return cacheResults.js;
+            //cacheFilter.js = cacheKey;
 
             // Can't use the cache. Build a member list.
             compl = [];

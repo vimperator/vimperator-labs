@@ -1344,7 +1344,7 @@ function ItemList(id) //{{{
     function fill(offset)
     {
         let diff = offset - startIndex;
-        if (items == null || offset == null || offset - startIndex == 0 || offset < 0)
+        if (items == null || offset == null || diff == 0 || offset < 0)
             return;
 
         startIndex = offset;

@@ -534,7 +534,7 @@ function Commands() //{{{
 
                                 if (complete)
                                 {
-                                    if (quote || !invalid && count)
+                                    if (quote || !invalid && count && i + optname.length + 1 + arg.length == str.length)
                                     {
                                         args.completeStart += optname.length + 1;
                                         args.completeOpt = opt[0][0];

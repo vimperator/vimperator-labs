@@ -78,13 +78,7 @@ function Bookmarks() //{{{
             let tags = taggingService.getTagsForURI(uri, {}) || [];
             //return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
 
-            return bookmarks.push({ url: node.uri,
-                                    title: node.title,
-                                    get icon() getFavicon(node.uri), // TODO; must be a direct way to get the icon
-                                    keyword: keyword,
-                                    tags: tags,
-                                    id: node.itemId,
-                                    get xml() template.bookmarkItem(this)});
+            return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
         }
 
         function readBookmark(id)
@@ -287,6 +281,9 @@ function Bookmarks() //{{{
         },
         { argCount: "0" });
 
+    function tags() util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(cache.bookmarks))]))
+                        .map(function (tag) [tag, tag]);
+
     commands.add(["bma[rk]"],
         "Add a bookmark",
         function (args, special)
@@ -322,8 +319,14 @@ function Bookmarks() //{{{
         },
         {
             bang: true,
-            completer: function (context) completion.bookmark(context.filter),
-            options: [[["-tags", "-T"], commands.OPTION_LIST]]
+            completer: function (context, args)
+            {
+                if (args.completeOpt)
+                    return;
+                context.advance(args.completeStart); // TODO: Move this to completion.ex?
+                completion.url(context, "b");
+            },
+            options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
         });
 
     commands.add(["delbm[arks]"],
