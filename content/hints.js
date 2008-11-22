@@ -138,11 +138,11 @@ function Hints() //{{{
             // TODO: mozilla docs recommend localName instead of tagName
             tagname = elem.tagName.toLowerCase();
             if (tagname == "input" || tagname == "textarea")
-                text = elem.value.toLowerCase();
+                text = elem.value;
             else if (tagname == "select")
             {
                 if (elem.selectedIndex >= 0)
-                    text = elem.item(elem.selectedIndex).text.toLowerCase();
+                    text = elem.item(elem.selectedIndex).text;
                 else
                     text = "";
             }
@@ -511,7 +511,7 @@ function Hints() //{{{
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
-                let words = linkText.split(wordSplitRegex);
+                let words = linkText.split(wordSplitRegex).map(String.toLowerCase);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
