@@ -76,7 +76,6 @@ function Bookmarks() //{{{
             let uri = ioService.newURI(node.uri, null, null);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
-            //return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
 
             return bookmarks.push(new Bookmark(node.uri, node.title, null, keyword, tags, node.itemId));
         }

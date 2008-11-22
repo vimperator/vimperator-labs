@@ -383,7 +383,10 @@ const liberator = (function () //{{{
             {
                 args = args.string;
 
-                let method = args[0] == ":" ? "execute" : "eval";
+                if (args[0] == ":")
+                    var method = function () liberator.execute(args);
+                else
+                    method = liberator.eval("(function () {" + args + "})");
 
                 try
                 {
@@ -395,7 +398,7 @@ const liberator = (function () //{{{
                         for (let i in util.interruptableRange(0, count, 500))
                         {
                             let now = Date.now();
-                            liberator[method](args);
+                            method();
                             total += Date.now() - now;
                         }
 
@@ -437,10 +440,7 @@ const liberator = (function () //{{{
                     else
                     {
                         var beforeTime = Date.now();
-                        if (args && args[0] == ":")
-                            liberator.execute(args);
-                        else
-                            liberator.eval(args);
+                        method();
 
                         if (special)
                             return;

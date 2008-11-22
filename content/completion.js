@@ -68,6 +68,7 @@ function CompletionContext(editor, name, offset)
         this.reset();
     }
     this.name = name || "";
+    this.cache = {};
     this._items = []; // FIXME
     this.selectionTypes = {};
 }
@@ -266,37 +267,36 @@ function Completion() //{{{
 
             completion.filterMap = [null, function (v) template.highlight(v, true)];
 
-            //if (cacheFilter.js === cacheKey)
-            //    return cacheResults.js;
-            //cacheFilter.js = cacheKey;
+            let [obj, key] = objects;
+            let cache = this.context.cache.objects || {};
+            this.context.cache.objects = cache;
+            if (key in cache)
+                return cache[key];
 
             // Can't use the cache. Build a member list.
-            compl = [];
-            for (let [,obj] in Iterator(objects))
-            {
-                // Things we can dereference
-                if (["object", "string", "function"].indexOf(typeof obj) == -1)
-                    continue;
-                if (!obj)
-                    continue;
+            let compl = [];
+            // Things we can dereference
+            if (["object", "string", "function"].indexOf(typeof obj) == -1)
+                return [];
+            if (!obj)
+                return [];
 
-                // XPCNativeWrappers, etc, don't show all accessible
-                // members until they're accessed, so, we look at
-                // the wrappedJSObject instead, and return any keys
-                // available in the object itself.
-                let orig = obj;
-                if (obj.wrappedJSObject)
-                    obj = obj.wrappedJSObject;
-                // v[0] in orig and orig[v[0]] catch different cases. XPCOM
-                // objects are problematic, to say the least.
-                compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)])
-                // And if wrappedJSObject happens to be available,
-                // return that, too.
-                if (orig.wrappedJSObject)
-                    compl.push([["wrappedJSObject", obj]]);
-            }
+            // XPCNativeWrappers, etc, don't show all accessible
+            // members until they're accessed, so, we look at
+            // the wrappedJSObject instead, and return any keys
+            // available in the object itself.
+            let orig = obj;
+            if (obj.wrappedJSObject)
+                obj = obj.wrappedJSObject;
+            // v[0] in orig and orig[v[0]] catch different cases. XPCOM
+            // objects are problematic, to say the least.
+            compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)])
+            // And if wrappedJSObject happens to be available,
+            // return that, too.
+            if (orig.wrappedJSObject)
+                compl.push([["wrappedJSObject", obj]]);
             compl = util.Array.flatten(compl);
-            return cacheResults.js = compl;
+            return cache[key] = compl;
         }
 
         this.filter = function filter(compl, key, last, offset)
@@ -327,9 +327,9 @@ function Completion() //{{{
 
         this.eval = function eval(arg, key, tmp)
         {
-            if (!("eval" in cacheResults))
-                cacheResults.eval = {};
-            let cache = cacheResults.eval;
+            if (!("eval" in this.context.cache))
+                this.context.cache.eval = {};
+            let cache = this.context.cache.eval;
             if (!key)
                 key = arg;
 
@@ -525,6 +525,7 @@ function Completion() //{{{
                 let statement = get(frame, 0, STATEMENTS) || 0; // Current statement.
                 let prev = statement;
                 let obj;
+                let cacheKey;
                 for (let [i, dot] in Iterator(get(frame)[DOTS].concat(stop)))
                 {
                     if (dot < statement)
@@ -538,7 +539,7 @@ function Completion() //{{{
                     cacheKey = str.substring(statement, dot);
                     obj = self.eval(s, cacheKey, obj);
                 }
-                return [[obj, str.substring(statement, stop + 1)]];
+                return [[obj, cacheKey]]
             }
 
             function getObjKey(frame)
@@ -565,7 +566,7 @@ function Completion() //{{{
                 {
                     let ctxt = this.context.fork(obj[1], top[OFFSET]);
                     ctxt.title = [obj[1]];
-                    ctxt.items = this.filter(compl || this.objectKeys(obj[0]), key + (string || ""), last, key.length);
+                    ctxt.items = this.filter(compl || this.objectKeys(obj), key + (string || ""), last, key.length);
                 }
             }
 
@@ -627,7 +628,7 @@ function Completion() //{{{
 
                     try
                     {
-                        var completer = obj[func].liberatorCompleter;
+                        var completer = obj[0][0][func].liberatorCompleter;
                     }
                     catch (e) {}
                     if (!completer)
@@ -645,10 +646,11 @@ function Completion() //{{{
                     });
                     args.push(key);
 
-                    let compl = completer.call(this, func, obj, string, args);
+                    let compl = completer.call(this, func, obj[0][0], string, args);
                     if (!(compl instanceof Array))
                         compl = [v for (v in compl)];
                     key = this.eval(key);
+                    obj[0][1] += "." + func + "(...";
                     return complete.call(this, obj, key, compl, string, last);
                 }
 
