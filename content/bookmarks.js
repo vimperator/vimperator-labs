@@ -338,7 +338,10 @@ function Bookmarks() //{{{
 
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
         },
-        { completer: function (context) completion.bookmark(context.filter) });
+        {
+            completer: function (context) completion.bookmark(context.filter),
+            literal: true
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -631,7 +634,7 @@ function History() //{{{
                 let filter = context.filter;
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
-                for (let i = sh.index - 1; i >= 0; i--)
+                for (let i in util.range(sh.index, 0, true))
                 {
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;
@@ -641,7 +644,8 @@ function History() //{{{
                 }
                 return [0, completions];
             },
-            count: true
+            count: true,
+            literal: true
         });
 
     commands.add(["fo[rward]", "fw"],
@@ -692,7 +696,8 @@ function History() //{{{
                 }
                 return [0, completions];
             },
-            count: true
+            count: true,
+            literal: true
         });
 
     commands.add(["hist[ory]", "hs"],

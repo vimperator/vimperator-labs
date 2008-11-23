@@ -349,10 +349,18 @@ const util = { //{{{
         return color ? string : [s for each (s in string)].join("");
     },
 
-    range: function (start, end)
+    range: function (start, end, reverse)
     {
-        while (start < end)
-            yield start++;
+        if (!reverse)
+        {
+            while (start < end)
+                yield start++;
+        }
+        else
+        {
+            while (start >= end)
+                yield --start;
+        }
     },
 
     interruptableRange: function (start, end, time)

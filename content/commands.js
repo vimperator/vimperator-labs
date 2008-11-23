@@ -80,7 +80,7 @@ function Command(specs, description, action, extraInfo) //{{{
     this.names       = expandedSpecs.names; // return all command name aliases
     this.description = description || "";
     this.action      = action;
-    this.argCount    = extraInfo.argCount || "";
+    this.argCount    = extraInfo.argCount || 0;
     this.completer   = extraInfo.completer || null;
     this.hereDoc     = extraInfo.hereDoc || false;
     this.options     = extraInfo.options || [];
@@ -425,7 +425,7 @@ function Commands() //{{{
                 argCount = "*";
 
             if (literal)
-                var literalIndex = parseInt(argCount) - 1 || 0;
+                var literalIndex = argCount == "+" ? 0 : Math.max(argCount - 1, 0);
 
             var args = {};       // parsed options
             args.arguments = []; // remaining arguments
@@ -499,36 +499,19 @@ function Commands() //{{{
                                 arg = null;
                                 quote = null;
                                 count = 0;
-                                // no value to the option
-                                if (optname.length >= sub.length)
-                                {
-                                    count = 0;
-                                }
-                                else if (sub[optname.length] == "=")
+                                let sep = sub[optname.length];
+                                if (sep == "=" || /\s/.test(sep) && opt[1] != this.OPTION_NOARG)
                                 {
                                     [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
 
+                                    // if we add the argument to an option after a space, it MUST not be empty
+                                    if (sep != "=" && !quote && arg.length == 0)
+                                        arg = null;
+
                                     count++; // to compensate the "=" character
                                 }
-                                else if (/\s/.test(sub[optname.length]))
+                                else if (sep != null) // this isn't really an option as it has trailing characters, parse it as an argument
                                 {
-                                    if (opt[1] != this.OPTION_NOARG)
-                                    {
-                                        [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
-                                        if (count == -1)
-
-                                        // if we add the argument to an option after a space, it MUST not be empty
-                                        if (!quote && arg.length == 0)
-                                            arg = null;
-
-                                        count++; // to compensate the " " character
-                                    }
-                                    else
-                                        count = 1; // the space
-                                }
-                                else
-                                {
-                                    // this isn't really an option as it has trailing characters, parse it as an argument
                                     invalid = true;
                                 }
 
@@ -589,6 +572,12 @@ function Commands() //{{{
                     }
                 }
 
+                if (complete)
+                {
+                    if (argCount == "0" || args.arguments.length > 0  && (argCount == "1" || argCount == "?"))
+                        complete.highlight(i, sub.length, "SPELLCHECK")
+                }
+
                 if (literal && args.arguments.length == literalIndex)
                 {
                     args.literalArg = sub;
@@ -643,7 +632,7 @@ function Commands() //{{{
             }
 
             // check for correct number of arguments
-            if (args.arguments.length == 0 && (argCount == "1" || argCount == "+") && !complete)
+            if (!complete && (args.arguments.length == 0 && (argCount == "1" || argCount == "+") || literal && argCount == "+" && /^\s*$/.test(literalArg)))
             {
                 liberator.echoerr("E471: Argument required");
                 return null;
@@ -835,7 +824,7 @@ function Commands() //{{{
             }
         },
         {
-            argCount: "2",
+            argCount: 2,
             bang: true,
             completer: function (context) completion.userCommand(context.filter),
             options: [

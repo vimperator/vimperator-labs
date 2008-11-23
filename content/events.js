@@ -111,7 +111,7 @@ function AutoCommands() //{{{
             }
         },
         {
-            argCount: "3",
+            argCount: 3,
             bang: true,
             completer: function (context) completion.autocmdEvent(context.filter),
             literal: true
@@ -125,8 +125,8 @@ function AutoCommands() //{{{
             commands.get("doautocmd").action.call(this, args.string);
         },
         {
-            argCount: "+",
-            completer: function (context) completion.autocmdEvent(context.filter)
+            completer: function (context) completion.autocmdEvent(context.filter),
+            literal: true
         }
     );
 
@@ -136,6 +136,8 @@ function AutoCommands() //{{{
         function (args)
         {
             args = args.string;
+            if (/^\s*$/.test(args))
+                return liberator.echo("No matching autocommands");
 
             let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
             url = url || buffer.URL;
@@ -161,9 +163,8 @@ function AutoCommands() //{{{
             }
         },
         {
-            // TODO: Vim actually just displays "No matching autocommands" when no arg is specified
-            argCount: "+",
-            completer: function (context) completion.autocmdEvent(context.filter)
+            completer: function (context) completion.autocmdEvent(context.filter),
+            literal: true
         }
     );
 
@@ -718,7 +719,8 @@ function Events() //{{{
         },
         {
             bang: true,
-            completer: function (context) completion.macro(context.filter)
+            completer: function (context) completion.macro(context.filter),
+            literal: true
         });
 
     commands.add(["macros"],
@@ -729,7 +731,10 @@ function Events() //{{{
             var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args.string));
             liberator.echo(str, commandline.FORCE_MULTILINE);
         },
-        { completer: function (context) completion.macro(context.filter) });
+        {
+            completer: function (context) completion.macro(context.filter),
+            literal: true
+        });
 
     commands.add(["pl[ay]"],
         "Replay a recorded macro",

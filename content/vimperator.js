@@ -283,19 +283,15 @@ const config = { //{{{
                 {
                     liberator.open(args);
                 }
+                else if (special)
+                    BrowserReloadSkipCache();
                 else
-                {
-                    if (special)
-                        BrowserReloadSkipCache();
-                    else
-                        BrowserReload();
-                }
+                    BrowserReload();
             },
             {
                 bang: true,
-                literal: true,
-                argCount: 0,
-                completer: function (context) completion.url(context)
+                completer: function (context) completion.url(context),
+                literal: true
             });
 
         commands.add(["redr[aw]"],
@@ -347,7 +343,8 @@ const config = { //{{{
             },
             {
                 argCount: "+",
-                completer: function (context) completion.sidebar(context.filter)
+                completer: function (context) completion.sidebar(context.filter),
+                literal: true
             });
 
         commands.add(["winc[lose]", "wc[lose]"],
@@ -366,7 +363,10 @@ const config = { //{{{
                 else
                     liberator.open("about:blank", liberator.NEW_WINDOW);
             },
-            { completer: function (context) completion.url(context) });
+            {
+                completer: function (context) completion.url(context),
+                literal: true
+            });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////

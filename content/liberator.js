@@ -239,29 +239,30 @@ const liberator = (function () //{{{
             "Execute the specified menu item from the command line",
             function (args)
             {
-                var item = args.string;
-                var items = getMenuItems();
+                let args = args.string;
+                let items = getMenuItems();
 
-                if (!items.some(function (i) i.fullMenuPath == item))
+                if (!items.some(function (i) i.fullMenuPath == args))
                 {
-                    liberator.echoerr("E334: Menu not found: " + item);
+                    liberator.echoerr("E334: Menu not found: " + args);
                     return;
                 }
 
-                for (let i = 0; i < items.length; i++)
+                for (let [i, item] in Iterator(items))
                 {
-                    if (items[i].fullMenuPath == item)
-                        items[i].doCommand();
+                    if (item.fullMenuPath == args)
+                        item.doCommand();
                 }
             },
             {
-                argCount: "+", // NOTE: single arg may contain unescaped whitespace
+                argCount: "+",
                 // TODO: add this as a standard menu completion function
                 completer: function (context)
                 {
                     let completions = getMenuItems().map(function (item) [item.fullMenuPath, item.label]);
                     return [0, completion.filter(completions, context.filter)];
-                }
+                },
+                literal: true
             });
 
         commands.add(["exe[cute]"],
@@ -307,7 +308,8 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (context) completion.help(context.filter)
+                completer: function (context) completion.help(context.filter),
+                literal: true
             });
 
         commands.add(["javas[cript]", "js"],
@@ -335,7 +337,8 @@ const liberator = (function () //{{{
             {
                 bang: true,
                 completer: function (context) completion.javascript(context),
-                hereDoc: true
+                hereDoc: true,
+                literal: true
             });
 
         commands.add(["loadplugins", "lpl"],
@@ -468,7 +471,8 @@ const liberator = (function () //{{{
                     else
                         return completion.javascript(context);
                 },
-                count: true
+                count: true,
+                literal: true
             });
 
         commands.add(["ve[rsion]"],

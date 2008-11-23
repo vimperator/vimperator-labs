@@ -53,11 +53,12 @@ function CompletionContext(editor, name, offset)
         this.parent = parent;
         this.editor = parent.editor;
         this.offset = parent.offset + (offset || 0);
-        this.__defineGetter__("tabPressed", function () this.top.tabPressed);
+        this.__defineGetter__("contextList", function () this.top.contextList);
         this.__defineGetter__("onUpdate", function () this.top.onUpdate);
+        this.__defineGetter__("selectionTypes", function () this.top.selectionTypes);
+        this.__defineGetter__("tabPressed", function () this.top.tabPressed);
         this.__defineGetter__("updateAsync", function () this.top.updateAsync);
         this.__defineGetter__("value", function () this.top.value);
-        this.__defineGetter__("selectionTypes", function () this.top.selectionTypes);
         this.incomplete = false;
     }
     else
@@ -105,8 +106,6 @@ CompletionContext.prototype = {
 
     get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
 
-    get contextList() [v for ([k, v] in Iterator(this.contexts))],
-
     get createRow() this._createRow || template.completionRow, // XXX
     set createRow(createRow) this._createRow = createRow,
 
@@ -132,6 +131,7 @@ CompletionContext.prototype = {
     fork: function fork(name, offset, completer, self)
     {
         let context = new CompletionContext(this, name, offset);
+        this.contextList.push(context);
         if (completer)
             return completer.apply(self, [context].concat(Array.slice(arguments, 4)));
         return context;
@@ -146,16 +146,14 @@ CompletionContext.prototype = {
             const editor = this.editor;
             let sel = editor.selectionController.getSelection(selType);
             if (length == 0)
-            {
                 sel.removeAllRanges();
-                editor.selectionController.repaintSelection(selType);
-                return;
+            else
+            {
+                let range = editor.selection.getRangeAt(0).cloneRange();
+                range.setStart(range.startContainer, this.offset + start);
+                range.setEnd(range.startContainer, this.offset + start + length);
+                sel.addRange(range);
             }
-
-            let range = editor.selection.getRangeAt(0).cloneRange();
-            range.setStart(range.startContainer, this.offset + start);
-            range.setEnd(range.startContainer, this.offset + start + length);
-            sel.addRange(range);
             editor.selectionController.repaintSelection(selType);
         }
         catch (e) {}
@@ -169,10 +167,11 @@ CompletionContext.prototype = {
         // Not ideal.
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
-        this.updateAsync = false;
+        this.contextList = [];
+        this.offset = 0;
         this.selectionTypes = {};
         this.tabPressed = false;
-        this.offset = 0;
+        this.updateAsync = false;
         this.value = this.editor ? this.editor.rootElement.textContent : this._value;
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
         //    delete this.contexts[key];
@@ -1239,8 +1238,9 @@ function Completion() //{{{
                                     root.containerOpen = true;
                                     context.cache.items = util.map(util.range(0, root.childCount), function (i) {
                                         let child = root.getChild(i);
-                                        let query = child.uri.substring(begin.length, child.uri.length - end.length);
-                                        if (end == "" || child.uri.substr(-end.length) == end)
+                                        let rest = child.uri.length - end.length;
+                                        let query = child.uri.substring(begin.length, rest);
+                                        if (child.uri.substr(rest) == end && query.indexOf("&") == -1)
                                             return [decodeURIComponent(query.replace("+", "%20")),
                                                     child.title,
                                                     child.icon];
@@ -1430,11 +1430,14 @@ function Completion() //{{{
             return [0, this.filter(cmds, filter)];
         },
 
-        userMapping: function userMapping(filter, modes)
+        userMapping: function userMapping(context, args, modes)
         {
-            // TODO: add appropriate getters to l.mappings
-            let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
-            return [0, this.filter(maps, filter)];
+            liberator.dump(args);
+            if (args.completeArg == 0)
+            {
+                let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
+                context.items = this.filter(maps, args.arguments[0]);
+            }
         }
     // }}}
     };

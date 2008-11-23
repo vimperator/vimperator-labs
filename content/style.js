@@ -426,7 +426,7 @@ liberator.registerObserver("load_commands", function ()
             }
         },
         {
-            argCount: "2",
+            argCount: 2,
             bang: true,
             completer: function (context, args, bang) {
                 let compl = [];
@@ -463,7 +463,7 @@ liberator.registerObserver("load_commands", function ()
             styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
         },
         {
-            argCount: "2",
+            argCount: 2,
             // FIXME: Ugly.
             completer: function (context) [0, completion.filter(
                     [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
@@ -507,7 +507,7 @@ liberator.registerObserver("load_commands", function ()
                 liberator.echoerr(error);
         },
         {
-            argCount: "2",
+            argCount: 2,
             bang: true,
             // TODO: add this as a standard highlight completion function?
             completer: function (context) [0,

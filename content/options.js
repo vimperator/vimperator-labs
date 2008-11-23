@@ -397,7 +397,8 @@ function Options() //{{{
             completer: function (context, args, special, count)
             {
                 return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_LOCAL });
-            }
+            },
+            literal: true
         }
     );
 
@@ -413,7 +414,8 @@ function Options() //{{{
             completer: function (context, args, special, count)
             {
                 return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
-            }
+            },
+            literal: true
         }
     );
 
@@ -801,6 +803,7 @@ function Options() //{{{
                 }
                 return [len, completion.filter(completions, filter, true)];
             },
+            literal: true,
             serial: function () [
                 {
                     command: this.name,

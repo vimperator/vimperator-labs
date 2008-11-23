@@ -339,7 +339,8 @@ function IO() //{{{
         },
         {
             bang: true,
-            completer: function (context) completion.shellCommand(filter)
+            completer: function (context) completion.shellCommand(context.filter),
+            literal: true
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

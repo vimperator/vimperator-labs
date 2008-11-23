@@ -184,8 +184,8 @@ function Mappings() //{{{
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
         const opts = {
-                argCount: "2",
-                completer: function (context) completion.userMapping(context.filter, modes),
+                argCount: 2,
+                completer: function (context, args) completion.userMapping(context, args, modes),
                 options: [
                     [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
                 ],
@@ -224,13 +224,7 @@ function Mappings() //{{{
             "Remove a mapping" + modeDescription,
             function (args)
             {
-                args = args.string;
-
-                if (!args)
-                {
-                    liberator.echoerr("E474: Invalid argument");
-                    return;
-                }
+                args = args.arguments[1];
 
                 let found = false;
                 for (let [,mode] in Iterator(modes))
@@ -244,7 +238,10 @@ function Mappings() //{{{
                 if (!found)
                     liberator.echoerr("E31: No such mapping");
             },
-            { completer: function (context) completion.userMapping(context.filter, modes) });
+            {
+                argCount: "1",
+                completer: function (context, args) completion.userMapping(context, args, modes)
+            });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
