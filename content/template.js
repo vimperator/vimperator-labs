@@ -1,8 +1,8 @@
 const template = {
-    add: function (a, b) a + b,
-    join: function (c) function (a, b) a + c + b,
+    add: function add(a, b) a + b,
+    join: function join(c) function (a, b) a + c + b,
 
-    map: function (iter, fn, sep)
+    map: function map(iter, fn, sep)
     {
         if (iter.length) /* Kludge? */
             iter = util.Array.iterator(iter);
@@ -20,7 +20,7 @@ const template = {
         return ret;
     },
 
-    maybeXML: function (xml)
+    maybeXML: function maybeXML(xml)
     {
         if (typeof xml == "xml")
             return xml;
@@ -32,7 +32,7 @@ const template = {
         return <>{xml}</>;
     },
 
-    completionRow: function (context, item, class)
+    completionRow: function completionRow(context, item, class)
     {
         let text = item.text || item[0] || "";
         let description = item.description || item[1] || "";
@@ -66,7 +66,7 @@ const template = {
 
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
-    highlight: function (arg, processStrings)
+    highlight: function highlight(arg, processStrings)
     {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
         try
@@ -107,7 +107,7 @@ const template = {
         }
     },
 
-    highlightFilter: function (str, filter)
+    highlightFilter: function highlightFilter(str, filter)
     {
         if (typeof str == "xml")
             return str;
@@ -125,7 +125,7 @@ const template = {
         })());
     },
 
-    highlightRegexp: function (str, re)
+    highlightRegexp: function highlightRegexp(str, re)
     {
         if (typeof str == "xml")
             return str;
@@ -137,7 +137,7 @@ const template = {
         })());
     },
 
-    highlightSubstrings: function (str, iter)
+    highlightSubstrings: function highlightSubstrings(str, iter)
     {
         if (typeof str == "xml")
             return str;
@@ -157,7 +157,7 @@ const template = {
         return s + <>{str.substr(start)}</>;
     },
 
-    highlightURL: function (str, force)
+    highlightURL: function highlightURL(str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
             return <a class="hl-URL" href="#">{str}</a>;
@@ -165,14 +165,14 @@ const template = {
             return str;
     },
 
-    generic: function (xml)
+    generic: function generic(xml)
     {
         return <>:{commandline.getCommand()}<br/></> + xml;
     },
 
     // every item must have a .xml property which defines how to draw itself
     // @param headers is an array of strings, the text for the header columns
-    genericTable: function (headers, items)
+    genericTable: function genericTable(headers, items)
     {
         return this.generic(
             <table>
@@ -188,7 +188,7 @@ const template = {
     },
 
     // returns a single row for a bookmark or history item
-    bookmarkItem: function (item)
+    bookmarkItem: function bookmarkItem(item)
     {
         var extra = [];
         if (item.keyword)
@@ -215,7 +215,7 @@ const template = {
         </ul>
     },
 
-    jumps: function (index, elems)
+    jumps: function jumps(index, elems)
     {
         return this.generic(
             <table>
@@ -234,7 +234,7 @@ const template = {
             </table>);
     },
 
-    options: function (title, opts)
+    options: function options(title, opts)
     {
         return this.generic(
             <table>
@@ -253,7 +253,7 @@ const template = {
             </table>);
     },
 
-    table: function (title, data, indent)
+    table: function table(title, data, indent)
     {
         let table =
             <table>
@@ -272,7 +272,7 @@ const template = {
             return table;
     },
 
-    tabular: function (headings, style, iter)
+    tabular: function tabular(headings, style, iter)
     {
         /* This might be mind-bogglingly slow. We'll see. */
         return this.generic(
@@ -295,7 +295,7 @@ const template = {
             </table>);
     },
 
-    usage: function (iter)
+    usage: function usage(iter)
     {
         return this.generic(
             <table>

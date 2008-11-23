@@ -72,8 +72,7 @@ function AutoCommands() //{{{
         "Execute commands automatically on events",
         function (args, special)
         {
-            let [event, regex] = args.arguments;
-            let cmd = args.literalArg;
+            let [event, regex, cmd] = args.arguments;
             let events = null;
             if (event)
             {

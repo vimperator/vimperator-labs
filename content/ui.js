@@ -50,9 +50,9 @@ function CommandLine() //{{{
 
         get length() this.store.length,
 
-        get: function (index) this.store.get(index),
+        get: function get(index) this.store.get(index),
 
-        add: function (str)
+        add: function add(str)
         {
             if (!str)
                 return;
@@ -81,7 +81,7 @@ function CommandLine() //{{{
 
         get length() this._messages.length,
 
-        add: function (message)
+        add: function add(message)
         {
             if (!message)
                 return;
@@ -316,7 +316,7 @@ function CommandLine() //{{{
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfl",
         {
-            completer: function (filter)
+            completer: function completer(filter)
             {
                 return [
                     ["s", "Search engines and keyword URLs"],
@@ -327,7 +327,7 @@ function CommandLine() //{{{
                     ["S", "Suggest engines"]
                 ];
             },
-            validator: function (value) !/[^sfbhSl]/.test(value)
+            validator: function validator(value) !/[^sfbhSl]/.test(value)
         });
 
     options.add(["history", "hi"],
@@ -352,7 +352,7 @@ function CommandLine() //{{{
          "Engine Alias which has a feature of suggest",
          "stringlist", "google",
          {
-             completer: function (value)
+             completer: function completer(value)
              {
                  let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                     .getService(Components.interfaces.nsIBrowserSearchService);
@@ -361,7 +361,7 @@ function CommandLine() //{{{
 
                  return engines.map(function (engine) [engine.alias, engine.description]);
              },
-             validator: function (value)
+             validator: function validator(value)
              {
                  let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                     .getService(Components.interfaces.nsIBrowserSearchService);
@@ -377,7 +377,7 @@ function CommandLine() //{{{
         "List of file patterns to ignore when completing files",
         "stringlist", "",
         {
-            validator: function (value)
+            validator: function validator(value)
             {
                 // TODO: allow for escaping the ","
                 try
@@ -396,7 +396,7 @@ function CommandLine() //{{{
         "Define how command line completion works",
         "stringlist", "list:full",
         {
-            completer: function (filter)
+            completer: function completer(filter)
             {
                 return [
                     ["",              "Complete only the first match"],
@@ -407,7 +407,7 @@ function CommandLine() //{{{
                     ["list:longest",  "List all and complete common string"]
                 ];
             },
-            validator: function (value)
+            validator: function validator(value)
             {
                 return value.split(",").every(
                     function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
@@ -419,14 +419,14 @@ function CommandLine() //{{{
         "Change how command line completion is done",
         "stringlist", "",
         {
-            completer: function (value)
+            completer: function completer(value)
             {
                 return [
                     ["auto", "Automatically show completions while you are typing"],
                     ["sort", "Always sort the completion list"]
                 ];
             },
-            validator: function (value)
+            validator: function validator(value)
             {
                 return value.split(",").every(function (item) /^(sort|auto|)$/.test(item));
             }
@@ -562,12 +562,12 @@ function CommandLine() //{{{
                 storage.styles.removeSheet("silent-mode", null, null, null, true);
         },
 
-        getCommand: function ()
+        getCommand: function getCommand()
         {
             return commandWidget.value;
         },
 
-        open: function (prompt, cmd, extendedMode)
+        open: function open(prompt, cmd, extendedMode)
         {
             // save the current prompts, we need it later if the command widget
             // receives focus without calling the this.open() method
@@ -598,7 +598,7 @@ function CommandLine() //{{{
         },
 
         // normally used when pressing esc, does not execute a command
-        close: function ()
+        close: function close()
         {
             var res = liberator.triggerCallback("cancel", currentExtendedMode);
             inputHistory.add(this.getCommand());
@@ -606,7 +606,7 @@ function CommandLine() //{{{
             this.clear();
         },
 
-        clear: function ()
+        clear: function clear()
         {
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
@@ -617,7 +617,7 @@ function CommandLine() //{{{
         },
 
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
-        echo: function (str, highlightGroup, flags)
+        echo: function echo(str, highlightGroup, flags)
         {
             var focused = document.commandDispatcher.focusedElement;
             if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
@@ -662,7 +662,7 @@ function CommandLine() //{{{
 
         // this will prompt the user for a string
         // commandline.input("(s)ave or (o)pen the file?")
-        input: function (prompt, callback, extra)
+        input: function input(prompt, callback, extra)
         {
             extra = extra || {};
 
@@ -678,7 +678,7 @@ function CommandLine() //{{{
 
         // reads a multi line input and returns the string once the last line matches
         // @param untilRegexp
-        inputMultiline: function (untilRegexp, callbackFunc)
+        inputMultiline: function inputMultiline(untilRegexp, callbackFunc)
         {
             // save the mode, because we need to restore it
             modes.push(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
@@ -694,7 +694,7 @@ function CommandLine() //{{{
             setTimeout(function () { multilineInputWidget.focus(); }, 10);
         },
 
-        onEvent: function (event)
+        onEvent: function onEvent(event)
         {
             var command = this.getCommand();
 
@@ -944,7 +944,7 @@ function CommandLine() //{{{
             }
         },
 
-        onMultilineInputEvent: function (event)
+        onMultilineInputEvent: function onMultilineInputEvent(event)
         {
             if (event.type == "keypress")
             {
@@ -980,7 +980,7 @@ function CommandLine() //{{{
 
         // FIXME: if 'more' is set and the MOW is not scrollable we should still
         // allow a down motion after an up rather than closing
-        onMultilineOutputEvent: function (event)
+        onMultilineOutputEvent: function onMultilineOutputEvent(event)
         {
             var win = multilineOutputWidget.contentWindow;
 
@@ -1177,7 +1177,7 @@ function CommandLine() //{{{
             }
         },
 
-        highlight: function (start, end, type)
+        highlight: function highlight(start, end, type)
         {
             // FIXME: Kludge.
             try // Firefox <3.1 doesn't have repaintSelection
@@ -1199,7 +1199,7 @@ function CommandLine() //{{{
             catch (e) {}
         },
 
-        updateMorePrompt: function (force, showHelp)
+        updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
             let win = multilineOutputWidget.contentWindow;
             function isScrollable() !win.scrollMaxY == 0;
@@ -1213,7 +1213,7 @@ function CommandLine() //{{{
                 setLine("Press ENTER or type command to continue", this.HL_QUESTION);
         },
 
-        updateOutputHeight: function (open)
+        updateOutputHeight: function updateOutputHeight(open)
         {
             if (!open && outputContainer.collapsed)
                 return;
@@ -1233,7 +1233,7 @@ function CommandLine() //{{{
         },
 
         // to allow asynchronous adding of completions
-        setCompletions: function (newCompletions)
+        setCompletions: function setCompletions(newCompletions)
         {
             if (liberator.mode != modes.COMMAND_LINE)
                 return;
@@ -1272,7 +1272,7 @@ function CommandLine() //{{{
         },
 
         // TODO: does that function need to be public?
-        resetCompletions: function ()
+        resetCompletions: function resetCompletions()
         {
             autocompleteTimer.reset();
             completion.cancel();
@@ -1403,8 +1403,8 @@ function ItemList(id) //{{{
 
     return {
 
-        clear: function () { this.setItems(); doc.body.innerHTML = ""; },
-        hide: function () { container.collapsed = true; },
+        clear: function clear() { this.setItems(); doc.body.innerHTML = ""; },
+        hide: function hide() { container.collapsed = true; },
         show: function show()
         {
             /* FIXME: Should only happen with autocomplete,
@@ -1417,7 +1417,7 @@ function ItemList(id) //{{{
             }
             container.collapsed = false;
         },
-        visible: function () !container.collapsed,
+        visible: function visible() !container.collapsed,
 
         // if @param selectedItem is given, show the list and select that item
         setItems: function setItems(newItems, selectedItem)
@@ -1468,7 +1468,7 @@ function ItemList(id) //{{{
             return;
         },
 
-        onEvent: function (event) false
+        onEvent: function onEvent(event) false
     };
     //}}}
 }; //}}}
@@ -1498,7 +1498,7 @@ function StatusLine() //{{{
         "Show the status line",
         "number", 2,
         {
-            setter: function (value)
+            setter: function setter(value)
             {
                 if (value == 0)
                     document.getElementById("status-bar").collapsed = true;
@@ -1509,7 +1509,7 @@ function StatusLine() //{{{
 
                 return value;
             },
-            completer: function (filter)
+            completer: function completer(filter)
             {
                 return [
                     ["0", "Never display status line"],
@@ -1517,7 +1517,7 @@ function StatusLine() //{{{
                     ["2", "Always display status line"]
                 ];
             },
-            validator: function (value) value >= 0 && value <= 2
+            validator: function validator(value) value >= 0 && value <= 2
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1526,7 +1526,7 @@ function StatusLine() //{{{
 
     return {
 
-        setClass: function (type)
+        setClass: function setClass(type)
         {
             const highlightGroup = {
                 secure:   "StatusLineSecure",
@@ -1538,7 +1538,7 @@ function StatusLine() //{{{
         },
 
         // update all fields of the statusline
-        update: function ()
+        update: function update()
         {
             this.updateUrl();
             this.updateInputBuffer();
@@ -1548,7 +1548,7 @@ function StatusLine() //{{{
         },
 
         // if "url" is ommited, build a usable string for the URL
-        updateUrl: function (url)
+        updateUrl: function updateUrl(url)
         {
             if (typeof url == "string")
             {
@@ -1590,7 +1590,7 @@ function StatusLine() //{{{
             urlWidget.value = url;
         },
 
-        updateInputBuffer: function (buffer)
+        updateInputBuffer: function updateInputBuffer(buffer)
         {
             if (!buffer || typeof buffer != "string")
                 buffer = "";
@@ -1598,7 +1598,7 @@ function StatusLine() //{{{
             inputBufferWidget.value = buffer;
         },
 
-        updateProgress: function (progress)
+        updateProgress: function updateProgress(progress)
         {
             if (!progress)
                 progress = "";
@@ -1626,7 +1626,7 @@ function StatusLine() //{{{
         },
 
         // you can omit either of the 2 arguments
-        updateTabCount: function (currentIndex, totalTabs)
+        updateTabCount: function updateTabCount(currentIndex, totalTabs)
         {
             if (!liberator.has("tabs"))
             {
@@ -1652,7 +1652,7 @@ function StatusLine() //{{{
         },
 
         // percent is given between 0 and 1
-        updateBufferPosition: function (percent)
+        updateBufferPosition: function updateBufferPosition(percent)
         {
             if (!percent || typeof percent != "number")
             {

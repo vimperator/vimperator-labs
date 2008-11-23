@@ -166,8 +166,7 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
-                let lhs = args.arguments[0];
-                let rhs = args.literalArg;
+                let [lhs, rhs] = args.arguments;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
                 else

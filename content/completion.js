@@ -27,7 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // An eval with a cleaner lexical scope.
-modules._cleanEval = function (__liberator_eval_arg, __liberator_eval_tmp)
+modules._cleanEval = function _cleanEval(__liberator_eval_arg, __liberator_eval_tmp)
 {
     return window.eval(__liberator_eval_arg);
 }
@@ -54,6 +54,7 @@ function CompletionContext(editor, name, offset)
         this.offset = parent.offset + (offset || 0);
         this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
         this.__defineGetter__("onUpdate", function () this.parent.onUpdate);
+        this.__defineGetter__("updateAsync", function () this.parent.updateAsync);
         this.__defineGetter__("value", function () this.parent.value);
         this.__defineGetter__("selectionTypes", function () this.parent.selectionTypes);
         this.incomplete = false;
@@ -114,18 +115,19 @@ CompletionContext.prototype = {
     {
         this.hasItems = items.length > 0;
         this._items = items;
-        this.onUpdate.call(this);
+        if (this.updateAsync)
+            this.onUpdate.call(this);
     },
 
     get title() this._title || ["Completions"], // XXX
     set title(val) this._title = val,
 
-    advance: function (count)
+    advance: function advance(count)
     {
         this.offset += count;
     },
 
-    fork: function (name, offset, completer, self)
+    fork: function fork(name, offset, completer, self)
     {
         let context = new CompletionContext(this, name, offset);
         if (completer)
@@ -133,7 +135,7 @@ CompletionContext.prototype = {
         return context;
     },
 
-    highlight: function (start, length, type)
+    highlight: function highlight(start, length, type)
     {
         try // Firefox <3.1 doesn't have repaintSelection
         {
@@ -157,7 +159,7 @@ CompletionContext.prototype = {
         catch (e) {}
     },
 
-    reset: function ()
+    reset: function reset()
     {
         let self = this;
         if (this.parent)
@@ -165,6 +167,7 @@ CompletionContext.prototype = {
         // Not ideal.
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
+        this.updateAsync = false;
         this.selectionTypes = {};
         this.tabPressed = false;
         this.offset = 0;
@@ -269,7 +272,7 @@ function Completion() //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
-            completion.filterMap = [null, function (v) template.highlight(v, true)];
+            completion.filterMap = [null, function highlight(v) template.highlight(v, true)];
 
             let [obj, key] = objects;
             let cache = this.context.cache.objects || {};
@@ -485,7 +488,7 @@ function Completion() //{{{
             lastIdx = i;
         }
 
-        this.complete = function (context)
+        this.complete = function _complete(context)
         {
             this.context = context;
             let string = context.filter;
@@ -787,13 +790,13 @@ function Completion() //{{{
 
     return {
 
-        setFunctionCompleter: function (funcs, completers)
+        setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
             if (!(funcs instanceof Array))
                 funcs = [funcs];
             for (let [,func] in Iterator(funcs))
             {
-                func.liberatorCompleter = function (func, obj, string, args) {
+                func.liberatorCompleter = function liberatorCompleter(func, obj, string, args) {
                     let completer = completers[args.length - 1];
                     if (!completer)
                         return [];
@@ -834,7 +837,7 @@ function Completion() //{{{
         },
 
         // cancel any ongoing search
-        cancel: function()
+        cancel: function cancel()
         {
             if (completionService)
                 completionService.stopSearch();
@@ -936,7 +939,7 @@ function Completion() //{{{
 
         autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
 
-        bookmark: function (filter)
+        bookmark: function bookmark(filter)
         {
             return {
                 start: 0,
@@ -1033,7 +1036,7 @@ function Completion() //{{{
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
 
-        directory: function (context, tail)
+        directory: function directory(context, tail)
         {
             this.file(context, tail);
             context.items = context.items.filter(function (i) i[1] == "Directory");
@@ -1081,25 +1084,26 @@ function Completion() //{{{
             if (command)
             {
                 [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
-                context = context.fork(cmd, prefix.length);
-                let argContext = context.fork("args", args.completeStart);
-                args = command.parseArgs(context.filter, argContext);
+                let cmdContext = context.fork(cmd, prefix.length);
+                let argContext = cmdContext.fork("args", args.completeStart);
+                args = command.parseArgs(cmdContext.filter, argContext);
                 if (args)
                 {
                     // XXX, XXX, XXX
                     if (!args.completeOpt && command.completer)
                     {
-                        context.advance(args.completeStart);
-                        compObject = command.completer.call(command, context, args, special, count);
+                        cmdContext.advance(args.completeStart);
+                        compObject = command.completer.call(command, cmdContext, args, special, count);
                         if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                             compObject = { start: compObject[0], items: compObject[1] };
                         if (compObject != null)
                         {
-                            context.advance(compObject.start);
-                            context.title = ["Completions"];
-                            context.items = compObject.items;
+                            cmdContext.advance(compObject.start);
+                            cmdContext.title = ["Completions"];
+                            cmdContext.items = compObject.items;
                         }
                     }
+                    cmdContext.updateAsync = true;
                 }
                 //liberator.dump([[v.name, v.offset, v.items.length, v.hasItems] for each (v in context.contexts)]);
             }
@@ -1112,7 +1116,7 @@ function Completion() //{{{
             let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
             // dir == "" is expanded inside readDirectory to the current dir
 
-            let generate = function ()
+            let generate = function generate()
             {
                 let files = [], mapped = [];
 
@@ -1173,7 +1177,7 @@ function Completion() //{{{
 
         get javascriptCompleter() javascript,
 
-        javascript: function (context)
+        javascript: function _javascript(context)
         {
             return javascript.complete(context);
         },
@@ -1229,7 +1233,7 @@ function Completion() //{{{
         },
 
         // XXX: Move to bookmarks.js?
-        searchEngineSuggest: function (context, engineAliases)
+        searchEngineSuggest: function searchEngineSuggest(context, engineAliases)
         {
             if (!filter)
                 return [0, []];
@@ -1273,7 +1277,7 @@ function Completion() //{{{
 
         shellCommand: function shellCommand(filter)
         {
-            let generate = function ()
+            let generate = function generate()
             {
                 const environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                                      .getService(Components.interfaces.nsIEnvironment);
@@ -1345,10 +1349,10 @@ function Completion() //{{{
                 s: this.search,
                 f: this.file,
                 S: this.searchEngineSuggest,
-                b: function (context)
+                b: function b(context)
                 {
                     context.title = ["Bookmark", "Title"];
-                    context.createRow = function (context, item, class)
+                    context.createRow = function createRow(context, item, class)
                     {
                         // FIXME
                         if (class)
@@ -1357,7 +1361,7 @@ function Completion() //{{{
                     }
                     context.items = bookmarks.get(context.filter)
                 },
-                l: function (context)
+                l: function l(context)
                 {
                     if (!completionService)
                         return
@@ -1392,7 +1396,7 @@ function Completion() //{{{
         },
 
         // FIXME: Temporary
-        _url: function (filter, complete)
+        _url: function _url(filter, complete)
         {
             let context = new CompletionContext(filter);
             this.url(context, complete);

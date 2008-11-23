@@ -333,7 +333,8 @@ const util = { //{{{
                     i = parseInt(i);
                 else if (/^[A-Z_]+$/.test(i))
                     i = "";
-                keys.push([i, <>{key}{noVal ? "" : <>: {value}</>}<br/>&#xa;</>]);
+                keys.push([i, <>{key}{noVal ? "" : <>: {value}</> // Vim /
+                    }<br/>&#xa;</>]);
             }
         }
         catch (e) {}
@@ -516,7 +517,7 @@ function Struct()
     ConStructor.defaultValue = function (key, val)
     {
         let i = args.indexOf(key);
-        ConStructor.prototype.__defineGetter__(i, function () this[i] = val.call(this));
+        ConStructor.prototype.__defineGetter__(i, function () (this[i] = val.call(this), this[i])); // Kludge for FF 3.0
         ConStructor.prototype.__defineSetter__(i, function (val) {
             let value = val;
             this.__defineGetter__(i, function () value);

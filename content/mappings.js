@@ -158,8 +158,7 @@ function Mappings() //{{{
             }
 
             // ?:\s+ <- don't remember; (...)? optional = rhs
-            let [lhs] = args.arguments;
-            let rhs = args.literalArg;
+            let [lhs, rhs] = args.arguments;
 
             if (!rhs) // list the mapping
             {

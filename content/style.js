@@ -128,7 +128,6 @@ function Highlights(name, store, serial)
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
         css = style.selector + " { " + css + " }";
 
-        style.filter; // FIXME: needed for FF 3.0 (not 3.1) - track down when I'm awake...
         let error = styles.addSheet(style.selector, style.filter, css, true, force);
         if (!error)
             style.value = newStyle;
@@ -396,9 +395,8 @@ liberator.registerObserver("load_commands", function ()
         "Add or list user styles",
         function (args, special)
         {
-            let [filter] = args.arguments;
+            let [filter, css] = args.arguments;
             let name = args["-name"];
-            let css = args.literalArg;
 
             if (!css)
             {
@@ -491,8 +489,7 @@ liberator.registerObserver("load_commands", function ()
                 height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 overflow: hidden !important;
             ]]>;
-            let key = args.arguments[0];
-            let css = args.literalArg;
+            let [key, css] = args.arguments[0];
             if (!css && !(key && special))
             {
                 let str = template.tabular(["Key", "Sample", "CSS"],
