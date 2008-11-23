@@ -709,6 +709,8 @@ function History() //{{{
 
     return {
 
+        get service() historyService,
+
         get: function (filter, maxItems)
         {
             let items = [];

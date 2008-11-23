@@ -1255,6 +1255,15 @@ const liberator = (function () //{{{
             return true;
         },
 
+        callInMainThread: function (callback)
+        {
+            let mainThread = threadManager.mainThread;
+            if (!threadManager.isMainThread)
+                mainThread.dispatch({ run: callback }, mainThread.DISPATCH_NORMAL);
+            else
+                callback();
+        },
+
         threadYield: function (flush)
         {
             let mainThread = threadManager.mainThread;

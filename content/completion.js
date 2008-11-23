@@ -49,14 +49,15 @@ function CompletionContext(editor, name, offset)
             return self;
         }
         this.contexts[name] = this;
+        this.top = parent.top;
         this.parent = parent;
         this.editor = parent.editor;
         this.offset = parent.offset + (offset || 0);
-        this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
-        this.__defineGetter__("onUpdate", function () this.parent.onUpdate);
-        this.__defineGetter__("updateAsync", function () this.parent.updateAsync);
-        this.__defineGetter__("value", function () this.parent.value);
-        this.__defineGetter__("selectionTypes", function () this.parent.selectionTypes);
+        this.__defineGetter__("tabPressed", function () this.top.tabPressed);
+        this.__defineGetter__("onUpdate", function () this.top.onUpdate);
+        this.__defineGetter__("updateAsync", function () this.top.updateAsync);
+        this.__defineGetter__("value", function () this.top.value);
+        this.__defineGetter__("selectionTypes", function () this.top.selectionTypes);
         this.incomplete = false;
     }
     else
@@ -65,6 +66,7 @@ function CompletionContext(editor, name, offset)
             this._value = editor;
         else
             this.editor = editor;
+        this.top = this;
         this.offset = offset || 0;
         this.tabPressed = false;
         this.onUpdate = function () true;
@@ -116,7 +118,7 @@ CompletionContext.prototype = {
         this.hasItems = items.length > 0;
         this._items = items;
         if (this.updateAsync)
-            this.onUpdate.call(this);
+            liberator.callInMainThread(function () { this.onUpdate.call(this) });
     },
 
     get title() this._title || ["Completions"], // XXX
@@ -1197,39 +1199,59 @@ function Completion() //{{{
 
         search: function search(context)
         {
-            let [, keyword, args] = context.filter.match(/^\s*(\S*)\s*(.*)/);
+            let [, keyword, space, args] = context.filter.match(/^\s*(\S*)(\s*)(.*)$/);
             let keywords = bookmarks.getKeywords();
             let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), context.filter, false, true);
 
             context.title = ["Search Keywords"];
             context.items = engines;
 
-            // NOTE: While i like the result of the code, due to the History simplification
-            // that code is too slow to be here. We might use a direct Places History query instead for better speed
-            // let generate = function () {
-            //     let hist = history.get();
-            //     let searches = [];
-            //     for (let [, k] in Iterator(keywords))
-            //     {
-            //         if (k.keyword.toLowerCase() != keyword.toLowerCase() || k.url.indexOf("%s") == -1)
-            //             continue;
-            //         let [begin, end] = k.url.split("%s");
-            //         for (let [, h] in Iterator(hist))
-            //         {
-            //             if (h.url.indexOf(begin) == 0 && (!end.length || h.url.substr(-end.length) == end))
-            //             {
-            //                 let query = h.url.substring(begin.length, h.url.length - end.length);
-            //                 searches.push([decodeURIComponent(query.replace("+", "%20")),
-            //                                <>{begin}<span class="hl-Filter">{query}</span>{end}</>,
-            //                                k.icon]);
-            //             }
-            //         }
-            //     }
-            //     return searches;
-            // }
-            // let searches = this.cached("searches-" + keyword, args, generate, "filter", [false, true]);
-            // searches = searches.map(function (a) (a = a.concat(), a[0] = keyword + " " + a[0], a));
-            // return [0, searches.concat(engines)];
+            // TODO: Simplify.
+            for (let [,item] in Iterator(keywords))
+            {
+                let name = item.keyword;
+                if (space && keyword == name && item.url.indexOf("%s") > -1)
+                    context.fork(name, name.length + space.length, function (context) {
+                        let [begin, end] = item.url.split("%s");
+                        let history = modules.history.service;
+                        let query = history.getNewQuery();
+                        let opts = history.getNewQueryOptions();
+
+                        query.uri = window.makeURI(begin);
+                        query.uriIsPrefix = true;
+                        opts.resultType = opts.RESULTS_AS_URI;
+                        opts.queryType = opts.QUERY_TYPE_HISTORY;
+
+                        context.title = [keyword + " Quick Search"];
+                        function setItems()
+                        {
+                            context.items = completion.filter(context.cache.items, args, false, true);
+                        }
+
+                        if (context.cache.items)
+                            setItems();
+                        else
+                        {
+                            context.incomplete = true;
+                            liberator.callFunctionInThread(null, function () {
+                                let results = history.executeQuery(query, opts);
+                                let root = results.root;
+                                    root.containerOpen = true;
+                                    context.cache.items = util.map(util.range(0, root.childCount), function (i) {
+                                        let child = root.getChild(i);
+                                        let query = child.uri.substring(begin.length, child.uri.length - end.length);
+                                        if (end == "" || child.uri.substr(-end.length) == end)
+                                            return [decodeURIComponent(query.replace("+", "%20")),
+                                                    child.title,
+                                                    child.icon];
+                                    }).filter(function (k) k);
+                                    root.containerOpen = false;
+                                    context.incomplete = false;
+                                    setItems();
+                            });
+                        }
+                    });
+            }
         },
 
         // XXX: Move to bookmarks.js?
@@ -1367,10 +1389,8 @@ function Completion() //{{{
                         return
                     context.title = ["Smart Completions"];
                     context.incomplete = true;
-                    if (context.items.length)
-                        context.hasItems = true; // XXX
-                    let timer = new util.Timer(50, 100, function () {
-                        let result = context.result;
+                    context.hasItems = context.items.length > 0; // XXX
+                    let timer = new util.Timer(50, 100, function (result) {
                         context.items = [
                                 [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
                                 for (i in util.range(0, result.matchCount))
@@ -1383,7 +1403,7 @@ function Completion() //{{{
                     completionService.startSearch(context.filter, "", context.result, {
                         onSearchResult: function onSearchResult(search, result) {
                             context.result = result;
-                            timer.tell();
+                            timer.tell(result);
                             if (result.searchResult <= result.RESULT_SUCCESS)
                                 timer.flush();
                         }

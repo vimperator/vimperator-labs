@@ -293,6 +293,8 @@ const config = { //{{{
             },
             {
                 bang: true,
+                literal: true,
+                argCount: 0,
                 completer: function (context) completion.url(context)
             });
 
