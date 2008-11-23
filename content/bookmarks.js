@@ -313,7 +313,7 @@ function Bookmarks() //{{{
             argCount: "?",
             bang: true,
             options: [[["-title", "-t"],    commands.OPTION_STRING],
-                      [["-tags", "-T"],     commands.OPTION_LIST],
+                      [["-tags", "-T"],     commands.OPTION_LIST, null, tags],
                       [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)]]
         });
 

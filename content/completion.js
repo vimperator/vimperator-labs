@@ -55,22 +55,26 @@ function CompletionContext(editor, name, offset)
         this.__defineGetter__("tabPressed", function () this.parent.tabPressed);
         this.__defineGetter__("onUpdate", function () this.parent.onUpdate);
         this.__defineGetter__("value", function () this.parent.value);
+        this.__defineGetter__("selectionTypes", function () this.parent.selectionTypes);
         this.incomplete = false;
     }
     else
     {
-        this.editor = editor;
+        if (typeof editor == "string")
+            this._value = editor;
+        else
+            this.editor = editor;
         this.offset = offset || 0;
         this.tabPressed = false;
         this.onUpdate = function () true;
         this.contexts = { name: this };
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
+        this.selectionTypes = {};
         this.reset();
     }
     this.name = name || "";
     this.cache = {};
     this._items = []; // FIXME
-    this.selectionTypes = {};
 }
 CompletionContext.prototype = {
     // Temporary
@@ -96,7 +100,7 @@ CompletionContext.prototype = {
         return { start: minStart, items: util.Array.flatten(items) }
     },
 
-    get caret() this.editor.selection.getRangeAt(0).startOffset - this.offset,
+    get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
 
     get contextList() [v for ([k, v] in Iterator(this.contexts))],
 
@@ -159,12 +163,12 @@ CompletionContext.prototype = {
         if (this.parent)
             throw Error();
         // Not ideal.
-        for each (let type in this.selectionTypes)
+        for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
         this.selectionTypes = {};
         this.tabPressed = false;
         this.offset = 0;
-        this.value = this.editor.rootElement.textContent;
+        this.value = this.editor ? this.editor.rootElement.textContent : this._value;
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
         //    delete this.contexts[key];
         for each (let context in this.contexts)
@@ -373,11 +377,11 @@ function Completion() //{{{
             {
                 if (top[CHAR] != arg)
                 {
-                    self.context.highlight(top[OFFSET] + 1, i - top[OFFSET], "SPELLCHECK");
+                    self.context.highlight(top[OFFSET], i - top[OFFSET], "SPELLCHECK");
                     self.context.highlight(top[OFFSET], 1, "FIND");
                     throw new Error("Invalid JS");
                 }
-                if (i == str.length - 1)
+                if (i == self.context.caret - 1)
                     self.context.highlight(top[OFFSET], 1, "FIND");
                 // The closing character of this stack frame will have pushed a new
                 // statement, leaving us with an empty statement. This doesn't matter,
@@ -1074,7 +1078,7 @@ function Completion() //{{{
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
             let compObject = { start: 0, items: [] };
-            if (command && command.completer)
+            if (command)
             {
                 [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
                 context = context.fork(cmd, prefix.length);
@@ -1083,7 +1087,7 @@ function Completion() //{{{
                 if (args)
                 {
                     // XXX, XXX, XXX
-                    if (!args.completeOpt)
+                    if (!args.completeOpt && command.completer)
                     {
                         context.advance(args.completeStart);
                         compObject = command.completer.call(command, context, args, special, count);
@@ -1390,10 +1394,7 @@ function Completion() //{{{
         // FIXME: Temporary
         _url: function (filter, complete)
         {
-            let context = new CompletionContext({
-                selection: { getRangeAt: function () ({ startOffset: filter.length }) },
-                rootElement: { textContent: filter }
-            });
+            let context = new CompletionContext(filter);
             this.url(context, complete);
             return context.allItems;
         },
