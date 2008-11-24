@@ -39,26 +39,26 @@ function CompletionContext(editor, name, offset)
 
     if (editor instanceof arguments.callee)
     {
+        let self = this;
         let parent = editor;
         name = parent.name + "/" + name;
         this.contexts = parent.contexts;
         if (name in this.contexts)
         {
-            let self = this.contexts[name];
+            self = this.contexts[name];
             self.offset = parent.offset + (offset || 0);
             return self;
         }
         this.contexts[name] = this;
-        this.top = parent.top;
+        this.anchored = parent.anchored;
         this.parent = parent;
-        this.editor = parent.editor;
         this.offset = parent.offset + (offset || 0);
-        this.__defineGetter__("contextList", function () this.top.contextList);
-        this.__defineGetter__("onUpdate", function () this.top.onUpdate);
-        this.__defineGetter__("selectionTypes", function () this.top.selectionTypes);
-        this.__defineGetter__("tabPressed", function () this.top.tabPressed);
-        this.__defineGetter__("updateAsync", function () this.top.updateAsync);
-        this.__defineGetter__("value", function () this.top.value);
+        ["editor", "filterFunc", "keys", "title", "top"].forEach(function (key)
+            self[key] = parent[key]);
+        ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
+            self.__defineGetter__(key, function () this.top[key]);
+            self.__defineSetter__(key, function (val) this.top[key] = val);
+        });
         this.incomplete = false;
     }
     else
@@ -67,6 +67,9 @@ function CompletionContext(editor, name, offset)
             this._value = editor;
         else
             this.editor = editor;
+        this.filterFunc = completion.filter;
+        this.title = ["Completions"];
+        this.keys = [0, 1];
         this.top = this;
         this.offset = offset || 0;
         this.tabPressed = false;
@@ -78,54 +81,137 @@ function CompletionContext(editor, name, offset)
     }
     this.name = name || "";
     this.cache = {};
-    this._items = []; // FIXME
+    this.process = [];
+    this._completions = []; // FIXME
 }
 CompletionContext.prototype = {
     // Temporary
     get allItems()
     {
+        let self = this;
         let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
-        let items = [];
-        for each (let [k, context] in Iterator(this.contexts))
-        {
-            let prefix = this.value.substring(minStart, context.offset);
-            if (context.hasItems)
-            {
-                items.push(context.items.map(function (item) {
-                    if (!("text" in item))
-                        item = { icon: item[2], text: item[0], description: item[1] };
-                    else // FIXME
-                        item = util.Array.assocToObj([x for (x in Iterator(item))]);
-                    item.text = prefix + item.text;
-                    return item;
-                }));
-            }
-        }
+        let items = this.contextList.map(function (context) {
+            let prefix = self.value.substring(minStart, context.offset);
+            if (!context.hasItems)
+                return [];
+            return context.items;
+        });
         return { start: minStart, items: util.Array.flatten(items) }
     },
 
     get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
 
+    get completions() this._completions || [],
+    set completions(items)
+    {
+        delete this.cache.filtered;
+        delete this.cache.filter;
+        this.hasItems = items.length > 0;
+        this._completions = items;
+        let self = this;
+        if (this.updateAsync)
+            liberator.callInMainThread(function () { self.onUpdate.call(self) });
+    },
+
     get createRow() this._createRow || template.completionRow, // XXX
     set createRow(createRow) this._createRow = createRow,
 
-    get filter() this.value.substr(this.offset, this.caret),
+    get regenerate() this._generate && (!this.completions || this.cache.key != this.key || this.cache.offset != this.offset),
+    set regenerate(val) { if (val) delete this.cache.offset },
 
-    get items() this._items,
-    set items(items)
+    get generate() !this._generate ? null : function ()
     {
-        this.hasItems = items.length > 0;
-        this._items = items;
-        if (this.updateAsync)
-            liberator.callInMainThread(function () { this.onUpdate.call(this) });
+        this._completions = this._generate.call(this);
+        this.cache.offset = this.offset;
+        this.cache.key = this.key;
+        return this._completions;
+    },
+    set generate(arg)
+    {
+        let self = this;
+        this.hasItems = true;
+        this._generate = arg;
+        if (this.background && this.regenerate)
+        {
+            let lock = {};
+            this.cache.backgroundLock = lock;
+            this.incomplete = true;
+            liberator.callFunctionInThread(null, function () {
+                let items = self.generate();
+                if (self.backgroundLock != lock)
+                    return;
+                self.incomplete = false;
+                self.completions = items;
+            });
+        }
     },
 
-    get title() this._title || ["Completions"], // XXX
-    set title(val) this._title = val,
+    get filter() this._filter || this.value.substr(this.offset, this.caret),
+    set filter(val) this._filter = val,
+
+    get format() ({
+        keys: this.keys,
+        process: this.process
+    }),
+    set format(format)
+    {
+        this.keys = format.keys;
+        this.process = format.process;
+    },
+
+    get items()
+    {
+        if (!this.hasItems)
+            return [];
+        if (this.cache.filtered && this.cache.filter == this.filter)
+            return this.cache.filtered;
+        let items = this.completions;
+        if (this.regenerate)
+            items = this.generate();
+        this.cache.filter = this.filter;
+        if (items == null)
+            return items;
+
+        let self = this;
+        let text = function (item) item[self.keys[0]];
+        if (self.quote)
+            text = function (item) self.quote(item[self.keys[0]]);
+        this.cache.filtered = this.filterFunc(items.map(function (item) ({ text: text(item), item: item })),
+                    this.filter, this.anchored);
+        return this.cache.filtered;
+    },
+
+    get process() // FIXME
+    {
+        let process = this._process;
+        process = [process[0] || template.icon, process[1] || function (item, k) k];
+        let first = process[0];
+        let filter = this.filter;
+        if (!this.anchored)
+            process[0] = function (item, text) first(item, template.highlightFilter(item.text, filter));
+        return process;
+    },
+    set process(process)
+    {
+        this._process = process;
+    },
 
     advance: function advance(count)
     {
         this.offset += count;
+    },
+
+    getItems: function (start, end)
+    {
+        let self = this;
+        let items = this.items;
+        if (!items)
+            return [];
+
+        let reverse = start > end;
+        start = Math.max(0, start || 0);
+        end = Math.min(items.length, end ? end : items.length);
+        return util.map(util.range(start, end, reverse), function (i) items[i]);
     },
 
     fork: function fork(name, offset, completer, self)
@@ -273,8 +359,6 @@ function Completion() //{{{
             if (!(objects instanceof Array))
                 objects = [objects];
 
-            completion.filterMap = [null, function highlight(v) template.highlight(v, true)];
-
             let [obj, key] = objects;
             let cache = this.context.cache.objects || {};
             this.context.cache.objects = cache;
@@ -307,30 +391,27 @@ function Completion() //{{{
             return cache[key] = compl;
         }
 
-        this.filter = function filter(compl, key, last, offset)
+        this.filter = function filter(context, compl, name, anchored, key, last, offset)
         {
+            context.title = [name];
+            context.anchored = anchored;
+            context.filter = key;
+            context.process = [null, function highlight(item, v) template.highlight(v, true)];
+
             if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
                 key = util.escapeString(key.substr(offset), "");
-
-            let res = buildLongestStartingSubstring(compl, key);
-            if (res.length == 0)
-            {
-                substrings = [];
-                res = buildLongestCommonSubstring(compl, key);
-            }
 
             if (last != undefined) // Prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
                 substrings = substrings.map(function (s) last + s);
 
+            let res;
             if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
-            {
-                res.forEach(function strEscape(a) a[0] = util.escapeString(a[0].substr(offset), last));
-            }
+                res = compl.map(function (a) [util.escapeString(a[0].substr(offset), last), a[1]]);
             else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
-            {
-                res = res.filter(function isIdent(a) /^[\w$][\w\d$]*$/.test(a[0]));
-            }
-            return res;
+                res = compl.filter(function isIdent(a) /^[\w$][\w\d$]*$/.test(a[0]));
+            if (!anchored)
+                res = res.filter(function ([k]) util.compareIgnoreCase(k.substr(0, key.length), key));
+            context.completions = res;
         }
 
         this.eval = function eval(arg, key, tmp)
@@ -505,7 +586,6 @@ function Completion() //{{{
             {
                 if (e.message != "Invalid JS")
                     liberator.reportError(e);
-                // liberator.dump(util.escapeString(string) + ": " + e + "\n" + e.stack);
                 lastIdx = 0;
                 return;
             }
@@ -572,9 +652,15 @@ function Completion() //{{{
             {
                 for (let [,obj] in Iterator(objects))
                 {
-                    let ctxt = this.context.fork(obj[1], top[OFFSET]);
-                    ctxt.title = [obj[1]];
-                    ctxt.items = this.filter(compl || this.objectKeys(obj), key + (string || ""), last, key.length);
+                    obj[3] = compl || this.objectKeys(obj);
+                    this.context.fork(obj[1], top[OFFSET], this.filter, this,
+                        obj[3], obj[1], true, key + (string || ""), last, key.length);
+                }
+                for (let [,obj] in Iterator(objects))
+                {
+                    obj[1] += " (substrings)";
+                    this.context.fork(obj[1], top[OFFSET], this.filter, this,
+                        obj[3], obj[1], false, key + (string || ""), last, key.length);
                 }
             }
 
@@ -723,8 +809,9 @@ function Completion() //{{{
 
         for (let [,item] in Iterator(list))
         {
-            var complist = item[0] instanceof Array ?  item[0]
-                                                    : [item[0]];
+            // FIXME: Temporary kludge
+            let text = item.item ? item.item[0] || item.text : item[0];
+            var complist = text instanceof Array ? text : [text];
             for (let [,compitem] in Iterator(complist))
             {
                 let str = !ignorecase ? compitem : String(compitem).toLowerCase();
@@ -732,15 +819,14 @@ function Completion() //{{{
                 if (str.indexOf(filter) == -1)
                     continue;
 
-                filtered.push([compitem, item[1], favicon ? item[2] : null]);
+                item.text = compitem;
+                filtered.push(item);
 
                 if (longest)
                     buildSubstrings(str, filter);
                 break;
             }
         }
-        if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
         return filtered;
     }
 
@@ -755,14 +841,15 @@ function Completion() //{{{
 
         for (let [,item] in Iterator(list))
         {
-            var complist = item[0] instanceof Array ?  item[0]
-                                                    : [item[0]];
+            let text = item.item ? item.item[0] || item.text : item[0];
+            var complist = text instanceof Array ?  text : [text];
             for (let [,compitem] in Iterator(complist))
             {
-                if (compitem.indexOf(filter) != 0)
+                if (compitem.substr(0, filter.length) != filter)
                     continue;
 
-                filtered.push([compitem, item[1], favicon ? item[2] : null]);
+                item.text = compitem;
+                filtered.push(item);
 
                 if (longest)
                 {
@@ -780,8 +867,6 @@ function Completion() //{{{
                 break;
             }
         }
-        if (options.get("wildoptions").has("sort"))
-            filtered = filtered.sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));;
         return filtered;
     }
 
@@ -808,33 +893,29 @@ function Completion() //{{{
 
         // returns the longest common substring
         // used for the 'longest' setting for wildmode
-        get longestSubstring () substrings.reduce(function (a, b) a.length > b.length ? a : b, ""),
+        get longestSubstring() substrings.reduce(function (a, b) a.length > b.length ? a : b, ""),
 
         get substrings() substrings.slice(),
+
+        runCompleter: function (name, filter)
+        {
+            let context = new CompletionContext(filter);
+            context.__defineGetter__("background", function () false);
+            context.__defineSetter__("background", function () false);
+            this[name](context);
+            return context.items.map(function (i) i.item);
+        },
 
         // generic filter function, also builds substrings needed
         // for :set wildmode=list:longest, if necessary
         filter: function filter(array, filter, matchFromBeginning, favicon)
         {
-            if (!filter)
-                return [[a[0], a[1], favicon ? a[2] : null] for each (a in array)];
-
             let result;
             if (matchFromBeginning)
                 result = buildLongestStartingSubstring(array, filter, favicon);
             else
                 result = buildLongestCommonSubstring(array, filter, favicon);
             return result;
-        },
-
-        cached: function cached(key, filter, generate, method)
-        {
-            if (!filter && cacheFilter[key] || filter.indexOf(cacheFilter[key]) != 0)
-                cacheResults[key] = generate(filter);
-            cacheFilter[key] = filter;
-            if (cacheResults[key].length)
-                return cacheResults[key] = this[method].apply(this, [cacheResults[key], filter].concat(Array.slice(arguments, 4)));
-             return [];
         },
 
         // cancel any ongoing search
@@ -928,10 +1009,7 @@ function Completion() //{{{
                 itemsStr = itemsStr.toLowerCase();
             }
 
-            if (filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1))
-                return true;
-
-            return false;
+            return filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1);
         },
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -944,16 +1022,14 @@ function Completion() //{{{
         {
             return {
                 start: 0,
-                get items() {
-                    return bookmarks.get(filter).map(function (bmark) {
+                items: bookmarks.get(filter).map(function (bmark) {
                         // temporary, until we have moved all completions to objects
                         bmark[0] = bmark.url;
                         bmark[1] = bmark.title;
 
                         bmark.text = bmark.url;
                         return bmark;
-                    });
-                },
+                    })
             };
         },
 
@@ -1017,22 +1093,18 @@ function Completion() //{{{
             let schemes = [];
             let rtp = options["runtimepath"].split(",");
 
-            rtp.forEach(function (path) {
-                // FIXME: Now! Very, very broken.
-                schemes = schemes.concat([[c[0].replace(/\.vimp$/, ""), ""]
+            let schemes = rtp.map(function (path) // FIXME: Now! Very, very broken.
+                [[c[0].replace(/\.vimp$/, ""), ""]
                     for each (c in completion.file(path + "/colors/", true)[1])]);
-            });
 
-            return [0, completion.filter(schemes, filter)];
+            return [0, completion.filter(util.Array.flatten(schemes), filter)];
         },
 
         command: function command(context)
         {
             context.title = ["Command"];
-            if (!context.filter)
-                context.items = [[c.name, c.description] for (c in commands)];
-            else
-                context.items = this.filter([[c.longNames, c.description] for (c in commands)], context.filter, true);
+            context.anchored = true;
+            context.completions = [[c.longNames, c.description] for (c in commands)];
         },
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
@@ -1040,7 +1112,7 @@ function Completion() //{{{
         directory: function directory(context, tail)
         {
             this.file(context, tail);
-            context.items = context.items.filter(function (i) i[1] == "Directory");
+            context.completions = context.completions.filter(function (i) i[1] == "Directory");
         },
 
         environment: function environment(filter)
@@ -1050,10 +1122,7 @@ function Completion() //{{{
 
             lines.pop();
 
-            let vars = lines.map(function (line) {
-                let matches = line.match(/([^=]+)=(.+)/) || [];
-                return [matches[1], matches[2]];
-            });
+            let vars = lines.map(function (line) (line.match(/([^=]+)=(.+)/) || []).slice(1));
 
             return [0, this.filter(vars, filter)];
         },
@@ -1075,7 +1144,6 @@ function Completion() //{{{
             let [count, cmd, special, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length)
-            context.items = []; // XXX
             if (!junk)
                 return this.command(context);
 
@@ -1090,7 +1158,6 @@ function Completion() //{{{
                 args = command.parseArgs(cmdContext.filter, argContext);
                 if (args)
                 {
-                    // XXX, XXX, XXX
                     if (!args.completeOpt && command.completer)
                     {
                         cmdContext.advance(args.completeStart);
@@ -1101,12 +1168,12 @@ function Completion() //{{{
                         {
                             cmdContext.advance(compObject.start);
                             cmdContext.title = ["Completions"];
-                            cmdContext.items = compObject.items;
+                            cmdContext.filterFunc = function (k) k;
+                            cmdContext.completions = compObject.items;
                         }
                     }
-                    cmdContext.updateAsync = true;
+                    context.updateAsync = true;
                 }
-                //liberator.dump([[v.name, v.offset, v.items.length, v.hasItems] for each (v in context.contexts)]);
             }
         },
 
@@ -1117,64 +1184,52 @@ function Completion() //{{{
             let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
             // dir == "" is expanded inside readDirectory to the current dir
 
-            let generate = function generate()
+            context.title = ["Path", "Type"];
+            if (tail)
+                context.advance(dir.length);
+            context.anchored = true;
+            context.key = dir;
+            context.generate = function generate()
             {
-                let files = [], mapped = [];
+                context.cache.dir = dir;
 
                 try
                 {
-                    dir = dir.replace("\\ ", " ", "g");
-                    files = io.readDirectory(dir, true);
+                    let files = io.readDirectory(dir, true);
 
                     if (options["wildignore"])
                     {
                         let wigRegexp = RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
-
                         files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
                     }
 
-                    mapped = files.map(
+                    return files.map(
                         function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
                             file.isDirectory() ? "Directory" : "File"]
                     );
                 }
                 catch (e) {}
-
-                return mapped;
+                return [];
             };
-
-            context.title = ["Path", "Type"];
-            if (tail)
-                context.advance(dir.length);
-            context.items = this.cached("file-" + dir, context.filter, generate, "filter", true);
         },
 
-        help: function help(filter)
+        help: function help(context)
         {
-            let res = [];
-
-            for (let [, file] in Iterator(config.helpFiles))
+            context.title = ["Help"];
+            context.background = true;
+            context.generate = function ()
             {
-                try
-                {
-                    var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "chrome://liberator/locale/" + file, false);
-                    xmlhttp.send(null);
-                }
-                catch (e)
-                {
-                    liberator.log("Error opening chrome://liberator/locale/" + file, 1);
-                    continue;
-                }
-                let doc = xmlhttp.responseXML;
-                res.push(Array.map(doc.getElementsByClassName("tag"),
-                        function (elem) [elem.textContent, file]));
+                let res = config.helpFiles.map(function (file) {
+                    let resp = util.httpGet("chrome://liberator/locale/" + file);
+                    if (!resp)
+                        return [];
+                    let doc = resp.responseXML;
+                    return Array.map(doc.getElementsByClassName("tag"),
+                            function (elem) [elem.textContent, file]);
+                });
+                return util.Array.flatten(res);
             }
-
-            return [0, this.filter(util.Array.flatten(res), filter)];
         },
-
-        highlightGroup: function highlightGroup(filter) commands.get("highlight").completer(filter), // XXX
 
         get javascriptCompleter() javascript,
 
@@ -1200,17 +1255,25 @@ function Completion() //{{{
         {
             let [, keyword, space, args] = context.filter.match(/^\s*(\S*)(\s*)(.*)$/);
             let keywords = bookmarks.getKeywords();
-            let engines = this.filter(keywords.concat(bookmarks.getSearchEngines()), context.filter, false, true);
+            let engines = bookmarks.getSearchEngines();
 
             context.title = ["Search Keywords"];
-            context.items = engines;
+            context.completions = keywords.concat(engines);
+            context.anchored = true;
 
-            // TODO: Simplify.
-            for (let [,item] in Iterator(keywords))
-            {
-                let name = item.keyword;
-                if (space && keyword == name && item.url.indexOf("%s") > -1)
-                    context.fork(name, name.length + space.length, function (context) {
+            if (!space)
+                return;
+
+            context.fork("suggest", keyword.length + space.length, this.searchEngineSuggest, this,
+                    keyword, true);
+
+            let item = keywords.filter(function (k) k.keyword == keyword)[0];
+            if (item && item.url.indexOf("%s") > -1)
+                context.fork("keyword/" + keyword, keyword.length + space.length, function (context) {
+                    context.title = [keyword + " Quick Search"];
+                    context.background = true;
+                    context.anchored = true;
+                    context.generate = function () {
                         let [begin, end] = item.url.split("%s");
                         let history = modules.history.service;
                         let query = history.getNewQuery();
@@ -1221,86 +1284,56 @@ function Completion() //{{{
                         opts.resultType = opts.RESULTS_AS_URI;
                         opts.queryType = opts.QUERY_TYPE_HISTORY;
 
-                        context.title = [keyword + " Quick Search"];
-                        function setItems()
-                        {
-                            context.items = completion.filter(context.cache.items, args, false, true);
-                        }
-
-                        if (context.cache.items)
-                            setItems();
-                        else
-                        {
-                            context.incomplete = true;
-                            liberator.callFunctionInThread(null, function () {
-                                let results = history.executeQuery(query, opts);
-                                let root = results.root;
-                                    root.containerOpen = true;
-                                    context.cache.items = util.map(util.range(0, root.childCount), function (i) {
-                                        let child = root.getChild(i);
-                                        let rest = child.uri.length - end.length;
-                                        let query = child.uri.substring(begin.length, rest);
-                                        if (child.uri.substr(rest) == end && query.indexOf("&") == -1)
-                                            return [decodeURIComponent(query.replace("+", "%20")),
-                                                    child.title,
-                                                    child.icon];
-                                    }).filter(function (k) k);
-                                    root.containerOpen = false;
-                                    context.incomplete = false;
-                                    setItems();
-                            });
-                        }
-                    });
-            }
+                        let results = history.executeQuery(query, opts);
+                        let root = results.root;
+                        root.containerOpen = true;
+                        let result = util.map(util.range(0, root.childCount), function (i) {
+                            let child = root.getChild(i);
+                            let rest = child.uri.length - end.length;
+                            let query = child.uri.substring(begin.length, rest);
+                            if (child.uri.substr(rest) == end && query.indexOf("&") == -1)
+                                return [decodeURIComponent(query.replace("+", "%20")),
+                                        child.title,
+                                        child.icon];
+                        }).filter(function (k) k);
+                        root.containerOpen = false;
+                        return result;
+                    };
+                });
         },
 
-        // XXX: Move to bookmarks.js?
-        searchEngineSuggest: function searchEngineSuggest(context, engineAliases)
+        searchEngineSuggest: function searchEngineSuggest(context, engineAliases, kludge)
         {
-            if (!filter)
-                return [0, []];
+            if (!context.filter)
+                return;
 
-            let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
-            let responseType = "application/x-suggestions+json";
             let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                .getService(Components.interfaces.nsIBrowserSearchService);
-            let matches = query.match(RegExp("^\s*(" + name + "\\s+)(.*)$")) || [];
-            if (matches[1])
-                context.advance(matches[1].length);
-            query = context.filter;
+            let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
             let completions = [];
             engineList.forEach(function (name) {
                 let engine = ss.getEngineByAlias(name);
-
-                if (engine && engine.supportsResponseType(responseType))
-                    var queryURI = engine.getSubmission(query, responseType).uri.asciiSpec;
-                else
+                if (!engine)
                     return;
-
-                let xhr = new XMLHttpRequest();
-                xhr.open("GET", queryURI, false);
-                xhr.send(null);
-
-                let json = Components.classes["@mozilla.org/dom/json;1"]
-                                     .createInstance(Components.interfaces.nsIJSON);
-                let results = json.decode(xhr.responseText)[1];
-                if (!results)
+                let [, word] = /^\s*(\S+)/.exec(context.filter) || [];
+                if (!kludge && word == name) // FIXME: Check for matching keywords
                     return;
+                let ctxt = context.fork(name, 0);
 
-                let ctxt = context.fork(engine.name, (matches[1] || "").length);
-                ctxt.title = [engine.name + " Suggestions"];
-                // make sure we receive strings, otherwise a man-in-the-middle attack
-                // could return objects which toString() method could be called to
-                // execute untrusted code
-                ctxt.items = [[item, ""] for ([k, item] in results) if (typeof item == "string")];
+                ctxt.title = [engine.description + " Suggestions"];
+                ctxt.regenerate = true;
+                ctxt.background = true;
+                ctxt.generate = function () bookmarks.getSuggestions(name, this.filter);
             });
         },
 
-        shellCommand: function shellCommand(filter)
+        shellCommand: function shellCommand(context)
         {
-            let generate = function generate()
+            context.title = ["Shell Command", "Path"];
+            context.generate = function ()
             {
+                liberator.dump("generate");
                 const environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                                      .getService(Components.interfaces.nsIEnvironment);
 
@@ -1312,17 +1345,13 @@ function Completion() //{{{
                     let dir = io.getFile(dirName);
                     if (dir.exists() && dir.isDirectory())
                     {
-                        io.readDirectory(dir).forEach(function (file) {
-                            if (file.isFile() && file.isExecutable())
-                                commands.push([file.leafName, dir.path]);
-                        });
+                        commands.push([[file.leafName, dir.path] for ([i, file] in Iterator(io.readDirectory(dir)))
+                                            if (file.isFile() && file.isExecutable())]);
                     }
                 }
 
-                return commands;
+                return util.Array.flatten(commands);
             }
-
-            return [0, this.cached("shell-command", filter, generate, "filter")];
         },
 
         sidebar: function sidebar(filter)
@@ -1341,14 +1370,14 @@ function Completion() //{{{
 
             // unify split style sheets
             completions.forEach(function (stylesheet) {
-                for (let i = 0; i < completions.length; i++)
-                {
-                    if (stylesheet[0] == completions[i][0] && stylesheet[1] != completions[i][1])
+                completions = completions.filter(function (completion) {
+                    if (stylesheet[0] == completion[0] && stylesheet[1] != completion[1])
                     {
-                        stylesheet[1] += ", " + completions[i][1];
-                        completions.splice(i, 1);
+                        stylesheet[1] += ", " + completion[1];
+                        return false;
                     }
-                }
+                    return true;
+                });
             });
 
             return [0, this.filter(completions, filter)];
@@ -1374,14 +1403,8 @@ function Completion() //{{{
                 b: function b(context)
                 {
                     context.title = ["Bookmark", "Title"];
-                    context.createRow = function createRow(context, item, class)
-                    {
-                        // FIXME
-                        if (class)
-                            return template.completionRow(context, item, class);
-                        return template.bookmarkItem(item);
-                    }
-                    context.items = bookmarks.get(context.filter)
+                    context.format = bookmarks.format;
+                    context.completions = bookmarks.get(context.filter)
                 },
                 l: function l(context)
                 {
@@ -1389,15 +1412,16 @@ function Completion() //{{{
                         return
                     context.title = ["Smart Completions"];
                     context.incomplete = true;
-                    context.hasItems = context.items.length > 0; // XXX
+                    context.hasItems = context.completions.length > 0; // XXX
+                    context.filterFunc = function (items) items;
                     let timer = new util.Timer(50, 100, function (result) {
-                        context.items = [
-                                [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
+                        context.completions = [
+                            { 0: result.getValueAt(i), 1: result.getCommentAt(i), icon: result.getImageAt(i) }
                                 for (i in util.range(0, result.matchCount))
                         ];
                         context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                         let filter = context.filter;
-                        context.items.forEach(function ([item]) buildSubstrings(item, filter));
+                        context.completions.forEach(function ([item]) buildSubstrings(item, filter));
                     });
                     completionService.stopSearch();
                     completionService.startSearch(context.filter, "", context.result, {
@@ -1408,9 +1432,9 @@ function Completion() //{{{
                                 timer.flush();
                         }
                     });
-                    
                 }
             };
+            // Will, and should, throw an error if !(c in opts)
             Array.forEach(complete || options["complete"],
                 function (c) context.fork(c, 0, opts[c], completion));
         },
@@ -1432,11 +1456,10 @@ function Completion() //{{{
 
         userMapping: function userMapping(context, args, modes)
         {
-            liberator.dump(args);
             if (args.completeArg == 0)
             {
                 let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
-                context.items = this.filter(maps, args.arguments[0]);
+                context.completions = this.filter(maps, args.arguments[0]);
             }
         }
     // }}}

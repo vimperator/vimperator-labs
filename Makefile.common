@@ -22,10 +22,10 @@ JAR_TXT_FILES = ${shell find -L content skin locale \
 			   \)				\
 		}
 JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
-JAR_BIN_FILES = ${shell find content skin	\
-			-type f			\
-			-a ! -path '*CVS*'	\
-			-a -path '*.png'	\
+JAR_BIN_FILES = ${shell find content skin webcontent	\
+			-type f				\
+			-a ! -path '*CVS*'		\
+			-a -path '*.png'		\
 		}
 JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES} ${DOC_FILES}
 JAR           = chrome/${NAME}.jar

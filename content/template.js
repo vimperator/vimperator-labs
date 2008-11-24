@@ -34,35 +34,41 @@ const template = {
 
     completionRow: function completionRow(context, item, class)
     {
-        let text = item.text || item[0] || "";
-        let description = item.description || item[1] || "";
-        let icon = item.icon || item[2];
-
-        /* Kludge until we have completion contexts. */
-        let map = completion.filterMap;
-        if (map)
-        {
-            text = map[0] ? map[0](text) : text;
-            description = map[1] ? map[1](description) : description;
-        }
-
-        // FIXME: Move.
-        let filter = context.filter;
-        if (filter)
-        {
-            text = template.highlightFilter(text, filter);
-            description = template.highlightFilter(description, filter);
-        }
-
         if (typeof icon == "function")
             icon = icon();
 
+        if (class)
+        {
+            var [text, desc] = item;
+        }
+        else
+        {
+            var text = context.process[0](item, item.text || item.item[context.keys[0]]);
+            var desc = context.process[1](item, item.item[context.keys[1]]);
+        }
+
         return <ul class={class || "hl-CompItem"}>
-                   <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
-                   <li class="hl-CompResult">{text}</li>
-                   <li class="hl-CompDesc">{description}</li>
+                   <li class="hl-CompResult">{text || ""}</li>
+                   <li class="hl-CompDesc">{desc || ""}</li>
                </ul>;
     },
+
+    bookmarkDescription: function (item, text)
+    <>
+        <a href="#" class="hl-URL">{text}</a>&#160;
+        {
+            !(item.item.extra.length) ? "" :
+            <span class="extra-info">
+                ({
+                    template.map(item.item.extra, function (e)
+                    <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
+                    <>&#xa0;</>/* Non-breaking space */)
+                })
+            </span>
+        }
+    </>,
+
+    icon: function (item, text) <><span class="hl-CompIcon">{item.item.icon ? <img src={item.item.icon}/> : <></>}</span>{text}</>,
 
     filter: function (str) <span class="hl-Filter">{str}</span>,
 
@@ -114,11 +120,10 @@ const template = {
 
     highlightFilter: function highlightFilter(str, filter, highlight)
     {
-        if (typeof str == "xml")
-            return str;
-
         return this.highlightSubstrings(str, (function ()
         {
+            if (filter.length == 0)
+                return;
             let lcstr = String.toLowerCase(str);
             let lcfilter = filter.toLowerCase();
             let start = 0;
@@ -132,12 +137,9 @@ const template = {
 
     highlightRegexp: function highlightRegexp(str, re, highlight)
     {
-        if (typeof str == "xml")
-            return str;
-
         return this.highlightSubstrings(str, (function ()
         {
-            while (res = re.exec(str))
+            while (res = re.exec(str) && res[0].length)
                 yield [res.index, res[0].length];
         })(), highlight || template.filter);
     },

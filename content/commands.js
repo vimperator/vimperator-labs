@@ -421,11 +421,11 @@ function Commands() //{{{
             if (!options)
                 options = [];
 
-            if (!argCount)
-                argCount = "*";
-
             if (literal)
                 var literalIndex = argCount == "+" ? 0 : Math.max(argCount - 1, 0);
+
+            if (!argCount)
+                argCount = "*";
 
             var args = {};       // parsed options
             args.arguments = []; // remaining arguments
@@ -510,7 +510,7 @@ function Commands() //{{{
 
                                     count++; // to compensate the "=" character
                                 }
-                                else if (sep != null) // this isn't really an option as it has trailing characters, parse it as an argument
+                                else if (!/\s/.test(sep)) // this isn't really an option as it has trailing characters, parse it as an argument
                                 {
                                     invalid = true;
                                 }
@@ -623,12 +623,12 @@ function Commands() //{{{
                     else
                         compl = opt[3] || [];
                     context.title = [opt[0][0]];
-                    context.items = completion.filter(compl.map(function ([k, v]) [args.quote(k), v]), args.completeFilter);;
+                    context.completions = completion.filter(compl.map(function ([k, v]) [args.quote(k), v]), args.completeFilter);;
                 }
                 complete.advance(args.completeStart);
                 complete.title = ["Options"];
                 if (completeOpts)
-                    complete.items = completeOpts;
+                    complete.completions = completeOpts;
             }
 
             // check for correct number of arguments

@@ -349,6 +349,11 @@ function Bookmarks() //{{{
 
     return {
 
+        get format() ({
+            keys: ["url", "title"],
+            process: [template.icon, template.bookmarkDescription]
+        }),
+
         // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
@@ -356,7 +361,7 @@ function Bookmarks() //{{{
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
-            return completion.cached("bookmarks", filter, function () cache.bookmarks, "filterURLArray", tags);
+            return completion.filterURLArray(cache.bookmarks, filter, tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
@@ -490,10 +495,34 @@ function Bookmarks() //{{{
                 if (engine.alias != newAlias)
                     engine.alias = newAlias;
 
-                searchEngines.push([engine.alias, engine.description, engine.iconURI.spec]);
+                searchEngines.push({ 0: engine.alias, 1: engine.description, icon: engine.iconURI.spec });
             }
 
             return searchEngines;
+        },
+
+        getSuggestions: function (engine, query)
+        {
+            let ss = Components.classes["@mozilla.org/browser/search-service;1"]
+                               .getService(Components.interfaces.nsIBrowserSearchService);
+            const responseType = "application/x-suggestions+json";
+
+            let engine = ss.getEngineByAlias(engine);
+            if (engine && engine.supportsResponseType(responseType))
+                var queryURI = engine.getSubmission(query, responseType).uri.spec;
+            if (!queryURI)
+                return [];
+
+            let resp = util.httpGet(queryURI);
+            let json = Components.classes["@mozilla.org/dom/json;1"]
+                                 .createInstance(Components.interfaces.nsIJSON);
+            try
+            {
+                let results = json.decode(resp.responseText)[1];
+                return [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
+            }
+            catch (e) {}
+            return [];
         },
 
         // TODO: add filtering
@@ -512,7 +541,7 @@ function Bookmarks() //{{{
         {
             var url = null;
             var aPostDataRef = {};
-            var searchString = (useDefsearch? options["defsearch"] + " " : "") + text;
+            var searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
@@ -663,7 +692,7 @@ function History() //{{{
                 if (args)
                 {
                     var sh = getWebNavigation().sessionHistory;
-                    for (let i = sh.index + 1; i < sh.count; i++)
+                    for (let i in util.range(sh.index + 1, sh.count))
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
                         {
@@ -686,7 +715,7 @@ function History() //{{{
                 let filter = context.filter;
                 var sh = getWebNavigation().sessionHistory;
                 var completions = [];
-                for (let i = sh.index + 1; i < sh.count; i++)
+                for (let i in util.range(sh.index + 1, sh.count))
                 {
                     var entry = sh.getEntryAtIndex(i, false);
                     var url = entry.URI.spec;

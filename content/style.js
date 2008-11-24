@@ -32,10 +32,10 @@ function Highlights(name, store, serial)
         CompItem
         CompItem[selected] background: yellow;
         CompItem>*         padding: 0 .5ex;
-        CompIcon           width: 16px; min-width: 16px;
+        CompIcon           width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
         CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
         CompResult         width: 45%; overflow: hidden;
-        CompDesc           color: gray;
+        CompDesc           color: gray; width: 50%;
 
         Indicator   color: blue;
         Filter      font-weight: bold;
@@ -438,8 +438,7 @@ liberator.registerObserver("load_commands", function ()
                         compl.push([content.location.href, "Current URL"]);
                     }
                     catch (e) {}
-                    compl = compl.concat([[s, ""] for each (s in styles.sites)])
-                    context.items = completion.filter(compl, args.arguments[0]);
+                    context.completions = compl.concat([[s, ""] for each (s in styles.sites)])
                 }
             },
             hereDoc: true,

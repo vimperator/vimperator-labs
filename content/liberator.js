@@ -308,7 +308,7 @@ const liberator = (function () //{{{
             },
             {
                 bang: true,
-                completer: function (context) completion.help(context.filter),
+                completer: function (context) completion.help(context),
                 literal: true
             });
 
@@ -893,17 +893,17 @@ const liberator = (function () //{{{
                 }, 500);
             }
 
-            var [, items] = completion.help(topic);
+            var items = completion.runCompleter("help", topic);
             var partialMatch = -1;
 
-            for (let i = 0; i < items.length; i++)
+            for (let [i, item] in Iterator(items))
             {
-                if (items[i][0] == topic)
+                if (item[0] == topic)
                 {
-                    jumpToTag(items[i][1], items[i][0]);
+                    jumpToTag(item[1], item[0]);
                     return;
                 }
-                else if (partialMatch == -1 && items[i][0].indexOf(topic) > -1)
+                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
                 {
                     partialMatch = i;
                 }

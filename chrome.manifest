@@ -1,4 +1,5 @@
 # Firefox
+content  liberator2 webcontent/ contentaccessible=yes
 content	 liberator content/
 resource liberator modules/
 locale	 liberator en-US locale/en-US/

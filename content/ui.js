@@ -1180,28 +1180,6 @@ function CommandLine() //{{{
             }
         },
 
-        highlight: function highlight(start, end, type)
-        {
-            // FIXME: Kludge.
-            try // Firefox <3.1 doesn't have repaintSelection
-            {
-                const selType = Components.interfaces.nsISelectionController["SELECTION_" + type];
-                let editor = document.getElementById("liberator-commandline-command")
-                                     .inputField.editor;
-                let sel = editor.selectionController.getSelection(selType);
-                sel.removeAllRanges();
-
-                let range = editor.selection.getRangeAt(0).cloneRange();
-                let n = this.getCommand().indexOf(" ") + 1;
-                let node = range.startContainer;
-                range.setStart(node, start + n);
-                range.setEnd(node, end + n);
-                sel.addRange(range);
-                editor.selectionController.repaintSelection(selType);
-            }
-            catch (e) {}
-        },
-
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
             let win = multilineOutputWidget.contentWindow;
@@ -1356,12 +1334,12 @@ function ItemList(id) //{{{
         // do a full refill of the list:
         XML.ignoreWhitespace = true;
         let off = 0;
-        function range(context)
+        function getItems(context)
         {
             let len = context.items.length;
             let start = off;
             off += len;
-            return util.range(Math.max(offset - start, 0), Math.min(endIndex - start, len));
+            return context.getItems(offset - start, endIndex - start);
         }
 
         let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
@@ -1372,11 +1350,11 @@ function ItemList(id) //{{{
                             : <></>
                     }
                     {
-                        template.map(items.contextList, function (context) context.hasItems ?
+                        template.map(items.contextList, function (context) context.items.length ?
                         <>
-                        { context.createRow(context, context.title || {}, "hl-CompTitle") }
+                        { context.createRow(context, context.title || [], "hl-CompTitle") }
                         {
-                            template.map(range(context), function (i) context.createRow(context, context.items[i]))
+                            template.map(getItems(context), function (item) context.createRow(context, item))
                         }
                         </>
                         : undefined)

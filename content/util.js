@@ -272,6 +272,21 @@ const util = { //{{{
         return ret;
     },
 
+    httpGet: function (url)
+    {
+        try
+        {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", url, false);
+            xmlhttp.send(null);
+            return xmlhttp;
+        }
+        catch (e)
+        {
+            liberator.log("Error opening " + url, 1);
+        }
+    },
+
     map: function (obj, fn)
     {
         let ary = [];
@@ -359,7 +374,7 @@ const util = { //{{{
         }
         else
         {
-            while (start >= end)
+            while (start > end)
                 yield --start;
         }
     },
