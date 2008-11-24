@@ -23,7 +23,6 @@ BUGS:
 - http://apcmag.com/why_os_x_106_snow_leopard_should_leave_powerpc_in_the_cold.htm - scrolls the wrong
   window with j/k (the green slashdot thing for me).
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
-- :map <silent> is broken
 
 (recent CVS regressions):
 - A cached "awesomebar completion" result is still displayed, after the user removes "l" from the 'cpt' and
