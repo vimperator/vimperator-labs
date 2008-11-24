@@ -350,7 +350,7 @@ function Bookmarks() //{{{
     return {
 
         get format() ({
-            keys: ["url", "title"],
+            keys: { text: "url", description: "title", icon: "icon" },
             process: [template.icon, template.bookmarkDescription]
         }),
 
@@ -495,7 +495,7 @@ function Bookmarks() //{{{
                 if (engine.alias != newAlias)
                     engine.alias = newAlias;
 
-                searchEngines.push({ 0: engine.alias, 1: engine.description, icon: engine.iconURI.spec });
+                searchEngines.push([engine.alias, engine.description, engine.iconURI.spec]);
             }
 
             return searchEngines;

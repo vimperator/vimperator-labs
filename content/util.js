@@ -130,12 +130,20 @@ const util = { //{{{
         };
     },
 
-    compareIgnoreCase: function (a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
+    cloneObject: function (obj)
+    {
+        let newObj = {};
+        for (let [k, v] in Iterator(obj))
+            newObj[k] = v;
+        return newObj;
+    },
 
     clip: function (str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
+
+    compareIgnoreCase: function (a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
 
     computedStyle: function (node)
     {

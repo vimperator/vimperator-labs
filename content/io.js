@@ -347,6 +347,12 @@ function IO() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    liberator.registerObserver("load_completion", function ()
+    {
+        completion.setFunctionCompleter([ioManager.getFile, ioManager.expandPath],
+            [function (obj, arg) completion.runCompleter("file", arg)]);
+    });
+
     var ioManager = {
 
         MODE_RDONLY: 0x01,

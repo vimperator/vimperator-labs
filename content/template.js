@@ -43,8 +43,8 @@ const template = {
         }
         else
         {
-            var text = context.process[0](item, item.text || item.item[context.keys[0]]);
-            var desc = context.process[1](item, item.item[context.keys[1]]);
+            var text = context.process[0].call(context, item, item.text || context.getKey(item, "text"));
+            var desc = context.process[1].call(context, item, context.getKey(item, "description"));
         }
 
         return <ul class={class || "hl-CompItem"}>
@@ -68,7 +68,11 @@ const template = {
         }
     </>,
 
-    icon: function (item, text) <><span class="hl-CompIcon">{item.item.icon ? <img src={item.item.icon}/> : <></>}</span>{text}</>,
+    icon: function (item, text)
+    {
+        let icon = this.getKey(item, "icon");
+        return <><span class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</span>{text}</>
+    },
 
     filter: function (str) <span class="hl-Filter">{str}</span>,
 

@@ -37,9 +37,9 @@ function CompletionContext(editor, name, offset)
     if (!name)
         name = "";
 
+    let self = this;
     if (editor instanceof arguments.callee)
     {
-        let self = this;
         let parent = editor;
         name = parent.name + "/" + name;
         this.contexts = parent.contexts;
@@ -53,6 +53,7 @@ function CompletionContext(editor, name, offset)
         this.anchored = parent.anchored;
         this.parent = parent;
         this.offset = parent.offset + (offset || 0);
+        this.keys = util.cloneObject(this.parent.keys);
         ["editor", "filterFunc", "keys", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
@@ -69,7 +70,7 @@ function CompletionContext(editor, name, offset)
             this.editor = editor;
         this.filterFunc = completion.filter;
         this.title = ["Completions"];
-        this.keys = [0, 1];
+        this.keys = { text: 0, description: 1, icon: "icon" };
         this.top = this;
         this.offset = offset || 0;
         this.tabPressed = false;
@@ -83,6 +84,7 @@ function CompletionContext(editor, name, offset)
     this.cache = {};
     this.process = [];
     this._completions = []; // FIXME
+    this.getKey = function (item, key) item.item[self.keys[key]];
 }
 CompletionContext.prototype = {
     // Temporary
@@ -173,22 +175,27 @@ CompletionContext.prototype = {
             return items;
 
         let self = this;
-        let text = function (item) item[self.keys[0]];
+        let text = function (item) item[self.keys["text"]];
         if (self.quote)
-            text = function (item) self.quote(item[self.keys[0]]);
+            text = function (item) self.quote(item[self.keys["text"]]);
+
+        completion.getKey = this.getKey; // XXX
         this.cache.filtered = this.filterFunc(items.map(function (item) ({ text: text(item), item: item })),
                     this.filter, this.anchored);
+        completion.getKey = null;
+
         return this.cache.filtered;
     },
 
     get process() // FIXME
     {
+        let self = this;
         let process = this._process;
         process = [process[0] || template.icon, process[1] || function (item, k) k];
         let first = process[0];
         let filter = this.filter;
         if (!this.anchored)
-            process[0] = function (item, text) first(item, template.highlightFilter(item.text, filter));
+            process[0] = function (item, text) first.call(self, item, template.highlightFilter(item.text, filter));
         return process;
     },
     set process(process)
@@ -809,8 +816,7 @@ function Completion() //{{{
 
         for (let [,item] in Iterator(list))
         {
-            // FIXME: Temporary kludge
-            let text = item.item ? item.item[0] || item.text : item[0];
+            let text = completion.getKey(item, "text");
             var complist = text instanceof Array ? text : [text];
             for (let [,compitem] in Iterator(complist))
             {
@@ -841,7 +847,7 @@ function Completion() //{{{
 
         for (let [,item] in Iterator(list))
         {
-            let text = item.item ? item.item[0] || item.text : item[0];
+            let text = completion.getKey(item, "text");
             var complist = text instanceof Array ?  text : [text];
             for (let [,compitem] in Iterator(complist))
             {
@@ -876,6 +882,10 @@ function Completion() //{{{
 
     return {
 
+        // FIXME
+        get getKey() this._getKey || function (item, key) item[{ text: 0, description: 1, icon: 2}[key]],
+        set getKey(getKey) this._getKey = getKey,
+
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
             if (!(funcs instanceof Array))
@@ -908,14 +918,11 @@ function Completion() //{{{
 
         // generic filter function, also builds substrings needed
         // for :set wildmode=list:longest, if necessary
-        filter: function filter(array, filter, matchFromBeginning, favicon)
+        filter: function filter(array, filter, matchFromBeginning)
         {
-            let result;
             if (matchFromBeginning)
-                result = buildLongestStartingSubstring(array, filter, favicon);
-            else
-                result = buildLongestCommonSubstring(array, filter, favicon);
-            return result;
+                return buildLongestStartingSubstring(array, filter);
+            return buildLongestCommonSubstring(array, filter);
         },
 
         // cancel any ongoing search
@@ -1018,19 +1025,11 @@ function Completion() //{{{
 
         autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
 
-        bookmark: function bookmark(filter)
+        bookmark: function bookmark(context)
         {
-            return {
-                start: 0,
-                items: bookmarks.get(filter).map(function (bmark) {
-                        // temporary, until we have moved all completions to objects
-                        bmark[0] = bmark.url;
-                        bmark[1] = bmark.title;
-
-                        bmark.text = bmark.url;
-                        return bmark;
-                    })
-            };
+            context.title = ["Bookmark", "Title"];
+            context.format = bookmarks.format;
+            context.completions = bookmarks.get(context.filter)
         },
 
         buffer: function buffer(filter)
@@ -1102,7 +1101,8 @@ function Completion() //{{{
         {
             context.title = ["Command"];
             context.anchored = true;
-            context.completions = [[c.longNames, c.description] for (c in commands)];
+            context.keys = { text: "longNames", description: "description" };
+            context.completions = [k for (k in commands)];
         },
 
         dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
@@ -1143,7 +1143,7 @@ function Completion() //{{{
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length)
             if (!junk)
-                return this.command(context);
+                return context.fork("", 0, this.command);
 
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
@@ -1184,6 +1184,7 @@ function Completion() //{{{
             context.title = ["Path", "Type"];
             if (tail)
                 context.advance(dir.length);
+            context.keys = { text: 0, description: 1, icon: 2 };
             context.anchored = true;
             context.key = dir;
             context.generate = function generate()
@@ -1202,7 +1203,8 @@ function Completion() //{{{
 
                     return files.map(
                         function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
-                            file.isDirectory() ? "Directory" : "File"]
+                                         file.isDirectory() ? "Directory" : "File",
+                                         "moz-icon:" + (file.leafName.match(/\.\w+$/) || "")]
                     );
                 }
                 catch (e) {}
@@ -1255,6 +1257,7 @@ function Completion() //{{{
             let engines = bookmarks.getSearchEngines();
 
             context.title = ["Search Keywords"];
+            context.keys = { text: 0, description: 1, icon: 2 };
             context.completions = keywords.concat(engines);
             context.anchored = true;
 
@@ -1396,23 +1399,19 @@ function Completion() //{{{
                 s: this.search,
                 f: this.file,
                 S: this.searchEngineSuggest,
-                b: function b(context)
-                {
-                    context.title = ["Bookmark", "Title"];
-                    context.format = bookmarks.format;
-                    context.completions = bookmarks.get(context.filter)
-                },
+                b: this.bookmark,
                 l: function l(context)
                 {
                     if (!completionService)
                         return
                     context.title = ["Smart Completions"];
+                    context.keys.icon = 2;
                     context.incomplete = true;
                     context.hasItems = context.completions.length > 0; // XXX
                     context.filterFunc = function (items) items;
                     let timer = new util.Timer(50, 100, function (result) {
                         context.completions = [
-                            { 0: result.getValueAt(i), 1: result.getCommentAt(i), icon: result.getImageAt(i) }
+                            [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
                                 for (i in util.range(0, result.matchCount))
                         ];
                         context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
