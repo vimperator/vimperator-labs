@@ -108,7 +108,8 @@ commands.addUserCommand(["regr[essions]"],
             // 1.) run commands and mappings tests
 			for (let [, test] in Iterator(tests))
 			{
-				if (count >= 1 && ++currentTest != count)
+				currentTest++;
+				if (count >= 1 && currentTest != count)
 					continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
@@ -133,7 +134,8 @@ commands.addUserCommand(["regr[essions]"],
             // 2.) Run function tests
 			for (let [, func] in Iterator(functions))
 			{
-				if (count >= 1 && ++currentTest != count)
+				currentTest++;
+				if (count >= 1 && currentTest != count)
 					continue;
 
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
